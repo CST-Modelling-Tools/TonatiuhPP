@@ -1,8 +1,8 @@
+TEMPLATE = lib
+CONFIG += plugin
+CONFIG -= debug_and_release
 
-TEMPLATE      = lib
-CONFIG       += plugin debug_and_release
-
-include( ../../config.pri )
+include( ../../config.pri)
 
 INCLUDEPATH += . \
 			src \
@@ -10,20 +10,15 @@ INCLUDEPATH += . \
 			$$(TONATIUH_ROOT)/src
 
 # Input
-HEADERS = src/*.h \
-            $$(TONATIUH_ROOT)/src/source/raytracing/trt.h \
-           	$$(TONATIUH_ROOT)/src/source/raytracing/TSunShape.h 
+HEADERS = $$files(src/*.h) \
+            $$TONATIUH_ROOT/src/source/raytracing/trt.h \
+                $$TONATIUH_ROOT/src/source/raytracing/TSunShape.h
 
 
-SOURCES = src/*.cpp \
-           	$$(TONATIUH_ROOT)/src/source/raytracing/TSunShape.cpp
+SOURCES = $$files(src/*.cpp)  \
+                $$TONATIUH_ROOT/src/source/raytracing/TSunShape.cpp
 
 RESOURCES += src/SunshapePillbox.qrc	
-TARGET        = SunshapePillbox
 
-CONFIG(debug, debug|release) {
-	DESTDIR       = $$(TONATIUH_ROOT)/bin/debug/plugins/SunshapePillbox	
-}
-else { 
-	DESTDIR       = $$(TONATIUH_ROOT)/bin/release/plugins/SunshapePillbox
-}
+LIBS += -L../../bin
+DESTDIR = ../../bin/plugins

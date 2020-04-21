@@ -223,46 +223,44 @@ bool ShapeSphere::Intersect( const Ray& objectRay, double* tHit, DifferentialGeo
 					0.0,
 					phiMax.getValue() * radius.getValue() * sin( phiMax.getValue() * v ) * sin( ( -1 + u ) * thetaMin - u * thetaMax ) );
 
-	// Compute ShapeSphere \dndu and \dndv
-	Vector3D d2Pduu(  -radius.getValue() * ( thetaMin - thetaMax ) * ( -thetaMin + thetaMax ) * sin( phiMax.getValue() * v ) * sin( (-1 + u) * thetaMin - u * thetaMax ),
-					radius.getValue() * ( thetaMin - thetaMax ) * ( -thetaMin + thetaMax ) * cos( (-1 + u) * thetaMin - u * thetaMax ),
-					-radius.getValue() * ( thetaMin - thetaMax ) * ( -thetaMin + thetaMax ) * cos( phiMax.getValue() * v ) * sin( (-1 + u) * thetaMin -u * thetaMax )  );
+//	// Compute ShapeSphere \dndu and \dndv
+//	Vector3D d2Pduu(  -radius.getValue() * ( thetaMin - thetaMax ) * ( -thetaMin + thetaMax ) * sin( phiMax.getValue() * v ) * sin( (-1 + u) * thetaMin - u * thetaMax ),
+//					radius.getValue() * ( thetaMin - thetaMax ) * ( -thetaMin + thetaMax ) * cos( (-1 + u) * thetaMin - u * thetaMax ),
+//					-radius.getValue() * ( thetaMin - thetaMax ) * ( -thetaMin + thetaMax ) * cos( phiMax.getValue() * v ) * sin( (-1 + u) * thetaMin -u * thetaMax )  );
 
-	Vector3D d2Pduv( phiMax.getValue() * radius.getValue() * ( -thetaMin + thetaMax ) * cos( phiMax.getValue() * v ) * cos( (-1 + u ) * thetaMin - u  * thetaMax ),
-					0.0,
-					-phiMax.getValue() * radius.getValue() * ( -thetaMin + thetaMax ) * cos( (-1 + u ) * thetaMin - u  * thetaMax ) * sin( phiMax.getValue() * v ) );
+//	Vector3D d2Pduv( phiMax.getValue() * radius.getValue() * ( -thetaMin + thetaMax ) * cos( phiMax.getValue() * v ) * cos( (-1 + u ) * thetaMin - u  * thetaMax ),
+//					0.0,
+//					-phiMax.getValue() * radius.getValue() * ( -thetaMin + thetaMax ) * cos( (-1 + u ) * thetaMin - u  * thetaMax ) * sin( phiMax.getValue() * v ) );
 
-	Vector3D d2Pdvv( phiMax.getValue() * phiMax.getValue() * radius.getValue() * sin( phiMax.getValue() * v ) * sin( (-1 + u) * thetaMin - u * thetaMax ),
-					0.0,
-					phiMax.getValue() * phiMax.getValue() *  radius.getValue() * cos( phiMax.getValue() * v ) * sin( (-1 + u) * thetaMin - u * thetaMax ) );
+//	Vector3D d2Pdvv( phiMax.getValue() * phiMax.getValue() * radius.getValue() * sin( phiMax.getValue() * v ) * sin( (-1 + u) * thetaMin - u * thetaMax ),
+//					0.0,
+//					phiMax.getValue() * phiMax.getValue() *  radius.getValue() * cos( phiMax.getValue() * v ) * sin( (-1 + u) * thetaMin - u * thetaMax ) );
 
-	// Compute coefficients for fundamental forms
-	double E = DotProduct( dpdu, dpdu );
-	double F = DotProduct( dpdu, dpdv );
-	double G = DotProduct( dpdv, dpdv );
+//	// Compute coefficients for fundamental forms
+//	double E = DotProduct( dpdu, dpdu );
+//	double F = DotProduct( dpdu, dpdv );
+//	double G = DotProduct( dpdv, dpdv );
 
 	Vector3D N = Normalize( NormalVector( CrossProduct( dpdu, dpdv ) ) );
 
-	double e = DotProduct( N, d2Pduu );
-	double f = DotProduct( N, d2Pduv );
-	double g = DotProduct( N, d2Pdvv );
+//	double e = DotProduct( N, d2Pduu );
+//	double f = DotProduct( N, d2Pduv );
+//	double g = DotProduct( N, d2Pdvv );
 
 		// Compute \dndu and \dndv from fundamental form coefficients
-	double invEGF2 = 1.0 / (E*G - F*F);
-	Vector3D dndu = (f*F - e*G) * invEGF2 * dpdu +
-			        (e*F - f*E) * invEGF2 * dpdv;
-	Vector3D dndv = (g*F - f*G) * invEGF2 * dpdu +
-	                (f*F - g*E) * invEGF2 * dpdv;
+//	double invEGF2 = 1.0 / (E*G - F*F);
+    Vector3D dndu;// = (f*F - e*G) * invEGF2 * dpdu + (e*F - f*E) * invEGF2 * dpdv;
+    Vector3D dndv;// = (g*F - f*G) * invEGF2 * dpdu + (f*F - g*E) * invEGF2 * dpdv;
 
 	// Initialize _DifferentialGeometry_ from parametric information
 	*dg = DifferentialGeometry( hitPoint ,
 		                        dpdu,
 								dpdv,
-		                        dndu,
+                                dndu,
 								dndv,
 		                        u, v, this );
 
-	dg->shapeFrontSide = ( DotProduct( N, objectRay.direction() ) > 0 ) ? false : true;
+    dg->shapeFrontSide = ( DotProduct( N, objectRay.direction() ) <= 0 );
     // Update _tHit_ for quadric intersection
     *tHit = thit;
 

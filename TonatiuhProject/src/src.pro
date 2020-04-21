@@ -1,65 +1,40 @@
-TEMPLATE = app
-
-
-CONFIG       += qt warn_on thread debug_and_release
-
 include( ../config.pri )
 
 TARGET = Tonatiuh   
 
-DEPENDPATH += . \
-                $$(TONATIUH_ROOT)/geometry \
-                $$(TONATIUH_ROOT)/src \
-                $$(TONATIUH_ROOT)/src/source \
-                $$(TONATIUH_ROOT)/src/source/application \
-                $$(TONATIUH_ROOT)/src/source/auxiliary \
-                $$(TONATIUH_ROOT)/src/source/geometry \
-                $$(TONATIUH_ROOT)/src/source/gui \
-                $$(TONATIUH_ROOT)/src/source/raytracing \
-                $$(TONATIUH_ROOT)/src/source/statistics
-              
- 
-              
-QT += xml opengl svg  script 
-greaterThan(QT_MAJOR_VERSION, 4) {
-    QT += concurrent printsupport 
-} 
-
- 
-win32: {
-	RC_FILE = Tonatiuh.rc
-}
-
-mac:{
-	ICON = icons/Tonatiuh.icns
-}
+QT += xml opengl svg script
+QT += concurrent printsupport
 
 
-# Input
-HEADERS += source/application/*.h \
-           source/auxiliary/*.h \
-           source/geometry/*.h \
-           source/gui/*.h \
-           source/raytracing/*.h \
-           source/statistics/*.h 
-FORMS += source/gui/*.ui
-SOURCES += source/application/*.cpp \
-           source/auxiliary/*.cpp \
-           source/geometry/*.cpp \
-           source/gui/*.cpp \
-           source/raytracing/*.cpp  \
-           source/statistics/*.cpp 
+HEADERS += \
+$$files(source/application/*.h) \
+$$files(source/auxiliary/*.h) \
+$$files(source/geometry/*.h) \
+$$files(source/gui/*.h) \
+$$files(source/raytracing/*.h) \
+$$files(source/statistics/*.h)
+
+FORMS += $$files(source/gui/*.ui)
+
+SOURCES += \
+$$files(source/application/*.cpp) \
+$$files(source/auxiliary/*.cpp) \
+$$files(source/geometry/*.cpp) \
+$$files(source/gui/*.cpp) \
+$$files(source/raytracing/*.cpp) \
+$$files(source/statistics/*.cpp)
+
 RESOURCES += tonatiuh.qrc
  
+DESTDIR = ../bin
 
-CONFIG(debug, debug|release) {
-	DESTDIR = ../bin/debug
+win32 {
+    RC_FILE = Tonatiuh.rc
 }
-else{
-	DESTDIR=../bin/release
-}
-	
-QMAKE_CLEAN -= *.rc  
 
-src.target= src
-QMAKE_EXTRA_TARGETS += src
+LIBS += -L$$COINDIR/bin # to run
+
+#install.files += $$files($$OUT_PWD/../bin/*.dll) )
+#install.path = $$PWD/../../bin
+
+#INSTALLS += install
