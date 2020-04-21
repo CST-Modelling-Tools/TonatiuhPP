@@ -5,7 +5,7 @@ SoType UserSField::classTypeId STATIC_SOTYPE_INIT;
 
 SoType UserSField::getClassTypeId(void)
 {
-	return UserSField::classTypeId;
+    return UserSField::classTypeId;
 }
 
 void UserSField::initClass(void)

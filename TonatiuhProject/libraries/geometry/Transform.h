@@ -41,15 +41,15 @@ public:
     Ptr<Matrix4x4> GetMatrix() const {
         return m_mdir;
     }
-	Transform Transpose() const;
+    Transform Transpose() const;
     Transform GetInverse() const;
     bool SwapsHandedness() const;
     Vector3D multVecMatrix(const Vector3D& src) const;
     Vector3D multDirMatrix(const Vector3D& src) const;
 
 private:
-	Ptr<Matrix4x4> m_mdir;
-	Ptr<Matrix4x4> m_minv;
+    Ptr<Matrix4x4> m_mdir;
+    Ptr<Matrix4x4> m_minv;
 };
 
 Transform Translate(const Vector3D& delta);

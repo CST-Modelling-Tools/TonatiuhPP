@@ -20,7 +20,7 @@ NormalVector::~NormalVector()
 
 NormalVector& NormalVector::operator+=(const NormalVector& nV)
 {
-	x += nV.x;
+    x += nV.x;
     y += nV.y;
     z += nV.z;
     return *this;
@@ -36,7 +36,7 @@ NormalVector& NormalVector::operator-=(const NormalVector& nV)
 
 NormalVector& NormalVector::operator*=(double scalar)
 {
-	x *= scalar;
+    x *= scalar;
     y *= scalar;
     z *= scalar;
     return *this;
@@ -106,14 +106,14 @@ double NormalVector::length() const
 
 NormalVector operator+(NormalVector lhs, const NormalVector& rhs)
 {
-	// Note that lhs is taken by value
-	return lhs += rhs;
+    // Note that lhs is taken by value
+    return lhs += rhs;
 }
 
 NormalVector operator-(NormalVector lhs, const NormalVector& rhs)
 {
-	// Note that lhs is taken by value
-	return lhs -= rhs;
+    // Note that lhs is taken by value
+    return lhs -= rhs;
 }
 
 NormalVector operator*(double scalar, const NormalVector& nV)
@@ -123,7 +123,7 @@ NormalVector operator*(double scalar, const NormalVector& nV)
 
 std::ostream& operator<<(std::ostream& os, const NormalVector& nV)
 {
-	os << nV.x << ", " << nV.y << ", " << nV.z;
+    os << nV.x << ", " << nV.y << ", " << nV.z;
     return os;
 }
 
@@ -139,5 +139,5 @@ double AbsDotProduct(const NormalVector& nA, const NormalVector& nB)
 
 NormalVector Normalize(const NormalVector& nV)
 {
-	return nV / nV.length();
+    return nV / nV.length();
 }

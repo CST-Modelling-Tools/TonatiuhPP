@@ -12,7 +12,7 @@ RefCount::RefCount(const RefCount&)
 
 RefCount& RefCount::operator=(const RefCount&)
 {
-	return *this;
+    return *this;
 }
 
 RefCount::~RefCount()
@@ -21,7 +21,7 @@ RefCount::~RefCount()
 
 void RefCount::Upcount()
 {
-	++m_refCount;
+    ++m_refCount;
 }
 
 void RefCount::Downcount()
@@ -31,5 +31,5 @@ void RefCount::Downcount()
 
 unsigned long int RefCount::GetCount() const
 {
-	return m_refCount;
+    return m_refCount;
 }

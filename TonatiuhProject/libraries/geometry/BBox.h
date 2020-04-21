@@ -17,8 +17,8 @@ struct BBox
     void BoundingSphere(Point3D& center, double& radius) const;
     bool IntersectP(const Ray& ray, double* hitt0 = NULL, double* hitt1 = NULL) const;
 
-	Point3D pMin;
-	Point3D pMax;
+    Point3D pMin;
+    Point3D pMax;
 };
 
 BBox Union(const BBox& bbox, const Point3D& point);

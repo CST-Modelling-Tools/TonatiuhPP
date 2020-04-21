@@ -109,7 +109,7 @@ double& Point3D::operator[](int i)
 
 Point3D operator*(double scalar, const Point3D& point)
 {
-	return point * scalar;
+    return point * scalar;
 }
 
 std::ostream& operator<<(std::ostream& os, const Point3D& pA)
@@ -120,7 +120,7 @@ std::ostream& operator<<(std::ostream& os, const Point3D& pA)
 
 double Distance(const Point3D& pointA, const Point3D& pointB)
 {
-	return (pointA - pointB).length();
+    return (pointA - pointB).length();
 }
 
 double DistanceSquared(const Point3D& pointA, const Point3D& pointB)

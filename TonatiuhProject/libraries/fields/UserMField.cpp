@@ -5,12 +5,12 @@ SoType UserMField::classTypeId STATIC_SOTYPE_INIT;
 
 SoType UserMField::getClassTypeId(void)
 {
-	return UserMField::classTypeId;
+    return UserMField::classTypeId;
 }
 
 void UserMField::initClass(void)
 {
-	PRIVATE_FIELD_INIT_CLASS(UserMField, "UserMField", inherited, NULL);
+    PRIVATE_FIELD_INIT_CLASS(UserMField, "UserMField", inherited, NULL);
 }
 
 void UserMField::atexit_cleanup(void)

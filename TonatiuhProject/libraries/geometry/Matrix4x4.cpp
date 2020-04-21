@@ -9,10 +9,10 @@ Matrix4x4::Matrix4x4()
 {
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j)
-		{
+        {
             if (i == j) m[i][j] = 1.0;
-			else m[i][j] = 0.0;
-		}
+            else m[i][j] = 0.0;
+        }
 }
 
 Matrix4x4::Matrix4x4(double array[4][4])
@@ -27,10 +27,10 @@ Matrix4x4::Matrix4x4(double t00, double t01, double t02, double t03,
                      double t30, double t31, double t32, double t33)
     : RefCount()
 {
-	m[0][0] = t00; m[0][1] = t01; m[0][2] = t02; m[0][3] = t03;
-	m[1][0] = t10; m[1][1] = t11; m[1][2] = t12; m[1][3] = t13;
-	m[2][0] = t20; m[2][1] = t21; m[2][2] = t22; m[2][3] = t23;
-	m[3][0] = t30; m[3][1] = t31; m[3][2] = t32; m[3][3] = t33;
+    m[0][0] = t00; m[0][1] = t01; m[0][2] = t02; m[0][3] = t03;
+    m[1][0] = t10; m[1][1] = t11; m[1][2] = t12; m[1][3] = t13;
+    m[2][0] = t20; m[2][1] = t21; m[2][2] = t22; m[2][3] = t23;
+    m[3][0] = t30; m[3][1] = t31; m[3][2] = t32; m[3][3] = t33;
 }
 
 Matrix4x4::Matrix4x4(const Matrix4x4& rhs)
@@ -108,28 +108,28 @@ Ptr<Matrix4x4> Matrix4x4::Inverse() const
 
 Ptr<Matrix4x4> Mul(const Ptr<Matrix4x4>& m1, const Ptr<Matrix4x4>& m2)
 {
-	double r[4][4];
+    double r[4][4];
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j)
-			r[i][j] = m1->m[i][0] * m2->m[0][j] +
-			          m1->m[i][1] * m2->m[1][j] +
-			          m1->m[i][2] * m2->m[2][j] +
-			          m1->m[i][3] * m2->m[3][j];
-	return new Matrix4x4(r);
+            r[i][j] = m1->m[i][0] * m2->m[0][j] +
+                      m1->m[i][1] * m2->m[1][j] +
+                      m1->m[i][2] * m2->m[2][j] +
+                      m1->m[i][3] * m2->m[3][j];
+    return new Matrix4x4(r);
 }
 
 std::ostream& operator<<(std::ostream& os, const Matrix4x4& matrix)
 {
-	for (int i = 0; i < 4; ++i)
-	{
-		os << "[ ";
-		for (int j = 0; j < 4; ++j)
-		{
+    for (int i = 0; i < 4; ++i)
+    {
+        os << "[ ";
+        for (int j = 0; j < 4; ++j)
+        {
             if (fabs(matrix.m[i][j]) < gc::Epsilon) os << "0";
-			else os << matrix.m[i][j];
-			if (j != 3) os << ", ";
-		}
-		os << " ] " << std::endl;
-	}
-	return os;
+            else os << matrix.m[i][j];
+            if (j != 3) os << ", ";
+        }
+        os << " ] " << std::endl;
+    }
+    return os;
 }

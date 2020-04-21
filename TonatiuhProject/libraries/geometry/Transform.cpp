@@ -17,13 +17,13 @@ Transform::Transform(double mat[4][4])
                            mat[1][0],mat[1][1],mat[1][2],mat[1][3],
                            mat[2][0],mat[2][1],mat[2][2],mat[2][3],
                            mat[3][0],mat[3][1],mat[3][2],mat[3][3]);
-	m_minv = m_mdir->Inverse();
+    m_minv = m_mdir->Inverse();
 }
 
 Transform::Transform(const Ptr<Matrix4x4>& mdir)
     : m_mdir(mdir)
 {
-	m_minv = m_mdir->Inverse();
+    m_minv = m_mdir->Inverse();
 }
 
 Transform::Transform(const Ptr<Matrix4x4>& mdir, const Ptr<Matrix4x4>& minv)
@@ -41,7 +41,7 @@ Transform::Transform(double t00, double t01, double t02, double t03,
                            t10, t11, t12, t13,
                            t20, t21, t22, t23,
                            t30, t31, t32, t33);
-	m_minv = m_mdir->Inverse();
+    m_minv = m_mdir->Inverse();
 
 }
 
@@ -97,29 +97,29 @@ void Transform::operator()(const NormalVector& normal, NormalVector& transformed
 
 Ray Transform::operator()(const Ray& ray) const
 {
-	Ray transformedRay;
-	Vector3D transformedRayDirection;
+    Ray transformedRay;
+    Vector3D transformedRayDirection;
     (*this)(ray.origin, transformedRay.origin);
     (*this)(ray.direction(), transformedRayDirection);
     transformedRay.setDirection(transformedRayDirection);
-	transformedRay.mint = ray.mint;
-	transformedRay.maxt = ray.maxt;
-	return transformedRay;
+    transformedRay.mint = ray.mint;
+    transformedRay.maxt = ray.maxt;
+    return transformedRay;
 }
 
 void Transform::operator()(const Ray& ray, Ray& transformedRay) const
 {
-	Vector3D transformedRayDirection;
+    Vector3D transformedRayDirection;
     (*this)(ray.origin, transformedRay.origin);
     (*this)(ray.direction(), transformedRayDirection);
     transformedRay.setDirection(transformedRayDirection);
-	transformedRay.mint = ray.mint;
-	transformedRay.maxt = ray.maxt;
+    transformedRay.mint = ray.mint;
+    transformedRay.maxt = ray.maxt;
 }
 
 BBox Transform::operator()(const BBox& bbox) const
 {
-	const Transform& M = *this;
+    const Transform& M = *this;
     BBox ret(M(Point3D(bbox.pMin.x, bbox.pMin.y, bbox.pMin.z) ) );
     ret = Union(ret, M(Point3D(bbox.pMax.x, bbox.pMin.y, bbox.pMin.z) ) );
     ret = Union(ret, M(Point3D(bbox.pMin.x, bbox.pMax.y, bbox.pMin.z) ) );
@@ -128,12 +128,12 @@ BBox Transform::operator()(const BBox& bbox) const
     ret = Union(ret, M(Point3D(bbox.pMax.x, bbox.pMax.y, bbox.pMin.z) ) );
     ret = Union(ret, M(Point3D(bbox.pMax.x, bbox.pMin.y, bbox.pMax.z) ) );
     ret = Union(ret, M(Point3D(bbox.pMax.x, bbox.pMax.y, bbox.pMax.z) ) );
-	return ret;
+    return ret;
 }
 
 void Transform::operator()(const BBox& bbox, BBox& transformedBbox) const
 {
-	const Transform& transform = *this;
+    const Transform& transform = *this;
     transformedBbox = BBox(transform(Point3D(bbox.pMin.x, bbox.pMin.y, bbox.pMin.z) ) );
     transformedBbox = Union(transformedBbox, transform(Point3D(bbox.pMax.x, bbox.pMin.y, bbox.pMin.z) ) );
     transformedBbox = Union(transformedBbox, transform(Point3D(bbox.pMin.x, bbox.pMax.y, bbox.pMin.z) ) );
@@ -235,7 +235,7 @@ bool Transform::SwapsHandedness() const
                    (m_mdir->m[0][2] *
                     (m_mdir->m[1][0] * m_mdir->m[2][1] -
                      m_mdir->m[1][1] * m_mdir->m[2][0]) ) );
-	return det < 0.0;
+    return det < 0.0;
 }
 
 
@@ -286,7 +286,7 @@ Transform Scale(double sx, double sy, double sz)
 
 Transform RotateX(double angle)
 {
-	// angle is assumed to be in radians.
+    // angle is assumed to be in radians.
     double sinAngle = sin(angle);
     double cosAngle = cos(angle);
 
@@ -300,7 +300,7 @@ Transform RotateX(double angle)
 
 Transform RotateY(double angle)
 {
-	// angle is assumed to be in radians.
+    // angle is assumed to be in radians.
     double sinAngle = sin(angle);
     double cosAngle = cos(angle);
 
@@ -315,7 +315,7 @@ Transform RotateY(double angle)
 
 Transform RotateZ(double angle)
 {
-	// angle is assumed to be in radians.
+    // angle is assumed to be in radians.
     double sinAngle = sin(angle);
     double cosAngle = cos(angle);
 
@@ -329,31 +329,31 @@ Transform RotateZ(double angle)
 
 Transform Rotate(double angle, const Vector3D& axis)
 {
-	// angle is assumed to be in radians.
+    // angle is assumed to be in radians.
     Vector3D a = Normalize(axis);
     double s = sin(angle);
     double c = cos(angle);
-	double m[4][4];
+    double m[4][4];
 
-	m[0][0] = a.x * a.x + (1.0 - a.x * a.x) * c;
-	m[0][1] = a.x * a.y * (1.0 - c) - a.z * s;
-	m[0][2] = a.x * a.z * (1.0 - c) + a.y * s;
-	m[0][3] = 0.0;
+    m[0][0] = a.x * a.x + (1.0 - a.x * a.x) * c;
+    m[0][1] = a.x * a.y * (1.0 - c) - a.z * s;
+    m[0][2] = a.x * a.z * (1.0 - c) + a.y * s;
+    m[0][3] = 0.0;
 
-	m[1][0] = a.x * a.y * (1.0 - c) + a.z * s;
-	m[1][1] = a.y * a.y + (1.0 - a.y * a.y) * c;
-	m[1][2] = a.y * a.z * (1.0 - c) - a.x * s;
-	m[1][3] = 0.0;
+    m[1][0] = a.x * a.y * (1.0 - c) + a.z * s;
+    m[1][1] = a.y * a.y + (1.0 - a.y * a.y) * c;
+    m[1][2] = a.y * a.z * (1.0 - c) - a.x * s;
+    m[1][3] = 0.0;
 
-	m[2][0] = a.x * a.z * (1.0 - c) - a.y * s;
-	m[2][1] = a.y * a.z * (1.0 - c) + a.x * s;
-	m[2][2] = a.z * a.z + (1.0 - a.z * a.z) * c;
-	m[2][3] = 0.0;
+    m[2][0] = a.x * a.z * (1.0 - c) - a.y * s;
+    m[2][1] = a.y * a.z * (1.0 - c) + a.x * s;
+    m[2][2] = a.z * a.z + (1.0 - a.z * a.z) * c;
+    m[2][3] = 0.0;
 
-	m[3][0] = 0.0;
-	m[3][1] = 0.0;
-	m[3][2] = 0.0;
-	m[3][3] = 1.0;
+    m[3][0] = 0.0;
+    m[3][1] = 0.0;
+    m[3][2] = 0.0;
+    m[3][3] = 1.0;
 
     Ptr<Matrix4x4> mdir = new Matrix4x4(m);
     return Transform(mdir, mdir->Transpose() );
@@ -361,30 +361,30 @@ Transform Rotate(double angle, const Vector3D& axis)
 
 Transform LookAt(const Point3D& pos, const Point3D& look, const Vector3D& up)
 {
-	double m[4][4];
-	m[0][3] = pos.x;
-	m[1][3] = pos.y;
-	m[2][3] = pos.z;
-	m[3][3] = 1.0;
+    double m[4][4];
+    m[0][3] = pos.x;
+    m[1][3] = pos.y;
+    m[2][3] = pos.z;
+    m[3][3] = 1.0;
 
     Vector3D dir = Normalize(look - pos);
     Vector3D right = CrossProduct(dir, Normalize(up) );
     Vector3D newUp = CrossProduct(right, dir);
 
-	m[0][0] = right.x;
-	m[1][0] = right.y;
-	m[2][0] = right.z;
-	m[3][0] = 0.0;
+    m[0][0] = right.x;
+    m[1][0] = right.y;
+    m[2][0] = right.z;
+    m[3][0] = 0.0;
 
-	m[0][1] = dir.x;
-	m[1][1] = dir.y;
-	m[2][1] = dir.z;
-	m[3][1] = 0.0;
+    m[0][1] = dir.x;
+    m[1][1] = dir.y;
+    m[2][1] = dir.z;
+    m[3][1] = 0.0;
 
-	m[0][2] = newUp.x;
-	m[1][2] = newUp.y;
-	m[2][2] = newUp.z;
-	m[3][2] = 0.0;
+    m[0][2] = newUp.x;
+    m[1][2] = newUp.y;
+    m[2][2] = newUp.z;
+    m[3][2] = 0.0;
 
     Ptr<Matrix4x4> camToWorld = new Matrix4x4(m);
     return Transform(camToWorld->Inverse(), camToWorld);
@@ -392,6 +392,6 @@ Transform LookAt(const Point3D& pos, const Point3D& look, const Vector3D& up)
 
 std::ostream& operator<<(std::ostream& os, const Transform& tran)
 {
-	os << (*tran.GetMatrix());
-	return os;
+    os << (*tran.GetMatrix());
+    return os;
 }

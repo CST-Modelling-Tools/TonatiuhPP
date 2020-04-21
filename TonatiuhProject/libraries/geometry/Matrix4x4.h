@@ -20,7 +20,7 @@ public:
 
     bool operator==(const Matrix4x4& matrix) const;
 
-	double m[4][4];
+    double m[4][4];
 
 };
 

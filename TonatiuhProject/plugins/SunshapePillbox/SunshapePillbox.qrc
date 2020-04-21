@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/" >
+
+        <file>SunshapePillbox.png</file>
+    </qresource>
+</RCC>

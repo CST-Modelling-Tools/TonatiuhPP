@@ -12,8 +12,9 @@ QMAKE_CXXFLAGS_RELEASE += -O3 -march=native
 
 COINDIR = C:/Users/Victor/Neo/Programming/Qt/Libraries/Coin/release
 INCLUDEPATH += $$COINDIR/include
-LIBS += -L$$COINDIR/lib -lCoin -lSoQt
 DEFINES += COIN_NOT_DLL SOQT_NOT_DLL
+LIBS += -L$$COINDIR/lib -lCoin -lSoQt
+LIBS += -L$$COINDIR/bin
 
 HEADERS += \
     $$files(geometry/*.h) \

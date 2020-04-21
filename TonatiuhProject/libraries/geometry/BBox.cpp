@@ -84,58 +84,58 @@ bool BBox::IntersectP(const Ray& ray, double* hitt0, double* hitt1) const
 
     double invDirection = ray.invDirection().x;
     if (invDirection >= 0.0)
-	{
+    {
         tmin = (pMin.x - ray.origin.x) * invDirection;
         tmax = (pMax.x - ray.origin.x) * invDirection;
-	}
-	else
-	{
+    }
+    else
+    {
         tmin = (pMax.x - ray.origin.x) * invDirection;
         tmax = (pMin.x - ray.origin.x) * invDirection;
-	}
+    }
 
-	invDirection = ray.invDirection().y;
+    invDirection = ray.invDirection().y;
     if (invDirection >= 0.0)
-	{
+    {
         tymin = (pMin.y - ray.origin.y) * invDirection;
         tymax = (pMax.y - ray.origin.y) * invDirection;
-	}
-	else
-	{
+    }
+    else
+    {
         tymin = (pMax.y - ray.origin.y) * invDirection;
         tymax = (pMin.y - ray.origin.y) * invDirection;
-	}
+    }
 
     if ( (tmin > tymax) || (tymin > tmax) ) return false;
 
     if (tymin > tmin) tmin = tymin;
     if (tymax < tmax) tmax = tymax;
 
-	invDirection = ray.invDirection().z;
+    invDirection = ray.invDirection().z;
     if (invDirection >= 0.0)
-	{
+    {
         tzmin = (pMin.z - ray.origin.z) * invDirection;
         tzmax = (pMax.z - ray.origin.z) * invDirection;
-	}
-	else
-	{
+    }
+    else
+    {
         tzmin = (pMax.z - ray.origin.z) * invDirection;
         tzmax = (pMin.z - ray.origin.z) * invDirection;
-	}
+    }
 
     if ( (tmin > tzmax) || (tzmin > tmax) ) return false;
 
     if (tzmin > tmin) tmin = tzmin;
     if (tzmax < tmax) tmax = tzmax;
     if ( (tmin < t1) && (tmax > t0) )
-	{
+    {
         if (tmin < t0) tmin = t0;
         if (tmax > t1) tmax = t1;
         if (hitt0) *hitt0 = tmin;
         if (hitt1) *hitt1 = tmax;
-		return true;
-	}
-	else return false;
+        return true;
+    }
+    else return false;
 }
 
 BBox Union(const BBox& bbox, const Point3D& point)
