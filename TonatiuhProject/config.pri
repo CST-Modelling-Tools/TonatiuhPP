@@ -11,8 +11,8 @@ QT += widgets
 
 
 INCLUDEPATH += 	. \
-                $$TONATIUH_ROOT/geometry \
-                $$TONATIUH_ROOT/fields \
+                $$TONATIUH_ROOT/libraries/geometry \
+                $$TONATIUH_ROOT/libraries/fields \
                 $$TONATIUH_ROOT/src \
                 $$TONATIUH_ROOT/src/source \
                 $$TONATIUH_ROOT/src/source/analyzer \
@@ -26,7 +26,7 @@ INCLUDEPATH += 	. \
 
 DEFINES += COIN_NOT_DLL SOQT_NOT_DLL
 
-LIBS += -L$$OUT_PWD/../bin -lgeometry -lfields
+LIBS += -L$$OUT_PWD/.. -lTonatiuhLibraries
 LIBS += -L$$COINDIR/lib -lCoin -lSoQt
 		 
 QMAKE_CFLAGS_RELEASE -= -O2
@@ -40,8 +40,8 @@ contains( CONFIG, plugin ){
 #    QMAKE_CLAGS+= -fPIC
 #    QMAKE_CXXLAGS+= -fPIC
     INCLUDEPATH += $$(TONATIUH_ROOT)/plugin
-    LIBS += -L../../bin
-    DESTDIR = ../../bin/plugins
+    LIBS += -L../..
+    DESTDIR = ../../plugins
     CONFIG += skip_target_version_ext # do not append the dll names with version number
 }
 CONFIG -= debug_and_release # separate folders for debug and release

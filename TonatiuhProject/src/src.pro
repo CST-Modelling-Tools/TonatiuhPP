@@ -26,7 +26,7 @@ $$files(source/statistics/*.cpp)
 
 RESOURCES += tonatiuh.qrc
  
-DESTDIR = ../bin
+DESTDIR = ..
 
 win32 {
     RC_FILE = Tonatiuh.rc
