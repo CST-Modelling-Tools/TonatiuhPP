@@ -39,6 +39,8 @@ public:
     trt::TONATIUH_REAL phiMax;
     SoSFEnum activeSide;
 
+    static const char* getClassName() {return "Sphere";}
+
 protected:
     static void updateRadius(void* data, SoSensor*);
     static void updateYMin(void* data, SoSensor*);
@@ -62,4 +64,15 @@ private:
     SoFieldSensor* m_yMinSensor;
     SoFieldSensor* m_yMaxSensor;
     SoFieldSensor* m_phiMaxSensor;
+};
+
+
+
+#include "kernel/raytracing/TShapeFactory.h"
+
+class ShapeSphereFactory: public QObject, public ShapeFactory<ShapeSphere>
+{
+    Q_OBJECT
+    Q_INTERFACES(TShapeFactory)
+    Q_PLUGIN_METADATA(IID "tonatiuh.TShapeFactory")
 };

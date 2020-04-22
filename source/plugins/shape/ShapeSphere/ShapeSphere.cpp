@@ -19,9 +19,12 @@
 
 SO_NODE_SOURCE(ShapeSphere);
 
+
+
 void ShapeSphere::initClass()
 {
 	SO_NODE_INIT_CLASS(ShapeSphere, TShape, "TShape");
+
 }
 
 ShapeSphere::ShapeSphere( )
@@ -115,7 +118,7 @@ BBox ShapeSphere::GetBBox() const
 
 QString ShapeSphere::GetIcon() const
 {
-    return QLatin1String(":/ShapeSphere.png");
+    return ":/ShapeSphere.png";
 }
 
 Point3D ShapeSphere::Sample( double u1, double u2 ) const

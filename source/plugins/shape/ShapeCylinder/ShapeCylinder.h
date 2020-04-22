@@ -27,13 +27,15 @@ public:
 
     enum Side {
 		INSIDE = 0,
-		OUTSIDE   = 1,
+        OUTSIDE = 1,
 	};
 
 	trt::TONATIUH_REAL radius;
 	trt::TONATIUH_REAL length;
 	trt::TONATIUH_REAL phiMax;
 	SoSFEnum activeSide;
+
+    static const char* getClassName() {return "Cylinder";}
 
 protected:
     bool OutOfRange(double u, double v) const;
@@ -43,4 +45,15 @@ protected:
     void generatePrimitives(SoAction* action);
     void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
 	virtual ~ShapeCylinder();
+};
+
+
+
+#include "kernel/raytracing/TShapeFactory.h"
+
+class ShapeSphereFactory: public QObject, public ShapeFactory<ShapeCylinder>
+{
+    Q_OBJECT
+    Q_INTERFACES(TShapeFactory)
+    Q_PLUGIN_METADATA(IID "tonatiuh.TShapeFactory")
 };

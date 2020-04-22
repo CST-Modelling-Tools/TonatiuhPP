@@ -38,6 +38,7 @@ public:
 	SoMFFloat m_shininess;
     SoMFFloat m_transparency;
 
+    static const char* getClassName() {return "StandardSpecular";}
 
 protected:
     virtual ~MaterialStandardSpecular();
@@ -60,4 +61,14 @@ private:
 	SoFieldSensor* m_emissiveColorSensor;
 	SoFieldSensor* m_shininessSensor;
 	SoFieldSensor* m_transparencySensor;
+};
+
+
+#include "kernel/raytracing/TMaterialFactory.h"
+
+class MaterialStandardSpecularFactory: public QObject, public MaterialFactory<MaterialStandardSpecular>
+{
+    Q_OBJECT
+    Q_INTERFACES(TMaterialFactory)
+    Q_PLUGIN_METADATA(IID "tonatiuh.TMaterialFactory")
 };

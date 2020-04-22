@@ -116,7 +116,8 @@ void PluginManager::LoadAvailablePlugins(QDir pluginsDirectory)
 {
     QStringList filesList;
     BuildFileList(pluginsDirectory, filesList);
-    foreach(QString fileName, filesList) LoadTonatiuhPlugin(fileName);
+    for (QString fileName: filesList)
+        LoadTonatiuhPlugin(fileName);
 }
 
 /*!
@@ -167,7 +168,7 @@ void PluginManager::LoadComponentPlugin(QObject* plugin)
  */
 void PluginManager::LoadExportPhotonMapModePlugin(QObject* plugin)
 {
-    PhotonMapExportFactory* pPhotonMapExportFactory = qobject_cast< PhotonMapExportFactory* >(plugin);
+    PhotonMapExportFactory* pPhotonMapExportFactory = qobject_cast<PhotonMapExportFactory* >(plugin);
     if (!pPhotonMapExportFactory) gf::SevereError("PluginManager::LoadExportPhotonMapModePlugin: Component plug-in not recognized");
     m_exportPMModeFactoryList.push_back(pPhotonMapExportFactory);
 }
@@ -177,8 +178,7 @@ void PluginManager::LoadExportPhotonMapModePlugin(QObject* plugin)
  */
 void PluginManager::LoadMaterialPlugin(QObject* plugin)
 {
-
-    TMaterialFactory* pTMaterialFactory = qobject_cast<TMaterialFactory* >(plugin);
+    TMaterialFactory* pTMaterialFactory = qobject_cast<TMaterialFactory*>(plugin);
     if (!pTMaterialFactory) gf::SevereError("MainWindow::LoadPlugins: Material plug-in not recognized");
     pTMaterialFactory->CreateTMaterial();
     m_materialFactoryList.push_back(pTMaterialFactory);
@@ -237,14 +237,13 @@ void PluginManager::LoadTonatiuhPlugin(const QString& fileName)
 {
     QPluginLoader loader(fileName);
     QObject* plugin = loader.instance();
-    if (plugin != 0)
-    {
+    if(plugin) {
         if (plugin->inherits("PhotonMapExportFactory") ) LoadExportPhotonMapModePlugin(plugin);
         if (plugin->inherits("RandomDeviateFactory") ) LoadRandomDeviatePlugin(plugin);
         if (plugin->inherits("TComponentFactory") ) LoadComponentPlugin(plugin);
-        if (plugin->inherits("TShapeFactory") ) LoadShapePlugin(plugin);
+        if (dynamic_cast<TShapeFactory*>(plugin)) LoadShapePlugin(plugin);
         if (plugin->inherits("TSunShapeFactory") ) LoadSunshapePlugin(plugin);
-        if (plugin->inherits("TMaterialFactory") ) LoadMaterialPlugin(plugin);
+        if (dynamic_cast<TMaterialFactory*>(plugin)) LoadMaterialPlugin(plugin);
         if (plugin->inherits("TTrackerFactory") ) LoadTrackerPlugin(plugin);
         if (plugin->inherits("TTransmissivityFactory") ) LoadTransmissivityPlugin(plugin);
     }
