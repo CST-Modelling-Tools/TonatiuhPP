@@ -9,7 +9,7 @@
 #include <Inventor/nodekits/SoSceneKit.h>
 #include <Inventor/nodes/SoSelection.h>
 
-#include "application/Document.h"
+#include "main/Document.h"
 #include "gui/GraphicRoot.h"
 #include "gui/SceneModel.h"
 #include "ScriptRayTracer.h"
@@ -27,7 +27,7 @@
 #include "kernel/raytracing/TSunShape.h"
 #include "kernel/raytracing/TTransmissivity.h"
 
-ScriptRayTracer::ScriptRayTracer(QVector< RandomDeviateFactory* > listRandomDeviateFactory)
+ScriptRayTracer::ScriptRayTracer(QVector<RandomDeviateFactory*> listRandomDeviateFactory)
     :
       m_document(0),
       m_irradiance(-1),

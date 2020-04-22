@@ -44,6 +44,7 @@
 #include "actions/ActionInsertMaterial.h"
 #include "actions/ActionInsertShape.h"
 #include "actions/ActionInsertTracker.h"
+
 #include "commands/CmdChangeNodeName.h"
 #include "commands/CmdCopy.h"
 #include "commands/CmdCut.h"
@@ -59,18 +60,19 @@
 #include "commands/CmdModifyParameter.h"
 #include "commands/CmdPaste.h"
 #include "commands/CmdTransmissivityModified.h"
-#include "application/Document.h"
-#include "ExportDialog.h"
-#include "ExportPhotonMapSettingsDialog.h"
-#include "FluxAnalysis.h"
-#include "FluxAnalysisDialog.h"
-#include "GraphicView.h"
+
+#include "main/Document.h"
+#include "widgets/ExportDialog.h"
+#include "flux/ExportPhotonsDialog.h"
+#include "flux/FluxAnalysis.h"
+#include "flux/FluxAnalysisDialog.h"
+#include "view/GraphicView.h"
 #include "GraphicRoot.h"
-#include "GridSettingsDialog.h"
+#include "widgets/GridSettingsDialog.h"
 #include "kernel/gui/InstanceNode.h"
-#include "LightDialog.h"
+#include "widgets/LightDialog.h"
 #include "MainWindow.h"
-#include "NetworkConnectionsDialog.h"
+#include "widgets/NetworkConnectionsDialog.h"
 #include "kernel/gui/PhotonMapExport.h"
 #include "kernel/gui/PhotonMapExportFactory.h"
 #include "kernel/gui/PhotonMapExportSettings.h"
@@ -78,12 +80,12 @@
 #include "ProgressUpdater.h"
 #include "kernel/statistics/RandomDeviate.h"
 #include "kernel/statistics/RandomDeviateFactory.h"
-#include "RayTraceDialog.h"
+#include "widgets/RayTraceDialog.h"
 #include "kernel/raytracing/RayTracer.h"
 #include "kernel/raytracing/RayTracerNoTr.h"
 #include "SceneModel.h"
-#include "ScriptEditorDialog.h"
-#include "SunPositionCalculatorDialog.h"
+#include "script/ScriptEditorDialog.h"
+#include "calculator/SunCalculatorDialog.h"
 #include "TComponentFactory.h"
 #include "kernel/raytracing/TDefaultTracker.h"
 #include "kernel/geometry/tgf.h"
@@ -92,7 +94,7 @@
 #include "kernel/raytracing/TMaterial.h"
 #include "kernel/raytracing/TMaterialFactory.h"
 #include "kernel/raytracing/TPhotonMap.h"
-#include "TransmissivityDialog.h"
+#include "widgets/TransmissivityDialog.h"
 #include "kernel/raytracing/trf.h"
 #include "kernel/raytracing/TSceneKit.h"
 #include "kernel/raytracing/TSeparatorKit.h"
@@ -1700,7 +1702,7 @@ void MainWindow::Open(QString fileName)
 {
     if (fileName.isEmpty() )
     {
-        QMessageBox::warning(this, QLatin1String("Tonatiuh"),
+        QMessageBox::warning(this, "Tonatiuh",
                              tr("Open: Cannot open file:\n%1.").arg(fileName) );
         emit Abort(tr("Open: Cannot open file:\n%1.").arg(fileName) );
         return;
@@ -1709,7 +1711,7 @@ void MainWindow::Open(QString fileName)
     QFileInfo file(fileName);
     if (!file.exists() || !file.isFile() || file.suffix()!=QString("tnh") )
     {
-        QMessageBox::warning(this, QLatin1String("Tonatiuh"),
+        QMessageBox::warning(this, "Tonatiuh",
                              tr("Open: Cannot open file:\n%1.").arg(fileName) );
         emit Abort(tr("Open: Cannot open file:\n%1.").arg(fileName) );
         return;
@@ -2593,25 +2595,25 @@ void MainWindow::CreateComponent(TComponentFactory* pTComponentFactory)
     QString typeName = pTComponentFactory->TComponentName();
     componentRootNode->setName(typeName.toStdString().c_str() );
 
-    TSceneKit* scene = m_document->GetSceneKit();
-    TLightKit* lightKit = static_cast< TLightKit* >(scene->getPart("lightList[0]", false) );
-    if (lightKit)
-    {
+//    TSceneKit* scene = m_document->GetSceneKit();
+//    TLightKit* lightKit = static_cast< TLightKit* >(scene->getPart("lightList[0]", false) );
+//    if (lightKit)
+//    {
 
-        SoSearchAction trackersSearch;
-        trackersSearch.setType(TTracker::getClassTypeId() );
-        trackersSearch.setInterest(SoSearchAction::ALL);
-        trackersSearch.apply(componentRootNode);
-        SoPathList& trackersPath = trackersSearch.getPaths();
+//        SoSearchAction trackersSearch;
+//        trackersSearch.setType(TTracker::getClassTypeId() );
+//        trackersSearch.setInterest(SoSearchAction::ALL);
+//        trackersSearch.apply(componentRootNode);
+//        SoPathList& trackersPath = trackersSearch.getPaths();
 
-        for (int index = 0; index <trackersPath.getLength(); ++index)
-        {
-            SoFullPath* trackerPath = static_cast< SoFullPath* > (trackersPath[index]);
-            TTracker* tracker = static_cast< TTracker* >(trackerPath->getTail() );
-            //tracker->SetAzimuthAngle( &lightKit->azimuth );
-            //tracker->SetZenithAngle( &lightKit->zenith );
-        }
-    }
+//        for (int index = 0; index <trackersPath.getLength(); ++index)
+//        {
+//            SoFullPath* trackerPath = static_cast< SoFullPath* > (trackersPath[index]);
+//            TTracker* tracker = static_cast< TTracker* >(trackerPath->getTail() );
+//            //tracker->SetAzimuthAngle( &lightKit->azimuth );
+//            //tracker->SetZenithAngle( &lightKit->zenith );
+//        }
+//    }
 
 
 
@@ -2864,7 +2866,7 @@ void MainWindow::CalculateSunPosition()
     SoSceneKit* coinScene = m_document->GetSceneKit();
     if (!coinScene->getPart("lightList[0]", false) ) return;
 
-    SunPositionCalculatorDialog sunposDialog;
+    SunCalculatorDialog sunposDialog;
     connect(&sunposDialog, SIGNAL(changeSunLight(double,double)), this, SLOT(ChangeSunPosition(double,double)) );
 
     sunposDialog.exec();
@@ -3244,7 +3246,7 @@ void MainWindow::SetCurrentFile(const QString& fileName)
 bool MainWindow::SetPhotonMapExportSettings()
 {
     QVector< PhotonMapExportFactory* > exportPhotonMapModeList = m_pPluginManager->GetExportPMModeFactories();
-    ExportPhotonMapSettingsDialog exportSettingsDialog(*m_sceneModel, exportPhotonMapModeList);
+    ExportPhotonsDialog exportSettingsDialog(*m_sceneModel, exportPhotonMapModeList);
     if (!exportSettingsDialog.exec() ) return false;
 
     if (m_pExportModeSettings) delete m_pExportModeSettings;

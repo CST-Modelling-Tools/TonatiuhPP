@@ -1,0 +1,21 @@
+TEMPLATE = subdirs
+
+#SUBDIRS += ShapeBezierSurface
+#SUBDIRS += ShapeCAD
+#SUBDIRS += ShapeCone
+SUBDIRS += ShapeCylinder
+#SUBDIRS += ShapeFlatDisk
+#SUBDIRS += ShapeFlatRectangle
+#SUBDIRS += ShapeFlatTriangle
+#SUBDIRS += ShapeHyperboloid
+#SUBDIRS += ShapeParabolicDish
+SUBDIRS += ShapeParabolicRectangle
+SUBDIRS += ShapeSphere
+#SUBDIRS += ShapeSphericalPolygon
+#SUBDIRS += ShapeSphericalRectangle
+#SUBDIRS += ShapeTroughAsymmetricCPC
+#SUBDIRS += ShapeTroughCHC
+#SUBDIRS += ShapeTroughCPC
+#SUBDIRS += ShapeTroughHyperbola
+#SUBDIRS += ShapeTroughParabola
+#SUBDIRS += ShapeTrumpet

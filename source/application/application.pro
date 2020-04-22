@@ -12,24 +12,44 @@ INCLUDEPATH += $$TONATIUH_ROOT
 LIBS += -lTonatiuhKernel
 
 HEADERS += \
-    $$files(application/*.h) \
-    $$files(gui/*.h) \
     $$files(actions/*.h) \
+    $$files(calculator/*.h) \
     $$files(commands/*.h) \
-    $$files(raytracing/*.h)
+    $$files(flux/*.h) \
+    $$files(gui/*.h) \
+    $$files(main/*.h) \
+    $$files(parameters/*.h) \
+    $$files(raytracing/*.h) \
+    $$files(script/*.h) \
+    $$files(tree/*.h) \
+    $$files(view/*.h) \
+    $$files(widgets/*.h)
 
 SOURCES += \
-    $$files(application/*.cpp) \
-    $$files(gui/*.cpp) \
     $$files(actions/*.cpp) \
+    $$files(calculator/*.cpp) \
     $$files(commands/*.cpp) \
-    $$files(raytracing/*.cpp)
+    $$files(flux/*.cpp) \
+    $$files(gui/*.cpp) \
+    $$files(main/*.cpp) \
+    $$files(parameters/*.cpp) \
+    $$files(raytracing/*.cpp) \
+    $$files(script/*.cpp) \
+    $$files(tree/*.cpp) \
+    $$files(view/*.cpp) \
+    $$files(widgets/*.cpp)
 
-FORMS += $$files(gui/*.ui)
+FORMS += \
+    $$files(calculator/*.ui) \
+    $$files(flux/*.ui) \
+    $$files(gui/*.ui) \
+    $$files(script/*.ui) \
+    $$files(widgets/*.ui)
+#    $$files(parameters/*.ui) \
 
 RESOURCES += resources.qrc
  
-win32 {
-    RC_FILE = Tonatiuh.rc
-}
+#win32 {
+#    RC_FILE = Tonatiuh.rc
+#}
 
