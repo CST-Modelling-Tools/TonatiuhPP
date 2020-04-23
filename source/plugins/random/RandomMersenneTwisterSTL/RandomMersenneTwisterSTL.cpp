@@ -1,57 +1,16 @@
 #include "RandomMersenneTwisterSTL.h"
 
-unsigned long RandomMersenneTwisterSTL::RandomUInt()
+
+RandomMersenneTwisterSTL::RandomMersenneTwisterSTL(ulong seed, long size):
+    RandomDeviate(size),
+    m_generator{static_cast<std::mt19937_64::result_type>(seed)},
+    m_distribution(0., 1.)
 {
-	return RandomInteger();
+
 }
 
-void RandomMersenneTwisterSTL::GenerateNewState()
+void RandomMersenneTwisterSTL::FillArray(double* array, ulong size)
 {
-    for (int i = 0; i < (N - M); ++i) m_state[i] = m_state[i + M] ^ Twiddle(m_state[i], m_state[i + 1]);
-    for (int i = N - M; i < (N - 1); ++i) m_state[i] = m_state[i + M - N] ^ Twiddle(m_state[i], m_state[i + 1]);
-    m_state[N - 1] = m_state[ M - 1 ] ^ Twiddle(m_state[N - 1], m_state[0]);
-    m_p = 0; // reset position
+    for (ulong i = 0; i < size; i++)
+        array[i] = m_distribution(m_generator);
 }
-
-void RandomMersenneTwisterSTL::Seed(unsigned long seedValue)
-{
-    m_state[0] = seedValue & 0xFFFFFFFFUL; // for > 32 bit machines
-    for (int i = 1; i < N; ++i)
-    {
-        m_state[i] = 1812433253UL * (m_state[i - 1] ^ (m_state[i - 1] >> 30) ) + i;
-        m_state[i] &= 0xFFFFFFFFUL; // for > 32 bit machines
-    }
-    m_p = N; // force GenerateNewState() to be called for next random number
-}
-
-void RandomMersenneTwisterSTL::Seed(const unsigned long* seedArray, int arraySize)
-{
-    Seed(19650218UL);
-    int i = 1;
-    int j = 0;
-    for (int k = ( (N > arraySize) ? N : arraySize); k; --k)
-    {
-        m_state[i] = (m_state[i] ^ ( (m_state[i - 1] ^ (m_state[i - 1] >> 30) ) * 1664525UL) )
-                     + seedArray[j] + j; // non linear
-        m_state[i] &= 0xFFFFFFFFUL; // for > 32 bit machines
-        ++j; j %= arraySize;
-        if ( (++i) == N)
-        {
-            m_state[0] = m_state[N - 1];
-            i = 1;
-        }
-    }
-    for (int k = N - 1; k; --k)
-    {
-        m_state[i] = (m_state[i] ^ ( (m_state[i - 1] ^ (m_state[i - 1] >> 30) ) * 1566083941UL) ) - i;
-        m_state[i] &= 0xFFFFFFFFUL; // for > 32 bit machines
-        if ( (++i) == N)
-        {
-            m_state[0] = m_state[N - 1];
-            i = 1;
-        }
-    }
-    m_state[0] = 0x80000000UL; // MSB is 1; assuring non-zero initial array
-    m_p = N; // force GenerateNewState() to be called for next random number
-}
-

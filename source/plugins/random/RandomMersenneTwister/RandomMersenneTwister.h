@@ -8,26 +8,27 @@ class RandomMersenneTwister: public RandomDeviate
 {
 
 public:
-    RandomMersenneTwister(unsigned long seedValue = 5489UL, long int randomNumberArraySize = 10000000);
-    RandomMersenneTwister(const unsigned long* seedArray, int seedArraySize, long int randomNumberArraySize = 10000000);
-    virtual ~RandomMersenneTwister();
-    void FillArray(double* array, const unsigned long arraySize);
-    unsigned long RandomUInt();
+    RandomMersenneTwister(ulong seedValue = 5489UL, long randomNumberArraySize = 10'000'000);
+    RandomMersenneTwister(const ulong* seedArray, int seedArraySize, long randomNumberArraySize = 10'000'000);
+    virtual ~RandomMersenneTwister() {}
+
+    void FillArray(double* array, const ulong arraySize);
+    ulong RandomUInt();
 
     static const char* getClassName() {return "MersenneTwister";}
 
 private:
     enum { N = 624, M = 397 };
 
-    unsigned long m_state[N];
+    ulong m_state[N];
     int m_p;
     bool m_init;
 
-    void Seed(unsigned long seedValue);
-    void Seed(const unsigned long* seedArray, int arraySize);
-    unsigned long int RandomInteger();
+    void Seed(ulong seedValue);
+    void Seed(const ulong* seedArray, int arraySize);
+    ulong RandomInteger();
     double Random01();
-    unsigned long Twiddle(unsigned long u, unsigned long v);
+    ulong Twiddle(ulong u, ulong v);
     void GenerateNewState();
 
     RandomMersenneTwister(const RandomMersenneTwister&);
@@ -41,32 +42,28 @@ inline RandomMersenneTwister::RandomMersenneTwister(unsigned long seedValue, lon
     m_init = true;
 }
 
-inline RandomMersenneTwister::RandomMersenneTwister(const unsigned long* seedArray, int seedArraySize, long int randomNumberArraySize)
+inline RandomMersenneTwister::RandomMersenneTwister(const ulong* seedArray, int seedArraySize, long int randomNumberArraySize)
     : RandomDeviate(randomNumberArraySize), m_p(0)
 {
     Seed(seedArray, seedArraySize);
     m_init = true;
 }
 
-inline RandomMersenneTwister::~RandomMersenneTwister()
+inline void RandomMersenneTwister::FillArray(double* array, const ulong arraySize)
 {
+    for (uint i = 0; i < arraySize; i++) array[i] = Random01();
 }
 
-inline void RandomMersenneTwister::FillArray(double* array, const unsigned long arraySize)
-{
-    for (unsigned int i = 0; i < arraySize; i++) array[i] = Random01();
-}
-
-inline unsigned long RandomMersenneTwister::Twiddle(unsigned long u, unsigned long v)
+inline ulong RandomMersenneTwister::Twiddle(ulong u, ulong v)
 {
     return ( ( (u & 0x80000000UL) | (v & 0x7FFFFFFFUL) ) >> 1)
            ^ ( (v & 1UL) ? 0x9908B0DFUL : 0x0UL);
 }
 
-inline unsigned long int RandomMersenneTwister::RandomInteger()
+inline ulong RandomMersenneTwister::RandomInteger()
 {
     if (m_p == N) GenerateNewState(); // new state vector needed
-    unsigned long x = m_state[m_p++];
+    ulong x = m_state[m_p++];
     x ^= (x >> 11);
     x ^= (x << 7) & 0x9D2C5680UL;
     x ^= (x << 15) & 0xEFC60000UL;

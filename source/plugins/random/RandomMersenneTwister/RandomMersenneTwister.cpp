@@ -13,7 +13,7 @@ void RandomMersenneTwister::GenerateNewState()
     m_p = 0; // reset position
 }
 
-void RandomMersenneTwister::Seed(unsigned long seedValue)
+void RandomMersenneTwister::Seed(ulong seedValue)
 {
     m_state[0] = seedValue & 0xFFFFFFFFUL; // for > 32 bit machines
     for (int i = 1; i < N; ++i)
@@ -24,7 +24,7 @@ void RandomMersenneTwister::Seed(unsigned long seedValue)
     m_p = N; // force GenerateNewState() to be called for next random number
 }
 
-void RandomMersenneTwister::Seed(const unsigned long* seedArray, int arraySize)
+void RandomMersenneTwister::Seed(const ulong* seedArray, int arraySize)
 {
     Seed(19650218UL);
     int i = 1;

@@ -1,4 +1,5 @@
 #pragma once
+#include <qglobal.h>
 
 //!  RandomDeviate is the base class for random generators.
 /*!
@@ -8,50 +9,41 @@
 class RandomDeviate
 {
 public:
-    explicit RandomDeviate(const unsigned long arraySize = 100000);
+    explicit RandomDeviate(const ulong arraySize = 100'000);
     virtual ~RandomDeviate();
-    virtual void FillArray(double* array, const unsigned long arraySize) = 0;
-    unsigned long NumbersGenerated() const;
-    unsigned long NumbersProvided() const;
+
     double RandomDouble();
+    virtual void FillArray(double* array, const ulong arraySize) = 0;
+
+    ulong NumbersGenerated() const {return m_total;}
+    ulong NumbersProvided() const { return m_total - m_size + m_index;}
 
     static const char* getClassName() {return "RandomDeviate";}
 
 private:
-    const unsigned long m_arraySize;
-    double* m_randomNumber;
-    unsigned long m_numbersGenerated;
-    unsigned long m_nextRandomNumber;
+    double* m_numbers;
+    const ulong m_size;
+    ulong m_index;
+    ulong m_total;
 };
 
-inline RandomDeviate::RandomDeviate(const unsigned long arraySize)
-    : m_arraySize(arraySize), m_randomNumber(0), m_numbersGenerated(0), m_nextRandomNumber(arraySize)
+inline RandomDeviate::RandomDeviate(const ulong arraySize):
+    m_size(arraySize), m_index(arraySize), m_total(0)
 {
-    m_randomNumber = new double[arraySize];
+    m_numbers = new double[arraySize];
 }
 
 inline RandomDeviate::~RandomDeviate()
 {
-    if (m_randomNumber) delete [] m_randomNumber;
+    if (m_numbers) delete[] m_numbers;
 }
 
 inline double RandomDeviate::RandomDouble()
 {
-    if (m_nextRandomNumber >= m_arraySize)
-    {
-        m_nextRandomNumber = 0;
-        FillArray(m_randomNumber, m_arraySize);
-        m_numbersGenerated += m_arraySize;
+    if (m_index >= m_size) {
+        FillArray(m_numbers, m_size);
+        m_index = 0;
+        m_total += m_size;
     }
-    return m_randomNumber[m_nextRandomNumber++];
-}
-
-inline unsigned long RandomDeviate::NumbersGenerated() const
-{
-    return m_numbersGenerated;
-}
-
-inline unsigned long RandomDeviate::NumbersProvided() const
-{
-    return (m_numbersGenerated > 0) ? m_numbersGenerated - m_arraySize + m_nextRandomNumber : 0;
+    return m_numbers[m_index++];
 }
