@@ -26,7 +26,7 @@
    <string>Tonatiuh</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="../resources.qrc">
     <normaloff>:/icons/LogoTonatiuh.png</normaloff>:/icons/LogoTonatiuh.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -305,9 +305,9 @@
    <addaction name="actionPasteLink"/>
    <addaction name="actionDelete"/>
   </widget>
-  <widget class="QToolBar" name="raytraceToolBar">
+  <widget class="QToolBar" name="insertToolBar">
    <property name="windowTitle">
-    <string>Ray Tracer</string>
+    <string>Node Kits</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -315,8 +315,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionRun"/>
-   <addaction name="actionRunFluxAnalysis"/>
+   <addaction name="actionNode"/>
+   <addaction name="actionSurfaceNode"/>
   </widget>
   <widget class="QToolBar" name="viewToolBar">
    <property name="windowTitle">
@@ -335,9 +335,9 @@
    <addaction name="separator"/>
    <addaction name="actionGridSettings"/>
   </widget>
-  <widget class="QToolBar" name="insertToolBar">
+  <widget class="QToolBar" name="raytraceToolBar">
    <property name="windowTitle">
-    <string>Node Kits</string>
+    <string>Ray Tracer</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -345,12 +345,12 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionNode"/>
-   <addaction name="actionSurfaceNode"/>
+   <addaction name="actionRun"/>
+   <addaction name="actionRunFluxAnalysis"/>
   </widget>
   <action name="actionNew">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/new.png</normaloff>:/icons/new.png</iconset>
    </property>
    <property name="text">
@@ -359,7 +359,7 @@
   </action>
   <action name="actionOpen">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/open.png</normaloff>:/icons/open.png</iconset>
    </property>
    <property name="text">
@@ -368,7 +368,7 @@
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/save.png</normaloff>:/icons/save.png</iconset>
    </property>
    <property name="text">
@@ -377,7 +377,7 @@
   </action>
   <action name="actionSaveAs">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/saveas.png</normaloff>:/icons/saveas.png</iconset>
    </property>
    <property name="text">
@@ -389,7 +389,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/print.png</normaloff>:/icons/print.png</iconset>
    </property>
    <property name="text">
@@ -398,7 +398,7 @@
   </action>
   <action name="actionClose">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/close.png</normaloff>:/icons/close.png</iconset>
    </property>
    <property name="text">
@@ -410,7 +410,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/undo.png</normaloff>:/icons/undo.png</iconset>
    </property>
    <property name="text">
@@ -425,7 +425,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/redo.png</normaloff>:/icons/redo.png</iconset>
    </property>
    <property name="text">
@@ -437,7 +437,7 @@
   </action>
   <action name="actionCut">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/cut.png</normaloff>:/icons/cut.png</iconset>
    </property>
    <property name="text">
@@ -449,7 +449,7 @@
   </action>
   <action name="actionCopy">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/copy.png</normaloff>:/icons/copy.png</iconset>
    </property>
    <property name="text">
@@ -461,7 +461,7 @@
   </action>
   <action name="actionPasteCopy">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/paste.png</normaloff>:/icons/paste.png</iconset>
    </property>
    <property name="text">
@@ -476,7 +476,7 @@
   </action>
   <action name="actionRun">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/run.png</normaloff>:/icons/run.png</iconset>
    </property>
    <property name="text">
@@ -502,7 +502,7 @@
   </action>
   <action name="actionUndoView">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/undoView.png</normaloff>:/icons/undoView.png</iconset>
    </property>
    <property name="text">
@@ -511,8 +511,8 @@
   </action>
   <action name="actionNode">
    <property name="icon">
-    <iconset>
-     <normaloff>:/icons/separatorKit.png</normaloff>:/icons/separatorKit.png</iconset>
+    <iconset resource="../resources.qrc">
+     <normaloff>:/icons/nodeGroup.png</normaloff>:/icons/nodeGroup.png</iconset>
    </property>
    <property name="text">
     <string>Group Node</string>
@@ -534,7 +534,7 @@
   </action>
   <action name="actionPasteLink">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/paste_link.png</normaloff>:/icons/paste_link.png</iconset>
    </property>
    <property name="text">
@@ -546,7 +546,7 @@
   </action>
   <action name="actionDelete">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/delete.png</normaloff>:/icons/delete.png</iconset>
    </property>
    <property name="text">
@@ -563,8 +563,8 @@
   </action>
   <action name="actionSurfaceNode">
    <property name="icon">
-    <iconset>
-     <normaloff>:/icons/shapeKit.png</normaloff>:/icons/shapeKit.png</iconset>
+    <iconset resource="../resources.qrc">
+     <normaloff>:/icons/nodeShape.png</normaloff>:/icons/nodeShape.png</iconset>
    </property>
    <property name="text">
     <string>Surface Node</string>
@@ -572,7 +572,7 @@
   </action>
   <action name="action_X_Y_Plane">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/viewer_viewXY.png</normaloff>:/icons/viewer_viewXY.png</iconset>
    </property>
    <property name="text">
@@ -581,7 +581,7 @@
   </action>
   <action name="action_X_Z_Plane">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/viewer_viewXZ.png</normaloff>:/icons/viewer_viewXZ.png</iconset>
    </property>
    <property name="text">
@@ -590,7 +590,7 @@
   </action>
   <action name="action_Y_Z_Plane">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/viewer_viewYZ.png</normaloff>:/icons/viewer_viewYZ.png</iconset>
    </property>
    <property name="text">
@@ -602,7 +602,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/lightKit.png</normaloff>:/icons/lightKit.png</iconset>
    </property>
    <property name="text">
@@ -655,7 +655,7 @@
   </action>
   <action name="actionExportPhotonMap">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/export.png</normaloff>:/icons/export.png</iconset>
    </property>
    <property name="text">
@@ -674,7 +674,7 @@
   </action>
   <action name="actionSunPlane">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/viewer_viewSun.png</normaloff>:/icons/viewer_viewSun.png</iconset>
    </property>
    <property name="text">
@@ -686,7 +686,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/grid.png</normaloff>:/icons/grid.png</iconset>
    </property>
    <property name="text">
@@ -710,7 +710,7 @@
   </action>
   <action name="actionAnalyzerNode">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/AnalyzerKit.png</normaloff>:/icons/AnalyzerKit.png</iconset>
    </property>
    <property name="text">
@@ -757,7 +757,7 @@
   </action>
   <action name="actionRunFluxAnalysis">
    <property name="icon">
-    <iconset>
+    <iconset resource="../resources.qrc">
      <normaloff>:/icons/fluxdistribution.png</normaloff>:/icons/fluxdistribution.png</iconset>
    </property>
    <property name="text">
@@ -779,7 +779,9 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionGrid</sender>

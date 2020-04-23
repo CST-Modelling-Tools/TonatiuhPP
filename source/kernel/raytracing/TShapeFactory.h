@@ -14,10 +14,10 @@ public:
     virtual ~TShapeFactory() {}
     virtual QString TShapeName() const = 0;
     virtual QIcon TShapeIcon() const = 0;
-    virtual TShape* CreateTShape() const = 0;
-    virtual TShape* CreateTShape(int /*numberofParameters*/, QVector<QVariant> /*parametersList*/) const
+    virtual TShape* create() const = 0;
+    virtual TShape* create(int /*numberofParameters*/, QVector<QVariant> /*parametersList*/) const
     {
-        return CreateTShape();
+        return create();
     }
     virtual bool IsFlat() {return false;}
 };
@@ -38,7 +38,7 @@ public:
         return QIcon(QString(":/Shape%1.png").arg(T::getClassName()));
     }
 
-    T* CreateTShape() const
+    T* create() const
     {
         static bool first = true;
         if (first) {

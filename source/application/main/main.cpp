@@ -105,7 +105,7 @@ int main(int argc, char** argv)
     QDir pluginsDirectory(qApp->applicationDirPath() );
     pluginsDirectory.cd("plugins");
     PluginManager pluginManager;
-    pluginManager.LoadAvailablePlugins(pluginsDirectory);
+    pluginManager.load(pluginsDirectory);
 
     int exit;
     if (argc > 1)

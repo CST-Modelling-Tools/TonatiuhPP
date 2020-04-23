@@ -2,55 +2,64 @@
 
 #include <QVector>
 
-class PhotonMapExportFactory;
 class QDir;
 class QStringList;
-class RandomDeviateFactory;
+class QObject;
+
+class TTransmissivityFactory;
 class TComponentFactory;
+class PhotonMapExportFactory;
 class TMaterialFactory;
+class RandomDeviateFactory;
 class TShapeFactory;
 class TSunShapeFactory;
 class TTrackerFactory;
-class TTransmissivityFactory;
 
 class PluginManager
 {
 
 public:
-    PluginManager();
-    ~PluginManager();
+    PluginManager() {}
 
-    QVector<TComponentFactory*> GetComponentFactories() const;
-    QVector<PhotonMapExportFactory*> GetExportPMModeFactories() const;
-    QVector<TMaterialFactory*> GetMaterialFactories() const;
-    QVector<RandomDeviateFactory*> GetRandomDeviateFactories() const;
-    QVector<TShapeFactory*> GetShapeFactories() const;
-    QVector<TSunShapeFactory*> GetSunShapeFactories() const;
-    QVector<TTrackerFactory*> GetTrackerFactories() const;
-    QVector<TTransmissivityFactory*> GetTransmissivityFactories() const;
-    void LoadAvailablePlugins(QDir pluginsDirectory);
+    QVector<TTransmissivityFactory*> getAirFactories() const
+    {return m_airFactories;}
+    QVector<TComponentFactory*> getComponentFactories() const
+    {return m_componentFactories;}
+    QVector<PhotonMapExportFactory*> getExportFactories() const
+    {return m_exportFactories;}
+    QVector<TMaterialFactory*> getMaterialFactories() const
+    {return m_materialFactories;}
+    QVector<RandomDeviateFactory*> getRandomFactories() const
+    {return m_randomFactories;}
+    QVector<TShapeFactory*> getShapeFactories() const
+    {return m_shapeFactories;}
+    QVector<TSunShapeFactory*> getSunFactories() const
+    {return m_sunFactories;}
+    QVector<TTrackerFactory*> getTrackerFactories() const
+    {return m_trackerFactories;}
+
+    void load(QDir dir);
+    void sort();
 
 private:
-    void AddFilesToList(QDir directory, QStringList& filesList);
-    void BuildFileList(QDir directory, QStringList& filesList);
-    void LoadAvailablePlugins();
-    void LoadComponentPlugin(QObject* plugin);
-    void LoadExportPhotonMapModePlugin(QObject* plugin);
-    void LoadMaterialPlugin(QObject* plugin);
-    void LoadRandomDeviatePlugin(QObject* plugin);
-    void LoadShapePlugin(QObject* plugin);
-    void LoadSunshapePlugin(QObject* plugin);
-    void LoadTrackerPlugin(QObject* plugin);
-    void LoadTransmissivityPlugin(QObject* plugin);
-    void LoadTonatiuhPlugin(const QString& fileName);
-    bool ValidDirectoryName(QString& directoryName);
+    void findFiles(QDir dir, QStringList& files);
+    void loadTonatiuhPlugin(const QString& file);
 
-    QVector<TComponentFactory*> m_componentFactoryList;
-    QVector<PhotonMapExportFactory*> m_exportPMModeFactoryList;
-    QVector<TMaterialFactory*> m_materialFactoryList;
-    QVector<RandomDeviateFactory*> m_randomDeviateFactoryList;
-    QVector<TShapeFactory*> m_shapeFactoryList;
-    QVector<TSunShapeFactory*> m_sunshapeFactoryList;
-    QVector<TTrackerFactory*> m_trackerFactoryList;
-    QVector<TTransmissivityFactory*> m_transmissivityFactoryList;
+    void loadAirPlugin(QObject* plugin);
+    void LoadComponentPlugin(QObject* plugin);
+    void loadExportPlugin(QObject* plugin);
+    void loadMaterialPlugin(QObject* plugin);
+    void loadRandomPlugin(QObject* plugin);
+    void loadShapePlugin(QObject* plugin);
+    void loadSunPlugin(QObject* plugin);
+    void loadTrackerPlugin(QObject* plugin);
+
+    QVector<TTransmissivityFactory*> m_airFactories;
+    QVector<TComponentFactory*> m_componentFactories;
+    QVector<PhotonMapExportFactory*> m_exportFactories;
+    QVector<TMaterialFactory*> m_materialFactories;
+    QVector<RandomDeviateFactory*> m_randomFactories;
+    QVector<TShapeFactory*> m_shapeFactories;
+    QVector<TSunShapeFactory*> m_sunFactories;
+    QVector<TTrackerFactory*> m_trackerFactories;
 };

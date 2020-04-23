@@ -16,9 +16,9 @@ public:
     virtual ~PhotonMapExport() {}
 
     virtual void EndExport() {}
-    virtual void SavePhotonMap(std::vector<Photon*> raysLists) {}
+    virtual void SavePhotonMap(std::vector<Photon*> /*raysLists*/) {}
     void SetConcentratorToWorld(Transform concentratorToWorld);
-    virtual void SetPowerPerPhoton(double wPhoton) {}
+    virtual void SetPowerPerPhoton(double /*wPhoton*/) {}
 
     void SetSaveAllPhotonsEnabled();
     void SetSaveCoordinatesEnabled(bool enabled);

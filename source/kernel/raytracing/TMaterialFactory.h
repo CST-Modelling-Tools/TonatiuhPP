@@ -12,7 +12,7 @@ public:
     virtual ~TMaterialFactory() {}
     virtual QString TMaterialName() const = 0;
     virtual QIcon TMaterialIcon() const = 0;
-    virtual TMaterial* CreateTMaterial() const = 0;
+    virtual TMaterial* create() const = 0;
 };
 
 
@@ -31,7 +31,7 @@ public:
         return QIcon(QString(":/Material%1.png").arg(T::getClassName()));
     }
 
-    T* CreateTMaterial() const
+    T* create() const
     {
         static bool first = true;
         if (first) {

@@ -19,9 +19,9 @@ TransmissivityDialog::TransmissivityDialog(QVector< TTransmissivityFactory* > tr
     transmissivityCombo->addItem ("---");
     for (int t = 0; t < (int) transmissivityFactoryList.size(); ++t)
     {
-        QString transmissivityTypeName(transmissivityFactoryList[t]->CreateTTransmissivity()->getTypeId().getName().getString() );
+        QString transmissivityTypeName(transmissivityFactoryList[t]->create()->getTypeId().getName().getString() );
         m_transmissivityFactoryList.insert(transmissivityTypeName, transmissivityFactoryList[t]);
-        transmissivityCombo->addItem(transmissivityFactoryList[t]->TTransmissivityIcon(), transmissivityFactoryList[t]->TTransmissivityName(), transmissivityTypeName);
+        transmissivityCombo->addItem(transmissivityFactoryList[t]->icon(), transmissivityFactoryList[t]->name(), transmissivityTypeName);
     }
 
     connect(transmissivityCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeTransmissivityType(int)) );
@@ -75,7 +75,7 @@ void TransmissivityDialog::ChangeTransmissivityType(int index)
     else
     {
         TTransmissivityFactory* transmissivityFactory = m_transmissivityFactoryList.value(transmissivityCombo->itemData(index).toString() );
-        m_newTransmissivity = transmissivityFactory->CreateTTransmissivity();
+        m_newTransmissivity = transmissivityFactory->create();
 
     }
 

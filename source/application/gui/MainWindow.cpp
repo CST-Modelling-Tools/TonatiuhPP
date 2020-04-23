@@ -86,7 +86,7 @@
 #include "SceneModel.h"
 #include "script/ScriptEditorDialog.h"
 #include "calculator/SunCalculatorDialog.h"
-#include "TComponentFactory.h"
+#include "kernel/raytracing/TComponentFactory.h"
 #include "kernel/raytracing/TDefaultTracker.h"
 #include "kernel/geometry/tgf.h"
 #include "kernel/raytracing/TLightKit.h"
@@ -158,7 +158,6 @@ MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags fl
       m_graphicView(0),
       m_focusView(0)
 {
-
     setupUi(this);
     SetupActions();
     SetupMenus();
@@ -172,10 +171,12 @@ MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags fl
     ReadSettings();
 
     if (!tonatiuhFile.isEmpty() )
-    {
         StartOver(tonatiuhFile);
-    }
-    SelectNode(QLatin1String("//SunNode/RootNode") );
+
+    SelectNode("//SunNode/RootNode");
+
+    fileToolBar->hide();
+    editToolBar->hide();
 }
 
 /*!
@@ -220,7 +221,7 @@ void MainWindow::ExecuteScriptFile(QString tonatiuhScriptFile)
 {
     //New();
 
-    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pPluginManager->GetRandomDeviateFactories();
+    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pPluginManager->getRandomFactories();
     ScriptEditorDialog editor(randomDeviateFactoryList, this);
     editor.show();
 
@@ -231,10 +232,8 @@ void MainWindow::ExecuteScriptFile(QString tonatiuhScriptFile)
 
 void MainWindow::SetPluginManager(PluginManager* pluginManager)
 {
-
     m_pPluginManager = pluginManager;
     if (m_pPluginManager) SetupPluginsManager();
-
 }
 
 /*!
@@ -299,13 +298,13 @@ void MainWindow::DefineSunLight()
     TLightKit* currentLight = 0;
     if (coinScene->getPart("lightList[0]", false) ) currentLight = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
 
-    QVector< TShapeFactory* > shapeFactoryList = m_pPluginManager->GetShapeFactories();
+    QVector< TShapeFactory* > shapeFactoryList = m_pPluginManager->getShapeFactories();
 
     QVector< TShapeFactory* > tFlatShapeFactoryList;
     for (int i = 0; i < shapeFactoryList.size(); ++i)
         if (shapeFactoryList[i]->IsFlat() ) tFlatShapeFactoryList << shapeFactoryList[i];
 
-    QVector< TSunShapeFactory* > tSunShapeFactoryList = m_pPluginManager->GetSunShapeFactories();
+    QVector< TSunShapeFactory* > tSunShapeFactoryList = m_pPluginManager->getSunFactories();
 
     LightDialog dialog(*m_sceneModel, currentLight, tSunShapeFactoryList);
     if (dialog.exec() )
@@ -341,7 +340,7 @@ void MainWindow::DefineSunLight()
  */
 void MainWindow::DefineTransmissivity()
 {
-    TransmissivityDialog dialog(m_pPluginManager->GetTransmissivityFactories() );
+    TransmissivityDialog dialog(m_pPluginManager->getAirFactories() );
 
     TSceneKit* coinScene = m_document->GetSceneKit();
     if (!coinScene) return;
@@ -549,7 +548,7 @@ void MainWindow::RunFluxAnalysisRayTracer()
     InstanceNode*  rootSeparatorInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
     if (!rootSeparatorInstance) return;
 
-    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pPluginManager->GetRandomDeviateFactories();
+    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pPluginManager->getRandomFactories();
     //Check if there is a random generator selected;
     if (m_selectedRandomDeviate == -1)
     {
@@ -824,7 +823,7 @@ void MainWindow::ShowMenu(const QModelIndex& index)
  */
 void MainWindow::ShowRayTracerOptionsDialog()
 {
-    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pPluginManager->GetRandomDeviateFactories();
+    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pPluginManager->getRandomFactories();
     RayTraceDialog* options = new RayTraceDialog(m_raysPerIteration,
                                                  randomDeviateFactoryList, m_selectedRandomDeviate,
                                                  m_widthDivisions,m_heightDivisions,
@@ -968,7 +967,7 @@ void MainWindow::on_action_Y_Z_Plane_triggered()
 
 void MainWindow::on_actionOpenScriptEditor_triggered()
 {
-    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pPluginManager->GetRandomDeviateFactories();
+    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pPluginManager->getRandomFactories();
     ScriptEditorDialog editor(randomDeviateFactoryList, this);
     editor.exec();
 }
@@ -1266,7 +1265,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
     SoNode* parentNode = parentInstance->GetNode();
     if (!parentNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) return;
 
-    QVector< TComponentFactory* > factoryList = m_pPluginManager->GetComponentFactories();
+    QVector< TComponentFactory* > factoryList = m_pPluginManager->getComponentFactories();
     if (factoryList.size() == 0) return;
 
     QVector< QString > componentNames;
@@ -1331,7 +1330,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
  */
 void MainWindow::CreateMaterial(QString materialType)
 {
-    QVector< TMaterialFactory* > factoryList = m_pPluginManager->GetMaterialFactories();
+    QVector< TMaterialFactory* > factoryList = m_pPluginManager->getMaterialFactories();
     if (factoryList.size() == 0) return;
 
     QVector< QString > materialNames;
@@ -1356,7 +1355,7 @@ void MainWindow::CreateMaterial(QString materialType)
  */
 void MainWindow::CreateShape(QString shapeType)
 {
-    QVector< TShapeFactory* > factoryList = m_pPluginManager->GetShapeFactories();
+    QVector< TShapeFactory* > factoryList = m_pPluginManager->getShapeFactories();
     if (factoryList.size() == 0) return;
 
     QVector< QString > shapeNames;
@@ -1383,7 +1382,7 @@ void MainWindow::CreateShape(QString shapeType)
  */
 void MainWindow::CreateShape(QString shapeType, int numberOfParameters, QVector< QVariant > parametersList)
 {
-    QVector< TShapeFactory* > factoryList = m_pPluginManager->GetShapeFactories();
+    QVector< TShapeFactory* > factoryList = m_pPluginManager->getShapeFactories();
     if (factoryList.size() == 0) return;
 
     QVector< QString > shapeNames;
@@ -1447,7 +1446,7 @@ void MainWindow::CreateSurfaceNode()
  */
 void MainWindow::CreateTracker(QString trackerType)
 {
-    QVector< TTrackerFactory* > factoryList = m_pPluginManager->GetTrackerFactories();
+    QVector< TTrackerFactory* > factoryList = m_pPluginManager->getTrackerFactories();
     if (factoryList.size() == 0) return;
 
     QVector< QString > trackerNames;
@@ -1918,7 +1917,7 @@ void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned 
     InstanceNode*  rootSeparatorInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
     if (!rootSeparatorInstance) return;
 
-    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pPluginManager->GetRandomDeviateFactories();
+    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pPluginManager->getRandomFactories();
     //Check if there is a random generator selected;
     if (m_selectedRandomDeviate == -1)
     {
@@ -2037,7 +2036,7 @@ void MainWindow::SetExportIntersectionSurfaceSide(bool enabled)
  */
 void MainWindow::SetExportPhotonMapType(QString exportModeType)
 {
-    QVector< PhotonMapExportFactory* > factoryList = m_pPluginManager->GetExportPMModeFactories();
+    QVector< PhotonMapExportFactory* > factoryList = m_pPluginManager->getExportFactories();
     if (factoryList.size() == 0) return;
 
     QVector< QString > exportPMModeNames;
@@ -2117,7 +2116,7 @@ void MainWindow::SetPhotonMapBufferSize(unsigned int nPhotons)
  */
 void MainWindow::SetRandomDeviateType(QString typeName)
 {
-    QVector< RandomDeviateFactory* > factoryList = m_pPluginManager->GetRandomDeviateFactories();
+    QVector< RandomDeviateFactory* > factoryList = m_pPluginManager->getRandomFactories();
     if (factoryList.size() == 0) return;
 
     QVector< QString > randomNames;
@@ -2183,7 +2182,7 @@ void MainWindow::SetSunshape(QString sunshapeType)
         lightKit = new TLightKit;
 
 
-    QVector< TSunShapeFactory* > factoryList = m_pPluginManager->GetSunShapeFactories();
+    QVector< TSunShapeFactory* > factoryList = m_pPluginManager->getSunFactories();
 
     if (factoryList.size() == 0) return;
 
@@ -2201,7 +2200,7 @@ void MainWindow::SetSunshape(QString sunshapeType)
         return;
     }
 
-    lightKit->setPart("tsunshape", factoryList[selectedSunShapeIndex]->CreateTSunShape() );
+    lightKit->setPart("tsunshape", factoryList[selectedSunShapeIndex]->create() );
 
     CmdLightKitModified* command = new CmdLightKitModified(lightKit, coinScene, *m_sceneModel);
     m_commandStack->push(command);
@@ -2251,7 +2250,7 @@ void MainWindow::SetTransmissivity(QString transmissivityType)
         emit Abort(tr("SetTransmissivity: Error defining transmissivity.") );
         return;
     }
-    QVector< TTransmissivityFactory* > transmissivityFactoryList = m_pPluginManager->GetTransmissivityFactories();
+    QVector< TTransmissivityFactory* > transmissivityFactoryList = m_pPluginManager->getAirFactories();
     if (transmissivityFactoryList.count() < 1)
     {
         emit Abort(tr("SetTransmissivity: Error defining transmissivity.") );
@@ -2261,7 +2260,7 @@ void MainWindow::SetTransmissivity(QString transmissivityType)
     QStringList factoryNames;
     for (int i = 0; i < transmissivityFactoryList.count(); i++)
     {
-        QString name = transmissivityFactoryList[i]->TTransmissivityName();
+        QString name = transmissivityFactoryList[i]->name();
         factoryNames << name;
     }
 
@@ -2273,7 +2272,7 @@ void MainWindow::SetTransmissivity(QString transmissivityType)
         return;
     }
 
-    TTransmissivity* transmissivity = transmissivityFactoryList[ transmissivityIndex ]->CreateTTransmissivity();
+    TTransmissivity* transmissivity = transmissivityFactoryList[ transmissivityIndex ]->create();
     if (!transmissivity)
     {
         emit Abort(tr("SetTransmissivity: Error defining transmissivity.") );
@@ -2652,7 +2651,7 @@ void MainWindow::CreateMaterial(TMaterialFactory* pTMaterialFactory)
         return;
     }
 
-    material = pTMaterialFactory->CreateTMaterial();
+    material = pTMaterialFactory->create();
     QString typeName = pTMaterialFactory->TMaterialName();
     material->setName(typeName.toStdString().c_str() );
 
@@ -2693,7 +2692,7 @@ void MainWindow::CreateShape(TShapeFactory* pTShapeFactory)
     }
     else
     {
-        shape = pTShapeFactory->CreateTShape();
+        shape = pTShapeFactory->create();
         /*Hay que comprobar si shape es nulo para no crear una superficie a partir de nulo que probacara el cierre de la aplicacion.*/
         if (shape!=0) {
             shape->setName(pTShapeFactory->TShapeName().toStdString().c_str() );
@@ -2736,7 +2735,7 @@ void MainWindow::CreateShape(TShapeFactory* pTShapeFactory, int numberofParamete
     }
     else
     {
-        shape = pTShapeFactory->CreateTShape(numberofParameters, parametersList);
+        shape = pTShapeFactory->create(numberofParameters, parametersList);
         /*Hay que comprobar si shape es nulo para no crear una superficie a partir de nulo que probacara el cierre de la aplicacion.*/
         if (shape!=0) {
             shape->setName(pTShapeFactory->TShapeName().toStdString().c_str() );
@@ -2775,7 +2774,7 @@ void MainWindow::CreateTracker(TTrackerFactory* pTTrackerFactory)
                                      "This TSeparatorKit already contains a tracker node", 1);
             return;
         }
-        TTracker* tracker = pTTrackerFactory->CreateTTracker();
+        TTracker* tracker = pTTrackerFactory->create();
 
         tracker->SetSceneKit(scene);
         tracker->setName(pTTrackerFactory->TTrackerName().toStdString().c_str() );
@@ -2946,7 +2945,7 @@ SoSeparator* MainWindow::CreateGrid(int xDimension, int zDimension, double xSpac
  */
 PhotonMapExport* MainWindow::CreatePhotonMapExport() const
 {
-    QVector< PhotonMapExportFactory* > factoryList = m_pPluginManager->GetExportPMModeFactories();
+    QVector< PhotonMapExportFactory* > factoryList = m_pPluginManager->getExportFactories();
     if (factoryList.size() == 0) return 0;
 
     QVector< QString > exportPMModeNames;
@@ -3170,7 +3169,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
     lightTransform = static_cast< SoTransform* >(lightKit->getPart("transform",false) );
 
 
-    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pPluginManager->GetRandomDeviateFactories();
+    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pPluginManager->getRandomFactories();
     //Check if there is a random generator selected;
     if (m_selectedRandomDeviate == -1)
     {
@@ -3245,7 +3244,7 @@ void MainWindow::SetCurrentFile(const QString& fileName)
  */
 bool MainWindow::SetPhotonMapExportSettings()
 {
-    QVector< PhotonMapExportFactory* > exportPhotonMapModeList = m_pPluginManager->GetExportPMModeFactories();
+    QVector< PhotonMapExportFactory* > exportPhotonMapModeList = m_pPluginManager->getExportFactories();
     ExportPhotonsDialog exportSettingsDialog(*m_sceneModel, exportPhotonMapModeList);
     if (!exportSettingsDialog.exec() ) return false;
 
@@ -3283,7 +3282,7 @@ void MainWindow::SetupActionsInsertComponent()
     }
 
     if (!m_pPluginManager) return;
-    QVector< TComponentFactory* > componentFactoryList = m_pPluginManager->GetComponentFactories();
+    QVector< TComponentFactory* > componentFactoryList = m_pPluginManager->getComponentFactories();
     if (!(componentFactoryList.size() > 0) ) return;
 
     for (int i = 0; i < componentFactoryList.size(); ++i)
@@ -3332,7 +3331,7 @@ void MainWindow::SetupActionsInsertMaterial()
 
     if (!m_pPluginManager) return;
 
-    QVector< TMaterialFactory* > materialsFactoryList = m_pPluginManager->GetMaterialFactories();
+    QVector< TMaterialFactory* > materialsFactoryList = m_pPluginManager->getMaterialFactories();
     if (!(materialsFactoryList.size() > 0) ) return;
 
 
@@ -3384,7 +3383,7 @@ void MainWindow::SetupActionsInsertShape()
 
 
     if (!m_pPluginManager) return;
-    QVector< TShapeFactory* > shapeFactoryList = m_pPluginManager->GetShapeFactories();
+    QVector< TShapeFactory* > shapeFactoryList = m_pPluginManager->getShapeFactories();
     if (!(shapeFactoryList.size() > 0) ) return;
 
     for (int i = 0; i < shapeFactoryList.size(); ++i)
@@ -3429,7 +3428,7 @@ void MainWindow::SetupActionsInsertTracker()
 
 
     if (!m_pPluginManager) return;
-    QVector< TTrackerFactory* > trackerFactoryList = m_pPluginManager->GetTrackerFactories();
+    QVector< TTrackerFactory* > trackerFactoryList = m_pPluginManager->getTrackerFactories();
     if (!(trackerFactoryList.size() > 0) ) return;
 
     for (int i = 0; i < trackerFactoryList.size(); ++i)
@@ -3712,10 +3711,10 @@ void MainWindow::SetupPluginsManager()
     //m_pPluginManager = new PluginManager;
     //m_pPluginManager->LoadAvailablePlugins( PluginDirectory() );
 
-
     SetupActionsInsertComponent();
-    SetupActionsInsertMaterial();
+    addToolBarBreak();
     SetupActionsInsertShape();
+    SetupActionsInsertMaterial();
     SetupActionsInsertTracker();
 }
 

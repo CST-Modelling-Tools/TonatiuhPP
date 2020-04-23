@@ -34,7 +34,7 @@ LightDialog::LightDialog( SceneModel& sceneModel, TLightKit* currentLightKit, QV
 
     for( int sunShape = 0; sunShape < (int) sunshapeFactoryList.size(); ++sunShape )
     {
-        QString sunShapeTypeName( sunshapeFactoryList[sunShape]->CreateTSunShape()->getTypeId().getName().getString() );
+        QString sunShapeTypeName( sunshapeFactoryList[sunShape]->create()->getTypeId().getName().getString() );
         m_sunshapeList.insert( sunShapeTypeName, sunshapeFactoryList[sunShape] );
     }
 
@@ -121,7 +121,7 @@ void LightDialog::ChangeSunshape( int index )
     else
     {
         TSunShapeFactory* sunshapeFactory = m_sunshapeList.value( sunshapeCombo->itemData( index ).toString() );
-        m_newSunShape = sunshapeFactory->CreateTSunShape();
+        m_newSunShape = sunshapeFactory->create();
 
     }
 

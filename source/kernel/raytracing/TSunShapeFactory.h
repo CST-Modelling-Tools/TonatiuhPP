@@ -14,7 +14,7 @@ public:
     virtual ~TSunShapeFactory() {}
     virtual QString TSunShapeName() const  = 0;
     virtual QIcon TSunShapeIcon() const = 0;
-    virtual TSunShape* CreateTSunShape() const = 0;
+    virtual TSunShape* create() const = 0;
 };
 
 Q_DECLARE_INTERFACE( TSunShapeFactory, "tonatiuh.TSunShapeFactory")
@@ -35,7 +35,7 @@ public:
         return QIcon(QString(":/Sun%1.png").arg(T::getClassName()));
     }
 
-    T* CreateTSunShape() const
+    T* create() const
     {
         static bool first = true;
         if (first) {

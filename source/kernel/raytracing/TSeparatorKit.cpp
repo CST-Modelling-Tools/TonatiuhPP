@@ -81,6 +81,5 @@ SbBool  TSeparatorKit::setPart(const SbName& partname, SoNode* from )
  */
 QString TSeparatorKit::getIcon()
 {
-    return QLatin1String(":/icons/separatorKit.png");
-
+    return ":/icons/nodeGroup.png";
 }
