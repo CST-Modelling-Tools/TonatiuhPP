@@ -64,9 +64,11 @@ private:
 };
 
 
+
 #include "kernel/raytracing/TMaterialFactory.h"
 
-class MaterialStandardSpecularFactory: public QObject, public MaterialFactory<MaterialStandardSpecular>
+class MaterialStandardSpecularFactory:
+    public QObject, public MaterialFactory<MaterialStandardSpecular>
 {
     Q_OBJECT
     Q_INTERFACES(TMaterialFactory)

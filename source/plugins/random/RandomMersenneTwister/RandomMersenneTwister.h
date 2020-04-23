@@ -14,6 +14,8 @@ public:
     void FillArray(double* array, const unsigned long arraySize);
     unsigned long RandomUInt();
 
+    static const char* getClassName() {return "MersenneTwister";}
+
 private:
     enum { N = 624, M = 397 };
 
@@ -77,3 +79,13 @@ inline double RandomMersenneTwister::Random01()
 }
 
 
+
+#include "kernel/statistics/RandomDeviateFactory.h"
+
+class RandomMersenneTwisterFactory:
+    public QObject, public RandomFactory<RandomMersenneTwister>
+{
+    Q_OBJECT
+    Q_INTERFACES(RandomDeviateFactory)
+    Q_PLUGIN_METADATA(IID "tonatiuh.RandomDeviateFactory")
+};

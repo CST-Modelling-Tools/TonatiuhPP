@@ -7,18 +7,27 @@
 
 class Photon;
 
-class PhotonMapExportNull : public PhotonMapExport
+class PhotonMapExportNull: public PhotonMapExport
 {
 
 public:
-	PhotonMapExportNull();
-	virtual ~PhotonMapExportNull();
+    PhotonMapExportNull() {}
 
-	static QStringList GetParameterNames();
+    static QStringList GetParameterNames() {return QStringList();}
+    void SetSaveParameterValue(QString parameterName, QString parameterValue) {}
+    bool StartExport() {return true;}
 
-	void EndExport();
-	void SavePhotonMap( std::vector< Photon* > raysLists );
-	void SetPowerPerPhoton( double wPhoton );
-	void SetSaveParameterValue( QString parameterName, QString parameterValue );
-	bool StartExport();
+    static const char* getClassName() {return "No export";}
+};
+
+
+
+#include "kernel/gui/PhotonMapExportFactory.h"
+
+class PhotonMapExportNullFactory:
+    public QObject, public PhotonExportFactory<PhotonMapExportNull>
+{
+    Q_OBJECT
+    Q_INTERFACES(PhotonMapExportFactory)
+    Q_PLUGIN_METADATA(IID "tonatiuh.PhotonMapExportFactory")
 };

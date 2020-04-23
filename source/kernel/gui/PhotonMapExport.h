@@ -13,13 +13,12 @@ class PhotonMapExport
 
 public:
     PhotonMapExport();
-    virtual ~PhotonMapExport() {
-    }
+    virtual ~PhotonMapExport() {}
 
-    virtual void EndExport() = 0;
-    virtual void SavePhotonMap(std::vector<Photon*> raysLists) = 0;
+    virtual void EndExport() {}
+    virtual void SavePhotonMap(std::vector<Photon*> raysLists) {}
     void SetConcentratorToWorld(Transform concentratorToWorld);
-    virtual void SetPowerPerPhoton(double wPhoton) = 0;
+    virtual void SetPowerPerPhoton(double wPhoton) {}
 
     void SetSaveAllPhotonsEnabled();
     void SetSaveCoordinatesEnabled(bool enabled);
@@ -32,6 +31,8 @@ public:
     void SetSceneModel(SceneModel& sceneModel);
     virtual bool StartExport() = 0;
 
+    static const char* getClassName() {return "PhotonMapExport";}
+
 protected:
     Transform m_concentratorToWorld;
     SceneModel* m_pSceneModel;
@@ -43,5 +44,4 @@ protected:
     bool m_saveSide;
     bool m_saveSurfaceID;
     QStringList m_saveSurfacesURLList;
-
 };

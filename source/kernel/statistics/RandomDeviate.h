@@ -15,6 +15,8 @@ public:
     unsigned long NumbersProvided() const;
     double RandomDouble();
 
+    static const char* getClassName() {return "RandomDeviate";}
+
 private:
     const unsigned long m_arraySize;
     double* m_randomNumber;

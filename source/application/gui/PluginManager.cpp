@@ -237,9 +237,9 @@ void PluginManager::LoadTonatiuhPlugin(const QString& fileName)
 {
     QPluginLoader loader(fileName);
     QObject* plugin = loader.instance();
-    if(plugin) {
-        if (plugin->inherits("PhotonMapExportFactory") ) LoadExportPhotonMapModePlugin(plugin);
-        if (plugin->inherits("RandomDeviateFactory") ) LoadRandomDeviatePlugin(plugin);
+    if (plugin) {
+        if (dynamic_cast<PhotonMapExportFactory*>(plugin)) LoadExportPhotonMapModePlugin(plugin);
+        if (dynamic_cast<RandomDeviateFactory*>(plugin)) LoadRandomDeviatePlugin(plugin);
         if (plugin->inherits("TComponentFactory") ) LoadComponentPlugin(plugin);
         if (dynamic_cast<TShapeFactory*>(plugin)) LoadShapePlugin(plugin);
         if (dynamic_cast<TSunShapeFactory*>(plugin)) LoadSunshapePlugin(plugin);
@@ -255,5 +255,5 @@ void PluginManager::LoadTonatiuhPlugin(const QString& fileName)
  */
 bool PluginManager::ValidDirectoryName(QString& directoryName)
 {
-    return (directoryName != QLatin1String(".") ) && (directoryName != QLatin1String("..") );
+    return directoryName != "."  && directoryName != "..";
 }
