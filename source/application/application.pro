@@ -53,3 +53,7 @@ RESOURCES += resources.qrc
 #    RC_FILE = Tonatiuh.rc
 #}
 
+DISTFILES += \
+    ../../.gitignore \
+    ../../readme.md
+
