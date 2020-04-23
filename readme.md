@@ -5,4 +5,4 @@
 
 Work in progress
 
-<img src='https://scmt.cyi.ac.cy/bitbucket/projects/T20/repos/tonatiuh/browse/documentation/SplashScreen.png'/>
+<img src='./documentation/SplashScreen.png'/>
