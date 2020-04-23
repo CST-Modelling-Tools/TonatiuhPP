@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
 
-#SUBDIRS += SunshapeBuie
-SUBDIRS += SunshapePillbox
+#SUBDIRS += SunBuie
+SUBDIRS += SunPillbox

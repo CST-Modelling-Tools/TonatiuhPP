@@ -7,6 +7,7 @@
 #include "libraries/geometry/Vector3D.h"
 #include "kernel/statistics/RandomDeviate.h"
 
+
 class TSunShape: public SoNode
 {
     typedef SoNode inherited;
@@ -20,9 +21,9 @@ public:
     virtual double GetIrradiance() const = 0;
     virtual double GetThetaMax() const = 0;
 
+    static const char* getClassName() {return "SunShape";}
+
 protected:
-    TSunShape() {
-    }
-    virtual ~TSunShape() {
-    }
+    TSunShape() {}
+    virtual ~TSunShape() {}
 };

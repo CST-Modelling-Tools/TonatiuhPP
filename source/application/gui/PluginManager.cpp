@@ -242,7 +242,7 @@ void PluginManager::LoadTonatiuhPlugin(const QString& fileName)
         if (plugin->inherits("RandomDeviateFactory") ) LoadRandomDeviatePlugin(plugin);
         if (plugin->inherits("TComponentFactory") ) LoadComponentPlugin(plugin);
         if (dynamic_cast<TShapeFactory*>(plugin)) LoadShapePlugin(plugin);
-        if (plugin->inherits("TSunShapeFactory") ) LoadSunshapePlugin(plugin);
+        if (dynamic_cast<TSunShapeFactory*>(plugin)) LoadSunshapePlugin(plugin);
         if (dynamic_cast<TMaterialFactory*>(plugin)) LoadMaterialPlugin(plugin);
         if (plugin->inherits("TTrackerFactory") ) LoadTrackerPlugin(plugin);
         if (plugin->inherits("TTransmissivityFactory") ) LoadTransmissivityPlugin(plugin);

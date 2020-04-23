@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/" >
 
-        <file>SunshapePillbox.png</file>
+        <file>SunPillbox.png</file>
     </qresource>
 </RCC>

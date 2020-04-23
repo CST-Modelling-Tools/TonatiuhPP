@@ -1,28 +1,28 @@
 #include "libraries/geometry/gc.h"
 
-#include "SunshapePillbox.h"
+#include "SunPillbox.h"
 
-SO_NODE_SOURCE(SunshapePillbox);
+SO_NODE_SOURCE(SunPillbox);
 
-void SunshapePillbox::initClass()
+void SunPillbox::initClass()
 {
-	SO_NODE_INIT_CLASS(SunshapePillbox, TSunShape, "TSunShape");
+    SO_NODE_INIT_CLASS(SunPillbox, TSunShape, "TSunShape");
 }
 
-SunshapePillbox::SunshapePillbox( )
+SunPillbox::SunPillbox( )
 {
-	SO_NODE_CONSTRUCTOR( SunshapePillbox );
+    SO_NODE_CONSTRUCTOR( SunPillbox );
 	SO_NODE_ADD_FIELD( irradiance, ( 1000.0 ) );
 	SO_NODE_ADD_FIELD( thetaMax, (0.00465));
 
 }
 
-SunshapePillbox::~SunshapePillbox()
+SunPillbox::~SunPillbox()
 {
 }
 
 //Light Interface
-void SunshapePillbox::GenerateRayDirection( Vector3D& direction, RandomDeviate& rand ) const
+void SunPillbox::GenerateRayDirection( Vector3D& direction, RandomDeviate& rand ) const
 {
 	double phi = gc::TwoPi * rand.RandomDouble();
     double theta = asin( sin( thetaMax.getValue() )*sqrt( rand.RandomDouble() ) );
@@ -36,21 +36,21 @@ void SunshapePillbox::GenerateRayDirection( Vector3D& direction, RandomDeviate& 
     direction.z = sinTheta*cosPhi;
 }
 
-double SunshapePillbox::GetIrradiance( void ) const
+double SunPillbox::GetIrradiance( void ) const
 {
 	return irradiance.getValue();
 }
 
-double SunshapePillbox::GetThetaMax() const
+double SunPillbox::GetThetaMax() const
 {
 	return thetaMax.getValue();
 }
 
-SoNode* SunshapePillbox::copy( SbBool copyConnections ) const
+SoNode* SunPillbox::copy( SbBool copyConnections ) const
 {
 	// Use the standard version of the copy method to create
 	// a copy of this instance, including its field data
-	SunshapePillbox* newSunShape = dynamic_cast< SunshapePillbox* >( SoNode::copy( copyConnections ) );
+    SunPillbox* newSunShape = dynamic_cast< SunPillbox* >( SoNode::copy( copyConnections ) );
 
 	// Copy the m_thetaMin, m_thetaMax private members explicitly
 	newSunShape->irradiance = irradiance;

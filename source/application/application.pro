@@ -49,12 +49,7 @@ FORMS += \
 
 RESOURCES += resources.qrc
  
-#win32 {
-#    RC_FILE = Tonatiuh.rc
-#}
-
-DISTFILES += \
-    ../../.gitignore \
-    ../../readme.md
-
+win32 { # icon in windows explorer
+    RC_FILE = Tonatiuh.rc
+}
 
