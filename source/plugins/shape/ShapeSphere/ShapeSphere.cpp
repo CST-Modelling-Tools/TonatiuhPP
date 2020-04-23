@@ -121,100 +121,93 @@ QString ShapeSphere::GetIcon() const
     return ":/ShapeSphere.png";
 }
 
-Point3D ShapeSphere::Sample( double u1, double u2 ) const
+Point3D ShapeSphere::Sample(double u1, double u2) const
 {
-	return GetPoint3D( u1, u2 );
+    return GetPoint3D(u1, u2);
 }
 
-bool ShapeSphere::Intersect( const Ray& objectRay, double* tHit, DifferentialGeometry* dg ) const
+bool ShapeSphere::Intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg ) const
 {
-
-	// Compute quadratic ShapeSphere coefficients
-	Vector3D vObjectRayOrigin = Vector3D( objectRay.origin );
-	double A = objectRay.direction().lengthSquared();
-    double B = 2.0 * DotProduct( vObjectRayOrigin, objectRay.direction() );
-	double C = vObjectRayOrigin.lengthSquared() - radius.getValue() * radius.getValue();
-
-	// Solve quadratic equation for _t_ values
+    // intersection with full shape
+    // |r0 + t*d|^2 = R^2  (local coordinates)
+    // a*t^2 + b*t + c = 0
+    Vector3D rayOrigin = Vector3D(ray.origin);
+    double r = radius.getValue();
+    double A = ray.direction().lengthSquared();
+    double B = 2. * DotProduct( rayOrigin, ray.direction() );
+    double C = rayOrigin.lengthSquared() - r*r;
 	double t0, t1;
-	if( !gf::Quadratic( A, B, C, &t0, &t1 ) ) return false;
+    if (!gf::Quadratic(A, B, C, &t0, &t1)) return false;
 
-	// Compute intersection distance along ray
-	if( t0 > objectRay.maxt || t1 < objectRay.mint ) return false;
-    double thit = ( t0 > objectRay.mint )? t0 : t1 ;
-    if( thit > objectRay.maxt ) return false;
+    // ray
+    if (t0 > ray.tMax || t1 < ray.tMin) return false;
+    double thit = ( t0 > ray.tMin )? t0 : t1 ;
+    if( thit > ray.tMax ) return false;
 
-    //Evaluate Tolerance
-	double tol = 0.00001;
+    // intersection with clipped shape
+    double tolerance = 1e-5;
 
 	// Compute ShapeSphere hit position and $\phi$
-    Point3D hitPoint = objectRay( thit );
-	double phi = atan2( hitPoint.x, hitPoint.z );
-	if ( phi < 0. ) phi += gc::TwoPi;
+    Point3D hitPoint = ray(thit);
+    double phi = atan2(hitPoint.x, hitPoint.z);
+    if (phi < 0.) phi += gc::TwoPi;
 
 	// Test intersection against clipping parameters
-	if( (thit - objectRay.mint) < tol || hitPoint.y < yMin.getValue() || hitPoint.y > yMax.getValue() || phi > phiMax.getValue() )
+    if( (thit - ray.tMin) < tolerance || hitPoint.y < yMin.getValue() || hitPoint.y > yMax.getValue() || phi > phiMax.getValue() )
 	{
 		if ( thit == t1 ) return false;
-		if ( t1 > objectRay.maxt ) return false;
+        if ( t1 > ray.tMax ) return false;
 		thit = t1;
 
 		// Compute ShapeSphere hit position and $\phi$
-		hitPoint = objectRay( thit );
-		phi = atan2( hitPoint.x, hitPoint.z );
-	    if ( phi < 0. ) phi += gc::TwoPi;
+        hitPoint = ray(thit);
+        phi = atan2(hitPoint.x, hitPoint.z);
+        if (phi < 0.) phi += gc::TwoPi;
 
-		if ( (thit - objectRay.mint) < tol || hitPoint.y < yMin.getValue() || hitPoint.y > yMax.getValue() || phi > phiMax.getValue() )	return false;
+        if ( (thit - ray.tMin) < tolerance || hitPoint.y < yMin.getValue() || hitPoint.y > yMax.getValue() || phi > phiMax.getValue() )	return false;
 	}
-	// Now check if the fucntion is being called from IntersectP,
-	// in which case the pointers tHit and dg are 0
+
+    // differential geometry
 	if( ( tHit == 0 ) && ( dg == 0 ) ) return true;
 	else if( ( tHit == 0 ) || ( dg == 0 ) ) gf::SevereError( "Function ShapeSphere::Intersect(...) called with null pointers" );
 
 	// Find parametric representation of ShapeSphere hit
-	double theta = acos( hitPoint.y / radius.getValue() );
-	double thetaMin = acos( yMax.getValue() / radius.getValue() );
-	double thetaMax = acos( yMin.getValue()/radius.getValue() );
-	double u = ( theta - thetaMin ) / ( thetaMax - thetaMin );
-	double v = phi / phiMax.getValue();
+    double cosTheta = hitPoint.y / radius.getValue();
+    double theta = acos(cosTheta);
+    double thetaMin = acos(yMax.getValue() / radius.getValue() );
+    double thetaMax = acos(yMin.getValue() / radius.getValue() );
+    double u = (theta - thetaMin) / (thetaMax - thetaMin);
+    double v = phi / phiMax.getValue();
 
-	// Compute ShapeSphere \dpdu and \dpdv
-	Vector3D dpdu( radius.getValue() * ( -thetaMin + thetaMax ) * cos( ( -1 + u ) * thetaMin - u * thetaMax ) * sin( phiMax.getValue() * v ),
-					radius.getValue() * ( -thetaMin + thetaMax ) * sin( ( -1 + u ) * thetaMin - u * thetaMax ),
-					radius.getValue() * ( -thetaMin + thetaMax ) * cos( phiMax.getValue() * v ) * cos( ( -1 + u ) * thetaMin - u * thetaMax ) );
+    // Compute ShapeSphere \dpdu and \dpdv
+    double sinTheta = sin(theta);
+    double cosPhi = cos(phi);
+    double sinPhi = sin(phi);
 
-	Vector3D dpdv( -phiMax.getValue() * radius.getValue() * cos( phiMax.getValue() * v ) * sin( ( -1 + u ) * thetaMin - u * thetaMax ),
-					0.0,
-					phiMax.getValue() * radius.getValue() * sin( phiMax.getValue() * v ) * sin( ( -1 + u ) * thetaMin - u * thetaMax ) );
+    Vector3D dpdu(
+        cosTheta*sinPhi,
+        -sinTheta,
+        cosTheta*cosPhi
+        );
+    dpdu *= r*(thetaMax - thetaMin);
 
-//	// Compute ShapeSphere \dndu and \dndv
-//	Vector3D d2Pduu(  -radius.getValue() * ( thetaMin - thetaMax ) * ( -thetaMin + thetaMax ) * sin( phiMax.getValue() * v ) * sin( (-1 + u) * thetaMin - u * thetaMax ),
-//					radius.getValue() * ( thetaMin - thetaMax ) * ( -thetaMin + thetaMax ) * cos( (-1 + u) * thetaMin - u * thetaMax ),
-//					-radius.getValue() * ( thetaMin - thetaMax ) * ( -thetaMin + thetaMax ) * cos( phiMax.getValue() * v ) * sin( (-1 + u) * thetaMin -u * thetaMax )  );
+    Vector3D dpdv(
+        cosPhi,
+        0.,
+        -sinPhi
+        );
+    dpdv *= r*phiMax.getValue()*sinTheta;
 
-//	Vector3D d2Pduv( phiMax.getValue() * radius.getValue() * ( -thetaMin + thetaMax ) * cos( phiMax.getValue() * v ) * cos( (-1 + u ) * thetaMin - u  * thetaMax ),
-//					0.0,
-//					-phiMax.getValue() * radius.getValue() * ( -thetaMin + thetaMax ) * cos( (-1 + u ) * thetaMin - u  * thetaMax ) * sin( phiMax.getValue() * v ) );
+    Vector3D N(
+        sinTheta*sinPhi,
+        cosTheta,
+        sinTheta*cosPhi
+        );
 
-//	Vector3D d2Pdvv( phiMax.getValue() * phiMax.getValue() * radius.getValue() * sin( phiMax.getValue() * v ) * sin( (-1 + u) * thetaMin - u * thetaMax ),
-//					0.0,
-//					phiMax.getValue() * phiMax.getValue() *  radius.getValue() * cos( phiMax.getValue() * v ) * sin( (-1 + u) * thetaMin - u * thetaMax ) );
+//	Vector3D N = Normalize( NormalVector( CrossProduct( dpdu, dpdv ) ) );
 
-//	// Compute coefficients for fundamental forms
-//	double E = DotProduct( dpdu, dpdu );
-//	double F = DotProduct( dpdu, dpdv );
-//	double G = DotProduct( dpdv, dpdv );
-
-	Vector3D N = Normalize( NormalVector( CrossProduct( dpdu, dpdv ) ) );
-
-//	double e = DotProduct( N, d2Pduu );
-//	double f = DotProduct( N, d2Pduv );
-//	double g = DotProduct( N, d2Pdvv );
-
-		// Compute \dndu and \dndv from fundamental form coefficients
-//	double invEGF2 = 1.0 / (E*G - F*F);
-    Vector3D dndu;// = (f*F - e*G) * invEGF2 * dpdu + (e*F - f*E) * invEGF2 * dpdv;
-    Vector3D dndv;// = (g*F - f*G) * invEGF2 * dpdu + (f*F - g*E) * invEGF2 * dpdv;
+    Vector3D dndu;
+    Vector3D dndv;
 
 	// Initialize _DifferentialGeometry_ from parametric information
 	*dg = DifferentialGeometry( hitPoint ,
@@ -222,20 +215,19 @@ bool ShapeSphere::Intersect( const Ray& objectRay, double* tHit, DifferentialGeo
 								dpdv,
                                 dndu,
 								dndv,
-		                        u, v, this );
+                                u, v, this);
 
-    dg->shapeFrontSide = ( DotProduct( N, objectRay.direction() ) <= 0 );
+    dg->shapeFrontSide = ( DotProduct( N, ray.direction() ) <= 0 );
     // Update _tHit_ for quadric intersection
     *tHit = thit;
 
 	return true;
 }
 
-bool ShapeSphere::IntersectP( const Ray& ray ) const
+bool ShapeSphere::IntersectP(const Ray& ray) const
 {
-	return Intersect( ray, 0, 0 );
+    return Intersect(ray, 0, 0);
 }
-
 
 void ShapeSphere::updateYMin( void *data, SoSensor * )
 {

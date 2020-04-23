@@ -48,7 +48,6 @@ private:
     void RayTracerCreatingLightPhotons(double numberOfRays);
     void RayTracerNotCreatingLightPhotons(double numberOfRays);
 
-
     QVector< InstanceNode* > m_exportSuraceList;
     InstanceNode* m_rootNode;
     InstanceNode* m_lightNode;

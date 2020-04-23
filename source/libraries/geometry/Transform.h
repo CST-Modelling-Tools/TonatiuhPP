@@ -18,7 +18,7 @@ public:
     Transform();
     Transform(double mat[4][4]);
     Transform(const Ptr<Matrix4x4>& mdir);
-    Transform(const Ptr<Matrix4x4>& mdir,  const Ptr<Matrix4x4>& minv);
+    Transform(const Ptr<Matrix4x4>& mdir, const Ptr<Matrix4x4>& minv);
     Transform(double t00, double t01, double t02, double t03,
               double t10, double t11, double t12, double t13,
               double t20, double t21, double t22, double t23,

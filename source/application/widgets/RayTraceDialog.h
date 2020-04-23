@@ -21,26 +21,26 @@ class RayTraceDialog: public QDialog, private Ui::RayTraceDialog
 
 
 public:
-    RayTraceDialog( QWidget * parent = 0, Qt::WindowFlags f = 0 );
-    RayTraceDialog( int numRays,
-            QVector< RandomDeviateFactory* > randomFactoryList, int selectedRandomFactory = 0,
-            int widthDivisions = 200,int heightDivisions = 200,
-            bool drawRays = true, bool drawPhotons = false,
-            int photonMapSize = 1000000, bool increasePhotonMap = false,
-                QWidget * parent = 0, Qt::WindowFlags f = 0 );
-    ~RayTraceDialog();
+    RayTraceDialog(QWidget* parent = 0, Qt::WindowFlags f = 0);
+    RayTraceDialog(int numRays,
+                   QVector< RandomDeviateFactory* > randomFactoryList, int selectedRandomFactory = 0,
+                   int widthDivisions = 200,int heightDivisions = 200,
+                   bool drawRays = true, bool drawPhotons = false,
+                   int photonMapSize = 1'000'000, bool increasePhotonMap = false,
+                   QWidget * parent = 0, Qt::WindowFlags f = 0);
+    ~RayTraceDialog() {}
 
-    bool DrawPhotons() const;
-    bool DrawRays() const;
-    int GetHeightDivisions() const;
-    int GetNumRays() const;
-    int GetPhotonMapBufferSize() const;
-    int GetRandomDeviateFactoryIndex() const;
-    int GetWidthDivisions() const;
-    bool IncreasePhotonMap() const;;
+    bool DrawPhotons() const {return m_drawPhotons;}
+    bool DrawRays() const {return m_drawRays;}
+    int GetNumRays() const {return m_numRays;}
+    int GetWidthDivisions() const {return m_widthDivisions;}
+    int GetHeightDivisions() const {return m_heightDivisions;}
+    int GetPhotonMapBufferSize() const {return m_photonMapBufferSize;}
+    int GetRandomDeviateFactoryIndex() const {return m_selectedRandomFactory;}
+    bool IncreasePhotonMap() const;
 
 public slots:
-    void applyChanges( QAbstractButton* button );
+    void applyChanges(QAbstractButton* button);
     void saveChanges();
 
 private:

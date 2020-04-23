@@ -100,8 +100,8 @@ bool TCube::Intersect(const Ray& /*objectRay*/, double* /*tHit*/, DifferentialGe
 
 bool TCube::IntersectP( const Ray& ray ) const
 {
-    double t0 = ray.mint;
-    double t1 = ray.maxt;
+    double t0 = ray.tMin;
+    double t1 = ray.tMax;
     double tmin, tmax, tymin, tymax, tzmin, tzmax;
     double halfWidth = m_width.getValue()/2.0;
     double halfHeight = m_height.getValue()/2.0;

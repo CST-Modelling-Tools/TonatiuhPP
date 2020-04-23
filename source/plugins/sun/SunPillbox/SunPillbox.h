@@ -16,7 +16,6 @@ public:
     static void initClass();
     SoNode* copy(SbBool copyConnections) const;
 
-    //Sunshape Interface
     void GenerateRayDirection(Vector3D& direction, RandomDeviate& rand) const;
 	double GetIrradiance() const;
     double GetThetaMax() const;
@@ -27,7 +26,7 @@ public:
     static const char* getClassName() {return "Pillbox";}
 
 protected:
-    ~SunPillbox();
+    ~SunPillbox() {}
 };
 
 
@@ -40,4 +39,3 @@ class SunPillboxFactory: public QObject, public SunFactory<SunPillbox>
     Q_INTERFACES(TSunShapeFactory)
     Q_PLUGIN_METADATA(IID "tonatiuh.TSunShapeFactory")
 };
-

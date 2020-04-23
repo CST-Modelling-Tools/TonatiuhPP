@@ -101,25 +101,23 @@ bool TPhotonMap::SetExportMode(PhotonMapExport* pExportPhotonMap)
     return 1;
 }
 
-void TPhotonMap::StoreRays(std::vector< Photon >& raysList)
+void TPhotonMap::StoreRays(std::vector<Photon>& raysList)
 {
-    unsigned int raysListSize = raysList.size();
-    if ( (m_storedPhotonsInBuffer > 0) && ( (m_storedPhotonsInBuffer + raysListSize)  > m_bufferSize) )
+    uint raysListSize = raysList.size();
+    if (m_storedPhotonsInBuffer > 0 &&  m_storedPhotonsInBuffer + raysListSize > m_bufferSize)
     {
-        if (m_pExportPhotonMap) m_pExportPhotonMap->SavePhotonMap(m_photonsInMemory);
+        if (m_pExportPhotonMap)
+            m_pExportPhotonMap->SavePhotonMap(m_photonsInMemory);
 
-        unsigned int photonListSize = m_photonsInMemory.size();
-        for (unsigned int i = 0; i < photonListSize; ++i)
-        {
-            delete m_photonsInMemory[i];
-            m_photonsInMemory[i] = 0;
-        }
+        for (uint n = 0; n < m_photonsInMemory.size(); ++n)
+            delete m_photonsInMemory[n];
+
         m_photonsInMemory.clear();
-        std::vector< Photon* >(m_photonsInMemory).swap(m_photonsInMemory);
         m_storedPhotonsInBuffer = 0;
     }
 
-    for (unsigned int photon = 0; photon < raysListSize; photon++)
+//    uint nMax = std::min(uint(m_bufferSize), raysListSize);
+    for (uint photon = 0; photon < raysListSize; photon++)
         m_photonsInMemory.push_back(new Photon(raysList[photon]) );
 
     m_storedPhotonsInBuffer += raysListSize;

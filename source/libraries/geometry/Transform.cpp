@@ -42,7 +42,6 @@ Transform::Transform(double t00, double t01, double t02, double t03,
                            t20, t21, t22, t23,
                            t30, t31, t32, t33);
     m_minv = m_mdir->Inverse();
-
 }
 
 Point3D Transform::operator()(const Point3D& point) const
@@ -52,9 +51,8 @@ Point3D Transform::operator()(const Point3D& point) const
     double zp = m_mdir->m[2][0] * point.x + m_mdir->m[2][1] * point.y + m_mdir->m[2][2] * point.z + m_mdir->m[2][3];
     double wp = m_mdir->m[3][0] * point.x + m_mdir->m[3][1] * point.y + m_mdir->m[3][2] * point.z + m_mdir->m[3][3];
 
-    if (wp == 1.0) return Point3D(xp, yp, zp);
+    if (wp == 1.) return Point3D(xp, yp, zp);
     else return Point3D(xp, yp, zp) / wp;
-
 }
 
 void Transform::operator()(const Point3D& point, Point3D& transformedPoint) const
@@ -64,7 +62,7 @@ void Transform::operator()(const Point3D& point, Point3D& transformedPoint) cons
     transformedPoint.z = m_mdir->m[2][0] * point.x + m_mdir->m[2][1] * point.y + m_mdir->m[2][2] * point.z + m_mdir->m[2][3];
     double transformedW = m_mdir->m[3][0] * point.x + m_mdir->m[3][1] * point.y + m_mdir->m[3][2] * point.z + m_mdir->m[3][3];
 
-    if (transformedW != 1.0) transformedPoint /= transformedW;
+    if (transformedW != 1.) transformedPoint /= transformedW;
 }
 
 Vector3D Transform::operator()(const Vector3D& vector) const
@@ -97,14 +95,14 @@ void Transform::operator()(const NormalVector& normal, NormalVector& transformed
 
 Ray Transform::operator()(const Ray& ray) const
 {
-    Ray transformedRay;
-    Vector3D transformedRayDirection;
-    (*this)(ray.origin, transformedRay.origin);
-    (*this)(ray.direction(), transformedRayDirection);
-    transformedRay.setDirection(transformedRayDirection);
-    transformedRay.mint = ray.mint;
-    transformedRay.maxt = ray.maxt;
-    return transformedRay;
+    Ray ans;
+    Vector3D direction;
+    (*this)(ray.origin, ans.origin);
+    (*this)(ray.direction(), direction);
+    ans.setDirection(direction);
+    ans.tMin = ray.tMin;
+    ans.tMax = ray.tMax;
+    return ans;
 }
 
 void Transform::operator()(const Ray& ray, Ray& transformedRay) const
@@ -113,8 +111,8 @@ void Transform::operator()(const Ray& ray, Ray& transformedRay) const
     (*this)(ray.origin, transformedRay.origin);
     (*this)(ray.direction(), transformedRayDirection);
     transformedRay.setDirection(transformedRayDirection);
-    transformedRay.mint = ray.mint;
-    transformedRay.maxt = ray.maxt;
+    transformedRay.tMin = ray.tMin;
+    transformedRay.tMax = ray.tMax;
 }
 
 BBox Transform::operator()(const BBox& bbox) const

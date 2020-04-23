@@ -54,7 +54,7 @@ public:
     void SetIntersectionBBox(BBox nodeBBox);
     void SetIntersectionTransform(Transform nodeTransform);
 
-    QVector< InstanceNode* > children;
+    QVector<InstanceNode*> children;
 
 private:
     SoNode* m_coinNode;

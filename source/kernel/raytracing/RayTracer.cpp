@@ -97,18 +97,18 @@ void RayTracer::RayTracerCreatingAllPhotons(double numberOfRays)
 
                 if (rayLength > 0)
                 {
-                    if (m_transmissivity && !m_transmissivity->IsTransmitted(ray.maxt, rand) )
+                    if (m_transmissivity && !m_transmissivity->IsTransmitted(ray.tMax, rand) )
                     {
                         ++rayLength;
                         isReflectedRay = false;
                         intersectedSurface = 0;
-                        ray.maxt = HUGE_VAL;
+                        ray.tMax = HUGE_VAL;
                     }
 
                 }
                 if (isReflectedRay)
                 {
-                    photonsVector.push_back(Photon( (ray)(ray.maxt), isFront, ++rayLength, intersectedSurface, 1) );
+                    photonsVector.push_back(Photon( (ray)(ray.tMax), isFront, ++rayLength, intersectedSurface, 1) );
 
                     //Prepare node and ray for next iteration
                     ray = reflectedRay;
@@ -117,16 +117,16 @@ void RayTracer::RayTracerCreatingAllPhotons(double numberOfRays)
 
             }
 
-            if (!(rayLength == 0 && ray.maxt == HUGE_VAL) )
+            if (!(rayLength == 0 && ray.tMax == HUGE_VAL) )
             {
 
-                if (ray.maxt == HUGE_VAL)
+                if (ray.tMax == HUGE_VAL)
                 {
-                    ray.maxt = 0.1;
-                    photonsVector.push_back(Photon( (ray)(ray.maxt), 0, ++rayLength, intersectedSurface) );
+                    ray.tMax = 0.1;
+                    photonsVector.push_back(Photon( (ray)(ray.tMax), 0, ++rayLength, intersectedSurface) );
                 }
                 else
-                    photonsVector.push_back(Photon( (ray)(ray.maxt), isFront, ++rayLength, intersectedSurface) );
+                    photonsVector.push_back(Photon( (ray)(ray.tMax), isFront, ++rayLength, intersectedSurface) );
             }
 
         }
@@ -172,12 +172,12 @@ void RayTracer::RayTracerCreatingLightPhotons(double numberOfRays)
 
                 if (rayLength > 0)
                 {
-                    if (m_transmissivity && !m_transmissivity->IsTransmitted(ray.maxt, rand) )
+                    if (m_transmissivity && !m_transmissivity->IsTransmitted(ray.tMax, rand) )
                     {
                         ++rayLength;
                         isReflectedRay = false;
                         intersectedSurface = 0;
-                        ray.maxt = HUGE_VAL;
+                        ray.tMax = HUGE_VAL;
                     }
 
                 }
@@ -185,7 +185,7 @@ void RayTracer::RayTracerCreatingLightPhotons(double numberOfRays)
                 {
                     ++rayLength;
                     if (m_exportSuraceList.contains(intersectedSurface) )
-                        photonsVector.push_back(Photon( (ray)(ray.maxt), isFront, rayLength, intersectedSurface, 1) );
+                        photonsVector.push_back(Photon( (ray)(ray.tMax), isFront, rayLength, intersectedSurface, 1) );
 
                     //Prepare node and ray for next iteration
                     ray = reflectedRay;
@@ -193,15 +193,15 @@ void RayTracer::RayTracerCreatingLightPhotons(double numberOfRays)
 
             }
 
-            if (m_exportSuraceList.contains(intersectedSurface) && !(rayLength == 0 && ray.maxt == HUGE_VAL) )
+            if (m_exportSuraceList.contains(intersectedSurface) && !(rayLength == 0 && ray.tMax == HUGE_VAL) )
             {
-                if (ray.maxt == HUGE_VAL)
+                if (ray.tMax == HUGE_VAL)
                 {
-                    ray.maxt = 0.1;
-                    photonsVector.push_back(Photon( (ray)(ray.maxt), 0, ++rayLength, intersectedSurface) );
+                    ray.tMax = 0.1;
+                    photonsVector.push_back(Photon( (ray)(ray.tMax), 0, ++rayLength, intersectedSurface) );
                 }
                 else
-                    photonsVector.push_back(Photon( (ray)(ray.maxt), isFront, ++rayLength, intersectedSurface) );
+                    photonsVector.push_back(Photon( (ray)(ray.tMax), isFront, ++rayLength, intersectedSurface) );
             }
 
         }
@@ -245,12 +245,12 @@ void RayTracer::RayTracerNotCreatingLightPhotons(double numberOfRays)
 
                 if (rayLength > 0)
                 {
-                    if (m_transmissivity && !m_transmissivity->IsTransmitted(ray.maxt, rand) )
+                    if (m_transmissivity && !m_transmissivity->IsTransmitted(ray.tMax, rand) )
                     {
                         ++rayLength;
                         isReflectedRay = false;
                         intersectedSurface = 0;
-                        ray.maxt = HUGE_VAL;
+                        ray.tMax = HUGE_VAL;
                     }
 
 
@@ -259,7 +259,7 @@ void RayTracer::RayTracerNotCreatingLightPhotons(double numberOfRays)
                 {
                     ++rayLength;
                     if (m_exportSuraceList.contains(intersectedSurface) )
-                        photonsVector.push_back(Photon( (ray)(ray.maxt), isFront, rayLength, intersectedSurface, 1) );
+                        photonsVector.push_back(Photon( (ray)(ray.tMax), isFront, rayLength, intersectedSurface, 1) );
 
                     //Prepare node and ray for next iteration
                     ray = reflectedRay;
@@ -267,15 +267,15 @@ void RayTracer::RayTracerNotCreatingLightPhotons(double numberOfRays)
 
             }
 
-            if (m_exportSuraceList.contains(intersectedSurface) && !(rayLength == 0 && ray.maxt == HUGE_VAL) )
+            if (m_exportSuraceList.contains(intersectedSurface) && !(rayLength == 0 && ray.tMax == HUGE_VAL) )
             {
-                if (ray.maxt == HUGE_VAL)
+                if (ray.tMax == HUGE_VAL)
                 {
-                    ray.maxt = 0.1;
-                    photonsVector.push_back(Photon( (ray)(ray.maxt), 0, ++rayLength, intersectedSurface) );
+                    ray.tMax = 0.1;
+                    photonsVector.push_back(Photon( (ray)(ray.tMax), 0, ++rayLength, intersectedSurface) );
                 }
                 else
-                    photonsVector.push_back(Photon( (ray)(ray.maxt), isFront, ++rayLength, intersectedSurface) );
+                    photonsVector.push_back(Photon( (ray)(ray.tMax), isFront, ++rayLength, intersectedSurface) );
             }
 
         }

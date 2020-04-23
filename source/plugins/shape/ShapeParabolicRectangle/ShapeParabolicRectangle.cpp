@@ -82,9 +82,9 @@ bool ShapeParabolicRectangle::Intersect(const Ray& objectRay, double *tHit, Diff
 	if( !gf::Quadratic( A, B, C, &t0, &t1 ) ) return false;
 
 	// Compute intersection distance along ray
-	if( t0 > objectRay.maxt || t1 < objectRay.mint ) return false;
-    double thit = ( t0 > objectRay.mint )? t0 : t1 ;
-    if( thit > objectRay.maxt ) return false;
+	if( t0 > objectRay.tMax || t1 < objectRay.tMin ) return false;
+    double thit = ( t0 > objectRay.tMin )? t0 : t1 ;
+    if( thit > objectRay.tMax ) return false;
 
     //Evaluate Tolerance
 	double tol = 0.00001;
@@ -93,15 +93,15 @@ bool ShapeParabolicRectangle::Intersect(const Ray& objectRay, double *tHit, Diff
 	Point3D hitPoint = objectRay( thit );
 
 	// Test intersection against clipping parameters
-	if( (thit - objectRay.mint) < tol ||  hitPoint.x < ( - wX / 2 ) || hitPoint.x > ( wX / 2 ) ||
+	if( (thit - objectRay.tMin) < tol ||  hitPoint.x < ( - wX / 2 ) || hitPoint.x > ( wX / 2 ) ||
 			hitPoint.z < ( - wZ / 2 ) || hitPoint.z > ( wZ / 2 ) )
 	{
 		if ( thit == t1 ) return false;
-		if ( t1 > objectRay.maxt ) return false;
+		if ( t1 > objectRay.tMax ) return false;
 		thit = t1;
 
 		hitPoint = objectRay( thit );
-		if( (thit - objectRay.mint) < tol ||  hitPoint.x < ( - wX / 2 ) || hitPoint.x > ( wX / 2 ) ||
+		if( (thit - objectRay.tMin) < tol ||  hitPoint.x < ( - wX / 2 ) || hitPoint.x > ( wX / 2 ) ||
 					hitPoint.z < ( - wZ / 2 ) || hitPoint.z > ( wZ / 2 ) )	return false;
 
 	}

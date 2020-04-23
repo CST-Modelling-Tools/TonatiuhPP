@@ -69,34 +69,27 @@ double TLightShape::GetValidArea() const
 
 std::vector< QPair< int, int > > TLightShape::GetValidAreasCoord() const
 {
-
     return m_validAreasVector;
 }
 
-Point3D TLightShape::Sample( double u, double v, int a, int b) const
+Point3D TLightShape::GetPoint3D(double u, double v, int h, int w) const //? w <> h
 {
-    //calculate the coordinates of a photon un a cell
-    return GetPoint3D( u, v,a,b );
-}
+    if ( OutOfRange(u, v) )
+        gf::SevereError("Function TLightShape::GetPoint3D called with invalid parameters" );
 
-Point3D TLightShape::GetPoint3D( double u, double v, int h, int w ) const
-{
-    if( OutOfRange( u, v ) )     gf::SevereError("Function TLightShape::GetPoint3D called with invalid parameters" );
+    // size of cells the sun is divided
+    double xWidth = (xMax.getValue() - xMin.getValue())/m_widthElements;
+    double zWidth = (zMax.getValue() - zMin.getValue())/m_heightElements;
 
-    //size of cells the sun is divided
-    double width =  (xMax.getValue() - xMin.getValue())/m_widthElements;
-    double height = (zMax.getValue() - zMin.getValue())/m_heightElements;
+    // calculate the photon coordinate
+    double x = xMin.getValue() + (u + w)*xWidth;
+    double z = zMin.getValue() + (v + h)*zWidth;
 
-    //calculate the photon coordinate
-    double x = xMin.getValue()+( u * width ) + (w*width);
-    double z = zMin.getValue()+( v * height ) + (h*height);
-
-    return Point3D( x, 0, z );
+    return Point3D(x, 0., z);
 }
 
 void TLightShape::SetLightSourceArea( int h, int w, int** lightArea )
 {
-
     if( m_lightAreaMatrix != 0 )
     {
         for( int i = 0; i < m_heightElements; i++ )
@@ -114,11 +107,6 @@ void TLightShape::SetLightSourceArea( int h, int w, int** lightArea )
         for( int j = 0; j < m_widthElements; j++ )
             if( m_lightAreaMatrix[i][j] == 1 )    m_validAreasVector.push_back( QPair< int, int >( i, j ) );
 
-}
-
-bool TLightShape::OutOfRange( double u, double v ) const
-{
-    return ( ( u < 0.0 ) || ( u > 1.0 ) || ( v < 0.0 ) || ( v > 1.0 ) );
 }
 
 void TLightShape::computeBBox(SoAction*, SbBox3f& box, SbVec3f& /*center*/ )

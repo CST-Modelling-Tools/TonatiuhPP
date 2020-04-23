@@ -7,12 +7,12 @@
 class Ray
 {
 public:
-    Ray() : mint(gc::Epsilon), maxt(gc::Infinity)
+    Ray() : tMin(gc::Epsilon), tMax(gc::Infinity)
     {
     }
 
     Ray(const Point3D& orig, const Vector3D& direc, double start = gc::Epsilon, double end = gc::Infinity)
-        : origin(orig), mint(start), maxt(end)
+        : origin(orig), tMin(start), tMax(end)
     {
         setDirection(direc);
     }
@@ -48,12 +48,12 @@ public:
     {
         if (this == &ray) return true;
         return ( (origin == ray.origin) && (m_direction == ray.m_direction) &&
-                 !(fabs(mint - ray.mint) > gc::Epsilon) && !(fabs(maxt - ray.maxt) > gc::Epsilon) );
+                 !(fabs(tMin - ray.tMin) > gc::Epsilon) && !(fabs(tMax - ray.tMax) > gc::Epsilon) );
     }
 
     Point3D origin;
-    mutable double mint;
-    mutable double maxt;
+    mutable double tMin;
+    mutable double tMax;
 
 private:
     Vector3D m_direction;

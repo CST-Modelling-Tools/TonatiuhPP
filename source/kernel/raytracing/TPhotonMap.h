@@ -19,7 +19,7 @@ public:
     void StoreRays(std::vector<Photon>& ray);
 
 private:
-    unsigned long m_bufferSize;
+    ulong m_bufferSize;
     Transform m_concentratorToWorld;
     PhotonMapExport* m_pExportPhotonMap;
     const SceneModel* m_pSceneModel;

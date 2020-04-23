@@ -78,12 +78,12 @@ void BBox::BoundingSphere(Point3D& center, double& radius) const
 
 bool BBox::IntersectP(const Ray& ray, double* hitt0, double* hitt1) const
 {
-    double t0 = ray.mint;
-    double t1 = ray.maxt;
+    double t0 = ray.tMin;
+    double t1 = ray.tMax;
     double tmin, tmax, tymin, tymax, tzmin, tzmax;
 
     double invDirection = ray.invDirection().x;
-    if (invDirection >= 0.0)
+    if (invDirection >= 0.)
     {
         tmin = (pMin.x - ray.origin.x) * invDirection;
         tmax = (pMax.x - ray.origin.x) * invDirection;
@@ -95,7 +95,7 @@ bool BBox::IntersectP(const Ray& ray, double* hitt0, double* hitt1) const
     }
 
     invDirection = ray.invDirection().y;
-    if (invDirection >= 0.0)
+    if (invDirection >= 0.)
     {
         tymin = (pMin.y - ray.origin.y) * invDirection;
         tymax = (pMax.y - ray.origin.y) * invDirection;
@@ -106,13 +106,13 @@ bool BBox::IntersectP(const Ray& ray, double* hitt0, double* hitt1) const
         tymax = (pMin.y - ray.origin.y) * invDirection;
     }
 
-    if ( (tmin > tymax) || (tymin > tmax) ) return false;
+    if (tmin > tymax || tymin > tmax) return false;
 
     if (tymin > tmin) tmin = tymin;
     if (tymax < tmax) tmax = tymax;
 
     invDirection = ray.invDirection().z;
-    if (invDirection >= 0.0)
+    if (invDirection >= 0.)
     {
         tzmin = (pMin.z - ray.origin.z) * invDirection;
         tzmax = (pMax.z - ray.origin.z) * invDirection;
@@ -123,11 +123,11 @@ bool BBox::IntersectP(const Ray& ray, double* hitt0, double* hitt1) const
         tzmax = (pMin.z - ray.origin.z) * invDirection;
     }
 
-    if ( (tmin > tzmax) || (tzmin > tmax) ) return false;
+    if (tmin > tzmax || tzmin > tmax) return false;
 
     if (tzmin > tmin) tmin = tzmin;
     if (tzmax < tmax) tmax = tzmax;
-    if ( (tmin < t1) && (tmax > t0) )
+    if (tmin < t1 && tmax > t0)
     {
         if (tmin < t0) tmin = t0;
         if (tmax > t1) tmax = t1;

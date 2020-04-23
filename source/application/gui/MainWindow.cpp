@@ -145,8 +145,8 @@ MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags fl
       m_graphicsRoot(0),
       m_coinNode_Buffer(0),
       m_manipulators_Buffer(0),
-      m_tracedRays(0),
-      m_raysPerIteration(10000),
+      m_raysTracedTotal(0),
+      m_raysTraced(10000),
       m_heightDivisions(200),
       m_widthDivisions(200),
       m_drawPhotons(false),
@@ -516,7 +516,8 @@ void MainWindow::RunCompleteRayTracer()
     TLightShape* raycastingSurface = 0;
     TTransmissivity* transmissivity = 0;
 
-    QDateTime startTime = QDateTime::currentDateTime();
+    QElapsedTimer timer;
+    timer.start();
 
     if (!ReadyForRaytracing(rootSeparatorInstance, lightInstance, lightTransform, sunShape, raycastingSurface, transmissivity) )
         return;
@@ -526,8 +527,7 @@ void MainWindow::RunCompleteRayTracer()
 
     Run();
 
-    QDateTime endTime = QDateTime::currentDateTime();
-    std::cout << "Elapsed time (RunCompleteRayTracer): " << startTime.secsTo(endTime) << std::endl;
+    std::cout << "Elapsed time (RunCompleteRayTracer): " << timer.elapsed() << std::endl;
 }
 
 
@@ -824,7 +824,7 @@ void MainWindow::ShowMenu(const QModelIndex& index)
 void MainWindow::ShowRayTracerOptionsDialog()
 {
     QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pPluginManager->getRandomFactories();
-    RayTraceDialog* options = new RayTraceDialog(m_raysPerIteration,
+    RayTraceDialog* options = new RayTraceDialog(m_raysTraced,
                                                  randomDeviateFactoryList, m_selectedRandomDeviate,
                                                  m_widthDivisions,m_heightDivisions,
                                                  m_drawRays, m_drawPhotons,
@@ -837,7 +837,6 @@ void MainWindow::ShowRayTracerOptionsDialog()
     SetRaysDrawingOptions(options->DrawRays(), options->DrawPhotons() );
     SetPhotonMapBufferSize(options->GetPhotonMapBufferSize() );
     SetIncreasePhotonMap(options->IncreasePhotonMap() );
-
 }
 
 void MainWindow::ShowWarning(QString message)
@@ -1580,9 +1579,8 @@ double MainWindow::GetwPhoton(){
     TLightShape* raycastingShape = static_cast< TLightShape* >(lightKit->getPart("icon", false) );
     double inputAperture = raycastingShape->GetValidArea();
 
-    return double ( inputAperture * irradiance ) / m_raysPerIteration;
+    return double(inputAperture * irradiance) / m_raysTraced;
 }
-
 
 void MainWindow::SetAimingPointRelativity(bool relative)
 {
@@ -1784,7 +1782,8 @@ void MainWindow::Run()
     TLightShape* raycastingSurface = 0;
     TTransmissivity* transmissivity = 0;
 
-    QDateTime startTime = QDateTime::currentDateTime();
+    QElapsedTimer timer;
+    timer.start();
 
     if (ReadyForRaytracing(rootSeparatorInstance, lightInstance, lightTransform, sunShape, raycastingSurface, transmissivity) )
     {
@@ -1793,11 +1792,9 @@ void MainWindow::Run()
             if (!m_pExportModeSettings) return;
             else
             {
-
                 PhotonMapExport* pExportMode = CreatePhotonMapExport();
                 if (!pExportMode) return;
                 if (!m_pPhotonMap->SetExportMode(pExportMode)  ) return;
-
             }
         }
 
@@ -1831,13 +1828,14 @@ void MainWindow::Run()
             return;
         }
 
-        QVector< long > raysPerThread;
-        int maximumValueProgressScale = 100;
-        unsigned long t1 = m_raysPerIteration / maximumValueProgressScale;
-        for (int progressCount = 0; progressCount < maximumValueProgressScale; ++progressCount)
+        QVector<long> raysPerThread;
+        int progressMax = 100;
+        ulong t1 = m_raysTraced / progressMax;
+        for (int progress = 0; progress < progressMax; ++progress)
             raysPerThread << t1;
 
-        if ( (t1 * maximumValueProgressScale) < m_raysPerIteration) raysPerThread << (m_raysPerIteration - (t1 * maximumValueProgressScale) );
+        if (t1*progressMax < m_raysTraced)
+            raysPerThread << m_raysTraced - (t1*progressMax);
 
 
         Transform lightToWorld = tgf::TransformFromSoTransform(lightTransform);
@@ -1846,19 +1844,20 @@ void MainWindow::Run()
 
 
         // Create a progress dialog.
-        QProgressDialog dialog;
-        dialog.setLabelText(QString("Progressing using %1 thread(s)...").arg(QThread::idealThreadCount() ) );
+        QProgressDialog progressDialog;
+        progressDialog.setLabelText(QString("Progressing using %1 thread(s)...").arg(QThread::idealThreadCount() ) );
 
         // Create a QFutureWatcher and conncect signals and slots.
         QFutureWatcher< void > futureWatcher;
-        QObject::connect(&futureWatcher, SIGNAL(finished()), &dialog, SLOT(reset()));
-        QObject::connect(&dialog, SIGNAL(canceled()), &futureWatcher, SLOT(cancel()));
-        QObject::connect(&futureWatcher, SIGNAL(progressRangeChanged(int,int)), &dialog, SLOT(setRange(int,int)));
-        QObject::connect(&futureWatcher, SIGNAL(progressValueChanged(int)), &dialog, SLOT(setValue(int)));
+        QObject::connect(&futureWatcher, SIGNAL(finished()), &progressDialog, SLOT(reset()));
+        QObject::connect(&progressDialog, SIGNAL(canceled()), &futureWatcher, SLOT(cancel()));
+        QObject::connect(&futureWatcher, SIGNAL(progressRangeChanged(int,int)), &progressDialog, SLOT(setRange(int,int)));
+        QObject::connect(&futureWatcher, SIGNAL(progressValueChanged(int)), &progressDialog, SLOT(setValue(int)));
 
+        std::cout << "QtConcurrent started: " << timer.elapsed() << std::endl;
         QMutex mutex;
         QMutex mutexPhotonMap;
-        QFuture< void > photonMap;
+        QFuture<void> photonMap;
         if (transmissivity)
             photonMap = QtConcurrent::map(raysPerThread, RayTracer(rootSeparatorInstance,
                                                                    lightInstance, raycastingSurface, sunShape, lightToWorld,
@@ -1866,7 +1865,6 @@ void MainWindow::Run()
                                                                    *m_rand,
                                                                    &mutex, m_pPhotonMap, &mutexPhotonMap,
                                                                    exportSuraceList) );
-
         else
             photonMap = QtConcurrent::map(raysPerThread, RayTracerNoTr(rootSeparatorInstance,
                                                                        lightInstance, raycastingSurface, sunShape, lightToWorld,
@@ -1877,10 +1875,11 @@ void MainWindow::Run()
         futureWatcher.setFuture(photonMap);
 
         // Display the dialog and start the event loop.
-        dialog.exec();
+        progressDialog.exec();
         futureWatcher.waitForFinished();
+        std::cout << "QtConcurrent finished: " << timer.elapsed() << std::endl;
 
-        m_tracedRays += m_raysPerIteration;
+        m_raysTracedTotal += m_raysTraced;
 
         if (exportSuraceList.count() < 1)
             ShowRaysIn3DView();
@@ -1889,16 +1888,14 @@ void MainWindow::Run()
             actionDisplayRays->setChecked(false);
         }
 
-
         double irradiance = sunShape->GetIrradiance();
         double inputAperture = raycastingSurface->GetValidArea();
-        double wPhoton = (inputAperture * irradiance) / m_tracedRays;
+        double wPhoton = (inputAperture * irradiance) / m_raysTracedTotal;
 
         m_pPhotonMap->EndStore(wPhoton);
     }
 
-    QDateTime endTime = QDateTime::currentDateTime();
-    std::cout << "Elapsed time (Run): " << startTime.secsTo(endTime) << std::endl;
+    std::cout << "Elapsed time (Run): " << timer.elapsed() << std::endl;
 }
 
 /*
@@ -2164,7 +2161,7 @@ void MainWindow::SetRaysDrawingOptions(bool drawRays, bool drawPhotons)
  */
 void MainWindow::SetRaysPerIteration(unsigned int rays)
 {
-    m_raysPerIteration = rays;
+    m_raysTraced = rays;
 }
 
 /*!
@@ -3187,14 +3184,14 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
         delete m_pPhotonMap;
         m_pPhotonMap = new TPhotonMap();
         m_pPhotonMap->SetBufferSize(m_bufferPhotons);
-        m_tracedRays = 0;
+        m_raysTracedTotal = 0;
     }
 
     if (!m_pPhotonMap)
     {
         m_pPhotonMap = new TPhotonMap();
         m_pPhotonMap->SetBufferSize(m_bufferPhotons);
-        m_tracedRays = 0;
+        m_raysTracedTotal = 0;
     }
 
 
@@ -3824,7 +3821,7 @@ void MainWindow::ShowRaysIn3DView()
         if (m_drawRays)
         {
 
-            SoSeparator* currentRays = trf::DrawPhotonMapRays(*m_pPhotonMap, m_tracedRays);
+            SoSeparator* currentRays = trf::DrawPhotonMapRays(*m_pPhotonMap, m_raysTracedTotal);
             if (currentRays) rays->addChild(currentRays);
 
         }

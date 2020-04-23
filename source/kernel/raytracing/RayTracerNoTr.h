@@ -34,18 +34,18 @@ public:
                   QMutex* mutex,
                   TPhotonMap* photonMap,
                   QMutex* mutexPhotonMap,
-                  QVector< InstanceNode* > exportSuraceList);
+                  QVector<InstanceNode*> exportSuraceList);
 
     typedef void result_type;
-    void operator()(double numberOfRays);
-
+    void operator()(ulong rays);
 
 private:
-    void RayTracerCreatingAllPhotons(double numberOfRays);
-    void RayTracerCreatingLightPhotons(double numberOfRays);
-    void RayTracerNotCreatingLightPhotons(double numberOfRays);
+    bool NewPrimitiveRay(Ray* ray, ParallelRandomDeviate& rand);
+    void RayTracerCreatingAllPhotons(ulong rays);
+    void RayTracerCreatingLightPhotons(ulong rays);
+    void RayTracerNotCreatingLightPhotons(ulong rays);
 
-    QVector< InstanceNode* > m_exportSuraceList;
+    QVector<InstanceNode*> m_exportSuraceList;
     InstanceNode* m_rootNode;
     InstanceNode* m_lightNode;
     TLightShape* m_lightShape;
@@ -55,8 +55,6 @@ private:
     QMutex* m_mutex;
     TPhotonMap* m_photonMap;
     QMutex* m_pPhotonMapMutex;
-    std::vector< QPair< int, int > >  m_validAreasVector;
-
-    bool NewPrimitiveRay(Ray* ray, ParallelRandomDeviate& rand);
+    std::vector< QPair<int, int> >  m_validAreasVector;
 };
 

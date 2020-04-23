@@ -21,9 +21,7 @@ public:
     bool operator==(const Matrix4x4& matrix) const;
 
     double m[4][4];
-
 };
 
 Ptr<Matrix4x4> Mul(const Ptr<Matrix4x4>& m1, const Ptr<Matrix4x4>& m2);
 std::ostream& operator<<(std::ostream& os, const Matrix4x4& matrix);
-

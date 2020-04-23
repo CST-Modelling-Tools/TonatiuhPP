@@ -86,9 +86,9 @@ bool ShapeCylinder::Intersect( const Ray& objectRay, double* tHit, DifferentialG
 	if( !gf::Quadratic( A, B, C, &t0, &t1 ) ) return false;
 
 	// Compute intersection distance along ray
-	if( t0 > objectRay.maxt || t1 < objectRay.mint ) return false;
-    double thit = ( t0 > objectRay.mint )? t0 : t1 ;
-    if( thit > objectRay.maxt ) return false;
+	if( t0 > objectRay.tMax || t1 < objectRay.tMin ) return false;
+    double thit = ( t0 > objectRay.tMin )? t0 : t1 ;
+    if( thit > objectRay.tMax ) return false;
 
    //Compute possible cylinder hit position and $\phi
     Point3D hitPoint = objectRay( thit );
@@ -102,16 +102,16 @@ bool ShapeCylinder::Intersect( const Ray& objectRay, double* tHit, DifferentialG
 
 
 	// Test intersection against clipping parameters
-	if( (thit - objectRay.mint) < tol  || hitPoint.z < zmin || hitPoint.z > zmax || phi > phiMax.getValue() )
+	if( (thit - objectRay.tMin) < tol  || hitPoint.z < zmin || hitPoint.z > zmax || phi > phiMax.getValue() )
 	{
 		if ( thit == t1 ) return false;
-		if ( t1 > objectRay.maxt ) return false;
+		if ( t1 > objectRay.tMax ) return false;
 		thit = t1;
 
 		hitPoint = objectRay( thit );
 		phi = atan2( hitPoint.y, hitPoint.x );
 		if ( phi < 0. ) phi += gc::TwoPi;
-		if ( (thit - objectRay.mint) < tol  || hitPoint.z < zmin || hitPoint.z > zmax || phi > phiMax.getValue() ) return false;
+		if ( (thit - objectRay.tMin) < tol  || hitPoint.z < zmin || hitPoint.z > zmax || phi > phiMax.getValue() ) return false;
 	}
 	// Now check if the fucntion is being called from IntersectP,
 	// in which case the pointers tHit and dg are 0

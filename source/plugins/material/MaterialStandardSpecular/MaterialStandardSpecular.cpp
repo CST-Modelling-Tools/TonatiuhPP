@@ -123,18 +123,17 @@ void MaterialStandardSpecular::updateTransparency(void* data, SoSensor*)
 bool MaterialStandardSpecular::OutputRay(const Ray& incident, DifferentialGeometry* dg, RandomDeviate& rand, Ray* outputRay) const
 {
 	double randomNumber = rand.RandomDouble();
-    if (randomNumber >= m_reflectivity.getValue()  ) return false; //return 0;
+    if (randomNumber >= m_reflectivity.getValue() ) return false;
 
 	//Compute reflected ray (local coordinates )
 	outputRay->origin = dg->point;
 
 	NormalVector normalVector;
-	double sigmaSlope = m_sigmaSlope.getValue() / 1000;
-    if (sigmaSlope > 0.0)
-	{
+    double sigmaSlope = m_sigmaSlope.getValue() / 1000.; // from mrad to rad
+    if (sigmaSlope > 0.) {
 		NormalVector errorNormal;
         if (m_distribution.getValue() == 0)
-		{
+        { // pillbox
 			double phi = gc::TwoPi * rand.RandomDouble();
 			double theta = sigmaSlope * rand.RandomDouble();
 
@@ -143,29 +142,20 @@ bool MaterialStandardSpecular::OutputRay(const Ray& incident, DifferentialGeomet
             errorNormal.z = sin(theta) * cos(phi);
         }
         else if (m_distribution.getValue() == 1)
-        {
+        { // normal
             errorNormal.x = sigmaSlope * tgf::AlternateBoxMuller(rand);
-            errorNormal.y = 1.0;
+            errorNormal.y = 1.;
             errorNormal.z = sigmaSlope * tgf::AlternateBoxMuller(rand);
-
         }
 		Vector3D r = dg->normal;
         Vector3D s = Normalize(dg->dpdu);
         Vector3D t = Normalize(dg->dpdv);
-        Transform trasform(s.x, s.y, s.z, 0.0,
-                           r.x, r.y, r.z, 0.0,
-                           t.x, t.y, t.z, 0.0,
-                           0.0, 0.0, 0.0, 1.0);
-
-        NormalVector normalDirection = trasform.GetInverse()(errorNormal);
-        normalVector = Normalize(normalDirection);
-	}
-	else
-	{
+        normalVector = Normalize(NormalVector(s*errorNormal.x + r*errorNormal.y + t*errorNormal.z));
+    } else
 		normalVector = dg->normal;
-	}
+
 
     double cosTheta = DotProduct(normalVector, incident.direction() );
-    outputRay->setDirection(Normalize(incident.direction() - 2.0 * normalVector * cosTheta) );
+    outputRay->setDirection(Normalize(incident.direction() - 2. * normalVector * cosTheta) );
 	return true;
 }

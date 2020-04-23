@@ -251,8 +251,8 @@ private:
     SoNode* m_coinNode_Buffer;
     QStringList* m_manipulators_Buffer;
 
-    unsigned long m_tracedRays;
-    unsigned long m_raysPerIteration;
+    unsigned long m_raysTracedTotal;
+    unsigned long m_raysTraced;
     int m_heightDivisions;
     int m_widthDivisions;
 
