@@ -5,5 +5,5 @@
 
 Work in progress
 
-![Logo](/documentation/SplashScreen.png)
+![Logo](./documentation/SplashScreen.png)
 
