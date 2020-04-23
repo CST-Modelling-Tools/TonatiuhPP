@@ -5,4 +5,5 @@
 
 Work in progress
 
-<img src='./documentation/SplashScreen.png'/>
+![Logo](/documentation/SplashScreen.png)
+
