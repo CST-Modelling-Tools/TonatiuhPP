@@ -67,7 +67,7 @@ void PluginManager::loadTonatiuhPlugin(const QString& file)
     QPluginLoader loader(file);
     QObject* plugin = loader.instance();
     if (plugin) {
-        if (plugin->inherits("TTransmissivityFactory") ) loadAirPlugin(plugin);
+        if (dynamic_cast<TTransmissivityFactory*>(plugin)) loadAirPlugin(plugin);
         if (plugin->inherits("TComponentFactory") ) LoadComponentPlugin(plugin);
         if (dynamic_cast<PhotonMapExportFactory*>(plugin)) loadExportPlugin(plugin);
         if (dynamic_cast<TMaterialFactory*>(plugin)) loadMaterialPlugin(plugin);
@@ -97,6 +97,7 @@ void PluginManager::LoadComponentPlugin(QObject* plugin)
     TComponentFactory* f = qobject_cast<TComponentFactory*>(plugin);
     if (!f) gf::SevereError("PluginManager::LoadComponentPlugin: Component plug-in not recognized");
     m_componentFactories << f;
+    // template with void create
 }
 
 /*!

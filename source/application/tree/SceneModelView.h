@@ -38,5 +38,4 @@ private:
     QModelIndex m_currentIndex;
     NodeNameDelegate* m_iteimsDelegate;
     QPoint startPos;
-
 };

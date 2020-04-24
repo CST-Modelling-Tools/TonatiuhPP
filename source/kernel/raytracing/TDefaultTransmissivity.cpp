@@ -19,7 +19,7 @@ TDefaultTransmissivity::~TDefaultTransmissivity()
 
 }
 
-bool TDefaultTransmissivity::IsTransmitted( double /*distance*/, RandomDeviate& /*rand*/ ) const
+bool TDefaultTransmissivity::transmission( double /*distance*/, RandomDeviate& /*rand*/ ) const
 {
     return true;
 }

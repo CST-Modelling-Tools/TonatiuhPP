@@ -22,7 +22,11 @@ public:
     static void initClass();
 
     double GetValidArea() const;
-    std::vector< QPair< int, int > > GetValidAreasCoord() const;
+    const std::vector< QPair<int, int> >& GetValidAreasCoord() const
+    {
+        return m_validAreasVector;
+    }
+
     double GetVolume() const {return 0.;}
 
     Point3D Sample(double u, double v, int a, int b) const {
@@ -52,5 +56,5 @@ private:
     int m_heightElements;
     int** m_lightAreaMatrix;
     int m_widthElements;
-    std::vector< QPair< int, int > > m_validAreasVector;
+    std::vector< QPair<int, int> > m_validAreasVector;
 };

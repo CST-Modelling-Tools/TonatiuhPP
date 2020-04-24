@@ -1,7 +1,7 @@
 TARGET = Tonatiuh
 DESTDIR = ..
 
-VERSION = 2.2.4
+VERSION = 2.3.0
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 include(../config.pri)

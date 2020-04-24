@@ -1,6 +1,6 @@
 #include "TTransmissivity.h"
 
-SO_NODE_ABSTRACT_SOURCE(TTransmissivity);
+SO_NODE_ABSTRACT_SOURCE(TTransmissivity)
 
 
 void TTransmissivity::initClass()

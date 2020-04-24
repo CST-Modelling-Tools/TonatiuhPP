@@ -73,7 +73,7 @@ PhotonMapExport* TPhotonMap::GetExportMode() const
 /*!
  * Sets the size of the buffer to \a nPhotons.
  */
-void TPhotonMap::SetBufferSize(unsigned long nPhotons)
+void TPhotonMap::SetBufferSize(ulong nPhotons)
 {
     m_bufferSize = nPhotons;
 }

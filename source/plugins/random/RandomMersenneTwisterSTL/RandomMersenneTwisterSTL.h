@@ -2,14 +2,14 @@
 
 #include "kernel/statistics/RandomDeviate.h"
 
-
 #include <random>
+
 
 class RandomMersenneTwisterSTL: public RandomDeviate
 {
 
 public:
-    RandomMersenneTwisterSTL(ulong seed = 5489UL, long size = 10'000'000);
+    RandomMersenneTwisterSTL(ulong seed, long size = 10'000'000);
 
     void FillArray(double* array, ulong size);
 

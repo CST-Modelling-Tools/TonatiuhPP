@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-#SUBDIRS += air
+SUBDIRS += air
 #SUBDIRS += component
 SUBDIRS += material
 SUBDIRS += photon

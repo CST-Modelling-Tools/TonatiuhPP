@@ -13,7 +13,7 @@ public:
     void EndStore(double wPhoton);
     std::vector<Photon*> GetAllPhotons() const;
     PhotonMapExport* GetExportMode() const;
-    void SetBufferSize(unsigned long nPhotons);
+    void SetBufferSize(ulong nPhotons);
     void SetConcentratorToWorld(Transform concentratorToWorld);
     bool SetExportMode(PhotonMapExport* pExportPhotonMap);
     void StoreRays(std::vector<Photon>& ray);

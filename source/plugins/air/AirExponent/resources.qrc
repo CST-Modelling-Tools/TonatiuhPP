@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/" >
+        <file>AirExponent.png</file>
+    </qresource>
+</RCC>

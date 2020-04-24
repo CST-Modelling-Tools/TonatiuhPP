@@ -67,10 +67,7 @@ double TLightShape::GetValidArea() const
  * Returns the indexes of the valid areas to the ray tracer.
  */
 
-std::vector< QPair< int, int > > TLightShape::GetValidAreasCoord() const
-{
-    return m_validAreasVector;
-}
+
 
 Point3D TLightShape::GetPoint3D(double u, double v, int h, int w) const //? w <> h
 {

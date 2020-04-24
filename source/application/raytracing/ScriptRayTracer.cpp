@@ -16,7 +16,6 @@
 #include "kernel/statistics/RandomDeviate.h"
 #include "kernel/statistics/RandomDeviateFactory.h"
 #include "kernel/raytracing/RayTracer.h"
-#include "kernel/raytracing/RayTracerNoTr.h"
 #include "kernel/geometry/tgf.h"
 #include "kernel/raytracing/TLightKit.h"
 #include "kernel/raytracing/TLightShape.h"
@@ -376,10 +375,10 @@ int ScriptRayTracer::Trace()
     return 1;
 }
 
-double ScriptRayTracer::GetArea(){
+double ScriptRayTracer::GetArea() {
     return m_area;
 }
 
-double ScriptRayTracer::GetNumrays(){
+double ScriptRayTracer::GetNumrays() {
     return m_numberOfRays;
 }

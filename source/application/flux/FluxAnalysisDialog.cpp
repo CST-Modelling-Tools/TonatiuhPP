@@ -18,7 +18,6 @@
 #include "kernel/gui/InstanceNode.h"
 #include "kernel/statistics/RandomDeviate.h"
 #include "kernel/raytracing/RayTracer.h"
-#include "kernel/raytracing/RayTracerNoTr.h"
 #include "gui/SceneModel.h"
 #include "SelectSurfaceDialog.h"
 #include "kernel/raytracing/TLightKit.h"

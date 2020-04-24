@@ -18,7 +18,6 @@
 #include "kernel/raytracing/TPhotonMap.h"
 #include "libraries/geometry/gc.h"
 #include "kernel/raytracing/RayTracer.h"
-#include "kernel/raytracing/RayTracerNoTr.h"
 #include "kernel/raytracing/TLightKit.h"
 #include "kernel/raytracing/TLightShape.h"
 #include "libraries/geometry/Transform.h"
@@ -91,7 +90,7 @@ QString FluxAnalysis::GetSurfaceType(QString nodeURL)
     InstanceNode* instanceNode = m_pCurrentSceneModel->NodeFromIndex(nodeIndex);
     if (!instanceNode || instanceNode == 0) return QLatin1String("");
 
-    TShapeKit* shapeKit = static_cast< TShapeKit* > (instanceNode->GetNode() );
+    TShapeKit* shapeKit = static_cast<TShapeKit* > (instanceNode->GetNode() );
     if (!shapeKit || shapeKit == 0) return QLatin1String("");
 
     TShape* shape = static_cast< TShape* >(shapeKit->getPart("shape", false) );
@@ -277,20 +276,13 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
 
     QMutex mutex;
     QMutex mutexPhotonMap;
-    QFuture< void > photonMap;
-    if (transmissivity)
+    QFuture<void> photonMap;
         photonMap = QtConcurrent::map(raysPerThread, RayTracer(m_pRootSeparatorInstance,
-                                                               lightInstance, raycastingSurface, sunShape, lightToWorld,
-                                                               transmissivity,
-                                                               *m_pRandomDeviate,
-                                                               &mutex, m_pPhotonMap, &mutexPhotonMap,
-                                                               exportSuraceList) );
-    else
-        photonMap = QtConcurrent::map(raysPerThread, RayTracerNoTr(m_pRootSeparatorInstance,
-                                                                   lightInstance, raycastingSurface, sunShape, lightToWorld,
-                                                                   *m_pRandomDeviate,
-                                                                   &mutex, m_pPhotonMap, &mutexPhotonMap,
-                                                                   exportSuraceList) );
+            lightInstance, raycastingSurface, sunShape, lightToWorld,
+            transmissivity,
+            *m_pRandomDeviate,
+            &mutex, m_pPhotonMap, &mutexPhotonMap,
+            exportSuraceList) );
 
     futureWatcher.setFuture(photonMap);
 
@@ -302,7 +294,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
 
     double irradiance = sunShape->GetIrradiance();
     double inputAperture = raycastingSurface->GetValidArea();
-    m_wPhoton = double ( inputAperture * irradiance ) / m_tracedRays;
+    m_wPhoton = double(inputAperture*irradiance) / m_tracedRays;
 
     UpdatePhotonCounts();
 }

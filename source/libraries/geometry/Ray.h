@@ -17,10 +17,6 @@ public:
         setDirection(direc);
     }
 
-    ~Ray()
-    {
-    }
-
     Point3D operator()(double t) const
     {
         return origin + m_direction * t;
@@ -33,15 +29,15 @@ public:
 
     const Vector3D& invDirection() const
     {
-        return m_invDirection;
+        return m_directionInv;
     }
 
     void setDirection(const Vector3D& direction)
     {
         m_direction = direction;
-        m_invDirection.x = 1.0 / m_direction.x;
-        m_invDirection.y = 1.0 / m_direction.y;
-        m_invDirection.z = 1.0 / m_direction.z;
+        m_directionInv.x = 1./m_direction.x;
+        m_directionInv.y = 1./m_direction.y;
+        m_directionInv.z = 1./m_direction.z;
     }
 
     bool operator==(const Ray& ray) const
@@ -57,7 +53,7 @@ public:
 
 private:
     Vector3D m_direction;
-    Vector3D m_invDirection;
+    Vector3D m_directionInv;
 };
 
 

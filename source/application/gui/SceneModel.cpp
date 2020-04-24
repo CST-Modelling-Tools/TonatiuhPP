@@ -335,7 +335,7 @@ QVariant SceneModel::data( const QModelIndex& modelIndex, int role ) const
         {
             if( coinNode->getTypeId().isDerivedFrom( TLightKit::getClassTypeId() ) )
             {
-                return QIcon( QLatin1String( ":/icons/lightKit.png" ) );
+                return QIcon( QLatin1String( ":/icons/environmentSun.png" ) );
             }
             else if( coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
             {

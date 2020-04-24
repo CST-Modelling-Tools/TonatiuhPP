@@ -26,12 +26,12 @@ SceneModelView::SceneModelView( QWidget *parent )
     setItemDelegate( m_iteimsDelegate );
 
     //setAcceptDrops(true);
+//    setAnimated(false);
 
     connect( this, SIGNAL( collapsed( const QModelIndex& ) ),
             this, SLOT ( resizeViewToContents ( const QModelIndex& ) ) );
     connect( this, SIGNAL( expanded ( const QModelIndex& ) ),
             this, SLOT ( resizeViewToContents ( const QModelIndex& ) ) );
-
 }
 
 /*!

@@ -68,9 +68,6 @@
         <property name="selectionBehavior">
          <enum>QAbstractItemView::SelectRows</enum>
         </property>
-        <property name="animated">
-         <bool>true</bool>
-        </property>
         <property name="allColumnsShowFocus">
          <bool>false</bool>
         </property>
@@ -143,7 +140,7 @@
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
-     <string>View</string>
+     <string>&amp;View</string>
     </property>
     <addaction name="actionAxis"/>
     <addaction name="actionBackground"/>
@@ -155,6 +152,7 @@
     <addaction name="actionSunPlane"/>
     <addaction name="separator"/>
     <addaction name="actionGrid"/>
+    <addaction name="actionDisplayRays"/>
     <addaction name="actionGridSettings"/>
    </widget>
    <widget class="QMenu" name="menuInsert">
@@ -206,57 +204,37 @@
    </widget>
    <widget class="QMenu" name="menuEnvironment">
     <property name="title">
-     <string>Environment</string>
+     <string>E&amp;nvironment</string>
     </property>
-    <widget class="QMenu" name="menuSunLight">
-     <property name="title">
-      <string>Sun Light</string>
-     </property>
-     <addaction name="actionDefineSunLight"/>
-     <addaction name="actionCalculateSunPosition"/>
-     <addaction name="separator"/>
-     <addaction name="actionDisconnect_All_Trackers"/>
-    </widget>
-    <widget class="QMenu" name="menuTransmissivity">
-     <property name="title">
-      <string>Transmissivity</string>
-     </property>
-     <addaction name="separator"/>
-     <addaction name="actionDefineTransmissivity"/>
-    </widget>
-    <addaction name="menuSunLight"/>
-    <addaction name="menuTransmissivity"/>
+    <addaction name="actionDefineSunLight"/>
+    <addaction name="actionCalculateSunPosition"/>
+    <addaction name="actionDisconnect_All_Trackers"/>
+    <addaction name="separator"/>
+    <addaction name="actionDefineTransmissivity"/>
    </widget>
    <widget class="QMenu" name="menu_Raytrace">
     <property name="title">
-     <string>&amp;Ray Trace</string>
+     <string>&amp;Run</string>
     </property>
     <addaction name="actionRun"/>
-    <addaction name="actionRunFluxAnalysis"/>
-    <addaction name="actionDisplayRays"/>
-    <addaction name="separator"/>
     <addaction name="actionRayTraceOptions"/>
-    <addaction name="actionReset_Analyzer_Values"/>
+    <addaction name="separator"/>
+    <addaction name="actionRunFluxAnalysis"/>
+    <addaction name="separator"/>
+    <addaction name="actionOpenScriptEditor"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="actionAbout"/>
-   </widget>
-   <widget class="QMenu" name="menuAutomation">
-    <property name="title">
-     <string>Automation</string>
-    </property>
-    <addaction name="actionOpenScriptEditor"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuInsert"/>
    <addaction name="menuEnvironment"/>
-   <addaction name="menu_Raytrace"/>
    <addaction name="menuView"/>
-   <addaction name="menuAutomation"/>
+   <addaction name="menu_Raytrace"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -477,10 +455,10 @@
   <action name="actionRun">
    <property name="icon">
     <iconset resource="../resources.qrc">
-     <normaloff>:/icons/run.png</normaloff>:/icons/run.png</iconset>
+     <normaloff>:/icons/runRayTracing.png</normaloff>:/icons/runRayTracing.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Run</string>
+    <string>&amp;Ray Tracing...</string>
    </property>
   </action>
   <action name="actionAxis">
@@ -558,7 +536,7 @@
   </action>
   <action name="actionRayTraceOptions">
    <property name="text">
-    <string>Ray Trace Options ...</string>
+    <string>Ray Tracing Options ...</string>
    </property>
   </action>
   <action name="actionSurfaceNode">
@@ -603,10 +581,10 @@
    </property>
    <property name="icon">
     <iconset resource="../resources.qrc">
-     <normaloff>:/icons/lightKit.png</normaloff>:/icons/lightKit.png</iconset>
+     <normaloff>:/icons/environmentSun.png</normaloff>:/icons/environmentSun.png</iconset>
    </property>
    <property name="text">
-    <string>Define SunLight...</string>
+    <string>Sun...</string>
    </property>
   </action>
   <action name="actionEdit_Mode">
@@ -626,6 +604,10 @@
    </property>
    <property name="enabled">
     <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/icons/viewGrid.png</normaloff>:/icons/viewGrid.png</iconset>
    </property>
    <property name="text">
     <string>Grid</string>
@@ -650,7 +632,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Sun Position Calculator ...</string>
+    <string>Sun Calculator ...</string>
    </property>
   </action>
   <action name="actionExportPhotonMap">
@@ -687,10 +669,10 @@
    </property>
    <property name="icon">
     <iconset resource="../resources.qrc">
-     <normaloff>:/icons/grid.png</normaloff>:/icons/grid.png</iconset>
+     <normaloff>:/icons/viewGrid.png</normaloff>:/icons/viewGrid.png</iconset>
    </property>
    <property name="text">
-    <string>Grid Settings ...</string>
+    <string>Grid Settings...</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -700,7 +682,7 @@
   </action>
   <action name="actionOpenScriptEditor">
    <property name="text">
-    <string>Script Editor</string>
+    <string>Script...</string>
    </property>
   </action>
   <action name="actionCheckForUpdates">
@@ -746,8 +728,12 @@
    </property>
   </action>
   <action name="actionDefineTransmissivity">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/icons/environmentAir.png</normaloff>:/icons/environmentAir.png</iconset>
+   </property>
    <property name="text">
-    <string>Define Transmissivity...</string>
+    <string>Air...</string>
    </property>
   </action>
   <action name="actionNetworkConnections">
@@ -761,7 +747,7 @@
      <normaloff>:/icons/fluxdistribution.png</normaloff>:/icons/fluxdistribution.png</iconset>
    </property>
    <property name="text">
-    <string>Run Flux Analysis ...</string>
+    <string>Flux Analysis ...</string>
    </property>
   </action>
  </widget>

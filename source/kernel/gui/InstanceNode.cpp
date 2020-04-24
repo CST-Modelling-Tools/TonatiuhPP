@@ -82,14 +82,14 @@ bool InstanceNode::Intersect(const Ray& ray, RandomDeviate& rand, bool* isShapeF
         {
             InstanceNode* intersectedChild = 0;
             Ray childOutputRay;
-            bool childShapreFront = true;
-            bool isChildOutputRay = children[index]->Intersect(ray, rand, &childShapreFront, &intersectedChild, &childOutputRay);
+            bool childShapeFront = true;
+            bool isChildOutputRay = children[index]->Intersect(ray, rand, &childShapeFront, &intersectedChild, &childOutputRay);
 
-            if (ray.tMax < t)
+            if (ray.tMax < t) // tMax mutable
             {
                 t = ray.tMax;
                 *modelNode = intersectedChild;
-                *isShapeFront = childShapreFront;
+                *isShapeFront = childShapeFront;
 
                 *outputRay = childOutputRay;
                 isOutputRay = isChildOutputRay;

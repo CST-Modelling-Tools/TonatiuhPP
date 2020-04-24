@@ -63,6 +63,7 @@
 
 #include "main/Document.h"
 #include "widgets/ExportDialog.h"
+#include "widgets/DialogAbout.h"
 #include "flux/ExportPhotonsDialog.h"
 #include "flux/FluxAnalysis.h"
 #include "flux/FluxAnalysisDialog.h"
@@ -82,7 +83,6 @@
 #include "kernel/statistics/RandomDeviateFactory.h"
 #include "widgets/RayTraceDialog.h"
 #include "kernel/raytracing/RayTracer.h"
-#include "kernel/raytracing/RayTracerNoTr.h"
 #include "SceneModel.h"
 #include "script/ScriptEditorDialog.h"
 #include "calculator/SunCalculatorDialog.h"
@@ -159,6 +159,7 @@ MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags fl
       m_focusView(0)
 {
     setupUi(this);
+
     SetupActions();
     SetupMenus();
     SetupDocument();
@@ -982,16 +983,9 @@ void MainWindow::on_actionOpenScriptEditor_triggered()
  */
 void MainWindow::on_actionAbout_triggered()
 {
-    QString appVersion = qApp->applicationVersion();
-    QString aboutMessage("Tonatiuh\n"
-                         "Version: " + appVersion + "\n"
-                                                    "\nPlease see http://www.gnu.org/licenses/gpl.html for an overview of GPLv3 licensing.\n"
-                                                    "\nSee http://iat-cener.github.io/tonatiuh/ for more information.");
-    QMessageBox::about(this, QString("About Toantiuh"), aboutMessage);
-
-
+    DialogAbout dialog;
+    dialog.exec();
 }
-
 
 /*!
  * Changes the number of the grid cells and grid cell dimensions.
@@ -1209,6 +1203,8 @@ void MainWindow::CreateGroupNode()
     else
         parentIndex = sceneModelView->currentIndex();
 
+    sceneModelView->expand(parentIndex);
+
     InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
     if (!parentInstance)
     {
@@ -1228,23 +1224,18 @@ void MainWindow::CreateGroupNode()
         TSeparatorKit* separatorKit = new TSeparatorKit();
 
         CmdInsertSeparatorKit* cmdInsertSeparatorKit = new CmdInsertSeparatorKit(separatorKit, QPersistentModelIndex(parentIndex), m_sceneModel);
-        cmdInsertSeparatorKit->setText("Insert SeparatorKit node");
+        cmdInsertSeparatorKit->setText("Insert node");
         m_commandStack->push(cmdInsertSeparatorKit);
 
-        int count = 1;
-        QString nodeName = QString("TSeparatorKit%1").arg(QString::number(count) );
-        while (!m_sceneModel->SetNodeName(separatorKit, nodeName) )
-        {
-            count++;
-            nodeName = QString("TSeparatorKit%1").arg(QString::number(count) );
-        }
+        int count = 0;
+        QString name;
+        do {
+            name = QString("Node-%1").arg(++count);
+        } while (!m_sceneModel->SetNodeName(separatorKit, name));
 
         UpdateLightSize();
         m_document->SetDocumentModified(true);
-
-
     }
-
 }
 
 /*!
@@ -1848,7 +1839,7 @@ void MainWindow::Run()
         progressDialog.setLabelText(QString("Progressing using %1 thread(s)...").arg(QThread::idealThreadCount() ) );
 
         // Create a QFutureWatcher and conncect signals and slots.
-        QFutureWatcher< void > futureWatcher;
+        QFutureWatcher<void> futureWatcher;
         QObject::connect(&futureWatcher, SIGNAL(finished()), &progressDialog, SLOT(reset()));
         QObject::connect(&progressDialog, SIGNAL(canceled()), &futureWatcher, SLOT(cancel()));
         QObject::connect(&futureWatcher, SIGNAL(progressRangeChanged(int,int)), &progressDialog, SLOT(setRange(int,int)));
@@ -1858,20 +1849,12 @@ void MainWindow::Run()
         QMutex mutex;
         QMutex mutexPhotonMap;
         QFuture<void> photonMap;
-        if (transmissivity)
-            photonMap = QtConcurrent::map(raysPerThread, RayTracer(rootSeparatorInstance,
-                                                                   lightInstance, raycastingSurface, sunShape, lightToWorld,
-                                                                   transmissivity,
-                                                                   *m_rand,
-                                                                   &mutex, m_pPhotonMap, &mutexPhotonMap,
-                                                                   exportSuraceList) );
-        else
-            photonMap = QtConcurrent::map(raysPerThread, RayTracerNoTr(rootSeparatorInstance,
-                                                                       lightInstance, raycastingSurface, sunShape, lightToWorld,
-                                                                       *m_rand,
-                                                                       &mutex, m_pPhotonMap, &mutexPhotonMap,
-                                                                       exportSuraceList) );
-
+        photonMap = QtConcurrent::map(raysPerThread, RayTracer(rootSeparatorInstance,
+            lightInstance, raycastingSurface, sunShape, lightToWorld,
+            transmissivity,
+            *m_rand,
+            &mutex, m_pPhotonMap, &mutexPhotonMap,
+            exportSuraceList) );
         futureWatcher.setFuture(photonMap);
 
         // Display the dialog and start the event loop.
@@ -3269,7 +3252,6 @@ void MainWindow::SetupActions()
 
 void MainWindow::SetupActionsInsertComponent()
 {
-
     QMenu* pComponentMenu = menuInsert->findChild< QMenu* >("menuComponent");
     if (!pComponentMenu) return;
     if (pComponentMenu->isEmpty() )
@@ -3296,7 +3278,6 @@ void MainWindow::SetupActionsInsertComponent()
                 actionInsertComponent, SLOT(OnActionInsertComponentTriggered()) );
         connect(actionInsertComponent, SIGNAL(CreateComponent(TComponentFactory*)),
                 this, SLOT(CreateComponent(TComponentFactory*)) );
-
     }
 
 }
@@ -3320,7 +3301,7 @@ void MainWindow::SetupActionsInsertMaterial()
         if (!pMaterialsToolBar) gf::SevereError("MainWindow::SetupToolBars: NULL pMaterialsToolBar");
         pMaterialsToolBar->setObjectName(QString::fromUtf8("materialsToolBar") );
         pMaterialsToolBar->setOrientation(Qt::Horizontal);
-        pMaterialsToolBar->setWindowTitle(QLatin1String("Materials") );
+        pMaterialsToolBar->setWindowTitle("Materials");
         addToolBar(pMaterialsToolBar);
     }
 
@@ -3341,14 +3322,12 @@ void MainWindow::SetupActionsInsertMaterial()
 
         pMaterialsMenu->addAction(actionInsertMaterial);
         pMaterialsToolBar->addAction(actionInsertMaterial);
-        pMaterialsToolBar->addSeparator();
+//        pMaterialsToolBar->addSeparator();
         connect(actionInsertMaterial, SIGNAL(triggered()),
                 actionInsertMaterial, SLOT(OnActionInsertMaterialTriggered()) );
         connect(actionInsertMaterial, SIGNAL(CreateMaterial(TMaterialFactory*)),
                 this, SLOT(CreateMaterial(TMaterialFactory*)) );
-
     }
-
 }
 
 /**
@@ -3373,9 +3352,8 @@ void MainWindow::SetupActionsInsertShape()
         if (!pShapeToolBar) gf::SevereError("MainWindow::SetupToolBars: NULL pShapeToolBar");
         pShapeToolBar->setObjectName(QString::fromUtf8("shapeToolBar") );
         pShapeToolBar->setOrientation(Qt::Horizontal);
-        pShapeToolBar->setWindowTitle(QLatin1String("Shapes") );
+        pShapeToolBar->setWindowTitle("Shapes");
         addToolBar(pShapeToolBar);
-
     }
 
 
@@ -3391,7 +3369,7 @@ void MainWindow::SetupActionsInsertShape()
 
         pMenuShape->addAction(actionInsertShape);
         pShapeToolBar->addAction(actionInsertShape);
-        pShapeToolBar->addSeparator();
+//        pShapeToolBar->addSeparator();
         connect(actionInsertShape, SIGNAL(triggered()), actionInsertShape, SLOT(OnActionInsertShapeTriggered()) );
         connect(actionInsertShape, SIGNAL(CreateShape(TShapeFactory*)), this, SLOT(CreateShape(TShapeFactory*)) );
     }
@@ -3399,7 +3377,6 @@ void MainWindow::SetupActionsInsertShape()
 
 void MainWindow::SetupActionsInsertTracker()
 {
-
     QMenu* pTrackerMenu = menuInsert->findChild< QMenu* >("menuTracker");
     if (!pTrackerMenu) return;
     if (pTrackerMenu->isEmpty() )
@@ -3741,7 +3718,6 @@ void MainWindow::SetupTreeView()
  */
 void MainWindow::SetupTriggers()
 {
-
     //File actions
     connect(actionNew, SIGNAL(triggered()), this, SLOT (New()) );
     connect(actionOpen, SIGNAL(triggered()), this, SLOT (Open()) );
@@ -3783,8 +3759,6 @@ void MainWindow::SetupTriggers()
     connect(actionGrid, SIGNAL(triggered()), this, SLOT(ShowGrid())  );
     connect(actionGridSettings, SIGNAL(triggered()), this, SLOT(ChangeGridSettings())  );
     connect(actionBackground, SIGNAL(triggered()), this, SLOT(ShowBackground())  );
-
-
 }
 
 

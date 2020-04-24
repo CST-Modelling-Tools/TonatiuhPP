@@ -223,7 +223,7 @@
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>:/icons/run.png</normaloff>:/icons/run.png</iconset>
+          <normaloff>:/icons/runRayTracing.png</normaloff>:/icons/runRayTracing.png</iconset>
         </property>
         <property name="iconSize">
          <size>

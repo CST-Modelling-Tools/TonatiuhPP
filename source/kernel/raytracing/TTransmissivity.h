@@ -15,7 +15,9 @@ class TTransmissivity: public SoNode
 public:
     static void initClass();
 
-    virtual bool IsTransmitted(double distance, RandomDeviate& rand) const = 0;
+    virtual double transmission(double /*distance*/) const {return 1.;}
+
+    static const char* getClassName() {return "Air";}
 
 protected:
     TTransmissivity() {}

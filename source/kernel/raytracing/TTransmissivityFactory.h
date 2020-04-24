@@ -1,9 +1,9 @@
 #pragma once
 
 #include <QtPlugin>
+#include <QIcon>
 
 class QString;
-class QIcon;
 class TTransmissivity;
 
 class TTransmissivityFactory
@@ -15,3 +15,30 @@ public:
 };
 
 Q_DECLARE_INTERFACE(TTransmissivityFactory, "tonatiuh.TTransmissivityFactory")
+
+
+template<class T>
+class AirFactory: public TTransmissivityFactory
+{
+public:
+
+    QString name() const
+    {
+        return T::getClassName();
+    }
+
+    QIcon icon() const
+    {
+        return QIcon(QString(":/Air%1.png").arg(T::getClassName()));
+    }
+
+    T* create() const
+    {
+        static bool first = true;
+        if (first) {
+            first = false;
+            T::initClass();
+        }
+        return new T;
+    }
+};

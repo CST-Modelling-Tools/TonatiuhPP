@@ -1,4 +1,3 @@
 *.pro.user
 *.autosave
 build-*
-dependencies
