@@ -161,7 +161,7 @@
     </property>
     <widget class="QMenu" name="menuShape">
      <property name="title">
-      <string>Shape</string>
+      <string>Surface</string>
      </property>
     </widget>
     <widget class="QMenu" name="menuMaterial">
@@ -195,7 +195,7 @@
    </widget>
    <widget class="QMenu" name="menuEnvironment">
     <property name="title">
-     <string>E&amp;nvironment</string>
+     <string>Scene</string>
     </property>
     <addaction name="actionDefineSunLight"/>
     <addaction name="actionCalculateSunPosition"/>
@@ -460,6 +460,9 @@
    <property name="text">
     <string>&amp;Ray Tracing...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
   </action>
   <action name="actionAxis">
    <property name="checkable">
@@ -548,7 +551,7 @@
      <normaloff>:/icons/nodeShape.png</normaloff>:/icons/nodeShape.png</iconset>
    </property>
    <property name="text">
-    <string>Surface Node</string>
+    <string>Shape Node</string>
    </property>
   </action>
   <action name="action_X_Y_Plane">

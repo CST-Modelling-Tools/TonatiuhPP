@@ -4,8 +4,9 @@
 #include <Inventor/fields/SoSFFloat.h>
 
 #include "kernel/raytracing/TSunShape.h"
-#include "kernel/raytracing/trt.h"
 
+class SoSensor;
+class SoFieldSensor;
 
 class SunPillbox: public TSunShape
 {
@@ -20,20 +21,26 @@ public:
 	double GetIrradiance() const;
     double GetThetaMax() const;
 
-	trt::TONATIUH_REAL irradiance;
-	trt::TONATIUH_REAL thetaMax;
+    SoSFDouble irradiance;
+    SoSFDouble thetaMax;
 
     static const char* getClassName() {return "Pillbox";}
 
 protected:
-    ~SunPillbox() {}
+    ~SunPillbox();
+    static void updateTheta(void* data, SoSensor*);
+
+private:
+    SoFieldSensor* m_sensorTheta;
+    double m_sinTheta;
 };
 
 
 
 #include "kernel/raytracing/TSunShapeFactory.h"
 
-class SunPillboxFactory: public QObject, public SunFactory<SunPillbox>
+class SunPillboxFactory:
+    public QObject, public SunFactory<SunPillbox>
 {
     Q_OBJECT
     Q_INTERFACES(TSunShapeFactory)

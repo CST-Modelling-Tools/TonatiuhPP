@@ -24,7 +24,7 @@ public:
     virtual PhotonMapExportParametersWidget* GetExportPhotonMapModeWidget() const {return 0;}
 
     static const char* getClassName() {return "Export file";}
-    static const char* getClassIcon() {return ":Photons.png";}
+    static const char* getClassIcon() {return ":/Photons.png";}
     const char* getIcon() const {return getClassIcon();}
 };
 

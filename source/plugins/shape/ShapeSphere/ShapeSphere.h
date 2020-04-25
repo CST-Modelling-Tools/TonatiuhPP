@@ -49,12 +49,12 @@ protected:
     static void updatePhiMax(void* data, SoSensor*);
 
     bool OutOfRange(double u, double v) const;
-    Point3D GetPoint3D (double u, double v) const;
+    Point3D GetPoint3D(double u, double v) const;
     NormalVector GetNormal(double u, double v) const;
 
     void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
     void generatePrimitives(SoAction* action);
-    virtual ~ShapeSphere();
+    ~ShapeSphere();
 
 private:
     double m_lastValidRadius;

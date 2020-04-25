@@ -8,7 +8,6 @@ include(../config.pri)
 QT += xml opengl svg script
 QT += concurrent printsupport
 
-INCLUDEPATH += $$TONATIUH_ROOT
 LIBS += -lTonatiuhKernel
 
 HEADERS += \
@@ -45,7 +44,6 @@ FORMS += \
     $$files(gui/*.ui) \
     $$files(script/*.ui) \
     $$files(widgets/*.ui)
-#    $$files(parameters/*.ui) \
 
 RESOURCES += resources.qrc
  

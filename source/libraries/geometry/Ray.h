@@ -7,12 +7,13 @@
 class Ray
 {
 public:
-    Ray() : tMin(gc::Epsilon), tMax(gc::Infinity)
+    Ray():
+        tMin(gc::Epsilon), tMax(gc::Infinity)
     {
     }
 
-    Ray(const Point3D& orig, const Vector3D& direc, double start = gc::Epsilon, double end = gc::Infinity)
-        : origin(orig), tMin(start), tMax(end)
+    Ray(const Point3D& orig, const Vector3D& direc, double start = gc::Epsilon, double end = gc::Infinity):
+        origin(orig), tMin(start), tMax(end)
     {
         setDirection(direc);
     }
@@ -43,8 +44,8 @@ public:
     bool operator==(const Ray& ray) const
     {
         if (this == &ray) return true;
-        return ( (origin == ray.origin) && (m_direction == ray.m_direction) &&
-                 !(fabs(tMin - ray.tMin) > gc::Epsilon) && !(fabs(tMax - ray.tMax) > gc::Epsilon) );
+        return origin == ray.origin && m_direction == ray.m_direction &&
+               fabs(tMin - ray.tMin) < gc::Epsilon && fabs(tMax - ray.tMax) < gc::Epsilon;
     }
 
     Point3D origin;
@@ -55,5 +56,3 @@ private:
     Vector3D m_direction;
     Vector3D m_directionInv;
 };
-
-

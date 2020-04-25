@@ -2,6 +2,7 @@
 
 #include "libraries/geometry/gc.h"
 
+#include <Inventor/sensors/SoFieldSensor.h>
 
 SO_NODE_SOURCE(SunPillbox)
 
@@ -16,13 +17,27 @@ SunPillbox::SunPillbox()
     SO_NODE_CONSTRUCTOR(SunPillbox);
     SO_NODE_ADD_FIELD( irradiance, (1000.) );
 	SO_NODE_ADD_FIELD( thetaMax, (0.00465));
+    updateTheta(this, 0);
+
+    m_sensorTheta = new SoFieldSensor(updateTheta, this);
+    m_sensorTheta->attach(&thetaMax);
+}
+
+SunPillbox::~SunPillbox()
+{
+    delete m_sensorTheta;
+}
+
+void SunPillbox::updateTheta(void* data, SoSensor*)
+{
+    SunPillbox* sun = (SunPillbox*) data;
+    sun->m_sinTheta = sin(sun->thetaMax.getValue());
 }
 
 void SunPillbox::GenerateRayDirection(Vector3D& direction, RandomDeviate& rand) const
 {
     double phi = gc::TwoPi*rand.RandomDouble();
-    // store sin as in sphere trigger
-    double sinTheta = sin(thetaMax.getValue())*sqrt(rand.RandomDouble());
+    double sinTheta = m_sinTheta*sqrt(rand.RandomDouble());
     double cosTheta = sqrt(1. - sinTheta*sinTheta);
     double cosPhi = cos(phi);
     double sinPhi = sin(phi);
@@ -46,11 +61,10 @@ SoNode* SunPillbox::copy(SbBool copyConnections) const
 {
 	// Use the standard version of the copy method to create
 	// a copy of this instance, including its field data
-    SunPillbox* newSunShape = dynamic_cast<SunPillbox*>(SoNode::copy(copyConnections) );
+    SunPillbox* sun = dynamic_cast<SunPillbox*>(SoNode::copy(copyConnections) );
 
-	// Copy the m_thetaMin, m_thetaMax private members explicitly
-	newSunShape->irradiance = irradiance;
-	newSunShape->thetaMax = thetaMax;
+    sun->irradiance = irradiance;
+    sun->thetaMax = thetaMax;
 
-	return newSunShape;
+    return sun;
 }

@@ -24,41 +24,35 @@ SO_NODE_SOURCE(ShapeSphere);
 void ShapeSphere::initClass()
 {
 	SO_NODE_INIT_CLASS(ShapeSphere, TShape, "TShape");
-
 }
 
-ShapeSphere::ShapeSphere( )
-:m_lastValidRadius( 0.5 ),
- m_lastValidYMax( 0.5 ),
- m_lastValidYMin( -0.5 ),
- m_radiusSensor( 0 ),
- m_yMinSensor( 0 ),
- m_yMaxSensor( 0 ),
- m_phiMaxSensor( 0 )
+ShapeSphere::ShapeSphere( ):
+    m_lastValidRadius( 0.5 ),
+    m_lastValidYMax( 0.5 ),
+    m_lastValidYMin( -0.5 ),
+    m_radiusSensor( 0 ),
+    m_yMinSensor( 0 ),
+    m_yMaxSensor( 0 ),
+    m_phiMaxSensor( 0 )
 {
 	SO_NODE_CONSTRUCTOR(ShapeSphere);
 	SO_NODE_ADD_FIELD( radius, (0.5) );
 	SO_NODE_ADD_FIELD( yMin, (-0.5) );
 	SO_NODE_ADD_FIELD( yMax, (0.5) );
 	SO_NODE_ADD_FIELD( phiMax, ( gc::TwoPi) );
-
 	SO_NODE_DEFINE_ENUM_VALUE( Side, INSIDE );
 	SO_NODE_DEFINE_ENUM_VALUE( Side, OUTSIDE );
 	SO_NODE_SET_SF_ENUM_TYPE( activeSide, Side );
 	SO_NODE_ADD_FIELD( activeSide, (OUTSIDE) );
 
-	SoFieldSensor* m_radiusSensor = new SoFieldSensor(updateRadius, this);
-	m_radiusSensor->setPriority( 1 );
-	m_radiusSensor->attach( &radius );
-	SoFieldSensor* m_yMinSensor = new SoFieldSensor(updateYMin, this);
-	m_yMinSensor->setPriority( 1 );
-	m_yMinSensor->attach( &yMin );
-	SoFieldSensor* m_yMaxSensor = new SoFieldSensor(updateYMax, this);
-	m_yMaxSensor->setPriority( 1 );
-	m_yMaxSensor->attach( &yMax );
-	SoFieldSensor* m_phiMaxSensor = new SoFieldSensor(updatePhiMax, this);
-	m_phiMaxSensor->setPriority( 1 );
-	m_phiMaxSensor->attach( &phiMax );
+    m_radiusSensor = new SoFieldSensor(updateRadius, this);
+    m_radiusSensor->attach(&radius);
+    m_yMinSensor = new SoFieldSensor(updateYMin, this);
+    m_yMinSensor->attach(&yMin);
+    m_yMaxSensor = new SoFieldSensor(updateYMax, this);
+    m_yMaxSensor->attach(&yMax);
+    m_phiMaxSensor = new SoFieldSensor(updatePhiMax, this);
+    m_phiMaxSensor->attach(&phiMax);
 }
 
 ShapeSphere::~ShapeSphere()
@@ -84,11 +78,11 @@ SoNode* ShapeSphere::copy( SbBool copyConnections ) const
 
 double ShapeSphere::GetArea() const
 {
-	return ( 4 * gc::Pi * radius.getValue() * radius.getValue() );
+    return 4.*gc::Pi*radius.getValue()*radius.getValue();
 }
 double ShapeSphere::GetVolume() const
 {
-	return ( 4 * gc::Pi * radius.getValue() * radius.getValue() * radius.getValue() /3 );
+    return 4.*gc::Pi*radius.getValue()*radius.getValue()*radius.getValue()/3.;
 }
 
 BBox ShapeSphere::GetBBox() const
@@ -137,7 +131,7 @@ bool ShapeSphere::Intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     // ray
     if (t0 > ray.tMax || t1 < ray.tMin) return false;
     double thit = ( t0 > ray.tMin )? t0 : t1 ;
-    if( thit > ray.tMax ) return false;
+    if (thit > ray.tMax) return false;
 
     // intersection with clipped shape
     double tolerance = 1e-5;
@@ -183,21 +177,21 @@ bool ShapeSphere::Intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
         cosTheta*sinPhi,
         -sinTheta,
         cosTheta*cosPhi
-        );
+    );
     dpdu *= r*(thetaMax - thetaMin);
 
     Vector3D dpdv(
         cosPhi,
         0.,
         -sinPhi
-        );
+    );
     dpdv *= r*phiMax.getValue()*sinTheta;
 
     Vector3D N(
         sinTheta*sinPhi,
         cosTheta,
         sinTheta*cosPhi
-        );
+    );
 
 //	Vector3D N = Normalize( NormalVector( CrossProduct( dpdu, dpdv ) ) );
 
@@ -245,72 +239,66 @@ void ShapeSphere::updateYMin( void *data, SoSensor * )
 
 void ShapeSphere::updateRadius( void *data, SoSensor* )
 {
-
 	ShapeSphere* shapeSphere = (ShapeSphere *) data;
 	if( ( shapeSphere->radius.getValue() <= 0.0 ) )
 	{
 		QMessageBox::warning( 0,
-				QLatin1String( "Tonatiuh" ),
+                "Tonatiuh",
 				QObject::tr( "The sphere radius must be a positive value." ) );
 		shapeSphere->radius.setValue( shapeSphere->m_lastValidRadius );
 
 	}
 	else if( shapeSphere->radius.getValue() < std::max( std::fabs( shapeSphere->yMin.getValue() ), std::fabs( shapeSphere->yMin.getValue() ) ) )
 	{
-		QMessageBox::warning( 0, QLatin1String( "Tonatiuh" ),
+        QMessageBox::warning( 0, "Tonatiuh",
 				QObject::tr( "The sphere radius must equal or greater than y value." ) );
 		shapeSphere->radius.setValue( shapeSphere->m_lastValidRadius );
 	}
 	else
 		shapeSphere->m_lastValidRadius = shapeSphere->radius.getValue();
-
 }
 
-
-void ShapeSphere::updateYMax( void *data, SoSensor* )
+void ShapeSphere::updateYMax(void* data, SoSensor*)
 {
 	ShapeSphere* shapeSphere = (ShapeSphere *) data;
 	if( shapeSphere->yMax.getValue() < shapeSphere->yMin.getValue() )
 	{
 		QMessageBox::warning( 0,
-				QLatin1String( "Tonatiuh" ),
+                 "Tonatiuh",
 				QObject::tr( "Sphere y max must be larger than y min value. ") );
 		shapeSphere->yMax.setValue( shapeSphere->m_lastValidYMax );
-	}
-	else if( shapeSphere->yMax.getValue() > shapeSphere->radius.getValue() )
+    } else if( shapeSphere->yMax.getValue() > shapeSphere->radius.getValue() )
 	{
 		shapeSphere->yMax.setValue( shapeSphere->radius.getValue() );
 		shapeSphere->m_lastValidYMax = shapeSphere->radius.getValue();
-	}
-	else
+    } else
 		shapeSphere->m_lastValidYMax = shapeSphere->yMax.getValue();
-
 }
 
-void ShapeSphere::updatePhiMax( void *data, SoSensor* )
+void ShapeSphere::updatePhiMax(void* data, SoSensor*)
 {
-	ShapeSphere* shapeSphere = (ShapeSphere *) data;
-	if( shapeSphere->phiMax.getValue() > gc::TwoPi )	shapeSphere->phiMax.setValue( gc::TwoPi );
-	else if ( shapeSphere->phiMax.getValue() < 0.0 )	shapeSphere->phiMax.setValue( 0.0 );
-
+    ShapeSphere* shapeSphere = (ShapeSphere*) data;
+    if (shapeSphere->phiMax.getValue() > gc::TwoPi)
+        shapeSphere->phiMax.setValue(gc::TwoPi);
+    else if (shapeSphere->phiMax.getValue() < 0.)
+        shapeSphere->phiMax.setValue( 0.0 );
 }
 
 Point3D ShapeSphere::GetPoint3D( double u, double v ) const
 {
 	if ( OutOfRange( u, v ) ) gf::SevereError( "Function Poligon::GetPoint3D called with invalid parameters" );
 
-
 	double thetaMin = acos( yMax.getValue() / radius.getValue() );
 	double thetaMax = acos( yMin.getValue()/radius.getValue() );
-	double theta = u *( thetaMax - thetaMin ) + thetaMin;
-	double phi = v * phiMax.getValue();
+    double theta = thetaMin + u*(thetaMax - thetaMin);
+    double phi = v*phiMax.getValue();
 
-	double x = radius.getValue() * sin( theta ) * sin( phi );
-	double y = radius.getValue() * cos( theta );
-	double z = radius.getValue() * sin( theta ) * cos( phi );
-
-	return Point3D (x, y, z);
-
+    Point3D p(
+        sin(theta)*sin(phi),
+        cos(theta),
+        sin(theta)*cos(phi)
+    );
+    return radius.getValue()*p;
 }
 
 NormalVector ShapeSphere::GetNormal(double u, double v ) const
@@ -329,9 +317,9 @@ NormalVector ShapeSphere::GetNormal(double u, double v ) const
 	return normal;
 }
 
-bool ShapeSphere::OutOfRange( double u, double v ) const
+bool ShapeSphere::OutOfRange(double u, double v) const
 {
-	return ( ( u < 0.0 ) || ( u > 1.0 ) || ( v < 0.0 ) || ( v > 1.0 ) );
+    return u < 0. || u > 1. || v < 0. || v > 1.;
 }
 
 void ShapeSphere::computeBBox(SoAction*, SbBox3f& box, SbVec3f& /*center*/)
@@ -349,8 +337,8 @@ void ShapeSphere::computeBBox(SoAction*, SbBox3f& box, SbVec3f& /*center*/)
 
 void ShapeSphere::generatePrimitives(SoAction *action)
 {
-	SoPrimitiveVertex   pv;
-	SoState  *state = action->getState();
+    SoPrimitiveVertex pv;
+    SoState *state = action->getState();
 
 	SbBool useTexFunc = ( SoTextureCoordinateElement::getType(state) ==
 						  SoTextureCoordinateElement::FUNCTION );
@@ -359,7 +347,7 @@ void ShapeSphere::generatePrimitives(SoAction *action)
 	if ( useTexFunc ) tce = SoTextureCoordinateElement::getInstance(state);
 
 
-	SbVec3f  point;
+    SbVec3f point;
 	int rows = 50; // Number of points per row
 	int columns = 50; // Number of points per column
 	int totalPoints = rows * columns; // Total points in the grid
@@ -427,7 +415,7 @@ void ShapeSphere::generatePrimitives(SoAction *action)
 	float u = 1;
 	float v = 1;
 
-	beginShape(action, QUADS );
+    beginShape(action, QUADS);
 	for( int i = 0; i < totalIndices; ++i )
 	{
 		SbVec3f  point( finalvertex[i][0], finalvertex[i][1],  finalvertex[i][2] );
