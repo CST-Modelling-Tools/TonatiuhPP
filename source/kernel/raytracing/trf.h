@@ -9,8 +9,8 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoNode.h>
 
-#include "Photon.h"
-#include "TPhotonMap.h"
+#include "kernel/photons/Photon.h"
+#include "kernel/photons/TPhotonMap.h"
 #include "libraries/geometry/Ray.h"
 #include "kernel/geometry/tgf.h"
 #include "TShape.h"

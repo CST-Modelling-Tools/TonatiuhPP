@@ -19,7 +19,7 @@
 #include "kernel/geometry/tgf.h"
 #include "kernel/raytracing/TLightKit.h"
 #include "kernel/raytracing/TLightShape.h"
-#include "kernel/raytracing/TPhotonMap.h"
+#include "kernel/photons/TPhotonMap.h"
 #include "kernel/raytracing/trf.h"
 #include "kernel/raytracing/TSeparatorKit.h"
 #include "kernel/raytracing/TShape.h"

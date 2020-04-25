@@ -14,12 +14,33 @@
 #include "libraries/geometry/gf.h"
 #include "kernel/raytracing/TTransmissivityFactory.h"
 #include "kernel/raytracing/TComponentFactory.h"
-#include "kernel/gui/PhotonMapExportFactory.h"
+#include "kernel/photons/PhotonMapExportFactory.h"
 #include "kernel/raytracing/TMaterialFactory.h"
 #include "kernel/statistics/RandomDeviateFactory.h"
 #include "kernel/raytracing/TShapeFactory.h"
 #include "kernel/raytracing/TSunShapeFactory.h"
 #include "kernel/raytracing/TTrackerFactory.h"
+
+
+template <class T>
+void sortFactories(const QStringList& sorting, QVector<T*>& factories) {
+    int nA = 0;
+    for (const QString& name : sorting) {
+        if (name == "") {
+            factories.append(nullptr);
+            std::swap(factories[nA++], factories.last());
+        } else {
+            for (int n = 0; n < factories.size(); ++n) {
+                if (factories[n] == nullptr) continue;
+                if (factories[n]->name() == name) {
+                    std::swap(factories[nA++], factories[n]);
+                    break;
+                }
+            }
+        }
+    };
+}
+
 
 /*!
  * Loads all the valid plugins from "plugins" subdirecotry of the directory in
@@ -37,7 +58,17 @@ void PluginManager::load(QDir dir)
 
 void PluginManager::sort()
 {
+    QStringList shapeNames = {
+        "Sphere",
+        "Cylinder"
+    };
+    sortFactories(shapeNames, m_shapeFactories);
 
+    QStringList exportNames = {
+        "No export",
+        "File"
+    };
+    sortFactories(exportNames, m_exportFactories);
 }
 
 /*!

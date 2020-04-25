@@ -4,7 +4,7 @@
 
 #include <QStringList>
 
-#include "kernel/raytracing/Photon.h"
+#include "Photon.h"
 
 class SceneModel;
 
@@ -32,6 +32,8 @@ public:
     virtual bool StartExport() = 0;
 
     static const char* getClassName() {return "PhotonMapExport";}
+    static const char* getClassIcon() {return ":/PhotonMapExport.png";}
+    const char* getIcon() const {return getClassIcon();}
 
 protected:
     Transform m_concentratorToWorld;

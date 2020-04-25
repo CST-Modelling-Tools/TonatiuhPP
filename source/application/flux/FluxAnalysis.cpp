@@ -15,7 +15,7 @@
 #include "gui/SceneModel.h"
 #include "kernel/gui/InstanceNode.h"
 #include "kernel/statistics//RandomDeviate.h"
-#include "kernel/raytracing/TPhotonMap.h"
+#include "kernel/photons/TPhotonMap.h"
 #include "libraries/geometry/gc.h"
 #include "kernel/raytracing/RayTracer.h"
 #include "kernel/raytracing/TLightKit.h"

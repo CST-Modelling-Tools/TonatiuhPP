@@ -3,7 +3,7 @@
 #include <QDialog>
 #include <QVector>
 
-#include "kernel/gui/PhotonMapExportFactory.h"
+#include "kernel/photons/PhotonMapExportFactory.h"
 
 #include "ui_ExportPhotonsDialog.h"
 

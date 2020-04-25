@@ -4,7 +4,7 @@
 #include "statistics/ParallelRandomDeviate.h"
 #include "libraries/geometry/Ray.h"
 #include "RayTracer.h"
-#include "TPhotonMap.h"
+#include "kernel/photons/TPhotonMap.h"
 #include "TLightShape.h"
 #include "TSunShape.h"
 #include "TTransmissivity.h"

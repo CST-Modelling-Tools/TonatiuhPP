@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
 
 #SUBDIRS += PhotonMapExportDB
-#SUBDIRS += PhotonMapExportFile
+SUBDIRS += PhotonMapExportFile
 SUBDIRS += PhotonMapExportNull

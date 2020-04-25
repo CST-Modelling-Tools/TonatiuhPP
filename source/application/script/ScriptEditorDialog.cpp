@@ -79,9 +79,6 @@ ScriptEditorDialog::ScriptEditorDialog( QVector< RandomDeviateFactory* > listRan
      connect( runButton, SIGNAL( clicked( bool ) ), this, SLOT( RunScript() ) );
      connect( closeButton, SIGNAL( clicked( bool ) ), this, SLOT( Close( bool ) ) );
      connect( parent, SIGNAL( Abort( QString ) ), this, SLOT( AbortEvaluation( QString ) ) );
-
-
-
 }
 
 /**
@@ -109,7 +106,6 @@ void ScriptEditorDialog::AbortEvaluation( QString error )
 {
     QScriptContext* context = m_interpreter->currentContext();
     context->throwError(  error  );
-
 }
 
 /**
@@ -210,7 +206,6 @@ void  ScriptEditorDialog::RunScript()
         QString logmessage = QString( "[%1]\t The script execution is successfully finished.\n" ).arg( QDateTime::currentDateTime().toString());
         WriteMessage( logmessage );
     }
-
 }
 
 /*!

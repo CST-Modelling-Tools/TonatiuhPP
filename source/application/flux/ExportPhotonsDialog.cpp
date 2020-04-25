@@ -2,8 +2,8 @@
 #include <QMessageBox>
 
 #include "ExportPhotonsDialog.h"
-#include "kernel/gui/PhotonMapExportParametersWidget.h"
-#include "kernel/gui/PhotonMapExportSettings.h"
+#include "kernel/photons/PhotonMapExportParametersWidget.h"
+#include "kernel/photons/PhotonMapExportSettings.h"
 #include "SelectSurfaceDialog.h"
 
 /*!
@@ -20,7 +20,7 @@ ExportPhotonsDialog::ExportPhotonsDialog(
 
     for (int index = 0; index < typeList.size(); index++)
     {
-        storeTypeCombo->addItem(typeList[index]->GetIcon(), typeList[index]->GetName() );
+        storeTypeCombo->addItem(typeList[index]->icon(), typeList[index]->name() );
         PhotonMapExportParametersWidget* widget = typeList[index]->GetExportPhotonMapModeWidget();
         if (widget)
         {

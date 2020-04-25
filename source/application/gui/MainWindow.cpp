@@ -74,9 +74,9 @@
 #include "widgets/LightDialog.h"
 #include "MainWindow.h"
 #include "widgets/NetworkConnectionsDialog.h"
-#include "kernel/gui/PhotonMapExport.h"
-#include "kernel/gui/PhotonMapExportFactory.h"
-#include "kernel/gui/PhotonMapExportSettings.h"
+#include "kernel/photons/PhotonMapExport.h"
+#include "kernel/photons/PhotonMapExportFactory.h"
+#include "kernel/photons/PhotonMapExportSettings.h"
 #include "PluginManager.h"
 #include "ProgressUpdater.h"
 #include "kernel/statistics/RandomDeviate.h"
@@ -93,7 +93,7 @@
 #include "kernel/raytracing/TLightShape.h"
 #include "kernel/raytracing/TMaterial.h"
 #include "kernel/raytracing/TMaterialFactory.h"
-#include "kernel/raytracing/TPhotonMap.h"
+#include "kernel/photons/TPhotonMap.h"
 #include "widgets/TransmissivityDialog.h"
 #include "kernel/raytracing/trf.h"
 #include "kernel/raytracing/TSceneKit.h"
@@ -2018,7 +2018,7 @@ void MainWindow::SetExportPhotonMapType(QString exportModeType)
 
     QVector< QString > exportPMModeNames;
     for (int i = 0; i < factoryList.size(); i++)
-        exportPMModeNames << factoryList[i]->GetName();
+        exportPMModeNames << factoryList[i]->name();
 
     if (exportPMModeNames.indexOf(exportModeType) < 0)
     {
@@ -2931,7 +2931,7 @@ PhotonMapExport* MainWindow::CreatePhotonMapExport() const
 
     QVector< QString > exportPMModeNames;
     for (int i = 0; i < factoryList.size(); i++)
-        exportPMModeNames << factoryList[i]->GetName();
+        exportPMModeNames << factoryList[i]->name();
 
     int exportModeFactoryIndex = exportPMModeNames.indexOf(m_pExportModeSettings->modeTypeName);
     if (exportModeFactoryIndex < 0) return 0;
@@ -3722,7 +3722,6 @@ void MainWindow::SetupTriggers()
     connect(actionGridSettings, SIGNAL(triggered()), this, SLOT(ChangeGridSettings())  );
     connect(actionBackground, SIGNAL(triggered()), this, SLOT(ShowBackground())  );
 }
-
 
 /*!
  * Starts MainWindow views.

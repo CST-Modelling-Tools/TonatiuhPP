@@ -3,7 +3,7 @@
 #include <QMap>
 #include <QString>
 
-#include "kernel/gui/PhotonMapExport.h"
+#include "kernel/photons/PhotonMapExport.h"
 
 class Photon;
 
@@ -14,18 +14,22 @@ public:
     PhotonMapExportNull() {}
 
     static QStringList GetParameterNames() {return QStringList();}
-    void SetSaveParameterValue(QString parameterName, QString parameterValue) {}
+    void SetSaveParameterValue(QString /*parameterName*/, QString /*parameterValue*/) {}
     bool StartExport() {return true;}
 
     static const char* getClassName() {return "No export";}
+    static const char* getClassIcon() {return ":/PhotonMapExportNull.png";}
+    const char* getIcon() const {return getClassIcon();}
 };
 
 
 
-#include "kernel/gui/PhotonMapExportFactory.h"
+#include "kernel/photons/PhotonMapExportFactory.h"
+#include "kernel/photons/PhotonMapExportParametersWidget.h"
 
 class PhotonMapExportNullFactory:
-    public QObject, public PhotonExportFactory<PhotonMapExportNull>
+    public QObject,
+    public PhotonExportFactory<PhotonMapExportNull, PhotonMapExportParametersWidget>
 {
     Q_OBJECT
     Q_INTERFACES(PhotonMapExportFactory)

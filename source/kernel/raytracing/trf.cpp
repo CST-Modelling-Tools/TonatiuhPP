@@ -14,8 +14,8 @@
 
 #include "gui/InstanceNode.h"
 #include "libraries/geometry/Matrix4x4.h"
-#include "Photon.h"
-#include "TPhotonMap.h"
+#include "kernel/photons/Photon.h"
+#include "kernel/photons/TPhotonMap.h"
 #include "statistics/RandomDeviate.h"
 #include "libraries/geometry/Ray.h"
 #include "geometry/tgf.h"
@@ -26,7 +26,6 @@
 
 SoSeparator* trf::DrawPhotonMapPoints(const TPhotonMap& map)
 {
-
     SoSeparator* drawpoints = new SoSeparator;
     SoCoordinate3* points = new SoCoordinate3;
     std::vector< Photon* > photonsList = map.GetAllPhotons();

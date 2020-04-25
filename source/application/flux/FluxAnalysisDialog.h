@@ -2,7 +2,7 @@
 
 #include <QDialog>
 
-#include "kernel/raytracing/TPhotonMap.h"
+#include "kernel/photons/TPhotonMap.h"
 
 #include "ui_fluxanalysisdialog.h"
 
