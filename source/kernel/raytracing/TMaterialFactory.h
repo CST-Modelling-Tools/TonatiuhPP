@@ -10,8 +10,8 @@ class TMaterialFactory
 {
 public:
     virtual ~TMaterialFactory() {}
-    virtual QString TMaterialName() const = 0;
-    virtual QIcon TMaterialIcon() const = 0;
+    virtual QString name() const = 0;
+    virtual QIcon icon() const = 0;
     virtual TMaterial* create() const = 0;
 };
 
@@ -21,12 +21,12 @@ class MaterialFactory: public TMaterialFactory
 {
 public:
 
-    QString TMaterialName() const
+    QString name() const
     {
         return T::getClassName();
     }
 
-    QIcon TMaterialIcon() const
+    QIcon icon() const
     {
         return QIcon(QString(":/Material%1.png").arg(T::getClassName()));
     }

@@ -341,19 +341,18 @@ QVariant SceneModel::data( const QModelIndex& modelIndex, int role ) const
             {
                 TSeparatorKit* separatorKit = static_cast<TSeparatorKit*>( coinNode );
                 return QIcon( separatorKit->getIcon() );
-
             }
             else if( coinNode->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) )
             {
-                SoBaseKit* nodeKit = static_cast< SoBaseKit* >( coinNode );
-                TShape* kit = static_cast<TShape*>( nodeKit->getPart( "shape", false ) );
-                if( kit ) return QIcon( kit->GetIcon() );
+//                SoBaseKit* nodeKit = static_cast< SoBaseKit* >( coinNode );
+//                TShape* kit = static_cast<TShape*>( nodeKit->getPart( "shape", false ) );
+//                if( kit ) return QIcon( kit->GetIcon() );
                 return QIcon(":/icons/nodeShape.png");
             }
             else if( coinNode->getTypeId().isDerivedFrom(SoShape::getClassTypeId() ) )
             {
-                TShape* shape = static_cast<TShape*>( coinNode );
-                return QIcon( shape->GetIcon() );
+                TShape* shape = static_cast<TShape*>(coinNode);
+                return QIcon( shape->getIcon() );
             }
             else if( coinNode->getTypeId().isDerivedFrom(TMaterial::getClassTypeId() ) )
             {

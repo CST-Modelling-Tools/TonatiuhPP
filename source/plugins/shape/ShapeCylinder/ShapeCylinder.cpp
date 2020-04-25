@@ -68,11 +68,6 @@ BBox ShapeCylinder::GetBBox() const
 	return BBox( Point3D( xmin, ymin, zmin ), Point3D( xmax, ymax, zmax ) );
 }
 
-QString ShapeCylinder::GetIcon() const
-{
-    return ":/ShapeCylinder.png";
-}
-
 bool ShapeCylinder::Intersect( const Ray& objectRay, double* tHit, DifferentialGeometry* dg ) const
 {
 	// Compute quadratic cylinder coefficients

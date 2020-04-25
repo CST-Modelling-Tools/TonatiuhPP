@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>857</width>
-    <height>364</height>
+    <width>682</width>
+    <height>368</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -92,7 +92,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>857</width>
+     <width>682</width>
      <height>21</height>
     </rect>
    </property>
@@ -160,25 +160,16 @@
      <string>&amp;Insert</string>
     </property>
     <widget class="QMenu" name="menuShape">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
      <property name="title">
       <string>Shape</string>
      </property>
     </widget>
     <widget class="QMenu" name="menuMaterial">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
      <property name="title">
       <string>Material</string>
      </property>
     </widget>
     <widget class="QMenu" name="menuTracker">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
      <property name="title">
       <string>Tracker</string>
      </property>
@@ -216,12 +207,21 @@
     <property name="title">
      <string>&amp;Run</string>
     </property>
+    <widget class="QMenu" name="menuTest">
+     <property name="title">
+      <string>Test</string>
+     </property>
+     <addaction name="actionA"/>
+     <addaction name="actionB"/>
+     <addaction name="actionC"/>
+    </widget>
     <addaction name="actionRun"/>
     <addaction name="actionRayTraceOptions"/>
     <addaction name="separator"/>
     <addaction name="actionRunFluxAnalysis"/>
     <addaction name="separator"/>
     <addaction name="actionOpenScriptEditor"/>
+    <addaction name="menuTest"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -291,7 +291,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>false</bool>
+    <bool>true</bool>
    </attribute>
    <addaction name="actionNode"/>
    <addaction name="actionSurfaceNode"/>
@@ -521,6 +521,9 @@
    <property name="toolTip">
     <string>Paste a link to the clipboard node</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+V</string>
+   </property>
   </action>
   <action name="actionDelete">
    <property name="icon">
@@ -531,7 +534,7 @@
     <string>Delete</string>
    </property>
    <property name="shortcut">
-    <string>Backspace</string>
+    <string>Del</string>
    </property>
   </action>
   <action name="actionRayTraceOptions">
@@ -748,6 +751,21 @@
    </property>
    <property name="text">
     <string>Flux Analysis ...</string>
+   </property>
+  </action>
+  <action name="actionA">
+   <property name="text">
+    <string>A</string>
+   </property>
+  </action>
+  <action name="actionB">
+   <property name="text">
+    <string>B</string>
+   </property>
+  </action>
+  <action name="actionC">
+   <property name="text">
+    <string>C</string>
    </property>
   </action>
  </widget>

@@ -21,15 +21,16 @@ public:
     virtual double GetArea() const = 0;
     virtual double GetVolume() const = 0;
     virtual BBox GetBBox() const = 0;
-    virtual QString GetIcon() const = 0;
     virtual Point3D Sample(double u, double v) const = 0;
 
-    static const char* getClassName() {return "Shape";}
+    static const char* getClassName() {return "X";}
+    static const char* getClassIcon() {return ":/ShapeX.png";}
+    virtual const char* getIcon() const {return getClassIcon();}
 
 protected:
     virtual void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center) = 0;
     virtual void generatePrimitives(SoAction* action) = 0;
 
-    TShape();
-    ~TShape();
+    TShape() {}
+    ~TShape() {}
 };

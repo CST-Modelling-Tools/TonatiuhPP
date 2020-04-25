@@ -74,7 +74,7 @@ MaterialStandardSpecular::~MaterialStandardSpecular()
 
 QString MaterialStandardSpecular::getIcon()
 {
-    return QLatin1String(":/MaterialStandardSpecular.png");
+    return ":/MaterialStandardSpecular.png";
 }
 
 void MaterialStandardSpecular::updateReflectivity(void* data, SoSensor*)

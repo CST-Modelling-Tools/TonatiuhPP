@@ -116,11 +116,6 @@ BBox ShapeSphere::GetBBox() const
 	return BBox( Point3D( xmin, ymin, zmin), Point3D( xmax, ymax, zmax) );
 }
 
-QString ShapeSphere::GetIcon() const
-{
-    return ":/ShapeSphere.png";
-}
-
 Point3D ShapeSphere::Sample(double u1, double u2) const
 {
     return GetPoint3D(u1, u2);

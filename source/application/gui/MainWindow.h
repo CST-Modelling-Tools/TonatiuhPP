@@ -227,9 +227,9 @@ private:
     QString m_currentFile;
     Document* m_document;
     QStringList m_recentFiles;
-    QAction** m_recentFileActions;//[m_maxRecentFiles];
+    QVector<QAction*> m_recentFileActions;//[m_maxRecentFiles];
 
-    PluginManager* m_pPluginManager;
+    PluginManager* m_pluginManager;
 
     SceneModel* m_sceneModel;
     QItemSelectionModel* m_selectionModel;

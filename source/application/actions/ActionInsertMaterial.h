@@ -1,28 +1,27 @@
 #pragma once
+
 #include <QAction>
 
 class TMaterialFactory;
+
 
 //!  ActionInsertMaterial class is the action to insert material in the scene.
 /*!
   ActionInsertMaterial is the action added to menu and toolbar for each material plugin.
 */
-
-class ActionInsertMaterial : public QAction
+class ActionInsertMaterial: public QAction
 {
     Q_OBJECT
 
 public:
-    ActionInsertMaterial( const QString& text, QObject* parent, TMaterialFactory* pTMaterialFactory );
-    ~ActionInsertMaterial();
-
-signals:
-    void CreateMaterial( TMaterialFactory* pTMaterialFactory );
+    ActionInsertMaterial(TMaterialFactory* factory, QObject* parent);
 
 public slots:
-    void OnActionInsertMaterialTriggered();
+    void onTriggered();
+
+signals:
+    void CreateMaterial(TMaterialFactory* factory);
 
 private:
-    TMaterialFactory* m_pTMaterialFactory;
-
+    TMaterialFactory* m_factory;
 };

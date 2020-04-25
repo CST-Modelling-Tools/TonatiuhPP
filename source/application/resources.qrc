@@ -32,7 +32,6 @@
         <file>icons/saveas.png</file>
         <file>icons/nodeGroup.png</file>
         <file>icons/tcube.png</file>
-        <file>icons/Tonatiuh.icns</file>
         <file>icons/SplashScreen.png</file>
         <file>icons/undo.png</file>
         <file>icons/undoView.png</file>
@@ -48,5 +47,6 @@
         <file>icons/zoom-in.png</file>
         <file>icons/zoom-out.png</file>
         <file>icons/environmentAir.png</file>
+        <file>icons/nodeSurface.png</file>
     </qresource>
 </RCC>

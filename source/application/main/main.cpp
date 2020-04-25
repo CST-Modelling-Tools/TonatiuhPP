@@ -55,12 +55,18 @@
 
 Q_DECLARE_METATYPE(QVector<QVariant>)
 
+#include <QStyleFactory>
+#include <QDebug>
+
 int main(int argc, char** argv)
 {
 //    QApplication::setColorSpec(QApplication::CustomColor);
 
     QApplication a(argc, argv);
     a.setApplicationVersion(APP_VERSION);
+
+//    qDebug() << QStyleFactory::keys();
+//    a.setStyle(QStyleFactory::create("Windows"));
 
     QSplashScreen* splash = new QSplashScreen;
     splash->setPixmap(QPixmap(":/icons/SplashScreen.png") );

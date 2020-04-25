@@ -11,7 +11,7 @@ CD bin
 ECHO root
 COPY %BUILD%\*.exe 
 COPY %BUILD%\*.dll 
-FOR %%i IN (material, photon, random, shape, sun) DO (
+FOR %%i IN (air, material, photon, random, shape, sun) DO (
 	ECHO %%i
 	MD plugins\%%i 
 	COPY %BUILD%\plugins\%%i\*.dll plugins\%%i

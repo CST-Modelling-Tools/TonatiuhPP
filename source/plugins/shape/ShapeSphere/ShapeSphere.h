@@ -26,7 +26,6 @@ public:
     double GetArea() const;
     double GetVolume() const;
     BBox GetBBox() const;
-    QString GetIcon() const;
 
     Point3D Sample(double u1, double u2) const;
 
@@ -40,6 +39,8 @@ public:
     SoSFEnum activeSide;
 
     static const char* getClassName() {return "Sphere";}
+    static const char* getClassIcon() {return ":/ShapeSphere.png";}
+    const char* getIcon() const {return getClassIcon();}
 
 protected:
     static void updateRadius(void* data, SoSensor*);

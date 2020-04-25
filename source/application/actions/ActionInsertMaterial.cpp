@@ -1,24 +1,22 @@
 #include "ActionInsertMaterial.h"
 
-/**
- * Constructor.
- */
-ActionInsertMaterial::ActionInsertMaterial( const QString& text, QObject* parent, TMaterialFactory* pTMaterialFactory )
-: QAction(text,parent), m_pTMaterialFactory( pTMaterialFactory )
+#include "kernel/raytracing/TMaterialFactory.h"
+
+
+ActionInsertMaterial::ActionInsertMaterial(TMaterialFactory* factory, QObject* parent):
+    QAction(parent),
+    m_factory(factory)
 {
+    setText(factory->name());
+    setIcon(factory->icon());
+
+     connect(
+        this, SIGNAL(triggered()),
+        this, SLOT(onTriggered())
+     );
 }
 
-/**
- * Destructor.
- */
-ActionInsertMaterial::~ActionInsertMaterial()
+void ActionInsertMaterial::onTriggered()
 {
-}
-
-/**
- * Emits a create material signal.
- */
-void ActionInsertMaterial::OnActionInsertMaterialTriggered()
-{
-    emit CreateMaterial( m_pTMaterialFactory );
+    emit CreateMaterial(m_factory);
 }

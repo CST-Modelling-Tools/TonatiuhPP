@@ -1,16 +1,22 @@
 #include "ActionInsertShape.h"
+
 #include "kernel/raytracing/TShapeFactory.h"
 
 
-ActionInsertShape::ActionInsertShape (const QString& text, QObject* parent, TShapeFactory* pTShapeFactory)
-    : QAction(text,parent), m_pTShapeFactory(pTShapeFactory)
+ActionInsertShape::ActionInsertShape(TShapeFactory* factory, QObject* parent):
+    QAction(parent),
+    m_factory(factory)
 {
+    setText(factory->name());
+    setIcon(factory->icon());
+
+     connect(
+        this, SIGNAL(triggered()),
+        this, SLOT(onTriggered())
+     );
 }
 
-/**
- * Emits a create shape signal.
- */
-void ActionInsertShape::OnActionInsertShapeTriggered()
+void ActionInsertShape::onTriggered()
 {
-    emit CreateShape(m_pTShapeFactory);
+    emit CreateShape(m_factory);
 }

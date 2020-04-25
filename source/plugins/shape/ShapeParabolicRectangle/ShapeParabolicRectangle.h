@@ -25,7 +25,6 @@ public:
         return 0.0;
     }
 	BBox GetBBox() const;
-	QString GetIcon() const;
 
     bool Intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
     bool IntersectP(const Ray& ray) const;
@@ -38,6 +37,8 @@ public:
 	SoSFEnum activeSide;
 
     static const char* getClassName() {return "ParabolicRectangle";}
+    static const char* getClassIcon() {return ":/ShapeParabolicRectangle.png";}
+    const char* getIcon() const {return getClassIcon();}
 
 protected:
     Point3D GetPoint3D (double u, double v) const;

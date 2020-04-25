@@ -61,11 +61,6 @@ BBox ShapeParabolicRectangle::GetBBox() const
 
 }
 
-QString ShapeParabolicRectangle::GetIcon() const
-{
-    return ":/ShapeParabolicRectangle.png";
-}
-
 bool ShapeParabolicRectangle::Intersect(const Ray& objectRay, double *tHit, DifferentialGeometry *dg) const
 {
 	double focus = focusLength.getValue();

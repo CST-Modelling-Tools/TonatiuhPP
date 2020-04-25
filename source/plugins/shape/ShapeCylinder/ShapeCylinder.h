@@ -18,7 +18,6 @@ public:
 	double GetArea() const;
 	double GetVolume() const;
 	BBox GetBBox() const;
-	QString GetIcon() const;
 
     bool Intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
     bool IntersectP(const Ray& ray) const;
@@ -36,6 +35,8 @@ public:
 	SoSFEnum activeSide;
 
     static const char* getClassName() {return "Cylinder";}
+    static const char* getClassIcon() {return ":/ShapeCylinder.png";}
+    const char* getIcon() const {return getClassIcon();}
 
 protected:
     bool OutOfRange(double u, double v) const;
