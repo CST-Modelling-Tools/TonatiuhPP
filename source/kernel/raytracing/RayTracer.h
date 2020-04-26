@@ -1,5 +1,6 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
 #include <vector>
 
 #include <QVector>
@@ -22,7 +23,7 @@ class TSunShape;
 class TTransmissivity;
 
 
-class RayTracer
+class TONATIUH_KERNEL RayTracer
 {
 
 public:

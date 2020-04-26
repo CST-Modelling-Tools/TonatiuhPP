@@ -1,5 +1,6 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
 #include <Inventor/nodekits/SoSceneKit.h>
 #include <Inventor/actions/SoSearchAction.h>
 #include "TSeparatorKit.h"
@@ -11,7 +12,7 @@ class Vector3D;
 class Transform;
 
 
-class TSceneKit: public SoSceneKit
+class TONATIUH_KERNEL TSceneKit: public SoSceneKit
 {
     typedef SoSceneKit inherited;
 

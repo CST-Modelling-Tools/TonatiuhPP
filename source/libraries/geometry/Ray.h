@@ -4,7 +4,7 @@
 #include "Point3D.h"
 #include "Vector3D.h"
 
-class Ray
+class TONATIUH_LIBRARIES Ray
 {
 public:
     Ray():

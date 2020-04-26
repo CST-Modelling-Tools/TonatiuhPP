@@ -1,4 +1,6 @@
 #pragma once
+
+#include "kernel/TonatiuhKernel.h"
 #include <QtPlugin>
 #include <QVector>
 #include <QVariant>
@@ -8,7 +10,7 @@ class QString;
 class TShape;
 
 
-class TShapeFactory
+class TONATIUH_KERNEL TShapeFactory
 {
 public:
     virtual ~TShapeFactory() {}
@@ -22,6 +24,8 @@ public:
     virtual bool isFlat() {return false;}
 };
 
+
+Q_DECLARE_INTERFACE(TShapeFactory, "tonatiuh.TShapeFactory")
 
 template<class T>
 class ShapeFactory: public TShapeFactory
@@ -48,5 +52,3 @@ public:
         return new T;
     }
 };
-
-Q_DECLARE_INTERFACE(TShapeFactory, "tonatiuh.TShapeFactory")

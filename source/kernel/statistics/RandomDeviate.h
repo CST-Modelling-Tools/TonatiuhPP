@@ -1,4 +1,6 @@
 #pragma once
+
+#include "kernel/TonatiuhKernel.h"
 #include <qglobal.h>
 
 //!  RandomDeviate is the base class for random generators.
@@ -6,7 +8,7 @@
    A random generator class can be written based on this class.
  */
 
-class RandomDeviate
+class TONATIUH_KERNEL RandomDeviate
 {
 public:
     explicit RandomDeviate(const ulong arraySize = 100'000);

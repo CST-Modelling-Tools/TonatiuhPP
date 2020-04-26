@@ -1,8 +1,10 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
 #include <QWidget>
 
-class PhotonMapExportParametersWidget: public QWidget
+
+class TONATIUH_KERNEL PhotonMapExportParametersWidget: public QWidget
 {
     Q_OBJECT
 

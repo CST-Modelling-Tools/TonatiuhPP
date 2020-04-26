@@ -1,6 +1,6 @@
 #include "TMaterial.h"
 
-SO_NODE_ABSTRACT_SOURCE(TMaterial);
+SO_NODE_ABSTRACT_SOURCE(TMaterial)
 
 void TMaterial::initClass()
 {

@@ -1,14 +1,13 @@
 TARGET = Tonatiuh
 DESTDIR = ..
 
-VERSION = 2.3.0
-DEFINES += APP_VERSION=\\\"$$VERSION\\\"
-
 include(../config.pri)
-QT += xml opengl svg script
-QT += concurrent printsupport
 
-LIBS += -lTonatiuhKernel
+QT += concurrent # for multithreading
+QT += script # for scripting
+QT += printsupport # for customplot
+
+LIBS += -lTonatiuhKernel -lTonatiuhLibraries
 
 HEADERS += \
     $$files(actions/*.h) \
@@ -46,8 +45,7 @@ FORMS += \
     $$files(widgets/*.ui)
 
 RESOURCES += resources.qrc
- 
+
 win32 { # icon in windows explorer
     RC_FILE = Tonatiuh.rc
 }
-

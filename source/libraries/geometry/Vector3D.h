@@ -8,7 +8,7 @@ struct NormalVector;
 #include "Point3D.h"
 #include <cmath>
 
-struct Vector3D
+struct TONATIUH_LIBRARIES Vector3D
 {
     Vector3D(double dx = 0.0, double dy = 0.0, double dz = 0.0)
         : x(dx), y(dy), z(dz)
@@ -119,7 +119,8 @@ inline Vector3D operator*(double scalar, const Vector3D& vector)
 {
     return Vector3D(scalar * vector.x, scalar * vector.y, scalar * vector.z);
 }
-std::ostream& operator<<(std::ostream& os, const Vector3D& vector);
+
+TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const Vector3D& vector);
 
 inline double DotProduct(const Vector3D& vA, const Vector3D& vB)
 {
@@ -136,9 +137,9 @@ inline double DotProduct(const NormalVector& nA, const Vector3D& vB)
     return nA.x * vB.x + nA.y * vB.y + nA.z * vB.z;
 }
 
-double AbsDotProduct(const Vector3D& vA, const Vector3D& vB);
-double AbsDotProduct(const Vector3D& vA, const NormalVector& nB);
-double AbsDotProduct(const NormalVector& nA, const Vector3D& vB);
+TONATIUH_LIBRARIES double AbsDotProduct(const Vector3D& vA, const Vector3D& vB);
+TONATIUH_LIBRARIES double AbsDotProduct(const Vector3D& vA, const NormalVector& nB);
+TONATIUH_LIBRARIES double AbsDotProduct(const NormalVector& nA, const Vector3D& vB);
 
 inline Vector3D CrossProduct(const Vector3D& vA, const Vector3D& vB)
 {
@@ -167,4 +168,4 @@ inline Vector3D Normalize(const Vector3D& vA)
     return vA;
 }
 
-bool SameHemisphere(const Vector3D& vA, const Vector3D& vB);
+TONATIUH_LIBRARIES bool SameHemisphere(const Vector3D& vA, const Vector3D& vB);

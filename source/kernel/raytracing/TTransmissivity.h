@@ -1,12 +1,13 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
 #include <Inventor/nodes/SoNode.h>
 #include <Inventor/nodes/SoSubNode.h>
 
 #include "kernel/statistics/RandomDeviate.h"
 
 
-class TTransmissivity: public SoNode
+class TONATIUH_KERNEL TTransmissivity: public SoNode
 {
     typedef SoNode inherited;
 

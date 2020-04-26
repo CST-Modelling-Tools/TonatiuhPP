@@ -1,13 +1,14 @@
 TEMPLATE = lib
 TARGET = TonatiuhKernel
 DESTDIR = ..
+DEFINES += TONATIUH_KERNEL_EXPORT
 
 include(../config.pri)
-QT += xml opengl svg script
-QT += concurrent printsupport
 
+LIBS += -lTonatiuhLibraries
 
 HEADERS += \
+    $$files(*.h) \
     $$files(auxiliary/*.h) \
     $$files(geometry/*.h) \
     $$files(gui/*.h) \

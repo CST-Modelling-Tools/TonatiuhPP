@@ -1,5 +1,6 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
 #include <QtPlugin>
 #include <QIcon>
 
@@ -13,7 +14,7 @@ class QString;
    A export photonmap plugin must implement the following interface to load as a valid plugin for Tonatiuh.
  */
 
-class PhotonMapExportFactory
+class TONATIUH_KERNEL PhotonMapExportFactory
 {
 public:
     virtual ~PhotonMapExportFactory() {}

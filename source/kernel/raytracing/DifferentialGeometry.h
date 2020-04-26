@@ -1,12 +1,13 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
 #include "libraries/geometry/NormalVector.h"
 #include "libraries/geometry/Point3D.h"
 #include "libraries/geometry/Vector3D.h"
 
 class TShape;
 
-struct DifferentialGeometry
+struct TONATIUH_KERNEL DifferentialGeometry
 {
     DifferentialGeometry();
     DifferentialGeometry(const Point3D& P, const Vector3D& DPDU,

@@ -1,11 +1,12 @@
 #pragma once
 
+#include "libraries/TonatiuhLibraries.h"
 #include <string>
 
 namespace gf
 {
-void SevereError(std::string errorMessage);
-void Warning(std::string warningMessage);
-bool IsOdd(int number);
-bool Quadratic(double A, double B, double C, double* t0, double* t1);
+    TONATIUH_LIBRARIES void SevereError(std::string errorMessage);
+    TONATIUH_LIBRARIES void Warning(std::string warningMessage);
+    TONATIUH_LIBRARIES bool IsOdd(int number);
+    TONATIUH_LIBRARIES bool Quadratic(double A, double B, double C, double* t0, double* t1);
 }

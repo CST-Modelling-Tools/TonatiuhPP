@@ -4,7 +4,7 @@
 
 class Ray;
 
-struct BBox
+struct TONATIUH_LIBRARIES BBox
 {
     BBox();
     explicit BBox(const Point3D& point);
@@ -21,6 +21,6 @@ struct BBox
     Point3D pMax;
 };
 
-BBox Union(const BBox& bbox, const Point3D& point);
-BBox Union(const BBox& bbox1, const BBox& bbox2);
-std::ostream& operator<<(std::ostream& os, const BBox& bbox);
+TONATIUH_LIBRARIES BBox Union(const BBox& bbox, const Point3D& point);
+TONATIUH_LIBRARIES BBox Union(const BBox& bbox1, const BBox& bbox2);
+TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const BBox& bbox);

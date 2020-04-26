@@ -1,5 +1,6 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
 #include <Inventor/nodekits/SoSeparatorKit.h>
 
 /*!
@@ -41,7 +42,7 @@
 
 class QString;
 
-class TSeparatorKit : public SoSeparatorKit
+class TONATIUH_KERNEL TSeparatorKit : public SoSeparatorKit
 {
     typedef SoSeparatorKit inherited;
 
@@ -60,5 +61,4 @@ public:
 
 protected:
     virtual ~TSeparatorKit();
-
 };

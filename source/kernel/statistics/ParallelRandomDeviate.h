@@ -1,12 +1,13 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
 #include <QObject>
 #include <QMutex>
 
 #include "RandomDeviate.h"
 
 
-class ParallelRandomDeviate:  public QObject, public RandomDeviate
+class TONATIUH_KERNEL ParallelRandomDeviate:  public QObject, public RandomDeviate
 {
     Q_OBJECT
 

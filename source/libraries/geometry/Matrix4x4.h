@@ -4,7 +4,7 @@
 #include "RefCount.h"
 #include "Ptr.h"
 
-class Matrix4x4: public RefCount
+class TONATIUH_LIBRARIES Matrix4x4: public RefCount
 {
 public:
     Matrix4x4();
@@ -23,5 +23,5 @@ public:
     double m[4][4];
 };
 
-Ptr<Matrix4x4> Mul(const Ptr<Matrix4x4>& m1, const Ptr<Matrix4x4>& m2);
-std::ostream& operator<<(std::ostream& os, const Matrix4x4& matrix);
+TONATIUH_LIBRARIES Ptr<Matrix4x4> Mul(const Ptr<Matrix4x4>& m1, const Ptr<Matrix4x4>& m2);
+TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const Matrix4x4& matrix);

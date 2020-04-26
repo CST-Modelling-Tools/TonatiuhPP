@@ -1,8 +1,6 @@
 #pragma once
 
-
 #include <iostream>
-
 #include "Matrix4x4.h"
 #include "Ptr.h"
 
@@ -12,7 +10,7 @@ struct NormalVector;
 class Ray;
 struct BBox;
 
-class Transform
+class TONATIUH_LIBRARIES Transform
 {
 public:
     Transform();
@@ -52,15 +50,15 @@ private:
     Ptr<Matrix4x4> m_minv;
 };
 
-Transform Translate(const Vector3D& delta);
-Transform Translate(double x, double y, double z);
-Transform Scale(double x, double y, double z);
-Transform RotateX(double angle);
-Transform RotateY(double angle);
-Transform RotateZ(double angle);
-Transform Rotate(double angle, const Vector3D& axis);
-Transform LookAt(const Point3D& pos, const Point3D& look, const Vector3D& up);
+TONATIUH_LIBRARIES Transform Translate(const Vector3D& delta);
+TONATIUH_LIBRARIES Transform Translate(double x, double y, double z);
+TONATIUH_LIBRARIES Transform Scale(double x, double y, double z);
+TONATIUH_LIBRARIES Transform RotateX(double angle);
+TONATIUH_LIBRARIES Transform RotateY(double angle);
+TONATIUH_LIBRARIES Transform RotateZ(double angle);
+TONATIUH_LIBRARIES Transform Rotate(double angle, const Vector3D& axis);
+TONATIUH_LIBRARIES Transform LookAt(const Point3D& pos, const Point3D& look, const Vector3D& up);
 
-std::ostream& operator<<(std::ostream& os, const Transform& tran);
+TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const Transform& tran);
 
 

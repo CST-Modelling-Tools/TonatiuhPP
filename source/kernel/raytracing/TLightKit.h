@@ -1,5 +1,6 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
 #include <QDateTime>
 #include <QPair>
 #include <QVector>
@@ -49,14 +50,12 @@ class TShapeKit;
 
 */
 
-class TLightKit : public SoLightKit
+class TONATIUH_KERNEL TLightKit : public SoLightKit
 {
     SO_KIT_HEADER(TLightKit);
-     SO_KIT_CATALOG_ENTRY_HEADER(iconMaterial);
-     SO_KIT_CATALOG_ENTRY_HEADER(iconTexture);
-     SO_KIT_CATALOG_ENTRY_HEADER(tsunshape);
-
-
+    SO_KIT_CATALOG_ENTRY_HEADER(iconMaterial);
+    SO_KIT_CATALOG_ENTRY_HEADER(iconTexture);
+    SO_KIT_CATALOG_ENTRY_HEADER(tsunshape);
 
 public:
     TLightKit();
@@ -64,7 +63,7 @@ public:
 
     void ChangePosition( double newAzimuth, double newZenith );
 
-    void Update( BBox box );
+    void Update(BBox box);
     void ComputeLightSourceArea( int widthDivisions,int heightDivisions,QVector< QPair< TShapeKit*, Transform > > surfacesList );
 
     trt::TONATIUH_REAL azimuth;
@@ -74,7 +73,4 @@ public:
 private:
     virtual ~TLightKit();
     void UpdateSunPosition();
-
-
 };
-

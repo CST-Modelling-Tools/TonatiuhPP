@@ -1,5 +1,7 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
+
 #include <vector>
 
 #include <QVector>
@@ -22,19 +24,31 @@ class SceneModel;
  * Any change made whitin a shared node is reflected in all node's InstanceNode.
  */
 
-class InstanceNode
+class TONATIUH_KERNEL InstanceNode
 {
 public:
     InstanceNode(SoNode* node);
     ~InstanceNode();
 
-    void SetNode(SoNode* node);
-    void SetParent(InstanceNode* parent);
+    void SetNode(SoNode* node)
+    {
+        m_coinNode = node;
+    }
+    void SetParent(InstanceNode* parent)
+    {
+        m_parent = parent;
+    }
     void AddChild(InstanceNode* child);
     void InsertChild(int row, InstanceNode* instanceChild);
 
-    SoNode* GetNode() const;
-    InstanceNode* GetParent() const;
+    SoNode* GetNode() const
+    {
+        return m_coinNode;
+    }
+    InstanceNode* GetParent() const
+    {
+        return m_parent;
+    }
     QString GetNodeURL() const;
     void Print(int level) const;
 
@@ -64,30 +78,6 @@ private:
     Transform m_transformOTW;
 };
 
-QDataStream& operator<< (QDataStream& s, const InstanceNode& node);
-QDataStream& operator>> (QDataStream& s, const InstanceNode& node);
-bool operator==(const InstanceNode& thisNode,const InstanceNode& otherNode);
-
-inline void InstanceNode::SetParent(InstanceNode* parent)
-{
-    m_parent = parent;
-}
-
-inline void InstanceNode::SetNode(SoNode* node)
-{
-    m_coinNode = node;
-}
-
-inline SoNode* InstanceNode::GetNode() const
-{
-    return m_coinNode;
-}
-
-/**
- * Returns parent instance.
- */
-inline InstanceNode* InstanceNode::GetParent() const
-{
-    return m_parent;
-}
-
+TONATIUH_KERNEL QDataStream& operator<<(QDataStream& s, const InstanceNode& node);
+TONATIUH_KERNEL QDataStream& operator>>(QDataStream& s, const InstanceNode& node);
+TONATIUH_KERNEL bool operator==(const InstanceNode& thisNode,const InstanceNode& otherNode);

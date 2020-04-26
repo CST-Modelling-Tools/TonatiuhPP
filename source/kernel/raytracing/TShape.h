@@ -1,5 +1,6 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
 #include <Inventor/nodes/SoShape.h>
 
 struct BBox;
@@ -9,7 +10,7 @@ struct Point3D;
 class QString;
 class Ray;
 
-class TShape: public SoShape
+class TONATIUH_KERNEL TShape: public SoShape
 {
     SO_NODE_ABSTRACT_HEADER(TShape);
 

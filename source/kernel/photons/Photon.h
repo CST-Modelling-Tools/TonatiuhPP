@@ -1,9 +1,12 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
+
 #include "kernel/gui/InstanceNode.h"
 #include "libraries/geometry/Point3D.h"
 
-struct Photon
+
+struct TONATIUH_KERNEL Photon
 {
     Photon();
     Photon(const Point3D& pos, int side, double id = 0, InstanceNode* intersectedSurface = 0, int absorbedPhoton = 0);

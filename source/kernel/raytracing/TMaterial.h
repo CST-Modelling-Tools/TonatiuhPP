@@ -1,5 +1,6 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
 #include <Inventor/nodes/SoMaterial.h>
 
 struct DifferentialGeometry;
@@ -7,7 +8,7 @@ class RandomDeviate;
 class Ray;
 class QString;
 
-class TMaterial : public SoMaterial
+class TONATIUH_KERNEL TMaterial : public SoMaterial
 {
     SO_NODE_ABSTRACT_HEADER(TMaterial);
 

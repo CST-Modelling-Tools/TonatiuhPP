@@ -4,7 +4,7 @@
 
 class PhotonMapExport;
 
-class TPhotonMap
+class TONATIUH_KERNEL TPhotonMap
 {
 public:
     TPhotonMap();

@@ -1830,6 +1830,9 @@ void MainWindow::Run()
         lightInstance->SetIntersectionTransform(lightToWorld.GetInverse() );
 
 
+        // single thread for gprof
+//        QThreadPool::globalInstance()->setMaxThreadCount(1);
+// change ideal
 
         // Create a progress dialog.
         QProgressDialog progressDialog;

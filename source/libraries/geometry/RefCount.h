@@ -1,7 +1,8 @@
 #pragma once
 
+#include "libraries/TonatiuhLibraries.h"
 
-class RefCount
+class TONATIUH_LIBRARIES RefCount
 {
 public:
     RefCount();

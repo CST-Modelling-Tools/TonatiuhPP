@@ -1,9 +1,11 @@
 #pragma once
 
+#include "libraries/TonatiuhLibraries.h"
 #include <iostream>
+
 struct Vector3D;
 
-struct NormalVector
+struct TONATIUH_LIBRARIES NormalVector
 {
     NormalVector(double dx = 0.0, double dy = 0.0, double dz = 0.0);
     explicit NormalVector(const Vector3D& vector);
@@ -32,12 +34,12 @@ struct NormalVector
     double z;
 };
 
-NormalVector operator+(NormalVector lhs, const NormalVector& rhs);
-NormalVector operator-(NormalVector lhs, const NormalVector& rhs);
-NormalVector operator*(double scalar, const NormalVector& nV);
-std::ostream& operator<<(std::ostream& os, const NormalVector& nV);
-double DotProduct(const NormalVector& nA, const NormalVector& nB);
-double AbsDotProduct(const NormalVector& nA, const NormalVector& nB);
-NormalVector Normalize(const NormalVector& nV);
+TONATIUH_LIBRARIES NormalVector operator+(NormalVector lhs, const NormalVector& rhs);
+TONATIUH_LIBRARIES NormalVector operator-(NormalVector lhs, const NormalVector& rhs);
+TONATIUH_LIBRARIES NormalVector operator*(double scalar, const NormalVector& nV);
+TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const NormalVector& nV);
+TONATIUH_LIBRARIES double DotProduct(const NormalVector& nA, const NormalVector& nB);
+TONATIUH_LIBRARIES double AbsDotProduct(const NormalVector& nA, const NormalVector& nB);
+TONATIUH_LIBRARIES NormalVector Normalize(const NormalVector& nV);
 
 

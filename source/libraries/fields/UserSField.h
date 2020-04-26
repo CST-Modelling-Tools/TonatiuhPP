@@ -1,14 +1,14 @@
 #pragma once
 
+#include "libraries/TonatiuhLibraries.h"
 #include <QStringList>
-
 #include <Inventor/fields/SoSubField.h>
 #include <Inventor/fields/SoSField.h>
 
 
 class FieldEditor;
 
-class UserSField: public SoSField
+class TONATIUH_LIBRARIES UserSField: public SoSField
 {
     typedef SoSField inherited;
 

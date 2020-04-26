@@ -26,13 +26,13 @@ class TPhotonMap;
 
 namespace trf
 {
-void ComputeSceneTreeMap(InstanceNode* instanceNode, Transform parentWTO, bool insertInSurfaceList);
-void ComputeFistStageSurfaceList(InstanceNode* instanceNode, QStringList disabledNodesURL, QVector< QPair< TShapeKit*, Transform > >* surfacesList);
-void CreatePhotonMap(TPhotonMap*& photonMap, QPair< TPhotonMap*,  std::vector < Photon  > > photonsList);
+    TONATIUH_KERNEL void ComputeSceneTreeMap(InstanceNode* instanceNode, Transform parentWTO, bool insertInSurfaceList);
+    TONATIUH_KERNEL void ComputeFistStageSurfaceList(InstanceNode* instanceNode, QStringList disabledNodesURL, QVector< QPair< TShapeKit*, Transform > >* surfacesList);
+    TONATIUH_KERNEL void CreatePhotonMap(TPhotonMap*& photonMap, QPair< TPhotonMap*,  std::vector < Photon  > > photonsList);
 
-SoSeparator* DrawPhotonMapPoints(const TPhotonMap& map);
-SoSeparator* DrawPhotonMapRays(const TPhotonMap& map, unsigned long numberOfRays);
-Transform GetObjectToWorld(SoPath* nodePath);
+    TONATIUH_KERNEL SoSeparator* DrawPhotonMapPoints(const TPhotonMap& map);
+    TONATIUH_KERNEL SoSeparator* DrawPhotonMapRays(const TPhotonMap& map, unsigned long numberOfRays);
+    TONATIUH_KERNEL Transform GetObjectToWorld(SoPath* nodePath);
 }
 
 /**
@@ -137,19 +137,16 @@ inline void trf::ComputeFistStageSurfaceList(InstanceNode* instanceNode, QString
         surfacesList->push_back(QPair< TShapeKit*, Transform >(surface, shapeTransform) );
 
     }
-
 }
 
 inline void trf::CreatePhotonMap(TPhotonMap*& photonMap, QPair< TPhotonMap*, std::vector< Photon >  > photonsList)
 {
     if (!photonMap) photonMap = photonsList.first;
     photonMap->StoreRays(photonsList.second);
-
 }
 
 inline Transform trf::GetObjectToWorld(SoPath* nodePath)
 {
-
     SoGetMatrixAction* getmatrixAction = new SoGetMatrixAction(SbViewportRegion () );
     getmatrixAction->apply(nodePath);
 

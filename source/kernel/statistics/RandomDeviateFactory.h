@@ -1,5 +1,6 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
 #include <QtPlugin>
 #include <QIcon>
 #include <QTime>

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
 #include <vector>
 
 #include <QPair>
@@ -13,7 +14,7 @@
 
 class Transform;
 
-class TLightShape : public SoShape
+class TONATIUH_KERNEL TLightShape : public SoShape
 {
     SO_NODE_HEADER(TLightShape);
 

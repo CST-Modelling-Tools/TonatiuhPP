@@ -7,8 +7,6 @@
 #include "libraries/geometry/Transform.h"
 
 
-
-
 double tgf::AlternateBoxMuller( RandomDeviate& rand )
 {
     static bool firsttime = true;
@@ -106,6 +104,4 @@ SbMatrix tgf::MatrixFromSoTransform( SoTransform* const & soTransform )
                             soTransform->center.getValue() );
 
     return sbMatrix;
-
 }
-

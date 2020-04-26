@@ -8,9 +8,8 @@
 
 class SceneModel;
 
-class PhotonMapExport
+class TONATIUH_KERNEL PhotonMapExport
 {
-
 public:
     PhotonMapExport();
     virtual ~PhotonMapExport() {}

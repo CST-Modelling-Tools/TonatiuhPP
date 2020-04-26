@@ -3,6 +3,5 @@ DESTDIR = ..
 
 include( ../config.pri)
 
-#INCLUDEPATH += $$TONATIUH_ROOT/plugin
 LIBS += -L../../..
-LIBS += -lTonatiuhKernel
+LIBS += -lTonatiuhKernel -lTonatiuhLibraries

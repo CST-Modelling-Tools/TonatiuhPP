@@ -1,5 +1,6 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
 #include <Inventor/engines/SoNodeEngine.h>
 #include <Inventor/engines/SoSubNodeEngine.h>
 #include <Inventor/nodes/SoTransform.h>
@@ -14,7 +15,7 @@ class Transform;
 class Vector3D;
 
 
-class TTracker: public SoNodeEngine
+class TONATIUH_KERNEL TTracker: public SoNodeEngine
 {
     SO_NODEENGINE_ABSTRACT_HEADER(TTracker);
 
@@ -57,5 +58,4 @@ protected:
 
 private:
     virtual void evaluate() = 0;
-
 };

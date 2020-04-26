@@ -1,5 +1,6 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
 #include <Inventor/nodes/SoNode.h>
 #include <Inventor/nodes/SoSubNode.h>
 #include <Inventor/fields/SoSFDouble.h>
@@ -8,7 +9,7 @@
 #include "kernel/statistics/RandomDeviate.h"
 
 
-class TSunShape: public SoNode
+class TONATIUH_KERNEL TSunShape: public SoNode
 {
     typedef SoNode inherited;
 
