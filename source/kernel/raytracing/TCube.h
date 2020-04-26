@@ -40,5 +40,4 @@ private:
     static SbVec3d frontNormal, rearNormal;
     static SbVec3d leftNormal, rightNormal;
     static SbVec3d baseNormal, topNormal;
-
 };

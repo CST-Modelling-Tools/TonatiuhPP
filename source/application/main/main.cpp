@@ -84,15 +84,16 @@ int main(int argc, char** argv)
 
     UserMField::initClass();
     UserSField::initClass();
+
     TSceneKit::initClass();
     TMaterial::initClass();
     TDefaultMaterial::initClass();
     TSeparatorKit::initClass();
+
     TShape::initClass();
-    TCube::initClass();
+
     TLightShape::initClass();
     TShapeKit::initClass();
-    TSquare::initClass();
     TLightKit::initClass();
     TSunShape::initClass();
     TDefaultSunShape::initClass();

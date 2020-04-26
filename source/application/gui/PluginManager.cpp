@@ -18,8 +18,10 @@
 #include "kernel/raytracing/TMaterialFactory.h"
 #include "kernel/statistics/RandomDeviateFactory.h"
 #include "kernel/raytracing/TShapeFactory.h"
-#include "kernel/raytracing/TSunShapeFactory.h"
+#include "kernel/raytracing/TSunFactory.h"
 #include "kernel/raytracing/TTrackerFactory.h"
+#include "kernel/raytracing/TSquare.h"
+#include "kernel/raytracing/TCube.h"
 
 
 template <class T>
@@ -48,11 +50,19 @@ void sortFactories(const QStringList& sorting, QVector<T*>& factories) {
  */
 void PluginManager::load(QDir dir)
 {
-    QStringList filesList;
-    findFiles(dir, filesList);
+    QStringList files;
+    findFiles(dir, files);
 
-    for (QString fileName: filesList)
-        loadTonatiuhPlugin(fileName);
+    for (QString file: files) {
+        QPluginLoader loader(file);
+        QObject* p = loader.instance();
+        TFactory* f = dynamic_cast<TFactory*>(p);
+        loadTonatiuhPlugin(f);
+    }
+
+    loadTonatiuhPlugin(new ShapeFactory<TSquare>);
+    loadTonatiuhPlugin(new ShapeFactory<TCube>);
+
     sort();
 }
 
@@ -93,94 +103,46 @@ void PluginManager::findFiles(QDir dir, QStringList& files)
 /*!
  * Loads the plugin is defined in \a fileName, if it is a valid plugin.
  */
-void PluginManager::loadTonatiuhPlugin(const QString& file)
+void PluginManager::loadTonatiuhPlugin(TFactory* p)
 {
-    QPluginLoader loader(file);
-    QObject* plugin = loader.instance();
-    if (plugin) {
-        if (dynamic_cast<TTransmissivityFactory*>(plugin)) loadAirPlugin(plugin);
-        if (plugin->inherits("TComponentFactory") ) LoadComponentPlugin(plugin);
-        if (dynamic_cast<PhotonMapExportFactory*>(plugin)) loadExportPlugin(plugin);
-        if (dynamic_cast<TMaterialFactory*>(plugin)) loadMaterialPlugin(plugin);
-        if (dynamic_cast<RandomDeviateFactory*>(plugin)) loadRandomPlugin(plugin);
-        if (dynamic_cast<TShapeFactory*>(plugin)) loadShapePlugin(plugin);
-        if (dynamic_cast<TSunShapeFactory*>(plugin)) loadSunPlugin(plugin);
-        if (plugin->inherits("TTrackerFactory") ) loadTrackerPlugin(plugin);
+    if (auto f = dynamic_cast<TTransmissivityFactory*>(p))
+    {
+        f->init();
+        m_airFactories << f;
+        m_airMap[f->name()] = f;
     }
-}
-
-/*!
- * Loads \a plugin as transmissivity plugin.
- */
-void PluginManager::loadAirPlugin(QObject* plugin)
-{
-    TTransmissivityFactory* f = qobject_cast<TTransmissivityFactory*>(plugin);
-    if (!f) gf::SevereError("MainWindow::LoadPlugins: Transmissivity plug-in not recognized");
-    f->create();
-    m_airFactories << f;
-}
-
-/*!
- * Loads the \a plugin as component type.
- */
-void PluginManager::LoadComponentPlugin(QObject* plugin)
-{
-    TComponentFactory* f = qobject_cast<TComponentFactory*>(plugin);
-    if (!f) gf::SevereError("PluginManager::LoadComponentPlugin: Component plug-in not recognized");
-    m_componentFactories << f;
-    // template with void create
-}
-
-/*!
- * Loads the \a plugin as component type.
- */
-void PluginManager::loadExportPlugin(QObject* plugin)
-{
-    PhotonMapExportFactory* f = qobject_cast<PhotonMapExportFactory*>(plugin);
-    if (!f) gf::SevereError("PluginManager::LoadExportPhotonMapModePlugin: Component plug-in not recognized");
-    m_exportFactories << f;
-}
-
-/*!
- * Loads the \a plugin as material type.
- */
-void PluginManager::loadMaterialPlugin(QObject* plugin)
-{
-    TMaterialFactory* f = qobject_cast<TMaterialFactory*>(plugin);
-    if (!f) gf::SevereError("MainWindow::LoadPlugins: Material plug-in not recognized");
-    f->create();
-    m_materialFactories << f;
-}
-
-/*!
- * Loads the \a plugin as RandomDeviatePlugin type.
- */
-void PluginManager::loadRandomPlugin(QObject* plugin)
-{
-    RandomDeviateFactory* f = qobject_cast<RandomDeviateFactory*>(plugin);
-    m_randomFactories << f;
-}
-
-void PluginManager::loadShapePlugin(QObject* plugin)
-{
-    TShapeFactory* f = qobject_cast<TShapeFactory*>(plugin);
-    if (!f) gf::SevereError("MainWindow::LoadPlugins: Shape plug-in not recognized");
-    f->create();
-    m_shapeFactories << f;
-}
-
-void PluginManager::loadSunPlugin(QObject* plugin)
-{
-    TSunShapeFactory* f = qobject_cast<TSunShapeFactory*>(plugin);
-    if (!f) gf::SevereError("MainWindow::LoadPlugins: SunShape plug-in not recognized"); ;
-    f->create();
-    m_sunFactories << f;
-}
-
-void PluginManager::loadTrackerPlugin(QObject* plugin)
-{
-    TTrackerFactory* f = qobject_cast< TTrackerFactory*>(plugin);
-    if (!f) gf::SevereError("MainWindow::LoadPlugins: Tracker plug-in not recognized");
-    f->create();
-    m_trackerFactories << f;
+    else if (auto f = dynamic_cast<TComponentFactory*>(p))
+    {
+        m_componentFactories << f;
+    }
+    else if (auto f = dynamic_cast<PhotonMapExportFactory*>(p))
+    {
+        m_exportFactories << f;
+    }
+    else if (auto f = dynamic_cast<TMaterialFactory*>(p))
+    {
+        f->init();
+        m_materialFactories << f;
+        m_materialsMap[f->name()] = f;
+    }
+    else if (auto f = dynamic_cast<RandomDeviateFactory*>(p))
+    {
+        m_randomFactories << f;
+    }
+    else if (auto f = dynamic_cast<TShapeFactory*>(p))
+    {
+        f->init();
+        m_shapeFactories << f;
+        m_shapesMap[f->name()] = f;
+    }
+    else if (auto f = dynamic_cast<TSunFactory*>(p))
+    {
+        f->init();
+        m_sunFactories << f;
+    }
+    else if (auto f = dynamic_cast<TTrackerFactory*>(p))
+    {
+        f->create();
+        m_trackerFactories << f;
+    }
 }

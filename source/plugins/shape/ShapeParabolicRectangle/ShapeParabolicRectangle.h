@@ -13,10 +13,6 @@ class ShapeParabolicRectangle: public TShape
 	SO_NODE_HEADER(ShapeParabolicRectangle);
 
 public:
-    enum Side {
-		INSIDE = 0,
-        OUTSIDE = 1,
-	};
 
 	ShapeParabolicRectangle();
 	static void initClass();
@@ -43,7 +39,6 @@ public:
 protected:
     Point3D GetPoint3D (double u, double v) const;
     NormalVector GetNormal(double u, double v) const;
-    bool OutOfRange(double u, double v) const;
 
     void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
     void generatePrimitives(SoAction* action);

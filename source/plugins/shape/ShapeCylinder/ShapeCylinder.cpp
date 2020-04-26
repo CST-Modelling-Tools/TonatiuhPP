@@ -68,25 +68,25 @@ BBox ShapeCylinder::GetBBox() const
 	return BBox( Point3D( xmin, ymin, zmin ), Point3D( xmax, ymax, zmax ) );
 }
 
-bool ShapeCylinder::Intersect( const Ray& objectRay, double* tHit, DifferentialGeometry* dg ) const
+bool ShapeCylinder::Intersect( const Ray& ray, double* tHit, DifferentialGeometry* dg ) const
 {
 	// Compute quadratic cylinder coefficients
 //	Vector3D vObjectRayOrigin = Vector3D( objectRay.origin );
-	double A = objectRay.direction().x*objectRay.direction().x + objectRay.direction().y*objectRay.direction().y;
-    double B = 2.0 * ( objectRay.direction().x* objectRay.origin.x + objectRay.direction().y * objectRay.origin.y);
-	double C = objectRay.origin.x * objectRay.origin.x + objectRay.origin.y * objectRay.origin.y - radius.getValue() * radius.getValue();
+    double A = ray.direction().x*ray.direction().x + ray.direction().y*ray.direction().y;
+    double B = 2.0 * ( ray.direction().x* ray.origin.x + ray.direction().y * ray.origin.y);
+    double C = ray.origin.x * ray.origin.x + ray.origin.y * ray.origin.y - radius.getValue() * radius.getValue();
 
 	// Solve quadratic equation for _t_ values
 	double t0, t1;
 	if( !gf::Quadratic( A, B, C, &t0, &t1 ) ) return false;
 
 	// Compute intersection distance along ray
-	if( t0 > objectRay.tMax || t1 < objectRay.tMin ) return false;
-    double thit = ( t0 > objectRay.tMin )? t0 : t1 ;
-    if( thit > objectRay.tMax ) return false;
+    if( t0 > ray.tMax || t1 < ray.tMin ) return false;
+    double thit = ( t0 > ray.tMin )? t0 : t1 ;
+    if( thit > ray.tMax ) return false;
 
    //Compute possible cylinder hit position and $\phi
-    Point3D hitPoint = objectRay( thit );
+    Point3D hitPoint = ray( thit );
 	double phi = atan2( hitPoint.y, hitPoint.x );
 	if ( phi < 0. ) phi += gc::TwoPi;
 
@@ -97,16 +97,16 @@ bool ShapeCylinder::Intersect( const Ray& objectRay, double* tHit, DifferentialG
 
 
 	// Test intersection against clipping parameters
-	if( (thit - objectRay.tMin) < tol  || hitPoint.z < zmin || hitPoint.z > zmax || phi > phiMax.getValue() )
+    if( (thit - ray.tMin) < tol  || hitPoint.z < zmin || hitPoint.z > zmax || phi > phiMax.getValue() )
 	{
 		if ( thit == t1 ) return false;
-		if ( t1 > objectRay.tMax ) return false;
+        if ( t1 > ray.tMax ) return false;
 		thit = t1;
 
-		hitPoint = objectRay( thit );
+        hitPoint = ray( thit );
 		phi = atan2( hitPoint.y, hitPoint.x );
 		if ( phi < 0. ) phi += gc::TwoPi;
-		if ( (thit - objectRay.tMin) < tol  || hitPoint.z < zmin || hitPoint.z > zmax || phi > phiMax.getValue() ) return false;
+        if ( (thit - ray.tMin) < tol  || hitPoint.z < zmin || hitPoint.z > zmax || phi > phiMax.getValue() ) return false;
 	}
 	// Now check if the fucntion is being called from IntersectP,
 	// in which case the pointers tHit and dg are 0
@@ -128,61 +128,23 @@ bool ShapeCylinder::Intersect( const Ray& objectRay, double* tHit, DifferentialG
 						0.0 );
 	Vector3D dpdv( 0.0, 0.0, length.getValue() );
 
-	// Compute cylinder \dndu and \dndv
-	Vector3D d2Pduu( -phiMax.getValue() * phiMax.getValue() * radius.getValue()
-							* cos( phiMax.getValue() * u ),
-						-phiMax.getValue() * phiMax.getValue() * radius.getValue()
-							* sin( phiMax.getValue() * u ),
-						0.0 );
-	Vector3D d2Pduv( 0.0, 0.0, 0.0 );
-	Vector3D d2Pdvv( 0.0, 0.0, 0.0 );
 
-	// Compute coefficients for fundamental forms
-	double E = DotProduct( dpdu, dpdu );
-	double F = DotProduct( dpdu, dpdv );
-	double G = DotProduct( dpdv, dpdv );
-	Vector3D N = Normalize( NormalVector( CrossProduct( dpdu, dpdv ) ) );
+    NormalVector N = Normalize( NormalVector( CrossProduct( dpdu, dpdv ) ) );
 
-	double e = DotProduct( N, d2Pduu );
-	double f = DotProduct( N, d2Pduv );
-	double g = DotProduct( N, d2Pdvv );
 
-		// Compute \dndu and \dndv from fundamental form coefficients
-	double invEGF2 = 1.0 / (E*G - F*F);
-	Vector3D dndu = (f*F - e*G) * invEGF2 * dpdu +
-			        (e*F - f*E) * invEGF2 * dpdv;
-	Vector3D dndv = (g*F - f*G) * invEGF2 * dpdu +
-	                (f*F - g*E) * invEGF2 * dpdv;
+    *dg = DifferentialGeometry(hitPoint, u, v, dpdu, dpdv, N, this);
+    dg->shapeFrontSide = DotProduct(N, ray.direction()) <= 0.;
 
-	// Initialize _DifferentialGeometry_ from parametric information
-	*dg = DifferentialGeometry( hitPoint ,
-		                        dpdu,
-								dpdv,
-		                        dndu,
-								dndv,
-		                        u, v, this );
-	dg->shapeFrontSide = ( DotProduct( N, objectRay.direction() ) > 0 ) ? false : true;
-
-    // Update _tHit_ for quadric intersection
     *tHit = thit;
 
 	return true;
 }
 
-bool ShapeCylinder::IntersectP( const Ray& worldRay ) const
+bool ShapeCylinder::IntersectP(const Ray& worldRay) const
 {
-	return Intersect( worldRay, 0, 0 );
+    return Intersect(worldRay, 0, 0);
 }
 
-Point3D ShapeCylinder::Sample( double u, double v ) const
-{
-	return GetPoint3D( u, v );
-}
-
-bool ShapeCylinder::OutOfRange( double u, double v ) const
-{
-	return ( ( u < 0.0 ) || ( u > 1.0 ) || ( v < 0.0 ) || ( v > 1.0 ) );
-}
 
 Point3D ShapeCylinder::GetPoint3D (double u, double v) const
 {

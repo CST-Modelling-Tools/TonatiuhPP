@@ -2,21 +2,21 @@
 
 #include "kernel/raytracing/TFactory.h"
 
-class TMaterial;
+class TSunShape;
 
 
 
-class TMaterialFactory: public TFactory
+class TSunFactory: public TFactory
 {
-public: 
-    virtual TMaterial* create() const = 0;
+public:
+    virtual TSunShape* create() const = 0;
 };
-Q_DECLARE_INTERFACE(TMaterialFactory, "tonatiuh.TMaterialFactory")
+Q_DECLARE_INTERFACE( TSunFactory, "tonatiuh.TSunFactory")
 
 
 
 template<class T>
-class MaterialFactory: public TMaterialFactory
+class SunFactory: public TSunFactory
 {
 public:
     QString name() const {return T::getClassName();}

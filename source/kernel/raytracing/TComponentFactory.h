@@ -1,18 +1,14 @@
 #pragma once
 
-#include <QtPlugin>
+#include "kernel/raytracing/TFactory.h"
 
-class PluginManager;
-class QString;
-class QIcon;
 class TSeparatorKit;
 
-class TComponentFactory
+
+
+class TComponentFactory: public TFactory
 {
 public:
-    virtual ~TComponentFactory() {}
-    virtual QString TComponentName() const  = 0;
-    virtual QIcon TComponentIcon() const = 0;
     virtual TSeparatorKit* CreateTComponent( PluginManager* pPluginManager ) const = 0;
     virtual TSeparatorKit* CreateTComponent( PluginManager* pPluginManager, int numberofParameters, QVector< QVariant > parametersList ) const = 0;
 };

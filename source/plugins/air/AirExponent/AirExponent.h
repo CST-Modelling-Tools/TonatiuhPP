@@ -17,13 +17,15 @@ public:
     SoSFDouble constant;
 
     static const char* getClassName() {return "Exponent";}
+    static const char* getClassIcon() {return ":/AirExponent.png";}
 };
 
 
 
 #include "kernel/raytracing/TTransmissivityFactory.h"
 
-class AirExponentFactory: public QObject, public AirFactory<AirExponent>
+class AirExponentFactory:
+    public QObject, public AirFactory<AirExponent>
 {
     Q_OBJECT
     Q_INTERFACES(TTransmissivityFactory)

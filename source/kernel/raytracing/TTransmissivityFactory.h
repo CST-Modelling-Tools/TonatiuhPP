@@ -1,44 +1,28 @@
 #pragma once
 
-#include <QtPlugin>
-#include <QIcon>
+#include "kernel/raytracing/TFactory.h"
 
-class QString;
 class TTransmissivity;
 
-class TTransmissivityFactory
+
+
+class TTransmissivityFactory: public TFactory
 {
 public:
     virtual QString name() const = 0;
     virtual QIcon icon() const = 0;
     virtual TTransmissivity* create() const = 0;
 };
-
 Q_DECLARE_INTERFACE(TTransmissivityFactory, "tonatiuh.TTransmissivityFactory")
+
 
 
 template<class T>
 class AirFactory: public TTransmissivityFactory
 {
 public:
-
-    QString name() const
-    {
-        return T::getClassName();
-    }
-
-    QIcon icon() const
-    {
-        return QIcon(QString(":/Air%1.png").arg(T::getClassName()));
-    }
-
-    T* create() const
-    {
-        static bool first = true;
-        if (first) {
-            first = false;
-            T::initClass();
-        }
-        return new T;
-    }
+    QString name() const {return T::getClassName();}
+    QIcon icon() const {return QIcon(T::getClassIcon());}
+    void init() const {T::initClass();}
+    T* create() const {return new T;}
 };

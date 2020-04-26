@@ -15,19 +15,12 @@ class ShapeSphere: public TShape
     SO_NODE_HEADER(ShapeSphere);
 
 public:
-    enum Side {
-        INSIDE = 0,
-        OUTSIDE = 1,
-    };
-
     ShapeSphere();
     static void initClass();
     SoNode* copy(SbBool copyConnections) const;
     double GetArea() const;
     double GetVolume() const;
     BBox GetBBox() const;
-
-    Point3D Sample(double u1, double u2) const;
 
     bool Intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
     bool IntersectP(const Ray& ray) const;
@@ -48,7 +41,6 @@ protected:
     static void updateYMax(void* data, SoSensor*);
     static void updatePhiMax(void* data, SoSensor*);
 
-    bool OutOfRange(double u, double v) const;
     Point3D GetPoint3D(double u, double v) const;
     NormalVector GetNormal(double u, double v) const;
 

@@ -111,48 +111,19 @@ bool ShapeParabolicRectangle::Intersect(const Ray& objectRay, double *tHit, Diff
 	// Compute possible parabola hit position
 
 	// Find parametric representation of paraboloid hit
-	double u =  ( hitPoint.x  / wX ) + 0.5;
-	double v =  ( hitPoint.z  / wZ ) + 0.5;
+        double u = hitPoint.x/wX + 0.5;
+        double v = hitPoint.z/wZ + 0.5;
 
 	Vector3D dpdu( wX, ( (-0.5 + u) * wX *  wX ) / ( 2 * focus ), 0 );
 	Vector3D dpdv( 0.0, (( -0.5 + v) * wZ *  wZ ) /( 2 * focus ), wZ );
 
-	// Compute parabaloid \dndu and \dndv
-	Vector3D d2Pduu( 0.0,  (wX *  wX ) /( 2 * focus ), 0.0 );
-	Vector3D d2Pduv( 0.0, 0.0, 0.0 );
-	Vector3D d2Pdvv( 0.0,  (wZ *  wZ ) /( 2 * focus ), 0.0 );
-
-	// Compute coefficients for fundamental forms
-	double E = DotProduct(dpdu, dpdu);
-	double F = DotProduct(dpdu, dpdv);
-	double G = DotProduct(dpdv, dpdv);
-
 	NormalVector N = Normalize( NormalVector( CrossProduct( dpdu, dpdv ) ) );
 
-	double e = DotProduct(N, d2Pduu);
-	double f = DotProduct(N, d2Pduv);
-	double g = DotProduct(N, d2Pdvv);
-
-	// Compute \dndu and \dndv from fundamental form coefficients
-	double invEGF2 = 1.0 / (E*G - F*F);
-	Vector3D dndu = (f*F - e*G) * invEGF2 * dpdu +
-		(e*F - f*E) * invEGF2 * dpdv;
-	Vector3D dndv = (g*F - f*G) * invEGF2 * dpdu +
-		(f*F - g*E) * invEGF2 * dpdv;
 
 	// Initialize _DifferentialGeometry_ from parametric information
-	*dg = DifferentialGeometry(hitPoint,
-							   dpdu,
-							   dpdv,
-							   dndu,
-							   dndv,
-							   u, v, this);
-	dg->shapeFrontSide = ( DotProduct( N, objectRay.direction() ) > 0 ) ? false : true;
+        *dg = DifferentialGeometry(hitPoint, u, v, dpdu, dpdv, N, this);
+        dg->shapeFrontSide = DotProduct(N, objectRay.direction()) <= 0;
 
-
-///////////////////////////////////////////////////////////////////////////////////////
-
-	// Update _tHit_ for quadric intersection
 	*tHit = thit;
 	return true;
 }
@@ -165,11 +136,6 @@ bool ShapeParabolicRectangle::IntersectP( const Ray& objectRay ) const
 Point3D ShapeParabolicRectangle::Sample( double u, double v ) const
 {
 	return GetPoint3D( u, v );
-}
-
-bool ShapeParabolicRectangle::OutOfRange( double u, double v ) const
-{
-	return ( ( u < 0.0 ) || ( u > 1.0 ) || ( v < 0.0 ) || ( v > 1.0 ) );
 }
 
 Point3D ShapeParabolicRectangle::GetPoint3D( double u, double v ) const

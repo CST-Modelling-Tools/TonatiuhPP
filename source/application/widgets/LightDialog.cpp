@@ -11,7 +11,7 @@
 #include "kernel/raytracing/TShape.h"
 #include "kernel/raytracing/TShapeKit.h"
 #include "kernel/raytracing/TShapeFactory.h"
-#include "kernel/raytracing/TSunShapeFactory.h"
+#include "kernel/raytracing/TSunFactory.h"
 
 /**
  * Creates a new dialog for the light definition.
@@ -20,7 +20,7 @@
  * aperture and shows the the light parameters defined in the light \a currentLightKit.
  */
 
-LightDialog::LightDialog( SceneModel& sceneModel, TLightKit* currentLightKit, QVector< TSunShapeFactory* > sunshapeFactoryList, QWidget* parent )
+LightDialog::LightDialog( SceneModel& sceneModel, TLightKit* currentLightKit, QVector< TSunFactory* > sunshapeFactoryList, QWidget* parent )
 :QDialog( parent ),
  m_currentLightKit( currentLightKit ),
  m_currentSceneModel( &sceneModel ),
@@ -120,7 +120,7 @@ void LightDialog::ChangeSunshape( int index )
     else if( index == m_currentSunShapeIndex)    m_newSunShape = static_cast< TSunShape* >( m_currentLightKit->getPart( "tsunshape", false )->copy( true ) );
     else
     {
-        TSunShapeFactory* sunshapeFactory = m_sunshapeList.value( sunshapeCombo->itemData( index ).toString() );
+        TSunFactory* sunshapeFactory = m_sunshapeList.value( sunshapeCombo->itemData( index ).toString() );
         m_newSunShape = sunshapeFactory->create();
 
     }
@@ -216,10 +216,10 @@ void LightDialog::SunshapeBox()
     connect( sunshapeCombo, SIGNAL( activated( int ) ), this, SLOT( ChangeSunshape( int ) ) );
 
     //Add elements to sunshape combo
-    QList< TSunShapeFactory* > sunShapeFactoryList = m_sunshapeList.values();
+    QList< TSunFactory* > sunShapeFactoryList = m_sunshapeList.values();
     sunshapeCombo->addItem ( "---" );
     for( int i = 0; i < sunShapeFactoryList.size(); ++i )
-        sunshapeCombo->addItem( sunShapeFactoryList[i]->TSunShapeIcon(), sunShapeFactoryList[i]->TSunShapeName(),m_sunshapeList.key( sunShapeFactoryList[i] ) );
+        sunshapeCombo->addItem( sunShapeFactoryList[i]->icon(), sunShapeFactoryList[i]->name(),m_sunshapeList.key( sunShapeFactoryList[i] ) );
 
     //Select current LightKit Sunshape
     m_currentSunShapeIndex = 0;

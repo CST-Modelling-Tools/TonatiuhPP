@@ -14,7 +14,7 @@
 
 using namespace std;
 
-SO_NODE_SOURCE(TCube);
+SO_NODE_SOURCE(TCube)
 
 // Normals to the six sides of the cube
    SbVec3d TCube::frontNormal, TCube::rearNormal;

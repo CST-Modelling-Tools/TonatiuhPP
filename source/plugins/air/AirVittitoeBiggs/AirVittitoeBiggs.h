@@ -2,7 +2,6 @@
 
 #include <Inventor/fields/SoSFEnum.h>
 
-#include "kernel/raytracing/trt.h"
 #include "kernel/raytracing/TTransmissivity.h"
 
 
@@ -20,13 +19,15 @@ public:
     SoSFEnum visibility;
 
     static const char* getClassName() {return "VittitoeBiggs";}
+    static const char* getClassIcon() {return ":/AirVittitoeBiggs.png";}
 };
 
 
 
 #include "kernel/raytracing/TTransmissivityFactory.h"
 
-class AirVittitoeBiggsFactory: public QObject, public AirFactory<AirVittitoeBiggs>
+class AirVittitoeBiggsFactory:
+    public QObject, public AirFactory<AirVittitoeBiggs>
 {
     Q_OBJECT
     Q_INTERFACES(TTransmissivityFactory)

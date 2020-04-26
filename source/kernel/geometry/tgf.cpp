@@ -37,8 +37,6 @@ double tgf::AlternateBoxMuller( RandomDeviate& rand )
         firsttime = true;
         return x2;
     }
-
-
 }
 
 SbMatrix tgf::MatrixFromTransform( const Transform& transform )
@@ -97,11 +95,12 @@ Transform tgf::TransformFromSoTransform( SoTransform* const & soTransform )
 SbMatrix tgf::MatrixFromSoTransform( SoTransform* const & soTransform )
 {
     SbMatrix sbMatrix;
-    sbMatrix.setTransform(     soTransform->translation.getValue(),
-                            soTransform->rotation.getValue(),
-                            soTransform->scaleFactor.getValue(),
-                            soTransform->scaleOrientation.getValue(),
-                            soTransform->center.getValue() );
-
+    sbMatrix.setTransform(
+        soTransform->translation.getValue(),
+        soTransform->rotation.getValue(),
+        soTransform->scaleFactor.getValue(),
+        soTransform->scaleOrientation.getValue(),
+        soTransform->center.getValue()
+    );
     return sbMatrix;
 }

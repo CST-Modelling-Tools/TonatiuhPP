@@ -65,7 +65,7 @@ public:
     void CreateGroupNode();
     void CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector< QVariant > parametersList);
     void CreateMaterial(QString materialType);
-    void CreateShape(QString shapeType);
+    void CreateShape(QString name);
     void CreateShape(QString shapeType, int numberOfParameters, QVector< QVariant > parametersList);
     void CreateSurfaceNode();
     void CreateTracker(QString trackerType);

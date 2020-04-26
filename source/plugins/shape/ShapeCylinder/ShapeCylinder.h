@@ -22,13 +22,6 @@ public:
     bool Intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
     bool IntersectP(const Ray& ray) const;
 
-    Point3D Sample(double u, double v) const;
-
-    enum Side {
-		INSIDE = 0,
-        OUTSIDE = 1,
-	};
-
 	trt::TONATIUH_REAL radius;
 	trt::TONATIUH_REAL length;
 	trt::TONATIUH_REAL phiMax;
@@ -39,7 +32,6 @@ public:
     const char* getIcon() const {return getClassIcon();}
 
 protected:
-    bool OutOfRange(double u, double v) const;
     Point3D GetPoint3D(double u, double v) const;
     NormalVector GetNormal(double u, double v) const;
 

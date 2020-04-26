@@ -6,7 +6,7 @@ class Trace
 {
 public:
     Trace( std::string functionName, bool showTrace = true );
-    ~Trace( );
+    ~Trace();
 
 private:
     static int level;

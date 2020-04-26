@@ -7,7 +7,7 @@ using namespace std;
 
 void sunpos(cTime udtTime,cLocation udtLocation, cSunCoordinates *udtSunCoordinates)
 {
-       // Main variables
+    // Main variables
     double dJulianDate;
     double dElapsedJulianDays;
     double dDecimalHours;
@@ -105,6 +105,5 @@ void sunpos(cTime udtTime,cLocation udtLocation, cSunCoordinates *udtSunCoordina
             *sin(udtSunCoordinates->dZenithAngle);
         udtSunCoordinates->dZenithAngle=(udtSunCoordinates->dZenithAngle
             + dParallax)/gc::Degree;
-
     }
 }

@@ -17,7 +17,7 @@
 #include "kernel/raytracing/DifferentialGeometry.h"
 #include "ShapeSphere.h"
 
-SO_NODE_SOURCE(ShapeSphere);
+SO_NODE_SOURCE(ShapeSphere)
 
 
 
@@ -110,11 +110,6 @@ BBox ShapeSphere::GetBBox() const
 	return BBox( Point3D( xmin, ymin, zmin), Point3D( xmax, ymax, zmax) );
 }
 
-Point3D ShapeSphere::Sample(double u1, double u2) const
-{
-    return GetPoint3D(u1, u2);
-}
-
 bool ShapeSphere::Intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg ) const
 {
     // intersection with full shape
@@ -130,7 +125,7 @@ bool ShapeSphere::Intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
 
     // ray
     if (t0 > ray.tMax || t1 < ray.tMin) return false;
-    double thit = ( t0 > ray.tMin )? t0 : t1 ;
+    double thit = ( t0 > ray.tMin )? t0 : t1;
     if (thit > ray.tMax) return false;
 
     // intersection with clipped shape
@@ -187,29 +182,16 @@ bool ShapeSphere::Intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     );
     dpdv *= r*phiMax.getValue()*sinTheta;
 
-    Vector3D N(
+    NormalVector N(
         sinTheta*sinPhi,
         cosTheta,
         sinTheta*cosPhi
     );
 
-//	Vector3D N = Normalize( NormalVector( CrossProduct( dpdu, dpdv ) ) );
+    *dg = DifferentialGeometry(hitPoint, u, v, dpdu, dpdv, N, this);
+    dg->shapeFrontSide = DotProduct(N, ray.direction()) <= 0.;
 
-    Vector3D dndu;
-    Vector3D dndv;
-
-	// Initialize _DifferentialGeometry_ from parametric information
-	*dg = DifferentialGeometry( hitPoint ,
-		                        dpdu,
-								dpdv,
-                                dndu,
-								dndv,
-                                u, v, this);
-
-    dg->shapeFrontSide = ( DotProduct( N, ray.direction() ) <= 0 );
-    // Update _tHit_ for quadric intersection
     *tHit = thit;
-
 	return true;
 }
 
@@ -218,7 +200,7 @@ bool ShapeSphere::IntersectP(const Ray& ray) const
     return Intersect(ray, 0, 0);
 }
 
-void ShapeSphere::updateYMin( void *data, SoSensor * )
+void ShapeSphere::updateYMin(void* data, SoSensor*)
 {
 	ShapeSphere* shapeSphere = (ShapeSphere *) data;
 	if( shapeSphere->yMin.getValue() >= shapeSphere->yMax.getValue() )
@@ -237,7 +219,7 @@ void ShapeSphere::updateYMin( void *data, SoSensor * )
 		shapeSphere->m_lastValidYMin = shapeSphere->yMin.getValue();
 }
 
-void ShapeSphere::updateRadius( void *data, SoSensor* )
+void ShapeSphere::updateRadius(void* data, SoSensor*)
 {
 	ShapeSphere* shapeSphere = (ShapeSphere *) data;
 	if( ( shapeSphere->radius.getValue() <= 0.0 ) )
@@ -315,11 +297,6 @@ NormalVector ShapeSphere::GetNormal(double u, double v ) const
 					phiMax.getValue() * radius.getValue() * sin( phiMax.getValue() * v ) * sin( ( -1 + u ) * thetaMin - u * thetaMax ) );
 	NormalVector normal = Normalize( NormalVector( CrossProduct( dpdu, dpdv ) ) );
 	return normal;
-}
-
-bool ShapeSphere::OutOfRange(double u, double v) const
-{
-    return u < 0. || u > 1. || v < 0. || v > 1.;
 }
 
 void ShapeSphere::computeBBox(SoAction*, SbBox3f& box, SbVec3f& /*center*/)

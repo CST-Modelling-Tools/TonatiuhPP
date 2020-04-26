@@ -11,10 +11,10 @@ class TONATIUH_KERNEL TSquare : public TShape
 {
     SO_NODE_HEADER(TSquare);
 public:
-    TSquare( );
+    TSquare();
     static void initClass();
     double GetArea() const;
-    double GetVolume() const {return 0.0;}
+    double GetVolume() const {return 0.;}
     BBox GetBBox() const;
     QString GetIcon() const;
 

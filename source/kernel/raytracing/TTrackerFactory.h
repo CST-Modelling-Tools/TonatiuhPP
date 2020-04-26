@@ -1,18 +1,14 @@
 #pragma once
 
-#include <QtPlugin>
+#include "kernel/raytracing/TFactory.h"
 
-class QString;
-class QIcon;
 class TTracker;
 
-class TTrackerFactory
+
+
+class TTrackerFactory: public TFactory
 {
 public:
-    virtual ~TTrackerFactory() {}
-    virtual QString TTrackerName() const  = 0;
-    virtual QIcon TTrackerIcon() const = 0;
-    virtual TTracker* create( ) const = 0;
+    virtual TTracker* create() const = 0;
 };
-
 Q_DECLARE_INTERFACE( TTrackerFactory, "tonatiuh.TTrackerFactory")

@@ -39,6 +39,7 @@ public:
     SoMFFloat m_transparency;
 
     static const char* getClassName() {return "StandardSpecular";}
+    static const char* getClassIcon() {return ":/MaterialStandardSpecular.png";}
 
 protected:
     virtual ~MaterialStandardSpecular();

@@ -100,7 +100,7 @@
 #include "kernel/raytracing/TSeparatorKit.h"
 #include "kernel/raytracing/TShapeFactory.h"
 #include "kernel/raytracing/TShapeKit.h"
-#include "kernel/raytracing/TSunShapeFactory.h"
+#include "kernel/raytracing/TSunFactory.h"
 #include "kernel/raytracing/TTracker.h"
 #include "kernel/raytracing/TTrackerFactory.h"
 #include "kernel/raytracing/TTransmissivity.h"
@@ -303,7 +303,7 @@ void MainWindow::DefineSunLight()
     for (int i = 0; i < shapeFactoryList.size(); ++i)
         if (shapeFactoryList[i]->isFlat() ) tFlatShapeFactoryList << shapeFactoryList[i];
 
-    QVector< TSunShapeFactory* > tSunShapeFactoryList = m_pluginManager->getSunFactories();
+    QVector< TSunFactory* > tSunShapeFactoryList = m_pluginManager->getSunFactories();
 
     LightDialog dialog(*m_sceneModel, currentLight, tSunShapeFactoryList);
     if (dialog.exec() )
@@ -1258,7 +1258,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
 
     QVector< QString > componentNames;
     for (int i = 0; i < factoryList.size(); i++)
-        componentNames << factoryList[i]->TComponentName();
+        componentNames << factoryList[i]->name();
 
     int selectedCompoent = componentNames.indexOf(componentType);
     if (selectedCompoent < 0)
@@ -1277,7 +1277,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
     if (!componentRootNode) return;
 
 
-    QString typeName = pTComponentFactory->TComponentName();
+    QString typeName = pTComponentFactory->name();
     componentRootNode->setName(nodeName.toStdString().c_str() );
 
     TSceneKit* scene = m_document->GetSceneKit();
@@ -1302,7 +1302,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
 
 
     CmdInsertSeparatorKit* cmdInsertSeparatorKit = new CmdInsertSeparatorKit(componentRootNode, QPersistentModelIndex(parentIndex), m_sceneModel);
-    QString commandText = QString("Create Component: %1").arg(pTComponentFactory->TComponentName().toLatin1().constData() );
+    QString commandText = QString("Create Component: %1").arg(pTComponentFactory->name().toLatin1().constData() );
     cmdInsertSeparatorKit->setText(commandText);
     m_commandStack->push(cmdInsertSeparatorKit);
 
@@ -1341,23 +1341,13 @@ void MainWindow::CreateMaterial(QString materialType)
  * If the current node is not a valid parent node or \a shapeType is not a valid type, the shape node will not be created.
  *
  */
-void MainWindow::CreateShape(QString shapeType)
+void MainWindow::CreateShape(QString name)
 {
-    QVector< TShapeFactory* > factoryList = m_pluginManager->getShapeFactories();
-    if (factoryList.size() == 0) return;
-
-    QVector< QString > shapeNames;
-    for (int i = 0; i < factoryList.size(); i++)
-        shapeNames << factoryList[i]->name();
-
-    int selectedShape = shapeNames.indexOf(shapeType);
-    if (selectedShape < 0)
-    {
-        emit Abort(tr("CreateShape: Selected shape type is not valid.") );
-        return;
-    }
-
-    CreateShape(factoryList[ selectedShape ]);
+    TShapeFactory* f = m_pluginManager->getShapeMap().value(name, 0);
+    if (f)
+        CreateShape(f);
+    else
+        emit Abort(tr("CreateShape: Selected shape type is not valid."));
 }
 
 
@@ -1438,7 +1428,7 @@ void MainWindow::CreateTracker(QString trackerType)
 
     QVector< QString > trackerNames;
     for (int i = 0; i < factoryList.size(); i++)
-        trackerNames << factoryList[i]->TTrackerName();
+        trackerNames << factoryList[i]->name();
 
     int selectedTracker = trackerNames.indexOf(trackerType);
     if (selectedTracker < 0)
@@ -2162,14 +2152,14 @@ void MainWindow::SetSunshape(QString sunshapeType)
         lightKit = new TLightKit;
 
 
-    QVector< TSunShapeFactory* > factoryList = m_pluginManager->getSunFactories();
+    QVector< TSunFactory* > factoryList = m_pluginManager->getSunFactories();
 
     if (factoryList.size() == 0) return;
 
     QVector< QString > factoryNames;
     for (int i = 0; i < factoryList.size(); i++)
     {
-        QString name = factoryList[i]->TSunShapeName();
+        QString name = factoryList[i]->name();
         factoryNames << name;
     }
 
@@ -2571,7 +2561,7 @@ void MainWindow::CreateComponent(TComponentFactory* pTComponentFactory)
     TSeparatorKit* componentRootNode = pTComponentFactory->CreateTComponent(m_pluginManager);
     if (!componentRootNode) return;
 
-    QString typeName = pTComponentFactory->TComponentName();
+    QString typeName = pTComponentFactory->name();
     componentRootNode->setName(typeName.toStdString().c_str() );
 
 //    TSceneKit* scene = m_document->GetSceneKit();
@@ -2597,7 +2587,7 @@ void MainWindow::CreateComponent(TComponentFactory* pTComponentFactory)
 
 
     CmdInsertSeparatorKit* cmdInsertSeparatorKit = new CmdInsertSeparatorKit(componentRootNode, QPersistentModelIndex(parentIndex), m_sceneModel);
-    QString commandText = QString("Create Component: %1").arg(pTComponentFactory->TComponentName().toLatin1().constData() );
+    QString commandText = QString("Create Component: %1").arg(pTComponentFactory->name().toLatin1().constData() );
     cmdInsertSeparatorKit->setText(commandText);
     m_commandStack->push(cmdInsertSeparatorKit);
 
@@ -2655,40 +2645,34 @@ void MainWindow::CreateMaterial(TMaterialFactory* pTMaterialFactory)
  * Creates a shape node from the \a pTTrackerFactory as current selected node child.
  *
  */
-void MainWindow::CreateShape(TShapeFactory* pTShapeFactory)
+void MainWindow::CreateShape(TShapeFactory* factory)
 {
-    QModelIndex parentIndex = ((!sceneModelView->currentIndex().isValid() ) || (sceneModelView->currentIndex() == sceneModelView->rootIndex())) ?
-                m_sceneModel->index (0,0,sceneModelView->rootIndex()) : sceneModelView->currentIndex();
-
+    QModelIndex parentIndex = sceneModelView->currentIndex();
+    if (!parentIndex.isValid()) return;
     sceneModelView->expand(parentIndex);
 
     InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
     SoNode* parentNode = parentInstance->GetNode();
     if (!parentNode->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId() ) ) return;
+    TShapeKit* shapeKit = static_cast<TShapeKit*>(parentNode);
 
-    TShapeKit* shapeKit = static_cast< TShapeKit* >(parentNode);
-    TShape* shape = static_cast< TShape* >(shapeKit->getPart("shape", false) );
-
-    if (shape)
-    {
+    TShape* shape = static_cast<TShape*>(shapeKit->getPart("shape", false) );
+    if (shape) {
         QMessageBox::information(this, "Tonatiuh Action",
                                  "This TShapeKit already contains a shape", 1);
+        return;
     }
-    else
-    {
-        shape = pTShapeFactory->create();
-        /*Hay que comprobar si shape es nulo para no crear una superficie a partir de nulo que probacara el cierre de la aplicacion.*/
-        if (shape!=0) {
-            shape->setName(pTShapeFactory->name().toStdString().c_str() );
-            CmdInsertShape* createShape = new CmdInsertShape(shapeKit, shape, m_sceneModel);
-            QString commandText = QString("Create Shape: %1").arg(pTShapeFactory->name().toLatin1().constData());
-            createShape->setText(commandText);
-            m_commandStack->push(createShape);
 
-            UpdateLightSize();
-            m_document->SetDocumentModified(true);
-        }
-    }
+    shape = factory->create();
+    shape->setName(factory->name().toStdString().c_str());
+
+    CmdInsertShape* cmd = new CmdInsertShape(shapeKit, shape, m_sceneModel);
+    QString text = QString("Create Shape: %1").arg(factory->name());
+    cmd->setText(text);
+    m_commandStack->push(cmd);
+
+    UpdateLightSize();
+    m_document->SetDocumentModified(true);
 }
 
 /*!
@@ -2719,7 +2703,7 @@ void MainWindow::CreateShape(TShapeFactory* pTShapeFactory, int numberofParamete
     }
     else
     {
-        shape = pTShapeFactory->create(numberofParameters, parametersList);
+        shape = pTShapeFactory->create(parametersList);
         /*Hay que comprobar si shape es nulo para no crear una superficie a partir de nulo que probacara el cierre de la aplicacion.*/
         if (shape!=0) {
             shape->setName(pTShapeFactory->name().toStdString().c_str() );
@@ -2761,7 +2745,7 @@ void MainWindow::CreateTracker(TTrackerFactory* pTTrackerFactory)
         TTracker* tracker = pTTrackerFactory->create();
 
         tracker->SetSceneKit(scene);
-        tracker->setName(pTTrackerFactory->TTrackerName().toStdString().c_str() );
+        tracker->setName(pTTrackerFactory->name().toStdString().c_str() );
         CmdInsertTracker* command = new CmdInsertTracker(tracker, parentIndex, scene, m_sceneModel);
         m_commandStack->push(command);
 
@@ -3273,8 +3257,8 @@ void MainWindow::SetupActionsInsertComponent()
     {
         TComponentFactory* pTComponentFactory = componentFactoryList[i];
 
-        ActionInsertComponent* actionInsertComponent = new ActionInsertComponent(pTComponentFactory->TComponentName(), this, pTComponentFactory);
-        actionInsertComponent->setIcon(pTComponentFactory->TComponentIcon() );
+        ActionInsertComponent* actionInsertComponent = new ActionInsertComponent(pTComponentFactory->name(), this, pTComponentFactory);
+        actionInsertComponent->setIcon(pTComponentFactory->icon() );
 
         pComponentMenu->addAction(actionInsertComponent);
         //m_materialsToolBar->addAction( actionInsertComponent );
@@ -3377,8 +3361,8 @@ void MainWindow::SetupActionsInsertTracker()
     for (int i = 0; i < trackerFactoryList.size(); ++i)
     {
         TTrackerFactory* pTTrackerFactory = trackerFactoryList[i];
-        ActionInsertTracker* actionInsertTracker = new ActionInsertTracker(pTTrackerFactory->TTrackerName(), this, pTTrackerFactory);
-        actionInsertTracker->setIcon(pTTrackerFactory->TTrackerIcon() );
+        ActionInsertTracker* actionInsertTracker = new ActionInsertTracker(pTTrackerFactory->name(), this, pTTrackerFactory);
+        actionInsertTracker->setIcon(pTTrackerFactory->icon() );
 
         pTrackerMenu->addAction(actionInsertTracker);
         pTrackersToolBar->addAction(actionInsertTracker);
