@@ -182,7 +182,7 @@ bool ShapeSphere::Intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     );
     dpdv *= r*phiMax.getValue()*sinTheta;
 
-    NormalVector N(
+    Vector3D N(
         sinTheta*sinPhi,
         cosTheta,
         sinTheta*cosPhi
@@ -283,7 +283,7 @@ Point3D ShapeSphere::GetPoint3D( double u, double v ) const
     return radius.getValue()*p;
 }
 
-NormalVector ShapeSphere::GetNormal(double u, double v ) const
+Vector3D ShapeSphere::GetNormal(double u, double v) const
 {
 	double thetaMin = acos( yMax.getValue() / radius.getValue() );
 	double thetaMax = acos( yMin.getValue()/radius.getValue() );
@@ -295,7 +295,8 @@ NormalVector ShapeSphere::GetNormal(double u, double v ) const
 	Vector3D dpdv( -phiMax.getValue() * radius.getValue() * cos( phiMax.getValue() * v ) * sin( ( -1 + u ) * thetaMin - u * thetaMax ),
 					0.0,
 					phiMax.getValue() * radius.getValue() * sin( phiMax.getValue() * v ) * sin( ( -1 + u ) * thetaMin - u * thetaMax ) );
-	NormalVector normal = Normalize( NormalVector( CrossProduct( dpdu, dpdv ) ) );
+
+    Vector3D normal = Normalize(CrossProduct(dpdu, dpdv));
 	return normal;
 }
 
@@ -344,7 +345,7 @@ void ShapeSphere::generatePrimitives(SoAction *action)
 			vj = ( 1.0 /(double)(columns-1) ) * j;
 
 			Point3D point = GetPoint3D(ui, vj);
-			NormalVector normal;
+            Vector3D normal;
 			if( activeSide.getValue() == 0 )	normal = -GetNormal(ui, vj);
 			else	normal = GetNormal(ui, vj);
 

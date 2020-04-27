@@ -129,7 +129,7 @@ bool ShapeCylinder::Intersect( const Ray& ray, double* tHit, DifferentialGeometr
 	Vector3D dpdv( 0.0, 0.0, length.getValue() );
 
 
-    NormalVector N = Normalize( NormalVector( CrossProduct( dpdu, dpdv ) ) );
+    Vector3D N = Normalize(CrossProduct(dpdu, dpdv));
 
 
     *dg = DifferentialGeometry(hitPoint, u, v, dpdu, dpdv, N, this);
@@ -161,14 +161,14 @@ Point3D ShapeCylinder::GetPoint3D (double u, double v) const
 	return Point3D (x, y, z);
 }
 
-NormalVector ShapeCylinder::GetNormal (double u, double /* v */) const
+Vector3D ShapeCylinder::GetNormal(double u, double /* v */) const
 {
 	Vector3D dpdu( -phiMax.getValue() * radius.getValue() * sin ( phiMax.getValue() * u ),
 					phiMax.getValue() * radius.getValue() * cos( phiMax.getValue() * u ),
 					0.0 );
 	Vector3D dpdv( 0.0, 0.0, length.getValue() );
 
-	return Normalize( NormalVector( CrossProduct( dpdu, dpdv ) ) );
+    return Normalize(CrossProduct(dpdu, dpdv));
 
 }
 
@@ -225,7 +225,7 @@ void ShapeCylinder::generatePrimitives(SoAction *action)
 			vj = ( 1.0 /(double)(columns-1) ) * j;
 
 			Point3D point = GetPoint3D(ui, vj);
-			NormalVector normal;
+            Vector3D normal;
 			if( activeSide.getValue() == 0 )	normal = -GetNormal(ui, vj);
 			else	normal = GetNormal(ui, vj);
 

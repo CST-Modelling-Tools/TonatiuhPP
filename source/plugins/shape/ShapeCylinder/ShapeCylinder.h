@@ -33,7 +33,7 @@ public:
 
 protected:
     Point3D GetPoint3D(double u, double v) const;
-    NormalVector GetNormal(double u, double v) const;
+    Vector3D GetNormal(double u, double v) const;
 
     void generatePrimitives(SoAction* action);
     void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);

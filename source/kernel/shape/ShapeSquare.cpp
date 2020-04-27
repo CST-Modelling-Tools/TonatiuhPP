@@ -8,7 +8,7 @@
 #include "libraries/geometry/gf.h"
 
 #include "libraries/geometry/BBox.h"
-#include "libraries/geometry/NormalVector.h"
+#include "libraries/geometry/Vector3D.h"
 #include "libraries/geometry/Point3D.h"
 #include "ShapeSquare.h"
 
@@ -56,14 +56,14 @@ bool ShapeSquare::Intersect(const Ray& /*objectRay*/, double* /*tHit*/, Differen
     return true;
 }
 
-bool ShapeSquare::IntersectP( const Ray& objectRay ) const
+bool ShapeSquare::IntersectP(const Ray& objectRay) const
 {
-    return Intersect( objectRay, 0, 0 );
+    return Intersect(objectRay, 0, 0);
 }
 
-Point3D ShapeSquare::Sample( double u, double v ) const
+Point3D ShapeSquare::Sample(double u, double v) const
 {
-    return GetPoint3D( u, v );
+    return GetPoint3D(u, v);
 }
 
 Point3D ShapeSquare::GetPoint3D (double u, double v) const
@@ -77,9 +77,9 @@ Point3D ShapeSquare::GetPoint3D (double u, double v) const
     return Point3D(x,0,z);
 }
 
-NormalVector ShapeSquare::GetNormal (double /*u*/, double /*v*/) const
+Vector3D ShapeSquare::GetNormal (double /*u*/, double /*v*/) const
 {
-    return NormalVector( 0, 1, 0 );
+    return Vector3D(0, 1, 0);
 }
 
 
@@ -135,7 +135,7 @@ void ShapeSquare::generatePrimitives(SoAction *action)
         for ( int j = 0 ; j < columns ; ++j )
         {
             Point3D point = GetPoint3D(ui, vj);
-            NormalVector normal = GetNormal(ui, vj);
+            Vector3D normal = GetNormal(ui, vj);
 
             vertex[h][0] = point.x;
             vertex[h][1] = point.y;
@@ -175,7 +175,6 @@ void ShapeSquare::generatePrimitives(SoAction *action)
         finalvertex[ivert][4] = vertex[indices[ivert]][4];
         finalvertex[ivert][5] = vertex[indices[ivert]][5];
     }
-
 
     float u = 1;
     float v = 1;

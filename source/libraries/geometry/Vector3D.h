@@ -10,61 +10,61 @@ struct NormalVector;
 
 struct TONATIUH_LIBRARIES Vector3D
 {
-    Vector3D(double dx = 0.0, double dy = 0.0, double dz = 0.0)
-        : x(dx), y(dy), z(dz)
+    Vector3D(double x = 0., double y = 0., double z = 0.):
+        x(x), y(y), z(z)
     {
     }
-    Vector3D(const NormalVector& norm)
-        : x(norm.x), y(norm.y), z(norm.z)
-    {
-    }
-
-    explicit Vector3D(const Point3D& point)
-        : x(point.x), y(point.y), z(point.z)
+    Vector3D(const NormalVector& norm):
+        x(norm.x), y(norm.y), z(norm.z)
     {
     }
 
-    Vector3D& operator+=(const Vector3D& vector)
+    explicit Vector3D(const Point3D& p):
+        x(p.x), y(p.y), z(p.z)
     {
-        x += vector.x;
-        y += vector.y;
-        z += vector.z;
+    }
+
+    Vector3D& operator+=(const Vector3D& v)
+    {
+        x += v.x;
+        y += v.y;
+        z += v.z;
         return *this;
     }
 
-    Vector3D& operator-=(const Vector3D& vector)
+    Vector3D& operator-=(const Vector3D& v)
     {
-        x -= vector.x;
-        y -= vector.y;
-        z -= vector.z;
+        x -= v.x;
+        y -= v.y;
+        z -= v.z;
         return *this;
     }
-    Vector3D& operator*=(double scalar)
+    Vector3D& operator*=(double s)
     {
-        x *= scalar;
-        y *= scalar;
-        z *= scalar;
+        x *= s;
+        y *= s;
+        z *= s;
         return *this;
     }
 
-    Vector3D operator*(double scalar) const
+    Vector3D operator*(double s) const
     {
-        return Vector3D(x * scalar, y * scalar, z * scalar);
+        return Vector3D(x*s, y*s, z*s);
     }
 
-    Vector3D& operator/=(double scalar)
+    Vector3D& operator/=(double s)
     {
-        double inv = 1.0 / scalar;
+        double inv = 1.0 / s;
         x *= inv;
         y *= inv;
         z *= inv;
         return *this;
     }
 
-    Vector3D operator/(double scalar) const
+    Vector3D operator/(double s) const
     {
-        double inv = 1.0 / scalar;
-        return Vector3D(x * inv, y * inv, z * inv);
+        double inv = 1./s;
+        return Vector3D(x*inv, y*inv, z*inv);
     }
 
     Vector3D operator-() const
@@ -88,16 +88,14 @@ struct TONATIUH_LIBRARIES Vector3D
         return z;
     }
 
-
     void zero();
     double lengthSquared() const
     {
-        return x * x + y * y + z * z;
+        return x*x + y*y + z*z;
     }
 
-    double length() const
-    {
-        return std::sqrt(x * x + y * y + z * z);
+    double length() const {
+        return std::sqrt(x*x + y*y + z*z);
     }
 
     double x;
@@ -143,9 +141,11 @@ TONATIUH_LIBRARIES double AbsDotProduct(const NormalVector& nA, const Vector3D& 
 
 inline Vector3D CrossProduct(const Vector3D& vA, const Vector3D& vB)
 {
-    return Vector3D( (vA.y * vB.z) - (vA.z * vB.y),
-                     (vA.z * vB.x) - (vA.x * vB.z),
-                     (vA.x * vB.y) - (vA.y * vB.x) );
+    return Vector3D(
+        vA.y*vB.z - vA.z*vB.y,
+        vA.z*vB.x - vA.x*vB.z,
+        vA.x*vB.y - vA.y*vB.x
+    );
 }
 
 inline Vector3D CrossProduct(const Vector3D& vA, const NormalVector& nB)
@@ -164,7 +164,7 @@ inline Vector3D CrossProduct(const NormalVector& nA, const Vector3D& vB)
 
 inline Vector3D Normalize(const Vector3D& vA)
 {
-    if (vA.length() > 0.0f) return vA / vA.length();
+    if (vA.length() > 0.) return vA / vA.length();
     return vA;
 }
 

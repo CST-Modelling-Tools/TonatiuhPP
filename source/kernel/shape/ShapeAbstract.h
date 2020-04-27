@@ -5,8 +5,8 @@
 
 struct BBox;
 struct DifferentialGeometry;
-struct NormalVector;
 struct Point3D;
+struct Vector3D;
 class QString;
 class Ray;
 

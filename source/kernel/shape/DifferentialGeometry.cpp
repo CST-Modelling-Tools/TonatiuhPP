@@ -11,7 +11,7 @@ DifferentialGeometry::DifferentialGeometry(
     const Point3D& point,
     double u, double v,
     const Vector3D& dpdu, const Vector3D& dpdv,
-    const NormalVector& normal,
+    const Vector3D& normal,
     const ShapeAbstract* sh):
     point(point),
     u(u), v(v),

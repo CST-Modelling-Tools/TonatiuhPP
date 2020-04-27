@@ -44,7 +44,7 @@ protected:
     static void updatePhiMax(void* data, SoSensor*);
 
     Point3D GetPoint3D(double u, double v) const;
-    NormalVector GetNormal(double u, double v) const;
+    Vector3D GetNormal(double u, double v) const;
 
     void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
     void generatePrimitives(SoAction* action);

@@ -284,8 +284,8 @@ Point3D ShapeCube::GetPoint3D( double /*u1*/, double /*u2*/ ) const
     return Point3D( 0, 0, 0 );
 }
 
-NormalVector ShapeCube::GetNormal(double /*u*/, double /*v*/ ) const
+Vector3D ShapeCube::GetNormal(double /*u*/, double /*v*/ ) const
 {
-    return NormalVector( 0, 1, 0 );
+    return Vector3D(0, 1, 0);
 }
 

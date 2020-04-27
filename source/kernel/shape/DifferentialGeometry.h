@@ -8,11 +8,10 @@ class ShapeAbstract;
 struct TONATIUH_KERNEL DifferentialGeometry
 {
     DifferentialGeometry();
-    DifferentialGeometry(
-        const Point3D& point,
+    DifferentialGeometry(const Point3D& point,
         double u, double v,
         const Vector3D& dpdu, const Vector3D& dpdv,
-        const NormalVector& normal,
+        const Vector3D& normal,
         const ShapeAbstract* shape);
 
     Point3D point;
@@ -20,7 +19,7 @@ struct TONATIUH_KERNEL DifferentialGeometry
     double v;
     Vector3D dpdu;
     Vector3D dpdv;
-    NormalVector normal;
+    Vector3D normal;
 
     const ShapeAbstract* shape;
     bool shapeFrontSide;

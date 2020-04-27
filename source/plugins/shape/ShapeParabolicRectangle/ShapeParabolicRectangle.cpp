@@ -117,7 +117,7 @@ bool ShapeParabolicRectangle::Intersect(const Ray& objectRay, double *tHit, Diff
 	Vector3D dpdu( wX, ( (-0.5 + u) * wX *  wX ) / ( 2 * focus ), 0 );
 	Vector3D dpdv( 0.0, (( -0.5 + v) * wZ *  wZ ) /( 2 * focus ), wZ );
 
-	NormalVector N = Normalize( NormalVector( CrossProduct( dpdu, dpdv ) ) );
+    Vector3D N = Normalize(CrossProduct(dpdu, dpdv));
 
 
 	// Initialize _DifferentialGeometry_ from parametric information
@@ -128,32 +128,31 @@ bool ShapeParabolicRectangle::Intersect(const Ray& objectRay, double *tHit, Diff
 	return true;
 }
 
-bool ShapeParabolicRectangle::IntersectP( const Ray& objectRay ) const
+bool ShapeParabolicRectangle::IntersectP(const Ray& objectRay) const
 {
-	return Intersect( objectRay, 0, 0 );
+    return Intersect(objectRay, 0, 0);
 }
 
-Point3D ShapeParabolicRectangle::Sample( double u, double v ) const
+Point3D ShapeParabolicRectangle::Sample(double u, double v) const
 {
-	return GetPoint3D( u, v );
+    return GetPoint3D(u, v);
 }
 
-Point3D ShapeParabolicRectangle::GetPoint3D( double u, double v ) const
+Point3D ShapeParabolicRectangle::GetPoint3D(double u, double v) const
 {
-	if ( OutOfRange( u, v ) ) gf::SevereError( "Function Poligon::GetPoint3D called with invalid parameters" );
+    if (OutOfRange(u, v) ) gf::SevereError("Function Poligon::GetPoint3D called with invalid parameters");
 
-	double x = ( u - 0.5 )* widthX.getValue();
-	double z = ( v - 0.5 )* widthZ.getValue();
-	double y = ( x * x + z * z)/( 4 * focusLength.getValue() );
+    double x = (u - 0.5) * widthX.getValue();
+    double z = (v - 0.5) * widthZ.getValue();
+    double y = (x * x + z * z) / (4 * focusLength.getValue() );
 	return Point3D (x, y, z);
-
 }
 
-NormalVector ShapeParabolicRectangle::GetNormal( double u, double v ) const
+Vector3D ShapeParabolicRectangle::GetNormal( double u, double v ) const
 {
 	Vector3D dpdu( widthX.getValue(), ( (-0.5 + u) * widthX.getValue() *  widthX.getValue() )/(2 * focusLength.getValue()), 0 );
 	Vector3D dpdv( 0.0, (( -0.5 + v) * widthZ.getValue() *  widthZ.getValue() ) /( 2 * focusLength.getValue() ), widthZ.getValue() );
-	return Normalize( NormalVector( CrossProduct( dpdu, dpdv ) ) );
+    return Normalize(CrossProduct(dpdu, dpdv));
 }
 void ShapeParabolicRectangle::computeBBox( SoAction*, SbBox3f& box, SbVec3f& /*center*/ )
 {
@@ -200,7 +199,7 @@ void ShapeParabolicRectangle::generatePrimitives(SoAction *action)
     		vj = ( 1.0 /(double)(columns-1) ) * j;
 
     		Point3D point = GetPoint3D(ui, vj);
-    		NormalVector normal;
+            Vector3D normal;
     		if( activeSide.getValue() == 0 )	normal = -GetNormal(ui, vj);
     		else	normal = GetNormal(ui, vj);
 

@@ -128,10 +128,10 @@ bool MaterialStandardSpecular::OutputRay(const Ray& incident, DifferentialGeomet
     //Compute reflected ray (local coordinates )
     outputRay->origin = dg->point;
 
-    NormalVector normalVector;
+    Vector3D normalVector;
     double sigmaSlope = m_sigmaSlope.getValue() / 1000.; // from mrad to rad
     if (sigmaSlope > 0.) {
-        NormalVector errorNormal;
+        Vector3D errorNormal;
         if (m_distribution.getValue() == 0)
         { // pillbox
             double phi = gc::TwoPi * rand.RandomDouble();
@@ -150,7 +150,7 @@ bool MaterialStandardSpecular::OutputRay(const Ray& incident, DifferentialGeomet
         Vector3D r = dg->normal;
         Vector3D s = Normalize(dg->dpdu);
         Vector3D t = Normalize(dg->dpdv);
-        normalVector = Normalize(NormalVector(s*errorNormal.x + r*errorNormal.y + t*errorNormal.z));
+        normalVector = Normalize(s*errorNormal.x + r*errorNormal.y + t*errorNormal.z);
     } else
         normalVector = dg->normal;
 

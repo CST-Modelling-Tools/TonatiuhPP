@@ -8,19 +8,18 @@
 
 
 
-bool Vector3D::operator==(const Vector3D& vector) const
+bool Vector3D::operator==(const Vector3D& v) const
 {
-    if (this == &vector) return true;
-    else return( (fabs(x - vector.x) < DBL_EPSILON) &&
-             (fabs(y - vector.y) < DBL_EPSILON) &&
-             (fabs(z - vector.z) < DBL_EPSILON) );
+    if (this == &v) return true;
+    else return fabs(x - v.x) < DBL_EPSILON &&
+             fabs(y - v.y) < DBL_EPSILON &&
+             fabs(z - v.z) < DBL_EPSILON;
 }
 
-bool Vector3D::operator!=(const Vector3D& vector) const
+bool Vector3D::operator!=(const Vector3D& v) const
 {
-    return !(*this == vector);
+    return !(*this == v);
 }
-
 
 void Vector3D::zero()
 {
@@ -29,13 +28,11 @@ void Vector3D::zero()
     z = 0.0;
 }
 
-
 std::ostream& operator<<(std::ostream& os, const Vector3D& vector)
 {
     os << vector.x << ", " << vector.y << ", " << vector.z;
     return os;
 }
-
 
 double AbsDotProduct(const Vector3D& vA, const Vector3D& vB)
 {
@@ -51,10 +48,6 @@ double AbsDotProduct(const NormalVector& nA, const Vector3D& vB)
 {
     return fabs(DotProduct(nA, vB) );
 }
-
-
-
-
 
 bool SameHemisphere(const Vector3D& vA, const Vector3D& vB)
 {
