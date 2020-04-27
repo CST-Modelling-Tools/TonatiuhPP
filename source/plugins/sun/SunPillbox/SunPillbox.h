@@ -1,12 +1,10 @@
 #pragma once
 
 #include <Inventor/fields/SoSFDouble.h>
-
 #include "kernel/sun/SunShape.h"
 
 class SoSensor;
 class SoFieldSensor;
-
 
 
 class SunPillbox: public SunShape
@@ -36,7 +34,6 @@ private:
     SoFieldSensor* m_sensorTheta;
     double m_sinThetaMax;
 };
-
 
 
 #include "kernel/sun/SunFactory.h"

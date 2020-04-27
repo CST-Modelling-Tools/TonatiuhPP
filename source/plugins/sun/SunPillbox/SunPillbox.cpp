@@ -1,7 +1,6 @@
 #include "SunPillbox.h"
 
 #include "libraries/geometry/gc.h"
-
 #include <Inventor/sensors/SoFieldSensor.h>
 
 SO_NODE_SOURCE(SunPillbox)
@@ -16,7 +15,7 @@ SunPillbox::SunPillbox()
 {
     SO_NODE_CONSTRUCTOR(SunPillbox);
     SO_NODE_ADD_FIELD( irradiance, (1000.) );
-	SO_NODE_ADD_FIELD( thetaMax, (0.00465));
+    SO_NODE_ADD_FIELD( thetaMax, (0.00465) );
     updateTheta(this, 0);
 
     m_sensorTheta = new SoFieldSensor(updateTheta, this);

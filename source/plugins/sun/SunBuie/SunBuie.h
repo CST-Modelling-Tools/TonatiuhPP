@@ -1,0 +1,71 @@
+#pragma once
+
+#include <Inventor/fields/SoSFDouble.h>
+#include "kernel/sun/SunShape.h"
+
+class SoSensor;
+class SoFieldSensor;
+
+
+class SunBuie: public SunShape
+{
+    SO_NODE_HEADER(SunBuie);
+
+public:
+    SunBuie();
+    static void initClass();
+    SoNode* copy(SbBool copyConnections) const;
+
+    void GenerateRayDirection(Vector3D& direction, RandomDeviate& rand) const;
+	double GetIrradiance() const;
+    double GetThetaMax() const;
+
+    SoSFDouble irradiance;
+    SoSFDouble csr;
+
+    static const char* getClassName() {return "Buie";}
+    static const char* getClassIcon() {return ":/SunBuie.png";}
+
+protected:
+    static void updateCSR(void* data, SoSensor*);
+     ~SunBuie();
+
+private:
+     double chiValue(double csr) const;
+     double phi(double theta) const;
+     double pdfTheta(double theta) const;
+     double zenithAngle(RandomDeviate& rand) const;
+     void updateState(double csrValue);
+
+     SoFieldSensor* m_sensorCSR;
+
+	 double m_chi;
+	 double m_k;
+	 double m_gamma;
+	 double m_etokTimes1000toGamma;
+
+     double m_thetaSD; // solar disk
+     double m_thetaCS; // circumsolar
+     double m_deltaThetaCSSD; // difference
+
+     double m_integralA;
+	 double m_integralB;
+	 double m_alpha;
+	 double m_heightRectangle1;
+	 double m_heightRectangle2;
+	 double m_probabilityRectangle1;
+
+     static const double m_minCRSValue;
+     static const double m_maxCRSValue;
+};
+
+
+#include "kernel/sun/SunFactory.h"
+
+class SunPillboxFactory:
+    public QObject, public SunFactoryT<SunBuie>
+{
+    Q_OBJECT
+    Q_INTERFACES(SunFactory)
+    Q_PLUGIN_METADATA(IID "tonatiuh.SunFactory")
+};
