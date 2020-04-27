@@ -2,7 +2,7 @@
 
 #include "kernel/raytracing/TFactory.h"
 
-class TTransmissivity;
+class AirAbstract;
 
 
 
@@ -11,7 +11,7 @@ class AirFactory: public TFactory
 public:
     virtual QString name() const = 0;
     virtual QIcon icon() const = 0;
-    virtual TTransmissivity* create() const = 0;
+    virtual AirAbstract* create() const = 0;
 };
 Q_DECLARE_INTERFACE(AirFactory, "tonatiuh.AirFactory")
 

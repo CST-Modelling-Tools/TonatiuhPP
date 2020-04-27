@@ -21,7 +21,7 @@ SO_NODE_SOURCE(TDefaultSunShape)
 
 void TDefaultSunShape::initClass()
 {
-    SO_NODE_INIT_CLASS(TDefaultSunShape, SunShape, "SunShape");
+    SO_NODE_INIT_CLASS(TDefaultSunShape, SunAbstract, "SunShape");
 }
 
 TDefaultSunShape::TDefaultSunShape( )

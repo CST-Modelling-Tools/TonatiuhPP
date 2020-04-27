@@ -5,7 +5,7 @@ SO_NODE_SOURCE( TDefaultTransmissivity );
 
 void TDefaultTransmissivity::initClass()
 {
-    SO_NODE_INIT_CLASS( TDefaultTransmissivity, TTransmissivity, "TTransmissivity" );
+    SO_NODE_INIT_CLASS( TDefaultTransmissivity, AirAbstract, "AirTransmission" );
 }
 
 TDefaultTransmissivity::TDefaultTransmissivity( )

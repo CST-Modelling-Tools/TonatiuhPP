@@ -5,14 +5,14 @@
 #include <Inventor/fields/SoSFFloat.h>
 #include <Inventor/fields/SoSFString.h>
 
-#include "kernel/material/TMaterial.h"
+#include "kernel/material/MaterialAbstract.h"
 #include "kernel/raytracing/trt.h"
 
 class SoSensor;
 class SoFieldSensor;
 
 
-class MaterialStandardSpecular: public TMaterial
+class MaterialStandardSpecular: public MaterialAbstract
 {
     SO_NODE_HEADER(MaterialStandardSpecular);
 

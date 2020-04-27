@@ -1,13 +1,13 @@
 #pragma once
 
 #include <Inventor/fields/SoSFDouble.h>
-#include "kernel/sun/SunShape.h"
+#include "kernel/sun/SunAbstract.h"
 
 class SoSensor;
 class SoFieldSensor;
 
 
-class SunPillbox: public SunShape
+class TONATIUH_KERNEL SunPillbox: public SunAbstract
 {
     SO_NODE_HEADER(SunPillbox);
 
@@ -24,7 +24,7 @@ public:
     SoSFDouble thetaMax;
 
     static const char* getClassName() {return "Pillbox";}
-    static const char* getClassIcon() {return ":/SunPillbox.png";}
+    static const char* getClassIcon() {return ":/images/SunPillbox.png";}
 
 protected:
     ~SunPillbox();
@@ -33,15 +33,4 @@ protected:
 private:
     SoFieldSensor* m_sensorTheta;
     double m_sinThetaMax;
-};
-
-
-#include "kernel/sun/SunFactory.h"
-
-class SunPillboxFactory:
-    public QObject, public SunFactoryT<SunPillbox>
-{
-    Q_OBJECT
-    Q_INTERFACES(SunFactory)
-    Q_PLUGIN_METADATA(IID "tonatiuh.SunFactory")
 };

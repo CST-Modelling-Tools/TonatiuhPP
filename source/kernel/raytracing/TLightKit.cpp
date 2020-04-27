@@ -14,17 +14,15 @@
 #include <Inventor/nodekits/SoNodekitCatalog.h>
 
 #include "libraries/geometry/gc.h"
-
 #include "libraries/geometry/BBox.h"
 #include "libraries/geometry/Matrix4x4.h"
 #include "libraries/geometry/Point3D.h"
-#include "auxiliary/sunpos.h"
-#include "kernel/sun/TDefaultSunShape.h"
+#include "kernel/sun/sunpos.h"
+#include "kernel/sun/SunPillbox.h"
 #include "TLightKit.h"
 #include "TLightShape.h"
 #include "libraries/geometry/Transform.h"
 #include "TShapeKit.h"
-//#include "kernel/shape/ShapeSquare.h"
 
 
 struct Polygon
@@ -84,7 +82,7 @@ TLightKit::TLightKit()
 
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(iconMaterial, SoNode, SoMaterial, TRUE, iconSeparator, icon, TRUE);
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(iconTexture, SoNode, SoTexture2, TRUE, iconSeparator, iconMaterial, TRUE);
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tsunshape, SunShape, TDefaultSunShape, TRUE, transformGroup, "", TRUE);
+    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tsunshape, SunAbstract, SunPillbox, TRUE, transformGroup, "", TRUE);
 
     SO_NODE_ADD_FIELD(azimuth, (0.0) );
     SO_NODE_ADD_FIELD(zenith, (0.0) );
@@ -170,7 +168,7 @@ void TLightKit::Update(BBox box)
         distMax = 0.0;
     }
 
-    SunShape* sunshape = static_cast< SunShape* >(this->getPart("tsunshape", false) );
+    SunAbstract* sunshape = static_cast< SunAbstract* >(this->getPart("tsunshape", false) );
     if (!sunshape) return;
     double thetaMax = sunshape->GetThetaMax();
     double delta = 0.01;
@@ -234,7 +232,7 @@ void TLightKit::ComputeLightSourceArea(int widthDivisions, int heigthDivisions, 
         Transform surfaceTransform = surfacesList[s].second;
         Transform shapeToWorld = surfaceTransform.GetInverse();
 
-        TShape* shapeNode = static_cast< TShape* > (surfaceKit->getPart("shape", false) );
+        ShapeAbstract* shapeNode = static_cast< ShapeAbstract* > (surfaceKit->getPart("shape", false) );
         if (shapeNode)
         {
             BBox shapeBB = shapeNode->GetBBox();

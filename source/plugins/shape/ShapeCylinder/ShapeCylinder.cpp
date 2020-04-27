@@ -17,7 +17,7 @@ SO_NODE_SOURCE(ShapeCylinder);
 
 void ShapeCylinder::initClass()
 {
-	SO_NODE_INIT_CLASS(ShapeCylinder, TShape, "TShape");
+    SO_NODE_INIT_CLASS(ShapeCylinder, ShapeAbstract, "ShapeAbstract");
 }
 
 ShapeCylinder::ShapeCylinder( )

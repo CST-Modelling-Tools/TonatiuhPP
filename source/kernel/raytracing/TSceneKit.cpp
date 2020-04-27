@@ -9,7 +9,7 @@
 #include "TSceneKit.h"
 #include "TSeparatorKit.h"
 #include "kernel/tracker/TTracker.h"
-#include "kernel/air/TTransmissivity.h"
+#include "kernel/air/AirAbstract.h"
 
 SO_KIT_SOURCE(TSceneKit)
 
@@ -28,7 +28,7 @@ void TSceneKit::initClass()
 TSceneKit::TSceneKit()
 {
     SO_KIT_CONSTRUCTOR(TSceneKit);
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY( transmissivity, TTransmissivity, TDefaultTransmissivity, TRUE, topSeparator, "", TRUE);
+    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY( transmissivity, AirAbstract, TDefaultTransmissivity, TRUE, topSeparator, "", TRUE);
 
     SO_NODE_ADD_FIELD( azimuth, (gc::Pi) );
     SO_NODE_ADD_FIELD( zenith, (0.f) );

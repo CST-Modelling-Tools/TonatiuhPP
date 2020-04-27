@@ -14,11 +14,11 @@
 #include "PathWrapper.h"
 #include "SceneModel.h"
 #include "kernel/raytracing/TLightKit.h"
-#include "kernel/material/TMaterial.h"
+#include "kernel/material/MaterialAbstract.h"
 #include "kernel/raytracing/TSceneTracker.h"
 #include "kernel/raytracing/TSceneKit.h"
 #include "kernel/raytracing/TSeparatorKit.h"
-#include "kernel/shape/TShape.h"
+#include "kernel/shape/ShapeAbstract.h"
 #include "kernel/raytracing/TShapeKit.h"
 #include "kernel/tracker/TTracker.h"
 
@@ -351,12 +351,12 @@ QVariant SceneModel::data( const QModelIndex& modelIndex, int role ) const
             }
             else if( coinNode->getTypeId().isDerivedFrom(SoShape::getClassTypeId() ) )
             {
-                TShape* shape = static_cast<TShape*>(coinNode);
+                ShapeAbstract* shape = static_cast<ShapeAbstract*>(coinNode);
                 return QIcon( shape->getIcon() );
             }
-            else if( coinNode->getTypeId().isDerivedFrom(TMaterial::getClassTypeId() ) )
+            else if( coinNode->getTypeId().isDerivedFrom(MaterialAbstract::getClassTypeId() ) )
             {
-                TMaterial* material = static_cast<TMaterial*>( coinNode );
+                MaterialAbstract* material = static_cast<MaterialAbstract*>( coinNode );
                 return QIcon(material->getIcon());
             }
             else if( coinNode->getTypeId().isDerivedFrom(TTracker::getClassTypeId() ) )
@@ -777,7 +777,7 @@ bool SceneModel::Paste( tgc::PasteType type, SoBaseKit& coinParent, SoNode& coin
         {
             TShapeKit* shapeKit = static_cast< TShapeKit* >( pCoinParent );
             if(!shapeKit)    return false;
-            TShape* shape = static_cast< TShape* >( shapeKit->getPart( "shape", false ) );
+            ShapeAbstract* shape = static_cast< ShapeAbstract* >( shapeKit->getPart( "shape", false ) );
 
             if (shape)
             {
@@ -790,7 +790,7 @@ bool SceneModel::Paste( tgc::PasteType type, SoBaseKit& coinParent, SoNode& coin
         {
             TShapeKit* shapeKit = static_cast< TShapeKit* >( pCoinParent );
             if(!shapeKit)    return false;
-            TMaterial* material = static_cast< TMaterial* >( shapeKit->getPart( "material", false ) );
+            MaterialAbstract* material = static_cast< MaterialAbstract* >( shapeKit->getPart( "material", false ) );
             if (material)
             {
                 QMessageBox::warning( 0, tr( "Tonatiuh warning" ), tr( "This TShapeKit already contains a material" ) );

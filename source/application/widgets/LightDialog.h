@@ -13,9 +13,9 @@ class QItemSelectionModel;
 class QTabWidget;
 class SceneModel;
 class TLightKit;
-class TShape;
+class ShapeAbstract;
 class ShapeFactory;
-class SunShape;
+class SunAbstract;
 class SunFactory;
 
 //!  LightDialog class is the dialog to define the light parameters.
@@ -53,7 +53,7 @@ private:
     TLightKit* m_currentLightKit;
     SceneModel* m_currentSceneModel;
     int m_currentSunShapeIndex;
-    SunShape* m_newSunShape;
+    SunAbstract* m_newSunShape;
     QItemSelectionModel* m_sceneSelectionModel;
 
     QMap<QString, SunFactory*> m_sunshapeList;

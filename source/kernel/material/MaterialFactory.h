@@ -2,14 +2,14 @@
 
 #include "kernel/raytracing/TFactory.h"
 
-class TMaterial;
+class MaterialAbstract;
 
 
 
 class MaterialFactory: public TFactory
 {
 public: 
-    virtual TMaterial* create() const = 0;
+    virtual MaterialAbstract* create() const = 0;
 };
 
 Q_DECLARE_INTERFACE(MaterialFactory, "tonatiuh.MaterialFactory")

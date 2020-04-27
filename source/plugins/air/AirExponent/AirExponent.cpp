@@ -6,7 +6,7 @@ SO_NODE_SOURCE(AirExponent)
 
 void AirExponent::initClass()
 {
-    SO_NODE_INIT_CLASS(AirExponent, TTransmissivity, "TTransmissivity");
+    SO_NODE_INIT_CLASS(AirExponent, AirAbstract, "AirTransmission");
 }
 
 AirExponent::AirExponent()

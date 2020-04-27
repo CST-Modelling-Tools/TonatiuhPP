@@ -2,10 +2,10 @@
 
 #include <Inventor/fields/SoSFDouble.h>
 
-#include "kernel/air/TTransmissivity.h"
+#include "kernel/air/AirAbstract.h"
 
 
-class AirExponent: public TTransmissivity
+class AirExponent: public AirAbstract
 {
     SO_NODE_HEADER(AirExponent);
 

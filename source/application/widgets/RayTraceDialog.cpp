@@ -2,7 +2,7 @@
 #include <QFileDialog>
 #include <QDir>
 
-#include "kernel/random/RandomDeviateFactory.h"
+#include "kernel/random/RandomFactory.h"
 #include "RayTraceDialog.h"
 
 /**
@@ -33,7 +33,7 @@ RayTraceDialog::RayTraceDialog(QWidget* parent, Qt::WindowFlags f):
  */
 RayTraceDialog::RayTraceDialog(
     int numRays,
-    QVector<RandomDeviateFactory*> randomFactoryList, int selectedRandomFactory,
+    QVector<RandomFactory*> randomFactoryList, int selectedRandomFactory,
     int widthDivisions, int heightDivisions,
     bool drawRays, bool drawPhotons,
     int photonMapSize, bool increasePhotonMap,

@@ -1,10 +1,9 @@
 #pragma once
 
-#include "kernel/TonatiuhKernel.h"
-#include "TMaterial.h"
+#include "MaterialAbstract.h"
 
 
-class TONATIUH_KERNEL TDefaultMaterial : public TMaterial
+class TONATIUH_KERNEL TDefaultMaterial: public MaterialAbstract
 {
     SO_NODE_HEADER(TDefaultMaterial);
     

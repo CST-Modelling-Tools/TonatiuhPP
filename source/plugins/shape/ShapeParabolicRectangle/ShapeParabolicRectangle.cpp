@@ -16,19 +16,20 @@
 #include "libraries/geometry/Vector3D.h"
 
 
-SO_NODE_SOURCE(ShapeParabolicRectangle);
+SO_NODE_SOURCE(ShapeParabolicRectangle)
+
 
 void ShapeParabolicRectangle::initClass()
 {
-	SO_NODE_INIT_CLASS(ShapeParabolicRectangle, TShape, "TShape");
+    SO_NODE_INIT_CLASS(ShapeParabolicRectangle, ShapeAbstract, "ShapeAbstract");
 }
 
 ShapeParabolicRectangle::ShapeParabolicRectangle()
 {
 	SO_NODE_CONSTRUCTOR(ShapeParabolicRectangle);
 	SO_NODE_ADD_FIELD( focusLength, (0.125) );
-	SO_NODE_ADD_FIELD( widthX, (1.0) );
-	SO_NODE_ADD_FIELD( widthZ, (1.0) );
+    SO_NODE_ADD_FIELD( widthX, (1.) );
+    SO_NODE_ADD_FIELD( widthZ, (1.) );
 
 	SO_NODE_DEFINE_ENUM_VALUE( Side, INSIDE );
 	SO_NODE_DEFINE_ENUM_VALUE( Side, OUTSIDE );
@@ -58,7 +59,6 @@ BBox ShapeParabolicRectangle::GetBBox() const
 	double zmax = widthZ.getValue() / 2;
 
 	return BBox( Point3D( xmin, ymin, zmin), Point3D( xmax, ymax, zmax) );
-
 }
 
 bool ShapeParabolicRectangle::Intersect(const Ray& objectRay, double *tHit, DifferentialGeometry *dg) const

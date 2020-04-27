@@ -11,7 +11,6 @@
 #include "gui/MainWindow.h"
 #include "kernel/shape/ShapeCube.h"
 #include "kernel/material/TDefaultMaterial.h"
-#include "kernel/sun/TDefaultSunShape.h"
 #include "kernel/tracker/TDefaultTracker.h"
 #include "kernel/air/TDefaultTransmissivity.h"
 #include "kernel/raytracing/TLightKit.h"
@@ -22,7 +21,7 @@
 #include "kernel/raytracing/TShapeKit.h"
 #include "kernel/shape/ShapeSquare.h"
 #include "kernel/tracker/TTrackerForAiming.h"
-#include "kernel/air/TTransmissivity.h"
+#include "kernel/air/AirAbstract.h"
 #include "libraries/fields/UserMField.h"
 #include "libraries/fields/UserSField.h"
 
@@ -85,23 +84,22 @@ int main(int argc, char** argv)
     UserSField::initClass();
 
     TSceneKit::initClass();
-    TMaterial::initClass();
+    MaterialAbstract::initClass();
     TDefaultMaterial::initClass();
     TSeparatorKit::initClass();
 
-    TShape::initClass();
+    ShapeAbstract::initClass();
 
     TLightShape::initClass();
     TShapeKit::initClass();
     TLightKit::initClass();
-    SunShape::initClass();
-    TDefaultSunShape::initClass();
+    SunAbstract::initClass();
     TTracker::initClass();
     TTrackerForAiming::initClass();
     TDefaultTracker::initClass();
     TSceneTracker::initClass();
     GraphicRootTracker::initClass();
-    TTransmissivity::initClass();
+    AirAbstract::initClass();
     TDefaultTransmissivity::initClass();
 
     splash->showMessage(QObject::tr("Setting up the main window..."), topRight, Qt::black);

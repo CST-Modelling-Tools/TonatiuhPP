@@ -22,12 +22,12 @@ private:
 
 
 
-#include "kernel/random/RandomDeviateFactory.h"
+#include "kernel/random/RandomFactory.h"
 
 class RandomMersenneTwisterSTLFactory:
-    public QObject, public RandomFactory<RandomMersenneTwisterSTL>
+    public QObject, public RandomFactoryT<RandomMersenneTwisterSTL>
 {
     Q_OBJECT
-    Q_INTERFACES(RandomDeviateFactory)
-    Q_PLUGIN_METADATA(IID "tonatiuh.RandomDeviateFactory")
+    Q_INTERFACES(RandomFactory)
+    Q_PLUGIN_METADATA(IID "tonatiuh.RandomFactory")
 };

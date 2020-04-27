@@ -5,11 +5,11 @@
 #include <Inventor/nodes/SoSubNode.h>
 
 
-class TONATIUH_KERNEL TTransmissivity: public SoNode
+class TONATIUH_KERNEL AirAbstract: public SoNode
 {
     typedef SoNode inherited;
 
-    SO_NODE_ABSTRACT_HEADER(TTransmissivity);
+    SO_NODE_ABSTRACT_HEADER(AirAbstract);
 
 public:
     static void initClass();
@@ -19,6 +19,6 @@ public:
     static const char* getClassName() {return "Air";}
 
 protected:
-    TTransmissivity() {}
-    virtual ~TTransmissivity() {}
+    AirAbstract() {}
+    virtual ~AirAbstract() {}
 };

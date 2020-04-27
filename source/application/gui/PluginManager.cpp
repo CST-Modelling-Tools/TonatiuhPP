@@ -15,11 +15,12 @@
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/material/MaterialFactory.h"
 #include "kernel/photons/PhotonExportFactory.h"
-#include "kernel/random/RandomDeviateFactory.h"
+#include "kernel/random/RandomFactory.h"
 #include "kernel/shape/ShapeFactory.h"
 #include "kernel/shape/ShapeCube.h"
 #include "kernel/shape/ShapeSquare.h"
 #include "kernel/sun/SunFactory.h"
+#include "kernel/sun/SunPillbox.h"
 #include "kernel/tracker/TrackerFactory.h"
 #include "libraries/geometry/gf.h"
 
@@ -62,6 +63,7 @@ void PluginManager::load(QDir dir)
 
     loadTonatiuhPlugin(new ShapeFactoryT<ShapeSquare>);
     loadTonatiuhPlugin(new ShapeFactoryT<ShapeCube>);
+    loadTonatiuhPlugin(new SunFactoryT<SunPillbox>);
 
     sort();
 }
@@ -125,7 +127,7 @@ void PluginManager::loadTonatiuhPlugin(TFactory* p)
         m_materialFactories << f;
         m_materialsMap[f->name()] = f;
     }
-    else if (auto f = dynamic_cast<RandomDeviateFactory*>(p))
+    else if (auto f = dynamic_cast<RandomFactory*>(p))
     {
         m_randomFactories << f;
     }
@@ -139,6 +141,7 @@ void PluginManager::loadTonatiuhPlugin(TFactory* p)
     {
         f->init();
         m_sunFactories << f;
+        m_sunMap[f->name()] = f;
     }
     else if (auto f = dynamic_cast<TrackerFactory*>(p))
     {

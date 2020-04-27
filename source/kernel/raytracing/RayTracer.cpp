@@ -6,16 +6,16 @@
 #include "RayTracer.h"
 #include "kernel/photons/PhotonMap.h"
 #include "TLightShape.h"
-#include "kernel/sun/SunShape.h"
-#include "kernel/air/TTransmissivity.h"
+#include "kernel/sun/SunAbstract.h"
+#include "kernel/air/AirAbstract.h"
 
 
 RayTracer::RayTracer(InstanceNode* rootNode,
                      InstanceNode* sunNode,
                      TLightShape* lightShape,
-                     SunShape* const lightSunShape,
+                     SunAbstract* const lightSunShape,
                      Transform lightToWorld,
-                     TTransmissivity* transmissivity,
+                     AirAbstract* transmissivity,
                      RandomDeviate& rand,
                      QMutex* mutex,
                      PhotonMap* photonMap,

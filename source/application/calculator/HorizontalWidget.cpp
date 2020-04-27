@@ -39,9 +39,9 @@ HorizontalWidget::HorizontalWidget( QWidget* parent )
     m_rootNode->addChild( Ejes( ) );
     m_rootNode->addChild( Text() );
     m_rootNode->addChild( Sphere() );
-       m_rootNode->addChild( Horizon() );
-       m_rootNode->addChild( AzimuthLine() );
-       m_rootNode->addChild( ZenithLine() );
+    m_rootNode->addChild( Horizon() );
+    m_rootNode->addChild( AzimuthLine() );
+    m_rootNode->addChild( ZenithLine() );
     m_rootNode->addChild( Star() );
 
     SoQtExaminerViewer* myRenderArea = new SoQtExaminerViewer( examinerWidget );
@@ -50,27 +50,27 @@ HorizontalWidget::HorizontalWidget( QWidget* parent )
     myRenderArea->setBackgroundColor(col);
     myRenderArea->show(  );
 
-     QWidget* labelsWidget = new QWidget;
+    QWidget* labelsWidget = new QWidget;
     mainLayout->addWidget( labelsWidget );
 
-     QGridLayout* labelsLayout = new QGridLayout;
-     labelsWidget->setLayout( labelsLayout );
+    QGridLayout* labelsLayout = new QGridLayout;
+    labelsWidget->setLayout( labelsLayout );
 
-     QLabel* m_AzimuthLabel = new QLabel;
-     m_AzimuthLabel->setText( "Azimuth:" );
-     labelsLayout->addWidget( m_AzimuthLabel, 0, 0, 1, 1 );
+    QLabel* m_AzimuthLabel = new QLabel;
+    m_AzimuthLabel->setText( "Azimuth:" );
+    labelsLayout->addWidget( m_AzimuthLabel, 0, 0, 1, 1 );
 
     m_azimuthValue = new QLabel;
-     m_azimuthValue->setText( QString::number( m_azimuth ) );
-     labelsLayout->addWidget( m_azimuthValue, 0, 1, 1, 3  );
+    m_azimuthValue->setText( QString::number( m_azimuth ) );
+    labelsLayout->addWidget( m_azimuthValue, 0, 1, 1, 3  );
 
     QLabel* m_zenithLabel = new QLabel;
-     m_zenithLabel->setText( "Zenith:" );
-     labelsLayout->addWidget( m_zenithLabel, 1, 0, 1, 1 );
+    m_zenithLabel->setText( "Zenith:" );
+    labelsLayout->addWidget( m_zenithLabel, 1, 0, 1, 1 );
 
     m_zenithValue = new QLabel;
-     m_zenithValue->setText( QString::number( m_zenith ) );
-     labelsLayout->addWidget( m_zenithValue, 1, 1, 1, 3 );
+    m_zenithValue->setText( QString::number( m_zenith ) );
+    labelsLayout->addWidget( m_zenithValue, 1, 1, 1, 3 );
 
 }
 

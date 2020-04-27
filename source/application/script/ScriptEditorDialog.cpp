@@ -13,10 +13,10 @@
  Q_DECLARE_METATYPE(QVector<QVariant>)
 
 /**
- * Creates a dialog to edit scripts and run them. The list \a listRandomDeviateFactory is
+ * Creates a dialog to edit scripts and run them. The list \a listRandomFactory is
  * the random generator types that can be defined in the scripts to run Tonatiuh. The dialog explorer shows the directories and scripts files from \a dirName path.
  */
-ScriptEditorDialog::ScriptEditorDialog( QVector< RandomDeviateFactory* > listRandomDeviateFactory, QWidget* parent )
+ScriptEditorDialog::ScriptEditorDialog( QVector< RandomFactory* > listRandomFactory, QWidget* parent )
 :QDialog( parent ),
  m_currentScritFileName( "" ),
  m_fileModel( 0 ),
@@ -53,7 +53,7 @@ ScriptEditorDialog::ScriptEditorDialog( QVector< RandomDeviateFactory* > listRan
     QScriptValue logConsoleObject = m_interpreter->newQObject( logWidget );
     m_interpreter->globalObject().setProperty( "console", logConsoleObject );
 
-    QObject* rayTracer = new ScriptRayTracer( listRandomDeviateFactory );
+    QObject* rayTracer = new ScriptRayTracer( listRandomFactory );
     QScriptValue rayTracerValue = m_interpreter->newQObject( rayTracer );
     m_interpreter->globalObject().setProperty( "rayTracer", rayTracerValue );
 

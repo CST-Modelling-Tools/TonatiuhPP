@@ -4,11 +4,11 @@
 #include <Inventor/fields/SoSFEnum.h>
 #include <Inventor/fields/SoSFFloat.h>
 
-#include "kernel/shape/TShape.h"
+#include "kernel/shape/ShapeAbstract.h"
 #include "kernel/raytracing/trt.h"
 
 
-class ShapeParabolicRectangle: public TShape
+class ShapeParabolicRectangle: public ShapeAbstract
 {
 	SO_NODE_HEADER(ShapeParabolicRectangle);
 
@@ -18,7 +18,7 @@ public:
 	static void initClass();
 	double GetArea() const;
     double GetVolume() const {
-        return 0.0;
+        return 0.;
     }
 	BBox GetBBox() const;
 

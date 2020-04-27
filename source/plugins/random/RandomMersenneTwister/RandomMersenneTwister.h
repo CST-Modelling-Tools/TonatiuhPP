@@ -77,12 +77,12 @@ inline double RandomMersenneTwister::Random01()
 
 
 
-#include "kernel/random/RandomDeviateFactory.h"
+#include "kernel/random/RandomFactory.h"
 
 class RandomMersenneTwisterFactory:
-    public QObject, public RandomFactory<RandomMersenneTwister>
+    public QObject, public RandomFactoryT<RandomMersenneTwister>
 {
     Q_OBJECT
-    Q_INTERFACES(RandomDeviateFactory)
-    Q_PLUGIN_METADATA(IID "tonatiuh.RandomDeviateFactory")
+    Q_INTERFACES(RandomFactory)
+    Q_PLUGIN_METADATA(IID "tonatiuh.RandomFactory")
 };

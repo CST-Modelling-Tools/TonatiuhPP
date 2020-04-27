@@ -11,7 +11,7 @@
 
 
 #include "trt.h"
-#include "kernel/sun/SunShape.h"
+#include "kernel/sun/SunAbstract.h"
 
 struct BBox;
 class Transform;

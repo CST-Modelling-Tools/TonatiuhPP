@@ -6,7 +6,7 @@
 #include <QString>
 #include <QVector>
 
-class RandomDeviateFactory;
+class RandomFactory;
 
 //!  RayTraceDialog class is the dialog to set ray trace options.
 /*!
@@ -22,7 +22,7 @@ public:
     RayTraceDialog(QWidget* parent = 0, Qt::WindowFlags f = 0);
     RayTraceDialog(
         int numRays,
-        QVector<RandomDeviateFactory*> randomFactoryList, int selectedRandomFactory = 0,
+        QVector<RandomFactory*> randomFactoryList, int selectedRandomFactory = 0,
         int widthDivisions = 200,int heightDivisions = 200,
         bool drawRays = true, bool drawPhotons = false,
         int photonMapSize = 1'000'000, bool increasePhotonMap = false,
@@ -36,7 +36,7 @@ public:
     int GetWidthDivisions() const {return m_widthDivisions;}
     int GetHeightDivisions() const {return m_heightDivisions;}
     int GetPhotonMapBufferSize() const {return m_photonMapBufferSize;}
-    int GetRandomDeviateFactoryIndex() const {return m_selectedRandomFactory;}
+    int GetRandomFactoryIndex() const {return m_selectedRandomFactory;}
     bool IncreasePhotonMap() const {return m_increasePhotonMap;}
 
 public slots:

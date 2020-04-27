@@ -7,7 +7,7 @@
 
 
 #include "TransmissivityDialog.h"
-#include "kernel/air/TTransmissivity.h"
+#include "kernel/air/AirAbstract.h"
 #include "kernel/air/AirFactory.h"
 
 
@@ -34,7 +34,7 @@ TransmissivityDialog::TransmissivityDialog(QVector<AirFactory*> transmissivityFa
 /*!
  * Returns defined transmissivity node.
  */
-TTransmissivity* TransmissivityDialog::GetTransmissivity() const
+AirAbstract* TransmissivityDialog::GetTransmissivity() const
 {
     return m_newTransmissivity;
 }
@@ -51,10 +51,10 @@ void TransmissivityDialog::SetValue(SoNode* node, QString paramenterName, QStrin
             parameterField->set(newValue.toStdString().c_str() );
     }
 }
-void TransmissivityDialog::SetCurrentTransmissivity(TTransmissivity* transmissivity)
+void TransmissivityDialog::SetCurrentTransmissivity(AirAbstract* transmissivity)
 {
     if (!transmissivity) return;
-    m_currentTransmissivity = static_cast< TTransmissivity* >(transmissivity->copy(true) );
+    m_currentTransmissivity = static_cast< AirAbstract* >(transmissivity->copy(true) );
 
     //Select current Transmissivity
     m_currentTransmissivityIndex = 0;
@@ -73,7 +73,7 @@ void TransmissivityDialog::ChangeTransmissivityType(int index)
 
     if (index == 0) m_newTransmissivity = 0;
     else if (index == m_currentTransmissivityIndex)
-        m_newTransmissivity = static_cast< TTransmissivity* >(m_currentTransmissivity->copy(true) );
+        m_newTransmissivity = static_cast< AirAbstract* >(m_currentTransmissivity->copy(true) );
     else
     {
         AirFactory* transmissivityFactory = m_transmissivityFactoryList.value(transmissivityCombo->itemData(index).toString() );

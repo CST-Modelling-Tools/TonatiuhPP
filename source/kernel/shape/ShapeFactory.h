@@ -5,15 +5,15 @@
 #include <QVector>
 #include <QVariant>
 
-class TShape;
+class ShapeAbstract;
 
 
 
 class TONATIUH_KERNEL ShapeFactory: public TFactory
 {
 public:
-    virtual TShape* create() const = 0;
-    virtual TShape* create(QVector<QVariant> /*parameters*/) const {return create();}
+    virtual ShapeAbstract* create() const = 0;
+    virtual ShapeAbstract* create(QVector<QVariant> /*parameters*/) const {return create();}
     virtual bool isFlat() {return false;}
 };
 

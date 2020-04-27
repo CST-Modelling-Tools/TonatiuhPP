@@ -3,7 +3,7 @@
 #include "gui/SceneModel.h"
 #include "kernel/raytracing/TSeparatorKit.h"
 #include "kernel/raytracing/TShapeKit.h"
-#include "kernel/shape/TShape.h"
+#include "kernel/shape/ShapeAbstract.h"
 
 
 /*!
@@ -54,7 +54,7 @@ bool NodesFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex& source
 
         TShapeKit* shapeKit = static_cast<TShapeKit*>(node);
         if (!shapeKit) return (false);
-        TShape* shape = static_cast<TShape*>(shapeKit->getPart("shape", false) );
+        ShapeAbstract* shape = static_cast<ShapeAbstract*>(shapeKit->getPart("shape", false) );
 
         if (shape && m_shapeTypeList.contains(shape->getTypeId().getName().getString() ) )
             return true;

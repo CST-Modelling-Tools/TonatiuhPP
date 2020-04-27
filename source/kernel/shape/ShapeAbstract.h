@@ -10,9 +10,9 @@ struct Point3D;
 class QString;
 class Ray;
 
-class TONATIUH_KERNEL TShape: public SoShape
+class TONATIUH_KERNEL ShapeAbstract: public SoShape
 {
-    SO_NODE_ABSTRACT_HEADER(TShape);
+    SO_NODE_ABSTRACT_HEADER(ShapeAbstract);
 
 public:
     enum Side {
@@ -39,6 +39,6 @@ protected:
     virtual void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center) = 0;
     virtual void generatePrimitives(SoAction* action) = 0;
 
-    TShape() {}
-    ~TShape() {}
+    ShapeAbstract() {}
+    ~ShapeAbstract() {}
 };

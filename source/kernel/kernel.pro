@@ -10,7 +10,6 @@ LIBS += -lTonatiuhLibraries
 HEADERS += \
     $$files(*.h) \
     $$files(air/*.h) \
-    $$files(auxiliary/*.h) \
     $$files(component/*.h) \
     $$files(gui/*.h) \
     $$files(material/*.h) \
@@ -24,7 +23,6 @@ HEADERS += \
 SOURCES += \
     $$files(*.cpp) \
     $$files(air/*.cpp) \
-    $$files(auxiliary/*.cpp) \
 #    $$files(component/*.cpp) \
     $$files(gui/*.cpp) \
     $$files(material/*.cpp) \
@@ -34,3 +32,5 @@ SOURCES += \
     $$files(shape/*.cpp) \
     $$files(sun/*.cpp) \
     $$files(tracker/*.cpp)
+
+RESOURCES += resources.qrc

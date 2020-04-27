@@ -71,17 +71,17 @@
 #include "flux/FluxAnalysis.h"
 #include "flux/FluxAnalysisDialog.h"
 #include "kernel/air/AirFactory.h"
-#include "kernel/air/TTransmissivity.h"
+#include "kernel/air/AirAbstract.h"
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/gui/InstanceNode.h"
 #include "kernel/material/MaterialFactory.h"
-#include "kernel/material/TMaterial.h"
+#include "kernel/material/MaterialAbstract.h"
 #include "kernel/photons/PhotonExport.h"
 #include "kernel/photons/PhotonExportFactory.h"
 #include "kernel/photons/PhotonExportSettings.h"
 #include "kernel/photons/PhotonMap.h"
 #include "kernel/random/RandomDeviate.h"
-#include "kernel/random/RandomDeviateFactory.h"
+#include "kernel/random/RandomFactory.h"
 #include "kernel/raytracing/RayTracer.h"
 #include "kernel/raytracing/TLightKit.h"
 #include "kernel/raytracing/TLightShape.h"
@@ -220,7 +220,7 @@ void MainWindow::ExecuteScriptFile(QString tonatiuhScriptFile)
 {
     //New();
 
-    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
+    QVector< RandomFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
     ScriptEditorDialog editor(randomDeviateFactoryList, this);
     editor.show();
 
@@ -344,11 +344,11 @@ void MainWindow::DefineTransmissivity()
     TSceneKit* coinScene = m_document->GetSceneKit();
     if (!coinScene) return;
 
-    TTransmissivity* currentTransmissivity = static_cast< TTransmissivity* > (coinScene->getPart("transmissivity", false) );
+    AirAbstract* currentTransmissivity = static_cast< AirAbstract* > (coinScene->getPart("transmissivity", false) );
     if (currentTransmissivity) dialog.SetCurrentTransmissivity(currentTransmissivity);
     if (!dialog.exec() ) return;
 
-    TTransmissivity* newTransmissivity = dialog.GetTransmissivity();
+    AirAbstract* newTransmissivity = dialog.GetTransmissivity();
     //    coinScene->setPart( "transmissivity", newTransmissivity );
 
     CmdTransmissivityModified* command = new CmdTransmissivityModified(newTransmissivity, coinScene);
@@ -511,9 +511,9 @@ void MainWindow::RunCompleteRayTracer()
     InstanceNode* rootSeparatorInstance = 0;
     InstanceNode* lightInstance = 0;
     SoTransform* lightTransform = 0;
-    SunShape* sunShape = 0;
+    SunAbstract* sunShape = 0;
     TLightShape* raycastingSurface = 0;
-    TTransmissivity* transmissivity = 0;
+    AirAbstract* transmissivity = 0;
 
     QElapsedTimer timer;
     timer.start();
@@ -547,7 +547,7 @@ void MainWindow::RunFluxAnalysisRayTracer()
     InstanceNode*  rootSeparatorInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
     if (!rootSeparatorInstance) return;
 
-    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
+    QVector< RandomFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
     //Check if there is a random generator selected;
     if (m_selectedRandomDeviate == -1)
     {
@@ -822,7 +822,7 @@ void MainWindow::ShowMenu(const QModelIndex& index)
  */
 void MainWindow::ShowRayTracerOptionsDialog()
 {
-    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
+    QVector< RandomFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
     RayTraceDialog* options = new RayTraceDialog(m_raysTraced,
                                                  randomDeviateFactoryList, m_selectedRandomDeviate,
                                                  m_widthDivisions,m_heightDivisions,
@@ -831,7 +831,7 @@ void MainWindow::ShowRayTracerOptionsDialog()
     options->exec();
 
     SetRaysPerIteration(options->GetNumRays() );
-    SetRandomDeviateType(randomDeviateFactoryList[options->GetRandomDeviateFactoryIndex()]->name() );
+    SetRandomDeviateType(randomDeviateFactoryList[options->GetRandomFactoryIndex()]->name() );
     SetRayCastingGrid(options->GetWidthDivisions(), options->GetHeightDivisions() );
     SetRaysDrawingOptions(options->DrawRays(), options->DrawPhotons() );
     SetPhotonMapBufferSize(options->GetPhotonMapBufferSize() );
@@ -965,7 +965,7 @@ void MainWindow::on_action_Y_Z_Plane_triggered()
 
 void MainWindow::on_actionOpenScriptEditor_triggered()
 {
-    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
+    QVector< RandomFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
     ScriptEditorDialog editor(randomDeviateFactoryList, this);
     editor.exec();
 }
@@ -1548,7 +1548,7 @@ double MainWindow::GetwPhoton(){
 
 
     if (!lightKit->getPart("tsunshape", false) ) return 0;
-    SunShape* sunShape = static_cast< SunShape* >(lightKit->getPart("tsunshape", false) );
+    SunAbstract* sunShape = static_cast< SunAbstract* >(lightKit->getPart("tsunshape", false) );
     double irradiance = sunShape->GetIrradiance();
 
     if (!lightKit->getPart("icon", false) ) return 0;
@@ -1754,9 +1754,9 @@ void MainWindow::Run()
     InstanceNode* rootSeparatorInstance = 0;
     InstanceNode* lightInstance = 0;
     SoTransform* lightTransform = 0;
-    SunShape* sunShape = 0;
+    SunAbstract* sunShape = 0;
     TLightShape* raycastingSurface = 0;
-    TTransmissivity* transmissivity = 0;
+    AirAbstract* transmissivity = 0;
 
     QElapsedTimer timer;
     timer.start();
@@ -1885,7 +1885,7 @@ void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned 
     InstanceNode*  rootSeparatorInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
     if (!rootSeparatorInstance) return;
 
-    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
+    QVector< RandomFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
     //Check if there is a random generator selected;
     if (m_selectedRandomDeviate == -1)
     {
@@ -2084,7 +2084,7 @@ void MainWindow::SetPhotonMapBufferSize(unsigned int nPhotons)
  */
 void MainWindow::SetRandomDeviateType(QString typeName)
 {
-    QVector< RandomDeviateFactory* > factoryList = m_pluginManager->getRandomFactories();
+    QVector< RandomFactory* > factoryList = m_pluginManager->getRandomFactories();
     if (factoryList.size() == 0) return;
 
     QVector< QString > randomNames;
@@ -2195,7 +2195,7 @@ void MainWindow::SetSunshapeParameter(QString parameter, QString value)
         return;
     }
 
-    SunShape* sunshape = static_cast< SunShape* > (lightKit->getPart("tsunshape", false) );
+    SunAbstract* sunshape = static_cast< SunAbstract* > (lightKit->getPart("tsunshape", false) );
     if (!sunshape)
     {
         emit Abort(tr("SetSunshapeParameter: There is not sunshape defined.") );
@@ -2240,7 +2240,7 @@ void MainWindow::SetTransmissivity(QString transmissivityType)
         return;
     }
 
-    TTransmissivity* transmissivity = transmissivityFactoryList[ transmissivityIndex ]->create();
+    AirAbstract* transmissivity = transmissivityFactoryList[ transmissivityIndex ]->create();
     if (!transmissivity)
     {
         emit Abort(tr("SetTransmissivity: Error defining transmissivity.") );
@@ -2258,7 +2258,7 @@ void MainWindow::SetTransmissivity(QString transmissivityType)
 void MainWindow::SetTransmissivityParameter(QString parameter, QString value)
 {
     SoSceneKit* coinScene = m_document->GetSceneKit();
-    TTransmissivity* transmissivity = static_cast< TTransmissivity* >(coinScene->getPart("transmissivity", false) );
+    AirAbstract* transmissivity = static_cast< AirAbstract* >(coinScene->getPart("transmissivity", false) );
     if (!transmissivity)
     {
         emit Abort(tr("SetTransmissivity: No transmissivity type defined.") );
@@ -2612,7 +2612,7 @@ void MainWindow::CreateMaterial(MaterialFactory* pMaterialFactory)
     if (!parentNode->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId() ) ) return;
 
     TShapeKit* shapeKit = static_cast< TShapeKit* >(parentNode);
-    TMaterial* material = static_cast< TMaterial* >(shapeKit->getPart("material", false) );
+    MaterialAbstract* material = static_cast< MaterialAbstract* >(shapeKit->getPart("material", false) );
 
     if (material)
     {
@@ -2654,7 +2654,7 @@ void MainWindow::CreateShape(ShapeFactory* factory)
     if (!parentNode->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId() ) ) return;
     TShapeKit* shapeKit = static_cast<TShapeKit*>(parentNode);
 
-    TShape* shape = static_cast<TShape*>(shapeKit->getPart("shape", false) );
+    ShapeAbstract* shape = static_cast<ShapeAbstract*>(shapeKit->getPart("shape", false) );
     if (shape) {
         QMessageBox::information(this, "Tonatiuh Action",
                                  "This TShapeKit already contains a shape", 1);
@@ -2692,7 +2692,7 @@ void MainWindow::CreateShape(ShapeFactory* pShapeFactory, int numberofParameters
     if (!parentNode->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId() ) ) return;
 
     TShapeKit* shapeKit = static_cast< TShapeKit* >(parentNode);
-    TShape* shape = static_cast< TShape* >(shapeKit->getPart("shape", false) );
+    ShapeAbstract* shape = static_cast< ShapeAbstract* >(shapeKit->getPart("shape", false) );
 
     if (shape)
     {
@@ -3097,9 +3097,9 @@ void MainWindow::ReadSettings()
 bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
                                     InstanceNode*& lightInstance,
                                     SoTransform*& lightTransform,
-                                    SunShape*& sunShape,
+                                    SunAbstract*& sunShape,
                                     TLightShape*& raycastingShape,
-                                    TTransmissivity*& transmissivity)
+                                    AirAbstract*& transmissivity)
 {
 
     //Check if there is a scene
@@ -3109,7 +3109,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
     //Check if there is a transmissivity defined
     if (!coinScene->getPart("transmissivity", false) ) transmissivity = 0;
     else
-        transmissivity = static_cast< TTransmissivity* > (coinScene->getPart("transmissivity", false) );
+        transmissivity = static_cast< AirAbstract* > (coinScene->getPart("transmissivity", false) );
 
     //Check if there is a rootSeparator InstanceNode
     rootSeparatorInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
@@ -3126,7 +3126,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
     if (!lightInstance) return false;
 
     if (!lightKit->getPart("tsunshape", false) ) return false;
-    sunShape = static_cast< SunShape* >(lightKit->getPart("tsunshape", false) );
+    sunShape = static_cast< SunAbstract* >(lightKit->getPart("tsunshape", false) );
 
     if (!lightKit->getPart("icon", false) ) return false;
     raycastingShape = static_cast< TLightShape* >(lightKit->getPart("icon", false) );
@@ -3135,7 +3135,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
     lightTransform = static_cast< SoTransform* >(lightKit->getPart("transform",false) );
 
 
-    QVector< RandomDeviateFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
+    QVector< RandomFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
     //Check if there is a random generator selected;
     if (m_selectedRandomDeviate == -1)
     {

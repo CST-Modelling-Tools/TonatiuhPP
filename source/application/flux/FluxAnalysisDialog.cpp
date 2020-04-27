@@ -25,9 +25,9 @@
 #include "libraries/geometry/Transform.h"
 #include "kernel/raytracing/trf.h"
 #include "kernel/raytracing/TSceneKit.h"
-#include "kernel/shape/TShape.h"
+#include "kernel/shape/ShapeAbstract.h"
 #include "kernel/raytracing/TShapeKit.h"
-#include "kernel/air/TTransmissivity.h"
+#include "kernel/air/AirAbstract.h"
 
 
 /******************************************

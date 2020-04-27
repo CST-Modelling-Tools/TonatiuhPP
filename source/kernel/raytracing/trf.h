@@ -13,8 +13,8 @@
 #include "kernel/photons/PhotonMap.h"
 #include "libraries/geometry/Ray.h"
 #include "kernel/tgf.h"
-#include "kernel/shape/TShape.h"
-#include "kernel/sun/SunShape.h"
+#include "kernel/shape/ShapeAbstract.h"
+#include "kernel/sun/SunAbstract.h"
 #include "libraries/geometry/Transform.h"
 #include "TSeparatorKit.h"
 #include "TShapeKit.h"
@@ -93,13 +93,13 @@ inline void trf::ComputeSceneTreeMap(InstanceNode* instanceNode, Transform paren
         if (instanceNode->children.count() > 0)
         {
             InstanceNode* shapeInstance = 0;
-            if (instanceNode->children[0]->GetNode()->getTypeId().isDerivedFrom(TShape::getClassTypeId() ) )
+            if (instanceNode->children[0]->GetNode()->getTypeId().isDerivedFrom(ShapeAbstract::getClassTypeId() ) )
                 shapeInstance =  instanceNode->children[0];
             else if (instanceNode->children.count() > 1) shapeInstance =  instanceNode->children[1];
 
             if (shapeInstance)
             {
-                TShape* shapeNode = static_cast< TShape* > (shapeInstance->GetNode() );
+                ShapeAbstract* shapeNode = static_cast< ShapeAbstract* > (shapeInstance->GetNode() );
                 shapeBB = shapeToWorld(shapeNode->GetBBox() );
 
                 instanceNode->SetIntersectionTransform(shapeTransform);

@@ -15,8 +15,8 @@
 
 #include <iostream>
 
-WorldMap::WorldMap(QWidget* widget)
-    : QWidget(widget), m_rightAscension(0), m_declination(0), m_azimuth(0), m_zenith(0)
+WorldMap::WorldMap(QWidget* widget):
+    QWidget(widget), m_rightAscension(0), m_declination(0), m_azimuth(0), m_zenith(0)
 {
     m_gray = new Image(":/icons/WorldMapGray.BMP");
     m_map.load(":/icons/mundo.BMP");
@@ -24,7 +24,6 @@ WorldMap::WorldMap(QWidget* widget)
     m_position.load(":/icons/position.png");
     m_sun = m_sun.scaledToWidth(15);
     m_position = m_position.scaledToWidth(15);
-
 }
 
 WorldMap::~WorldMap()

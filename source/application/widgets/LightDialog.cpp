@@ -8,7 +8,7 @@
 #include "LightDialog.h"
 #include "gui/SceneModel.h"
 #include "kernel/raytracing/TLightKit.h"
-#include "kernel/shape/TShape.h"
+#include "kernel/shape/ShapeAbstract.h"
 #include "kernel/raytracing/TShapeKit.h"
 #include "kernel/shape/ShapeFactory.h"
 #include "kernel/sun/SunFactory.h"
@@ -39,7 +39,7 @@ LightDialog::LightDialog( SceneModel& sceneModel, TLightKit* currentLightKit, QV
 
     if( currentLightKit )
     {
-        if( currentLightKit->getPart( "tsunshape", false ) )    m_newSunShape = static_cast< SunShape* >( currentLightKit->getPart( "tsunshape", false )->copy( true ) );
+        if( currentLightKit->getPart( "tsunshape", false ) )    m_newSunShape = static_cast< SunAbstract* >( currentLightKit->getPart( "tsunshape", false )->copy( true ) );
     }
 
     SetupSunSizeTab();
@@ -116,7 +116,7 @@ void LightDialog::ChangeSunshape( int index )
 {
     while( (m_newSunShape!=0) && m_newSunShape->getRefCount() > 0 )    m_newSunShape->unref();
     if( index == 0 ) m_newSunShape = 0;
-    else if( index == m_currentSunShapeIndex)    m_newSunShape = static_cast< SunShape* >( m_currentLightKit->getPart( "tsunshape", false )->copy( true ) );
+    else if( index == m_currentSunShapeIndex)    m_newSunShape = static_cast< SunAbstract* >( m_currentLightKit->getPart( "tsunshape", false )->copy( true ) );
     else
     {
         SunFactory* sunshapeFactory = m_sunshapeList.value( sunshapeCombo->itemData( index ).toString() );

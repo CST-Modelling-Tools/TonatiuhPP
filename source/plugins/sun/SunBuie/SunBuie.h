@@ -1,13 +1,13 @@
 #pragma once
 
 #include <Inventor/fields/SoSFDouble.h>
-#include "kernel/sun/SunShape.h"
+#include "kernel/sun/SunAbstract.h"
 
 class SoSensor;
 class SoFieldSensor;
 
 
-class SunBuie: public SunShape
+class SunBuie: public SunAbstract
 {
     SO_NODE_HEADER(SunBuie);
 
@@ -42,18 +42,16 @@ private:
 	 double m_chi;
 	 double m_k;
 	 double m_gamma;
-	 double m_etokTimes1000toGamma;
+     double m_exp;
 
      double m_thetaSD; // solar disk
      double m_thetaCS; // circumsolar
      double m_deltaThetaCSSD; // difference
 
-     double m_integralA;
-	 double m_integralB;
 	 double m_alpha;
-	 double m_heightRectangle1;
-	 double m_heightRectangle2;
-	 double m_probabilityRectangle1;
+     double m_heightSD;
+     double m_heightCS;
+     double m_probabilitySD;
 
      static const double m_minCRSValue;
      static const double m_maxCRSValue;

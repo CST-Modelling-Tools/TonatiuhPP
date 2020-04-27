@@ -3,7 +3,7 @@
 #include "kernel/TonatiuhKernel.h"
 #include "libraries/geometry/Vector3D.h"
 
-class TShape;
+class ShapeAbstract;
 
 struct TONATIUH_KERNEL DifferentialGeometry
 {
@@ -13,7 +13,7 @@ struct TONATIUH_KERNEL DifferentialGeometry
         double u, double v,
         const Vector3D& dpdu, const Vector3D& dpdv,
         const NormalVector& normal,
-        const TShape* shape);
+        const ShapeAbstract* shape);
 
     Point3D point;
     double u;
@@ -22,6 +22,6 @@ struct TONATIUH_KERNEL DifferentialGeometry
     Vector3D dpdv;
     NormalVector normal;
 
-    const TShape* shape;
+    const ShapeAbstract* shape;
     bool shapeFrontSide;
 };

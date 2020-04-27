@@ -2,10 +2,10 @@
 
 #include <Inventor/fields/SoSFEnum.h>
 
-#include "kernel/air/TTransmissivity.h"
+#include "kernel/air/AirAbstract.h"
 
 
-class AirVittitoeBiggs: public TTransmissivity
+class AirVittitoeBiggs: public AirAbstract
 {
     SO_NODE_HEADER(AirVittitoeBiggs);
 

@@ -14,7 +14,7 @@
 #include "gui/SceneModel.h"
 #include "ScriptRayTracer.h"
 #include "kernel/random/RandomDeviate.h"
-#include "kernel/random/RandomDeviateFactory.h"
+#include "kernel/random/RandomFactory.h"
 #include "kernel/raytracing/RayTracer.h"
 #include "kernel/tgf.h"
 #include "kernel/raytracing/TLightKit.h"
@@ -22,16 +22,16 @@
 #include "kernel/photons/PhotonMap.h"
 #include "kernel/raytracing/trf.h"
 #include "kernel/raytracing/TSeparatorKit.h"
-#include "kernel/shape/TShape.h"
-#include "kernel/sun/SunShape.h"
-#include "kernel/air/TTransmissivity.h"
+#include "kernel/shape/ShapeAbstract.h"
+#include "kernel/sun/SunAbstract.h"
+#include "kernel/air/AirAbstract.h"
 
-ScriptRayTracer::ScriptRayTracer(QVector<RandomDeviateFactory*> listRandomDeviateFactory):
+ScriptRayTracer::ScriptRayTracer(QVector<RandomFactory*> listRandomFactory):
     m_document(0),
     m_irradiance(-1),
     m_numberOfRays(0),
     m_photonMap(0),
-    m_RandomDeviateFactoryList(listRandomDeviateFactory),
+    m_RandomFactoryList(listRandomFactory),
     m_randomDeviate(0),
     m_sceneModel (0),
     m_widthDivisions(200),
@@ -79,11 +79,11 @@ QString ScriptRayTracer::GetDir()
 
 bool ScriptRayTracer::IsValidRandomGeneratorType(QString type)
 {
-    if (m_RandomDeviateFactoryList.size() == 0) return 0;
+    if (m_RandomFactoryList.size() == 0) return 0;
 
     QVector< QString > randomGeneratorsNames;
-    for (int i = 0; i < m_RandomDeviateFactoryList.size(); i++)
-        randomGeneratorsNames << m_RandomDeviateFactoryList[i]->name();
+    for (int i = 0; i < m_RandomFactoryList.size(); i++)
+        randomGeneratorsNames << m_RandomFactoryList[i]->name();
 
     int selectedRandom = randomGeneratorsNames.indexOf(type);
 
@@ -145,8 +145,8 @@ int ScriptRayTracer::SetPhotonMapExportMode(QString typeName)
 int ScriptRayTracer::SetRandomDeviateType(QString typeName)
 {
     QVector< QString > randomGeneratorsNames;
-    for (int i = 0; i < m_RandomDeviateFactoryList.size(); i++)
-        randomGeneratorsNames << m_RandomDeviateFactoryList[i]->name();
+    for (int i = 0; i < m_RandomFactoryList.size(); i++)
+        randomGeneratorsNames << m_RandomFactoryList[i]->name();
 
     int selectedRandom = randomGeneratorsNames.indexOf(typeName);
     if (selectedRandom < 0)
@@ -155,7 +155,7 @@ int ScriptRayTracer::SetRandomDeviateType(QString typeName)
         return 0;
     }
 
-    m_randomDeviate = m_RandomDeviateFactoryList[selectedRandom]->create();
+    m_randomDeviate = m_RandomFactoryList[selectedRandom]->create();
     return 1;
 }
 
@@ -332,10 +332,10 @@ int ScriptRayTracer::Trace()
 
 
            //Check if there is a transmissivity defined
-           TTransmissivity* transmissivity;
+           AirTransmission* transmissivity;
            if ( !coinScene->getPart( "transmissivity", false ) )    transmissivity = 0;
            else
-                transmissivity = static_cast< TTransmissivity* > ( coinScene->getPart( "transmissivity", false ) );
+                transmissivity = static_cast< AirTransmission* > ( coinScene->getPart( "transmissivity", false ) );
 
            //Compute the valid areas for the raytracing
 

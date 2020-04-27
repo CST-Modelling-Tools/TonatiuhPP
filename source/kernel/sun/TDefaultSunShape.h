@@ -1,10 +1,10 @@
 #pragma once
 
 #include "kernel/TonatiuhKernel.h"
-#include "SunShape.h"
+#include "SunAbstract.h"
 
 
-class TONATIUH_KERNEL TDefaultSunShape: public SunShape
+class TONATIUH_KERNEL TDefaultSunShape: public SunAbstract
 {
     SO_NODE_HEADER(TDefaultSunShape);
 

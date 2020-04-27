@@ -8,18 +8,18 @@ class RandomDeviate;
 
 
 
-class RandomDeviateFactory: public TFactory
+class RandomFactory: public TFactory
 {
 public:
     virtual RandomDeviate* create() const = 0;
 };
 
-Q_DECLARE_INTERFACE(RandomDeviateFactory, "tonatiuh.RandomDeviateFactory")
+Q_DECLARE_INTERFACE(RandomFactory, "tonatiuh.RandomFactory")
 
 
 
 template<class T>
-class RandomFactory: public RandomDeviateFactory
+class RandomFactoryT: public RandomFactory
 {
 public:
     QString name() const {return T::getClassName();}

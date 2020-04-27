@@ -38,7 +38,7 @@ CmdLightKitModified::CmdLightKitModified(TLightKit* newLightKit, SoSceneKit* sce
             m_previousZenith = lightKit->zenith.getValue();
             m_previousDisbleNodes = QString(lightKit->disabledNodes.getValue().getString() );
 
-            m_pPreviousSunShape = dynamic_cast< SunShape* >(lightKit->getPart("tsunshape", false)->copy(true) );
+            m_pPreviousSunShape = dynamic_cast< SunAbstract* >(lightKit->getPart("tsunshape", false)->copy(true) );
             if (m_pPreviousSunShape) m_pPreviousSunShape->ref();
         }
     }
@@ -87,7 +87,7 @@ void CmdLightKitModified::redo()
     {
         TLightKit* lightKit = static_cast< TLightKit* > (m_scene->getPart("lightList[0]", false) );
 
-        SunShape* sunhape = static_cast< SunShape* > (m_pNewLightKit->getPart("tsunshape", false) );
+        SunAbstract* sunhape = static_cast< SunAbstract* > (m_pNewLightKit->getPart("tsunshape", false) );
         lightKit->setPart("tsunshape", sunhape);
 
         lightKit->ChangePosition(m_pNewLightKit->azimuth.getValue(), m_pNewLightKit->zenith.getValue() );

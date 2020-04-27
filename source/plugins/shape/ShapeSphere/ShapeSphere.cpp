@@ -23,7 +23,7 @@ SO_NODE_SOURCE(ShapeSphere)
 
 void ShapeSphere::initClass()
 {
-	SO_NODE_INIT_CLASS(ShapeSphere, TShape, "TShape");
+    SO_NODE_INIT_CLASS(ShapeSphere, ShapeAbstract, "ShapeAbstract");
 }
 
 ShapeSphere::ShapeSphere( ):

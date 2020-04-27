@@ -1,8 +1,9 @@
 #pragma once
 
+#include "libraries/TonatiuhLibraries.h"
 #include <string>
 
-class Trace
+class TONATIUH_LIBRARIES Trace
 {
 public:
     Trace(std::string functionName, bool showTrace = true);

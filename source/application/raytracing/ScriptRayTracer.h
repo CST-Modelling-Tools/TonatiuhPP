@@ -10,7 +10,7 @@ class Document;
 class GraphicRoot;
 class InstanceNode;
 class RandomDeviate;
-class RandomDeviateFactory;
+class RandomFactory;
 class QScriptContext;
 class SceneModel;
 class PhotonMap;
@@ -21,7 +21,7 @@ class ScriptRayTracer: public QObject
     Q_OBJECT
 
 public:
-    ScriptRayTracer(QVector< RandomDeviateFactory* > listRandomDeviateFactory);
+    ScriptRayTracer(QVector< RandomFactory* > listRandomFactory);
     ~ScriptRayTracer();
 
     void Clear();
@@ -70,7 +70,7 @@ private:
     PhotonMap* m_photonMap;
     bool m_photonMapToFile;
 
-    QVector< RandomDeviateFactory* > m_RandomDeviateFactoryList;
+    QVector< RandomFactory* > m_RandomFactoryList;
     RandomDeviate* m_randomDeviate;
 
     SceneModel* m_sceneModel;

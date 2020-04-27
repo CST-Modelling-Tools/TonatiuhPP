@@ -4,7 +4,7 @@
 
 class SceneModel;
 class TShapeKit;
-class TShape;
+class ShapeAbstract;
 
 //!  CmdInsertShape class is the insert command for shapes stored in the command stack.
 /*!
@@ -14,7 +14,7 @@ class TShape;
 class CmdInsertShape: public QUndoCommand
 {
 public:
-    CmdInsertShape(TShapeKit* shapeKit, TShape* shape, SceneModel* model, QUndoCommand* parent = 0);
+    CmdInsertShape(TShapeKit* shapeKit, ShapeAbstract* shape, SceneModel* model, QUndoCommand* parent = 0);
     ~CmdInsertShape();
 
     virtual void undo();
@@ -22,7 +22,7 @@ public:
 
 private:
     TShapeKit* m_shapeKit;
-    TShape* m_shape;
+    ShapeAbstract* m_shape;
     SceneModel* m_pModel;
     int m_row;
 };

@@ -9,8 +9,8 @@
 #include "shape//DifferentialGeometry.h"
 #include "InstanceNode.h"
 #include "tgf.h"
-#include "kernel/material/TMaterial.h"
-#include "kernel/shape/TShape.h"
+#include "kernel/material/MaterialAbstract.h"
+#include "kernel/shape/ShapeAbstract.h"
 #include "raytracing/TShapeKit.h"
 #include "raytracing/TLightKit.h"
 #include "tracker/TTracker.h"
@@ -101,17 +101,17 @@ bool InstanceNode::Intersect(const Ray& ray, RandomDeviate& rand, bool* isShapeF
     {
         Ray childCoordinatesRay(m_transformWTO(ray));
 
-        TShape* tshape = 0;
-        TMaterial* tmaterial = 0;
-        if (children[0]->GetNode()->getTypeId().isDerivedFrom(TShape::getClassTypeId() ) )
+        ShapeAbstract* tshape = 0;
+        MaterialAbstract* tmaterial = 0;
+        if (children[0]->GetNode()->getTypeId().isDerivedFrom(ShapeAbstract::getClassTypeId() ) )
         {
-            tshape = static_cast<TShape*>(children[0]->GetNode() );
-            if (children.size() > 1) tmaterial = static_cast<TMaterial*> (children[1]->GetNode() );
+            tshape = static_cast<ShapeAbstract*>(children[0]->GetNode() );
+            if (children.size() > 1) tmaterial = static_cast<MaterialAbstract*> (children[1]->GetNode() );
         }
         else if (children.count() > 1)
         {
-            tmaterial = static_cast<TMaterial*>(children[0]->GetNode() );
-            tshape = static_cast<TShape*>(children[1]->GetNode() );
+            tmaterial = static_cast<MaterialAbstract*>(children[0]->GetNode() );
+            tshape = static_cast<ShapeAbstract*>(children[1]->GetNode() );
         }
 
         if (tshape)

@@ -6,7 +6,7 @@ SO_NODE_SOURCE(TDefaultMaterial);
 
 void TDefaultMaterial::initClass()
 {
-     SO_NODE_INIT_CLASS( TDefaultMaterial, TMaterial, "Material" );
+     SO_NODE_INIT_CLASS( TDefaultMaterial, MaterialAbstract, "Material" );
 }
 
 TDefaultMaterial::TDefaultMaterial()

@@ -12,7 +12,7 @@ SO_NODE_SOURCE(SunBuie)
 
 void SunBuie::initClass()
 {
-    SO_NODE_INIT_CLASS(SunBuie, SunShape, "SunShape");
+    SO_NODE_INIT_CLASS(SunBuie, SunAbstract, "SunShape");
 }
 
 SunBuie::SunBuie()
@@ -35,22 +35,22 @@ void SunBuie::updateState(double csrValue)
     m_thetaCS = 43.6e-3;
     m_deltaThetaCSSD = m_thetaCS - m_thetaSD;
 
-    m_integralA = 9.224724736098827e-6;
     m_chi = chiValue(csrValue);
     m_k = 0.9*log(13.5*m_chi)*pow(m_chi, -0.3);
     m_gamma = 2.2*log(0.52*m_chi)*pow(m_chi, 0.43) - 0.1;
-    m_etokTimes1000toGamma = exp(m_k)*pow(1000, m_gamma);
+    m_exp = exp(m_k)*pow(1000, m_gamma);
 
+    double m_integralA = 9.224724736098827e-6;
     double gammaPlusTwo = m_gamma + 2.;
-    m_integralB = (exp(m_k)*pow(1000, m_gamma)/gammaPlusTwo) * ( pow(m_thetaCS, gammaPlusTwo) - pow(m_thetaSD, gammaPlusTwo) );
-
+    double m_integralB = (exp(m_k)*pow(1000, m_gamma)/gammaPlusTwo) * ( pow(m_thetaCS, gammaPlusTwo) - pow(m_thetaSD, gammaPlusTwo) );
     m_alpha = 1./(m_integralA + m_integralB);
-    m_heightRectangle1 = 1.001 * pdfTheta(0.0038915695846209047);
-    m_heightRectangle2 = pdfTheta(m_thetaSD);
 
-    double areaR1 = m_thetaSD*m_heightRectangle1;
-    double areaR2 = m_deltaThetaCSSD*m_heightRectangle2;
-    m_probabilityRectangle1 = areaR1/(areaR1 + areaR2);
+    m_heightSD = 1.001 * pdfTheta(0.0038915695846209047);
+    m_heightCS = pdfTheta(m_thetaSD);
+
+    double areaA = m_thetaSD*m_heightSD;
+    double areaB = m_deltaThetaCSSD*m_heightCS;
+    m_probabilitySD = areaA/(areaA + areaB);
 }
 
 SunBuie::~SunBuie()
@@ -94,16 +94,14 @@ SoNode* SunBuie::copy(SbBool copyConnections) const
 	newSunShape->m_chi = m_chi;
 	newSunShape->m_k = m_k;
 	newSunShape->m_gamma = m_gamma;
-	newSunShape->m_etokTimes1000toGamma = m_etokTimes1000toGamma;
+    newSunShape->m_exp = m_exp;
 	newSunShape->m_thetaSD = m_thetaSD;
 	newSunShape->m_thetaCS = m_thetaCS;
 	newSunShape->m_deltaThetaCSSD = m_deltaThetaCSSD;
-	newSunShape->m_integralA = m_integralA;
-	newSunShape->m_integralB = m_integralB;
 	newSunShape->m_alpha = m_alpha;
-	newSunShape->m_heightRectangle1 = m_heightRectangle1;
-	newSunShape->m_heightRectangle2 = m_heightRectangle2;
-	newSunShape->m_probabilityRectangle1 = m_probabilityRectangle1;
+    newSunShape->m_heightSD = m_heightSD;
+    newSunShape->m_heightCS = m_heightCS;
+    newSunShape->m_probabilitySD = m_probabilitySD;
 
 	return newSunShape;
 }
@@ -122,12 +120,12 @@ double SunBuie::zenithAngle(RandomDeviate& rand) const
 	double value;
 
     do {
-        if (rand.RandomDouble() < m_probabilityRectangle1) {
+        if (rand.RandomDouble() < m_probabilitySD) {
             theta = rand.RandomDouble()*m_thetaSD;
-            value = rand.RandomDouble()*m_heightRectangle1;
+            value = rand.RandomDouble()*m_heightSD;
         } else {
             theta = m_thetaSD + rand.RandomDouble()*m_deltaThetaCSSD;
-            value = rand.RandomDouble()*m_heightRectangle2;
+            value = rand.RandomDouble()*m_heightCS;
 		}
     } while (value > pdfTheta(theta));
 
@@ -158,7 +156,7 @@ double SunBuie::phi(double theta) const
     if (theta < m_thetaSD)
         return cos(326.*theta)/cos(308.*theta);
     else
-        return m_etokTimes1000toGamma*pow(theta, m_gamma);
+        return m_exp*pow(theta, m_gamma);
 }
 
 double SunBuie::pdfTheta(double theta) const
@@ -166,3 +164,7 @@ double SunBuie::pdfTheta(double theta) const
     return m_alpha*phi(theta)*sin(theta);
 }
 
+
+// References:
+// D. Buie, C.J. Dey, S. Bosi. "The effective size of the solar cone for solar concentrating systems". Solar Energy 74 (2003) 417�427.
+// D. Buie, A.G. Monger, C.J. Dey. "Sunshape distributions for terrestrial solar simulations". Solar Energy 74 (2003) 113�122.

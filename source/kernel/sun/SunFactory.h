@@ -2,14 +2,14 @@
 
 #include "kernel/raytracing/TFactory.h"
 
-class SunShape;
+class SunAbstract;
 
 
 
 class SunFactory: public TFactory
 {
 public:
-    virtual SunShape* create() const = 0;
+    virtual SunAbstract* create() const = 0;
 };
 
 Q_DECLARE_INTERFACE(SunFactory, "tonatiuh.SunFactory")

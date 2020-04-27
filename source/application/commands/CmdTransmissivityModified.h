@@ -9,13 +9,13 @@
 #include <QUndoCommand>
 
 class TSceneKit;
-class TTransmissivity;
+class AirAbstract;
 
 class CmdTransmissivityModified : public QUndoCommand
 {
 
 public:
-    CmdTransmissivityModified( TTransmissivity* newTransmissivity, TSceneKit* scene,  QUndoCommand* parent = 0 );
+    CmdTransmissivityModified( AirAbstract* newTransmissivity, TSceneKit* scene,  QUndoCommand* parent = 0 );
     ~CmdTransmissivityModified();
 
      virtual void undo();
@@ -23,8 +23,8 @@ public:
 
 private:
      bool m_isPreviousTransmissivity;
-     TTransmissivity* m_pPreviousTransmissivity;
-     TTransmissivity* m_pNewTransmissivity;
+     AirAbstract* m_pPreviousTransmissivity;
+     AirAbstract* m_pNewTransmissivity;
      TSceneKit* m_scene;
 };
 

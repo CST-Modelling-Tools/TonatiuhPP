@@ -6,8 +6,8 @@
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/Ray.h"
 #include "kernel/shape/ShapeCube.h"
-#include "kernel/material/TMaterial.h"
-#include "kernel/shape/TShape.h"
+#include "kernel/material/MaterialAbstract.h"
+#include "kernel/shape/ShapeAbstract.h"
 #include "TShapeKit.h"
 
 
@@ -27,18 +27,16 @@ void TShapeKit::initClass()
  */
 TShapeKit::TShapeKit()
 {
-
     SO_KIT_CONSTRUCTOR(TShapeKit);
 
-    SO_KIT_CHANGE_ENTRY_TYPE(shape, TShape, ShapeCube);
-    SO_KIT_CHANGE_NULL_BY_DEFAULT(shape,TRUE);
+    SO_KIT_CHANGE_ENTRY_TYPE(shape, ShapeAbstract, ShapeCube);
+    SO_KIT_CHANGE_NULL_BY_DEFAULT(shape, TRUE);
     SO_KIT_INIT_INSTANCE();
 
     setPart("shape", NULL);
 
     //SoTransform* transform = new SoTransform;
     //setPart("transform",  NULL);
-
 }
 /*!
  * Destroys the TShapeKit object.
@@ -63,7 +61,7 @@ bool TShapeKit::IntersectP(const Ray&) const
  *
  *Return the reflected ray. If the returned value is null, there is not reflected ray.
  */
-Ray* TShapeKit::Intersect( const Ray& /* objectRay */, bool* /* isShapeFront */, RandomDeviate& /* rand */ ) const
+Ray* TShapeKit::Intersect(const Ray& /* objectRay */, bool* /* isShapeFront */, RandomDeviate& /* rand */ ) const
 {
     return 0;
 }

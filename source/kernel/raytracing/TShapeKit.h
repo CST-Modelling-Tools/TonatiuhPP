@@ -23,10 +23,9 @@ public:
     TShapeKit();
     static void initClass();
 
-    bool IntersectP( const Ray& ray ) const;
-    Ray* Intersect( const Ray& objectRay, bool* isShapeFront, RandomDeviate& rand ) const;
+    bool IntersectP(const Ray& ray) const;
+    Ray* Intersect(const Ray& objectRay, bool* isShapeFront, RandomDeviate& rand) const;
 
 protected:
     virtual ~TShapeKit();
-
 };

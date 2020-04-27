@@ -12,7 +12,7 @@ class AirFactory;
 class ComponentFactory;
 class PhotonExportFactory;
 class MaterialFactory;
-class RandomDeviateFactory;
+class RandomFactory;
 class ShapeFactory;
 class SunFactory;
 class TrackerFactory;
@@ -27,7 +27,7 @@ public:
     QVector<ComponentFactory*> getComponentFactories() const {return m_componentFactories;}
     QVector<PhotonExportFactory*> getExportFactories() const {return m_exportFactories;}
     QVector<MaterialFactory*> getMaterialFactories() const {return m_materialFactories;}
-    QVector<RandomDeviateFactory*> getRandomFactories() const {return m_randomFactories;}
+    QVector<RandomFactory*> getRandomFactories() const {return m_randomFactories;}
     QVector<ShapeFactory*> getShapeFactories() const {return m_shapeFactories;}
     QVector<SunFactory*> getSunFactories() const {return m_sunFactories;}
     QVector<TrackerFactory*> getTrackerFactories() const {return m_trackerFactories;}
@@ -50,7 +50,7 @@ private:
     QVector<ComponentFactory*> m_componentFactories;
     QVector<PhotonExportFactory*> m_exportFactories;
     QVector<MaterialFactory*> m_materialFactories;
-    QVector<RandomDeviateFactory*> m_randomFactories;
+    QVector<RandomFactory*> m_randomFactories;
     QVector<ShapeFactory*> m_shapeFactories;
     QVector<SunFactory*> m_sunFactories;
     QVector<TrackerFactory*> m_trackerFactories;

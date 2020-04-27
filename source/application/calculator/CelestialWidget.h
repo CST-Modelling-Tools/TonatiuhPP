@@ -2,7 +2,7 @@
 
 #include <QWidget>
 
-#include "kernel/auxiliary/sunpos.h"
+#include "kernel/sun/sunpos.h"
 
 class QLabel;
 class SoSeparator;
@@ -15,9 +15,7 @@ public:
     CelestialWidget(QWidget* parent = 0);
     ~CelestialWidget();
 
-    double getSphereRadio() {
-        return sphereRadio;
-    }
+    double getSphereRadio() {return sphereRadio;}
     double getDeclination() {
         return m_declination;
     }

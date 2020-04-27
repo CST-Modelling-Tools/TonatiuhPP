@@ -5,10 +5,10 @@
 #include <Inventor/fields/SoSFFloat.h>
 #include <Inventor/nodes/SoShape.h>
 
-#include "kernel/shape/TShape.h"
+#include "kernel/shape/ShapeAbstract.h"
 #include "kernel/raytracing/trt.h"
 
-class ShapeCylinder: public TShape
+class ShapeCylinder: public ShapeAbstract
 {
 	SO_NODE_HEADER(ShapeCylinder);
 

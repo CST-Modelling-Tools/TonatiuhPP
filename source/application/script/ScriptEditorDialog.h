@@ -10,7 +10,7 @@ class QItemSelectionModel;
 class QLineEdit;
 class QScriptContext;
 class QScriptEngine;
-class RandomDeviateFactory;
+class RandomFactory;
 
 //!  ScriptEditorDialog class is the dialog to edit and run scripts with Tonatiuh.
 /*!
@@ -22,7 +22,7 @@ class ScriptEditorDialog: public QDialog, private Ui::ScriptEditorDialog
     Q_OBJECT
 
 public:
-    ScriptEditorDialog(QVector<RandomDeviateFactory*> listRandomDeviateFactory, QWidget* parent = 0);
+    ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory, QWidget* parent = 0);
     ~ScriptEditorDialog();
 
     void ExecuteScript(QString tonatiuhScriptFile);

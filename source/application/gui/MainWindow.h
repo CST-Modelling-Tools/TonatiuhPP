@@ -26,9 +26,9 @@ class MaterialFactory;
 class PhotonMap;
 class PhotonToMemory;
 class ShapeFactory;
-class SunShape;
+class SunAbstract;
 class TrackerFactory;
-class TTransmissivity;
+class AirAbstract;
 class SoCamera;
 
 struct PhotonExportSettings;
@@ -191,9 +191,9 @@ private:
     bool ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
                             InstanceNode*& lightInstance,
                             SoTransform*& lightTransform,
-                            SunShape*& sunShape,
+                            SunAbstract*& sunShape,
                             TLightShape*& shape,
-                            TTransmissivity*& transmissivity);
+                            AirAbstract*& transmissivity);
     bool SaveFile(const QString& fileName);
     void SetCurrentFile(const QString& fileName);
     bool SetPhotonMapExportSettings();

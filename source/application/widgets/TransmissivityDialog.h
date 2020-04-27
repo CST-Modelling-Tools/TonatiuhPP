@@ -5,7 +5,7 @@
 
 #include "ui_transmissivitydialog.h"
 
-class TTransmissivity;
+class AirAbstract;
 class AirFactory;
 
 
@@ -17,8 +17,8 @@ public:
     TransmissivityDialog(QVector<AirFactory*> transmissivityFactoryList, QWidget* parent = 0, Qt::WindowFlags f = 0);
     ~TransmissivityDialog() {}
 
-    TTransmissivity* GetTransmissivity() const;
-    void SetCurrentTransmissivity(TTransmissivity* transmissivity);
+    AirAbstract* GetTransmissivity() const;
+    void SetCurrentTransmissivity(AirAbstract* transmissivity);
 
 public slots:
     void SetValue(SoNode* node, QString paramenterName, QString newValue);
@@ -28,7 +28,7 @@ protected slots:
 
 private:
     int m_currentTransmissivityIndex;
-    TTransmissivity* m_currentTransmissivity;
-    TTransmissivity* m_newTransmissivity;
+    AirAbstract* m_currentTransmissivity;
+    AirAbstract* m_newTransmissivity;
     QMap<QString, AirFactory*> m_transmissivityFactoryList;
 };

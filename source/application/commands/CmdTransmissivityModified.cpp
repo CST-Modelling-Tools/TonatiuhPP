@@ -2,12 +2,12 @@
 
 #include "CmdTransmissivityModified.h"
 #include "kernel/raytracing/TSceneKit.h"
-#include "kernel/air/TTransmissivity.h"
+#include "kernel/air/AirAbstract.h"
 
 /*!
  * Creates a new transmissivity definition command. The
  */
-CmdTransmissivityModified::CmdTransmissivityModified(TTransmissivity* newTransmissivity, TSceneKit* scene, QUndoCommand* parent):
+CmdTransmissivityModified::CmdTransmissivityModified(AirAbstract* newTransmissivity, TSceneKit* scene, QUndoCommand* parent):
     QUndoCommand("Transmissivity changed", parent),
     m_isPreviousTransmissivity(false),
     m_pNewTransmissivity(0),
@@ -15,14 +15,14 @@ CmdTransmissivityModified::CmdTransmissivityModified(TTransmissivity* newTransmi
 {
     if (newTransmissivity)
     {
-        m_pNewTransmissivity = static_cast< TTransmissivity* >(newTransmissivity->copy(true) );
+        m_pNewTransmissivity = static_cast< AirAbstract* >(newTransmissivity->copy(true) );
         m_pNewTransmissivity->ref();
     }
 
     if (m_scene->getPart("transmissivity", false) )
     {
         m_isPreviousTransmissivity = true;
-        m_pPreviousTransmissivity = dynamic_cast< TTransmissivity* >(m_scene->getPart("transmissivity", false) );
+        m_pPreviousTransmissivity = dynamic_cast< AirAbstract* >(m_scene->getPart("transmissivity", false) );
         if (m_pPreviousTransmissivity) m_pPreviousTransmissivity->ref();
 
     }

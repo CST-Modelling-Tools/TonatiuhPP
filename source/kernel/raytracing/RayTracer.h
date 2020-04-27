@@ -19,8 +19,8 @@ class QMutex;
 class QPoint;
 class PhotonMap;
 class TLightShape;
-class SunShape;
-class TTransmissivity;
+class SunAbstract;
+class AirAbstract;
 
 
 class TONATIUH_KERNEL RayTracer
@@ -30,9 +30,9 @@ public:
     RayTracer(InstanceNode* rootNode,
               InstanceNode* sunNode,
               TLightShape* lightShape,
-              SunShape* const lightSunShape,
+              SunAbstract* const lightSunShape,
               Transform lightToWorld,
-              TTransmissivity* transmissivity,
+              AirAbstract* transmissivity,
               RandomDeviate& rand,
               QMutex* mutex,
               PhotonMap* photonMap,
@@ -49,9 +49,9 @@ private:
     InstanceNode* m_rootNode;
     InstanceNode* m_sunNode;
     TLightShape* m_lightShape;
-    const SunShape* m_lightSunShape;
+    const SunAbstract* m_lightSunShape;
     Transform m_lightToWorld;
-    TTransmissivity* m_transmissivity;
+    AirAbstract* m_transmissivity;
     RandomDeviate* m_pRand;
     QMutex* m_mutex;
     PhotonMap* m_photonMap;

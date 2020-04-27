@@ -4,13 +4,14 @@
 #include <Inventor/fields/SoSFEnum.h>
 #include <Inventor/fields/SoSFFloat.h>
 
-#include "kernel/shape/TShape.h"
+#include "kernel/shape/ShapeAbstract.h"
 #include "kernel/raytracing/trt.h"
 
 class SoFieldSensor;
 class SoSensor;
 
-class ShapeSphere: public TShape
+
+class ShapeSphere: public ShapeAbstract
 {
     SO_NODE_HEADER(ShapeSphere);
 
@@ -18,6 +19,7 @@ public:
     ShapeSphere();
     static void initClass();
     SoNode* copy(SbBool copyConnections) const;
+
     double GetArea() const;
     double GetVolume() const;
     BBox GetBBox() const;
@@ -63,7 +65,8 @@ private:
 
 #include "kernel/shape/ShapeFactory.h"
 
-class ShapeSphereFactory: public QObject, public ShapeFactoryT<ShapeSphere>
+class ShapeSphereFactory:
+    public QObject, public ShapeFactoryT<ShapeSphere>
 {
     Q_OBJECT
     Q_INTERFACES(ShapeFactory)
