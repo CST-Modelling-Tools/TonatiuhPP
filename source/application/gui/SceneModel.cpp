@@ -14,19 +14,19 @@
 #include "PathWrapper.h"
 #include "SceneModel.h"
 #include "kernel/raytracing/TLightKit.h"
-#include "kernel/raytracing/TMaterial.h"
+#include "kernel/material/TMaterial.h"
 #include "kernel/raytracing/TSceneTracker.h"
 #include "kernel/raytracing/TSceneKit.h"
 #include "kernel/raytracing/TSeparatorKit.h"
-#include "kernel/raytracing/TShape.h"
+#include "kernel/shape/TShape.h"
 #include "kernel/raytracing/TShapeKit.h"
 #include "kernel/raytracing/TTracker.h"
 
 /*!
  * Creates an empty model.
  */
-SceneModel::SceneModel( QObject* parent)
-:QAbstractItemModel( parent ), m_coinRoot( 0 ), m_coinScene(0), m_instanceRoot( 0 )
+SceneModel::SceneModel(QObject* parent):
+    QAbstractItemModel(parent), m_coinRoot(0), m_coinScene(0), m_instanceRoot(0)
 {
 
 }
@@ -53,10 +53,10 @@ void SceneModel::SetCoinRoot( SoSeparator& coinRoot )
  *
  * Creates nodes for the model to the scene subnodes.
  */
-void SceneModel::SetCoinScene( TSceneKit& coinScene )
+void SceneModel::SetCoinScene(TSceneKit& coinScene)
 {
     beginResetModel();
-    if( m_instanceRoot )    Clear();
+    if (m_instanceRoot) Clear();
     m_mapCoinQt.clear();
     m_coinScene = 0;
     m_coinScene = &coinScene;

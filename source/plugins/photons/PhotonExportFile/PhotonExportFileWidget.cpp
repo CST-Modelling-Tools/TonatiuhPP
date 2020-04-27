@@ -2,51 +2,39 @@
 #include <QMessageBox>
 #include <QSettings>
 
-#include "PhotonMapExportFile.h"
-#include "PhotonMapExportFileWidget.h"
+#include "PhotonExportFile.h"
+#include "PhotonExportFileWidget.h"
 
 /*!
  * Creates a widget for the plugin parameters.
  */
-PhotonMapExportFileWidget::PhotonMapExportFileWidget( QWidget* parent )
-:PhotonMapExportParametersWidget( parent)
+PhotonExportFileWidget::PhotonExportFileWidget(QWidget* parent):
+    PhotonExportWidget(parent)
 {
     setupUi(this);
 	SetupTriggers();
 }
 
 /*!
- * Destroys widget object.
- */
-PhotonMapExportFileWidget::~PhotonMapExportFileWidget()
-{
-
-}
-
-/*!
  * Returns the plugin parameters names.
  */
-QStringList PhotonMapExportFileWidget::GetParameterNames() const
+QStringList PhotonExportFileWidget::GetParameterNames() const
 {
-	return PhotonMapExportFile::GetParameterNames();
+    return PhotonExportFile::GetParameterNames();
 }
 
 /*!
  * Return the value of
  */
-QString PhotonMapExportFileWidget::GetParameterValue( QString parameter ) const
+QString PhotonExportFileWidget::GetParameterValue( QString parameter ) const
 {
 	QStringList parametersName = GetParameterNames();
 
-	//Directory name
-	if( parameter == parametersName[0] )
+    if( parameter == parametersName[0] ) //Directory name
 		return saveDirectoryLine->text();
-
-	//File name.
-	else if( parameter == parametersName[1] )
-	{
+    else if (parameter == parametersName[1]) //File name.
 		return filenameLine->text();
-	}
+
 
 	//Maximum number of photons that a file can store.
 	else if( parameter == parametersName[2] )
@@ -61,11 +49,11 @@ QString PhotonMapExportFileWidget::GetParameterValue( QString parameter ) const
 /*!
  * Select existing directory to save the data exported from the photon.
  */
-void PhotonMapExportFileWidget::SelectSaveDirectory()
+void PhotonExportFileWidget::SelectSaveDirectory()
 {
-	QSettings settings( QLatin1String( "NREL UTB CENER" ), QLatin1String( "Tonatiuh" ) );
-	QString lastUsedDirectory = settings.value( QLatin1String( "PhotonMapExportFileWidget.directoryToExport" ),
-			QLatin1String( "." ) ).toString();
+    QSettings settings("NREL UTB CENER", "Tonatiuh");
+    QString lastUsedDirectory = settings.value( "PhotonExportFileWidget.directoryToExport",
+            ".").toString();
 
 
 	QString directoryToExport = QFileDialog::getExistingDirectory ( this, tr( "Save Direcotry" ), lastUsedDirectory );
@@ -80,15 +68,14 @@ void PhotonMapExportFileWidget::SelectSaveDirectory()
 
 	}
 
-    settings.setValue("PhotonMapExportFileWidget.directoryToExport", directoryToExport );
+    settings.setValue("PhotonExportFileWidget.directoryToExport", directoryToExport );
 	saveDirectoryLine->setText( directoryToExport );
-
 }
 
 /*!
  * Setups triggers for the buttons.
  */
-void PhotonMapExportFileWidget::SetupTriggers()
+void PhotonExportFileWidget::SetupTriggers()
 {
 	connect( selectDirectoryButton, SIGNAL( clicked() ), this, SLOT( SelectSaveDirectory() ) );
 }

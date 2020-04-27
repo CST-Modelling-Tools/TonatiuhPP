@@ -13,35 +13,34 @@
 #include "gui/GraphicRoot.h"
 #include "gui/SceneModel.h"
 #include "ScriptRayTracer.h"
-#include "kernel/statistics/RandomDeviate.h"
-#include "kernel/statistics/RandomDeviateFactory.h"
+#include "kernel/random/RandomDeviate.h"
+#include "kernel/random/RandomDeviateFactory.h"
 #include "kernel/raytracing/RayTracer.h"
 #include "kernel/geometry/tgf.h"
 #include "kernel/raytracing/TLightKit.h"
 #include "kernel/raytracing/TLightShape.h"
-#include "kernel/photons/TPhotonMap.h"
+#include "kernel/photons/PhotonMap.h"
 #include "kernel/raytracing/trf.h"
 #include "kernel/raytracing/TSeparatorKit.h"
-#include "kernel/raytracing/TShape.h"
+#include "kernel/shape/TShape.h"
 #include "kernel/raytracing/TSunShape.h"
-#include "kernel/raytracing/TTransmissivity.h"
+#include "kernel/air/TTransmissivity.h"
 
-ScriptRayTracer::ScriptRayTracer(QVector<RandomDeviateFactory*> listRandomDeviateFactory)
-    :
-      m_document(0),
-      m_irradiance(-1),
-      m_numberOfRays(0),
-      m_photonMap(0),
-      m_RandomDeviateFactoryList(listRandomDeviateFactory),
-      m_randomDeviate(0),
-      m_sceneModel (0),
-      m_widthDivisions(200),
-      m_heightDivisions(200),
-      m_sunPosistionChanged(false),
-      m_sunAzimuth(0),
-      m_sunElevation(0),
-      m_wPhoton(0),
-      m_dirName("")
+ScriptRayTracer::ScriptRayTracer(QVector<RandomDeviateFactory*> listRandomDeviateFactory):
+    m_document(0),
+    m_irradiance(-1),
+    m_numberOfRays(0),
+    m_photonMap(0),
+    m_RandomDeviateFactoryList(listRandomDeviateFactory),
+    m_randomDeviate(0),
+    m_sceneModel (0),
+    m_widthDivisions(200),
+    m_heightDivisions(200),
+    m_sunPosistionChanged(false),
+    m_sunAzimuth(0),
+    m_sunElevation(0),
+    m_wPhoton(0),
+    m_dirName("")
 {
 
 }

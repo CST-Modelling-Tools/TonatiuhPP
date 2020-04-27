@@ -2,7 +2,7 @@
 
 #include "CmdInsertShape.h"
 #include "gui/SceneModel.h"
-#include "kernel/raytracing/TShape.h"
+#include "kernel/shape/TShape.h"
 #include "kernel/raytracing/TShapeKit.h"
 
 /**
@@ -10,11 +10,11 @@
  *
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
-CmdInsertShape::CmdInsertShape(TShapeKit* shapeKit, TShape* shape, SceneModel* model, QUndoCommand* parent)
-    : QUndoCommand("InsertShape", parent), m_shapeKit(shapeKit), m_shape(shape), m_pModel(model), m_row(-1)
+CmdInsertShape::CmdInsertShape(TShapeKit* shapeKit, TShape* shape, SceneModel* model, QUndoCommand* parent):
+    QUndoCommand("InsertShape", parent), m_shapeKit(shapeKit), m_shape(shape), m_pModel(model), m_row(-1)
 {
-    if (m_shapeKit == 0) gf::SevereError("CmdInsertShape called with NULL TShapeKit*");
-    if (m_shape == 0) gf::SevereError("CmdInsertShape called with NULL TShape*");
+    if (!m_shapeKit) gf::SevereError("CmdInsertShape called with NULL TShapeKit*");
+    if (!m_shape) gf::SevereError("CmdInsertShape called with NULL TShape*");
     m_shape->ref();
 }
 

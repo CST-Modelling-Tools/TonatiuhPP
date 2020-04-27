@@ -1,5 +1,6 @@
 #include "Photon.h"
 
+
 Photon::Photon():
     id(-1),
     pos(Point3D()),

@@ -7,7 +7,6 @@
 #include <QVector>
 
 class RandomDeviateFactory;
-class TPhotonMapFactory;
 
 //!  RayTraceDialog class is the dialog to set ray trace options.
 /*!
@@ -19,15 +18,16 @@ class RayTraceDialog: public QDialog, private Ui::RayTraceDialog
 {
     Q_OBJECT
 
-
 public:
     RayTraceDialog(QWidget* parent = 0, Qt::WindowFlags f = 0);
-    RayTraceDialog(int numRays,
-                   QVector< RandomDeviateFactory* > randomFactoryList, int selectedRandomFactory = 0,
-                   int widthDivisions = 200,int heightDivisions = 200,
-                   bool drawRays = true, bool drawPhotons = false,
-                   int photonMapSize = 1'000'000, bool increasePhotonMap = false,
-                   QWidget * parent = 0, Qt::WindowFlags f = 0);
+    RayTraceDialog(
+        int numRays,
+        QVector<RandomDeviateFactory*> randomFactoryList, int selectedRandomFactory = 0,
+        int widthDivisions = 200,int heightDivisions = 200,
+        bool drawRays = true, bool drawPhotons = false,
+        int photonMapSize = 1'000'000, bool increasePhotonMap = false,
+        QWidget* parent = 0, Qt::WindowFlags f = 0
+    );
     ~RayTraceDialog() {}
 
     bool DrawPhotons() const {return m_drawPhotons;}
@@ -37,7 +37,7 @@ public:
     int GetHeightDivisions() const {return m_heightDivisions;}
     int GetPhotonMapBufferSize() const {return m_photonMapBufferSize;}
     int GetRandomDeviateFactoryIndex() const {return m_selectedRandomFactory;}
-    bool IncreasePhotonMap() const;
+    bool IncreasePhotonMap() const {return m_increasePhotonMap;}
 
 public slots:
     void applyChanges(QAbstractButton* button);

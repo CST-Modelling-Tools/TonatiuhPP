@@ -12,16 +12,16 @@
 #include <iostream>
 
 #include "libraries/geometry/gf.h"
-#include "kernel/raytracing/TTransmissivityFactory.h"
+#include "kernel/air/TTransmissivityFactory.h"
 #include "kernel/raytracing/TComponentFactory.h"
-#include "kernel/photons/PhotonMapExportFactory.h"
-#include "kernel/raytracing/TMaterialFactory.h"
-#include "kernel/statistics/RandomDeviateFactory.h"
-#include "kernel/raytracing/TShapeFactory.h"
+#include "kernel/photons/PhotonExportFactory.h"
+#include "kernel/material/TMaterialFactory.h"
+#include "kernel/random/RandomDeviateFactory.h"
+#include "kernel/shape/TShapeFactory.h"
 #include "kernel/raytracing/TSunFactory.h"
 #include "kernel/raytracing/TTrackerFactory.h"
-#include "kernel/raytracing/TSquare.h"
-#include "kernel/raytracing/TCube.h"
+#include "kernel/shape/TSquare.h"
+#include "kernel/shape/TCube.h"
 
 
 template <class T>
@@ -40,7 +40,7 @@ void sortFactories(const QStringList& sorting, QVector<T*>& factories) {
                 }
             }
         }
-    };
+    }
 }
 
 
@@ -115,7 +115,7 @@ void PluginManager::loadTonatiuhPlugin(TFactory* p)
     {
         m_componentFactories << f;
     }
-    else if (auto f = dynamic_cast<PhotonMapExportFactory*>(p))
+    else if (auto f = dynamic_cast<PhotonExportFactory*>(p))
     {
         m_exportFactories << f;
     }

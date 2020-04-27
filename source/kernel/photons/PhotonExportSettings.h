@@ -5,11 +5,11 @@
 #include <QString>
 
 
-struct TONATIUH_KERNEL PhotonMapExportSettings
+struct TONATIUH_KERNEL PhotonExportSettings
 {
-    void AddParameter( QString parameterName, QString parameterValue )
+    void AddParameter(QString parameterName, QString parameterValue)
     {
-        modeTypeParameters.insert( parameterName, parameterValue );
+        modeTypeParameters.insert(parameterName, parameterValue);
     }
 
     QString modeTypeName;
@@ -20,6 +20,6 @@ struct TONATIUH_KERNEL PhotonMapExportSettings
     bool exportAbsorption;
     bool exportSurfaceID;
     QStringList exportSurfaceNodeList;
-    QMap< QString, QString > modeTypeParameters;
+    QMap<QString, QString> modeTypeParameters;
 };
 

@@ -7,7 +7,7 @@
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Transform.h"
 #include "kernel/raytracing/DifferentialGeometry.h"
-#include "kernel/statistics/RandomDeviate.h"
+#include "kernel/random/RandomDeviate.h"
 #include "kernel/geometry/tgf.h"
 
 

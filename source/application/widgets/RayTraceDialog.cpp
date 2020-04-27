@@ -2,7 +2,7 @@
 #include <QFileDialog>
 #include <QDir>
 
-#include "kernel/statistics/RandomDeviateFactory.h"
+#include "kernel/random/RandomDeviateFactory.h"
 #include "RayTraceDialog.h"
 
 /**
@@ -10,16 +10,16 @@
  *
  * The variables take the default values.
  */
-RayTraceDialog::RayTraceDialog(QWidget* parent, Qt::WindowFlags f)
-    : QDialog (parent, f),
+RayTraceDialog::RayTraceDialog(QWidget* parent, Qt::WindowFlags f):
+    QDialog(parent, f),
+    m_numRays(0),
+    m_selectedRandomFactory(-1),
+    m_widthDivisions(200),
+    m_heightDivisions(200),
     m_drawPhotons(false),
     m_drawRays(false),
-    m_heightDivisions(200),
-    m_increasePhotonMap(false),
-    m_numRays(0),
     m_photonMapBufferSize(1000000),
-    m_selectedRandomFactory(-1),
-    m_widthDivisions(200)
+    m_increasePhotonMap(false)
 {
     setupUi(this);
     connect(this, SIGNAL(accepted()), this, SLOT(saveChanges()) );
@@ -31,32 +31,32 @@ RayTraceDialog::RayTraceDialog(QWidget* parent, Qt::WindowFlags f)
  *
  * The variables take the values specified by \a numRats, \a faction, \a drawPhotons and \a increasePhotonMap.
  */
-RayTraceDialog::RayTraceDialog(int numRays,
-                               QVector< RandomDeviateFactory* > randomFactoryList, int selectedRandomFactory,
-                               int widthDivisions, int heightDivisions,
-                               bool drawRays, bool drawPhotons,
-                               int photonMapSize, bool increasePhotonMap,
-                               QWidget* parent, Qt::WindowFlags f)
-    : QDialog (parent, f),
+RayTraceDialog::RayTraceDialog(
+    int numRays,
+    QVector<RandomDeviateFactory*> randomFactoryList, int selectedRandomFactory,
+    int widthDivisions, int heightDivisions,
+    bool drawRays, bool drawPhotons,
+    int photonMapSize, bool increasePhotonMap,
+    QWidget* parent, Qt::WindowFlags f
+):
+    QDialog(parent, f),
+    m_numRays(numRays),
+    m_selectedRandomFactory(selectedRandomFactory),
+    m_widthDivisions(widthDivisions),
+    m_heightDivisions(heightDivisions),
     m_drawPhotons(drawPhotons),
     m_drawRays(drawRays),
-    m_heightDivisions(heightDivisions),
-    m_increasePhotonMap(increasePhotonMap),
-    m_numRays(numRays),
     m_photonMapBufferSize(photonMapSize),
-    m_selectedRandomFactory(selectedRandomFactory),
-    m_widthDivisions(widthDivisions)
+    m_increasePhotonMap(increasePhotonMap)
 {
     setupUi(this);
     raysSpinBox->setValue(m_numRays);
     for (int index = 0; index < randomFactoryList.size(); ++index)
-    {
         randomCombo->addItem(randomFactoryList[index]->icon(), randomFactoryList[index]->name() );
-    }
+
     if (m_selectedRandomFactory < 0 && randomFactoryList.size() > 0)
         m_selectedRandomFactory = 0;
     randomCombo->setCurrentIndex(m_selectedRandomFactory);
-
 
     widthDivisionsSpinBox->setValue(m_widthDivisions);
     heightDivisionsSpinBox->setValue(m_heightDivisions);
@@ -72,14 +72,6 @@ RayTraceDialog::RayTraceDialog(int numRays,
 
     connect(this, SIGNAL(accepted()), this, SLOT(saveChanges()) );
     connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(applyChanges(QAbstractButton*)) );
-}
-
-/**
- * Returns if the the tracer use the same photon map used in the previous tracer process.
- */
-bool RayTraceDialog::IncreasePhotonMap() const
-{
-    return m_increasePhotonMap;
 }
 
 /**
@@ -105,9 +97,6 @@ void RayTraceDialog::saveChanges()
     m_drawPhotons = showPhotonsCheck->isChecked();
 
     m_photonMapBufferSize = bufferSizeSpin->value();
-    if (newMapRadio->isChecked() )
-        m_increasePhotonMap = false;
-    else
-        m_increasePhotonMap = true;
+    m_increasePhotonMap = !newMapRadio->isChecked();
 }
 

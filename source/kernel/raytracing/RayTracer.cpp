@@ -1,13 +1,14 @@
 #include <QPoint>
 
 #include "DifferentialGeometry.h"
-#include "statistics/ParallelRandomDeviate.h"
+#include "kernel/random/ParallelRandomDeviate.h"
 #include "libraries/geometry/Ray.h"
 #include "RayTracer.h"
-#include "kernel/photons/TPhotonMap.h"
+#include "kernel/photons/PhotonMap.h"
 #include "TLightShape.h"
 #include "TSunShape.h"
-#include "TTransmissivity.h"
+#include "kernel/air/TTransmissivity.h"
+
 
 RayTracer::RayTracer(InstanceNode* rootNode,
                      InstanceNode* sunNode,
@@ -17,9 +18,9 @@ RayTracer::RayTracer(InstanceNode* rootNode,
                      TTransmissivity* transmissivity,
                      RandomDeviate& rand,
                      QMutex* mutex,
-                     TPhotonMap* photonMap,
+                     PhotonMap* photonMap,
                      QMutex* mutexPhotonMap,
-                     QVector<InstanceNode*> exportSuraceList) :
+                     QVector<InstanceNode*> exportSuraceList):
     m_rootNode(rootNode),
     m_sunNode(sunNode),
     m_lightShape(lightShape),

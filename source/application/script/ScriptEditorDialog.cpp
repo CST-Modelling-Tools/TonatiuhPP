@@ -39,14 +39,11 @@ ScriptEditorDialog::ScriptEditorDialog( QVector< RandomDeviateFactory* > listRan
     fileTree->setModel( m_fileModel );
 
 
-
-
-
     QString pluginsDirectory= QApplication::applicationDirPath() + QDir::separator() + "plugins";
     QCoreApplication::addLibraryPath(pluginsDirectory );
 
 
-      //Init QtScript environment
+    //Init QtScript environment
     m_interpreter = new QScriptEngine;
     qScriptRegisterSequenceMetaType<QVector<QVariant> >(m_interpreter);
 
@@ -71,14 +68,13 @@ ScriptEditorDialog::ScriptEditorDialog( QVector< RandomDeviateFactory* > listRan
 
 
 
-
-     connect( fileTree, SIGNAL( doubleClicked( const QModelIndex& ) ), this, SLOT( OpenScriptFile( const QModelIndex& ) ) );
-     connect( codeEditorWidget, SIGNAL( FileOpened( QString ) ), this, SLOT( SetCurrentFile( QString ) ) );
-     connect( codeEditorWidget, SIGNAL( FileSaved( QString ) ), this, SLOT( SetCurrentFile( QString ) ) );
-     connect( codeEditorWidget, SIGNAL( RunScript( ) ), this, SLOT( RunScript() ) );
-     connect( runButton, SIGNAL( clicked( bool ) ), this, SLOT( RunScript() ) );
-     connect( closeButton, SIGNAL( clicked( bool ) ), this, SLOT( Close( bool ) ) );
-     connect( parent, SIGNAL( Abort( QString ) ), this, SLOT( AbortEvaluation( QString ) ) );
+    connect( fileTree, SIGNAL( doubleClicked( const QModelIndex& ) ), this, SLOT( OpenScriptFile( const QModelIndex& ) ) );
+    connect( codeEditorWidget, SIGNAL( FileOpened( QString ) ), this, SLOT( SetCurrentFile( QString ) ) );
+    connect( codeEditorWidget, SIGNAL( FileSaved( QString ) ), this, SLOT( SetCurrentFile( QString ) ) );
+    connect( codeEditorWidget, SIGNAL( RunScript( ) ), this, SLOT( RunScript() ) );
+    connect( runButton, SIGNAL( clicked( bool ) ), this, SLOT( RunScript() ) );
+    connect( closeButton, SIGNAL( clicked( bool ) ), this, SLOT( Close( bool ) ) );
+    connect( parent, SIGNAL( Abort( QString ) ), this, SLOT( AbortEvaluation( QString ) ) );
 }
 
 /**
@@ -134,15 +130,12 @@ void ScriptEditorDialog::Close( bool /* checked */  )
  *
  * Before open the selected script, it verifies if the current script can be closed.
  */
-void ScriptEditorDialog::OpenScriptFile( const QModelIndex& index )
+void ScriptEditorDialog::OpenScriptFile(const QModelIndex& index)
 {
-    QString fileName = m_fileModel->data( index, QFileSystemModel::FilePathRole ).toString();
-    QFileInfo fileInfo( fileName );
-    if( !fileInfo.isDir() )
-    {
-        codeEditorWidget->OpenScriptFile( fileName );
-    }
-
+    QString fileName = m_fileModel->data(index, QFileSystemModel::FilePathRole).toString();
+    QFileInfo fileInfo(fileName);
+    if (!fileInfo.isDir() )
+        codeEditorWidget->OpenScriptFile(fileName);
 }
 
 /**

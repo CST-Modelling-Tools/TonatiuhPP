@@ -9,23 +9,22 @@
 
 #include "gui/GraphicRootTracker.h"
 #include "gui/MainWindow.h"
-#include "kernel/raytracing/TCube.h"
-#include "kernel/raytracing/TDefaultMaterial.h"
+#include "kernel/shape/TCube.h"
+#include "kernel/material/TDefaultMaterial.h"
 #include "kernel/raytracing/TDefaultSunShape.h"
 #include "kernel/raytracing/TDefaultTracker.h"
-#include "kernel/raytracing/TDefaultTransmissivity.h"
+#include "kernel/air/TDefaultTransmissivity.h"
 #include "kernel/raytracing/TLightKit.h"
 #include "kernel/raytracing/TLightShape.h"
 #include "kernel/raytracing/TSceneKit.h"
 #include "kernel/raytracing/TSceneTracker.h"
 #include "kernel/raytracing/TSeparatorKit.h"
 #include "kernel/raytracing/TShapeKit.h"
-#include "kernel/raytracing/TSquare.h"
+#include "kernel/shape/TSquare.h"
 #include "kernel/raytracing/TTrackerForAiming.h"
-#include "kernel/raytracing/TTransmissivity.h"
+#include "kernel/air/TTransmissivity.h"
 #include "libraries/fields/UserMField.h"
 #include "libraries/fields/UserSField.h"
-
 
 #include <QScriptEngine>
 #include <QTextStream>
@@ -122,7 +121,6 @@ int main(int argc, char** argv)
         QFileInfo fileInfo(tonatiuhFile);
         if (fileInfo.completeSuffix() == QLatin1String("tnhs") )
         {
-
             QString fileName(argv[1]);
             QFileInfo fileInfo(fileName);
 
@@ -132,12 +130,10 @@ int main(int argc, char** argv)
             QScriptEngine* interpreter = new QScriptEngine;
             qScriptRegisterSequenceMetaType<QVector<QVariant> >(interpreter);
 
-
             MainWindow* mw = new MainWindow(QLatin1String("") );
             mw->SetPluginManager(&pluginManager);
             QScriptValue tonatiuh = interpreter->newQObject(mw);
             interpreter->globalObject().setProperty("tonatiuh", tonatiuh);
-
 
             QFile scriptFile(fileName);
             if (!scriptFile.open(QIODevice::ReadOnly) )
@@ -145,7 +141,6 @@ int main(int argc, char** argv)
                 QString errorMessage = QString("Cannot open file %1.").arg(fileName);
                 std::cerr << errorMessage.toStdString() << std::endl;
             }
-
 
             QTextStream in(&scriptFile);
             QString program = in.readAll();

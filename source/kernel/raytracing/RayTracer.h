@@ -17,7 +17,7 @@ class RandomDeviate;
 struct RayTracerPhoton;
 class QMutex;
 class QPoint;
-class TPhotonMap;
+class PhotonMap;
 class TLightShape;
 class TSunShape;
 class TTransmissivity;
@@ -35,7 +35,7 @@ public:
               TTransmissivity* transmissivity,
               RandomDeviate& rand,
               QMutex* mutex,
-              TPhotonMap* photonMap,
+              PhotonMap* photonMap,
               QMutex* mutexPhotonMap,
               QVector<InstanceNode*> exportSuraceList);
 
@@ -54,7 +54,7 @@ private:
     TTransmissivity* m_transmissivity;
     RandomDeviate* m_pRand;
     QMutex* m_mutex;
-    TPhotonMap* m_photonMap;
+    PhotonMap* m_photonMap;
     QMutex* m_pPhotonMapMutex;
     QVector<InstanceNode*> m_exportSuraceList;
 

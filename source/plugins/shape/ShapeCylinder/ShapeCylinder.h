@@ -5,7 +5,7 @@
 #include <Inventor/fields/SoSFFloat.h>
 #include <Inventor/nodes/SoShape.h>
 
-#include "kernel/raytracing/TShape.h"
+#include "kernel/shape/TShape.h"
 #include "kernel/raytracing/trt.h"
 
 class ShapeCylinder: public TShape
@@ -42,7 +42,7 @@ protected:
 
 
 
-#include "kernel/raytracing/TShapeFactory.h"
+#include "kernel/shape/TShapeFactory.h"
 
 class ShapeSphereFactory: public QObject, public ShapeFactory<ShapeCylinder>
 {

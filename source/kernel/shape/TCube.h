@@ -4,7 +4,8 @@
 #include <Inventor/fields/SoSFDouble.h>
 
 #include "TShape.h"
-#include "trt.h"
+#include "kernel/raytracing/trt.h"
+
 
 class TONATIUH_KERNEL TCube : public TShape
 {

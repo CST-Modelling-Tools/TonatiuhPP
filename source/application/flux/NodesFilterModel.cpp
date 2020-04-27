@@ -3,18 +3,17 @@
 #include "gui/SceneModel.h"
 #include "kernel/raytracing/TSeparatorKit.h"
 #include "kernel/raytracing/TShapeKit.h"
-#include "kernel/raytracing/TShape.h"
+#include "kernel/shape/TShape.h"
 
 
 /*!
  * Creates model object
  */
-NodesFilterModel::NodesFilterModel(QObject* parent)
-    : QSortFilterProxyModel(parent)
+NodesFilterModel::NodesFilterModel(QObject* parent):
+    QSortFilterProxyModel(parent)
 {
 
 }
-
 
 /*!
  * Adds new node type to de filter.

@@ -5,7 +5,7 @@
 #include <Inventor/fields/SoSFFloat.h>
 #include <Inventor/fields/SoSFString.h>
 
-#include "kernel/raytracing/TMaterial.h"
+#include "kernel/material/TMaterial.h"
 #include "kernel/raytracing/trt.h"
 
 class SoSensor;
@@ -14,13 +14,14 @@ class SoFieldSensor;
 
 class MaterialStandardSpecular: public TMaterial
 {
-	SO_NODE_HEADER(MaterialStandardSpecular);
+    SO_NODE_HEADER(MaterialStandardSpecular);
 
 public:
-	enum Distribution {
-		//PILLBOX = 0,
-		NORMAL = 1,
+    enum Distribution {
+        //PILLBOX = 0,
+        NORMAL = 1,
     };
+
     MaterialStandardSpecular();
 	static void initClass();
 
@@ -55,18 +56,18 @@ protected:
     static void updateTransparency(void* data, SoSensor*);
 
 private:
-	SoFieldSensor* m_reflectivitySensor;
-	SoFieldSensor* m_ambientColorSensor;
-	SoFieldSensor* m_diffuseColorSensor;
-	SoFieldSensor* m_specularColorSensor;
-	SoFieldSensor* m_emissiveColorSensor;
-	SoFieldSensor* m_shininessSensor;
-	SoFieldSensor* m_transparencySensor;
+    SoFieldSensor* m_reflectivitySensor;
+    SoFieldSensor* m_ambientColorSensor;
+    SoFieldSensor* m_diffuseColorSensor;
+    SoFieldSensor* m_specularColorSensor;
+    SoFieldSensor* m_emissiveColorSensor;
+    SoFieldSensor* m_shininessSensor;
+    SoFieldSensor* m_transparencySensor;
 };
 
 
 
-#include "kernel/raytracing/TMaterialFactory.h"
+#include "kernel/material/TMaterialFactory.h"
 
 class MaterialStandardSpecularFactory:
     public QObject, public MaterialFactory<MaterialStandardSpecular>

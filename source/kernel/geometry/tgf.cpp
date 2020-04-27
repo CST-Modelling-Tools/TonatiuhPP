@@ -2,7 +2,7 @@
 
 #include <Inventor/nodes/SoTransform.h>
 
-#include "statistics/RandomDeviate.h"
+#include "kernel/random/RandomDeviate.h"
 #include "tgf.h"
 #include "libraries/geometry/Transform.h"
 

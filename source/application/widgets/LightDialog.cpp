@@ -8,9 +8,9 @@
 #include "LightDialog.h"
 #include "gui/SceneModel.h"
 #include "kernel/raytracing/TLightKit.h"
-#include "kernel/raytracing/TShape.h"
+#include "kernel/shape/TShape.h"
 #include "kernel/raytracing/TShapeKit.h"
-#include "kernel/raytracing/TShapeFactory.h"
+#include "kernel/shape/TShapeFactory.h"
 #include "kernel/raytracing/TSunFactory.h"
 
 /**
@@ -20,14 +20,13 @@
  * aperture and shows the the light parameters defined in the light \a currentLightKit.
  */
 
-LightDialog::LightDialog( SceneModel& sceneModel, TLightKit* currentLightKit, QVector< TSunFactory* > sunshapeFactoryList, QWidget* parent )
-:QDialog( parent ),
- m_currentLightKit( currentLightKit ),
- m_currentSceneModel( &sceneModel ),
- m_currentSunShapeIndex( -1 ),
- m_newSunShape( 0 ),
- m_sceneSelectionModel( 0 )
-
+LightDialog::LightDialog( SceneModel& sceneModel, TLightKit* currentLightKit, QVector< TSunFactory* > sunshapeFactoryList, QWidget* parent ):
+    QDialog(parent),
+    m_currentLightKit(currentLightKit),
+    m_currentSceneModel(&sceneModel),
+    m_currentSunShapeIndex(-1),
+    m_newSunShape(0),
+    m_sceneSelectionModel(0)
 {
     setupUi( this );
 

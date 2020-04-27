@@ -1,6 +1,6 @@
 #include "ActionInsertShape.h"
 
-#include "kernel/raytracing/TShapeFactory.h"
+#include "kernel/shape/TShapeFactory.h"
 
 
 ActionInsertShape::ActionInsertShape(TShapeFactory* factory, QObject* parent):

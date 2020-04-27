@@ -2,7 +2,7 @@
 
 #include <Inventor/fields/SoSFEnum.h>
 
-#include "kernel/raytracing/TTransmissivity.h"
+#include "kernel/air/TTransmissivity.h"
 
 
 class AirVittitoeBiggs: public TTransmissivity
@@ -24,7 +24,7 @@ public:
 
 
 
-#include "kernel/raytracing/TTransmissivityFactory.h"
+#include "kernel/air/TTransmissivityFactory.h"
 
 class AirVittitoeBiggsFactory:
     public QObject, public AirFactory<AirVittitoeBiggs>

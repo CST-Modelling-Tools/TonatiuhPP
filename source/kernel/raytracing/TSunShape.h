@@ -6,7 +6,7 @@
 #include <Inventor/fields/SoSFDouble.h>
 
 #include "libraries/geometry/Vector3D.h"
-#include "kernel/statistics/RandomDeviate.h"
+#include "kernel/random/RandomDeviate.h"
 
 
 class TONATIUH_KERNEL TSunShape: public SoNode

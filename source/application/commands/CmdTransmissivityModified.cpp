@@ -2,13 +2,13 @@
 
 #include "CmdTransmissivityModified.h"
 #include "kernel/raytracing/TSceneKit.h"
-#include "kernel/raytracing/TTransmissivity.h"
+#include "kernel/air/TTransmissivity.h"
 
 /*!
  * Creates a new transmissivity definition command. The
  */
-CmdTransmissivityModified::CmdTransmissivityModified(TTransmissivity* newTransmissivity, TSceneKit* scene, QUndoCommand* parent)
-    : QUndoCommand("Transmissivity changed", parent),
+CmdTransmissivityModified::CmdTransmissivityModified(TTransmissivity* newTransmissivity, TSceneKit* scene, QUndoCommand* parent):
+    QUndoCommand("Transmissivity changed", parent),
     m_isPreviousTransmissivity(false),
     m_pNewTransmissivity(0),
     m_scene(scene)
@@ -54,8 +54,6 @@ void CmdTransmissivityModified::undo()
  */
 void CmdTransmissivityModified::redo()
 {
-
     if (m_pNewTransmissivity) m_scene->setPart("transmissivity", m_pNewTransmissivity);
     else m_scene->setPart("transmissivity", 0);
-
 }

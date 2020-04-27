@@ -4,10 +4,10 @@
 int Trace::level = -1;
 bool Trace::TraceEnabled = true;
 
-Trace::Trace( std::string functionName, bool showTrace )
-: m_functionName( functionName ), m_functionTrace( showTrace )
+Trace::Trace(std::string functionName, bool showTrace):
+    m_functionName(functionName), m_functionTrace(showTrace)
 {
-    if(!TraceEnabled || !m_functionTrace)
+    if (!TraceEnabled || !m_functionTrace)
         return;
 
     level++;
@@ -15,7 +15,7 @@ Trace::Trace( std::string functionName, bool showTrace )
     std::cout << "( " << level << " )" << "<ENTERING " << m_functionName << ">" << std::endl;
 }
 
-Trace::~Trace( )
+Trace::~Trace()
 {
     if(!TraceEnabled || !m_functionTrace)
         return;

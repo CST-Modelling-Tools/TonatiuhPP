@@ -3,23 +3,23 @@
 #include <QDialog>
 #include <QVector>
 
-#include "kernel/photons/PhotonMapExportFactory.h"
+#include "kernel/photons/PhotonExportFactory.h"
 
 #include "ui_ExportPhotonsDialog.h"
 
 class SceneModel;
-class PhotonMapExportParametersWidget;
-struct PhotonMapExportSettings;
+class PhotonExportWidget;
+struct PhotonExportSettings;
 
 class ExportPhotonsDialog: public QDialog, private Ui::ExportPhotonsDialog
 {
     Q_OBJECT
 
 public:
-    ExportPhotonsDialog(SceneModel& scene, QVector<PhotonMapExportFactory*> typeList, QWidget* parent = 0);
+    ExportPhotonsDialog(SceneModel& scene, QVector<PhotonExportFactory*> typeList, QWidget* parent = 0);
     ~ExportPhotonsDialog() {}
 
-    PhotonMapExportSettings GetExportPhotonMapSettings() const;
+    PhotonExportSettings GetExportPhotonMapSettings() const;
 
 private slots:
     void ChangeCurrentStoreTypeParameters();
@@ -31,5 +31,5 @@ private:
 
     SceneModel* m_scene;
     QStringList m_surfaces;
-    QVector<PhotonMapExportParametersWidget*> m_parameters;
+    QVector<PhotonExportWidget*> m_parameters;
 };

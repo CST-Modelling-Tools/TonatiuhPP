@@ -5,13 +5,13 @@
 
 #include "DifferentialGeometry.h"
 #include "libraries/geometry/Ray.h"
-#include "TCube.h"
-#include "TMaterial.h"
-#include "TShape.h"
+#include "kernel/shape/TCube.h"
+#include "kernel/material/TMaterial.h"
+#include "kernel/shape/TShape.h"
 #include "TShapeKit.h"
 
 
-SO_KIT_SOURCE(TShapeKit);
+SO_KIT_SOURCE(TShapeKit)
 
 /**
  * Sets up initialization for data common to all instances of this class, like submitting necessary information to the Coin type system.

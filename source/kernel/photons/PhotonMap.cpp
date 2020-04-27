@@ -1,10 +1,10 @@
-#include "TPhotonMap.h"
-#include "PhotonMapExport.h"
+#include "PhotonMap.h"
+#include "PhotonExport.h"
 
 /*!
  * Creates a photon map
  */
-TPhotonMap::TPhotonMap():
+PhotonMap::PhotonMap():
     m_bufferSize(0),
     m_pExportPhotonMap(0),
     m_pSceneModel(0),
@@ -14,7 +14,7 @@ TPhotonMap::TPhotonMap():
 
 }
 
-TPhotonMap::~TPhotonMap()
+PhotonMap::~PhotonMap()
 {
     uint photonListSize = m_photonsInMemory.size();
     for (uint i = 0; i < photonListSize; ++i) {
@@ -30,7 +30,7 @@ TPhotonMap::~TPhotonMap()
 /*!
  * Checks where the photon map has to be saved and saves them.
  */
-void TPhotonMap::EndStore(double wPhoton)
+void PhotonMap::EndStore(double wPhoton)
 {
     if (m_storedPhotonsInBuffer > 0)
     {
@@ -55,7 +55,7 @@ void TPhotonMap::EndStore(double wPhoton)
 /*!
  *
  */
-std::vector<Photon*> TPhotonMap::GetAllPhotons() const
+std::vector<Photon*> PhotonMap::GetAllPhotons() const
 {
     return m_photonsInMemory;
 }
@@ -63,7 +63,7 @@ std::vector<Photon*> TPhotonMap::GetAllPhotons() const
 /*!
  * Returns the export mode. If not export mode defined return null.
  */
-PhotonMapExport* TPhotonMap::GetExportMode() const
+PhotonExport* PhotonMap::GetExportMode() const
 {
     if (!m_pExportPhotonMap) return 0;
     return (m_pExportPhotonMap);
@@ -72,7 +72,7 @@ PhotonMapExport* TPhotonMap::GetExportMode() const
 /*!
  * Sets the size of the buffer to \a nPhotons.
  */
-void TPhotonMap::SetBufferSize(ulong nPhotons)
+void PhotonMap::SetBufferSize(ulong nPhotons)
 {
     m_bufferSize = nPhotons;
 }
@@ -80,7 +80,7 @@ void TPhotonMap::SetBufferSize(ulong nPhotons)
 /*!
  * Sets the transformation to change from concentrator coordinates to world coordinates.
  */
-void TPhotonMap::SetConcentratorToWorld(Transform concentratorToWorld)
+void PhotonMap::SetConcentratorToWorld(Transform concentratorToWorld)
 {
     m_concentratorToWorld = concentratorToWorld;
     if (m_pExportPhotonMap) m_pExportPhotonMap->SetConcentratorToWorld(m_concentratorToWorld);
@@ -89,7 +89,7 @@ void TPhotonMap::SetConcentratorToWorld(Transform concentratorToWorld)
 /*!
  * Sets the photonmap export mode.
  */
-bool TPhotonMap::SetExportMode(PhotonMapExport* pExportPhotonMap)
+bool PhotonMap::SetExportMode(PhotonExport* pExportPhotonMap)
 {
     if (!pExportPhotonMap) return 0;
     m_pExportPhotonMap = pExportPhotonMap;
@@ -100,7 +100,7 @@ bool TPhotonMap::SetExportMode(PhotonMapExport* pExportPhotonMap)
     return 1;
 }
 
-void TPhotonMap::StoreRays(std::vector<Photon>& raysList)
+void PhotonMap::StoreRays(std::vector<Photon>& raysList)
 {
     uint raysListSize = raysList.size();
     if (m_storedPhotonsInBuffer > 0 &&  m_storedPhotonsInBuffer + raysListSize > m_bufferSize)

@@ -24,7 +24,8 @@
 #include "TLightShape.h"
 #include "libraries/geometry/Transform.h"
 #include "TShapeKit.h"
-#include "TSquare.h"
+#include "kernel/shape/TSquare.h"
+
 
 struct Polygon
 {
@@ -67,7 +68,7 @@ bool PixelInPolygon(int x, int y, Polygon p)
 }
 
 
-SO_KIT_SOURCE(TLightKit);
+SO_KIT_SOURCE(TLightKit)
 
 /**
  * Initializates TLightKit componets

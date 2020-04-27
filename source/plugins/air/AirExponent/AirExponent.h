@@ -2,7 +2,7 @@
 
 #include <Inventor/fields/SoSFDouble.h>
 
-#include "kernel/raytracing/TTransmissivity.h"
+#include "kernel/air/TTransmissivity.h"
 
 
 class AirExponent: public TTransmissivity
@@ -22,7 +22,7 @@ public:
 
 
 
-#include "kernel/raytracing/TTransmissivityFactory.h"
+#include "kernel/air/TTransmissivityFactory.h"
 
 class AirExponentFactory:
     public QObject, public AirFactory<AirExponent>

@@ -74,13 +74,13 @@
 #include "widgets/LightDialog.h"
 #include "MainWindow.h"
 #include "widgets/NetworkConnectionsDialog.h"
-#include "kernel/photons/PhotonMapExport.h"
-#include "kernel/photons/PhotonMapExportFactory.h"
-#include "kernel/photons/PhotonMapExportSettings.h"
+#include "kernel/photons/PhotonExport.h"
+#include "kernel/photons/PhotonExportFactory.h"
+#include "kernel/photons/PhotonExportSettings.h"
 #include "PluginManager.h"
 #include "ProgressUpdater.h"
-#include "kernel/statistics/RandomDeviate.h"
-#include "kernel/statistics/RandomDeviateFactory.h"
+#include "kernel/random/RandomDeviate.h"
+#include "kernel/random/RandomDeviateFactory.h"
 #include "widgets/RayTraceDialog.h"
 #include "kernel/raytracing/RayTracer.h"
 #include "SceneModel.h"
@@ -91,20 +91,20 @@
 #include "kernel/geometry/tgf.h"
 #include "kernel/raytracing/TLightKit.h"
 #include "kernel/raytracing/TLightShape.h"
-#include "kernel/raytracing/TMaterial.h"
-#include "kernel/raytracing/TMaterialFactory.h"
-#include "kernel/photons/TPhotonMap.h"
+#include "kernel/material/TMaterial.h"
+#include "kernel/material/TMaterialFactory.h"
+#include "kernel/photons/PhotonMap.h"
 #include "widgets/TransmissivityDialog.h"
 #include "kernel/raytracing/trf.h"
 #include "kernel/raytracing/TSceneKit.h"
 #include "kernel/raytracing/TSeparatorKit.h"
-#include "kernel/raytracing/TShapeFactory.h"
+#include "kernel/shape/TShapeFactory.h"
 #include "kernel/raytracing/TShapeKit.h"
 #include "kernel/raytracing/TSunFactory.h"
 #include "kernel/raytracing/TTracker.h"
 #include "kernel/raytracing/TTrackerFactory.h"
-#include "kernel/raytracing/TTransmissivity.h"
-#include "kernel/raytracing/TTransmissivityFactory.h"
+#include "kernel/air/TTransmissivity.h"
+#include "kernel/air/TTransmissivityFactory.h"
 
 
 void startManipulator(void* data, SoDragger* dragger)
@@ -1770,7 +1770,7 @@ void MainWindow::Run()
             if (!m_pExportModeSettings) return;
             else
             {
-                PhotonMapExport* pExportMode = CreatePhotonMapExport();
+                PhotonExport* pExportMode = CreatePhotonMapExport();
                 if (!pExportMode) return;
                 if (!m_pPhotonMap->SetExportMode(pExportMode)  ) return;
             }
@@ -2006,7 +2006,7 @@ void MainWindow::SetExportIntersectionSurfaceSide(bool enabled)
  */
 void MainWindow::SetExportPhotonMapType(QString exportModeType)
 {
-    QVector< PhotonMapExportFactory* > factoryList = m_pluginManager->getExportFactories();
+    QVector< PhotonExportFactory* > factoryList = m_pluginManager->getExportFactories();
     if (factoryList.size() == 0) return;
 
     QVector< QString > exportPMModeNames;
@@ -2020,7 +2020,7 @@ void MainWindow::SetExportPhotonMapType(QString exportModeType)
     }
 
     if (!m_pExportModeSettings)
-        m_pExportModeSettings = new PhotonMapExportSettings;
+        m_pExportModeSettings = new PhotonExportSettings;
 
     m_pExportModeSettings->modeTypeName = exportModeType;
 }
@@ -2911,9 +2911,9 @@ SoSeparator* MainWindow::CreateGrid(int xDimension, int zDimension, double xSpac
 /*!
  * Creates a export mode object form export mode settings.
  */
-PhotonMapExport* MainWindow::CreatePhotonMapExport() const
+PhotonExport* MainWindow::CreatePhotonMapExport() const
 {
-    QVector< PhotonMapExportFactory* > factoryList = m_pluginManager->getExportFactories();
+    QVector< PhotonExportFactory* > factoryList = m_pluginManager->getExportFactories();
     if (factoryList.size() == 0) return 0;
 
     QVector< QString > exportPMModeNames;
@@ -2923,10 +2923,10 @@ PhotonMapExport* MainWindow::CreatePhotonMapExport() const
     int exportModeFactoryIndex = exportPMModeNames.indexOf(m_pExportModeSettings->modeTypeName);
     if (exportModeFactoryIndex < 0) return 0;
 
-    PhotonMapExportFactory* pExportModeFactory = factoryList[exportModeFactoryIndex];
+    PhotonExportFactory* pExportModeFactory = factoryList[exportModeFactoryIndex];
     if (!pExportModeFactory) return 0;
 
-    PhotonMapExport* pExportMode = pExportModeFactory->create();
+    PhotonExport* pExportMode = pExportModeFactory->create();
     if (!pExportMode) return 0;
 
     pExportMode->SetSaveCoordinatesEnabled(m_pExportModeSettings->exportCoordinates);
@@ -3153,14 +3153,14 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
     if (!m_increasePhotonMap)
     {
         delete m_pPhotonMap;
-        m_pPhotonMap = new TPhotonMap();
+        m_pPhotonMap = new PhotonMap();
         m_pPhotonMap->SetBufferSize(m_bufferPhotons);
         m_raysTracedTotal = 0;
     }
 
     if (!m_pPhotonMap)
     {
-        m_pPhotonMap = new TPhotonMap();
+        m_pPhotonMap = new PhotonMap();
         m_pPhotonMap->SetBufferSize(m_bufferPhotons);
         m_raysTracedTotal = 0;
     }
@@ -3212,13 +3212,13 @@ void MainWindow::SetCurrentFile(const QString& fileName)
  */
 bool MainWindow::SetPhotonMapExportSettings()
 {
-    QVector< PhotonMapExportFactory* > exportPhotonMapModeList = m_pluginManager->getExportFactories();
+    QVector< PhotonExportFactory* > exportPhotonMapModeList = m_pluginManager->getExportFactories();
     ExportPhotonsDialog exportSettingsDialog(*m_sceneModel, exportPhotonMapModeList);
     if (!exportSettingsDialog.exec() ) return false;
 
     if (m_pExportModeSettings) delete m_pExportModeSettings;
 
-    m_pExportModeSettings = new PhotonMapExportSettings;
+    m_pExportModeSettings = new PhotonExportSettings;
     *m_pExportModeSettings = exportSettingsDialog.GetExportPhotonMapSettings();
     return true;
 }

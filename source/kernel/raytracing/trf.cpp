@@ -14,9 +14,9 @@
 
 #include "gui/InstanceNode.h"
 #include "libraries/geometry/Matrix4x4.h"
-#include "kernel/photons/Photon.h"
-#include "kernel/photons/TPhotonMap.h"
-#include "statistics/RandomDeviate.h"
+#include "photons/Photon.h"
+#include "photons/PhotonMap.h"
+#include "random/RandomDeviate.h"
 #include "libraries/geometry/Ray.h"
 #include "geometry/tgf.h"
 #include "TLightKit.h"
@@ -24,7 +24,7 @@
 #include "TShapeKit.h"
 
 
-SoSeparator* trf::DrawPhotonMapPoints(const TPhotonMap& map)
+SoSeparator* trf::DrawPhotonMapPoints(const PhotonMap& map)
 {
     SoSeparator* drawpoints = new SoSeparator;
     SoCoordinate3* points = new SoCoordinate3;
@@ -54,7 +54,7 @@ SoSeparator* trf::DrawPhotonMapPoints(const TPhotonMap& map)
 
 }
 
-SoSeparator* trf::DrawPhotonMapRays(const TPhotonMap& map, unsigned long /*numberOfRays*/)
+SoSeparator* trf::DrawPhotonMapRays(const PhotonMap& map, unsigned long /*numberOfRays*/)
 {
 
     SoSeparator* drawrays = new SoSeparator;

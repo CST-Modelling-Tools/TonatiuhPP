@@ -14,17 +14,17 @@
 #include "kernel/raytracing/TSceneKit.h"
 #include "gui/SceneModel.h"
 #include "kernel/gui/InstanceNode.h"
-#include "kernel/statistics//RandomDeviate.h"
-#include "kernel/photons/TPhotonMap.h"
+#include "kernel/random//RandomDeviate.h"
+#include "kernel/photons/PhotonMap.h"
 #include "libraries/geometry/gc.h"
 #include "kernel/raytracing/RayTracer.h"
 #include "kernel/raytracing/TLightKit.h"
 #include "kernel/raytracing/TLightShape.h"
 #include "libraries/geometry/Transform.h"
 #include "kernel/raytracing/trf.h"
-#include "kernel/raytracing/TShape.h"
+#include "kernel/shape/TShape.h"
 #include "kernel/raytracing/TShapeKit.h"
-#include "kernel/raytracing/TTransmissivity.h"
+#include "kernel/air/TTransmissivity.h"
 
 /******************************************
  * FluxAnalysis
@@ -106,9 +106,9 @@ bool FluxAnalysis::CheckSurface()
 {
     QString surfaceType = GetSurfaceType(m_surfaceURL);
 
-    if ( (surfaceType != "ShapeFlatRectangle") &&
-         (surfaceType != "ShapeFlatDisk") &&
-         (surfaceType != "ShapeCylinder") )
+    if ( surfaceType != "ShapeFlatRectangle" &&
+         surfaceType != "ShapeFlatDisk" &&
+         surfaceType != "ShapeCylinder" )
         return false;
 
     return true;
@@ -204,7 +204,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     {
         if (m_pPhotonMap) m_pPhotonMap->EndStore(-1);
         delete m_pPhotonMap;
-        m_pPhotonMap = new TPhotonMap();
+        m_pPhotonMap = new PhotonMap();
         m_pPhotonMap->SetBufferSize(HUGE_VAL);
         m_tracedRays = 0;
         m_wPhoton = 0;

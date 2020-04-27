@@ -10,10 +10,10 @@
 #include <Inventor/nodes/SoNode.h>
 
 #include "kernel/photons/Photon.h"
-#include "kernel/photons/TPhotonMap.h"
+#include "kernel/photons/PhotonMap.h"
 #include "libraries/geometry/Ray.h"
 #include "kernel/geometry/tgf.h"
-#include "TShape.h"
+#include "kernel/shape//TShape.h"
 #include "TSunShape.h"
 #include "libraries/geometry/Transform.h"
 #include "TSeparatorKit.h"
@@ -22,16 +22,16 @@
 
 class InstanceNode;
 class RandomDeviate;
-class TPhotonMap;
+class PhotonMap;
 
 namespace trf
 {
     TONATIUH_KERNEL void ComputeSceneTreeMap(InstanceNode* instanceNode, Transform parentWTO, bool insertInSurfaceList);
     TONATIUH_KERNEL void ComputeFistStageSurfaceList(InstanceNode* instanceNode, QStringList disabledNodesURL, QVector< QPair< TShapeKit*, Transform > >* surfacesList);
-    TONATIUH_KERNEL void CreatePhotonMap(TPhotonMap*& photonMap, QPair< TPhotonMap*,  std::vector < Photon  > > photonsList);
+    TONATIUH_KERNEL void CreatePhotonMap(PhotonMap*& photonMap, QPair< PhotonMap*,  std::vector < Photon  > > photonsList);
 
-    TONATIUH_KERNEL SoSeparator* DrawPhotonMapPoints(const TPhotonMap& map);
-    TONATIUH_KERNEL SoSeparator* DrawPhotonMapRays(const TPhotonMap& map, unsigned long numberOfRays);
+    TONATIUH_KERNEL SoSeparator* DrawPhotonMapPoints(const PhotonMap& map);
+    TONATIUH_KERNEL SoSeparator* DrawPhotonMapRays(const PhotonMap& map, unsigned long numberOfRays);
     TONATIUH_KERNEL Transform GetObjectToWorld(SoPath* nodePath);
 }
 
@@ -139,7 +139,7 @@ inline void trf::ComputeFistStageSurfaceList(InstanceNode* instanceNode, QString
     }
 }
 
-inline void trf::CreatePhotonMap(TPhotonMap*& photonMap, QPair< TPhotonMap*, std::vector< Photon >  > photonsList)
+inline void trf::CreatePhotonMap(PhotonMap*& photonMap, QPair< PhotonMap*, std::vector< Photon >  > photonsList)
 {
     if (!photonMap) photonMap = photonsList.first;
     photonMap->StoreRays(photonsList.second);

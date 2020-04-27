@@ -1,19 +1,19 @@
 #pragma once
 
 #include "kernel/TonatiuhKernel.h"
-#include "trt.h"
+#include "kernel/raytracing/trt.h"
 #include "TTransmissivity.h"
 
 
-class TONATIUH_KERNEL TDefaultTransmissivity : public TTransmissivity
+class TONATIUH_KERNEL TDefaultTransmissivity: public TTransmissivity
 {
-    SO_NODE_HEADER( TransmissivityDefualt );
+    SO_NODE_HEADER(TransmissivityDefualt);
 
 public:
     static void initClass();
     TDefaultTransmissivity();
 
-    bool transmission( double distance, RandomDeviate& rand ) const;
+    double transmission( double distance) const;
 
     trt::TONATIUH_REAL constant;
 

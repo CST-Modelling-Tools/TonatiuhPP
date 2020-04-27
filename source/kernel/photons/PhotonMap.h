@@ -2,26 +2,26 @@
 
 #include "Photon.h"
 
-class PhotonMapExport;
+class PhotonExport;
 
-class TONATIUH_KERNEL TPhotonMap
+class TONATIUH_KERNEL PhotonMap
 {
 public:
-    TPhotonMap();
-    ~TPhotonMap();
+    PhotonMap();
+    ~PhotonMap();
 
     void EndStore(double wPhoton);
     std::vector<Photon*> GetAllPhotons() const;
-    PhotonMapExport* GetExportMode() const;
+    PhotonExport* GetExportMode() const;
     void SetBufferSize(ulong nPhotons);
     void SetConcentratorToWorld(Transform concentratorToWorld);
-    bool SetExportMode(PhotonMapExport* pExportPhotonMap);
+    bool SetExportMode(PhotonExport* pExportPhotonMap);
     void StoreRays(std::vector<Photon>& ray);
 
 private:
     ulong m_bufferSize;
     Transform m_concentratorToWorld;
-    PhotonMapExport* m_pExportPhotonMap;
+    PhotonExport* m_pExportPhotonMap;
     const SceneModel* m_pSceneModel;
     unsigned long m_storedPhotonsInBuffer;
     unsigned long m_storedAllPhotons;

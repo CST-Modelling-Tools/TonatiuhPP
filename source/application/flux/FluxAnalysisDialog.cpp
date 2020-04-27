@@ -16,7 +16,7 @@
 #include "FluxAnalysisDialog.h"
 #include "libraries/geometry/gc.h"
 #include "kernel/gui/InstanceNode.h"
-#include "kernel/statistics/RandomDeviate.h"
+#include "kernel/random/RandomDeviate.h"
 #include "kernel/raytracing/RayTracer.h"
 #include "gui/SceneModel.h"
 #include "SelectSurfaceDialog.h"
@@ -25,9 +25,9 @@
 #include "libraries/geometry/Transform.h"
 #include "kernel/raytracing/trf.h"
 #include "kernel/raytracing/TSceneKit.h"
-#include "kernel/raytracing/TShape.h"
+#include "kernel/shape/TShape.h"
 #include "kernel/raytracing/TShapeKit.h"
-#include "kernel/raytracing/TTransmissivity.h"
+#include "kernel/air/TTransmissivity.h"
 
 
 /******************************************
@@ -51,13 +51,13 @@ FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* currentScene, SceneModel& curr
     m_fluxAnalysis = new FluxAnalysis(currentScene, currentSceneModel, rootSeparatorInstance, sunWidthDivisions, sunHeightDivisions, randomDeviate);
     setupUi(this);
 
-	QSize windowSize = size();
-	QList<int> sizes;
+    QSize windowSize = size();
+    QList<int> sizes;
     sizes << windowSize.width() * 0.3 << windowSize.width() * 0.7;
     splitter->setSizes(sizes);
 
-	QSize resultsWidgetSize = resultsWidget->size();
-	int resultsWidgetSizeHeight = resultsWidgetSize.height();
+    QSize resultsWidgetSize = resultsWidget->size();
+    int resultsWidgetSizeHeight = resultsWidgetSize.height();
 
     contourPlotWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.34);
     sectorsWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.34);
@@ -84,7 +84,7 @@ FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* currentScene, SceneModel& curr
     connect(exportButton, SIGNAL(clicked()), this, SLOT(ExportData()) );
     connect(storeTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(SaveCoordsExport()) );
 
-	// configure axis rect:
+    // configure axis rect:
     contourPlotWidget->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom); // this will also allow rescaling the color scale by dragging/zooming
     contourPlotWidget->axisRect()->setupFullAxesBox(true);
 
@@ -95,17 +95,17 @@ FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* currentScene, SceneModel& curr
 
     horizontaSectorPlot->plotLayout()->insertRow(0);
     horizontaSectorPlot->plotLayout()->addElement(0, 0, new QCPPlotTitle(horizontaSectorPlot, "Horizontal Sector") );
-	// give the axes some labels:
+    // give the axes some labels:
     horizontaSectorPlot->xAxis->setLabel("Y (unit length)");
     horizontaSectorPlot->yAxis->setLabel("Flux ( (unit power) / (unit length)^2 )");
 
     verticalSectorPlot->plotLayout()->insertRow(0);
     verticalSectorPlot->plotLayout()->addElement(0, 0, new QCPPlotTitle(verticalSectorPlot, "Vertical Sector") );
-	// give the axes some labels:
+    // give the axes some labels:
     verticalSectorPlot->xAxis->setLabel("X (unit length)");
     verticalSectorPlot->yAxis->setLabel("Flux ( (unit power) / (unit length)^2 )");
 
-	// give the y-axes an initial range:
+    // give the y-axes an initial range:
     verticalSectorPlot->yAxis->setRange(0, 1.08);
     horizontaSectorPlot->yAxis->setRange(0, 1.08);
 }

@@ -7,30 +7,22 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
-#include "PhotonMapExportFile.h"
+#include "PhotonExportFile.h"
 #include "kernel/gui/InstanceNode.h"
 //#include "kernel/gui/SceneModel.h" ?
 
 /*!
  * Creates export object to export photon map photons to a file.
  */
-PhotonMapExportFile::PhotonMapExportFile()
-:PhotonMapExport(),
- m_photonsFilename( QLatin1String( "PhotonMap" ) ),
- m_powerPerPhoton( 0.0 ),
- m_currentFile( 1 ),
- m_exportDirecotryName( QLatin1String( "" ) ),
- m_exportedPhotons( 0 ),
- m_nPhotonsPerFile( -1 ),
- m_oneFile( true )
-{
-
-}
-
-/*!
- * Destroys export object
- */
-PhotonMapExportFile::~PhotonMapExportFile()
+PhotonExportFile::PhotonExportFile():
+    PhotonExport(),
+    m_photonsFilename("PhotonMap"),
+    m_powerPerPhoton(0.),
+    m_currentFile(1),
+    m_exportDirectoryName(""),
+    m_exportedPhotons(0),
+    m_nPhotonsPerFile(-1),
+    m_oneFile(true)
 {
 
 }
@@ -38,51 +30,47 @@ PhotonMapExportFile::~PhotonMapExportFile()
 /*!
  * Returns the plugin parameters names.
  */
-QStringList PhotonMapExportFile::GetParameterNames()
+QStringList PhotonExportFile::GetParameterNames()
 {
 	QStringList parametersNames;
-	parametersNames<<QLatin1String( "ExportDirectory" );
-	parametersNames<<QLatin1String( "ExportFile" );
-	parametersNames<<QLatin1String( "FileSize" );
-
+    parametersNames << "ExportDirectory";
+    parametersNames << "ExportFile";
+    parametersNames << "FileSize";
 	return parametersNames;
 }
 
 /*!
  *
  */
-void PhotonMapExportFile::EndExport()
+void PhotonExportFile::EndExport()
 {
-
-	QDir exportDirectory( m_exportDirecotryName );
+    QDir exportDirectory(m_exportDirectoryName);
 	QString exportFilename;
-	if( m_oneFile )
-		exportFilename = exportDirectory.absoluteFilePath( QString( QLatin1String("%1_parameters.txt" ) ).arg( m_photonsFilename ) );
+    if (m_oneFile)
+        exportFilename = exportDirectory.absoluteFilePath( QString("%1_parameters.txt").arg( m_photonsFilename ) );
 	else
 	{
-		QString newName = QString( QLatin1String( "%1_parameters.txt" ) ).arg( m_photonsFilename );
-		exportFilename = exportDirectory.absoluteFilePath( newName );
+        QString newName = QString("%1_parameters.txt").arg(m_photonsFilename);
+        exportFilename = exportDirectory.absoluteFilePath(newName);
 	}
 
-	QString tmpFilename( QLatin1String( "tmpexportpotonmap.dat" ) );
-	QFile exportFile( exportFilename );
+    QFile exportFile(exportFilename);
 
+    WriteFileFormat(exportFilename);
+    exportFile.open(QIODevice::Append);
+    QTextStream out(&exportFile);
 
-	WriteFileFormat( exportFilename );
-	exportFile.open( QIODevice::Append );
-	QTextStream out( &exportFile );
-
-	out<<double( m_powerPerPhoton );
+    out << m_powerPerPhoton;
 }
 
 /*!
  * Saves \a raysList photons to file.
  */
-void PhotonMapExportFile::SavePhotonMap( std::vector< Photon* > raysLists )
+void PhotonExportFile::SavePhotonMap( std::vector< Photon* > raysLists )
 {
 	if( m_oneFile )
 	{
-		QDir exportDirectory( m_exportDirecotryName );
+        QDir exportDirectory( m_exportDirectoryName );
 		QString filename = m_photonsFilename;
 		QString exportFilename = exportDirectory.absoluteFilePath( filename.append( QLatin1String( ".dat" ) ) );
 
@@ -98,26 +86,16 @@ void PhotonMapExportFile::SavePhotonMap( std::vector< Photon* > raysLists )
 }
 
 /*!
- *	Sets the current power per
- */
-void PhotonMapExportFile::SetPowerPerPhoton( double wPhoton )
-{
-	m_powerPerPhoton = wPhoton;
-}
-
-
-
-/*!
  * Sets to parameter \a parameterName the value \a parameterValue.
  */
-void PhotonMapExportFile::SetSaveParameterValue( QString parameterName, QString parameterValue )
+void PhotonExportFile::SetSaveParameterValue( QString parameterName, QString parameterValue )
 {
 
 	QStringList parameters = GetParameterNames();
 
 	//Directory name
 	if( parameterName == parameters[0] )
-		m_exportDirecotryName = parameterValue;
+        m_exportDirectoryName = parameterValue;
 
 	//File name
 	else if( parameterName == parameters[1] )
@@ -143,22 +121,21 @@ void PhotonMapExportFile::SetSaveParameterValue( QString parameterName, QString 
 /*!
  * Deletes the files that can be uset to export.
  */
-bool PhotonMapExportFile::StartExport()
+bool PhotonExportFile::StartExport()
 {
-
-	if( m_exportedPhotons < 1  )	RemoveExistingFiles();
+    if (m_exportedPhotons < 1) RemoveExistingFiles();
 	return 1;
 }
 
 /*!
  * Export \a a raysList all data to file \a filename.
  */
-void PhotonMapExportFile::ExportAllPhotonsAllData( QString filename, std::vector< Photon* > raysLists )
+void PhotonExportFile::ExportAllPhotonsAllData( QString filename, std::vector< Photon* > raysLists )
 {
-	QFile exportFile( filename );
-	exportFile.open( QIODevice::Append );
+    QFile exportFile(filename);
+    exportFile.open(QIODevice::Append);
 
-	QDataStream out( &exportFile );
+    QDataStream out(&exportFile);
 
 	unsigned long nPhotonElements = raysLists.size();
 	if( m_saveCoordinatesInGlobal )
@@ -205,7 +182,6 @@ void PhotonMapExportFile::ExportAllPhotonsAllData( QString filename, std::vector
 
 			previousPhotonID = m_exportedPhotons;
 		}
-
 	}
 	else
 	{
@@ -261,13 +237,12 @@ void PhotonMapExportFile::ExportAllPhotonsAllData( QString filename, std::vector
 		}
 	}
 	exportFile.close();
-
 }
 
 /*!
  * Exports \a raysLists photons data except previous and next photon identifier to file \a filename.
  */
-void PhotonMapExportFile::ExportAllPhotonsNotNextPrevID( QString filename, std::vector< Photon* > raysLists )
+void PhotonExportFile::ExportAllPhotonsNotNextPrevID( QString filename, std::vector< Photon* > raysLists )
 {
 
 	QFile exportFile( filename );
@@ -352,16 +327,14 @@ void PhotonMapExportFile::ExportAllPhotonsNotNextPrevID( QString filename, std::
 
 	}
 	exportFile.close();
-
 }
 
 /*!
  * Exports \a raysLists all photons data to file \a filename.
  * For each photon only selected parameters will be exported.
  */
-void PhotonMapExportFile::ExportAllPhotonsSelectedData( QString filename, std::vector< Photon* > raysLists )
+void PhotonExportFile::ExportAllPhotonsSelectedData( QString filename, std::vector< Photon* > raysLists )
 {
-
 	QFile exportFile( filename );
 	exportFile.open( QIODevice::Append );
 
@@ -429,7 +402,7 @@ void PhotonMapExportFile::ExportAllPhotonsSelectedData( QString filename, std::v
 /*!
  * Exports \a numberOfPhotons photons from \a raysLists to file \a filename starting from [\a startIndexRaysList, \a endIndexRaysList ].
  */
-void PhotonMapExportFile::ExportSelectedPhotonsAllData( QString filename, std::vector< Photon* > raysLists,
+void PhotonExportFile::ExportSelectedPhotonsAllData( QString filename, std::vector< Photon* > raysLists,
 		unsigned long startIndex, 	unsigned long numberOfPhotons )
 {
 
@@ -543,13 +516,12 @@ void PhotonMapExportFile::ExportSelectedPhotonsAllData( QString filename, std::v
 
 	}
 	exportFile.close();
-
 }
 
 /*!
  * Exports \a numberOfPhotons photons from \a raysLists to file \a filename starting from [\a startIndexRaysList, \a endIndexRaysList ].
  */
-void PhotonMapExportFile::ExportSelectedPhotonsNotNextPrevID( QString filename, std::vector< Photon* > raysLists,
+void PhotonExportFile::ExportSelectedPhotonsNotNextPrevID( QString filename, std::vector< Photon* > raysLists,
 		unsigned long startIndex, unsigned long numberOfPhotons )
 {
 	QFile exportFile( filename );
@@ -639,17 +611,15 @@ void PhotonMapExportFile::ExportSelectedPhotonsNotNextPrevID( QString filename, 
 
 	}
 	exportFile.close();
-
 }
 
 /*!
  * Exports \a numberOfPhotons photons from \a raysLists to file \a filename starting from [\a startIndexRaysList, \a endIndexRaysList ].
  *  * For each photon only selected parameters will be exported.
  */
-void PhotonMapExportFile::ExportSelectedPhotonsSelectedData( QString filename, std::vector< Photon* > raysLists,
+void PhotonExportFile::ExportSelectedPhotonsSelectedData( QString filename, std::vector< Photon* > raysLists,
 		unsigned long startIndex, 	unsigned long numberOfPhotons )
 {
-
 	QFile exportFile( filename );
 	exportFile.open( QIODevice::Append );
 
@@ -714,22 +684,20 @@ void PhotonMapExportFile::ExportSelectedPhotonsSelectedData( QString filename, s
 		}
 
 		if( m_saveSurfaceID )
-			out<<double( urlId );
+            out << double( urlId );
 
 		previousPhotonID = m_exportedPhotons;
 		exportedPhotonsToFile++;
 	}
 	exportFile.close();
-
 }
 
 /*!
  * Remove existing files that this export type can used.
  */
-void PhotonMapExportFile::RemoveExistingFiles()
+void PhotonExportFile::RemoveExistingFiles()
 {
-
-	QDir exportDirectory( m_exportDirecotryName );
+    QDir exportDirectory( m_exportDirectoryName );
 	QString filename = m_photonsFilename;
 	if( m_oneFile )
 	{
@@ -743,7 +711,6 @@ void PhotonMapExportFile::RemoveExistingFiles()
 	}
 	else
 	{
-
 		QStringList filters;
 		filters << filename.append( QLatin1String( "_*.dat" ) );
 		exportDirectory.setNameFilters(filters);
@@ -766,18 +733,17 @@ void PhotonMapExportFile::RemoveExistingFiles()
  * Exports \a raysLists photons data to files with the same number of photons in each file.
  * Each file stores \a m_nPhotonsPerFile photons.
  */
-void PhotonMapExportFile::SaveToVariousFiles( std::vector <Photon* > raysLists )
+void PhotonExportFile::SaveToVariousFiles(std::vector<Photon*> raysLists)
 {
+    QDir exportDirectory(m_exportDirectoryName);
 
-	QDir exportDirectory( m_exportDirecotryName );
+    ulong nPhotons = raysLists.size();
 
-	unsigned long nPhotons = raysLists.size();
+    ulong startIndex = 0;
+    ulong filePhotons = m_exportedPhotons - ( m_nPhotonsPerFile * ( m_currentFile - 1 ) );
 
-	unsigned long startIndex = 0;
-	unsigned long filePhotons = m_exportedPhotons - ( m_nPhotonsPerFile * ( m_currentFile - 1 ) );
-
-	unsigned long nPhotonsToExport = 0;
-	for( unsigned long i = 0; i < nPhotons; i++ )
+    ulong nPhotonsToExport = 0;
+    for (ulong i = 0; i < nPhotons; i++ )
 	{
 		if( !( filePhotons < m_nPhotonsPerFile ) )
 		{
@@ -802,17 +768,14 @@ void PhotonMapExportFile::SaveToVariousFiles( std::vector <Photon* > raysLists )
 		}
 		filePhotons++;
 		nPhotonsToExport++;
-
 	}
 
-	if( filePhotons > 0 )
-	{
-		QString newName = QString( QLatin1String( "%1_%2.dat" ) ).arg(
+    if (filePhotons > 0) {
+        QString newName = QString("%1_%2.dat").arg(
 				m_photonsFilename,
-				QString::number( m_currentFile ) );
+                QString::number(m_currentFile) );
 
 		QString currentFileName = exportDirectory.absoluteFilePath( newName );
-
 
 		if( m_saveCoordinates && m_saveSide && m_savePrevNexID && m_saveSurfaceID )
 			ExportSelectedPhotonsAllData( currentFileName, raysLists, startIndex, nPhotonsToExport );
@@ -827,41 +790,35 @@ void PhotonMapExportFile::SaveToVariousFiles( std::vector <Photon* > raysLists )
 /*!
  * Writes the file or first file header with the format.
  */
-void PhotonMapExportFile::WriteFileFormat( QString exportFilename )
+void PhotonExportFile::WriteFileFormat(QString exportFilename)
 {
+    QFile file(exportFilename);
+    file.open(QIODevice::WriteOnly);
+    QTextStream out(&file);
 
-	QFile exportFile( exportFilename );
-	exportFile.open( QIODevice::WriteOnly );
-	QTextStream out( &exportFile );
-	out<<QString( QLatin1String( "START PARAMETERS\n" ) );
-	out<<QString( QLatin1String( "id\n" ) );
-	if( m_saveCoordinates  )
-	{
-		out<<QString( QLatin1String( "x\n" ) );
-		out<<QString( QLatin1String( "y\n" ) );
-		out<<QString( QLatin1String( "z\n" ) );
+    out << "START PARAMETERS\n";
+    out << "id\n";
+    if (m_saveCoordinates) {
+        out << "x\n";
+        out << "y\n";
+        out << "z\n";
 	}
-	if(  m_saveSide )	out<<QString( QLatin1String( "side\n" ) );
-	if( m_savePrevNexID )
-	{
-		out<<QString( QLatin1String( "previous ID\n" ) );
-		out<<QString( QLatin1String( "next ID\n" ) );
+    if (m_saveSide)
+        out << "side\n";
+    if (m_savePrevNexID) {
+        out << "previous ID\n";
+        out << "next ID\n";
 	}
-	if( m_saveSurfaceID )
-	{
-		out<<QString( QLatin1String( "surface ID\n" ) );
-	}
-
-	out<<QString( QLatin1String( "END PARAMETERS\n" ) );
+    if (m_saveSurfaceID)
+        out << "surface ID\n";
+    out << "END PARAMETERS\n";
 
 
-	out<<QString( QLatin1String( "START SURFACES\n" ) );
-	for( int s = 0; s < m_surfaceIdentfier.count(); s++ )
-	{
+    out << "START SURFACES\n";
+    for (int s = 0; s < m_surfaceIdentfier.size(); s++) {
 		QString surfaceURL = m_surfaceIdentfier[s]->GetNodeURL();
-		out<<QString( QLatin1String( "%1 %2\n" ) ).arg( QString::number( s+1 ),
-				surfaceURL);
+        out << QString("%1 %2\n").arg(QString::number(s + 1), surfaceURL);
 	}
 
-	out<<QString( QLatin1String( "END SURFACES\n" ) );
+    out << "END SURFACES\n";
 }

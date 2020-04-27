@@ -4,7 +4,7 @@ class TSceneKit;
 class SceneModel;
 class InstanceNode;
 class RandomDeviate;
-class TPhotonMap;
+class PhotonMap;
 
 
 class FluxAnalysis
@@ -46,7 +46,7 @@ private:
 	int m_sunHeightDivisions;
 	RandomDeviate* m_pRandomDeviate;
 
-	TPhotonMap* m_pPhotonMap;
+	PhotonMap* m_pPhotonMap;
 
 	QString m_surfaceURL;
 	QString m_surfaceSide;

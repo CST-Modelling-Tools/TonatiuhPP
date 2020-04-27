@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kernel/statistics/RandomDeviate.h"
+#include "kernel/random/RandomDeviate.h"
 
 #include <random>
 
@@ -22,7 +22,7 @@ private:
 
 
 
-#include "kernel/statistics/RandomDeviateFactory.h"
+#include "kernel/random/RandomDeviateFactory.h"
 
 class RandomMersenneTwisterSTLFactory:
     public QObject, public RandomFactory<RandomMersenneTwisterSTL>

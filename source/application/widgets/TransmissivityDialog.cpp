@@ -7,13 +7,14 @@
 
 
 #include "TransmissivityDialog.h"
-#include "kernel/raytracing/TTransmissivity.h"
-#include "kernel/raytracing/TTransmissivityFactory.h"
+#include "kernel/air/TTransmissivity.h"
+#include "kernel/air/TTransmissivityFactory.h"
 
-TransmissivityDialog::TransmissivityDialog(QVector< TTransmissivityFactory* > transmissivityFactoryList, QWidget* parent, Qt::WindowFlags f)
-    : QDialog(parent, f),
-      m_currentTransmissivityIndex(-1),
-      m_newTransmissivity(0)
+
+TransmissivityDialog::TransmissivityDialog(QVector<TTransmissivityFactory*> transmissivityFactoryList, QWidget* parent, Qt::WindowFlags f):
+    QDialog(parent, f),
+    m_currentTransmissivityIndex(-1),
+    m_newTransmissivity(0)
 {
     setupUi(this);
     transmissivityCombo->addItem ("---");
@@ -43,7 +44,7 @@ TTransmissivity* TransmissivityDialog::GetTransmissivity() const
 void TransmissivityDialog::SetValue(SoNode* node, QString paramenterName, QString newValue)
 {
     double value = newValue.toDouble();
-    if (value>=0) {
+    if (value >= 0) {
 
         SoField* parameterField = node->getField(SbName(paramenterName.toStdString().c_str() ) );
         if (parameterField)
@@ -67,7 +68,8 @@ void TransmissivityDialog::SetCurrentTransmissivity(TTransmissivity* transmissiv
 
 void TransmissivityDialog::ChangeTransmissivityType(int index)
 {
-    while ( (m_newTransmissivity!= 0) && m_newTransmissivity->getRefCount() > 0) m_newTransmissivity->unref();
+    while (m_newTransmissivity && m_newTransmissivity->getRefCount() > 0)
+        m_newTransmissivity->unref();
 
     if (index == 0) m_newTransmissivity = 0;
     else if (index == m_currentTransmissivityIndex)
@@ -80,5 +82,4 @@ void TransmissivityDialog::ChangeTransmissivityType(int index)
     }
 
     transmissivityParameters->SetContainer(m_newTransmissivity, QString() );
-
 }

@@ -4,8 +4,6 @@
 #include <Inventor/nodes/SoNode.h>
 #include <Inventor/nodes/SoSubNode.h>
 
-#include "kernel/statistics/RandomDeviate.h"
-
 
 class TONATIUH_KERNEL TTransmissivity: public SoNode
 {

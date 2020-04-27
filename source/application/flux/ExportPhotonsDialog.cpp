@@ -2,8 +2,8 @@
 #include <QMessageBox>
 
 #include "ExportPhotonsDialog.h"
-#include "kernel/photons/PhotonMapExportParametersWidget.h"
-#include "kernel/photons/PhotonMapExportSettings.h"
+#include "kernel/photons/PhotonExportWidget.h"
+#include "kernel/photons/PhotonExportSettings.h"
 #include "SelectSurfaceDialog.h"
 
 /*!
@@ -11,7 +11,7 @@
  */
 ExportPhotonsDialog::ExportPhotonsDialog(
         SceneModel& scene,
-        QVector<PhotonMapExportFactory*> typeList,
+        QVector<PhotonExportFactory*> typeList,
         QWidget* parent):
     QDialog(parent),
     m_scene(&scene)
@@ -21,7 +21,7 @@ ExportPhotonsDialog::ExportPhotonsDialog(
     for (int index = 0; index < typeList.size(); index++)
     {
         storeTypeCombo->addItem(typeList[index]->icon(), typeList[index]->name() );
-        PhotonMapExportParametersWidget* widget = typeList[index]->createWidget();
+        PhotonExportWidget* widget = typeList[index]->createWidget();
         if (widget)
         {
             m_parameters << widget;
@@ -41,9 +41,9 @@ ExportPhotonsDialog::ExportPhotonsDialog(
 /*!
  *    Returns defined settings into settings class object.
  */
-PhotonMapExportSettings ExportPhotonsDialog::GetExportPhotonMapSettings() const
+PhotonExportSettings ExportPhotonsDialog::GetExportPhotonMapSettings() const
 {
-    PhotonMapExportSettings settings;
+    PhotonExportSettings settings;
     settings.modeTypeName = storeTypeCombo->currentText();
     //settings.exportAllPhotonMap = ( exportAllPhotonsRadio->isEnabled() && exportAllPhotonsRadio->isChecked() );
     settings.exportCoordinates = (coordCheck->isEnabled() && coordCheck->isChecked() );
@@ -56,7 +56,7 @@ PhotonMapExportSettings ExportPhotonsDialog::GetExportPhotonMapSettings() const
     else
         settings.exportSurfaceNodeList = m_surfaces;
 
-    PhotonMapExportParametersWidget* exportTypeWidget = m_parameters[storeTypeCombo->currentIndex()];
+    PhotonExportWidget* exportTypeWidget = m_parameters[storeTypeCombo->currentIndex()];
     if (!exportTypeWidget) return settings;
 
     QStringList exportTypeParametersName = exportTypeWidget->GetParameterNames();

@@ -7,7 +7,7 @@
 #include <QScriptEngine>
 
 #include "ScriptRayTracer.h"
-#include "kernel/statistics/RandomDeviateFactory.h"
+#include "kernel/random/RandomDeviateFactory.h"
 #include "tonatiuh_script.h"
 #include "kernel/auxiliary/sunpos.h"
 

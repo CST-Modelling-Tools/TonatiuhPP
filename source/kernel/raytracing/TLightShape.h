@@ -9,7 +9,7 @@
 #include <Inventor/fields/SoSFEnum.h>
 #include <Inventor/fields/SoSFFloat.h>
 
-#include "TShape.h"
+#include "kernel/shape/TShape.h"
 #include "trt.h"
 
 class Transform;

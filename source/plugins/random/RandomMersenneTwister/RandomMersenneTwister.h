@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kernel/statistics/RandomDeviate.h"
+#include "kernel/random/RandomDeviate.h"
 
 const double LongIntegerToDouble = 1.0 / 4294967296.0;
 
@@ -77,7 +77,7 @@ inline double RandomMersenneTwister::Random01()
 
 
 
-#include "kernel/statistics/RandomDeviateFactory.h"
+#include "kernel/random/RandomDeviateFactory.h"
 
 class RandomMersenneTwisterFactory:
     public QObject, public RandomFactory<RandomMersenneTwister>

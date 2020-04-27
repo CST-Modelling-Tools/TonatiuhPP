@@ -13,7 +13,7 @@ class RandomDeviate;
 class RandomDeviateFactory;
 class QScriptContext;
 class SceneModel;
-class TPhotonMap;
+class PhotonMap;
 class Transform;
 
 class ScriptRayTracer: public QObject
@@ -67,7 +67,7 @@ private:
 
     unsigned long m_numberOfRays;
 
-    TPhotonMap* m_photonMap;
+    PhotonMap* m_photonMap;
     bool m_photonMapToFile;
 
     QVector< RandomDeviateFactory* > m_RandomDeviateFactoryList;

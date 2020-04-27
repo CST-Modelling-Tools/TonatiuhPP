@@ -1,6 +1,6 @@
 #include "ActionInsertMaterial.h"
 
-#include "kernel/raytracing/TMaterialFactory.h"
+#include "kernel/material/TMaterialFactory.h"
 
 
 ActionInsertMaterial::ActionInsertMaterial(TMaterialFactory* factory, QObject* parent):

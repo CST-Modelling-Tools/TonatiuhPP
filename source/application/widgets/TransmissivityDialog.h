@@ -8,6 +8,7 @@
 class TTransmissivity;
 class TTransmissivityFactory;
 
+
 class TransmissivityDialog: public QDialog, private Ui::TransmissivityDialog
 {
     Q_OBJECT

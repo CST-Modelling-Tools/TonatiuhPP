@@ -2,7 +2,7 @@
 
 #include "CmdInsertMaterial.h"
 #include "gui/SceneModel.h"
-#include "kernel/raytracing/TMaterial.h"
+#include "kernel/material/TMaterial.h"
 #include "kernel/raytracing/TShapeKit.h"
 
 /**
@@ -10,13 +10,12 @@
  *
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
-CmdInsertMaterial::CmdInsertMaterial(TShapeKit* shapeKit, TMaterial* material, SceneModel* model, QUndoCommand* parent)
-    : QUndoCommand("InsertMaterial", parent), m_shapeKit(shapeKit),m_material(material), m_pModel(model), m_row(-1)
+CmdInsertMaterial::CmdInsertMaterial(TShapeKit* shapeKit, TMaterial* material, SceneModel* model, QUndoCommand* parent):
+    QUndoCommand("InsertMaterial", parent), m_shapeKit(shapeKit),m_material(material), m_pModel(model), m_row(-1)
 {
-    if (m_shapeKit == 0) gf::SevereError("CmdInsertMaterial called with NULL TShapeKit");
-    if (m_material == 0) gf::SevereError("CmdInsertMaterial called with NULL TMaterial");
+    if (!m_shapeKit) gf::SevereError("CmdInsertMaterial called with NULL TShapeKit");
+    if (!m_material) gf::SevereError("CmdInsertMaterial called with NULL TMaterial");
     m_material->ref();
-
 }
 
 /*!

@@ -5,13 +5,13 @@
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/Vector3D.h"
 
-#include "TDefaultTransmissivity.h"
+#include "kernel/air/TDefaultTransmissivity.h"
 #include "TSceneKit.h"
 #include "TSeparatorKit.h"
 #include "TTracker.h"
-#include "TTransmissivity.h"
+#include "kernel/air/TTransmissivity.h"
 
-SO_KIT_SOURCE(TSceneKit);
+SO_KIT_SOURCE(TSceneKit)
 
 /**
  * Does initialization common for all objects of the TSceneKit class.
@@ -35,7 +35,6 @@ TSceneKit::TSceneKit()
     SO_NODE_ADD_FIELD( zenith, ( 0.0f ) );
 
     SO_KIT_INIT_INSTANCE();
-
 }
 
 /**
