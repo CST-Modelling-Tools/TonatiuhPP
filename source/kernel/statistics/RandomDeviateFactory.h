@@ -1,43 +1,31 @@
 #pragma once
 
-#include "kernel/TonatiuhKernel.h"
-#include <QtPlugin>
-#include <QIcon>
+#include "kernel/raytracing/TFactory.h"
+
 #include <QTime>
 
-class QString;
 class RandomDeviate;
 
-//!  RandomDeviateFactory is the interface for random generators plugins.
-/*!
-   A random generator plugin must implement the following interface to load as a valid plugin for Toantiuh.
- */
 
-class RandomDeviateFactory
+
+class RandomDeviateFactory: public TFactory
 {
 public:
-    virtual QString RandomDeviateName() const = 0;
-    virtual QIcon RandomDeviateIcon() const {return QIcon();}
-    virtual RandomDeviate* CreateRandomDeviate() const = 0;
+    virtual RandomDeviate* create() const = 0;
 };
 
 Q_DECLARE_INTERFACE(RandomDeviateFactory, "tonatiuh.RandomDeviateFactory")
+
 
 
 template<class T>
 class RandomFactory: public RandomDeviateFactory
 {
 public:
+    QString name() const {return T::getClassName();}
 
-    QString RandomDeviateName() const
-    {
-        return T::getClassName();
-    }
-
-    T* CreateRandomDeviate() const
-    {
+    T* create() const {
         ulong seed = QTime::currentTime().msec();
         return new T(seed);
-        //return new RandomMersenneTwister(123);
     }
 };

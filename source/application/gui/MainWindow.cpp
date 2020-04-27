@@ -556,7 +556,7 @@ void MainWindow::RunFluxAnalysisRayTracer()
     }
 
     //Create the random generator
-    RandomDeviate*     pRandomDeviate =  randomDeviateFactoryList[m_selectedRandomDeviate]->CreateRandomDeviate();
+    RandomDeviate*     pRandomDeviate =  randomDeviateFactoryList[m_selectedRandomDeviate]->create();
 
     FluxAnalysisDialog dialog(coinScene, *m_sceneModel, rootSeparatorInstance, m_widthDivisions, m_heightDivisions, pRandomDeviate);
     dialog.exec();
@@ -831,7 +831,7 @@ void MainWindow::ShowRayTracerOptionsDialog()
     options->exec();
 
     SetRaysPerIteration(options->GetNumRays() );
-    SetRandomDeviateType(randomDeviateFactoryList[options->GetRandomDeviateFactoryIndex()]->RandomDeviateName() );
+    SetRandomDeviateType(randomDeviateFactoryList[options->GetRandomDeviateFactoryIndex()]->name() );
     SetRayCastingGrid(options->GetWidthDivisions(), options->GetHeightDivisions() );
     SetRaysDrawingOptions(options->DrawRays(), options->DrawPhotons() );
     SetPhotonMapBufferSize(options->GetPhotonMapBufferSize() );
@@ -1896,7 +1896,7 @@ void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned 
     }
 
     //Create the random generator
-    if (!m_rand) m_rand =  randomDeviateFactoryList[m_selectedRandomDeviate]->CreateRandomDeviate();
+    if (!m_rand) m_rand =  randomDeviateFactoryList[m_selectedRandomDeviate]->create();
 
     FluxAnalysis fluxAnalysis(coinScene, *m_sceneModel, rootSeparatorInstance, m_widthDivisions, m_heightDivisions, m_rand);
 
@@ -2091,7 +2091,7 @@ void MainWindow::SetRandomDeviateType(QString typeName)
 
     QVector< QString > randomNames;
     for (int i = 0; i < factoryList.size(); i++)
-        randomNames << factoryList[i]->RandomDeviateName();
+        randomNames << factoryList[i]->name();
 
     int oldSelectedRandomDeviate = m_selectedRandomDeviate;
 
@@ -2926,7 +2926,7 @@ PhotonMapExport* MainWindow::CreatePhotonMapExport() const
     PhotonMapExportFactory* pExportModeFactory = factoryList[exportModeFactoryIndex];
     if (!pExportModeFactory) return 0;
 
-    PhotonMapExport* pExportMode = pExportModeFactory->GetExportPhotonMapMode();
+    PhotonMapExport* pExportMode = pExportModeFactory->create();
     if (!pExportMode) return 0;
 
     pExportMode->SetSaveCoordinatesEnabled(m_pExportModeSettings->exportCoordinates);
@@ -3146,7 +3146,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
     }
 
     //Create the random generator
-    if (!m_rand) m_rand =  randomDeviateFactoryList[m_selectedRandomDeviate]->CreateRandomDeviate();
+    if (!m_rand) m_rand =  randomDeviateFactoryList[m_selectedRandomDeviate]->create();
 
 
     //Create the photon map where photons are going to be stored

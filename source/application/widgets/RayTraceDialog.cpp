@@ -51,7 +51,7 @@ RayTraceDialog::RayTraceDialog(int numRays,
     raysSpinBox->setValue(m_numRays);
     for (int index = 0; index < randomFactoryList.size(); ++index)
     {
-        randomCombo->addItem(randomFactoryList[index]->RandomDeviateIcon(), randomFactoryList[index]->RandomDeviateName() );
+        randomCombo->addItem(randomFactoryList[index]->icon(), randomFactoryList[index]->name() );
     }
     if (m_selectedRandomFactory < 0 && randomFactoryList.size() > 0)
         m_selectedRandomFactory = 0;

@@ -12,7 +12,7 @@ class TFactory
 {
 public:
     virtual ~TFactory() {}
-    virtual QString name() const  = 0;
-    virtual QIcon icon() const = 0;
-    virtual void init() const = 0;
+    virtual QString name() const = 0;
+    virtual QIcon icon() const {return QIcon();}
+    virtual void init() const {}
 };

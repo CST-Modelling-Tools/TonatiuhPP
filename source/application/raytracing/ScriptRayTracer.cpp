@@ -84,7 +84,7 @@ bool ScriptRayTracer::IsValidRandomGeneratorType(QString type)
 
     QVector< QString > randomGeneratorsNames;
     for (int i = 0; i < m_RandomDeviateFactoryList.size(); i++)
-        randomGeneratorsNames << m_RandomDeviateFactoryList[i]->RandomDeviateName();
+        randomGeneratorsNames << m_RandomDeviateFactoryList[i]->name();
 
     int selectedRandom = randomGeneratorsNames.indexOf(type);
 
@@ -147,7 +147,7 @@ int ScriptRayTracer::SetRandomDeviateType(QString typeName)
 {
     QVector< QString > randomGeneratorsNames;
     for (int i = 0; i < m_RandomDeviateFactoryList.size(); i++)
-        randomGeneratorsNames << m_RandomDeviateFactoryList[i]->RandomDeviateName();
+        randomGeneratorsNames << m_RandomDeviateFactoryList[i]->name();
 
     int selectedRandom = randomGeneratorsNames.indexOf(typeName);
     if (selectedRandom < 0)
@@ -156,7 +156,7 @@ int ScriptRayTracer::SetRandomDeviateType(QString typeName)
         return 0;
     }
 
-    m_randomDeviate = m_RandomDeviateFactoryList[selectedRandom]->CreateRandomDeviate();
+    m_randomDeviate = m_RandomDeviateFactoryList[selectedRandom]->create();
     return 1;
 }
 

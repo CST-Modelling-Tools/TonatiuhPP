@@ -11,6 +11,7 @@ class TMaterialFactory: public TFactory
 public: 
     virtual TMaterial* create() const = 0;
 };
+
 Q_DECLARE_INTERFACE(TMaterialFactory, "tonatiuh.TMaterialFactory")
 
 

@@ -21,7 +21,7 @@ ExportPhotonsDialog::ExportPhotonsDialog(
     for (int index = 0; index < typeList.size(); index++)
     {
         storeTypeCombo->addItem(typeList[index]->icon(), typeList[index]->name() );
-        PhotonMapExportParametersWidget* widget = typeList[index]->GetExportPhotonMapModeWidget();
+        PhotonMapExportParametersWidget* widget = typeList[index]->createWidget();
         if (widget)
         {
             m_parameters << widget;
