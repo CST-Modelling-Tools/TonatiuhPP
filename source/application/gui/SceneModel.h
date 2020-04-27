@@ -2,7 +2,7 @@
 
 #include <QAbstractItemModel>
 
-#include "kernel/geometry/tgc.h"
+#include "commands/tgc.h"
 
 class InstanceNode;
 class QModelIndex;

@@ -6,19 +6,19 @@ class TTransmissivity;
 
 
 
-class TTransmissivityFactory: public TFactory
+class AirFactory: public TFactory
 {
 public:
     virtual QString name() const = 0;
     virtual QIcon icon() const = 0;
     virtual TTransmissivity* create() const = 0;
 };
-Q_DECLARE_INTERFACE(TTransmissivityFactory, "tonatiuh.TTransmissivityFactory")
+Q_DECLARE_INTERFACE(AirFactory, "tonatiuh.AirFactory")
 
 
 
 template<class T>
-class AirFactory: public TTransmissivityFactory
+class AirFactoryT: public AirFactory
 {
 public:
     QString name() const {return T::getClassName();}

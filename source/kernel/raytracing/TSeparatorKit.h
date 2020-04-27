@@ -48,7 +48,7 @@ class TONATIUH_KERNEL TSeparatorKit : public SoSeparatorKit
 
     SO_KIT_HEADER(TSeparatorKit);
 
-    SO_KIT_CATALOG_ENTRY_HEADER( tracker );
+    SO_KIT_CATALOG_ENTRY_HEADER(tracker);
 
 public:
     TSeparatorKit();

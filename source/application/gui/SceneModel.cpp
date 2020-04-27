@@ -20,7 +20,7 @@
 #include "kernel/raytracing/TSeparatorKit.h"
 #include "kernel/shape/TShape.h"
 #include "kernel/raytracing/TShapeKit.h"
-#include "kernel/raytracing/TTracker.h"
+#include "kernel/tracker/TTracker.h"
 
 /*!
  * Creates an empty model.

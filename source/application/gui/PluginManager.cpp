@@ -11,17 +11,17 @@
 #include <QStringList>
 #include <iostream>
 
-#include "libraries/geometry/gf.h"
-#include "kernel/air/TTransmissivityFactory.h"
-#include "kernel/raytracing/TComponentFactory.h"
+#include "kernel/air/AirFactory.h"
+#include "kernel/component/ComponentFactory.h"
+#include "kernel/material/MaterialFactory.h"
 #include "kernel/photons/PhotonExportFactory.h"
-#include "kernel/material/TMaterialFactory.h"
 #include "kernel/random/RandomDeviateFactory.h"
-#include "kernel/shape/TShapeFactory.h"
-#include "kernel/raytracing/TSunFactory.h"
-#include "kernel/raytracing/TTrackerFactory.h"
-#include "kernel/shape/TSquare.h"
-#include "kernel/shape/TCube.h"
+#include "kernel/shape/ShapeFactory.h"
+#include "kernel/shape/ShapeCube.h"
+#include "kernel/shape/ShapeSquare.h"
+#include "kernel/sun/SunFactory.h"
+#include "kernel/tracker/TrackerFactory.h"
+#include "libraries/geometry/gf.h"
 
 
 template <class T>
@@ -60,8 +60,8 @@ void PluginManager::load(QDir dir)
         loadTonatiuhPlugin(f);
     }
 
-    loadTonatiuhPlugin(new ShapeFactory<TSquare>);
-    loadTonatiuhPlugin(new ShapeFactory<TCube>);
+    loadTonatiuhPlugin(new ShapeFactoryT<ShapeSquare>);
+    loadTonatiuhPlugin(new ShapeFactoryT<ShapeCube>);
 
     sort();
 }
@@ -105,13 +105,13 @@ void PluginManager::findFiles(QDir dir, QStringList& files)
  */
 void PluginManager::loadTonatiuhPlugin(TFactory* p)
 {
-    if (auto f = dynamic_cast<TTransmissivityFactory*>(p))
+    if (auto f = dynamic_cast<AirFactory*>(p))
     {
         f->init();
         m_airFactories << f;
         m_airMap[f->name()] = f;
     }
-    else if (auto f = dynamic_cast<TComponentFactory*>(p))
+    else if (auto f = dynamic_cast<ComponentFactory*>(p))
     {
         m_componentFactories << f;
     }
@@ -119,7 +119,7 @@ void PluginManager::loadTonatiuhPlugin(TFactory* p)
     {
         m_exportFactories << f;
     }
-    else if (auto f = dynamic_cast<TMaterialFactory*>(p))
+    else if (auto f = dynamic_cast<MaterialFactory*>(p))
     {
         f->init();
         m_materialFactories << f;
@@ -129,18 +129,18 @@ void PluginManager::loadTonatiuhPlugin(TFactory* p)
     {
         m_randomFactories << f;
     }
-    else if (auto f = dynamic_cast<TShapeFactory*>(p))
+    else if (auto f = dynamic_cast<ShapeFactory*>(p))
     {
         f->init();
         m_shapeFactories << f;
         m_shapesMap[f->name()] = f;
     }
-    else if (auto f = dynamic_cast<TSunFactory*>(p))
+    else if (auto f = dynamic_cast<SunFactory*>(p))
     {
         f->init();
         m_sunFactories << f;
     }
-    else if (auto f = dynamic_cast<TTrackerFactory*>(p))
+    else if (auto f = dynamic_cast<TrackerFactory*>(p))
     {
         f->create();
         m_trackerFactories << f;

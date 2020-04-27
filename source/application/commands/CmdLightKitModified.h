@@ -6,7 +6,7 @@ class SceneModel;
 class SoSceneKit;
 class TLightKit;
 class TShape;
-class TSunShape;
+class SunShape;
 
 //!  CmdLightKitModified class is the light definition command stored in the command stack.
 /*!
@@ -29,7 +29,7 @@ private:
      double m_previousAzimuth;
      QString m_previousDisbleNodes;
      double m_previousZenith;
-     TSunShape* m_pPreviousSunShape;
+     SunShape* m_pPreviousSunShape;
      TLightKit* m_pNewLightKit;
      SoSceneKit* m_scene;
      SceneModel* m_pModel;

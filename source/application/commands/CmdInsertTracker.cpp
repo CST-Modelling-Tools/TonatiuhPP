@@ -8,7 +8,7 @@
 #include "kernel/gui/InstanceNode.h"
 #include "gui/SceneModel.h"
 #include "kernel/raytracing/TLightKit.h"
-#include "kernel/raytracing/TTracker.h"
+#include "kernel/tracker/TTracker.h"
 
 /**
  * Creates a new tracker insert command that adds a \a tracker to a parent node with \a parentIndex in the \a model.

@@ -16,14 +16,14 @@
 #include "kernel/random/RandomDeviate.h"
 #include "kernel/random/RandomDeviateFactory.h"
 #include "kernel/raytracing/RayTracer.h"
-#include "kernel/geometry/tgf.h"
+#include "kernel/tgf.h"
 #include "kernel/raytracing/TLightKit.h"
 #include "kernel/raytracing/TLightShape.h"
 #include "kernel/photons/PhotonMap.h"
 #include "kernel/raytracing/trf.h"
 #include "kernel/raytracing/TSeparatorKit.h"
 #include "kernel/shape/TShape.h"
-#include "kernel/raytracing/TSunShape.h"
+#include "kernel/sun/SunShape.h"
 #include "kernel/air/TTransmissivity.h"
 
 ScriptRayTracer::ScriptRayTracer(QVector<RandomDeviateFactory*> listRandomDeviateFactory):
@@ -302,7 +302,7 @@ int ScriptRayTracer::Trace()
            m_sceneModel->UpdateSceneModel();
 
            if( !lightKit->getPart( "tsunshape", false ) ) return 0;
-           TSunShape* sunShape = static_cast< TSunShape * >( lightKit->getPart( "tsunshape", false ) );
+           SunShape* sunShape = static_cast< SunShape * >( lightKit->getPart( "tsunshape", false ) );
 
 
            if( !lightKit->getPart( "icon", false ) ) return 0;

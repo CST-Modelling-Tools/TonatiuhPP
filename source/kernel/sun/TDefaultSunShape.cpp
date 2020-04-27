@@ -12,15 +12,16 @@
 #include "TDefaultSunShape.h"
 
 #include <cmath>
-#include "geometry/tgc.h"
-#include "geometry/tgf.h"
+//#include "kernel/tgc.h"
+#include "kernel/tgf.h"
 #include "libraries/geometry/Vector3D.h"
 
-SO_NODE_SOURCE(TDefaultSunShape);
+SO_NODE_SOURCE(TDefaultSunShape)
+
 
 void TDefaultSunShape::initClass()
 {
-    SO_NODE_INIT_CLASS(TDefaultSunShape, TSunShape, "TSunShape");
+    SO_NODE_INIT_CLASS(TDefaultSunShape, SunShape, "SunShape");
 }
 
 TDefaultSunShape::TDefaultSunShape( )

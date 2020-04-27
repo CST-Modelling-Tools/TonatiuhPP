@@ -7,7 +7,7 @@
 #include "libraries/geometry/Transform.h"
 
 
-double tgf::AlternateBoxMuller( RandomDeviate& rand )
+double tgf::AlternateBoxMuller(RandomDeviate& rand)
 {
     static bool firsttime = true;
     static double x1;
@@ -18,10 +18,10 @@ double tgf::AlternateBoxMuller( RandomDeviate& rand )
         double s = 2;
         double u1;
         double u2;
-        while(s > 1)
+        while (s > 1)
         {
-             u1 = 2 * rand.RandomDouble( ) - 1;
-             u2 = 2 * rand.RandomDouble( ) - 1;
+             u1 = 2 * rand.RandomDouble() - 1;
+             u2 = 2 * rand.RandomDouble() - 1;
             s = u1 * u1 + u2 * u2;
         }
 
@@ -39,41 +39,41 @@ double tgf::AlternateBoxMuller( RandomDeviate& rand )
     }
 }
 
-SbMatrix tgf::MatrixFromTransform( const Transform& transform )
+SbMatrix tgf::MatrixFromTransform(const Transform& transform)
 {
     Ptr<Matrix4x4> transformMatrix = transform.GetMatrix()->Transpose();
-    float m00 = float ( transformMatrix->m[0][0] );
-    float m01 = float ( transformMatrix->m[0][1] );
-    float m02 = float ( transformMatrix->m[0][2] );
-    float m03 = float ( transformMatrix->m[0][3] );
-    float m10 = float ( transformMatrix->m[1][0] );
-    float m11 = float ( transformMatrix->m[1][1] );
-    float m12 = float ( transformMatrix->m[1][2] );
-    float m13 = float ( transformMatrix->m[1][3] );
-    float m20 = float ( transformMatrix->m[2][0] );
-    float m21 = float ( transformMatrix->m[2][1] );
-    float m22 = float ( transformMatrix->m[2][2] );
-    float m23 = float ( transformMatrix->m[2][3] );
-    float m30 = float ( transformMatrix->m[3][0] );
-    float m31 = float ( transformMatrix->m[3][1] );
-    float m32 = float ( transformMatrix->m[3][2] );
-    float m33 = float ( transformMatrix->m[3][3] );
+    float m00 = float(transformMatrix->m[0][0]);
+    float m01 = float(transformMatrix->m[0][1]);
+    float m02 = float(transformMatrix->m[0][2]);
+    float m03 = float(transformMatrix->m[0][3]);
+    float m10 = float(transformMatrix->m[1][0]);
+    float m11 = float(transformMatrix->m[1][1]);
+    float m12 = float(transformMatrix->m[1][2]);
+    float m13 = float(transformMatrix->m[1][3]);
+    float m20 = float(transformMatrix->m[2][0]);
+    float m21 = float(transformMatrix->m[2][1]);
+    float m22 = float(transformMatrix->m[2][2]);
+    float m23 = float(transformMatrix->m[2][3]);
+    float m30 = float(transformMatrix->m[3][0]);
+    float m31 = float(transformMatrix->m[3][1]);
+    float m32 = float(transformMatrix->m[3][2]);
+    float m33 = float(transformMatrix->m[3][3]);
 
-    SbVec3f axis1( m00, m10, m20 );
-    SbVec3f axis2( m01, m11, m21 );
+    SbVec3f axis1(m00, m10, m20);
+    SbVec3f axis2(m01, m11, m21);
     //axis2.normalize();
 
-    SbVec3f axis3( m02, m12, m22 );
+    SbVec3f axis3(m02, m12, m22);
     //axis3.normalize();
 
     return SbMatrix( axis1[0], axis2[0], axis3[0], m03,
             axis1[1], axis2[1], axis3[1], m13,
             axis1[2], axis2[2], axis3[2], m23,
-            m30, m31, m32, m33 );
+            m30, m31, m32, m33);
 
 }
 
-Transform tgf::TransformFromMatrix( SbMatrix const& matrix )
+Transform tgf::TransformFromMatrix(SbMatrix const& matrix)
 {
     Transform transform;
     /*if( matrix.det4() < tgc::Epsilon )
@@ -87,12 +87,12 @@ Transform tgf::TransformFromMatrix( SbMatrix const& matrix )
     return transform;
 }
 
-Transform tgf::TransformFromSoTransform( SoTransform* const & soTransform )
+Transform tgf::TransformFromSoTransform(SoTransform* const& soTransform)
 {
     return TransformFromMatrix( MatrixFromSoTransform( soTransform ) );
 }
 
-SbMatrix tgf::MatrixFromSoTransform( SoTransform* const & soTransform )
+SbMatrix tgf::MatrixFromSoTransform(SoTransform* const& soTransform)
 {
     SbMatrix sbMatrix;
     sbMatrix.setTransform(

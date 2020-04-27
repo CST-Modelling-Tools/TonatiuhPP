@@ -13,5 +13,5 @@ namespace tgf
     TONATIUH_KERNEL SbMatrix MatrixFromTransform(const Transform& transform);
     TONATIUH_KERNEL Transform TransformFromMatrix(SbMatrix const& matrix);
     TONATIUH_KERNEL Transform TransformFromSoTransform(SoTransform* const& soTransform);
-    TONATIUH_KERNEL SbMatrix MatrixFromSoTransform(SoTransform* const & soTransform);
+    TONATIUH_KERNEL SbMatrix MatrixFromSoTransform(SoTransform* const& soTransform);
 }

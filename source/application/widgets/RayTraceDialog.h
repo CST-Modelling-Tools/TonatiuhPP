@@ -44,12 +44,12 @@ public slots:
     void saveChanges();
 
 private:
-    bool m_drawPhotons;  /*!<This property holds whether photons are going to be drawn. */
-    bool m_drawRays;  /*!<This property holds whether rays are going to be drawn. */
-    int m_heightDivisions; /*!<number of height divisions in the sun*/
-    bool m_increasePhotonMap; /*!<This property holds whether traced phtons are going to added to the old photon map. */
     int m_numRays; /*!< Number of rays to trace. */
-    int m_photonMapBufferSize; /*!< Maximum number of photons int the PhotonMap. */
     int m_selectedRandomFactory; /*!< The index of factory selected from TPhotonMapFactory list. */
     int m_widthDivisions; /*number of width divisions in the sun*/
+    int m_heightDivisions; /*!<number of height divisions in the sun*/
+    bool m_drawRays;  /*!<This property holds whether rays are going to be drawn. */
+    bool m_drawPhotons;  /*!<This property holds whether photons are going to be drawn. */
+    int m_photonMapBufferSize; /*!< Maximum number of photons int the PhotonMap. */
+    bool m_increasePhotonMap; /*!<This property holds whether traced phtons are going to added to the old photon map. */
 };

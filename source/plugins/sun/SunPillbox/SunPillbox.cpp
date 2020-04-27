@@ -9,7 +9,7 @@ SO_NODE_SOURCE(SunPillbox)
 
 void SunPillbox::initClass()
 {
-    SO_NODE_INIT_CLASS(SunPillbox, TSunShape, "TSunShape");
+    SO_NODE_INIT_CLASS(SunPillbox, SunShape, "SunShape");
 }
 
 SunPillbox::SunPillbox()
@@ -31,13 +31,13 @@ SunPillbox::~SunPillbox()
 void SunPillbox::updateTheta(void* data, SoSensor*)
 {
     SunPillbox* sun = (SunPillbox*) data;
-    sun->m_sinTheta = sin(sun->thetaMax.getValue());
+    sun->m_sinThetaMax = sin(sun->thetaMax.getValue());
 }
 
 void SunPillbox::GenerateRayDirection(Vector3D& direction, RandomDeviate& rand) const
 {
     double phi = gc::TwoPi*rand.RandomDouble();
-    double sinTheta = m_sinTheta*sqrt(rand.RandomDouble());
+    double sinTheta = m_sinThetaMax*sqrt(rand.RandomDouble());
     double cosTheta = sqrt(1. - sinTheta*sinTheta);
     double cosPhi = cos(phi);
     double sinPhi = sin(phi);

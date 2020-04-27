@@ -18,7 +18,7 @@
 #include "photons/PhotonMap.h"
 #include "random/RandomDeviate.h"
 #include "libraries/geometry/Ray.h"
-#include "geometry/tgf.h"
+#include "kernel/tgf.h"
 #include "TLightKit.h"
 #include "trf.h"
 #include "TShapeKit.h"
@@ -29,9 +29,9 @@ SoSeparator* trf::DrawPhotonMapPoints(const PhotonMap& map)
     SoSeparator* drawpoints = new SoSeparator;
     SoCoordinate3* points = new SoCoordinate3;
     std::vector< Photon* > photonsList = map.GetAllPhotons();
-    unsigned int numRays = 0;
+    uint numRays = 0;
 
-    for (unsigned int i = 0; i < photonsList.size(); i++)
+    for (uint i = 0; i < photonsList.size(); i++)
     {
         Point3D photon = photonsList[i]->pos;
         points->point.set1Value(numRays, photon.x, photon.y, photon.z);

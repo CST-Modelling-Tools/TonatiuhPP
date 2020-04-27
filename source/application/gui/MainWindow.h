@@ -2,7 +2,7 @@
 
 #include <Inventor/SbVec3f.h>
 
-#include "kernel/geometry/tgc.h"
+#include "commands/tgc.h"
 
 #include "ui_mainwindow.h"
 
@@ -20,14 +20,14 @@ class SoDragger;
 class SoSelection;
 class SoSeparator;
 class SoTransform;
-class TComponentFactory;
+class ComponentFactory;
 class TLightShape;
-class TMaterialFactory;
+class MaterialFactory;
 class PhotonMap;
 class PhotonToMemory;
-class TShapeFactory;
-class TSunShape;
-class TTrackerFactory;
+class ShapeFactory;
+class SunShape;
+class TrackerFactory;
 class TTransmissivity;
 class SoCamera;
 
@@ -44,7 +44,7 @@ class MainWindow: public QMainWindow, private Ui::MainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QString tonatiuhFile = 0, QWidget * parent = 0, Qt::WindowFlags flags = 0);
+    MainWindow(QString tonatiuhFile = 0, QWidget* parent = 0, Qt::WindowFlags flags = 0);
     ~MainWindow();
 
     void FinishManipulation();
@@ -76,7 +76,7 @@ public:
     void InsertFileComponent(QString componentFileName = QString( "" ) );
     void New();
     void Open(QString fileName);
-    void Paste(QString nodeURL, QString pasteType = QString( "Shared" ) );
+    void Paste(QString nodeURL, QString pasteType = QString("Shared") );
     void PasteCopy();
     void PasteLink();
     void Run();
@@ -116,11 +116,11 @@ public:
     void ChangeGridSettings();
     void ChangeNodeName(const QModelIndex& index, const QString& newName);
     void ChangeSelection(const QModelIndex& current);
-    void CreateComponent(TComponentFactory* pTComponentFactory);
-    void CreateMaterial(TMaterialFactory* pTMaterialFactory);
-    void CreateShape(TShapeFactory* pTShapeFactory);
-    void CreateShape(TShapeFactory* pTShapeFactory, int numberOfParameters, QVector< QVariant > parametersList);
-    void CreateTracker(TTrackerFactory* pTTrackerFactory);
+    void CreateComponent(ComponentFactory* pComponentFactory);
+    void CreateMaterial(MaterialFactory* pMaterialFactory);
+    void CreateShape(ShapeFactory* pShapeFactory);
+    void CreateShape(ShapeFactory* pShapeFactory, int numberOfParameters, QVector<QVariant> parametersList);
+    void CreateTracker(TrackerFactory* pTrackerFactory);
     void DefineSunLight();
     void DefineTransmissivity();
     void DisconnectAllTrackers(bool disconnect);
@@ -191,7 +191,7 @@ private:
     bool ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
                             InstanceNode*& lightInstance,
                             SoTransform*& lightTransform,
-                            TSunShape*& sunShape,
+                            SunShape*& sunShape,
                             TLightShape*& shape,
                             TTransmissivity*& transmissivity);
     bool SaveFile(const QString& fileName);
@@ -221,7 +221,7 @@ private:
     void WriteSettings();
     double GetwPhoton();
 
-    enum { m_maxRecentFiles = 7 };
+    enum {m_maxRecentFiles = 7};
     QUndoStack* m_commandStack;
     QUndoView* m_commandView;
     QString m_currentFile;

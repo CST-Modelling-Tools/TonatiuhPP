@@ -3,7 +3,7 @@
 #include <Inventor/engines/SoSubNodeEngine.h>
 #include <Inventor/fields/SoSFVec3f.h>
 
-#include "kernel/raytracing/TTracker.h"
+#include "kernel/tracker/TTracker.h"
 #include "kernel/raytracing/trt.h"
 
 class QString;

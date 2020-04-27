@@ -2,7 +2,7 @@
 
 #include <QUndoCommand>
 
-#include "kernel/geometry/tgc.h"
+#include "commands/tgc.h"
 
 class InstanceNode;
 class QModelIndex;
@@ -16,10 +16,10 @@ class SoBaseKit;
    \sa CmdCopy, CmdCut, CmdDelete
 */
 
-class CmdPaste : public QUndoCommand
+class CmdPaste: public QUndoCommand
 {
 public:
-    CmdPaste( tgc::PasteType type, const QModelIndex& parentModelIndex,  SoNode*& coinClipboard, SceneModel& sceneModel, QUndoCommand* parent = 0 );
+    CmdPaste(tgc::PasteType type, const QModelIndex& parentModelIndex,  SoNode*& coinClipboard, SceneModel& sceneModel, QUndoCommand* parent = 0 );
     ~CmdPaste();
 
      virtual void undo();

@@ -67,12 +67,12 @@ private:
 
 
 
-#include "kernel/material/TMaterialFactory.h"
+#include "kernel/material/MaterialFactory.h"
 
 class MaterialStandardSpecularFactory:
-    public QObject, public MaterialFactory<MaterialStandardSpecular>
+    public QObject, public MaterialFactoryT<MaterialStandardSpecular>
 {
     Q_OBJECT
-    Q_INTERFACES(TMaterialFactory)
-    Q_PLUGIN_METADATA(IID "tonatiuh.TMaterialFactory")
+    Q_INTERFACES(MaterialFactory)
+    Q_PLUGIN_METADATA(IID "tonatiuh.MaterialFactory")
 };

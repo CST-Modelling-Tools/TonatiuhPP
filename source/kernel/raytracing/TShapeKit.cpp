@@ -3,9 +3,9 @@
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoTransform.h>
 
-#include "DifferentialGeometry.h"
+#include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/Ray.h"
-#include "kernel/shape/TCube.h"
+#include "kernel/shape/ShapeCube.h"
 #include "kernel/material/TMaterial.h"
 #include "kernel/shape/TShape.h"
 #include "TShapeKit.h"
@@ -30,11 +30,11 @@ TShapeKit::TShapeKit()
 
     SO_KIT_CONSTRUCTOR(TShapeKit);
 
-    SO_KIT_CHANGE_ENTRY_TYPE(shape, TShape, TCube);
+    SO_KIT_CHANGE_ENTRY_TYPE(shape, TShape, ShapeCube);
     SO_KIT_CHANGE_NULL_BY_DEFAULT(shape,TRUE);
     SO_KIT_INIT_INSTANCE();
 
-    setPart("shape", NULL );
+    setPart("shape", NULL);
 
     //SoTransform* transform = new SoTransform;
     //setPart("transform",  NULL);
@@ -52,7 +52,7 @@ TShapeKit::~TShapeKit()
  * Check if ray intersects with the node.
  *
  */
-bool TShapeKit::IntersectP( const Ray& ) const
+bool TShapeKit::IntersectP(const Ray&) const
 {
     return false;
 }

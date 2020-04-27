@@ -14,9 +14,9 @@ class QTabWidget;
 class SceneModel;
 class TLightKit;
 class TShape;
-class TShapeFactory;
-class TSunShape;
-class TSunFactory;
+class ShapeFactory;
+class SunShape;
+class SunFactory;
 
 //!  LightDialog class is the dialog to define the light parameters.
 /*!
@@ -27,7 +27,7 @@ class LightDialog: public QDialog, private Ui::LightDialog
     Q_OBJECT
 
 public:
-    LightDialog(SceneModel& sceneModel, TLightKit* currentLightKit, QVector< TSunFactory* > sunshapeFactoryList, QWidget* parent = 0);
+    LightDialog(SceneModel& sceneModel, TLightKit* currentLightKit, QVector< SunFactory* > sunshapeFactoryList, QWidget* parent = 0);
     ~LightDialog();
 
     TLightKit* GetTLightKit();
@@ -53,8 +53,8 @@ private:
     TLightKit* m_currentLightKit;
     SceneModel* m_currentSceneModel;
     int m_currentSunShapeIndex;
-    TSunShape* m_newSunShape;
+    SunShape* m_newSunShape;
     QItemSelectionModel* m_sceneSelectionModel;
 
-    QMap<QString, TSunFactory*> m_sunshapeList;
+    QMap<QString, SunFactory*> m_sunshapeList;
 };

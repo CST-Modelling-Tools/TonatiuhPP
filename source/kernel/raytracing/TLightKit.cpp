@@ -19,20 +19,17 @@
 #include "libraries/geometry/Matrix4x4.h"
 #include "libraries/geometry/Point3D.h"
 #include "auxiliary/sunpos.h"
-#include "TDefaultSunShape.h"
+#include "kernel/sun/TDefaultSunShape.h"
 #include "TLightKit.h"
 #include "TLightShape.h"
 #include "libraries/geometry/Transform.h"
 #include "TShapeKit.h"
-#include "kernel/shape/TSquare.h"
+//#include "kernel/shape/ShapeSquare.h"
 
 
 struct Polygon
 {
-    Polygon()
-    {
-
-    }
+    Polygon() {}
 
     Polygon(QPointF p1, QPointF p2, QPointF p3, QPointF p4)
     {
@@ -87,7 +84,7 @@ TLightKit::TLightKit()
 
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(iconMaterial, SoNode, SoMaterial, TRUE, iconSeparator, icon, TRUE);
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(iconTexture, SoNode, SoTexture2, TRUE, iconSeparator, iconMaterial, TRUE);
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tsunshape, TSunShape, TDefaultSunShape, TRUE, transformGroup, "", TRUE);
+    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tsunshape, SunShape, TDefaultSunShape, TRUE, transformGroup, "", TRUE);
 
     SO_NODE_ADD_FIELD(azimuth, (0.0) );
     SO_NODE_ADD_FIELD(zenith, (0.0) );
@@ -173,7 +170,7 @@ void TLightKit::Update(BBox box)
         distMax = 0.0;
     }
 
-    TSunShape* sunshape = static_cast< TSunShape* >(this->getPart("tsunshape", false) );
+    SunShape* sunshape = static_cast< SunShape* >(this->getPart("tsunshape", false) );
     if (!sunshape) return;
     double thetaMax = sunshape->GetThetaMax();
     double delta = 0.01;

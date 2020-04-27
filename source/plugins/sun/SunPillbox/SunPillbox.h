@@ -2,14 +2,14 @@
 
 #include <Inventor/fields/SoSFDouble.h>
 
-#include "kernel/raytracing/TSunShape.h"
+#include "kernel/sun/SunShape.h"
 
 class SoSensor;
 class SoFieldSensor;
 
 
 
-class SunPillbox: public TSunShape
+class SunPillbox: public SunShape
 {
     SO_NODE_HEADER(SunPillbox);
 
@@ -34,17 +34,17 @@ protected:
 
 private:
     SoFieldSensor* m_sensorTheta;
-    double m_sinTheta;
+    double m_sinThetaMax;
 };
 
 
 
-#include "kernel/raytracing/TSunFactory.h"
+#include "kernel/sun/SunFactory.h"
 
 class SunPillboxFactory:
-    public QObject, public SunFactory<SunPillbox>
+    public QObject, public SunFactoryT<SunPillbox>
 {
     Q_OBJECT
-    Q_INTERFACES(TSunFactory)
-    Q_PLUGIN_METADATA(IID "tonatiuh.TSunFactory")
+    Q_INTERFACES(SunFactory)
+    Q_PLUGIN_METADATA(IID "tonatiuh.SunFactory")
 };

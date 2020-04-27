@@ -5,7 +5,7 @@
 #include <Inventor/actions/SoSearchAction.h>
 #include "TSeparatorKit.h"
 #include "trt.h"
-#include "kernel/geometry/tgf.h"
+#include "kernel/tgf.h"
 
 class QString;
 class Vector3D;

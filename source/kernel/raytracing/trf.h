@@ -12,9 +12,9 @@
 #include "kernel/photons/Photon.h"
 #include "kernel/photons/PhotonMap.h"
 #include "libraries/geometry/Ray.h"
-#include "kernel/geometry/tgf.h"
-#include "kernel/shape//TShape.h"
-#include "TSunShape.h"
+#include "kernel/tgf.h"
+#include "kernel/shape/TShape.h"
+#include "kernel/sun/SunShape.h"
 #include "libraries/geometry/Transform.h"
 #include "TSeparatorKit.h"
 #include "TShapeKit.h"
@@ -28,7 +28,7 @@ namespace trf
 {
     TONATIUH_KERNEL void ComputeSceneTreeMap(InstanceNode* instanceNode, Transform parentWTO, bool insertInSurfaceList);
     TONATIUH_KERNEL void ComputeFistStageSurfaceList(InstanceNode* instanceNode, QStringList disabledNodesURL, QVector< QPair< TShapeKit*, Transform > >* surfacesList);
-    TONATIUH_KERNEL void CreatePhotonMap(PhotonMap*& photonMap, QPair< PhotonMap*,  std::vector < Photon  > > photonsList);
+    TONATIUH_KERNEL void CreatePhotonMap(PhotonMap*& photonMap, QPair<PhotonMap*, std::vector<Photon> > photonsList);
 
     TONATIUH_KERNEL SoSeparator* DrawPhotonMapPoints(const PhotonMap& map);
     TONATIUH_KERNEL SoSeparator* DrawPhotonMapRays(const PhotonMap& map, unsigned long numberOfRays);

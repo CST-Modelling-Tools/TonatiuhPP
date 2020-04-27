@@ -6,19 +6,19 @@
 #include "libraries/geometry/BBox.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/Ray.h"
-#include "raytracing/DifferentialGeometry.h"
+#include "shape//DifferentialGeometry.h"
 #include "InstanceNode.h"
-#include "geometry/tgf.h"
+#include "tgf.h"
 #include "kernel/material/TMaterial.h"
 #include "kernel/shape/TShape.h"
 #include "raytracing/TShapeKit.h"
 #include "raytracing/TLightKit.h"
-#include "raytracing/TTracker.h"
-#include "raytracing/TTrackerForAiming.h"
+#include "tracker/TTracker.h"
+#include "tracker/TTrackerForAiming.h"
 
 
-InstanceNode::InstanceNode(SoNode* node)
-    : m_coinNode(node), m_parent(0)
+InstanceNode::InstanceNode(SoNode* node):
+    m_coinNode(node), m_parent(0)
 {
 }
 
@@ -33,7 +33,7 @@ InstanceNode::~InstanceNode()
 QString InstanceNode::GetNodeURL() const
 {
     QString url;
-    if (GetParent() ) url = GetParent()->GetNodeURL();
+    if (GetParent()) url = GetParent()->GetNodeURL();
     url.append(QLatin1String("/") );
     const char* nodeName = m_coinNode->getName().getString();
     url.append(QLatin1String(nodeName) );

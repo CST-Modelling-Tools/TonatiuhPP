@@ -8,7 +8,7 @@
 #include "kernel/air/TDefaultTransmissivity.h"
 #include "TSceneKit.h"
 #include "TSeparatorKit.h"
-#include "TTracker.h"
+#include "kernel/tracker/TTracker.h"
 #include "kernel/air/TTransmissivity.h"
 
 SO_KIT_SOURCE(TSceneKit)
@@ -30,9 +30,8 @@ TSceneKit::TSceneKit()
     SO_KIT_CONSTRUCTOR(TSceneKit);
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY( transmissivity, TTransmissivity, TDefaultTransmissivity, TRUE, topSeparator, "", TRUE);
 
-
-    SO_NODE_ADD_FIELD( azimuth, ( gc::Pi ) );
-    SO_NODE_ADD_FIELD( zenith, ( 0.0f ) );
+    SO_NODE_ADD_FIELD( azimuth, (gc::Pi) );
+    SO_NODE_ADD_FIELD( zenith, (0.f) );
 
     SO_KIT_INIT_INSTANCE();
 }

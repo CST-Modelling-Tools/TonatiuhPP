@@ -16,8 +16,8 @@ RayTraceDialog::RayTraceDialog(QWidget* parent, Qt::WindowFlags f):
     m_selectedRandomFactory(-1),
     m_widthDivisions(200),
     m_heightDivisions(200),
-    m_drawPhotons(false),
     m_drawRays(false),
+    m_drawPhotons(false),
     m_photonMapBufferSize(1000000),
     m_increasePhotonMap(false)
 {
@@ -44,8 +44,8 @@ RayTraceDialog::RayTraceDialog(
     m_selectedRandomFactory(selectedRandomFactory),
     m_widthDivisions(widthDivisions),
     m_heightDivisions(heightDivisions),
-    m_drawPhotons(drawPhotons),
     m_drawRays(drawRays),
+    m_drawPhotons(drawPhotons),
     m_photonMapBufferSize(photonMapSize),
     m_increasePhotonMap(increasePhotonMap)
 {

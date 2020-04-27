@@ -185,7 +185,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     if (!lightInstance) return;
 
     if (!lightKit->getPart("tsunshape", false) ) return;
-    TSunShape* sunShape = static_cast< TSunShape* >(lightKit->getPart("tsunshape", false) );
+    SunShape* sunShape = static_cast< SunShape* >(lightKit->getPart("tsunshape", false) );
 
     if (!lightKit->getPart("icon", false) ) return;
     TLightShape* raycastingSurface = static_cast< TLightShape* >(lightKit->getPart("icon", false) );

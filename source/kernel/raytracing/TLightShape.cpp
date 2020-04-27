@@ -11,7 +11,7 @@
 #include "libraries/geometry/gf.h"
 
 #include "libraries/geometry/BBox.h"
-#include "DifferentialGeometry.h"
+#include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/Ray.h"
 #include "TLightShape.h"
 #include "libraries/geometry/Transform.h"
@@ -20,17 +20,17 @@
 
 
 
-SO_NODE_SOURCE(TLightShape);
+SO_NODE_SOURCE(TLightShape)
 
 void TLightShape::initClass()
 {
     SO_NODE_INIT_CLASS(TLightShape, SoShape, "Shape");
 }
 
-TLightShape::TLightShape( )
-:m_heightElements( 0 ),
- m_lightAreaMatrix( 0 ),
- m_widthElements( 0 )
+TLightShape::TLightShape():
+    m_heightElements( 0 ),
+    m_lightAreaMatrix( 0 ),
+    m_widthElements( 0 )
 {
     SO_NODE_CONSTRUCTOR(TLightShape);
     SO_NODE_ADD_FIELD( xMin, (-0.5) );

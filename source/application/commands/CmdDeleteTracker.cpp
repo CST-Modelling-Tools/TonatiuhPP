@@ -8,13 +8,13 @@
 #include "gui/SceneModel.h"
 #include "kernel/raytracing/TLightKit.h"
 #include "kernel/raytracing/TSeparatorKit.h"
-#include "kernel/raytracing/TTracker.h"
+#include "kernel/tracker/TTracker.h"
 
 /*!
  * Contructor.
  */
-CmdDeleteTracker::CmdDeleteTracker(const QModelIndex& selectedIndex, SoSceneKit* scene, SceneModel& model, QUndoCommand* parent)
-    : QUndoCommand("Delete", parent), m_tracker(0),  m_coinParent(0),  m_scene(scene), m_pModel(&model), m_row(0)
+CmdDeleteTracker::CmdDeleteTracker(const QModelIndex& selectedIndex, SoSceneKit* scene, SceneModel& model, QUndoCommand* parent):
+    QUndoCommand("Delete", parent), m_tracker(0),  m_coinParent(0),  m_scene(scene), m_pModel(&model), m_row(0)
 {
     //if( !m_scene->getPart("lightList[0]", false) )     gf::SevereError( "CmdDeleteTracker Null lightKit." );
 
@@ -30,7 +30,6 @@ CmdDeleteTracker::CmdDeleteTracker(const QModelIndex& selectedIndex, SoSceneKit*
     m_tracker->ref();
 
     m_row = instanceSelection->GetParent()->children.indexOf(instanceSelection);
-
 }
 
 /*!

@@ -6,9 +6,10 @@ class TTracker;
 
 
 
-class TTrackerFactory: public TFactory
+class TrackerFactory: public TFactory
 {
 public:
     virtual TTracker* create() const = 0;
 };
-Q_DECLARE_INTERFACE( TTrackerFactory, "tonatiuh.TTrackerFactory")
+
+Q_DECLARE_INTERFACE( TrackerFactory, "tonatiuh.TrackerFactory")

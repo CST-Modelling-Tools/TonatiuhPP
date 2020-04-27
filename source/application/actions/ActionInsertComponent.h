@@ -2,22 +2,22 @@
 
 #include <QAction>
 
-class TComponentFactory;
+class ComponentFactory;
 
 class ActionInsertComponent: public QAction
 {
     Q_OBJECT
 
 public:
-    ActionInsertComponent(const QString& text, QObject* parent, TComponentFactory* pTComponentFactory);
+    ActionInsertComponent(const QString& text, QObject* parent, ComponentFactory* pComponentFactory);
     ~ActionInsertComponent();
 
 signals:
-    void CreateComponent(TComponentFactory* pTComponentFactory);
+    void CreateComponent(ComponentFactory* pComponentFactory);
 
 public slots:
     void OnActionInsertComponentTriggered();
 
 private:
-    TComponentFactory* m_pTComponentFactory;
+    ComponentFactory* m_pComponentFactory;
 };

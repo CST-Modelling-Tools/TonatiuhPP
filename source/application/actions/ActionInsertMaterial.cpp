@@ -1,9 +1,9 @@
 #include "ActionInsertMaterial.h"
 
-#include "kernel/material/TMaterialFactory.h"
+#include "kernel/material/MaterialFactory.h"
 
 
-ActionInsertMaterial::ActionInsertMaterial(TMaterialFactory* factory, QObject* parent):
+ActionInsertMaterial::ActionInsertMaterial(MaterialFactory* factory, QObject* parent):
     QAction(parent),
     m_factory(factory)
 {

@@ -22,12 +22,12 @@ public:
 
 
 
-#include "kernel/air/TTransmissivityFactory.h"
+#include "kernel/air/AirFactory.h"
 
 class AirExponentFactory:
-    public QObject, public AirFactory<AirExponent>
+    public QObject, public AirFactoryT<AirExponent>
 {
     Q_OBJECT
-    Q_INTERFACES(TTransmissivityFactory)
-    Q_PLUGIN_METADATA(IID "tonatiuh.TTransmissivityFactory")
+    Q_INTERFACES(AirFactory)
+    Q_PLUGIN_METADATA(IID "tonatiuh.AirFactory")
 };

@@ -3,8 +3,8 @@
 /**
  * Constructor.
  */
-ActionInsertTracker::ActionInsertTracker( const QString& text, QObject* parent, TTrackerFactory* pTTrackerFactory )
-: QAction(text,parent), m_pTTrackerFactory(pTTrackerFactory)
+ActionInsertTracker::ActionInsertTracker( const QString& text, QObject* parent, TrackerFactory* pTrackerFactory )
+: QAction(text,parent), m_pTrackerFactory(pTrackerFactory)
 {
 }
 
@@ -20,5 +20,5 @@ ActionInsertTracker::~ActionInsertTracker()
  */
 void ActionInsertTracker::OnActionInsertTrackerTriggered()
 {
-    emit CreateTracker( m_pTTrackerFactory );
+    emit CreateTracker( m_pTrackerFactory );
 }

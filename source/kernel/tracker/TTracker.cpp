@@ -2,21 +2,21 @@
 
 #include "libraries/geometry/Transform.h"
 
-#include "TSceneKit.h"
+#include "kernel/raytracing/TSceneKit.h"
 #include "TTracker.h"
-#include "TLightKit.h"
-#include "geometry/tgc.h"
+#include "kernel/raytracing/TLightKit.h"
+//#include "geometry/tgc.h"
 
 
-SO_NODEENGINE_ABSTRACT_SOURCE(TTracker);
+SO_NODEENGINE_ABSTRACT_SOURCE(TTracker)
 
 void TTracker::initClass()
 {
     SO_NODEENGINE_INIT_ABSTRACT_CLASS(TTracker, SoNodeEngine, "NodeEngine");
 }
 
-TTracker::TTracker()
-    : m_scene(0)
+TTracker::TTracker():
+    m_scene(0)
 {
 }
 

@@ -6,17 +6,18 @@
 
 
 #include "TTracker.h"
-#include "trt.h"
+#include "kernel/raytracing/trt.h"
+
 
 class TONATIUH_KERNEL TTrackerForAiming :  public TTracker
 {
-    SO_NODEENGINE_ABSTRACT_HEADER( TTrackerForAiming );
+    SO_NODEENGINE_ABSTRACT_HEADER(TTrackerForAiming);
 
 public:
     static void initClass();
     enum AimingPointType{
         Absolute = 0,
-        Relative   = 1
+        Relative = 1
     };
 
     SoSFEnum typeOfAimingPoint;

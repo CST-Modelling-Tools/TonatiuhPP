@@ -2,7 +2,7 @@
 
 #include <QAction>
 
-class TTrackerFactory;
+class TrackerFactory;
 
 //! ActionInsertTracker class is the action to insert a tracker in the scene.
 /*!
@@ -14,16 +14,16 @@ class ActionInsertTracker : public QAction
     Q_OBJECT
 
 public:
-    ActionInsertTracker( const QString& text, QObject* parent, TTrackerFactory* pTTrackerFactory );
+    ActionInsertTracker( const QString& text, QObject* parent, TrackerFactory* pTrackerFactory );
     ~ActionInsertTracker();
     
 signals:
-    void CreateTracker( TTrackerFactory* pTTrackerFactory );
+    void CreateTracker( TrackerFactory* pTrackerFactory );
     
 public slots:
     void OnActionInsertTrackerTriggered();
     
 private:
-    TTrackerFactory* m_pTTrackerFactory;
+    TrackerFactory* m_pTrackerFactory;
     
 };

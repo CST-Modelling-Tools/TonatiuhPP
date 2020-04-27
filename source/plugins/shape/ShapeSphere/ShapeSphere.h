@@ -61,11 +61,11 @@ private:
 
 
 
-#include "kernel/shape/TShapeFactory.h"
+#include "kernel/shape/ShapeFactory.h"
 
-class ShapeSphereFactory: public QObject, public ShapeFactory<ShapeSphere>
+class ShapeSphereFactory: public QObject, public ShapeFactoryT<ShapeSphere>
 {
     Q_OBJECT
-    Q_INTERFACES(TShapeFactory)
-    Q_PLUGIN_METADATA(IID "tonatiuh.TShapeFactory")
+    Q_INTERFACES(ShapeFactory)
+    Q_PLUGIN_METADATA(IID "tonatiuh.ShapeFactory")
 };

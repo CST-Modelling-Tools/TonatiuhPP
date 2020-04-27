@@ -19,7 +19,7 @@ class QMutex;
 class QPoint;
 class PhotonMap;
 class TLightShape;
-class TSunShape;
+class SunShape;
 class TTransmissivity;
 
 
@@ -30,7 +30,7 @@ public:
     RayTracer(InstanceNode* rootNode,
               InstanceNode* sunNode,
               TLightShape* lightShape,
-              TSunShape* const lightSunShape,
+              SunShape* const lightSunShape,
               Transform lightToWorld,
               TTransmissivity* transmissivity,
               RandomDeviate& rand,
@@ -49,7 +49,7 @@ private:
     InstanceNode* m_rootNode;
     InstanceNode* m_sunNode;
     TLightShape* m_lightShape;
-    const TSunShape* m_lightSunShape;
+    const SunShape* m_lightSunShape;
     Transform m_lightToWorld;
     TTransmissivity* m_transmissivity;
     RandomDeviate* m_pRand;

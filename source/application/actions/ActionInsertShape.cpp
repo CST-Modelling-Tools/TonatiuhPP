@@ -1,9 +1,9 @@
 #include "ActionInsertShape.h"
 
-#include "kernel/shape/TShapeFactory.h"
+#include "kernel/shape/ShapeFactory.h"
 
 
-ActionInsertShape::ActionInsertShape(TShapeFactory* factory, QObject* parent):
+ActionInsertShape::ActionInsertShape(ShapeFactory* factory, QObject* parent):
     QAction(parent),
     m_factory(factory)
 {

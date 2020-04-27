@@ -6,18 +6,18 @@ class TMaterial;
 
 
 
-class TMaterialFactory: public TFactory
+class MaterialFactory: public TFactory
 {
 public: 
     virtual TMaterial* create() const = 0;
 };
 
-Q_DECLARE_INTERFACE(TMaterialFactory, "tonatiuh.TMaterialFactory")
+Q_DECLARE_INTERFACE(MaterialFactory, "tonatiuh.MaterialFactory")
 
 
 
 template<class T>
-class MaterialFactory: public TMaterialFactory
+class MaterialFactoryT: public MaterialFactory
 {
 public:
     QString name() const {return T::getClassName();}

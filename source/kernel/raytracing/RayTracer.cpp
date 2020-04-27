@@ -1,19 +1,19 @@
 #include <QPoint>
 
-#include "DifferentialGeometry.h"
+#include "kernel/shape/DifferentialGeometry.h"
 #include "kernel/random/ParallelRandomDeviate.h"
 #include "libraries/geometry/Ray.h"
 #include "RayTracer.h"
 #include "kernel/photons/PhotonMap.h"
 #include "TLightShape.h"
-#include "TSunShape.h"
+#include "kernel/sun/SunShape.h"
 #include "kernel/air/TTransmissivity.h"
 
 
 RayTracer::RayTracer(InstanceNode* rootNode,
                      InstanceNode* sunNode,
                      TLightShape* lightShape,
-                     TSunShape* const lightSunShape,
+                     SunShape* const lightSunShape,
                      Transform lightToWorld,
                      TTransmissivity* transmissivity,
                      RandomDeviate& rand,

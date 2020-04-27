@@ -9,11 +9,11 @@
 #include "kernel/random/RandomDeviate.h"
 
 
-class TONATIUH_KERNEL TSunShape: public SoNode
+class TONATIUH_KERNEL SunShape: public SoNode
 {
     typedef SoNode inherited;
 
-    SO_NODE_ABSTRACT_HEADER(TSunShape);
+    SO_NODE_ABSTRACT_HEADER(SunShape);
 
 public:
     static void initClass();
@@ -25,6 +25,6 @@ public:
     static const char* getClassName() {return "SunShape";}
 
 protected:
-    TSunShape() {}
-    virtual ~TSunShape() {}
+    SunShape() {}
+    virtual ~SunShape() {}
 };

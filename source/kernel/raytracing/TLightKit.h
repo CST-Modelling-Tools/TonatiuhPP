@@ -11,7 +11,7 @@
 
 
 #include "trt.h"
-#include "TSunShape.h"
+#include "kernel/sun/SunShape.h"
 
 struct BBox;
 class Transform;
@@ -45,7 +45,7 @@ class TShapeKit;
         "light",  SoLight  --- , (default type = SoDirectionalLight)
   PVT   "iconSeparator",  SoSeparator  ---
         "icon",  SoNode  --- , (default type = SoCube)
-        "tsunshape",  TSunShape  --- , (default type = TDefaultSunShape)
+        "tsunshape",  SunShape  --- , (default type = TDefaultSunShape)
   \endverbatim
 
 */
@@ -61,7 +61,7 @@ public:
     TLightKit();
     static void initClass();
 
-    void ChangePosition( double newAzimuth, double newZenith );
+    void ChangePosition(double newAzimuth, double newZenith);
 
     void Update(BBox box);
     void ComputeLightSourceArea( int widthDivisions,int heightDivisions,QVector< QPair< TShapeKit*, Transform > > surfacesList );

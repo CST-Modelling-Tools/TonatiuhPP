@@ -6,26 +6,26 @@
 #include "libraries/geometry/gc.h"
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Transform.h"
-#include "kernel/raytracing/DifferentialGeometry.h"
+#include "kernel/shape/DifferentialGeometry.h"
 #include "kernel/random/RandomDeviate.h"
-#include "kernel/geometry/tgf.h"
+#include "kernel/tgf.h"
 
 
-SO_NODE_SOURCE(MaterialStandardSpecular);
+SO_NODE_SOURCE(MaterialStandardSpecular)
 
 void MaterialStandardSpecular::initClass()
 {
     SO_NODE_INIT_CLASS(MaterialStandardSpecular, TMaterial, "Material");
 }
 
-MaterialStandardSpecular::MaterialStandardSpecular()
-    : m_sigmaOpt(0)
+MaterialStandardSpecular::MaterialStandardSpecular():
+    m_sigmaOpt(0)
 {
     SO_NODE_CONSTRUCTOR(MaterialStandardSpecular);
     SO_NODE_ADD_FIELD(m_reflectivity, (0.0) );
     SO_NODE_ADD_FIELD(m_sigmaSlope, (2.0) );
 
-	//SO_NODE_DEFINE_ENUM_VALUE(Distribution, PILLBOX);
+    //SO_NODE_DEFINE_ENUM_VALUE(Distribution, PILLBOX);
     SO_NODE_DEFINE_ENUM_VALUE(Distribution, NORMAL);
     SO_NODE_SET_SF_ENUM_TYPE(m_distribution, Distribution);
     SO_NODE_ADD_FIELD(m_distribution, (NORMAL) );
@@ -63,13 +63,13 @@ MaterialStandardSpecular::MaterialStandardSpecular()
 
 MaterialStandardSpecular::~MaterialStandardSpecular()
 {
-	delete m_reflectivitySensor;
-	delete m_ambientColorSensor;
-	delete m_diffuseColorSensor;
-	delete m_specularColorSensor;
-	delete m_emissiveColorSensor;
-	delete m_shininessSensor;
-	delete m_transparencySensor;
+    delete m_reflectivitySensor;
+    delete m_ambientColorSensor;
+    delete m_diffuseColorSensor;
+    delete m_specularColorSensor;
+    delete m_emissiveColorSensor;
+    delete m_shininessSensor;
+    delete m_transparencySensor;
 }
 
 QString MaterialStandardSpecular::getIcon()
@@ -122,20 +122,20 @@ void MaterialStandardSpecular::updateTransparency(void* data, SoSensor*)
 
 bool MaterialStandardSpecular::OutputRay(const Ray& incident, DifferentialGeometry* dg, RandomDeviate& rand, Ray* outputRay) const
 {
-	double randomNumber = rand.RandomDouble();
+    double randomNumber = rand.RandomDouble();
     if (randomNumber >= m_reflectivity.getValue() ) return false;
 
-	//Compute reflected ray (local coordinates )
-	outputRay->origin = dg->point;
+    //Compute reflected ray (local coordinates )
+    outputRay->origin = dg->point;
 
-	NormalVector normalVector;
+    NormalVector normalVector;
     double sigmaSlope = m_sigmaSlope.getValue() / 1000.; // from mrad to rad
     if (sigmaSlope > 0.) {
-		NormalVector errorNormal;
+        NormalVector errorNormal;
         if (m_distribution.getValue() == 0)
         { // pillbox
-			double phi = gc::TwoPi * rand.RandomDouble();
-			double theta = sigmaSlope * rand.RandomDouble();
+            double phi = gc::TwoPi * rand.RandomDouble();
+            double theta = sigmaSlope * rand.RandomDouble();
 
             errorNormal.x = sin(theta) * sin(phi);
             errorNormal.y = cos(theta);
@@ -147,15 +147,14 @@ bool MaterialStandardSpecular::OutputRay(const Ray& incident, DifferentialGeomet
             errorNormal.y = 1.;
             errorNormal.z = sigmaSlope * tgf::AlternateBoxMuller(rand);
         }
-		Vector3D r = dg->normal;
+        Vector3D r = dg->normal;
         Vector3D s = Normalize(dg->dpdu);
         Vector3D t = Normalize(dg->dpdv);
         normalVector = Normalize(NormalVector(s*errorNormal.x + r*errorNormal.y + t*errorNormal.z));
     } else
-		normalVector = dg->normal;
-
+        normalVector = dg->normal;
 
     double cosTheta = DotProduct(normalVector, incident.direction() );
     outputRay->setDirection(Normalize(incident.direction() - 2. * normalVector * cosTheta) );
-	return true;
+    return true;
 }

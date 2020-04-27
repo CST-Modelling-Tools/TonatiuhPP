@@ -14,7 +14,7 @@
 #include "libraries/geometry/BBox.h"
 #include "libraries/geometry/Ray.h"
 
-#include "kernel/raytracing/DifferentialGeometry.h"
+#include "kernel/shape/DifferentialGeometry.h"
 #include "ShapeSphere.h"
 
 SO_NODE_SOURCE(ShapeSphere)

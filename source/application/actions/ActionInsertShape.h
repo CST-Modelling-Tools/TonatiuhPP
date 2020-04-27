@@ -2,7 +2,7 @@
 
 #include <QAction>
 
-class TShapeFactory;
+class ShapeFactory;
 
 
 //!  ActionInsertShape class is the action to insert a shape in the scene.
@@ -14,14 +14,14 @@ class ActionInsertShape: public QAction
     Q_OBJECT
 
 public:
-    ActionInsertShape(TShapeFactory* factory, QObject* parent);
+    ActionInsertShape(ShapeFactory* factory, QObject* parent);
 
 public slots:
     void onTriggered();
 
 signals:
-    void CreateShape(TShapeFactory* factory);
+    void CreateShape(ShapeFactory* factory);
 
 private:
-    TShapeFactory* m_factory;
+    ShapeFactory* m_factory;
 };

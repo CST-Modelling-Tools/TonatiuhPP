@@ -1,16 +1,15 @@
 #include "TTrackerForAiming.h"
-#include "TSceneKit.h"
+#include "kernel/raytracing/TSceneKit.h"
 #include "libraries/geometry/Transform.h"
-#include "trf.h"
+#include "kernel/raytracing/trf.h"
 
 
-SO_NODEENGINE_ABSTRACT_SOURCE( TTrackerForAiming );
+SO_NODEENGINE_ABSTRACT_SOURCE(TTrackerForAiming)
+
 
 void TTrackerForAiming::initClass()
 {
-
-
-    SO_NODEENGINE_INIT_ABSTRACT_CLASS( TTrackerForAiming, TTracker, "TTracker" );
+    SO_NODEENGINE_INIT_ABSTRACT_CLASS(TTrackerForAiming, TTracker, "TTracker");
 }
 
 TTrackerForAiming::TTrackerForAiming()
@@ -24,7 +23,6 @@ TTrackerForAiming::TTrackerForAiming()
     SoFieldSensor* m_infoDisplayed = new SoFieldSensor( updateTypeOfAimingPoint, this );
     m_infoDisplayed->attach( &typeOfAimingPoint );*/
 }
-
 
 TTrackerForAiming::~TTrackerForAiming()
 {

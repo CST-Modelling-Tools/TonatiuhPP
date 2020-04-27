@@ -9,10 +9,10 @@
 
 #include "gui/GraphicRootTracker.h"
 #include "gui/MainWindow.h"
-#include "kernel/shape/TCube.h"
+#include "kernel/shape/ShapeCube.h"
 #include "kernel/material/TDefaultMaterial.h"
-#include "kernel/raytracing/TDefaultSunShape.h"
-#include "kernel/raytracing/TDefaultTracker.h"
+#include "kernel/sun/TDefaultSunShape.h"
+#include "kernel/tracker/TDefaultTracker.h"
 #include "kernel/air/TDefaultTransmissivity.h"
 #include "kernel/raytracing/TLightKit.h"
 #include "kernel/raytracing/TLightShape.h"
@@ -20,8 +20,8 @@
 #include "kernel/raytracing/TSceneTracker.h"
 #include "kernel/raytracing/TSeparatorKit.h"
 #include "kernel/raytracing/TShapeKit.h"
-#include "kernel/shape/TSquare.h"
-#include "kernel/raytracing/TTrackerForAiming.h"
+#include "kernel/shape/ShapeSquare.h"
+#include "kernel/tracker/TTrackerForAiming.h"
 #include "kernel/air/TTransmissivity.h"
 #include "libraries/fields/UserMField.h"
 #include "libraries/fields/UserSField.h"
@@ -94,7 +94,7 @@ int main(int argc, char** argv)
     TLightShape::initClass();
     TShapeKit::initClass();
     TLightKit::initClass();
-    TSunShape::initClass();
+    SunShape::initClass();
     TDefaultSunShape::initClass();
     TTracker::initClass();
     TTrackerForAiming::initClass();
@@ -104,9 +104,7 @@ int main(int argc, char** argv)
     TTransmissivity::initClass();
     TDefaultTransmissivity::initClass();
 
-
     splash->showMessage(QObject::tr("Setting up the main window..."), topRight, Qt::black);
-
 
     QDir pluginsDirectory(qApp->applicationDirPath() );
     pluginsDirectory.cd("plugins");
@@ -119,7 +117,7 @@ int main(int argc, char** argv)
         QString tonatiuhFile = argv[1];
 
         QFileInfo fileInfo(tonatiuhFile);
-        if (fileInfo.completeSuffix() == QLatin1String("tnhs") )
+        if (fileInfo.completeSuffix() == "tnhs")
         {
             QString fileName(argv[1]);
             QFileInfo fileInfo(fileName);

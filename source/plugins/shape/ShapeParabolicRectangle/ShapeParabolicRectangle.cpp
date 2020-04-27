@@ -10,7 +10,7 @@
 #include "libraries/geometry/gf.h"
 
 #include "libraries/geometry/BBox.h"
-#include "kernel/raytracing/DifferentialGeometry.h"
+#include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/Ray.h"
 #include "ShapeParabolicRectangle.h"
 #include "libraries/geometry/Vector3D.h"

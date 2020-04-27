@@ -2,7 +2,7 @@
 
 #include <QAction>
 
-class TMaterialFactory;
+class MaterialFactory;
 
 
 //!  ActionInsertMaterial class is the action to insert material in the scene.
@@ -14,14 +14,14 @@ class ActionInsertMaterial: public QAction
     Q_OBJECT
 
 public:
-    ActionInsertMaterial(TMaterialFactory* factory, QObject* parent);
+    ActionInsertMaterial(MaterialFactory* factory, QObject* parent);
 
 public slots:
     void onTriggered();
 
 signals:
-    void CreateMaterial(TMaterialFactory* factory);
+    void CreateMaterial(MaterialFactory* factory);
 
 private:
-    TMaterialFactory* m_factory;
+    MaterialFactory* m_factory;
 };

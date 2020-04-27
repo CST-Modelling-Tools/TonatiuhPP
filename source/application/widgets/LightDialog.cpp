@@ -10,8 +10,8 @@
 #include "kernel/raytracing/TLightKit.h"
 #include "kernel/shape/TShape.h"
 #include "kernel/raytracing/TShapeKit.h"
-#include "kernel/shape/TShapeFactory.h"
-#include "kernel/raytracing/TSunFactory.h"
+#include "kernel/shape/ShapeFactory.h"
+#include "kernel/sun/SunFactory.h"
 
 /**
  * Creates a new dialog for the light definition.
@@ -20,7 +20,7 @@
  * aperture and shows the the light parameters defined in the light \a currentLightKit.
  */
 
-LightDialog::LightDialog( SceneModel& sceneModel, TLightKit* currentLightKit, QVector< TSunFactory* > sunshapeFactoryList, QWidget* parent ):
+LightDialog::LightDialog( SceneModel& sceneModel, TLightKit* currentLightKit, QVector< SunFactory* > sunshapeFactoryList, QWidget* parent ):
     QDialog(parent),
     m_currentLightKit(currentLightKit),
     m_currentSceneModel(&sceneModel),
@@ -39,7 +39,7 @@ LightDialog::LightDialog( SceneModel& sceneModel, TLightKit* currentLightKit, QV
 
     if( currentLightKit )
     {
-        if( currentLightKit->getPart( "tsunshape", false ) )    m_newSunShape = static_cast< TSunShape* >( currentLightKit->getPart( "tsunshape", false )->copy( true ) );
+        if( currentLightKit->getPart( "tsunshape", false ) )    m_newSunShape = static_cast< SunShape* >( currentLightKit->getPart( "tsunshape", false )->copy( true ) );
     }
 
     SetupSunSizeTab();
@@ -116,10 +116,10 @@ void LightDialog::ChangeSunshape( int index )
 {
     while( (m_newSunShape!=0) && m_newSunShape->getRefCount() > 0 )    m_newSunShape->unref();
     if( index == 0 ) m_newSunShape = 0;
-    else if( index == m_currentSunShapeIndex)    m_newSunShape = static_cast< TSunShape* >( m_currentLightKit->getPart( "tsunshape", false )->copy( true ) );
+    else if( index == m_currentSunShapeIndex)    m_newSunShape = static_cast< SunShape* >( m_currentLightKit->getPart( "tsunshape", false )->copy( true ) );
     else
     {
-        TSunFactory* sunshapeFactory = m_sunshapeList.value( sunshapeCombo->itemData( index ).toString() );
+        SunFactory* sunshapeFactory = m_sunshapeList.value( sunshapeCombo->itemData( index ).toString() );
         m_newSunShape = sunshapeFactory->create();
 
     }
@@ -215,7 +215,7 @@ void LightDialog::SunshapeBox()
     connect( sunshapeCombo, SIGNAL( activated( int ) ), this, SLOT( ChangeSunshape( int ) ) );
 
     //Add elements to sunshape combo
-    QList< TSunFactory* > sunShapeFactoryList = m_sunshapeList.values();
+    QList< SunFactory* > sunShapeFactoryList = m_sunshapeList.values();
     sunshapeCombo->addItem ( "---" );
     for( int i = 0; i < sunShapeFactoryList.size(); ++i )
         sunshapeCombo->addItem( sunShapeFactoryList[i]->icon(), sunShapeFactoryList[i]->name(),m_sunshapeList.key( sunShapeFactoryList[i] ) );

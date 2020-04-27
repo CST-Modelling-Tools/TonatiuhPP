@@ -10,7 +10,7 @@
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Vector3D.h"
 
-#include "kernel/raytracing/DifferentialGeometry.h"
+#include "kernel/shape/DifferentialGeometry.h"
 #include "ShapeCylinder.h"
 
 SO_NODE_SOURCE(ShapeCylinder);

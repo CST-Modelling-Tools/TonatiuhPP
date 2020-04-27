@@ -11,9 +11,9 @@
 /*!
  * Creates an action object with \a text and \a parent as parent object.
  */
-ActionInsertComponent::ActionInsertComponent( const QString& text, QObject* parent, TComponentFactory* pTComponentFactory )
+ActionInsertComponent::ActionInsertComponent( const QString& text, QObject* parent, ComponentFactory* pComponentFactory )
 :QAction( text, parent ),
- m_pTComponentFactory( pTComponentFactory )
+ m_pComponentFactory( pComponentFactory )
 
 {
 
@@ -32,5 +32,5 @@ ActionInsertComponent::~ActionInsertComponent()
  */
 void ActionInsertComponent::OnActionInsertComponentTriggered()
 {
-    emit CreateComponent( m_pTComponentFactory );
+    emit CreateComponent( m_pComponentFactory );
 }

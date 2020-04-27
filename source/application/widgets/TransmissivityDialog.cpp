@@ -8,10 +8,10 @@
 
 #include "TransmissivityDialog.h"
 #include "kernel/air/TTransmissivity.h"
-#include "kernel/air/TTransmissivityFactory.h"
+#include "kernel/air/AirFactory.h"
 
 
-TransmissivityDialog::TransmissivityDialog(QVector<TTransmissivityFactory*> transmissivityFactoryList, QWidget* parent, Qt::WindowFlags f):
+TransmissivityDialog::TransmissivityDialog(QVector<AirFactory*> transmissivityFactoryList, QWidget* parent, Qt::WindowFlags f):
     QDialog(parent, f),
     m_currentTransmissivityIndex(-1),
     m_newTransmissivity(0)
@@ -76,7 +76,7 @@ void TransmissivityDialog::ChangeTransmissivityType(int index)
         m_newTransmissivity = static_cast< TTransmissivity* >(m_currentTransmissivity->copy(true) );
     else
     {
-        TTransmissivityFactory* transmissivityFactory = m_transmissivityFactoryList.value(transmissivityCombo->itemData(index).toString() );
+        AirFactory* transmissivityFactory = m_transmissivityFactoryList.value(transmissivityCombo->itemData(index).toString() );
         m_newTransmissivity = transmissivityFactory->create();
 
     }
