@@ -20,7 +20,6 @@ public:
 	BBox GetBBox() const;
 
     bool Intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
-    bool IntersectP(const Ray& ray) const;
 
 	trt::TONATIUH_REAL radius;
 	trt::TONATIUH_REAL length;
@@ -36,7 +35,6 @@ protected:
     Vector3D GetNormal(double u, double v) const;
 
     void generatePrimitives(SoAction* action);
-    void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
 	virtual ~ShapeCylinder();
 };
 

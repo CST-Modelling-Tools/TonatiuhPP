@@ -37,15 +37,6 @@ ShapeParabolicRectangle::ShapeParabolicRectangle()
 	SO_NODE_ADD_FIELD( activeSide, (OUTSIDE) );
 }
 
-ShapeParabolicRectangle::~ShapeParabolicRectangle()
-{
-}
-
-double ShapeParabolicRectangle::GetArea() const
-{
-	return -1;
-}
-
 BBox ShapeParabolicRectangle::GetBBox() const
 {
 	double xmin = -widthX.getValue()/2;
@@ -128,11 +119,6 @@ bool ShapeParabolicRectangle::Intersect(const Ray& objectRay, double *tHit, Diff
 	return true;
 }
 
-bool ShapeParabolicRectangle::IntersectP(const Ray& objectRay) const
-{
-    return Intersect(objectRay, 0, 0);
-}
-
 Point3D ShapeParabolicRectangle::Sample(double u, double v) const
 {
     return GetPoint3D(u, v);
@@ -154,115 +140,15 @@ Vector3D ShapeParabolicRectangle::GetNormal( double u, double v ) const
 	Vector3D dpdv( 0.0, (( -0.5 + v) * widthZ.getValue() *  widthZ.getValue() ) /( 2 * focusLength.getValue() ), widthZ.getValue() );
     return Normalize(CrossProduct(dpdu, dpdv));
 }
-void ShapeParabolicRectangle::computeBBox( SoAction*, SbBox3f& box, SbVec3f& /*center*/ )
+
+void ShapeParabolicRectangle::generatePrimitives(SoAction* action)
 {
-	BBox bBox = GetBBox();
-	// These points define the min and max extents of the box.
-	SbVec3f min, max;
+    double q = 2.*focusLength.getValue()*gc::Degree;
+    int rows = 1 + ceil(widthX.getValue()/q);
+    int columns = 1 + ceil(widthZ.getValue()/q);
 
-	min.setValue( bBox.pMin.x, bBox.pMin.y, bBox.pMin.z );
-	max.setValue( bBox.pMax.x, bBox.pMax.y, bBox.pMax.z );;
+    if (rows > 36) rows = 36;
+    if (columns > 36) columns = 36;
 
-	// Set the box to bound the two extreme points.
-	box.setBounds(min, max);
-}
-
-void ShapeParabolicRectangle::generatePrimitives(SoAction *action)
-{
-    SoPrimitiveVertex   pv;
-    SoState  *state = action->getState();
-
-    SbBool useTexFunc = ( SoTextureCoordinateElement::getType(state) ==
-                          SoTextureCoordinateElement::FUNCTION );
-
-    const SoTextureCoordinateElement* tce = 0;
-    if ( useTexFunc ) tce = SoTextureCoordinateElement::getInstance(state);
-
-
-    SbVec3f  point;
- 	const int rows = 12; // Number of points per row
-    const int columns = 12; // Number of points per column
-    const int totalPoints = (rows)*(columns); // Total points in the grid
-
-    float vertex[totalPoints][6];
-
-    int h = 0;
-    double ui = 0;
-	double vj = 0;
-
-    for (int i = 0; i < rows; ++i )
-    {
-    	ui =( 1.0 /(double)(rows-1) ) * i;
-
-    	for ( int j = 0 ; j < columns ; ++j )
-    	{
-    		vj = ( 1.0 /(double)(columns-1) ) * j;
-
-    		Point3D point = GetPoint3D(ui, vj);
-            Vector3D normal;
-    		if( activeSide.getValue() == 0 )	normal = -GetNormal(ui, vj);
-    		else	normal = GetNormal(ui, vj);
-
-    		vertex[h][0] = point.x;
-    		vertex[h][1] = point.y;
-    		vertex[h][2] = point.z;
-    		vertex[h][3] = normal.x;
-    		vertex[h][4] = normal.y;
-    		vertex[h][5] = normal.z;
-
-    		pv.setPoint( vertex[h][0], vertex[h][1], vertex[h][2] );
-    		h++; //Increase h to the next point.
-
-    	}
-    }
-
-    float u = 1;
-    float v = 1;
-    beginShape(action, QUADS );
-	for( int irow = 0; irow < (rows-1); ++irow )
-	{
-		for( int icolumn = 0; icolumn < (columns-1); ++icolumn )
-		{
-			int index0 = irow*columns + icolumn;
-			SbVec3f  point0( vertex[index0][0], vertex[index0][1],  vertex[index0][2] );
-			SbVec3f normal0(vertex[index0][3], vertex[index0][4], vertex[index0][5] );
-			SbVec4f texCoord0 = useTexFunc ? tce->get(point0, normal0): SbVec4f( u,v, 0.0, 1.0 );
-			pv.setPoint(point0);
-			pv.setNormal(normal0);
-			pv.setTextureCoords(texCoord0);
-			shapeVertex(&pv);
-
-			int index1 = index0 + 1;
-			SbVec3f  point1( vertex[index1][0], vertex[index1][1],  vertex[index1][2] );
-			SbVec3f normal1(vertex[index1][3], vertex[index1][4], vertex[index1][5] );
-			SbVec4f texCoord1 = useTexFunc ? tce->get(point1, normal1): SbVec4f( u,v, 0.0, 1.0 );
-			pv.setPoint(point1);
-			pv.setNormal(normal1);
-			pv.setTextureCoords(texCoord1);
-			shapeVertex(&pv);
-
-			int index3 = index0 + columns;
-			int index2 = index3 + 1;
-
-			SbVec3f  point2( vertex[index2][0], vertex[index2][1],  vertex[index2][2] );
-			SbVec3f normal2(vertex[index2][3], vertex[index2][4], vertex[index2][5] );
-			SbVec4f texCoord2 = useTexFunc ? tce->get(point2, normal2): SbVec4f( u,v, 0.0, 1.0 );
-			pv.setPoint(point2);
-			pv.setNormal(normal2);
-			pv.setTextureCoords(texCoord2);
-			shapeVertex(&pv);
-
-			SbVec3f  point3( vertex[index3][0], vertex[index3][1],  vertex[index3][2] );
-			SbVec3f normal3(vertex[index3][3], vertex[index3][4], vertex[index3][5] );
-			SbVec4f texCoord3 = useTexFunc ? tce->get(point3, normal3): SbVec4f( u,v, 0.0, 1.0 );
-			pv.setPoint(point3);
-			pv.setNormal(normal3);
-			pv.setTextureCoords(texCoord3);
-			shapeVertex(&pv);
-
-		}
-	}
-
-	endShape();
-
+    generateQuads(action, QSize(rows, columns), activeSide.getValue() == Side::OUTSIDE);
 }

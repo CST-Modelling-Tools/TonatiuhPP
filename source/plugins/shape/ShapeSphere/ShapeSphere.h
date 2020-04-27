@@ -20,45 +20,44 @@ public:
     static void initClass();
     SoNode* copy(SbBool copyConnections) const;
 
+    bool Intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
+
     double GetArea() const;
     double GetVolume() const;
     BBox GetBBox() const;
-
-    bool Intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
-    bool IntersectP(const Ray& ray) const;
-
-    trt::TONATIUH_REAL radius;
-    trt::TONATIUH_REAL yMax;
-    trt::TONATIUH_REAL yMin;
-    trt::TONATIUH_REAL phiMax;
-    SoSFEnum activeSide;
 
     static const char* getClassName() {return "Sphere";}
     static const char* getClassIcon() {return ":/ShapeSphere.png";}
     const char* getIcon() const {return getClassIcon();}
 
 protected:
-    static void updateRadius(void* data, SoSensor*);
-    static void updateYMin(void* data, SoSensor*);
-    static void updateYMax(void* data, SoSensor*);
-    static void updatePhiMax(void* data, SoSensor*);
+    ~ShapeSphere();
 
     Point3D GetPoint3D(double u, double v) const;
     Vector3D GetNormal(double u, double v) const;
-
-    void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
     void generatePrimitives(SoAction* action);
-    ~ShapeSphere();
+
+    static void update_radius(void* data, SoSensor*);
+    static void update_yMin(void* data, SoSensor*);
+    static void update_yMax(void* data, SoSensor*);
+    static void update_phiMax(void* data, SoSensor*);
+
+public:
+    trt::TONATIUH_REAL radius;
+    trt::TONATIUH_REAL yMax;
+    trt::TONATIUH_REAL yMin;
+    trt::TONATIUH_REAL phiMax;
+    SoSFEnum activeSide;
 
 private:
-    double m_lastValidRadius;
-    double m_lastValidYMax;
-    double m_lastValidYMin;
+    double m_radiusOld;
+    double m_yMaxOld;
+    double m_yMinOld;
 
-    SoFieldSensor* m_radiusSensor;
-    SoFieldSensor* m_yMinSensor;
-    SoFieldSensor* m_yMaxSensor;
-    SoFieldSensor* m_phiMaxSensor;
+    SoFieldSensor* m_sensor_radius;
+    SoFieldSensor* m_sensor_yMin;
+    SoFieldSensor* m_sensor_yMax;
+    SoFieldSensor* m_sensor_phiMax;
 };
 
 
