@@ -80,17 +80,6 @@ TLightKit* LightDialog::getLightKit()
     return lightKit;
 }
 
-/*!
- *
- */
-void LightDialog::accept()
-{
-    if (sunshapeCombo->currentIndex() == 0)
-        QMessageBox::warning(this, "Tonatiuh", "You must select a sunshape type.", QMessageBox::Ok);
-    else
-        QDialog::accept();
-}
-
 void LightDialog::SetValue(SoNode* node, QString paramenterName, QString newValue)
 {
     if(paramenterName=="irradiance"){
@@ -115,9 +104,7 @@ void LightDialog::ChangeSunshape(int index)
     while (m_sunNew && m_sunNew->getRefCount() > 0)
         m_sunNew->unref();
 
-    if (index == 0)
-        m_sunNew = 0;
-    else if (index == m_currentSunShapeIndex)
+    if (index == m_currentSunShapeIndex)
         m_sunNew = static_cast<SunAbstract*>(m_lightKitOld->getPart("tsunshape", false)->copy(true));
     else {
         SunFactory* f = m_sunShapeMap[sunshapeCombo->itemText(index)];
@@ -167,7 +154,7 @@ void LightDialog::makeSunShapeTab()
     );
 
     QList<SunFactory*> sunFactories = m_sunShapeMap.values();
-    sunshapeCombo->addItem("---");
+//    sunshapeCombo->addItem("---");
     for (SunFactory* f : sunFactories)
         sunshapeCombo->addItem(f->icon(), f->name());
 

@@ -33,7 +33,6 @@ public:
     TLightKit* getLightKit();
 
 public slots:
-    void accept();
     void SetValue(SoNode* node, QString paramenterName, QString newValue);
 
 protected slots:

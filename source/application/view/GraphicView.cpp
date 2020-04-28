@@ -29,10 +29,14 @@ GraphicView::~GraphicView()
 
 void GraphicView::SetSceneGraph(GraphicRoot* sceneGraphRoot)
 {
-
     m_sceneGraphRoot = sceneGraphRoot;
     m_myRenderArea = new SoQtExaminerViewer(this);
-    m_myRenderArea->setGLRenderAction(new SoBoxHighlightRenderAction() );
+
+    SoBoxHighlightRenderAction* highlighter = new SoBoxHighlightRenderAction();
+    highlighter->setColor(SbColor(100/255., 180/255., 120/255.));
+    highlighter->setLineWidth(1.);
+    m_myRenderArea->setGLRenderAction(highlighter);
+
     m_myRenderArea->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
     m_myRenderArea->setSceneGraph(m_sceneGraphRoot->GetNode() );
 

@@ -88,7 +88,7 @@ void FieldContainerWidget::SetContainer(SoNode* fieldContainer, QString containe
     m_containerName = containerName;
 
     if (m_pFieldContainer) ReadFields();
-    resizeColumnToContents (1);
+    resizeColumnToContents(1);
 }
 
 /**

@@ -144,7 +144,7 @@
     </property>
     <addaction name="actionAxis"/>
     <addaction name="actionBackground"/>
-    <addaction name="actionEdit_Mode"/>
+    <addaction name="actionDisplayRays"/>
     <addaction name="separator"/>
     <addaction name="action_X_Y_Plane"/>
     <addaction name="action_X_Z_Plane"/>
@@ -152,8 +152,9 @@
     <addaction name="actionSunPlane"/>
     <addaction name="separator"/>
     <addaction name="actionGrid"/>
-    <addaction name="actionDisplayRays"/>
     <addaction name="actionGridSettings"/>
+    <addaction name="separator"/>
+    <addaction name="actionEdit_Mode"/>
    </widget>
    <widget class="QMenu" name="menuInsert">
     <property name="title">
@@ -311,7 +312,7 @@
    <addaction name="action_X_Z_Plane"/>
    <addaction name="actionSunPlane"/>
    <addaction name="separator"/>
-   <addaction name="actionGridSettings"/>
+   <addaction name="actionGrid"/>
   </widget>
   <widget class="QToolBar" name="raytraceToolBar">
    <property name="windowTitle">
@@ -617,6 +618,9 @@
    </property>
    <property name="text">
     <string>Grid</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
    </property>
   </action>
   <action name="actionBackground">

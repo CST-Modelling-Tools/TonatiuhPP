@@ -2664,7 +2664,7 @@ void MainWindow::CreateShape(ShapeFactory* factory)
  * Creates a shape node from the \a pTrackerFactory as current selected node child.
  *
  */
-void MainWindow::CreateShape(ShapeFactory* pShapeFactory, int numberofParameters, QVector< QVariant > parametersList)
+void MainWindow::CreateShape(ShapeFactory* pShapeFactory, int /*numberofParameters*/, QVector< QVariant > parametersList)
 {
     QModelIndex parentIndex = ((!sceneModelView->currentIndex().isValid() ) || (sceneModelView->currentIndex() == sceneModelView->rootIndex())) ?
                 m_sceneModel->index (0,0,sceneModelView->rootIndex()) : sceneModelView->currentIndex();
