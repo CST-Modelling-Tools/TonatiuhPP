@@ -28,9 +28,7 @@ public:
 	trt::TONATIUH_REAL widthZ;
 	SoSFEnum activeSide;
 
-    static const char* getClassName() {return "ParabolicRectangle";}
-    static const char* getClassIcon() {return ":/ShapeParabolicRectangle.png";}
-    const char* getIcon() const {return getClassIcon();}
+    NAME_ICON_FUNCTIONS("ParabolicRectangle", ":/ShapeParabolicRectangle.png")
 
 protected:
     Point3D GetPoint3D (double u, double v) const;

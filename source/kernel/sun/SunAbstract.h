@@ -1,6 +1,7 @@
 #pragma once
 
 #include "kernel/TonatiuhKernel.h"
+#include "kernel/raytracing/TAbstract.h"
 #include <Inventor/nodes/SoNode.h>
 #include <Inventor/nodes/SoSubNode.h>
 #include <Inventor/fields/SoSFDouble.h>
@@ -22,7 +23,7 @@ public:
     virtual double GetIrradiance() const = 0;
     virtual double GetThetaMax() const = 0;
 
-    static const char* getClassName() {return "SunShape";}
+    NAME_ICON_FUNCTIONS("X", ":/SunX.png")
 
 protected:
     SunAbstract() {}

@@ -8,7 +8,7 @@ SO_NODE_SOURCE(SunPillbox)
 
 void SunPillbox::initClass()
 {
-    SO_NODE_INIT_CLASS(SunPillbox, SunAbstract, "SunShape");
+    SO_NODE_INIT_CLASS(SunPillbox, SunAbstract, "SunAbstract");
 }
 
 SunPillbox::SunPillbox()

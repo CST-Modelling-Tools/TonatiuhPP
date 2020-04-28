@@ -12,12 +12,12 @@ SO_NODE_SOURCE(SunBuie)
 
 void SunBuie::initClass()
 {
-    SO_NODE_INIT_CLASS(SunBuie, SunAbstract, "SunShape");
+    SO_NODE_INIT_CLASS(SunBuie, SunAbstract, "SunAbstract");
 }
 
 SunBuie::SunBuie()
 {
-    SO_NODE_CONSTRUCTOR( SunBuie );
+    SO_NODE_CONSTRUCTOR(SunBuie);
     SO_NODE_ADD_FIELD( irradiance, (1000.) );
     SO_NODE_ADD_FIELD( csr, (0.02) );
 

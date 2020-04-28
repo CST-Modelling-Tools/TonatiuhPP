@@ -50,7 +50,7 @@ class TShapeKit;
 
 */
 
-class TONATIUH_KERNEL TLightKit : public SoLightKit
+class TONATIUH_KERNEL TLightKit: public SoLightKit
 {
     SO_KIT_HEADER(TLightKit);
     SO_KIT_CATALOG_ENTRY_HEADER(iconMaterial);

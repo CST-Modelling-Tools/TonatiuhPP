@@ -13,34 +13,36 @@
  * If the model has not previous light a light node is added to \a sceneModel.
  */
 
-CmdLightKitModified::CmdLightKitModified(TLightKit* newLightKit, SoSceneKit* scene, SceneModel& sceneModel, QUndoCommand* parent)
-    : QUndoCommand("Modify LightKit", parent),
-      m_previousLightKit(false),
-      m_previousAzimuth(0),
-      m_previousDisbleNodes(""),
-      m_previousZenith(0),
-      m_pPreviousSunShape(0),
-      m_pNewLightKit(0),
-      m_scene(scene),
-      m_pModel(&sceneModel)
+CmdLightKitModified::CmdLightKitModified(
+    TLightKit* lightKitNew,
+    SoSceneKit* sceneKit,
+    SceneModel& sceneModel,
+    QUndoCommand* parent
+):
+    QUndoCommand("Modify LightKit", parent),
+    m_hasOld(false),
+    m_lightKitNew(0),
+    m_sunShapeOld(0),
+    m_azimuthOld(0),
+    m_zenithOld(0),
+    m_nodesOld(""),
+    m_sceneKit(sceneKit),
+    m_sceneModel(&sceneModel)
 {
-    if (newLightKit == 0) gf::SevereError("CmdLightKitModified called with NULL TLightKit*");
-    m_pNewLightKit = static_cast< TLightKit* >(newLightKit->copy(true) );
-    m_pNewLightKit->ref();
+    if (!lightKitNew)
+        gf::SevereError("CmdLightKitModified called with NULL TLightKit*");
 
-    if (m_scene->getPart("lightList[0]", false) )
-    {
-        m_previousLightKit = true;
-        TLightKit* lightKit = dynamic_cast< TLightKit* >(m_scene->getPart("lightList[0]", false) );
-        if (lightKit)
-        {
-            m_previousAzimuth = lightKit->azimuth.getValue();
-            m_previousZenith = lightKit->zenith.getValue();
-            m_previousDisbleNodes = QString(lightKit->disabledNodes.getValue().getString() );
+    m_lightKitNew = static_cast<TLightKit*>(lightKitNew->copy(true));
+    m_lightKitNew->ref();
 
-            m_pPreviousSunShape = dynamic_cast< SunAbstract* >(lightKit->getPart("tsunshape", false)->copy(true) );
-            if (m_pPreviousSunShape) m_pPreviousSunShape->ref();
-        }
+    TLightKit* lightKit = dynamic_cast<TLightKit*>(m_sceneKit->getPart("lightList[0]", false));
+    if (lightKit) {
+        m_hasOld = true;
+        m_sunShapeOld = dynamic_cast<SunAbstract*>(lightKit->getPart("tsunshape", false)->copy(true) );
+        if (m_sunShapeOld) m_sunShapeOld->ref();
+        m_azimuthOld = lightKit->azimuth.getValue();
+        m_zenithOld = lightKit->zenith.getValue();
+        m_nodesOld = lightKit->disabledNodes.getValue().getString();
     }
 }
 
@@ -49,11 +51,8 @@ CmdLightKitModified::CmdLightKitModified(TLightKit* newLightKit, SoSceneKit* sce
  */
 CmdLightKitModified::~CmdLightKitModified()
 {
-    m_pNewLightKit->unref();
-    if (m_previousLightKit)
-    {
-        m_pPreviousSunShape->unref();
-    }
+    m_lightKitNew->unref();
+    m_sunShapeOld->unref();
 }
 
 /*!
@@ -62,36 +61,29 @@ CmdLightKitModified::~CmdLightKitModified()
  */
 void CmdLightKitModified::undo()
 {
-    if (m_previousLightKit)
-    {
-        TLightKit* lightKit = static_cast< TLightKit* > (m_scene->getPart("lightList[0]", false) );
-        lightKit->setPart("tsunshape", m_pPreviousSunShape);
-        lightKit->ChangePosition(m_previousAzimuth, m_previousZenith);
-        lightKit->disabledNodes.setValue(m_previousDisbleNodes.toStdString().c_str() );
-    }
-    else m_pModel->RemoveLightNode(*m_pNewLightKit);
+    if (m_hasOld) {
+        TLightKit* lightKit = static_cast<TLightKit*> (m_sceneKit->getPart("lightList[0]", false) );
+        lightKit->setPart("tsunshape", m_sunShapeOld);
+        lightKit->ChangePosition(m_azimuthOld, m_zenithOld);
+        lightKit->disabledNodes.setValue(m_nodesOld.toStdString().c_str() );
+    } else
+        m_sceneModel->RemoveLightNode(*m_lightKitNew);
 }
 
 /*!
  * Applies a change to the light. After redo() scene will contain the light with the new definition.
  * \sa undo().
  */
-
 void CmdLightKitModified::redo()
 {
-    if (!m_previousLightKit)
-    {
-        m_pModel->InsertLightNode(*m_pNewLightKit);
-    }
-    else
-    {
-        TLightKit* lightKit = static_cast< TLightKit* > (m_scene->getPart("lightList[0]", false) );
+    if (m_hasOld) {
+        TLightKit* lightKit = static_cast<TLightKit*>(m_sceneKit->getPart("lightList[0]", false));
 
-        SunAbstract* sunhape = static_cast< SunAbstract* > (m_pNewLightKit->getPart("tsunshape", false) );
-        lightKit->setPart("tsunshape", sunhape);
+        SunAbstract* shape = static_cast<SunAbstract*>(m_lightKitNew->getPart("tsunshape", false));
+        lightKit->setPart("tsunshape", shape);
 
-        lightKit->ChangePosition(m_pNewLightKit->azimuth.getValue(), m_pNewLightKit->zenith.getValue() );
-        lightKit->disabledNodes.setValue(m_pNewLightKit->disabledNodes.getValue() );
-    }
-
+        lightKit->ChangePosition(m_lightKitNew->azimuth.getValue(), m_lightKitNew->zenith.getValue());
+        lightKit->disabledNodes.setValue(m_lightKitNew->disabledNodes.getValue() );
+    } else
+        m_sceneModel->InsertLightNode(*m_lightKitNew);
 }

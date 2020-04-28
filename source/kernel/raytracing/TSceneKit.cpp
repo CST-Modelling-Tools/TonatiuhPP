@@ -25,6 +25,10 @@ void TSceneKit::initClass()
 /**
  * Creates a new TSceneKit node.
  */
+
+#include "kernel/sun/SunPillbox.h"
+#include "kernel/raytracing/TLightKit.h"
+
 TSceneKit::TSceneKit()
 {
     SO_KIT_CONSTRUCTOR(TSceneKit);
@@ -34,6 +38,12 @@ TSceneKit::TSceneKit()
     SO_NODE_ADD_FIELD( zenith, (0.f) );
 
     SO_KIT_INIT_INSTANCE();
+
+
+    TLightKit* lightKit = new TLightKit;
+    lightKit->setPart("tsunshape", new SunPillbox);
+//    getPart("lightList", true);
+    setPart("lightList[0]", lightKit);
 }
 
 /**

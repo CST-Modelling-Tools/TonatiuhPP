@@ -27,10 +27,10 @@ class LightDialog: public QDialog, private Ui::LightDialog
     Q_OBJECT
 
 public:
-    LightDialog(SceneModel& sceneModel, TLightKit* currentLightKit, QVector< SunFactory* > sunshapeFactoryList, QWidget* parent = 0);
+    LightDialog(SceneModel& sceneModel, TLightKit* currentLightKit, QMap<QString, SunFactory*> sunShapeMap, QWidget* parent = 0);
     ~LightDialog();
 
-    TLightKit* GetTLightKit();
+    TLightKit* getLightKit();
 
 public slots:
     void accept();
@@ -43,18 +43,15 @@ protected slots:
 
 private:
     //void GenerateNodeTree( QModelIndex parentIndex, QTreeWidgetItem* parentIntem );
-    void SetupSunSizeTab();
-    void SetupTriggers();
-    void SunPositionTab();
-    void SunshapeTab();
-    void SunshapeBox();
+    void makeSunApertureTab();
+    void makeSunPositionTab();
+    void makeSunShapeTab();
 
-
-    TLightKit* m_currentLightKit;
-    SceneModel* m_currentSceneModel;
+    SceneModel* m_sceneModel;
+    QItemSelectionModel* m_selectionModel;
+    TLightKit* m_lightKitOld;
+    SunAbstract* m_sunNew;
+    QMap<QString, SunFactory*> m_sunShapeMap;
     int m_currentSunShapeIndex;
-    SunAbstract* m_newSunShape;
-    QItemSelectionModel* m_sceneSelectionModel;
 
-    QMap<QString, SunFactory*> m_sunshapeList;
 };

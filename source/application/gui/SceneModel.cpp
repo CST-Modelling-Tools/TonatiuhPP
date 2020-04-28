@@ -352,7 +352,7 @@ QVariant SceneModel::data( const QModelIndex& modelIndex, int role ) const
             else if( coinNode->getTypeId().isDerivedFrom(SoShape::getClassTypeId() ) )
             {
                 ShapeAbstract* shape = static_cast<ShapeAbstract*>(coinNode);
-                return QIcon( shape->getIcon() );
+                return QIcon( shape->getTypeIcon() );
             }
             else if( coinNode->getTypeId().isDerivedFrom(MaterialAbstract::getClassTypeId() ) )
             {
@@ -428,13 +428,15 @@ int SceneModel::InsertCoinNode( SoNode& coinChild, SoBaseKit& coinParent )
  * Insert a light node to the model. If the model has an other light node, the previous node
  * will be deleted.
  */
-void SceneModel::InsertLightNode( TLightKit& coinLight )
+void SceneModel::InsertLightNode(TLightKit& lightKit)
 {
-    SoNodeKitListPart* lightList = static_cast< SoNodeKitListPart* > ( m_coinScene->getPart("lightList", true ) ) ;
-    if ( lightList->getNumChildren() > 0 )
-        if( m_instanceRoot->children.size() > 0 ) m_instanceRoot->children.remove( 0 );
+    SoNodeKitListPart* lightList =
+            static_cast<SoNodeKitListPart*>(m_coinScene->getPart("lightList", true) ) ;
+    if (lightList->getNumChildren() > 0)
+        if (m_instanceRoot->children.size() > 0)
+            m_instanceRoot->children.remove(0);
 
-    m_coinScene->setPart( "lightList[0]", &coinLight );
+    m_coinScene->setPart("lightList[0]", &lightKit);
 
     SoSearchAction trackersSearch;
     trackersSearch.setType( TTracker::getClassTypeId() );
@@ -442,19 +444,18 @@ void SceneModel::InsertLightNode( TLightKit& coinLight )
     trackersSearch.apply( m_coinRoot );
     SoPathList& trackersPath = trackersSearch.getPaths();
 
-    for( int index = 0; index <trackersPath.getLength(); ++index )
+    for( int index = 0; index < trackersPath.getLength(); ++index )
     {
         SoFullPath* trackerPath = static_cast< SoFullPath* > ( trackersPath[index] );
         TTracker* tracker = static_cast< TTracker* >( trackerPath->getTail() );
-        tracker->SetAzimuthAngle( &coinLight.azimuth );
-        tracker->SetZenithAngle( &coinLight.zenith );
+        tracker->SetAzimuthAngle( &lightKit.azimuth );
+        tracker->SetZenithAngle( &lightKit.zenith );
     }
 
-    InstanceNode* instanceLight = new InstanceNode( &coinLight );
-    m_instanceRoot->InsertChild( 0, instanceLight );
+    InstanceNode* instanceLight = new InstanceNode(&lightKit);
+    m_instanceRoot->InsertChild(0, instanceLight);
 
-
-    emit LightNodeStateChanged( 1 );
+    emit LightNodeStateChanged(1);
     emit layoutChanged();
 }
 
@@ -494,7 +495,7 @@ void SceneModel::RemoveCoinNode( int row, SoBaseKit& coinParent )
     emit layoutChanged();
 }
 
-void SceneModel::RemoveLightNode( TLightKit& coinLight )
+void SceneModel::RemoveLightNode(TLightKit& coinLight)
 {
     SoNodeKitListPart* lightList = static_cast< SoNodeKitListPart* >( m_coinScene->getPart( "lightList", true ) );
     if ( lightList ) lightList->removeChild( &coinLight );
@@ -515,7 +516,6 @@ void SceneModel::RemoveLightNode( TLightKit& coinLight )
 
     emit LightNodeStateChanged( 0 );
     emit layoutChanged();
-
 }
 
 void SceneModel::ReconnectAllTrackers()

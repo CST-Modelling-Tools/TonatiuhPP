@@ -26,9 +26,7 @@ public:
     double GetVolume() const;
     BBox GetBBox() const;
 
-    static const char* getClassName() {return "Sphere";}
-    static const char* getClassIcon() {return ":/ShapeSphere.png";}
-    const char* getIcon() const {return getClassIcon();}
+    NAME_ICON_FUNCTIONS("Sphere", ":/ShapeSphere.png")
 
 protected:
     ~ShapeSphere();

@@ -23,8 +23,7 @@ public:
     SoSFDouble irradiance;
     SoSFDouble csr;
 
-    static const char* getClassName() {return "Buie";}
-    static const char* getClassIcon() {return ":/SunBuie.png";}
+    NAME_ICON_FUNCTIONS("Buie", ":/SunBuie.png")
 
 protected:
     static void updateCSR(void* data, SoSensor*);

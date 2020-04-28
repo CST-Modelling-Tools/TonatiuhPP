@@ -291,47 +291,29 @@ void MainWindow::DefineSunLight()
     if (!coinScene) return;
 
     InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
-    InstanceNode* concentratorRoot = sceneInstance->children[ sceneInstance->children.size() - 1 ];
+    InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
     m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 
-    TLightKit* currentLight = 0;
-    if (coinScene->getPart("lightList[0]", false) ) currentLight = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
+    TLightKit* lightKitOld = 0;
+    if (coinScene->getPart("lightList[0]", false) )
+        lightKitOld = static_cast<TLightKit*>(coinScene->getPart("lightList[0]", false) );
 
-    QVector< ShapeFactory*> shapeFactoryList = m_pluginManager->getShapeFactories();
+    LightDialog dialog(*m_sceneModel, lightKitOld, m_pluginManager->getSunMap());
+    if (!dialog.exec()) return;
 
-    QVector< ShapeFactory*> tFlatShapeFactoryList;
-    for (int i = 0; i < shapeFactoryList.size(); ++i)
-        if (shapeFactoryList[i]->isFlat() ) tFlatShapeFactoryList << shapeFactoryList[i];
+    TLightKit* lightKit = dialog.getLightKit();
+    if (!lightKit) return;
 
-    QVector< SunFactory* > tSunShapeFactoryList = m_pluginManager->getSunFactories();
+    CmdLightKitModified* cmd = new CmdLightKitModified(lightKit, coinScene, *m_sceneModel);
+    m_commandStack->push(cmd);
+    UpdateLightSize();
 
-    LightDialog dialog(*m_sceneModel, currentLight, tSunShapeFactoryList);
-    if (dialog.exec() )
-    {
+    parametersView->UpdateView();
+    m_document->SetDocumentModified(true);
 
-        TLightKit* lightKit = dialog.GetTLightKit();
-        if (!lightKit) return;
-
-        lightKit->setName("Light");
-
-        CmdLightKitModified* command = new CmdLightKitModified(lightKit, coinScene, *m_sceneModel);
-        m_commandStack->push(command);
-
-        //UpdateLightDimensions();
-        UpdateLightSize();
-
-        parametersView->UpdateView();
-        m_document->SetDocumentModified(true);
-
-        actionCalculateSunPosition->setEnabled(true);
-
-    }
-
-
-
+    actionCalculateSunPosition->setEnabled(true);
     actionDisplayRays->setEnabled(false);
     actionDisplayRays->setChecked(false);
-
 }
 
 /*!
@@ -3793,7 +3775,7 @@ bool MainWindow::StartOver(const QString& fileName)
     }
 
     ChangeModelScene();
-    return (true);
+    return true;
 }
 
 /*!

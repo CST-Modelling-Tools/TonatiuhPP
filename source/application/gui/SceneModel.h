@@ -45,7 +45,7 @@ public:
     QModelIndex IndexFromPath(const SoNodeKitPath& coinNodePath) const;
 
     int InsertCoinNode(SoNode& coinChild, SoBaseKit& coinParent);
-    void InsertLightNode(TLightKit& coinLight);
+    void InsertLightNode(TLightKit& lightKit);
 
     InstanceNode* NodeFromIndex(const QModelIndex& modelIndex) const;
 

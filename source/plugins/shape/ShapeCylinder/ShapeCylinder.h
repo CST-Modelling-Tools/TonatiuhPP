@@ -26,9 +26,7 @@ public:
 	trt::TONATIUH_REAL phiMax;
 	SoSFEnum activeSide;
 
-    static const char* getClassName() {return "Cylinder";}
-    static const char* getClassIcon() {return ":/ShapeCylinder.png";}
-    const char* getIcon() const {return getClassIcon();}
+    NAME_ICON_FUNCTIONS("Cylinder", ":/ShapeCylinder.png")
 
 protected:
     Point3D GetPoint3D(double u, double v) const;

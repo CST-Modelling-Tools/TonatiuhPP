@@ -23,8 +23,7 @@ public:
     SoSFDouble irradiance;
     SoSFDouble thetaMax;
 
-    static const char* getClassName() {return "Pillbox";}
-    static const char* getClassIcon() {return ":/images/SunPillbox.png";}
+    NAME_ICON_FUNCTIONS("Pillbox", ":/images/SunPillbox.png")
 
 protected:
     ~SunPillbox();

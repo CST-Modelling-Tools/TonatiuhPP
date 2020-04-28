@@ -1,6 +1,7 @@
 #pragma once
 
 #include "kernel/TonatiuhKernel.h"
+#include "kernel/raytracing/TAbstract.h"
 #include <Inventor/nodes/SoShape.h>
 
 struct BBox;
@@ -10,6 +11,7 @@ struct Vector3D;
 class QString;
 class QSize;
 class Ray;
+
 
 class TONATIUH_KERNEL ShapeAbstract: public SoShape
 {
@@ -30,14 +32,12 @@ public:
     virtual double GetVolume() const {return 0.;}
     virtual BBox GetBBox() const = 0;
 
-    static const char* getClassName() {return "X";}
-    static const char* getClassIcon() {return ":/ShapeX.png";}
-    virtual const char* getIcon() const {return getClassIcon();}
+    NAME_ICON_FUNCTIONS("X", ":/ShapeX.png")
 
 protected:
     virtual void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
 
-    bool OutOfRange(double u, double v) const;
+    virtual bool OutOfRange(double u, double v) const;
     virtual Point3D GetPoint3D(double u, double v) const = 0;
     virtual Vector3D GetNormal(double u, double v) const = 0;
     virtual void generatePrimitives(SoAction* action) = 0;

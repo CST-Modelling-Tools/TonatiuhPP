@@ -84,8 +84,8 @@ TLightKit::TLightKit()
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(iconTexture, SoNode, SoTexture2, TRUE, iconSeparator, iconMaterial, TRUE);
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tsunshape, SunAbstract, SunPillbox, TRUE, transformGroup, "", TRUE);
 
-    SO_NODE_ADD_FIELD(azimuth, (0.0) );
-    SO_NODE_ADD_FIELD(zenith, (0.0) );
+    SO_NODE_ADD_FIELD(azimuth, (0.) );
+    SO_NODE_ADD_FIELD(zenith, (0.) );
     SO_NODE_ADD_FIELD(disabledNodes, ("") );
 
 
@@ -132,7 +132,6 @@ TLightKit::~TLightKit()
 {
     //void ChangePosition( QDateTime time, double longitude, double latitude );
     //void SetDateTime( QDateTime time );
-
 }
 
 /*!
@@ -144,7 +143,6 @@ void TLightKit::ChangePosition(double newAzimuth, double newZenith)
 {
     azimuth = newAzimuth;
     zenith = newZenith;
-
 }
 
 void TLightKit::Update(BBox box)
@@ -343,7 +341,4 @@ void TLightKit::ComputeLightSourceArea(int widthDivisions, int heigthDivisions, 
 
 
     shape->SetLightSourceArea(heightPixeles, widthPixeles, areaMatrix);
-
 }
-
-

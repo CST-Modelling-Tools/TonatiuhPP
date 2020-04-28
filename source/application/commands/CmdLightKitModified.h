@@ -15,22 +15,28 @@ class SunAbstract;
    \sa CmdLightPositionModified
 */
 
-class CmdLightKitModified : public QUndoCommand
+class CmdLightKitModified: public QUndoCommand
 {
 public:
-    CmdLightKitModified( TLightKit* newLightKit, SoSceneKit* scene, SceneModel& sceneModel, QUndoCommand* parent = 0 );
+    CmdLightKitModified(
+        TLightKit* lightKit,
+        SoSceneKit* sceneKit,
+        SceneModel& sceneModel,
+        QUndoCommand* parent = 0
+     );
     ~CmdLightKitModified();
 
      virtual void undo();
      virtual void redo();
 
 private:
-     bool m_previousLightKit;
-     double m_previousAzimuth;
-     QString m_previousDisbleNodes;
-     double m_previousZenith;
-     SunAbstract* m_pPreviousSunShape;
-     TLightKit* m_pNewLightKit;
-     SoSceneKit* m_scene;
-     SceneModel* m_pModel;
+    bool m_hasOld;
+    TLightKit* m_lightKitNew;
+    SunAbstract* m_sunShapeOld;
+    double m_azimuthOld;
+    double m_zenithOld;
+    QString m_nodesOld;
+
+    SoSceneKit* m_sceneKit;
+    SceneModel* m_sceneModel;
 };
