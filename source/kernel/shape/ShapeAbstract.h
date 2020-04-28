@@ -18,11 +18,6 @@ class TONATIUH_KERNEL ShapeAbstract: public SoShape
     SO_NODE_ABSTRACT_HEADER(ShapeAbstract);
 
 public:
-    enum Side {
-        INSIDE = 0,
-        OUTSIDE = 1,
-    };
-
     static void initClass();
 
     virtual bool IntersectP(const Ray& ray) const;
@@ -32,9 +27,14 @@ public:
     virtual double GetVolume() const {return 0.;}
     virtual BBox GetBBox() const = 0;
 
+    enum Side {
+        INSIDE = 0,
+        OUTSIDE = 1,
+    };
+
     NAME_ICON_FUNCTIONS("X", ":/ShapeX.png")
 
-protected:
+    protected:
     virtual void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
 
     virtual bool OutOfRange(double u, double v) const;

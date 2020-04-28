@@ -98,13 +98,13 @@
 #include "main/Document.h"
 #include "script/ScriptEditorDialog.h"
 #include "view/GraphicView.h"
-#include "widgets/DialogAbout.h"
+#include "widgets/AboutDialog.h"
 #include "widgets/ExportDialog.h"
-#include "widgets/GridSettingsDialog.h"
-#include "widgets/LightDialog.h"
+#include "widgets/GridDialog.h"
+#include "widgets/SunDialog.h"
 #include "widgets/NetworkConnectionsDialog.h"
 #include "widgets/RayTraceDialog.h"
-#include "widgets/TransmissivityDialog.h"
+#include "widgets/AirDialog.h"
 
 
 void startManipulator(void* data, SoDragger* dragger)
@@ -298,7 +298,7 @@ void MainWindow::DefineSunLight()
     if (coinScene->getPart("lightList[0]", false) )
         lightKitOld = static_cast<TLightKit*>(coinScene->getPart("lightList[0]", false) );
 
-    LightDialog dialog(*m_sceneModel, lightKitOld, m_pluginManager->getSunMap());
+    SunDialog dialog(*m_sceneModel, lightKitOld, m_pluginManager->getSunMap());
     if (!dialog.exec()) return;
 
     TLightKit* lightKit = dialog.getLightKit();
@@ -321,31 +321,28 @@ void MainWindow::DefineSunLight()
  */
 void MainWindow::DefineTransmissivity()
 {
-    TransmissivityDialog dialog(m_pluginManager->getAirFactories() );
+    AirDialog dialog(m_pluginManager->getAirMap());
 
     TSceneKit* coinScene = m_document->GetSceneKit();
     if (!coinScene) return;
 
-    AirAbstract* currentTransmissivity = static_cast< AirAbstract* > (coinScene->getPart("transmissivity", false) );
-    if (currentTransmissivity) dialog.SetCurrentTransmissivity(currentTransmissivity);
+    AirAbstract* currentTransmissivity = static_cast<AirAbstract*> (coinScene->getPart("transmissivity", false) );
+    if (currentTransmissivity) dialog.setModel(currentTransmissivity);
     if (!dialog.exec() ) return;
 
-    AirAbstract* newTransmissivity = dialog.GetTransmissivity();
+    AirAbstract* newTransmissivity = dialog.getModel();
     //    coinScene->setPart( "transmissivity", newTransmissivity );
 
     CmdTransmissivityModified* command = new CmdTransmissivityModified(newTransmissivity, coinScene);
     if (m_commandStack) m_commandStack->push(command);
     m_document->SetDocumentModified(true);
-
 }
-
 
 void MainWindow::DisconnectAllTrackers(bool disconnect)
 {
     if (disconnect) m_sceneModel->DisconnectAllTrackers();
     else m_sceneModel->ReconnectAllTrackers();
 }
-
 
 /*!
  * If actionDisplay_rays is checked the 3D view shows rays representation. Otherwise the representation is hidden.
@@ -963,7 +960,7 @@ void MainWindow::on_actionOpenScriptEditor_triggered()
  */
 void MainWindow::on_actionAbout_triggered()
 {
-    DialogAbout dialog;
+    AboutDialog dialog;
     dialog.exec();
 }
 
@@ -972,7 +969,7 @@ void MainWindow::on_actionAbout_triggered()
  */
 void MainWindow::ChangeGridSettings()
 {
-    GridSettingsDialog gridDialog(m_gridXElements, m_gridZElements, m_gridXSpacing, m_gridZSpacing);
+    GridDialog gridDialog(m_gridXElements, m_gridZElements, m_gridXSpacing, m_gridZSpacing);
     if (gridDialog.exec() )
     {
         m_graphicsRoot->RemoveGrid();

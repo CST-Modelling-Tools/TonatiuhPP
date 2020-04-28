@@ -4,7 +4,7 @@
 #include <QMap>
 
 
-#include "ui_lightdialog.h"
+#include "ui_sundialog.h"
 
 class QComboBox;
 class QFrame;
@@ -22,18 +22,18 @@ class SunFactory;
 /*!
    LightDialog sets light parameters. The parameters that user can define are light suunshape, light input aperture shape and light position.
  */
-class LightDialog: public QDialog, private Ui::LightDialog
+class SunDialog: public QDialog, private Ui::SunDialog
 {
     Q_OBJECT
 
 public:
-    LightDialog(SceneModel& sceneModel, TLightKit* currentLightKit, QMap<QString, SunFactory*> sunShapeMap, QWidget* parent = 0);
-    ~LightDialog();
+    SunDialog(SceneModel& sceneModel, TLightKit* currentLightKit, QMap<QString, SunFactory*> sunShapeMap, QWidget* parent = 0);
+    ~SunDialog();
 
     TLightKit* getLightKit();
 
 public slots:
-    void SetValue(SoNode* node, QString paramenterName, QString newValue);
+    void SetValue(SoNode* node, QString parameter, QString value);
 
 protected slots:
     void ChangeSunshape(int index);
@@ -41,10 +41,9 @@ protected slots:
     void RemoveNodeFromDisabledNodeList();
 
 private:
-    //void GenerateNodeTree( QModelIndex parentIndex, QTreeWidgetItem* parentIntem );
-    void makeSunApertureTab();
-    void makeSunPositionTab();
     void makeSunShapeTab();
+    void makeSunPositionTab();
+    void makeSunApertureTab();
 
     SceneModel* m_sceneModel;
     QItemSelectionModel* m_selectionModel;
@@ -52,5 +51,4 @@ private:
     SunAbstract* m_sunNew;
     QMap<QString, SunFactory*> m_sunShapeMap;
     int m_currentSunShapeIndex;
-
 };

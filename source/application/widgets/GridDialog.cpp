@@ -1,6 +1,6 @@
-#include "GridSettingsDialog.h"
+#include "GridDialog.h"
 
-GridSettingsDialog::GridSettingsDialog(  int xDimension, int zDimension, double xSpacing, double zSpacing, QWidget* parent )
+GridDialog::GridDialog(  int xDimension, int zDimension, double xSpacing, double zSpacing, QWidget* parent )
 :QDialog( parent )
 {
     setupUi( this );
@@ -11,33 +11,33 @@ GridSettingsDialog::GridSettingsDialog(  int xDimension, int zDimension, double 
 
 }
 
-GridSettingsDialog::~GridSettingsDialog()
+GridDialog::~GridDialog()
 {
 
 }
 
-int GridSettingsDialog::GetXDimension()
+int GridDialog::GetXDimension()
 {
     return xDimensionSpin->value();
 }
 
-int GridSettingsDialog::GetZDimension()
+int GridDialog::GetZDimension()
 {
     return zDimensionSpin->value();
 }
 
-double GridSettingsDialog::GetXSpacing()
+double GridDialog::GetXSpacing()
 {
     return xSpacingSpin->value();
 }
 
-double GridSettingsDialog::GetZSpacing()
+double GridDialog::GetZSpacing()
 {
     return zSpacingSpin->value();
 }
 
 
-bool GridSettingsDialog::IsSizeDefined()
+bool GridDialog::IsSizeDefined()
 {
     return userDefinedRadio->isChecked();
 }

@@ -1,11 +1,11 @@
+#include "SunDialog.h"
+
 #include <QItemSelectionModel>
 #include <QMessageBox>
 
 #include "libraries/geometry/gc.h"
-
 #include "parameters/FieldContainerWidget.h"
 #include "kernel/gui/InstanceNode.h"
-#include "LightDialog.h"
 #include "gui/SceneModel.h"
 #include "kernel/raytracing/TLightKit.h"
 #include "kernel/shape/ShapeAbstract.h"
@@ -20,7 +20,7 @@
  * aperture and shows the the light parameters defined in the light \a currentLightKit.
  */
 
-LightDialog::LightDialog(
+SunDialog::SunDialog(
     SceneModel& sceneModel,
     TLightKit* lightKitOld,
     QMap<QString, SunFactory*> sunShapeMap,
@@ -42,15 +42,15 @@ LightDialog::LightDialog(
             m_sunNew = static_cast<SunAbstract*>(node->copy(true));
     }
 
+    makeSunShapeTab();
     makeSunApertureTab();
     makeSunPositionTab();
-    makeSunShapeTab();
 }
 
 /*!
  * Destroys the LightDialog object.
  */
-LightDialog::~LightDialog()
+SunDialog::~SunDialog()
 {
 
 }
@@ -58,7 +58,7 @@ LightDialog::~LightDialog()
 /*!
  * Returns a lightkit with the parameters defined in the dialog.
  */
-TLightKit* LightDialog::getLightKit()
+TLightKit* SunDialog::getLightKit()
 {
     TLightKit* lightKit = new TLightKit;
     lightKit->setName("Light");
@@ -80,69 +80,10 @@ TLightKit* LightDialog::getLightKit()
     return lightKit;
 }
 
-void LightDialog::SetValue(SoNode* node, QString paramenterName, QString newValue)
-{
-    if(paramenterName=="irradiance"){
-        if(newValue.toDouble()>=0){
-            SoField* parameterField = node->getField( SbName( paramenterName.toStdString().c_str() ) );
-                if( parameterField )
-                    parameterField->set( newValue.toStdString().c_str() );
-        }
-    }
-    else{
-    SoField* parameterField = node->getField( SbName( paramenterName.toStdString().c_str() ) );
-    if( parameterField )
-        parameterField->set( newValue.toStdString().c_str() );
-    }
-}
-
-/*!
- * Changes parameters of the shunshape paraneters view to sunshape type given by \a index.
- */
-void LightDialog::ChangeSunshape(int index)
-{
-    while (m_sunNew && m_sunNew->getRefCount() > 0)
-        m_sunNew->unref();
-
-    if (index == m_currentSunShapeIndex)
-        m_sunNew = static_cast<SunAbstract*>(m_lightKitOld->getPart("tsunshape", false)->copy(true));
-    else {
-        SunFactory* f = m_sunShapeMap[sunshapeCombo->itemText(index)];
-        m_sunNew = f->create();
-    }
-    sunshapeParameters->SetContainer(m_sunNew, QString());
-}
-
-/*!
- * Initializes the sun size tab models and lists.
- */
-void LightDialog::makeSunApertureTab()
-{
-    modelTreeView->setModel(m_sceneModel);
-    m_selectionModel = new QItemSelectionModel(m_sceneModel);
-    modelTreeView->setSelectionModel(m_selectionModel);
-    modelTreeView->setRootIndex(m_sceneModel->IndexFromNodeUrl("//SunNode"));
-
-    if (!m_lightKitOld) return;
-
-    QString nodeDisabled = QString(m_lightKitOld->disabledNodes.getValue().getString());
-    for (QString s : nodeDisabled.split(";", QString::SkipEmptyParts))
-        disabledNodeList->addItem(s);
-
-    connect(
-        addNodeButton, SIGNAL(clicked()),
-        this, SLOT(AddNodeToDisabledNodeList())
-    );
-    connect(
-        removeNodeButton, SIGNAL(clicked()),
-        this, SLOT(RemoveNodeFromDisabledNodeList())
-    );
-}
-
 /*!
  * Updates the dialog values to the values of the current light.
  */
-void LightDialog::makeSunShapeTab()
+void SunDialog::makeSunShapeTab()
 {
     connect(
         sunshapeParameters, SIGNAL(valueModificated(SoNode*, QString, QString)),
@@ -171,7 +112,7 @@ void LightDialog::makeSunShapeTab()
 /*!
  * Updates the sun position tab values to the values of the current light.
  */
-void LightDialog::makeSunPositionTab()
+void SunDialog::makeSunPositionTab()
 {
     if (!m_lightKitOld) return;
     azimuthSpin->setValue(m_lightKitOld->azimuth.getValue()/gc::Degree);
@@ -179,9 +120,62 @@ void LightDialog::makeSunPositionTab()
 }
 
 /*!
+ * Initializes the sun size tab models and lists.
+ */
+void SunDialog::makeSunApertureTab()
+{
+    modelTreeView->setModel(m_sceneModel);
+    m_selectionModel = new QItemSelectionModel(m_sceneModel);
+    modelTreeView->setSelectionModel(m_selectionModel);
+    modelTreeView->setRootIndex(m_sceneModel->IndexFromNodeUrl("//SunNode"));
+
+    if (!m_lightKitOld) return;
+
+    QString nodeDisabled = QString(m_lightKitOld->disabledNodes.getValue().getString());
+    for (QString s : nodeDisabled.split(";", QString::SkipEmptyParts))
+        disabledNodeList->addItem(s);
+
+    connect(
+        addNodeButton, SIGNAL(clicked()),
+        this, SLOT(AddNodeToDisabledNodeList())
+    );
+    connect(
+        removeNodeButton, SIGNAL(clicked()),
+        this, SLOT(RemoveNodeFromDisabledNodeList())
+    );
+}
+
+/*!
+ * Changes parameters of the shunshape paraneters view to sunshape type given by \a index.
+ */
+void SunDialog::ChangeSunshape(int index)
+{
+    while (m_sunNew && m_sunNew->getRefCount() > 0)
+        m_sunNew->unref();
+
+    if (index == m_currentSunShapeIndex)
+        m_sunNew = static_cast<SunAbstract*>(m_lightKitOld->getPart("tsunshape", false)->copy(true));
+    else {
+        SunFactory* f = m_sunShapeMap[sunshapeCombo->itemText(index)];
+        m_sunNew = f->create();
+    }
+    sunshapeParameters->SetContainer(m_sunNew, QString());
+}
+
+void SunDialog::SetValue(SoNode* node, QString parameter, QString value)
+{
+    if (parameter == "irradiance")
+        if (value.toDouble() < 0.) return;
+
+    SoField* field = node->getField(SbName(parameter.toStdString().c_str()));
+    if (field)
+        field->set(value.toStdString().c_str());
+}
+
+/*!
  * Adds in the tree view selected node to disabled node list.
  */
-void LightDialog::AddNodeToDisabledNodeList()
+void SunDialog::AddNodeToDisabledNodeList()
 {
     if ( !m_selectionModel->hasSelection() ) return;
     if ( m_selectionModel->currentIndex() == modelTreeView->rootIndex() ) return;
@@ -198,7 +192,7 @@ void LightDialog::AddNodeToDisabledNodeList()
 /*!
  * Removes the selected node in node list from disabled nodes.
  */
-void LightDialog::RemoveNodeFromDisabledNodeList()
+void SunDialog::RemoveNodeFromDisabledNodeList()
 {
     QListWidgetItem* currentItem = disabledNodeList->currentItem();
     if (!currentItem) return;

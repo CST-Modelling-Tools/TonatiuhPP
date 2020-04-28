@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>LightDialog</class>
- <widget class="QDialog" name="LightDialog">
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
+ <class>SunDialog</class>
+ <widget class="QDialog" name="SunDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>638</width>
+    <height>417</height>
+   </rect>
   </property>
   <property name="maximumSize">
    <size>
@@ -15,27 +17,12 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Define Sun Light</string>
+   <string>Sun</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QSplitter::handle {background: transparent;}</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="spacing">
-    <number>10</number>
-   </property>
-   <property name="leftMargin">
-    <number>10</number>
-   </property>
-   <property name="topMargin">
-    <number>10</number>
-   </property>
-   <property name="rightMargin">
-    <number>10</number>
-   </property>
-   <property name="bottomMargin">
-    <number>10</number>
-   </property>
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="sizePolicy">
@@ -366,7 +353,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>LightDialog</receiver>
+   <receiver>SunDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -382,7 +369,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>LightDialog</receiver>
+   <receiver>SunDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

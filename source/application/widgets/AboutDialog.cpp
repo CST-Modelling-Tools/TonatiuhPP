@@ -1,11 +1,11 @@
-#include "DialogAbout.h"
-#include "ui_DialogAbout.h"
+#include "AboutDialog.h"
+#include "ui_AboutDialog.h"
 
 #include <QDate>
 
-DialogAbout::DialogAbout(QWidget *parent) :
+AboutDialog::AboutDialog(QWidget* parent):
     QDialog(parent),
-    ui(new Ui::DialogAbout)
+    ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
 
@@ -25,7 +25,7 @@ DialogAbout::DialogAbout(QWidget *parent) :
     setWindowFlags(flags);
 }
 
-DialogAbout::~DialogAbout()
+AboutDialog::~AboutDialog()
 {
     delete ui;
 }

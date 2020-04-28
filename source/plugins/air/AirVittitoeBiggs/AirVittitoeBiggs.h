@@ -18,8 +18,7 @@ public:
     enum Visibility {ClearDay, HazyDay};
     SoSFEnum visibility;
 
-    static const char* getClassName() {return "VittitoeBiggs";}
-    static const char* getClassIcon() {return ":/AirVittitoeBiggs.png";}
+    NAME_ICON_FUNCTIONS("Vittitoe-Biggs", ":/AirVittitoeBiggs.png")
 };
 
 

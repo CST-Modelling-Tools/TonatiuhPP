@@ -6,7 +6,7 @@ SO_NODE_SOURCE(AirVittitoeBiggs)
 
 void AirVittitoeBiggs::initClass()
 {
-    SO_NODE_INIT_CLASS(AirVittitoeBiggs, AirAbstract, "AirTransmission");
+    SO_NODE_INIT_CLASS(AirVittitoeBiggs, AirAbstract, "AirAbstract");
 }
 
 AirVittitoeBiggs::AirVittitoeBiggs()

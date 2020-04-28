@@ -1,6 +1,6 @@
 <RCC>
-    <qresource prefix="/" >
-
+    <qresource prefix="/">
         <file>images/SunPillbox.png</file>
+        <file>images/AirPolynomial.png</file>
     </qresource>
 </RCC>

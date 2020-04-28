@@ -113,7 +113,8 @@ bool ShapeCylinder::Intersect( const Ray& ray, double* tHit, DifferentialGeometr
 	}
 	// Now check if the fucntion is being called from IntersectP,
 	// in which case the pointers tHit and dg are 0
-    if (tHit == 0 && dg == 0) return true;
+    if (tHit == 0 && dg == 0)
+        return true;
     else if (tHit == 0 || dg == 0)
         gf::SevereError("Function Cylinder::Intersect(...) called with null pointers");
 

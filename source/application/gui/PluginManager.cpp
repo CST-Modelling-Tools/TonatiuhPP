@@ -21,6 +21,7 @@
 #include "kernel/shape/ShapeSquare.h"
 #include "kernel/sun/SunFactory.h"
 #include "kernel/sun/SunPillbox.h"
+#include "kernel/air/AirPolynomial.h"
 #include "kernel/tracker/TrackerFactory.h"
 #include "libraries/geometry/gf.h"
 
@@ -64,6 +65,7 @@ void PluginManager::load(QDir dir)
     loadTonatiuhPlugin(new ShapeFactoryT<ShapeSquare>);
     loadTonatiuhPlugin(new ShapeFactoryT<ShapeCube>);
     loadTonatiuhPlugin(new SunFactoryT<SunPillbox>);
+    loadTonatiuhPlugin(new AirFactoryT<AirPolynomial>);
 
     sort();
 }

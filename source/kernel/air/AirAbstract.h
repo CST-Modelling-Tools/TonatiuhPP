@@ -1,14 +1,12 @@
 #pragma once
 
 #include "kernel/TonatiuhKernel.h"
-#include <Inventor/nodes/SoNode.h>
+#include "kernel/raytracing/TAbstract.h"
 #include <Inventor/nodes/SoSubNode.h>
 
 
 class TONATIUH_KERNEL AirAbstract: public SoNode
 {
-    typedef SoNode inherited;
-
     SO_NODE_ABSTRACT_HEADER(AirAbstract);
 
 public:
@@ -16,9 +14,9 @@ public:
 
     virtual double transmission(double /*distance*/) const {return 1.;}
 
-    static const char* getClassName() {return "Air";}
+    NAME_ICON_FUNCTIONS("X", ":/AirX.png")
 
 protected:
     AirAbstract() {}
-    virtual ~AirAbstract() {}
+    ~AirAbstract() {}
 };
