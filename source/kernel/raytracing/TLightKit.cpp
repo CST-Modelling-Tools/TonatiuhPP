@@ -101,22 +101,13 @@ TLightKit::TLightKit()
     lightMaterial->transparency = 0.5;
     setPart("iconMaterial", lightMaterial);
 
-    int widthPixeles = 100;
-    int heightPixeles = 100;
-    //unsigned char bitmap[ widthPixeles * heightPixeles ];
-    unsigned char*  bitmap = new unsigned char[ widthPixeles * heightPixeles ];
-    for (int y = 0; y < heightPixeles; y++)
-    {
-        for (int x = 0; x < widthPixeles; x++)
-        {
-            bitmap[ y * widthPixeles + x] = 255;
-        }
-
-    }
+    int widthPixeles = 10;
+    int heightPixeles = 10;
+    QVector<uchar> bitmap(widthPixeles * heightPixeles);
+    bitmap.fill(255);
 
     SoTexture2* texture = new SoTexture2;
-    texture->image.setValue(SbVec2s(heightPixeles, widthPixeles), 1, bitmap);
-    delete[] bitmap;
+    texture->image.setValue(SbVec2s(heightPixeles, widthPixeles), 1, bitmap.data());
     texture->model = SoTexture2::BLEND;
     texture->blendColor.setValue(0.933f, 0.91f, 0.666f);
     setPart("iconTexture", texture);
@@ -190,7 +181,6 @@ void TLightKit::Update(BBox box)
 
 void TLightKit::ComputeLightSourceArea(int widthDivisions, int heigthDivisions, QVector< QPair< TShapeKit*, Transform > > surfacesList)
 {
-
     TLightShape* shape = static_cast< TLightShape* >(this->getPart("icon", false) );
     if (!shape) return;
 
@@ -333,12 +323,12 @@ void TLightKit::ComputeLightSourceArea(int widthDivisions, int heigthDivisions, 
     }
 
 
-    SoTexture2* texture = static_cast< SoTexture2* >(getPart("iconTexture", true) );
-    texture->image.setValue(SbVec2s(heightPixeles, widthPixeles), 1, bitmap);
-    delete[] bitmap;
-    texture->wrapS = SoTexture2::CLAMP;
-    texture->wrapT = SoTexture2::CLAMP;
+//    SoTexture2* texture = static_cast< SoTexture2* >(getPart("iconTexture", true) );
+//    texture->image.setValue(SbVec2s(heightPixeles, widthPixeles), 1, bitmap);
+//    texture->wrapS = SoTexture2::CLAMP;
+//    texture->wrapT = SoTexture2::CLAMP;
 
+    delete[] bitmap;
 
     shape->SetLightSourceArea(heightPixeles, widthPixeles, areaMatrix);
 }
