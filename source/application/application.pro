@@ -47,5 +47,5 @@ FORMS += \
 RESOURCES += resources.qrc
 
 win32 { # icon in windows explorer
-    RC_FILE = Tonatiuh.rc
+    RC_ICONS = images/about/Tonatiuh.ico
 }

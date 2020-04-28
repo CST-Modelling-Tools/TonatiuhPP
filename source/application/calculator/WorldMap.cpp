@@ -18,10 +18,10 @@
 WorldMap::WorldMap(QWidget* widget):
     QWidget(widget), m_rightAscension(0), m_declination(0), m_azimuth(0), m_zenith(0)
 {
-    m_gray = new Image(":/icons/WorldMapGray.BMP");
-    m_map.load(":/icons/mundo.BMP");
-    m_sun.load(":/icons/sunIcon.png");
-    m_position.load(":/icons/position.png");
+    m_gray = new Image(":/images/map/worldMapGray.bmp");
+    m_map.load(":/images/map/worldMap.bmp");
+    m_sun.load(":/images/map/sun.png");
+    m_position.load(":/images/map/position.png");
     m_sun = m_sun.scaledToWidth(15);
     m_position = m_position.scaledToWidth(15);
 }

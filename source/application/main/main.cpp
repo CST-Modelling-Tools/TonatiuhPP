@@ -67,7 +67,7 @@ int main(int argc, char** argv)
 //    a.setStyle(QStyleFactory::create("Windows"));
 
     QSplashScreen* splash = new QSplashScreen;
-    splash->setPixmap(QPixmap(":/icons/SplashScreen.png") );
+    splash->setPixmap(QPixmap(":/images/about/SplashScreen.png") );
     splash->show();
 
     Qt::Alignment topRight = Qt::AlignRight | Qt::AlignTop;
@@ -160,7 +160,6 @@ int main(int argc, char** argv)
                 QString errorMessage = QString("Script Execution Error.\nLine %1. %2").arg(QString::number(lineNumber.toNumber() ), result.toString() );
                 std::cerr << errorMessage.toStdString() << std::endl;
                 return -1;
-
             }
 
             delete mw;
@@ -169,10 +168,8 @@ int main(int argc, char** argv)
         }
         else
         {
-
             MainWindow* mw = new MainWindow(tonatiuhFile);
             mw->SetPluginManager(&pluginManager);
-
 
             mw->show();
             splash->finish(mw);
@@ -190,7 +187,6 @@ int main(int argc, char** argv)
         delete splash;
         exit = a.exec();
         delete mw;
-
     }
 
     return exit;

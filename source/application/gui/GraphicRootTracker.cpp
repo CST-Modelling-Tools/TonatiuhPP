@@ -71,7 +71,7 @@ void GraphicRootTracker::SetZenithAngle( trt::TONATIUH_REAL* zenithField )
 QString GraphicRootTracker::getIcon()
 {
 
-    return QString( QLatin1String( ":/icons/GraphicRootTracker.png" ) );
+    return QString( QLatin1String( ":/images/GraphicRootTracker.png" ) );
 }
 
 void GraphicRootTracker::evaluate()

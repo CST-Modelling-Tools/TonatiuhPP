@@ -52,7 +52,7 @@ TDefaultTracker::~TDefaultTracker()
  */
 QString TDefaultTracker::getIcon()
 {
-    return QLatin1String(":/icons/HorizontalTracker.png");
+    return QLatin1String(":/images/HorizontalTracker.png");
 }
 
 /**

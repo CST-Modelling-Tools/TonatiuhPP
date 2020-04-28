@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>Code Editor</string>
   </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>:/icons/LogoTonatiuh.png</normaloff>:/icons/LogoTonatiuh.png</iconset>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>0</number>
@@ -42,8 +38,8 @@
          <string>New</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/icons/new.png</normaloff>:/icons/new.png</iconset>
+         <iconset resource="../resources.qrc">
+          <normaloff>:/images/file/new.png</normaloff>:/images/file/new.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -62,8 +58,8 @@
          <string>Open</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/icons/open.png</normaloff>:/icons/open.png</iconset>
+         <iconset resource="../resources.qrc">
+          <normaloff>:/images/file/open.png</normaloff>:/images/file/open.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -82,8 +78,8 @@
          <string>Save</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/icons/save.png</normaloff>:/icons/save.png</iconset>
+         <iconset resource="../resources.qrc">
+          <normaloff>:/images/file/save.png</normaloff>:/images/file/save.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -102,8 +98,8 @@
          <string>SaveAs</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/icons/saveas.png</normaloff>:/icons/saveas.png</iconset>
+         <iconset resource="../resources.qrc">
+          <normaloff>:/images/file/saveas.png</normaloff>:/images/file/saveas.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -122,8 +118,8 @@
          <string>Undo</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/icons/undo.png</normaloff>:/icons/undo.png</iconset>
+         <iconset resource="../resources.qrc">
+          <normaloff>:/images/edit/undo.png</normaloff>:/images/edit/undo.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -142,8 +138,8 @@
          <string>Redo</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/icons/redo.png</normaloff>:/icons/redo.png</iconset>
+         <iconset resource="../resources.qrc">
+          <normaloff>:/images/edit/redo.png</normaloff>:/images/edit/redo.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -162,8 +158,8 @@
          <string>Cut</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/icons/cut.png</normaloff>:/icons/cut.png</iconset>
+         <iconset resource="../resources.qrc">
+          <normaloff>:/images/edit/cut.png</normaloff>:/images/edit/cut.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -182,8 +178,8 @@
          <string>Copy</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/icons/copy.png</normaloff>:/icons/copy.png</iconset>
+         <iconset resource="../resources.qrc">
+          <normaloff>:/images/edit/copy.png</normaloff>:/images/edit/copy.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -202,8 +198,8 @@
          <string>Paste</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/icons/paste.png</normaloff>:/icons/paste.png</iconset>
+         <iconset resource="../resources.qrc">
+          <normaloff>:/images/edit/paste.png</normaloff>:/images/edit/paste.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -222,8 +218,8 @@
          <string>Run</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/icons/runRayTracing.png</normaloff>:/icons/runRayTracing.png</iconset>
+         <iconset resource="../resources.qrc">
+          <normaloff>:/images/run/runRayTracing.png</normaloff>:/images/run/runRayTracing.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -294,6 +290,8 @@
    <header>script/CodeEditArea.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

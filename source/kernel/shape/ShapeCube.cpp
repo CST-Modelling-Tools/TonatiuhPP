@@ -89,7 +89,7 @@ BBox ShapeCube::GetBBox() const
 
 QString ShapeCube::GetIcon() const
 {
-    return QLatin1String( ":/icons/tcube.png" );
+    return QLatin1String( ":/images/tcube.png" );
 }
 
 bool ShapeCube::Intersect(const Ray& /*objectRay*/, double* /*tHit*/, DifferentialGeometry* /*dg*/) const

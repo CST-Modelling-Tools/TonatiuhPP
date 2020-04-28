@@ -335,7 +335,7 @@ QVariant SceneModel::data( const QModelIndex& modelIndex, int role ) const
         {
             if( coinNode->getTypeId().isDerivedFrom( TLightKit::getClassTypeId() ) )
             {
-                return QIcon( QLatin1String( ":/icons/environmentSun.png" ) );
+                return QIcon( QLatin1String( ":/images/scene/environmentSun.png" ) );
             }
             else if( coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
             {
@@ -347,7 +347,7 @@ QVariant SceneModel::data( const QModelIndex& modelIndex, int role ) const
 //                SoBaseKit* nodeKit = static_cast< SoBaseKit* >( coinNode );
 //                TShape* kit = static_cast<TShape*>( nodeKit->getPart( "shape", false ) );
 //                if( kit ) return QIcon( kit->GetIcon() );
-                return QIcon(":/icons/nodeShape.png");
+                return QIcon(":/images/scene/nodeShape.png");
             }
             else if( coinNode->getTypeId().isDerivedFrom(SoShape::getClassTypeId() ) )
             {

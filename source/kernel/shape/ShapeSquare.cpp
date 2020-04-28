@@ -48,7 +48,7 @@ BBox ShapeSquare::GetBBox() const
 
 QString ShapeSquare::GetIcon() const
 {
-    return ":/icons/icons/node.png";//?
+    return ":/images/:/images/node.png";//?
 }
 
 bool ShapeSquare::Intersect(const Ray& /*objectRay*/, double* /*tHit*/, DifferentialGeometry* /*dg*/) const

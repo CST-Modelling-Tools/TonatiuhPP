@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>DialogAbout</class>
  <widget class="QDialog" name="DialogAbout">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>846</width>
+    <height>418</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>About</string>
   </property>
@@ -15,7 +23,7 @@
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="../resources.qrc">:/icons/SplashScreen.png</pixmap>
+      <pixmap resource="../resources.qrc">:/images/about/SplashScreen.png</pixmap>
      </property>
     </widget>
    </item>
@@ -24,10 +32,13 @@
      <item>
       <widget class="QLabel" name="label_links">
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Git repository&lt;br/&gt;&lt;a href=&quot;https://scmt.cyi.ac.cy/bitbucket/scm/t20/tonatiuh.git&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#305a87;&quot;&gt;https://scmt.cyi.ac.cy/bitbucket/scm/t20/tonatiuh.git&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Cyprus Institute&lt;br/&gt;&lt;a href=&quot;https://www.cyi.ac.cy/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#305a87;&quot;&gt;https://www.cyi.ac.cy/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Git repository&lt;br/&gt;&lt;a href=&quot;https://scmt.cyi.ac.cy/bitbucket/scm/t20/tonatiuh.git&quot;&gt;&lt;span style=&quot;color:#305a87;&quot;&gt;https://scmt.cyi.ac.cy/bitbucket/scm/t20/tonatiuh.git&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Cyprus Institute&lt;br/&gt;&lt;a href=&quot;https://www.cyi.ac.cy/&quot;&gt;&lt;span style=&quot;color:#305a87;&quot;&gt;https://www.cyi.ac.cy/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
        </property>
       </widget>
      </item>

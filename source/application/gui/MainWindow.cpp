@@ -3266,7 +3266,7 @@ void MainWindow::SetupActionsInsertMaterial()
 
     QPushButton* button = new QPushButton;
 //    tb->setText("Material");
-    button->setIcon(QIcon(":/icons/nodeSurface.png"));
+    button->setIcon(QIcon(":/images/scene/nodeSurface.png"));
 //    tb->setFlat(true);
     button->setMenu(menu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
@@ -3305,7 +3305,7 @@ void MainWindow::SetupActionsInsertShape()
 
     QPushButton* button = new QPushButton;
 //    tb->setText("Shape");
-    button->setIcon(QIcon(":/icons/nodeSurface.png"));
+    button->setIcon(QIcon(":/images/scene/nodeSurface.png"));
 //    tb->setFlat(true);
     button->setMenu(menu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
