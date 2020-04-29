@@ -26,8 +26,8 @@ public:
      );
     ~CmdLightKitModified();
 
-     virtual void undo();
-     virtual void redo();
+     void undo();
+     void redo();
 
 private:
     bool m_hasOld;

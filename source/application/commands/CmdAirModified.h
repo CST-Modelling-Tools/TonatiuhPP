@@ -11,20 +11,18 @@
 class TSceneKit;
 class AirAbstract;
 
-class CmdTransmissivityModified : public QUndoCommand
+class CmdAirModified: public QUndoCommand
 {
-
 public:
-    CmdTransmissivityModified( AirAbstract* newTransmissivity, TSceneKit* scene,  QUndoCommand* parent = 0 );
-    ~CmdTransmissivityModified();
+    CmdAirModified(AirAbstract* airNew, TSceneKit* scene, QUndoCommand* parent = 0);
+    ~CmdAirModified();
 
-     virtual void undo();
-     virtual void redo();
+     void undo();
+     void redo();
 
 private:
-     bool m_isPreviousTransmissivity;
-     AirAbstract* m_pPreviousTransmissivity;
-     AirAbstract* m_pNewTransmissivity;
+     bool m_hasOld;
+     AirAbstract* m_airOld;
+     AirAbstract* m_airNew;
      TSceneKit* m_scene;
 };
-

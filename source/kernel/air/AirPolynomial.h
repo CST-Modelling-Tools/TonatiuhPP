@@ -1,8 +1,8 @@
 #pragma once
 
+#include "kernel/air/AirAbstract.h"
 #include <Inventor/fields/SoSFEnum.h>
 #include <Inventor/fields/SoSFDouble.h>
-#include "kernel/air/AirAbstract.h"
 
 class SoFieldSensor;
 class SoSensor;
@@ -20,12 +20,11 @@ public:
     double transmission(double distance) const;
 
     enum Coefficients {
-        Vacuum,
+        Custom,
         VittitoeBiggsClear,
         VittitoeBiggsHazy,
         BallestrinClear,
-        BallestrinHazy,
-        Custom
+        BallestrinHazy
     };
 
     SoSFEnum coefficients;

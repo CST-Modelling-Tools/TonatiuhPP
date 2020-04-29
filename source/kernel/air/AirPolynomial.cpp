@@ -15,15 +15,14 @@ AirPolynomial::AirPolynomial()
     SO_NODE_CONSTRUCTOR(AirPolynomial);
     setName("Polynomial");
 
-    SO_NODE_DEFINE_ENUM_VALUE(Coefficients, Vacuum);
+    SO_NODE_DEFINE_ENUM_VALUE(Coefficients, Custom);
     SO_NODE_DEFINE_ENUM_VALUE(Coefficients, VittitoeBiggsClear);
     SO_NODE_DEFINE_ENUM_VALUE(Coefficients, VittitoeBiggsHazy);
     SO_NODE_DEFINE_ENUM_VALUE(Coefficients, BallestrinClear);
     SO_NODE_DEFINE_ENUM_VALUE(Coefficients, BallestrinHazy);
-    SO_NODE_DEFINE_ENUM_VALUE(Coefficients, Custom);
 
     SO_NODE_SET_SF_ENUM_TYPE(coefficients, Coefficients);
-    SO_NODE_ADD_FIELD( coefficients, (Vacuum) );
+    SO_NODE_ADD_FIELD( coefficients, (Custom) );
 
     SO_NODE_ADD_FIELD(a0, (1.) );
     SO_NODE_ADD_FIELD(a1, (0.) );
@@ -49,12 +48,7 @@ double AirPolynomial::transmission(double distance) const
 void AirPolynomial::update_coefficients(void* data, SoSensor*)
 {
     AirPolynomial* air = (AirPolynomial*) data;
-    if (air->coefficients.getValue() == Vacuum) {
-        air->a0 = 1.;
-        air->a1 = 0.;
-        air->a2 = 0.;
-        air->a3 = 0.;
-    } else if (air->coefficients.getValue() == VittitoeBiggsClear) {
+    if (air->coefficients.getValue() == VittitoeBiggsClear) {
         air->a0 = 0.99326;
         air->a1 = -0.1046;
         air->a2 = 0.017;

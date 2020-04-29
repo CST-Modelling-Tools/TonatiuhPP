@@ -36,4 +36,5 @@ SOURCES += \
 RESOURCES += resources.qrc
 
 DISTFILES += \
-    images/AirPolynomial.png
+    images/AirPolynomial.png \
+    images/AirVacuum.png

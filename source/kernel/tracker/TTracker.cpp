@@ -34,14 +34,10 @@ void TTracker::Disconnect()
     m_zenith.disconnect();
 }
 
-/*
-   void TTracker::SetLightAngles(TLightKit * coinLight )
-   {
-    m_azimuth.connectFrom( &(coinLight->azimuth) );
-    m_zenith.connectFrom( &(coinLight->zenith) );
-   }
- */
-
+void TTracker::SetSceneKit(TSceneKit* scene)
+{
+    m_scene = scene;
+}
 
 void TTracker::SetAzimuthAngle(trt::TONATIUH_REAL* azimuthField)
 {
@@ -51,11 +47,6 @@ void TTracker::SetAzimuthAngle(trt::TONATIUH_REAL* azimuthField)
 void TTracker::SetZenithAngle(trt::TONATIUH_REAL* zenithField)
 {
     m_zenith.connectFrom(zenithField);
-}
-
-void TTracker::SetSceneKit(TSceneKit* scene)
-{
-    m_scene = scene;
 }
 
 void TTracker::ConnectParentTranform(SoTransform* parentTransform)
@@ -71,6 +62,15 @@ void TTracker::ConnectParentTranform(SoTransform* parentTransform)
 void TTracker::Evaluate(Vector3D /*sunVector*/, Transform /*parentWT0*/)
 {
 
+}
+
+void TTracker::SetEngineOutputIdentity()
+{
+    SO_ENGINE_OUTPUT(outputTranslation, SoSFVec3f, setValue(0.0, 0.0, 0.0) );
+    SO_ENGINE_OUTPUT(outputRotation, SoSFRotation, setValue(0.0, 0.0, 1.0, 0.0) );
+    SO_ENGINE_OUTPUT(outputScaleFactor, SoSFVec3f, setValue(1.0, 1.0, 1.0) );
+    SO_ENGINE_OUTPUT(outputScaleOrientation, SoSFRotation, setValue(0.0, 0.0, 1.0, 0.0) );
+    SO_ENGINE_OUTPUT(outputCenter, SoSFVec3f, setValue(0.0, 0.0, 0.0) );
 }
 
 void TTracker::SetEngineOutput(SoTransform* newTransform)
@@ -91,14 +91,7 @@ void TTracker::SetEngineOutputRotation(SbRotation rotation)
     SO_ENGINE_OUTPUT(outputCenter, SoSFVec3f, setValue(SbVec3f(0.0, 0.0, 0.0) ) );
 }
 
-void TTracker::SetEngineOutputIdentity()
-{
-    SO_ENGINE_OUTPUT(outputTranslation, SoSFVec3f, setValue(0.0, 0.0, 0.0) );
-    SO_ENGINE_OUTPUT(outputRotation, SoSFRotation, setValue(0.0, 0.0, 1.0, 0.0) );
-    SO_ENGINE_OUTPUT(outputScaleFactor, SoSFVec3f, setValue(1.0, 1.0, 1.0) );
-    SO_ENGINE_OUTPUT(outputScaleOrientation, SoSFRotation, setValue(0.0, 0.0, 1.0, 0.0) );
-    SO_ENGINE_OUTPUT(outputCenter, SoSFVec3f, setValue(0.0, 0.0, 0.0) );
-}
+
 
 /*
    bool TTracker::IsConnected()
@@ -123,5 +116,13 @@ void TTracker::SetEngineOutputIdentity()
         m_scene->azimuth.setValue( m_azimuth.getValue() );
         m_scene->zenith.setValue( m_zenith.getValue() );
     }
+   }
+ */
+
+/*
+   void TTracker::SetLightAngles(TLightKit * coinLight )
+   {
+    m_azimuth.connectFrom( &(coinLight->azimuth) );
+    m_zenith.connectFrom( &(coinLight->zenith) );
    }
  */

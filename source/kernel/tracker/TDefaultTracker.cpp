@@ -8,7 +8,7 @@
 
 #include "TDefaultTracker.h"
 
-SO_NODEENGINE_SOURCE( TDefaultTracker );
+SO_NODEENGINE_SOURCE(TDefaultTracker)
 
 /**
  * Sets up initialization for data common to all instances of this class, like submitting necessary information to the Coin type system.
@@ -52,7 +52,7 @@ TDefaultTracker::~TDefaultTracker()
  */
 QString TDefaultTracker::getIcon()
 {
-    return QLatin1String(":/images/HorizontalTracker.png");
+    return ":/images/HorizontalTracker.png";
 }
 
 /**
@@ -63,5 +63,4 @@ void TDefaultTracker::evaluate()
     //if (!IsConnected()) return;
 
     SetEngineOutputIdentity();
-
 }

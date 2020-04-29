@@ -15,9 +15,9 @@ AirDialog::AirDialog(QMap<QString, AirFactory*> airMap, QWidget* parent, Qt::Win
 {
     ui->setupUi(this);
 
-    ui->comboBox->addItem("---");
     for (AirFactory* f : airMap)
         ui->comboBox->addItem(f->icon(), f->name());
+    ui->comboBox->setCurrentIndex(-1);
 
     connect(
         ui->comboBox, SIGNAL(currentIndexChanged(int)),
@@ -35,7 +35,7 @@ AirDialog::~AirDialog()
 }
 
 void AirDialog::setModel(AirAbstract* air)
-{
+{    
     if (!air) return;
     m_airOld = static_cast<AirAbstract*>(air->copy(true));
     m_index = 0;
@@ -50,10 +50,8 @@ void AirDialog::changeModel(int index)
     while (m_air && m_air->getRefCount() > 0)
         m_air->unref();
 
-    if (index == 0)
-        m_air = 0;
-    else if (index == m_index)
-        m_air = static_cast<AirAbstract*>(m_airOld->copy(true) );
+    if (index == m_index)
+        m_air = static_cast<AirAbstract*>(m_airOld->copy(true));
     else {
         AirFactory* f = m_airMap[ui->comboBox->itemText(index)];
         m_air = f->create();

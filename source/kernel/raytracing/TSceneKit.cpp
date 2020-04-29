@@ -5,7 +5,7 @@
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/Vector3D.h"
 
-#include "kernel/air/TDefaultTransmissivity.h"
+#include "kernel/air/AirVacuum.h"
 #include "TSceneKit.h"
 #include "TSeparatorKit.h"
 #include "kernel/tracker/TTracker.h"
@@ -32,7 +32,7 @@ void TSceneKit::initClass()
 TSceneKit::TSceneKit()
 {
     SO_KIT_CONSTRUCTOR(TSceneKit);
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY( transmissivity, AirAbstract, TDefaultTransmissivity, TRUE, topSeparator, "", TRUE);
+    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY( transmissivity, AirAbstract, AirVacuum, TRUE, topSeparator, "", TRUE);
 
     SO_NODE_ADD_FIELD( azimuth, (gc::Pi) );
     SO_NODE_ADD_FIELD( zenith, (0.f) );
@@ -44,6 +44,8 @@ TSceneKit::TSceneKit()
     lightKit->setPart("tsunshape", new SunPillbox);
 //    getPart("lightList", true);
     setPart("lightList[0]", lightKit);
+
+    setPart("transmissivity", new AirVacuum);
 }
 
 /**
@@ -93,10 +95,11 @@ void TSceneKit::UpdateSunPosition( double azimuthValue, double zenithValue )
             -sin( zenith.getValue() ) * cos( azimuth.getValue()  ) );
 
 
-    Transform sceneOTW( 1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1 );
+    Transform sceneOTW(
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1 );
 
 
     SoNodeKitListPart* coinPartList = static_cast< SoNodeKitListPart* >( getPart( "childList", true ) );
@@ -122,7 +125,7 @@ void TSceneKit::UpdateSunPosition( double azimuthValue, double zenithValue )
  */
 void TSceneKit::UpdateTrackersTransform( SoBaseKit* branch, Vector3D sunVector, Transform parentOTW )
 {
-    if( !branch )    return;
+    if (!branch) return;
 
     SoNode* tracker = branch->getPart( "tracker", false );
     if( tracker )
@@ -149,7 +152,5 @@ void TSceneKit::UpdateTrackersTransform( SoBaseKit* branch, Vector3D sunVector, 
                 if( coinChild )        UpdateTrackersTransform( coinChild, sunVector, nodeOTW );
             }
         }
-
     }
-
 }

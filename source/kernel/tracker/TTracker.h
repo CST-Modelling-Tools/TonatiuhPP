@@ -23,31 +23,31 @@ public:
     static void initClass();
     virtual QString getIcon() = 0;
 
-    void Disconnect();
-    //void SetLightAngles(TLightKit * coinLight );
+    void SetSceneKit(TSceneKit* scene);
     void SetAzimuthAngle(trt::TONATIUH_REAL* azimuthField);
     void SetZenithAngle(trt::TONATIUH_REAL* zenithField);
-    void SetSceneKit(TSceneKit* scene);
-    //void SetAnglesToScene();
+    void Disconnect();
     void ConnectParentTranform(SoTransform* parentTransform);
+    virtual void Evaluate(Vector3D sunVectorW, Transform parentWT0);
+
+    //void SetLightAngles(TLightKit * coinLight );
+    //void SetAnglesToScene();
     //double GetAzimuth() { return m_azimuth.getValue();};
     //double GetZenith() { return m_zenith.getValue();};
 
-    virtual void Evaluate(Vector3D sunVectorW, Transform parentWT0);
-
 protected:
-    //Constructor
     TTracker();
     virtual ~TTracker();
 
-    void SetEngineOutput(SoTransform* newTransform);
     void SetEngineOutputIdentity();
+    void SetEngineOutput(SoTransform* newTransform);
     void SetEngineOutputRotation(SbRotation rotation);
     Vector3D GetGobalSunVector();
     //bool IsConnected();
 
-    trt::TONATIUH_REAL m_azimuth;
     TSceneKit* m_scene;
+
+    trt::TONATIUH_REAL m_azimuth;
     trt::TONATIUH_REAL m_zenith;
 
     SoEngineOutput outputTranslation;

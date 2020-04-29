@@ -2,9 +2,7 @@ TEMPLATE = subdirs
 
 #SUBDIRS += TransmissivityATMParameters
 #SUBDIRS += TransmissivityBallestrin
-#SUBDIRS += TransmissivityDefault
-#SUBDIRS += TransmissivityMirval
+SUBDIRS += AirMirval
 #SUBDIRS += TransmissivitySenguptaNREL
 #SUBDIRS += TransmissivityVantHull
-SUBDIRS += AirVittitoeBiggs
-SUBDIRS += AirExponent
+#SUBDIRS += AirVittitoeBiggs

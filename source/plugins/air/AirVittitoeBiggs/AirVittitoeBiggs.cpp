@@ -20,7 +20,7 @@ AirVittitoeBiggs::AirVittitoeBiggs()
     setName("Vittitoe-Biggs");
 }
 
-double AirVittitoeBiggs::transmission( double distance) const
+double AirVittitoeBiggs::transmission(double distance) const
 {
     double d = distance/1000.;
     double t;

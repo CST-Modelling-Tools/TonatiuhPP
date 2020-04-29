@@ -12,7 +12,7 @@
 #include "kernel/shape/ShapeCube.h"
 #include "kernel/material/TDefaultMaterial.h"
 #include "kernel/tracker/TDefaultTracker.h"
-#include "kernel/air/TDefaultTransmissivity.h"
+#include "kernel/air/AirVacuum.h"
 #include "kernel/raytracing/TLightKit.h"
 #include "kernel/raytracing/TLightShape.h"
 #include "kernel/raytracing/TSceneKit.h"
@@ -84,23 +84,23 @@ int main(int argc, char** argv)
     UserSField::initClass();
 
     TSceneKit::initClass();
-    MaterialAbstract::initClass();
-    TDefaultMaterial::initClass();
     TSeparatorKit::initClass();
 
-    ShapeAbstract::initClass();
-
     TLightShape::initClass();
-    TShapeKit::initClass();
     TLightKit::initClass();
+    AirAbstract::initClass();
     SunAbstract::initClass();
+
+    TShapeKit::initClass();
+    ShapeAbstract::initClass();
+    MaterialAbstract::initClass();
+    TDefaultMaterial::initClass();
+
     TTracker::initClass();
     TTrackerForAiming::initClass();
     TDefaultTracker::initClass();
     TSceneTracker::initClass();
     GraphicRootTracker::initClass();
-    AirAbstract::initClass();
-    TDefaultTransmissivity::initClass();
 
     splash->showMessage(QObject::tr("Setting up the main window..."), topRight, Qt::black);
 

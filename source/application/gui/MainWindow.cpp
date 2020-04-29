@@ -59,7 +59,7 @@
 #include "commands/CmdLightPositionModified.h"
 #include "commands/CmdModifyParameter.h"
 #include "commands/CmdPaste.h"
-#include "commands/CmdTransmissivityModified.h"
+#include "commands/CmdAirModified.h"
 
 #include "view/GraphicRoot.h"
 #include "MainWindow.h"
@@ -72,6 +72,7 @@
 #include "run/FluxAnalysisDialog.h"
 #include "kernel/air/AirFactory.h"
 #include "kernel/air/AirAbstract.h"
+#include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/gui/InstanceNode.h"
 #include "kernel/material/MaterialFactory.h"
@@ -322,18 +323,16 @@ void MainWindow::DefineTransmissivity()
 {
     AirDialog dialog(m_pluginManager->getAirMap());
 
-    TSceneKit* coinScene = m_document->GetSceneKit();
-    if (!coinScene) return;
+    TSceneKit* sceneKit = m_document->GetSceneKit();
+    if (!sceneKit) return;
+    AirAbstract* airOld = static_cast<AirAbstract*>(sceneKit->getPart("transmissivity", false));
+    if (airOld) dialog.setModel(airOld);
 
-    AirAbstract* currentTransmissivity = static_cast<AirAbstract*> (coinScene->getPart("transmissivity", false) );
-    if (currentTransmissivity) dialog.setModel(currentTransmissivity);
-    if (!dialog.exec() ) return;
+    if (!dialog.exec()) return;
 
-    AirAbstract* newTransmissivity = dialog.getModel();
-    //    coinScene->setPart( "transmissivity", newTransmissivity );
-
-    CmdTransmissivityModified* command = new CmdTransmissivityModified(newTransmissivity, coinScene);
-    if (m_commandStack) m_commandStack->push(command);
+    AirAbstract* airNew = dialog.getModel();
+    CmdAirModified* cmd = new CmdAirModified(airNew, sceneKit);
+    if (m_commandStack) m_commandStack->push(cmd);
     m_document->SetDocumentModified(true);
 }
 
@@ -1812,9 +1811,13 @@ void MainWindow::Run()
         QMutex mutex;
         QMutex mutexPhotonMap;
         QFuture<void> photonMap;
+        AirAbstract* airTemp = 0;
+        if (!dynamic_cast<AirVacuum*>(transmissivity))
+            airTemp = transmissivity;
+
         photonMap = QtConcurrent::map(raysPerThread, RayTracer(rootSeparatorInstance,
             lightInstance, raycastingSurface, sunShape, lightToWorld,
-            transmissivity,
+            airTemp,
             *m_rand,
             &mutex, m_pPhotonMap, &mutexPhotonMap,
             exportSuraceList) );
@@ -2222,7 +2225,7 @@ void MainWindow::SetTransmissivity(QString transmissivityType)
         return;
     }
 
-    CmdTransmissivityModified* command = new CmdTransmissivityModified(transmissivity, coinScene);
+    CmdAirModified* command = new CmdAirModified(transmissivity, coinScene);
     if (m_commandStack) m_commandStack->push(command);
     m_document->SetDocumentModified(true);
 }
