@@ -5,7 +5,7 @@
 #include <Inventor/fields/SoSFDouble.h>
 
 #include "kernel/TonatiuhKernel.h"
-#include "kernel/raytracing/TAbstract.h"
+#include "kernel/scene/TAbstract.h"
 #include "kernel/random/RandomAbstract.h"
 #include "libraries/geometry/Vector3D.h"
 

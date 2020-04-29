@@ -1,7 +1,7 @@
 #include "TTrackerForAiming.h"
-#include "kernel/raytracing/TSceneKit.h"
+#include "kernel/scene/TSceneKit.h"
 #include "libraries/geometry/Transform.h"
-#include "kernel/raytracing/trf.h"
+#include "kernel/trf.h"
 
 
 SO_NODEENGINE_ABSTRACT_SOURCE(TTrackerForAiming)

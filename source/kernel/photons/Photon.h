@@ -2,7 +2,7 @@
 
 #include "kernel/TonatiuhKernel.h"
 
-#include "kernel/gui/InstanceNode.h"
+#include "kernel/run/InstanceNode.h"
 #include "libraries/geometry/Point3D.h"
 
 

@@ -2,17 +2,17 @@
 
 #include <Inventor/nodekits/SoBaseKit.h>
 #include "CmdInsertSeparatorKit.h"
-#include "kernel/gui/InstanceNode.h"
+#include "kernel/run/InstanceNode.h"
 #include "gui/SceneModel.h"
-#include "kernel/raytracing/TSeparatorKit.h"
+#include "kernel/scene/TSeparatorKit.h"
 
 /**
  * Creates a new group node insert command that adds a \a separatorKit to \a parentIndex node in the \a model.
  *
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
-CmdInsertSeparatorKit::CmdInsertSeparatorKit( TSeparatorKit* separatorKit,  const QModelIndex& parentIndex, SceneModel* model, QUndoCommand* parent )
-: QUndoCommand("InsertSeparatorKit", parent), m_separatorKit ( separatorKit ), m_coinParent( 0 ), m_pModel( model ), m_row( -1 )
+CmdInsertSeparatorKit::CmdInsertSeparatorKit( TSeparatorKit* separatorKit,  const QModelIndex& parentIndex, SceneModel* model, QUndoCommand* parent ):
+    QUndoCommand("InsertSeparatorKit", parent), m_separatorKit ( separatorKit ), m_coinParent( 0 ), m_pModel( model ), m_row( -1 )
 {
     if( !m_separatorKit ) gf::SevereError( "CmdInsertSeparatorKit Null separatorKit." );
     m_separatorKit->ref();
@@ -36,7 +36,7 @@ CmdInsertSeparatorKit::~CmdInsertSeparatorKit()
  */
 void CmdInsertSeparatorKit::undo()
 {
-    m_pModel->RemoveCoinNode( m_row, *m_coinParent );
+    m_pModel->RemoveCoinNode(m_row, *m_coinParent);
 }
 
 /*!
@@ -45,6 +45,5 @@ void CmdInsertSeparatorKit::undo()
  */
 void CmdInsertSeparatorKit::redo()
 {
-    m_row = m_pModel->InsertCoinNode( *m_separatorKit, *m_coinParent );
-
+    m_row = m_pModel->InsertCoinNode(*m_separatorKit, *m_coinParent);
 }

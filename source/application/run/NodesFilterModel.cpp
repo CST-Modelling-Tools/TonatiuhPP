@@ -1,8 +1,8 @@
-#include "kernel/gui/InstanceNode.h"
+#include "kernel/run/InstanceNode.h"
 #include "NodesFilterModel.h"
 #include "gui/SceneModel.h"
-#include "kernel/raytracing/TSeparatorKit.h"
-#include "kernel/raytracing/TShapeKit.h"
+#include "kernel/scene/TSeparatorKit.h"
+#include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeAbstract.h"
 
 

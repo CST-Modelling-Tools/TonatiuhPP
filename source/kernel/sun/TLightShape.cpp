@@ -2,17 +2,19 @@
 
 #include <QString>
 #include <QVector>
+
 #include <Inventor/SoPrimitiveVertex.h>
 #include <Inventor/actions/SoGLRenderAction.h>
 #include <Inventor/elements/SoGLTextureCoordinateElement.h>
 #include <Inventor/elements/SoMaterialBindingElement.h>
+
 #include <math.h>
 #include "libraries/geometry/BBox.h"
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/Vector3D.h"
 #include "libraries/geometry/gf.h"
-#include "raytracing/TShapeKit.h"
+#include "scene/TShapeKit.h"
 #include "shape/DifferentialGeometry.h"
 
 

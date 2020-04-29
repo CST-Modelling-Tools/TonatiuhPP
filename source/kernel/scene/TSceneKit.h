@@ -4,8 +4,8 @@
 #include <Inventor/nodekits/SoSceneKit.h>
 #include <Inventor/actions/SoSearchAction.h>
 #include "TSeparatorKit.h"
-#include "trt.h"
-#include "kernel/tgf.h"
+#include "kernel/TonatiuhTypes.h"
+#include "kernel/TonatiuhFunctions.h"
 
 class QString;
 class Vector3D;

@@ -7,11 +7,11 @@
 #include <Inventor/nodekits/SoBaseKit.h>
 #include <Inventor/nodekits/SoNodeKitListPart.h>
 
-#include "kernel/gui/InstanceNode.h"
+#include "kernel/run/InstanceNode.h"
 #include "SceneModelView.h"
 #include "gui/SceneModel.h"
-#include "kernel/raytracing/TSeparatorKit.h"
-#include "kernel/raytracing/TShapeKit.h"
+#include "kernel/scene/TSeparatorKit.h"
+#include "kernel/scene/TShapeKit.h"
 
 /**
  * Creates a new view for a model. This

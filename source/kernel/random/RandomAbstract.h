@@ -1,7 +1,7 @@
 #pragma once
 
 #include "kernel/TonatiuhKernel.h"
-#include "kernel/raytracing/TAbstract.h"
+#include "kernel/scene/TAbstract.h"
 #include <qglobal.h>
 
 //!  RandomDeviate is the base class for random generators.
@@ -28,6 +28,7 @@ private:
     ulong m_index;
     ulong m_total;
 };
+
 
 inline RandomAbstract::RandomAbstract(const ulong arraySize):
     m_size(arraySize), m_index(arraySize), m_total(0)

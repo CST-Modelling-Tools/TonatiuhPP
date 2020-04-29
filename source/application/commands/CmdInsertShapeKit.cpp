@@ -4,9 +4,9 @@
 #include "libraries/geometry/gf.h"
 
 #include "CmdInsertShapeKit.h"
-#include "kernel/gui/InstanceNode.h"
+#include "kernel/run/InstanceNode.h"
 #include "gui/SceneModel.h"
-#include "kernel/raytracing/TShapeKit.h"
+#include "kernel/scene/TShapeKit.h"
 
 /**
  * Creates a new shapekit insert command that adds a \a shapekit node to a node given with the \a parentIndex node in the \a model.

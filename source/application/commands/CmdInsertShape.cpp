@@ -3,7 +3,7 @@
 #include "CmdInsertShape.h"
 #include "gui/SceneModel.h"
 #include "kernel/shape/ShapeAbstract.h"
-#include "kernel/raytracing/TShapeKit.h"
+#include "kernel/scene/TShapeKit.h"
 
 /**
  * Creates a new shape insert command that adds a \a shape to \a shapekit node in the \a model.

@@ -3,7 +3,7 @@
 #include <Inventor/nodes/SoTransform.h>
 
 #include "kernel/random/RandomAbstract.h"
-#include "tgf.h"
+#include "TonatiuhFunctions.h"
 #include "libraries/geometry/Transform.h"
 
 
@@ -13,27 +13,23 @@ double tgf::AlternateBoxMuller(RandomAbstract& rand)
     static double x1;
     static double x2;
 
-    if (firsttime)
-    {
+    if (firsttime) {
         double s = 2;
         double u1;
         double u2;
-        while (s > 1)
-        {
-             u1 = 2 * rand.RandomDouble() - 1;
-             u2 = 2 * rand.RandomDouble() - 1;
-            s = u1 * u1 + u2 * u2;
+        while (s > 1) {
+            u1 = 2*rand.RandomDouble() - 1;
+            u2 = 2*rand.RandomDouble() - 1;
+            s = u1*u1 + u2*u2;
         }
 
-        double z = sqrt( -2 * log( s ) / s );
-        x1 = z * u1;
-        x2 = z * u2;
+        double z = sqrt( -2 * log(s) / s );
+        x1 = z*u1;
+        x2 = z*u2;
 
-         firsttime = false;
-         return x1;
-    }
-    else
-    {
+        firsttime = false;
+        return x1;
+    } else {
         firsttime = true;
         return x2;
     }

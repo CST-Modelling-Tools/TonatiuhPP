@@ -5,10 +5,6 @@
         <file>images/CalculationRequest.png</file>
         <file>images/about/SplashScreen.png</file>
         <file>images/about/Tonatiuh.png</file>
-        <file>images/arrow-down.png</file>
-        <file>images/arrow-left.png</file>
-        <file>images/arrow-right.png</file>
-        <file>images/arrow-up.png</file>
         <file>images/deleteTracker.png</file>
         <file>images/edit/copy.png</file>
         <file>images/edit/cut.png</file>
@@ -28,7 +24,7 @@
         <file>images/file/print.png</file>
         <file>images/file/save.png</file>
         <file>images/file/saveas.png</file>
-        <file>images/run/fluxAnalysis.png</file>
+        <file>images/run/runFluxAnalysis.png</file>
         <file>images/go-home.png</file>
         <file>images/map/position.png</file>
         <file>images/map/sun.png</file>
@@ -40,13 +36,10 @@
         <file>images/refresh.png</file>
         <file>images/run/runRayTracing.png</file>
         <file>images/tcube.png</file>
-        <file>images/up.png</file>
         <file>images/view/viewGrid.png</file>
         <file>images/view/viewSun.png</file>
         <file>images/view/viewXY.png</file>
         <file>images/view/viewXZ.png</file>
         <file>images/view/viewYZ.png</file>
-        <file>images/zoom-in.png</file>
-        <file>images/zoom-out.png</file>
     </qresource>
 </RCC>

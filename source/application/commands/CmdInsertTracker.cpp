@@ -6,7 +6,7 @@
 
 #include "gui/SceneModel.h"
 #include "libraries/geometry/gf.h"
-#include "kernel/gui/InstanceNode.h"
+#include "kernel/run/InstanceNode.h"
 #include "kernel/sun/TLightKit.h"
 #include "kernel/tracker/TTracker.h"
 

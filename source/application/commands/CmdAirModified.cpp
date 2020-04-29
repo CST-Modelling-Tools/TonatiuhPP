@@ -1,7 +1,7 @@
 #include "libraries/geometry/gf.h"
 
 #include "CmdAirModified.h"
-#include "kernel/raytracing/TSceneKit.h"
+#include "kernel/scene/TSceneKit.h"
 #include "kernel/air/AirAbstract.h"
 
 /*!

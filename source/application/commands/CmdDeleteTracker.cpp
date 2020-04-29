@@ -4,9 +4,9 @@
 #include <Inventor/nodekits/SoSceneKit.h>
 #include "libraries/geometry/gf.h"
 #include "gui/SceneModel.h"
-#include "kernel/gui/InstanceNode.h"
+#include "kernel/run/InstanceNode.h"
 #include "kernel/sun/TLightKit.h"
-#include "kernel/raytracing/TSeparatorKit.h"
+#include "kernel/scene/TSeparatorKit.h"
 #include "kernel/tracker/TTracker.h"
 
 /*!

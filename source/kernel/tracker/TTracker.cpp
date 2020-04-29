@@ -2,7 +2,7 @@
 
 #include <QString>
 #include "libraries/geometry/Transform.h"
-#include "raytracing/TSceneKit.h"
+#include "scene/TSceneKit.h"
 #include "sun/TLightKit.h"
 //#include "geometry/tgc.h"
 

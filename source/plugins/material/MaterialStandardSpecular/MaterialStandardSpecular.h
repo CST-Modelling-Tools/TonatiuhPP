@@ -6,7 +6,7 @@
 #include <Inventor/fields/SoSFString.h>
 
 #include "kernel/material/MaterialAbstract.h"
-#include "kernel/raytracing/trt.h"
+#include "kernel/TonatiuhTypes.h"
 
 class SoSensor;
 class SoFieldSensor;

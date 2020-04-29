@@ -4,7 +4,7 @@
 
 #include "CmdPaste.h"
 #include "gui/SceneModel.h"
-#include "kernel/gui/InstanceNode.h"
+#include "kernel/run/InstanceNode.h"
 
 /**
  * Creates a new paste command that represents a \a type paste of the \a coinClipboard node as a node located with \a parentModelIndex child in the \a model.

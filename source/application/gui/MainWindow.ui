@@ -703,7 +703,7 @@
   <action name="actionRunFluxAnalysis">
    <property name="icon">
     <iconset resource="../resources.qrc">
-     <normaloff>:/images/run/fluxAnalysis.png</normaloff>:/images/run/fluxAnalysis.png</iconset>
+     <normaloff>:/images/run/runFluxAnalysis.png</normaloff>:/images/run/runFluxAnalysis.png</iconset>
    </property>
    <property name="text">
     <string>Flux Analysis...</string>

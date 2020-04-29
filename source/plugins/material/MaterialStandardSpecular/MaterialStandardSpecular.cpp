@@ -8,7 +8,7 @@
 #include "libraries/geometry/Transform.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "kernel/random/RandomAbstract.h"
-#include "kernel/tgf.h"
+#include "kernel/TonatiuhFunctions.h"
 
 
 SO_NODE_SOURCE(MaterialStandardSpecular)

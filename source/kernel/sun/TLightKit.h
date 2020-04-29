@@ -7,7 +7,7 @@
 #include <Inventor/fields/SoSFBool.h>
 #include <Inventor/fields/SoSFString.h>
 #include <Inventor/nodekits/SoLightKit.h>
-#include "kernel/raytracing/trt.h"
+#include "kernel/TonatiuhTypes.h"
 #include "kernel/sun/SunAbstract.h"
 
 struct BBox;

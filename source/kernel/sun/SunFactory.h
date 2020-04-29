@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kernel/raytracing/TFactory.h"
+#include "kernel/scene/TFactory.h"
 
 class SunAbstract;
 

@@ -13,7 +13,7 @@
 #include "libraries/geometry/gf.h"
 
 #include "CmdModifyParameter.h"
-#include "kernel/gui/InstanceNode.h"
+#include "kernel/run/InstanceNode.h"
 #include "gui/SceneModel.h"
 
 /**

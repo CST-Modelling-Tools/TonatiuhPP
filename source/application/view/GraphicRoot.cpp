@@ -7,7 +7,7 @@
 
 #include "GraphicRoot.h"
 #include "kernel/tracker/GraphicRootTracker.h"
-#include "kernel/raytracing/TSceneKit.h"
+#include "kernel/scene/TSceneKit.h"
 
 
 void selectionFinishCallback( void * userData, SoSelection* selection )

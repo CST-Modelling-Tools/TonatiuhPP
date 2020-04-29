@@ -3,7 +3,7 @@
 #include "CmdInsertMaterial.h"
 #include "gui/SceneModel.h"
 #include "kernel/material/MaterialAbstract.h"
-#include "kernel/raytracing/TShapeKit.h"
+#include "kernel/scene/TShapeKit.h"
 
 /**
  * Creates a new material insert command that adds a \a material to \a shapekit node in the \a model.

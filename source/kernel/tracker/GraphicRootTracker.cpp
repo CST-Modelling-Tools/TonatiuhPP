@@ -16,7 +16,7 @@
 #include "libraries/geometry/Point3D.h"
 #include "GraphicRootTracker.h"
 #include "libraries/geometry/Transform.h"
-#include "kernel/raytracing/TSceneKit.h"
+#include "kernel/scene/TSceneKit.h"
 #include "libraries/geometry/Vector3D.h"
 
 SO_NODEENGINE_SOURCE(GraphicRootTracker)

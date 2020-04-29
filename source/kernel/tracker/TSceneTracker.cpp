@@ -14,15 +14,15 @@
 #include "libraries/geometry/Point3D.h"
 #include "libraries/geometry/Transform.h"
 #include "TSceneTracker.h"
-#include "kernel/raytracing/TSceneKit.h"
+#include "kernel/scene/TSceneKit.h"
 #include "libraries/geometry/Vector3D.h"
 
-SO_NODEENGINE_SOURCE( TSceneTracker );
+SO_NODEENGINE_SOURCE(TSceneTracker)
+
 
 void TSceneTracker::initClass()
 {
-    SO_NODEENGINE_INIT_CLASS( TSceneTracker, TTracker, "TTracker" );
-
+    SO_NODEENGINE_INIT_CLASS(TSceneTracker, TTracker, "TTracker");
 }
 
 TSceneTracker::TSceneTracker()
@@ -30,8 +30,8 @@ TSceneTracker::TSceneTracker()
     SO_NODEENGINE_CONSTRUCTOR( TSceneTracker );
 
     // Define input fields and their default values
-    SO_NODE_ADD_FIELD( m_azimuth, ( 0.0 ) );
-    SO_NODE_ADD_FIELD( m_zenith, ( 90.0 ) );
+    SO_NODE_ADD_FIELD( m_azimuth, (0.) );
+    SO_NODE_ADD_FIELD( m_zenith, (90.) );
 
     //ConstructEngineOutput();
     SO_NODEENGINE_ADD_OUTPUT( outputTranslation, SoSFVec3f);
@@ -39,8 +39,6 @@ TSceneTracker::TSceneTracker()
     SO_NODEENGINE_ADD_OUTPUT( outputScaleFactor, SoSFVec3f);
     SO_NODEENGINE_ADD_OUTPUT( outputScaleOrientation, SoSFRotation);
     SO_NODEENGINE_ADD_OUTPUT( outputCenter, SoSFVec3f);
-
-
 }
 
 TSceneTracker::~TSceneTracker()

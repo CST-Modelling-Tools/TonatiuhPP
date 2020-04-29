@@ -14,13 +14,13 @@
 
 #include "gui/SceneModel.h"
 #include "kernel/air/AirAbstract.h"
-#include "kernel/gui/InstanceNode.h"
+#include "kernel/run/InstanceNode.h"
 #include "kernel/photons/PhotonMap.h"
 #include "kernel/random//RandomAbstract.h"
-#include "kernel/raytracing/RayTracer.h"
-#include "kernel/raytracing/TSceneKit.h"
-#include "kernel/raytracing/TShapeKit.h"
-#include "kernel/raytracing/trf.h"
+#include "kernel/run/RayTracer.h"
+#include "kernel/scene/TSceneKit.h"
+#include "kernel/scene/TShapeKit.h"
+#include "kernel/trf.h"
 #include "kernel/shape/ShapeAbstract.h"
 #include "kernel/sun/TLightKit.h"
 #include "kernel/sun/TLightShape.h"
@@ -34,8 +34,14 @@
 /*!
  * Create FluxAnalysis object
  */
-FluxAnalysis::FluxAnalysis(TSceneKit* currentScene, SceneModel& currentSceneModel, InstanceNode* rootSeparatorInstance,
-                           int sunWidthDivisions, int sunHeightDivisions, RandomAbstract* randomDeviate) :
+FluxAnalysis::FluxAnalysis(
+    TSceneKit* currentScene,
+    SceneModel& currentSceneModel,
+    InstanceNode* rootSeparatorInstance,
+    int sunWidthDivisions,
+    int sunHeightDivisions,
+    RandomAbstract* randomDeviate
+):
     m_pCurrentScene(currentScene),
     m_pCurrentSceneModel(&currentSceneModel),
     m_pRootSeparatorInstance(rootSeparatorInstance),
@@ -69,12 +75,9 @@ FluxAnalysis::~FluxAnalysis()
 {
     clearPhotonMap();
 
-    if (m_photonCounts)
-    {
+    if (m_photonCounts) {
         for (int h = 0; h < m_heightDivisions; h++)
-        {
             delete[] m_photonCounts[h];
-        }
 
         delete[] m_photonCounts;
     }
@@ -521,9 +524,7 @@ void FluxAnalysis::FluxAnalysisFlatDisk(InstanceNode* node)
     if (photonCountsError)
     {
         for (int h = 0; h < heightDivisionsError; h++)
-        {
             delete[] photonCountsError[h];
-        }
 
         delete[] photonCountsError;
     }
@@ -605,9 +606,7 @@ void FluxAnalysis::FluxAnalysisFlatRectangle(InstanceNode* node)
     if (photonCountsError)
     {
         for (int h = 0; h < heightDivisionsError; h++)
-        {
             delete[] photonCountsError[h];
-        }
 
         delete[] photonCountsError;
     }

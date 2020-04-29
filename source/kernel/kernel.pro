@@ -11,11 +11,11 @@ HEADERS += \
     $$files(*.h) \
     $$files(air/*.h) \
     $$files(component/*.h) \
-    $$files(gui/*.h) \
+    $$files(scene/*.h) \
     $$files(material/*.h) \
     $$files(photons/*.h) \
     $$files(random/*.h) \
-    $$files(raytracing/*.h) \
+    $$files(run/*.h) \
     $$files(shape/*.h) \
     $$files(sun/*.h) \
     $$files(tracker/*.h)
@@ -24,11 +24,11 @@ SOURCES += \
     $$files(*.cpp) \
     $$files(air/*.cpp) \
 #    $$files(component/*.cpp) \
-    $$files(gui/*.cpp) \
+    $$files(scene/*.cpp) \
     $$files(material/*.cpp) \
     $$files(photons/*.cpp) \
     $$files(random/*.cpp) \
-    $$files(raytracing/*.cpp) \
+    $$files(run/*.cpp) \
     $$files(shape/*.cpp) \
     $$files(sun/*.cpp) \
     $$files(tracker/*.cpp)

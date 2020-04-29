@@ -5,7 +5,7 @@
 #include <Inventor/engines/SoSubNodeEngine.h>
 #include <Inventor/nodes/SoTransform.h>
 
-#include "kernel/raytracing/trt.h"
+#include "kernel/TonatiuhTypes.h"
 #include "libraries/geometry/Vector3D.h"
 
 class QString;

@@ -14,7 +14,7 @@
 #include "libraries/geometry/gf.h"
 
 #include "CmdChangeNodeName.h"
-#include "kernel/gui/InstanceNode.h"
+#include "kernel/run/InstanceNode.h"
 #include "gui/SceneModel.h"
 
 /*!

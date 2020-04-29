@@ -6,7 +6,7 @@
 #include <Inventor/nodes/SoShape.h>
 
 #include "kernel/shape/ShapeAbstract.h"
-#include "kernel/raytracing/trt.h"
+#include "kernel/TonatiuhTypes.h"
 
 class ShapeCylinder: public ShapeAbstract
 {

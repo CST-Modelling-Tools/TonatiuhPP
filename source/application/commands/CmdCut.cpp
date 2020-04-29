@@ -1,6 +1,6 @@
 #include <Inventor/nodekits/SoBaseKit.h>
 
-#include "kernel/gui/InstanceNode.h"
+#include "kernel/run/InstanceNode.h"
 #include "CmdCut.h"
 #include "gui/SceneModel.h"
 

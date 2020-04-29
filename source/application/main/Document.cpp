@@ -8,7 +8,7 @@
 #include <QString>
 
 #include "Document.h"
-#include "kernel/raytracing/TSceneKit.h"
+#include "kernel/scene/TSceneKit.h"
 
 /*!
  * Creates a new document object.

@@ -1,7 +1,7 @@
 #include <Inventor/nodekits/SoBaseKit.h>
 
 #include "CmdDelete.h"
-#include "kernel/gui/InstanceNode.h"
+#include "kernel/run/InstanceNode.h"
 #include "gui/SceneModel.h"
 
 /**

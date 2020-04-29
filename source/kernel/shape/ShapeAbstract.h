@@ -1,7 +1,7 @@
 #pragma once
 
 #include "kernel/TonatiuhKernel.h"
-#include "kernel/raytracing/TAbstract.h"
+#include "kernel/scene/TAbstract.h"
 #include <Inventor/nodes/SoShape.h>
 
 struct BBox;

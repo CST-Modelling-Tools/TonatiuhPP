@@ -8,7 +8,7 @@
 #include <QMessageBox>
 
 #include "PhotonExportFile.h"
-#include "kernel/gui/InstanceNode.h"
+#include "kernel/run/InstanceNode.h"
 //#include "kernel/gui/SceneModel.h" ?
 
 /*!

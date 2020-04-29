@@ -22,7 +22,7 @@
 #include "TLightKit.h"
 #include "TLightShape.h"
 #include "libraries/geometry/Transform.h"
-#include "raytracing/TShapeKit.h"
+#include "scene/TShapeKit.h"
 
 
 struct Polygon

@@ -4,8 +4,8 @@
 #include <QMessageBox>
 
 #include "gui/SceneModel.h"
-#include "kernel/gui/InstanceNode.h"
-#include "kernel/raytracing/TShapeKit.h"
+#include "kernel/run/InstanceNode.h"
+#include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeAbstract.h"
 #include "kernel/shape/ShapeFactory.h"
 #include "kernel/sun/SunFactory.h"

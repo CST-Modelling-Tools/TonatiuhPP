@@ -5,7 +5,7 @@
 #include <Inventor/fields/SoSFFloat.h>
 
 #include "kernel/shape/ShapeAbstract.h"
-#include "kernel/raytracing/trt.h"
+#include "kernel/TonatiuhTypes.h"
 
 
 class ShapeParabolicRectangle: public ShapeAbstract

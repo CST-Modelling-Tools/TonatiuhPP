@@ -2,7 +2,7 @@
 
 #include <Inventor/fields/SoSFDouble.h>
 #include "ShapeAbstract.h"
-#include "kernel/raytracing/trt.h"
+#include "kernel/TonatiuhTypes.h"
 
 
 class TONATIUH_KERNEL ShapeCube: public ShapeAbstract
