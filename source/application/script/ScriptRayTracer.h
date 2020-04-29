@@ -9,7 +9,7 @@
 class Document;
 class GraphicRoot;
 class InstanceNode;
-class RandomDeviate;
+class RandomAbstract;
 class RandomFactory;
 class QScriptContext;
 class SceneModel;
@@ -71,7 +71,7 @@ private:
     bool m_photonMapToFile;
 
     QVector< RandomFactory* > m_RandomFactoryList;
-    RandomDeviate* m_randomDeviate;
+    RandomAbstract* m_randomDeviate;
 
     SceneModel* m_sceneModel;
 

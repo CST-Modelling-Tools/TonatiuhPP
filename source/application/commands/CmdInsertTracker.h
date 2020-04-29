@@ -7,6 +7,7 @@ class InstanceNode;
 class TTracker;
 class SceneModel;
 class SoSceneKit;
+class SoBaseKit;
 
 //!  CmdInsertTracker class is the insert command for trackers stored in the command stack.
 /*!
@@ -16,18 +17,16 @@ class SoSceneKit;
 class CmdInsertTracker : public QUndoCommand
 {
 public:
-    CmdInsertTracker( TTracker* tracker, const QModelIndex& parentIndex, SoSceneKit* scene, SceneModel* model, QUndoCommand* parent = 0 );
+    CmdInsertTracker(TTracker* tracker, const QModelIndex& parentIndex, SoSceneKit* scene, SceneModel* model, QUndoCommand* parent = 0 );
     ~CmdInsertTracker();
 
     virtual void undo();
     virtual void redo();
 
 private:
-
     TTracker* m_tracker;
-    SoBaseKit* m_coinParent;;
+    SoBaseKit* m_coinParent;
     SoSceneKit* m_scene;
     SceneModel* m_pModel;
     int m_row;
-     
 };

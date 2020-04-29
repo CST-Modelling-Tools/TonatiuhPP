@@ -17,12 +17,12 @@
 #include "libraries/geometry/BBox.h"
 #include "libraries/geometry/Matrix4x4.h"
 #include "libraries/geometry/Point3D.h"
-#include "kernel/sun/sunpos.h"
-#include "kernel/sun/SunPillbox.h"
+#include "sun/sunpos.h"
+#include "sun/SunPillbox.h"
 #include "TLightKit.h"
 #include "TLightShape.h"
 #include "libraries/geometry/Transform.h"
-#include "TShapeKit.h"
+#include "raytracing/TShapeKit.h"
 
 
 struct Polygon
@@ -159,7 +159,7 @@ void TLightKit::Update(BBox box)
 
     SunAbstract* sunshape = static_cast< SunAbstract* >(this->getPart("tsunshape", false) );
     if (!sunshape) return;
-    double thetaMax = sunshape->GetThetaMax();
+    double thetaMax = sunshape->getThetaMax();
     double delta = 0.01;
     if (thetaMax > 0.0) delta = distMax * tan(thetaMax);
 

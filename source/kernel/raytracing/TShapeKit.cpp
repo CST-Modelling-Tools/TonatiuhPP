@@ -61,7 +61,7 @@ bool TShapeKit::IntersectP(const Ray&) const
  *
  *Return the reflected ray. If the returned value is null, there is not reflected ray.
  */
-Ray* TShapeKit::Intersect(const Ray& /* objectRay */, bool* /* isShapeFront */, RandomDeviate& /* rand */ ) const
+Ray* TShapeKit::Intersect(const Ray& /* objectRay */, bool* /* isShapeFront */, RandomAbstract& /* rand */ ) const
 {
     return 0;
 }

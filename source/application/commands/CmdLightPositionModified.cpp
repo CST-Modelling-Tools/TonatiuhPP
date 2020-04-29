@@ -1,15 +1,15 @@
-#include "libraries/geometry/gf.h"
-
 #include "CmdLightPositionModified.h"
-#include "kernel/raytracing/TLightKit.h"
+
+#include "kernel/sun/TLightKit.h"
+#include "libraries/geometry/gf.h"
 
 /**
  * Creates a new lightKit position command that represents a \a light move with \a parent parent.
  *
  * The new position is defined by \a azimuth and \a zenith in radians.
  */
-CmdLightPositionModified::CmdLightPositionModified(TLightKit* light, double azimuth, double zenith, QUndoCommand* parent)
-    : QUndoCommand("Sun position changed", parent), lightKit(light), m_newAzimuth(azimuth), m_newZenith(zenith)
+CmdLightPositionModified::CmdLightPositionModified(TLightKit* light, double azimuth, double zenith, QUndoCommand* parent):
+    QUndoCommand("Sun position changed", parent), lightKit(light), m_newAzimuth(azimuth), m_newZenith(zenith)
 {
     if (light == 0) gf::SevereError("CmdLinghtPositionModified called with NULL TLightKit");
 

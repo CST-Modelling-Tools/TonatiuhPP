@@ -1,10 +1,10 @@
 #pragma once
 
-#include "kernel/random/RandomDeviate.h"
+#include "kernel/random/RandomAbstract.h"
 #include <random>
 
 
-class RandomMersenneTwisterSTL: public RandomDeviate
+class RandomMersenneTwisterSTL: public RandomAbstract
 {
 public:
     RandomMersenneTwisterSTL(ulong seed, long size = 10'000'000);

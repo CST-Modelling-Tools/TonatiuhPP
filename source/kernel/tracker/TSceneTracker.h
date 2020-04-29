@@ -1,11 +1,8 @@
 #pragma once
 
-#include "kernel/TonatiuhKernel.h"
-#include <Inventor/engines/SoSubNodeEngine.h>
-#include <Inventor/fields/SoSFVec3f.h>
-
 #include "kernel/tracker/TTracker.h"
-#include "trt.h"
+//#include <Inventor/fields/SoSFVec3f.h>
+
 
 class QString;
 
@@ -17,9 +14,7 @@ public:
     static void initClass();
     QString getIcon();
 
-    //Constructor
     TSceneTracker();
-
 
 protected:
     virtual ~TSceneTracker();
@@ -29,5 +24,4 @@ private:
 
     //trt::TONATIUH_REAL m_azimuth;
     //trt::TONATIUH_REAL m_zenith;
-
 };

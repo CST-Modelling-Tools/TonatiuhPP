@@ -58,7 +58,7 @@ SunBuie::~SunBuie()
     delete m_sensorCSR;
 }
 
-void SunBuie::GenerateRayDirection(Vector3D& direction, RandomDeviate& rand) const
+void SunBuie::generateRay(Vector3D& direction, RandomAbstract& rand) const
 {
     double phi = gc::TwoPi*rand.RandomDouble();
     double theta = zenithAngle(rand);
@@ -72,12 +72,12 @@ void SunBuie::GenerateRayDirection(Vector3D& direction, RandomDeviate& rand) con
     direction.z = sinTheta*cosPhi;
 }
 
-double SunBuie::GetIrradiance() const
+double SunBuie::getIrradiance() const
 {
 	return irradiance.getValue();
 }
 
-double SunBuie::GetThetaMax() const
+double SunBuie::getThetaMax() const
 {
     return m_thetaCS;
 }
@@ -114,7 +114,7 @@ void SunBuie::updateCSR(void* data, SoSensor*)
         sunshape->updateState(csrValue);
 }
 
-double SunBuie::zenithAngle(RandomDeviate& rand) const
+double SunBuie::zenithAngle(RandomAbstract& rand) const
 {
 	double theta;
 	double value;

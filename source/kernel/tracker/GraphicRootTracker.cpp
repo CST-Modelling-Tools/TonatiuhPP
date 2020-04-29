@@ -25,7 +25,6 @@ SO_NODEENGINE_SOURCE(GraphicRootTracker)
 void GraphicRootTracker::initClass()
 {
     SO_NODEENGINE_INIT_CLASS( GraphicRootTracker, TTracker, "TTracker" );
-
 }
 
 GraphicRootTracker::GraphicRootTracker()
@@ -46,8 +45,17 @@ GraphicRootTracker::GraphicRootTracker()
 
 GraphicRootTracker::~GraphicRootTracker()
 {
-    m_azimuth.disconnect();
-    m_zenith.disconnect();
+    Disconnect();
+}
+
+void GraphicRootTracker::SetAzimuthAngle(trt::TONATIUH_REAL* azimuthField)
+{
+    m_azimuth.connectFrom(azimuthField);
+}
+
+void GraphicRootTracker::SetZenithAngle(trt::TONATIUH_REAL* zenithField)
+{
+    m_zenith.connectFrom(zenithField);
 }
 
 void GraphicRootTracker::Disconnect()
@@ -56,37 +64,16 @@ void GraphicRootTracker::Disconnect()
     m_zenith.disconnect();
 }
 
-void GraphicRootTracker::SetAzimuthAngle( trt::TONATIUH_REAL* azimuthField )
-{
-    m_azimuth.connectFrom(azimuthField);
-}
-
-void GraphicRootTracker::SetZenithAngle( trt::TONATIUH_REAL* zenithField )
-{
-    m_zenith.connectFrom(zenithField);
-}
-
-QString GraphicRootTracker::getIcon()
-{
-    return ":/images/GraphicRootTracker.png";
-}
-
 void GraphicRootTracker::evaluate()
 {
-    if (!m_azimuth.isConnected() || !m_zenith.isConnected() ) return;
+    if (!m_azimuth.isConnected() || !m_zenith.isConnected()) return;
 
-    //double alpha = gc::Pi - GetAzimuth();
-    double azimuth = m_azimuth.getValue();
-    double alpha = gc::Pi - azimuth;
+    double alpha = gc::Pi - m_azimuth.getValue();
+    SbRotation yRotation(SbVec3f(0., 1., 0.), alpha);
 
-    SbVec3f yAxis( 0.0, 1.0, 0.0 );
-    SbRotation yRotation( yAxis, alpha );
-    SbVec3f xAxis( 1.0, 0.0, 0.0 );
-    //SbRotation xRotation( xAxis, GetZenith() );
     double zenith = m_zenith.getValue();
-    SbRotation xRotation( xAxis, zenith );
+    SbRotation xRotation(SbVec3f(1., 0., 0.), zenith);
 
-    SbRotation rotation = xRotation * yRotation;
-
+    SbRotation rotation = xRotation*yRotation;
     SetEngineOutputRotation(rotation);
 }

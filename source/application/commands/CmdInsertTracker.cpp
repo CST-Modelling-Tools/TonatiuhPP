@@ -1,13 +1,13 @@
+#include "CmdInsertTracker.h"
+
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodekits/SoBaseKit.h>
 #include <Inventor/nodekits/SoSceneKit.h>
 
-#include "libraries/geometry/gf.h"
-
-#include "CmdInsertTracker.h"
-#include "kernel/gui/InstanceNode.h"
 #include "gui/SceneModel.h"
-#include "kernel/raytracing/TLightKit.h"
+#include "libraries/geometry/gf.h"
+#include "kernel/gui/InstanceNode.h"
+#include "kernel/sun/TLightKit.h"
 #include "kernel/tracker/TTracker.h"
 
 /**
@@ -15,8 +15,8 @@
  *
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
-CmdInsertTracker::CmdInsertTracker(TTracker* tracker,  const QModelIndex& parentIndex, SoSceneKit* scene, SceneModel* model, QUndoCommand* parent)
-    : QUndoCommand("Insert Tracker", parent), m_tracker (tracker), m_coinParent(0), m_scene(scene), m_pModel(model), m_row(0)
+CmdInsertTracker::CmdInsertTracker(TTracker* tracker,  const QModelIndex& parentIndex, SoSceneKit* scene, SceneModel* model, QUndoCommand* parent):
+    QUndoCommand("Insert Tracker", parent), m_tracker (tracker), m_coinParent(0), m_scene(scene), m_pModel(model), m_row(0)
 {
     if (!m_tracker) gf::SevereError("CmdInsertTracker Null tracker.");
     m_tracker->ref();

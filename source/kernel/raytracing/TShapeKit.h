@@ -4,7 +4,7 @@
 #include <Inventor/nodekits/SoShapeKit.h>
 #include <QString>
 
-class RandomDeviate;
+class RandomAbstract;
 class Ray;
 
 //!  TShapeKit class groups what is necessary to the shape.
@@ -24,7 +24,7 @@ public:
     static void initClass();
 
     bool IntersectP(const Ray& ray) const;
-    Ray* Intersect(const Ray& objectRay, bool* isShapeFront, RandomDeviate& rand) const;
+    Ray* Intersect(const Ray& objectRay, bool* isShapeFront, RandomAbstract& rand) const;
 
 protected:
     virtual ~TShapeKit();

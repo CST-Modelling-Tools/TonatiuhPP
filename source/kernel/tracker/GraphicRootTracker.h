@@ -1,12 +1,9 @@
 #pragma once
 
-#include <Inventor/engines/SoSubNodeEngine.h>
-#include <Inventor/fields/SoSFVec3f.h>
-
 #include "kernel/tracker/TTracker.h"
-#include "kernel/raytracing/trt.h"
 
 class QString;
+
 
 class TONATIUH_KERNEL GraphicRootTracker: public TTracker
 {
@@ -14,17 +11,17 @@ class TONATIUH_KERNEL GraphicRootTracker: public TTracker
 
 public:
     static void initClass();
-    QString getIcon();
+    QString getIcon() {return "";}
 
     GraphicRootTracker();
 
-    void Disconnect();
     void SetAzimuthAngle(trt::TONATIUH_REAL* azimuthField);
     void SetZenithAngle(trt::TONATIUH_REAL* zenithField);
+    void Disconnect();
 
 protected:
-    virtual ~GraphicRootTracker();
+    ~GraphicRootTracker();
 
 private:
-    virtual void evaluate();
+    void evaluate();
 };

@@ -11,9 +11,9 @@
 #include "libraries/geometry/Transform.h"
 
 class InstanceNode;
-class ParallelRandomDeviate;
+class RandomParallel;
 struct Photon;
-class RandomDeviate;
+class RandomAbstract;
 struct RayTracerPhoton;
 class QMutex;
 class QPoint;
@@ -33,7 +33,7 @@ public:
               SunAbstract* const lightSunShape,
               Transform lightToWorld,
               AirAbstract* transmissivity,
-              RandomDeviate& rand,
+              RandomAbstract& rand,
               QMutex* mutex,
               PhotonMap* photonMap,
               QMutex* mutexPhotonMap,
@@ -44,7 +44,7 @@ public:
     void operator()(ulong nRays);
 
 private:
-    bool NewPrimitiveRay(Ray* ray, ParallelRandomDeviate& rand);
+    bool NewPrimitiveRay(Ray* ray, RandomParallel& rand);
 
     InstanceNode* m_rootNode;
     InstanceNode* m_sunNode;
@@ -52,7 +52,7 @@ private:
     const SunAbstract* m_lightSunShape;
     Transform m_lightToWorld;
     AirAbstract* m_transmissivity;
-    RandomDeviate* m_pRand;
+    RandomAbstract* m_pRand;
     QMutex* m_mutex;
     PhotonMap* m_photonMap;
     QMutex* m_pPhotonMapMutex;

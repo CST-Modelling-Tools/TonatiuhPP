@@ -5,7 +5,7 @@
 
 class TONATIUH_KERNEL AirVacuum: public AirAbstract
 {
-    SO_NODE_HEADER(TransmissivityDefualt);
+    SO_NODE_HEADER(AirVacuum);
 
 public:
     static void initClass();

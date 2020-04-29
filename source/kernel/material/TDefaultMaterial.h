@@ -13,7 +13,7 @@ public:
     
     QString getIcon();
     //Ray* OutputRay( const Ray& incident, DifferentialGeometry* dg, RandomDeviate& rand  ) const;
-    bool OutputRay( const Ray& incident, DifferentialGeometry* dg, RandomDeviate& rand, Ray* outputRay  ) const;
+    bool OutputRay( const Ray& incident, DifferentialGeometry* dg, RandomAbstract& rand, Ray* outputRay  ) const;
      
 protected:
     virtual ~TDefaultMaterial();

@@ -16,10 +16,10 @@
 #include "libraries/geometry/Matrix4x4.h"
 #include "photons/Photon.h"
 #include "photons/PhotonMap.h"
-#include "random/RandomDeviate.h"
+#include "random/RandomAbstract.h"
 #include "libraries/geometry/Ray.h"
-#include "kernel/tgf.h"
-#include "TLightKit.h"
+#include "tgf.h"
+#include "sun/TLightKit.h"
 #include "trf.h"
 #include "TShapeKit.h"
 

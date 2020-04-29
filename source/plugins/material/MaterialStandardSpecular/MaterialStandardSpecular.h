@@ -26,7 +26,7 @@ public:
 	static void initClass();
 
     QString getIcon();
-    bool OutputRay(const Ray& incident, DifferentialGeometry* dg, RandomDeviate& rand, Ray* outputRay) const;
+    bool OutputRay(const Ray& incident, DifferentialGeometry* dg, RandomAbstract& rand, Ray* outputRay) const;
 
 	trt::TONATIUH_REAL m_reflectivity;
 	trt::TONATIUH_REAL m_sigmaSlope;

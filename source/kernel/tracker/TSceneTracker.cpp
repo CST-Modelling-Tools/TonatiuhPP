@@ -14,7 +14,7 @@
 #include "libraries/geometry/Point3D.h"
 #include "libraries/geometry/Transform.h"
 #include "TSceneTracker.h"
-#include "TSceneKit.h"
+#include "kernel/raytracing/TSceneKit.h"
 #include "libraries/geometry/Vector3D.h"
 
 SO_NODEENGINE_SOURCE( TSceneTracker );

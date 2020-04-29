@@ -4,13 +4,10 @@
 #include <QDateTime>
 #include <QPair>
 #include <QVector>
-
 #include <Inventor/fields/SoSFBool.h>
 #include <Inventor/fields/SoSFString.h>
 #include <Inventor/nodekits/SoLightKit.h>
-
-
-#include "trt.h"
+#include "kernel/raytracing/trt.h"
 #include "kernel/sun/SunAbstract.h"
 
 struct BBox;

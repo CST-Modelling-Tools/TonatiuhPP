@@ -12,7 +12,7 @@ class TONATIUH_KERNEL AirAbstract: public SoNode
 public:
     static void initClass();
 
-    virtual double transmission(double /*distance*/) const {return 1.;}
+    virtual double transmission(double /*distance*/) const = 0;
 
     NAME_ICON_FUNCTIONS("X", ":/AirX.png")
 

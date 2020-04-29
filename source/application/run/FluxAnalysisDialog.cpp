@@ -14,20 +14,20 @@
 
 #include "FluxAnalysis.h"
 #include "FluxAnalysisDialog.h"
-#include "libraries/geometry/gc.h"
-#include "kernel/gui/InstanceNode.h"
-#include "kernel/random/RandomDeviate.h"
-#include "kernel/raytracing/RayTracer.h"
-#include "gui/SceneModel.h"
 #include "SelectSurfaceDialog.h"
-#include "kernel/raytracing/TLightKit.h"
-#include "kernel/raytracing/TLightShape.h"
-#include "libraries/geometry/Transform.h"
-#include "kernel/raytracing/trf.h"
-#include "kernel/raytracing/TSceneKit.h"
-#include "kernel/shape/ShapeAbstract.h"
-#include "kernel/raytracing/TShapeKit.h"
+#include "gui/SceneModel.h"
 #include "kernel/air/AirAbstract.h"
+#include "kernel/gui/InstanceNode.h"
+#include "kernel/random/RandomAbstract.h"
+#include "kernel/raytracing/RayTracer.h"
+#include "kernel/raytracing/TSceneKit.h"
+#include "kernel/raytracing/TShapeKit.h"
+#include "kernel/raytracing/trf.h"
+#include "kernel/shape/ShapeAbstract.h"
+#include "kernel/sun/TLightKit.h"
+#include "kernel/sun/TLightShape.h"
+#include "libraries/geometry/Transform.h"
+#include "libraries/geometry/gc.h"
 
 
 /******************************************
@@ -39,8 +39,8 @@
 FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* currentScene, SceneModel& currentSceneModel,
                                        InstanceNode* rootSeparatorInstance,
                                        int sunWidthDivisions, int sunHeightDivisions,
-                                       RandomDeviate* randomDeviate,  QWidget* parent)
-    : QDialog(parent),
+                                       RandomAbstract* randomDeviate,  QWidget* parent):
+    QDialog(parent),
     m_currentSurfaceURL(""),
     m_pCurrentSceneModel(&currentSceneModel),
     m_pGridWidthVal(0),

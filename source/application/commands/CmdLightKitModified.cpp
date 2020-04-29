@@ -1,11 +1,10 @@
+#include "CmdLightKitModified.h"
+
 #include <Inventor/nodekits/SoSceneKit.h>
 #include <Inventor/nodekits/SoNodeKitListPart.h>
-
 #include "libraries/geometry/gf.h"
-
-#include "CmdLightKitModified.h"
 #include "gui/SceneModel.h"
-#include "kernel/raytracing/TLightKit.h"
+#include "kernel/sun/TLightKit.h"
 
 /**
  * Creates a new lightKit modification command that represents a new light defined as \a newLightKit to the \a scene.

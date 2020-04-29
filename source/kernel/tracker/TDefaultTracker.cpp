@@ -16,8 +16,7 @@ SO_NODEENGINE_SOURCE(TDefaultTracker)
  */
 void TDefaultTracker::initClass()
 {
-
-    SO_NODEENGINE_INIT_CLASS( TDefaultTracker, TTracker, "TTracker" );
+    SO_NODEENGINE_INIT_CLASS(TDefaultTracker, TTracker, "TTracker");
 }
 
 /**
@@ -32,11 +31,11 @@ TDefaultTracker::TDefaultTracker()
 
     //ConstructEngineOutput();
     // Define input fields and their default values
-    SO_NODEENGINE_ADD_OUTPUT( outputTranslation, SoSFVec3f);
-    SO_NODEENGINE_ADD_OUTPUT( outputRotation, SoSFRotation);
-    SO_NODEENGINE_ADD_OUTPUT( outputScaleFactor, SoSFVec3f);
-    SO_NODEENGINE_ADD_OUTPUT( outputScaleOrientation, SoSFRotation);
-    SO_NODEENGINE_ADD_OUTPUT( outputCenter, SoSFVec3f);
+    SO_NODEENGINE_ADD_OUTPUT(outputTranslation, SoSFVec3f);
+    SO_NODEENGINE_ADD_OUTPUT(outputRotation, SoSFRotation);
+    SO_NODEENGINE_ADD_OUTPUT(outputScaleFactor, SoSFVec3f);
+    SO_NODEENGINE_ADD_OUTPUT(outputScaleOrientation, SoSFRotation);
+    SO_NODEENGINE_ADD_OUTPUT(outputCenter, SoSFVec3f);
 }
 
 /**
@@ -48,19 +47,9 @@ TDefaultTracker::~TDefaultTracker()
 }
 
 /**
- * Returns the icon that represents the TDefaultTracker.
- */
-QString TDefaultTracker::getIcon()
-{
-    return ":/images/HorizontalTracker.png";
-}
-
-/**
  * Computes the rotation ouput.
  */
 void TDefaultTracker::evaluate()
 {
-    //if (!IsConnected()) return;
-
     SetEngineOutputIdentity();
 }

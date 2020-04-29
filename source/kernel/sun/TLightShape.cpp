@@ -1,23 +1,19 @@
+#include "TLightShape.h"
+
 #include <QString>
 #include <QVector>
-
 #include <Inventor/SoPrimitiveVertex.h>
 #include <Inventor/actions/SoGLRenderAction.h>
 #include <Inventor/elements/SoGLTextureCoordinateElement.h>
 #include <Inventor/elements/SoMaterialBindingElement.h>
-
 #include <math.h>
-
-#include "libraries/geometry/gf.h"
-
 #include "libraries/geometry/BBox.h"
-#include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/Ray.h"
-#include "TLightShape.h"
 #include "libraries/geometry/Transform.h"
-#include "TShapeKit.h"
 #include "libraries/geometry/Vector3D.h"
-
+#include "libraries/geometry/gf.h"
+#include "raytracing/TShapeKit.h"
+#include "shape/DifferentialGeometry.h"
 
 
 SO_NODE_SOURCE(TLightShape)

@@ -1,3 +1,5 @@
+#include "MainWindow.h"
+
 #include <iostream>
 
 #include <QCloseEvent>
@@ -61,50 +63,49 @@
 #include "commands/CmdPaste.h"
 #include "commands/CmdAirModified.h"
 
-#include "view/GraphicRoot.h"
-#include "MainWindow.h"
 #include "PluginManager.h"
-//#include "ProgressUpdater.h"
 #include "SceneModel.h"
 #include "calculator/SunCalculatorDialog.h"
-#include "run/ExportPhotonsDialog.h"
-#include "run/FluxAnalysis.h"
-#include "run/FluxAnalysisDialog.h"
-#include "kernel/air/AirFactory.h"
 #include "kernel/air/AirAbstract.h"
+#include "kernel/air/AirFactory.h"
 #include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/gui/InstanceNode.h"
-#include "kernel/material/MaterialFactory.h"
 #include "kernel/material/MaterialAbstract.h"
+#include "kernel/material/MaterialFactory.h"
 #include "kernel/photons/PhotonExport.h"
 #include "kernel/photons/PhotonExportFactory.h"
 #include "kernel/photons/PhotonExportSettings.h"
 #include "kernel/photons/PhotonMap.h"
-#include "kernel/random/RandomDeviate.h"
+#include "kernel/random/RandomAbstract.h"
 #include "kernel/random/RandomFactory.h"
 #include "kernel/raytracing/RayTracer.h"
-#include "kernel/raytracing/TLightKit.h"
-#include "kernel/raytracing/TLightShape.h"
 #include "kernel/raytracing/TSceneKit.h"
 #include "kernel/raytracing/TSeparatorKit.h"
 #include "kernel/raytracing/TShapeKit.h"
 #include "kernel/raytracing/trf.h"
 #include "kernel/shape/ShapeFactory.h"
 #include "kernel/sun/SunFactory.h"
+#include "kernel/sun/TLightKit.h"
+#include "kernel/sun/TLightShape.h"
 #include "kernel/tgf.h"
 #include "kernel/tracker/TDefaultTracker.h"
 #include "kernel/tracker/TTracker.h"
 #include "kernel/tracker/TrackerFactory.h"
 #include "main/Document.h"
+#include "run/ExportPhotonsDialog.h"
+#include "run/FluxAnalysis.h"
+#include "run/FluxAnalysisDialog.h"
+#include "run/RayTraceDialog.h"
 #include "script/ScriptEditorDialog.h"
+#include "view/GraphicRoot.h"
 #include "view/GraphicView.h"
 #include "widgets/AboutDialog.h"
-#include "widgets/GridDialog.h"
-#include "widgets/SunDialog.h"
-#include "widgets/NetworkConnectionsDialog.h"
-#include "run/RayTraceDialog.h"
 #include "widgets/AirDialog.h"
+#include "widgets/GridDialog.h"
+#include "widgets/NetworkConnectionsDialog.h"
+#include "widgets/SunDialog.h"
+//#include "ProgressUpdater.h"
 
 
 void startManipulator(void* data, SoDragger* dragger)
@@ -531,7 +532,7 @@ void MainWindow::RunFluxAnalysisRayTracer()
     }
 
     //Create the random generator
-    RandomDeviate* pRandomDeviate =  randomDeviateFactoryList[m_selectedRandomDeviate]->create();
+    RandomAbstract* pRandomDeviate =  randomDeviateFactoryList[m_selectedRandomDeviate]->create();
 
     FluxAnalysisDialog dialog(coinScene, *m_sceneModel, rootSeparatorInstance, m_widthDivisions, m_heightDivisions, pRandomDeviate);
     dialog.exec();
@@ -1523,7 +1524,7 @@ double MainWindow::GetwPhoton(){
 
     if (!lightKit->getPart("tsunshape", false) ) return 0;
     SunAbstract* sunShape = static_cast< SunAbstract* >(lightKit->getPart("tsunshape", false) );
-    double irradiance = sunShape->GetIrradiance();
+    double irradiance = sunShape->getIrradiance();
 
     if (!lightKit->getPart("icon", false) ) return 0;
     TLightShape* raycastingShape = static_cast< TLightShape* >(lightKit->getPart("icon", false) );
@@ -1837,7 +1838,7 @@ void MainWindow::Run()
             actionDisplayRays->setChecked(false);
         }
 
-        double irradiance = sunShape->GetIrradiance();
+        double irradiance = sunShape->getIrradiance();
         double inputAperture = raycastingSurface->GetValidArea();
         double wPhoton = (inputAperture * irradiance) / m_raysTracedTotal;
 

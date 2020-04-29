@@ -12,7 +12,7 @@
 #include "kernel/material/MaterialAbstract.h"
 #include "kernel/shape/ShapeAbstract.h"
 #include "raytracing/TShapeKit.h"
-#include "raytracing/TLightKit.h"
+#include "sun/TLightKit.h"
 #include "tracker/TTracker.h"
 #include "tracker/TTrackerForAiming.h"
 
@@ -70,7 +70,7 @@ void InstanceNode::InsertChild(int row, InstanceNode* instanceChild)
 
 
 //bool InstanceNode::Intersect( const Ray& ray, RandomDeviate& rand, InstanceNode** modelNode, Ray* outputRay )
-bool InstanceNode::Intersect(const Ray& ray, RandomDeviate& rand, bool* isShapeFront, InstanceNode** modelNode, Ray* outputRay)
+bool InstanceNode::Intersect(const Ray& ray, RandomAbstract& rand, bool* isShapeFront, InstanceNode** modelNode, Ray* outputRay)
 {
     //Check if the ray intersects with the BoundingBox
     if (!m_bbox.IntersectP(ray) ) return false;

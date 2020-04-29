@@ -3,15 +3,15 @@
 #include <QItemSelectionModel>
 #include <QMessageBox>
 
-#include "libraries/geometry/gc.h"
-#include "parameters/FieldContainerWidget.h"
-#include "kernel/gui/InstanceNode.h"
 #include "gui/SceneModel.h"
-#include "kernel/raytracing/TLightKit.h"
-#include "kernel/shape/ShapeAbstract.h"
+#include "kernel/gui/InstanceNode.h"
 #include "kernel/raytracing/TShapeKit.h"
+#include "kernel/shape/ShapeAbstract.h"
 #include "kernel/shape/ShapeFactory.h"
 #include "kernel/sun/SunFactory.h"
+#include "kernel/sun/TLightKit.h"
+#include "libraries/geometry/gc.h"
+#include "parameters/FieldContainerWidget.h"
 
 /**
  * Creates a new dialog for the light definition.

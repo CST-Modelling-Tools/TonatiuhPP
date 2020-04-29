@@ -1,26 +1,28 @@
 #include <QPoint>
 
-#include "kernel/shape/DifferentialGeometry.h"
-#include "kernel/random/ParallelRandomDeviate.h"
+#include "shape/DifferentialGeometry.h"
+#include "random/RandomParallel.h"
 #include "libraries/geometry/Ray.h"
 #include "RayTracer.h"
 #include "kernel/photons/PhotonMap.h"
-#include "TLightShape.h"
-#include "kernel/sun/SunAbstract.h"
-#include "kernel/air/AirAbstract.h"
+#include "sun/TLightShape.h"
+#include "sun/SunAbstract.h"
+#include "air/AirAbstract.h"
 
 
-RayTracer::RayTracer(InstanceNode* rootNode,
-                     InstanceNode* sunNode,
-                     TLightShape* lightShape,
-                     SunAbstract* const lightSunShape,
-                     Transform lightToWorld,
-                     AirAbstract* transmissivity,
-                     RandomDeviate& rand,
-                     QMutex* mutex,
-                     PhotonMap* photonMap,
-                     QMutex* mutexPhotonMap,
-                     QVector<InstanceNode*> exportSuraceList):
+RayTracer::RayTracer(
+    InstanceNode* rootNode,
+    InstanceNode* sunNode,
+    TLightShape* lightShape,
+    SunAbstract* const lightSunShape,
+    Transform lightToWorld,
+    AirAbstract* transmissivity,
+    RandomAbstract& rand,
+    QMutex* mutex,
+    PhotonMap* photonMap,
+    QMutex* mutexPhotonMap,
+    QVector<InstanceNode*> exportSuraceList
+):
     m_rootNode(rootNode),
     m_sunNode(sunNode),
     m_lightShape(lightShape),
@@ -45,7 +47,7 @@ void RayTracer::operator()(ulong nRays)
 
     std::vector<Photon> photons;
     // Photon(Point3D pos, int side, double id = 0, InstanceNode* intersectedSurface = 0, int absorbedPhoton = 0);
-    ParallelRandomDeviate rand(m_pRand, m_mutex);
+    RandomParallel rand(m_pRand, m_mutex);
 
     for (ulong n = 0; n < nRays; ++n)
     {
@@ -101,7 +103,7 @@ void RayTracer::operator()(ulong nRays)
     m_pPhotonMapMutex->unlock();
 }
 
-bool RayTracer::NewPrimitiveRay(Ray* ray, ParallelRandomDeviate& rand)
+bool RayTracer::NewPrimitiveRay(Ray* ray, RandomParallel& rand)
 {
     int area = int(rand.RandomDouble()*m_validAreasVector.size());
     QPair<int, int> areaIndex = m_validAreasVector[area];
@@ -109,7 +111,7 @@ bool RayTracer::NewPrimitiveRay(Ray* ray, ParallelRandomDeviate& rand)
     Point3D origin = m_lightShape->Sample(rand.RandomDouble(), rand.RandomDouble(), areaIndex.first, areaIndex.second);
 
     Vector3D direction;
-    m_lightSunShape->GenerateRayDirection(direction, rand);
+    m_lightSunShape->generateRay(direction, rand);
 
     *ray =  m_lightToWorld(Ray(origin, direction) );
     return true;

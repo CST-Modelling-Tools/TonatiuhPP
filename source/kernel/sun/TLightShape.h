@@ -2,7 +2,6 @@
 
 #include "kernel/TonatiuhKernel.h"
 #include <vector>
-
 #include <QPair>
 
 #include <Inventor/fields/SoSFDouble.h>
@@ -10,11 +9,13 @@
 #include <Inventor/fields/SoSFFloat.h>
 
 #include "kernel/shape/ShapeAbstract.h"
-#include "trt.h"
+#include "kernel/raytracing/trt.h"
+#include "libraries/geometry/Point3D.h"
 
 class Transform;
 
-class TONATIUH_KERNEL TLightShape : public SoShape
+
+class TONATIUH_KERNEL TLightShape: public SoShape
 {
     SO_NODE_HEADER(TLightShape);
 

@@ -21,7 +21,7 @@
 
 
 class InstanceNode;
-class RandomDeviate;
+class RandomAbstract;
 class PhotonMap;
 
 namespace trf

@@ -12,7 +12,7 @@
 #include "libraries/geometry/BBox.h"
 #include "libraries/geometry/Transform.h"
 
-class RandomDeviate;
+class RandomAbstract;
 class Ray;
 class SoNode;
 class TLightKit;
@@ -52,7 +52,7 @@ public:
     QString GetNodeURL() const;
     void Print(int level) const;
 
-    bool Intersect(const Ray& ray, RandomDeviate& rand, bool* isShapeFront, InstanceNode** modelNode, Ray* outputRay);
+    bool Intersect(const Ray& ray, RandomAbstract& rand, bool* isShapeFront, InstanceNode** modelNode, Ray* outputRay);
 
     //template<class T> void RecursivlyApply(void (T::*func)(void));
     //template<class T,class Param1> void RecursivlyApply(void (T::*func)(Param1),Param1 param1);

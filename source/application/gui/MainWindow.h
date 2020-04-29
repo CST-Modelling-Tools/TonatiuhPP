@@ -15,7 +15,7 @@ class PluginManager;
 class QDir;
 class QUndoStack;
 class QUndoView;
-class RandomDeviate;
+class RandomAbstract;
 class SoDragger;
 class SoSelection;
 class SoSeparator;
@@ -234,7 +234,7 @@ private:
     SceneModel* m_sceneModel;
     QItemSelectionModel* m_selectionModel;
 
-    RandomDeviate* m_rand;
+    RandomAbstract* m_rand;
     int m_selectedRandomDeviate;
 
 

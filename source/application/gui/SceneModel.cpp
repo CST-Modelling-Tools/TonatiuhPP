@@ -10,16 +10,16 @@
 
 #include "libraries/geometry/gf.h"
 
-#include "kernel/gui/InstanceNode.h"
 #include "PathWrapper.h"
 #include "SceneModel.h"
-#include "kernel/raytracing/TLightKit.h"
+#include "kernel/gui/InstanceNode.h"
 #include "kernel/material/MaterialAbstract.h"
-#include "kernel/raytracing/TSceneTracker.h"
 #include "kernel/raytracing/TSceneKit.h"
 #include "kernel/raytracing/TSeparatorKit.h"
-#include "kernel/shape/ShapeAbstract.h"
 #include "kernel/raytracing/TShapeKit.h"
+#include "kernel/shape/ShapeAbstract.h"
+#include "kernel/sun/TLightKit.h"
+#include "kernel/tracker/TSceneTracker.h"
 #include "kernel/tracker/TTracker.h"
 
 /*!
@@ -78,7 +78,6 @@ void SceneModel::Clear()
 
     delete m_instanceRoot;
     m_instanceRoot = 0;
-
 }
 
 /*!

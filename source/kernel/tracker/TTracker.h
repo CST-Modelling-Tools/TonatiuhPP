@@ -37,12 +37,12 @@ public:
 
 protected:
     TTracker();
-    virtual ~TTracker();
+    ~TTracker();
 
     void SetEngineOutputIdentity();
     void SetEngineOutput(SoTransform* newTransform);
     void SetEngineOutputRotation(SbRotation rotation);
-    Vector3D GetGobalSunVector();
+//    Vector3D GetGobalSunVector();
     //bool IsConnected();
 
     TSceneKit* m_scene;

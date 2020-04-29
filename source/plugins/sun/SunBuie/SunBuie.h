@@ -16,9 +16,9 @@ public:
     static void initClass();
     SoNode* copy(SbBool copyConnections) const;
 
-    void GenerateRayDirection(Vector3D& direction, RandomDeviate& rand) const;
-	double GetIrradiance() const;
-    double GetThetaMax() const;
+    void generateRay(Vector3D& direction, RandomAbstract& rand) const;
+	double getIrradiance() const;
+    double getThetaMax() const;
 
     SoSFDouble irradiance;
     SoSFDouble csr;
@@ -33,7 +33,7 @@ private:
      double chiValue(double csr) const;
      double phi(double theta) const;
      double pdfTheta(double theta) const;
-     double zenithAngle(RandomDeviate& rand) const;
+     double zenithAngle(RandomAbstract& rand) const;
      void updateState(double csrValue);
 
      SoFieldSensor* m_sensorCSR;

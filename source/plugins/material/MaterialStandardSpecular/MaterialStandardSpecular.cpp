@@ -7,7 +7,7 @@
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Transform.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "kernel/random/RandomDeviate.h"
+#include "kernel/random/RandomAbstract.h"
 #include "kernel/tgf.h"
 
 
@@ -120,7 +120,7 @@ void MaterialStandardSpecular::updateTransparency(void* data, SoSensor*)
     material->transparency.setValue(material->m_transparency[0]);
 }
 
-bool MaterialStandardSpecular::OutputRay(const Ray& incident, DifferentialGeometry* dg, RandomDeviate& rand, Ray* outputRay) const
+bool MaterialStandardSpecular::OutputRay(const Ray& incident, DifferentialGeometry* dg, RandomAbstract& rand, Ray* outputRay) const
 {
     double randomNumber = rand.RandomDouble();
     if (randomNumber >= m_reflectivity.getValue() ) return false;

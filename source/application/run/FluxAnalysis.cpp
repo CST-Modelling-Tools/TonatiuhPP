@@ -1,3 +1,5 @@
+#include "FluxAnalysis.h"
+
 #include <cmath>
 
 #include <QFileDialog>
@@ -10,21 +12,20 @@
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
 #include <Inventor/nodes/SoTransform.h>
 
-#include "FluxAnalysis.h"
-#include "kernel/raytracing/TSceneKit.h"
 #include "gui/SceneModel.h"
+#include "kernel/air/AirAbstract.h"
 #include "kernel/gui/InstanceNode.h"
-#include "kernel/random//RandomDeviate.h"
 #include "kernel/photons/PhotonMap.h"
-#include "libraries/geometry/gc.h"
+#include "kernel/random//RandomAbstract.h"
 #include "kernel/raytracing/RayTracer.h"
-#include "kernel/raytracing/TLightKit.h"
-#include "kernel/raytracing/TLightShape.h"
-#include "libraries/geometry/Transform.h"
+#include "kernel/raytracing/TSceneKit.h"
+#include "kernel/raytracing/TShapeKit.h"
 #include "kernel/raytracing/trf.h"
 #include "kernel/shape/ShapeAbstract.h"
-#include "kernel/raytracing/TShapeKit.h"
-#include "kernel/air/AirAbstract.h"
+#include "kernel/sun/TLightKit.h"
+#include "kernel/sun/TLightShape.h"
+#include "libraries/geometry/Transform.h"
+#include "libraries/geometry/gc.h"
 
 /******************************************
  * FluxAnalysis
@@ -34,7 +35,7 @@
  * Create FluxAnalysis object
  */
 FluxAnalysis::FluxAnalysis(TSceneKit* currentScene, SceneModel& currentSceneModel, InstanceNode* rootSeparatorInstance,
-                           int sunWidthDivisions, int sunHeightDivisions, RandomDeviate* randomDeviate) :
+                           int sunWidthDivisions, int sunHeightDivisions, RandomAbstract* randomDeviate) :
     m_pCurrentScene(currentScene),
     m_pCurrentSceneModel(&currentSceneModel),
     m_pRootSeparatorInstance(rootSeparatorInstance),
@@ -292,7 +293,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
 
     m_tracedRays += nOfRays;
 
-    double irradiance = sunShape->GetIrradiance();
+    double irradiance = sunShape->getIrradiance();
     double inputAperture = raycastingSurface->GetValidArea();
     m_wPhoton = double(inputAperture*irradiance) / m_tracedRays;
 

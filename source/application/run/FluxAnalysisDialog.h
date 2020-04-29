@@ -9,7 +9,7 @@
 class InstanceNode;
 class SceneModel;
 class QIntValidator;
-class RandomDeviate;
+class RandomAbstract;
 class TSceneKit;
 class FluxAnalysis;
 
@@ -21,7 +21,7 @@ class FluxAnalysisDialog: public QDialog, private Ui::FluxAnalysisDialog
 public:
     FluxAnalysisDialog(TSceneKit* currentScene, SceneModel& currentSceneModel, InstanceNode* rootSeparatorInstance,
                        int sunWidthDivisions, int sunHeightDivisions,
-                       RandomDeviate* randomDeviate, QWidget* parent = 0);
+                       RandomAbstract* randomDeviate, QWidget* parent = 0);
     ~FluxAnalysisDialog();
 
 protected:

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "kernel/random/RandomDeviate.h"
+#include "kernel/random/RandomAbstract.h"
 
 const double LongIntegerToDouble = 1./4294967296.;
 
-class RandomMersenneTwister: public RandomDeviate
+class RandomMersenneTwister: public RandomAbstract
 {
 
 public:
@@ -36,14 +36,14 @@ private:
 };
 
 inline RandomMersenneTwister::RandomMersenneTwister(unsigned long seedValue, long int randomNumberArraySize)
-    : RandomDeviate(randomNumberArraySize), m_p(0)
+    : RandomAbstract(randomNumberArraySize), m_p(0)
 {
     Seed(seedValue);
     m_init = true;
 }
 
 inline RandomMersenneTwister::RandomMersenneTwister(const ulong* seedArray, int seedArraySize, long int randomNumberArraySize)
-    : RandomDeviate(randomNumberArraySize), m_p(0)
+    : RandomAbstract(randomNumberArraySize), m_p(0)
 {
     Seed(seedArray, seedArraySize);
     m_init = true;

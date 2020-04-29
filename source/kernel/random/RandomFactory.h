@@ -3,14 +3,14 @@
 #include "kernel/raytracing/TFactory.h"
 #include <QTime>
 
-class RandomDeviate;
+class RandomAbstract;
 
 
 
 class RandomFactory: public TFactory
 {
 public:
-    virtual RandomDeviate* create() const = 0;
+    virtual RandomAbstract* create() const = 0;
 };
 
 Q_DECLARE_INTERFACE(RandomFactory, "tonatiuh.RandomFactory")

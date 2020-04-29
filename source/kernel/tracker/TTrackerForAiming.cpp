@@ -31,22 +31,17 @@ TTrackerForAiming::~TTrackerForAiming()
 
 void TTrackerForAiming::SetAimingPointRelativity(bool relative)
 {
-    if ((typeOfAimingPoint.getValue() == 1) != relative)
-    {        
-        if (relative)
-        {
-            typeOfAimingPoint.setValue(1);
-        }
-        else
-        {
-            typeOfAimingPoint.setValue(0);
-        }
-    }
+    if ((typeOfAimingPoint.getValue() == AimingPointType::Relative) == relative)
+        return;
+
+    if (relative)
+        typeOfAimingPoint.setValue(AimingPointType::Relative);
+    else
+        typeOfAimingPoint.setValue(AimingPointType::Absolute);
 }
 
-
-void TTrackerForAiming::updateTypeOfAimingPoint( void* data, SoSensor* )
+void TTrackerForAiming::updateTypeOfAimingPoint(void* data, SoSensor*)
 {
-    TTrackerForAiming* tracker = (TTrackerForAiming *) data;
+    TTrackerForAiming* tracker = (TTrackerForAiming*) data;
     tracker->SwitchAimingPointType();
 }

@@ -13,18 +13,19 @@
 #include "view/GraphicRoot.h"
 #include "gui/SceneModel.h"
 #include "ScriptRayTracer.h"
-#include "kernel/random/RandomDeviate.h"
+#include "kernel/random/RandomAbstract.h"
 #include "kernel/random/RandomFactory.h"
 #include "kernel/raytracing/RayTracer.h"
 #include "kernel/tgf.h"
-#include "kernel/raytracing/TLightKit.h"
-#include "kernel/raytracing/TLightShape.h"
+#include "kernel/sun/TLightKit.h"
+#include "kernel/sun/TLightShape.h"
 #include "kernel/photons/PhotonMap.h"
 #include "kernel/raytracing/trf.h"
 #include "kernel/raytracing/TSeparatorKit.h"
 #include "kernel/shape/ShapeAbstract.h"
 #include "kernel/sun/SunAbstract.h"
 #include "kernel/air/AirAbstract.h"
+
 
 ScriptRayTracer::ScriptRayTracer(QVector<RandomFactory*> listRandomFactory):
     m_document(0),
@@ -75,7 +76,6 @@ QString ScriptRayTracer::GetDir()
 {
     return m_dirName;
 }
-
 
 bool ScriptRayTracer::IsValidRandomGeneratorType(QString type)
 {

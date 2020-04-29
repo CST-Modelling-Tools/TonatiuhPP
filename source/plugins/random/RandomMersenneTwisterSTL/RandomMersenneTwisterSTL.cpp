@@ -2,7 +2,7 @@
 
 
 RandomMersenneTwisterSTL::RandomMersenneTwisterSTL(ulong seed, long size):
-    RandomDeviate(size),
+    RandomAbstract(size),
     m_generator{static_cast<std::mt19937_64::result_type>(seed)},
     m_distribution(0., 1.)
 {

@@ -8,11 +8,11 @@
 /*!
    A random generator class can be written based on this class.
  */
-class TONATIUH_KERNEL RandomDeviate
+class TONATIUH_KERNEL RandomAbstract
 {
 public:
-    explicit RandomDeviate(const ulong arraySize = 100'000);
-    virtual ~RandomDeviate();
+    explicit RandomAbstract(const ulong arraySize = 100'000);
+    virtual ~RandomAbstract();
 
     double RandomDouble();
     virtual void FillArray(double* array, const ulong arraySize) = 0;
@@ -29,18 +29,18 @@ private:
     ulong m_total;
 };
 
-inline RandomDeviate::RandomDeviate(const ulong arraySize):
+inline RandomAbstract::RandomAbstract(const ulong arraySize):
     m_size(arraySize), m_index(arraySize), m_total(0)
 {
     m_numbers = new double[arraySize];
 }
 
-inline RandomDeviate::~RandomDeviate()
+inline RandomAbstract::~RandomAbstract()
 {
     if (m_numbers) delete[] m_numbers;
 }
 
-inline double RandomDeviate::RandomDouble()
+inline double RandomAbstract::RandomDouble()
 {
     if (m_index >= m_size) {
         FillArray(m_numbers, m_size);

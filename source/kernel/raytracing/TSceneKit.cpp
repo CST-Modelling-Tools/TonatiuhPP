@@ -26,8 +26,8 @@ void TSceneKit::initClass()
  * Creates a new TSceneKit node.
  */
 
-#include "kernel/sun/SunPillbox.h"
-#include "kernel/raytracing/TLightKit.h"
+#include "sun/SunPillbox.h"
+#include "sun/TLightKit.h"
 
 TSceneKit::TSceneKit()
 {

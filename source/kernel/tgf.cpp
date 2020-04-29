@@ -2,12 +2,12 @@
 
 #include <Inventor/nodes/SoTransform.h>
 
-#include "kernel/random/RandomDeviate.h"
+#include "kernel/random/RandomAbstract.h"
 #include "tgf.h"
 #include "libraries/geometry/Transform.h"
 
 
-double tgf::AlternateBoxMuller(RandomDeviate& rand)
+double tgf::AlternateBoxMuller(RandomAbstract& rand)
 {
     static bool firsttime = true;
     static double x1;
