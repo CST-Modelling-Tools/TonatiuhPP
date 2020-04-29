@@ -11,19 +11,14 @@
 /*!
  * Creates a new code editor widget.
  */
-CodeEditorWidget::CodeEditorWidget( QWidget *parent, Qt::WindowFlags f )
-:QWidget( parent, f ),
- m_currentScritFileName( QString( "" ) )
+CodeEditorWidget::CodeEditorWidget( QWidget *parent, Qt::WindowFlags f ):
+    QWidget( parent, f ),
+    m_currentScritFileName( QString( "" ) )
 {
-
-    setupUi( this );
-
+    setupUi(this);
     SetupToolbar();
-
     lineNumberWidget->SetCodeEditor( codeEditor );
-
     connect( codeEditor, SIGNAL( updateRequest( QRect, int ) ), lineNumberWidget, SLOT( UpdateLineNumberArea( QRect, int ) ) );
-
 }
 
 /*!
@@ -33,7 +28,6 @@ CodeEditorWidget::~CodeEditorWidget()
 {
 
 }
-
 
 QTextDocument* CodeEditorWidget::Document() const
 {
@@ -72,7 +66,6 @@ void CodeEditorWidget::OpenScriptFile( QString fileName )
     if( !OkToContinue() ) return;
 
     StartDocument( fileName );
-
 }
 
 /*!
@@ -91,7 +84,6 @@ void CodeEditorWidget::NewScriptFile()
     emit FileOpened( QString( "" ) );
 
     document->setModified( false );
-
 }
 
 /*!
@@ -119,7 +111,6 @@ void CodeEditorWidget::OpenScriptFile()
      settings.setValue( "codeeditorwidget.openDirectory", file.absolutePath() );
 
     StartDocument( fileName );
-
 }
 
 /**
@@ -150,9 +141,7 @@ bool CodeEditorWidget::SaveAsScriptFile()
     QFileInfo file( fileName );
     settings.setValue( "codeeditorwidget.saveDirectory", file.absolutePath() );
 
-
     return SaveScriptFile( fileName );
-
 }
 
 /*!
@@ -211,7 +200,6 @@ void CodeEditorWidget::UpdateCodeEditorWidth( int /* width*/ )
  */
 void CodeEditorWidget::SetupToolbar()
 {
-
     connect( newButton, SIGNAL( clicked( bool) ), this, SLOT( NewScriptFile() ) );
     connect( openButton, SIGNAL( clicked( bool ) ), this, SLOT( OpenScriptFile() ) );
     connect( saveButton, SIGNAL( clicked( bool ) ), this, SLOT( SaveScript() ) );

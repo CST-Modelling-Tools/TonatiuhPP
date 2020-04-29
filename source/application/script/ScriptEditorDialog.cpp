@@ -31,17 +31,15 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory
     dialogVSplitter->setSizes ( sizes );
 
     QStringList fileNamesFilter;
-    fileNamesFilter<<"*.tnhs";
+    fileNamesFilter << "*.tnhs";
 
     m_fileModel = new FilesModel;
     m_fileModel->setRootPath( "" );
     m_fileModel->setNameFilters( fileNamesFilter );
     fileTree->setModel( m_fileModel );
 
-
     QString pluginsDirectory= QApplication::applicationDirPath() + QDir::separator() + "plugins";
     QCoreApplication::addLibraryPath(pluginsDirectory );
-
 
     //Init QtScript environment
     m_interpreter = new QScriptEngine;
@@ -121,7 +119,6 @@ void ScriptEditorDialog::Close( bool /* checked */  )
    close();
 }
 
-
 /*!
  * Opens the file selected into the file explorer.
  *
@@ -140,7 +137,6 @@ void ScriptEditorDialog::OpenScriptFile(const QModelIndex& index)
  */
 void  ScriptEditorDialog::RunScript()
 {
-
     QDateTime start=QDateTime::currentDateTime();
     QString logmessage = QString( "[%1]\t Start running script.\n").arg( start.toString() );
     WriteMessage( logmessage );
@@ -203,7 +199,7 @@ void  ScriptEditorDialog::RunScript()
  *
  * Changes the editor dialog title to shows the current file base name.
  */
-void ScriptEditorDialog::SetCurrentFile( QString fileName )
+void ScriptEditorDialog::SetCurrentFile(QString fileName)
 {
     m_currentScritFileName = fileName;
 
@@ -224,11 +220,10 @@ void ScriptEditorDialog::SetCurrentFile( QString fileName )
 /*!
  * Write the \a message at log window.
  */
-void ScriptEditorDialog::WriteMessage( QString message )
+void ScriptEditorDialog::WriteMessage(QString message)
 {
-    logWidget->appendPlainText( message );
+    logWidget->appendPlainText(message);
 }
-
 
 QScriptValue ScriptEditorDialog::PrintMessage( QScriptContext* context, QScriptEngine* engine )
 {
@@ -244,7 +239,6 @@ QScriptValue ScriptEditorDialog::PrintMessage( QScriptContext* context, QScriptE
 
     return 1;
 }
-
 
 QScriptValue ScriptEditorDialog::ImportExtension(QScriptContext *context, QScriptEngine *engine)
 {

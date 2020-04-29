@@ -46,28 +46,28 @@ class QResizeEvent;
  *
 */
 
-class CodeEditorWidget : public QWidget, private Ui::CodeEditorWidget
+class CodeEditorWidget: public QWidget, private Ui::CodeEditorWidget
 {
     Q_OBJECT
 
 public:
-    CodeEditorWidget( QWidget *parent = 0, Qt::WindowFlags f = 0);
+    CodeEditorWidget(QWidget* parent = 0, Qt::WindowFlags f = 0);
     ~CodeEditorWidget();
 
     QTextDocument* Document() const;
     bool OkToContinue();
-    void OpenScriptFile( QString fileName );
+    void OpenScriptFile(QString fileName);
 
 signals:
-    void FileOpened( QString fileName );
-    void FileSaved( QString fileName );
+    void FileOpened(QString fileName);
+    void FileSaved(QString fileName);
     void RunScript();
-    void Warging( QString message );
+    void Warging(QString message);
 
 public slots:
     void NewScriptFile();
     void OpenScriptFile();
-    void UpdateCodeEditorWidth( int width );
+    void UpdateCodeEditorWidth(int width);
 
 private slots:
     void Run();
@@ -75,9 +75,9 @@ private slots:
     bool SaveScript();
 
 private:
-    bool SaveScriptFile( const QString& fileName );
+    bool SaveScriptFile(const QString& fileName);
     void SetupToolbar();
-    void StartDocument( QString fileName );
+    void StartDocument(QString fileName);
 
     QString m_currentScritFileName;
 };

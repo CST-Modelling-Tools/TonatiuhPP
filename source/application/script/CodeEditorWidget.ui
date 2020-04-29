@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>548</width>
-    <height>469</height>
+    <height>386</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,6 +32,21 @@
    <item>
     <widget class="QWidget" name="editorToolbar" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QToolButton" name="newButton">
         <property name="text">
@@ -43,8 +58,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>30</width>
-          <height>30</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="autoRaise">
@@ -63,8 +78,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>30</width>
-          <height>30</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="autoRaise">
@@ -83,8 +98,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>30</width>
-          <height>30</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="autoRaise">
@@ -103,8 +118,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>30</width>
-          <height>30</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="autoRaise">
@@ -123,8 +138,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>30</width>
-          <height>30</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="autoRaise">
@@ -143,8 +158,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>30</width>
-          <height>30</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="autoRaise">
@@ -163,8 +178,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>30</width>
-          <height>30</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="autoRaise">
@@ -183,8 +198,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>30</width>
-          <height>30</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="autoRaise">
@@ -203,8 +218,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>30</width>
-          <height>30</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="autoRaise">
@@ -223,8 +238,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>30</width>
-          <height>30</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="autoRaise">
@@ -239,8 +254,8 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>40</width>
-          <height>20</height>
+          <width>0</width>
+          <height>0</height>
          </size>
         </property>
        </spacer>
@@ -249,31 +264,24 @@
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="mainWidget" native="true">
-     <layout class="QHBoxLayout" name="mainLayout">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="LineNumberWidget" name="lineNumberWidget" native="true"/>
-      </item>
-      <item>
-       <widget class="CodeEditArea" name="codeEditor"/>
-      </item>
-     </layout>
-    </widget>
+    <layout class="QHBoxLayout" name="mainLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="LineNumberWidget" name="lineNumberWidget" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="CodeEditArea" name="codeEditor"/>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
