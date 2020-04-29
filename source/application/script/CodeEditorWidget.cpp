@@ -11,8 +11,8 @@
 /*!
  * Creates a new code editor widget.
  */
-CodeEditorWidget::CodeEditorWidget( QWidget *parent, Qt::WindowFlags f ):
-    QWidget( parent, f ),
+CodeEditorWidget::CodeEditorWidget(QWidget* parent, Qt::WindowFlags f):
+    QWidget(parent, f),
     m_currentScritFileName( QString( "" ) )
 {
     setupUi(this);

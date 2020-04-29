@@ -24,38 +24,26 @@ SO_NODEENGINE_SOURCE(GraphicRootTracker)
 
 void GraphicRootTracker::initClass()
 {
-    SO_NODEENGINE_INIT_CLASS( GraphicRootTracker, TTracker, "TTracker" );
+    SO_NODEENGINE_INIT_CLASS(GraphicRootTracker, TTracker, "TTracker");
 }
 
 GraphicRootTracker::GraphicRootTracker()
 {
-    SO_NODEENGINE_CONSTRUCTOR( GraphicRootTracker );
+    SO_NODEENGINE_CONSTRUCTOR(GraphicRootTracker);
 
-    // Define input fields and their default values
     SO_NODE_ADD_FIELD( m_azimuth, (0.) );
     SO_NODE_ADD_FIELD( m_zenith, (90.) );
 
-    //ConstructEngineOutput();
-    SO_NODEENGINE_ADD_OUTPUT( outputTranslation, SoSFVec3f);
-    SO_NODEENGINE_ADD_OUTPUT( outputRotation, SoSFRotation);
-    SO_NODEENGINE_ADD_OUTPUT( outputScaleFactor, SoSFVec3f);
-    SO_NODEENGINE_ADD_OUTPUT( outputScaleOrientation, SoSFRotation);
-    SO_NODEENGINE_ADD_OUTPUT( outputCenter, SoSFVec3f);
+    SO_NODEENGINE_ADD_OUTPUT(outputTranslation, SoSFVec3f);
+    SO_NODEENGINE_ADD_OUTPUT(outputRotation, SoSFRotation);
+    SO_NODEENGINE_ADD_OUTPUT(outputScaleFactor, SoSFVec3f);
+    SO_NODEENGINE_ADD_OUTPUT(outputScaleOrientation, SoSFRotation);
+    SO_NODEENGINE_ADD_OUTPUT(outputCenter, SoSFVec3f);
 }
 
 GraphicRootTracker::~GraphicRootTracker()
 {
     Disconnect();
-}
-
-void GraphicRootTracker::SetAzimuthAngle(trt::TONATIUH_REAL* azimuthField)
-{
-    m_azimuth.connectFrom(azimuthField);
-}
-
-void GraphicRootTracker::SetZenithAngle(trt::TONATIUH_REAL* zenithField)
-{
-    m_zenith.connectFrom(zenithField);
 }
 
 void GraphicRootTracker::Disconnect()

@@ -11,12 +11,9 @@ class TONATIUH_KERNEL GraphicRootTracker: public TTracker
 
 public:
     static void initClass();
-    QString getIcon() {return "";}
 
     GraphicRootTracker();
 
-    void SetAzimuthAngle(trt::TONATIUH_REAL* azimuthField);
-    void SetZenithAngle(trt::TONATIUH_REAL* zenithField);
     void Disconnect();
 
 protected:

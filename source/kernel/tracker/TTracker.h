@@ -21,7 +21,7 @@ class TONATIUH_KERNEL TTracker: public SoNodeEngine
 
 public:
     static void initClass();
-    virtual QString getIcon() = 0;
+    virtual QString getIcon();
 
     void SetSceneKit(TSceneKit* scene);
     void SetAzimuthAngle(trt::TONATIUH_REAL* azimuthField);

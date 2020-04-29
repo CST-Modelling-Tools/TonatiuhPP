@@ -27,18 +27,16 @@ void TSceneTracker::initClass()
 
 TSceneTracker::TSceneTracker()
 {
-    SO_NODEENGINE_CONSTRUCTOR( TSceneTracker );
+    SO_NODEENGINE_CONSTRUCTOR(TSceneTracker);
 
-    // Define input fields and their default values
     SO_NODE_ADD_FIELD( m_azimuth, (0.) );
     SO_NODE_ADD_FIELD( m_zenith, (90.) );
 
-    //ConstructEngineOutput();
-    SO_NODEENGINE_ADD_OUTPUT( outputTranslation, SoSFVec3f);
-    SO_NODEENGINE_ADD_OUTPUT( outputRotation, SoSFRotation);
-    SO_NODEENGINE_ADD_OUTPUT( outputScaleFactor, SoSFVec3f);
-    SO_NODEENGINE_ADD_OUTPUT( outputScaleOrientation, SoSFRotation);
-    SO_NODEENGINE_ADD_OUTPUT( outputCenter, SoSFVec3f);
+    SO_NODEENGINE_ADD_OUTPUT(outputTranslation, SoSFVec3f);
+    SO_NODEENGINE_ADD_OUTPUT(outputRotation, SoSFRotation);
+    SO_NODEENGINE_ADD_OUTPUT(outputScaleFactor, SoSFVec3f);
+    SO_NODEENGINE_ADD_OUTPUT(outputScaleOrientation, SoSFRotation);
+    SO_NODEENGINE_ADD_OUTPUT(outputCenter, SoSFVec3f);
 }
 
 TSceneTracker::~TSceneTracker()
@@ -47,39 +45,19 @@ TSceneTracker::~TSceneTracker()
     m_zenith.disconnect();
 }
 
-QString TSceneTracker::getIcon()
-{
-
-    return QLatin1String(":/images/TSceneTracker.png");
-}
-
 void TSceneTracker::evaluate()
 {
-
     if ( !m_azimuth.isConnected() || !m_zenith.isConnected() ) return;
-    //SetAnglesToScene();
 
     double azimuth = m_azimuth.getValue();
     double zenith = m_zenith.getValue();
+    m_scene->UpdateSunPosition(azimuth, zenith);
 
-    m_scene->UpdateSunPosition( azimuth, zenith );
-
-
-    //m_scene->azimuth.setValue( azimuth );
-
-    //double alpha = gc::Pi - GetAzimuth();
     double alpha = gc::Pi - azimuth;
+    SbRotation yRotation( SbVec3f(0., 1., 0.), -alpha );
 
-    SbVec3f yAxis( 0.0, 1.0, 0.0 );
-    SbRotation yRotation( yAxis, -alpha );
-
-    SbVec3f xAxis( 1.0, 0.0, 0.0 );
-    //SbRotation xRotation( xAxis, -GetZenith() );
-    //m_scene->zenith.setValue( zenith );
-    SbRotation xRotation( xAxis, -zenith );
+    SbRotation xRotation( SbVec3f(1., 0., 0.), -zenith );
 
     SbRotation rotation = yRotation * xRotation;
-
     SetEngineOutputRotation(rotation);
-
 }

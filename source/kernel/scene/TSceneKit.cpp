@@ -85,14 +85,16 @@ SoPath* TSceneKit::GetSoPath( SoSearchAction* action )
     return nodePath;
 }
 
-void TSceneKit::UpdateSunPosition( double azimuthValue, double zenithValue )
+void TSceneKit::UpdateSunPosition(double azimuthValue, double zenithValue)
 {
     azimuth = azimuthValue;
     zenith = zenithValue;
 
-    Vector3D sunVector( sin( azimuth.getValue() ) * sin( zenith.getValue()  ),
-            cos( zenith.getValue()  ),
-            -sin( zenith.getValue() ) * cos( azimuth.getValue()  ) );
+    Vector3D sunVector(
+        sin( azimuth.getValue() ) * sin( zenith.getValue()  ),
+        cos( zenith.getValue()  ),
+        -sin( zenith.getValue() ) * cos( azimuth.getValue()  )
+    );
 
 
     Transform sceneOTW(
@@ -100,7 +102,6 @@ void TSceneKit::UpdateSunPosition( double azimuthValue, double zenithValue )
         0, 1, 0, 0,
         0, 0, 1, 0,
         0, 0, 0, 1 );
-
 
     SoNodeKitListPart* coinPartList = static_cast< SoNodeKitListPart* >( getPart( "childList", true ) );
     if( !coinPartList || coinPartList->getNumChildren() < 1 )    return;
@@ -117,7 +118,6 @@ void TSceneKit::UpdateSunPosition( double azimuthValue, double zenithValue )
         SoBaseKit* coinChild = static_cast< SoBaseKit* >( sunNodePartList->getChild( index ) );
         UpdateTrackersTransform( coinChild, sunVector, sceneOTW );
     }
-
 }
 
 /*!

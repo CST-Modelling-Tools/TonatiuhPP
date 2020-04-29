@@ -15,6 +15,11 @@ void TTracker::initClass()
     SO_NODEENGINE_INIT_ABSTRACT_CLASS(TTracker, SoNodeEngine, "NodeEngine");
 }
 
+QString TTracker::getIcon()
+{
+    return "";
+}
+
 TTracker::TTracker():
     m_scene(0)
 {

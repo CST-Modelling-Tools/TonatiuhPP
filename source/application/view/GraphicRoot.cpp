@@ -150,7 +150,7 @@ void GraphicRoot::RemoveModel()
 {
     if( m_pSelectionNode->getNumChildren() > 0 )
     {
-        m_pTracker->SetSceneKit( 0 );
+        m_pTracker->SetSceneKit(0);
         m_pTracker->Disconnect();
 
         m_pSelectionNode->removeAllChildren();
