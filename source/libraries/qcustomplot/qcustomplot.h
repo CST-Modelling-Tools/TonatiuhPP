@@ -23,6 +23,8 @@
 **          Version: 1.3.1                                                **
 ****************************************************************************/
 
+#include "libraries/TonatiuhLibraries.h"
+
 #ifndef QCUSTOMPLOT_H
 #define QCUSTOMPLOT_H
 

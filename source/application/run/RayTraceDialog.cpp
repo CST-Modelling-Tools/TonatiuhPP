@@ -23,7 +23,6 @@ RayTraceDialog::RayTraceDialog(QWidget* parent, Qt::WindowFlags f):
 {
     setupUi(this);
     connect(this, SIGNAL(accepted()), this, SLOT(saveChanges()) );
-    connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(applyChanges(QAbstractButton*)) );
 }
 
 /**
@@ -71,16 +70,6 @@ RayTraceDialog::RayTraceDialog(
         newMapRadio->setChecked(true);
 
     connect(this, SIGNAL(accepted()), this, SLOT(saveChanges()) );
-    connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(applyChanges(QAbstractButton*)) );
-}
-
-/**
- * If the applyChanges button is clicked the dialog values are saved.
- */
-void RayTraceDialog::applyChanges(QAbstractButton* button)
-{
-    if (buttonBox->buttonRole(button) == QDialogButtonBox::ApplyRole)
-        saveChanges();
 }
 
 /**

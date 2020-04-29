@@ -27,8 +27,6 @@ private slots:
     void DeleteSurface();
 
 private:
-    void SetupTriggers();
-
     SceneModel* m_scene;
     QStringList m_surfaces;
     QVector<PhotonExportWidget*> m_parameters;

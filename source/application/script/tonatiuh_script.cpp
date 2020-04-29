@@ -20,41 +20,41 @@ int tonatiuh_script::init(QScriptEngine* engine)
 
     rayTracer->Clear();
 
-        QScriptValue fun_tonatiuh_filename = engine->newFunction(tonatiuh_script::tonatiuh_filename);
-        engine->globalObject().setProperty("tonatiuh_filename", fun_tonatiuh_filename);
+    QScriptValue fun_tonatiuh_filename = engine->newFunction(tonatiuh_script::tonatiuh_filename);
+    engine->globalObject().setProperty("tonatiuh_filename", fun_tonatiuh_filename);
 
-        QScriptValue fun_tonatiuh_irradiance = engine->newFunction(tonatiuh_script::tonatiuh_irradiance);
-        engine->globalObject().setProperty("tonatiuh_irradiance", fun_tonatiuh_irradiance);
+    QScriptValue fun_tonatiuh_irradiance = engine->newFunction(tonatiuh_script::tonatiuh_irradiance);
+    engine->globalObject().setProperty("tonatiuh_irradiance", fun_tonatiuh_irradiance);
 
-        QScriptValue fun_tonatiuh_numrays = engine->newFunction(tonatiuh_script::tonatiuh_numrays);
-        engine->globalObject().setProperty("tonatiuh_numrays", fun_tonatiuh_numrays);
+    QScriptValue fun_tonatiuh_numrays = engine->newFunction(tonatiuh_script::tonatiuh_numrays);
+    engine->globalObject().setProperty("tonatiuh_numrays", fun_tonatiuh_numrays);
 
-        QScriptValue fun_tonatiuh_numdivisions = engine->newFunction(tonatiuh_script::tonatiuh_numdivisions);
-        engine->globalObject().setProperty("tonatiuh_numdivisions", fun_tonatiuh_numdivisions);
+    QScriptValue fun_tonatiuh_numdivisions = engine->newFunction(tonatiuh_script::tonatiuh_numdivisions);
+    engine->globalObject().setProperty("tonatiuh_numdivisions", fun_tonatiuh_numdivisions);
 
-        QScriptValue fun_tonatiuh_photon_map = engine->newFunction(tonatiuh_script::tonatiuh_photon_map_export_mode);
-        engine->globalObject().setProperty("tonatiuh_photon_map", fun_tonatiuh_photon_map);
+    QScriptValue fun_tonatiuh_photon_map = engine->newFunction(tonatiuh_script::tonatiuh_photon_map_export_mode);
+    engine->globalObject().setProperty("tonatiuh_photon_map", fun_tonatiuh_photon_map);
 
-        QScriptValue fun_tonatiuh_random_generator = engine->newFunction(tonatiuh_script::tonatiuh_random_generator);
-        engine->globalObject().setProperty("tonatiuh_random_generator", fun_tonatiuh_random_generator);
+    QScriptValue fun_tonatiuh_random_generator = engine->newFunction(tonatiuh_script::tonatiuh_random_generator);
+    engine->globalObject().setProperty("tonatiuh_random_generator", fun_tonatiuh_random_generator);
 
-        QScriptValue fun_tonatiuh_sunposition = engine->newFunction(tonatiuh_script::tonatiuh_sunposition);
-        engine->globalObject().setProperty("tonatiuh_sunposition", fun_tonatiuh_sunposition);
+    QScriptValue fun_tonatiuh_sunposition = engine->newFunction(tonatiuh_script::tonatiuh_sunposition);
+    engine->globalObject().setProperty("tonatiuh_sunposition", fun_tonatiuh_sunposition);
 
-        QScriptValue fun_tonatiuh_calculatesun = engine->newFunction(tonatiuh_script::tonatiuh_calculatesun);
-        engine->globalObject().setProperty("tonatiuh_calculatesun", fun_tonatiuh_calculatesun);
+    QScriptValue fun_tonatiuh_calculatesun = engine->newFunction(tonatiuh_script::tonatiuh_calculatesun);
+    engine->globalObject().setProperty("tonatiuh_calculatesun", fun_tonatiuh_calculatesun);
 
-        QScriptValue fun_tonatiuh_setsunpositiontoscene = engine->newFunction(tonatiuh_script::tonatiuh_setsunpositiontoscene);
-        engine->globalObject().setProperty("tonatiuh_setsunpositiontoscene", fun_tonatiuh_setsunpositiontoscene);
+    QScriptValue fun_tonatiuh_setsunpositiontoscene = engine->newFunction(tonatiuh_script::tonatiuh_setsunpositiontoscene);
+    engine->globalObject().setProperty("tonatiuh_setsunpositiontoscene", fun_tonatiuh_setsunpositiontoscene);
 
-        QScriptValue fun_tonatiuh_setdisconnectalltrackers = engine->newFunction(tonatiuh_script::tonatiuh_setdisconnectalltrackers);
-        engine->globalObject().setProperty("tonatiuh_setdisconnectalltrackers", fun_tonatiuh_setdisconnectalltrackers);
+    QScriptValue fun_tonatiuh_setdisconnectalltrackers = engine->newFunction(tonatiuh_script::tonatiuh_setdisconnectalltrackers);
+    engine->globalObject().setProperty("tonatiuh_setdisconnectalltrackers", fun_tonatiuh_setdisconnectalltrackers);
 
-        QScriptValue fun_tonatiuh_saveas = engine->newFunction(tonatiuh_script::tonatiuh_saveas);
-        engine->globalObject().setProperty("tonatiuh_saveas", fun_tonatiuh_saveas);
+    QScriptValue fun_tonatiuh_saveas = engine->newFunction(tonatiuh_script::tonatiuh_saveas);
+    engine->globalObject().setProperty("tonatiuh_saveas", fun_tonatiuh_saveas);
 
-        QScriptValue fun_tonatiuh_trace = engine->newFunction(tonatiuh_script::tonatiuh_trace);
-        engine->globalObject().setProperty("tonatiuh_trace", fun_tonatiuh_trace);
+    QScriptValue fun_tonatiuh_trace = engine->newFunction(tonatiuh_script::tonatiuh_trace);
+    engine->globalObject().setProperty("tonatiuh_trace", fun_tonatiuh_trace);
 
     return 1;
 }

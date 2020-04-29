@@ -1,7 +1,6 @@
 #pragma once
 
 #include "kernel/raytracing/TFactory.h"
-
 #include <QTime>
 
 class RandomDeviate;

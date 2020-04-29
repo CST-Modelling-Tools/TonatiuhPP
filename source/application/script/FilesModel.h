@@ -3,13 +3,12 @@
 #include <QFileSystemModel>
 
 
-class FilesModel : public QFileSystemModel
+class FilesModel: public QFileSystemModel
 {
 
 public:
      FilesModel(QObject *parent = 0);
 
 protected:
-     int columnCount( const QModelIndex& parent = QModelIndex() ) const;
-
+     int columnCount(const QModelIndex& parent = QModelIndex()) const;
 };

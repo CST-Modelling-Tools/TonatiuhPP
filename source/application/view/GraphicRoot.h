@@ -50,5 +50,4 @@ private:
     SoSeparator* m_pSceneSeparator;
     SoSelection* m_pSelectionNode;
     GraphicRootTracker* m_pTracker;
-
 };

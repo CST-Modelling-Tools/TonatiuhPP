@@ -694,7 +694,7 @@
   </action>
   <action name="actionRayTraceOptions">
    <property name="text">
-    <string>Ray Tracing Options ...</string>
+    <string>Ray Tracing Options...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+R</string>

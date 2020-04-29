@@ -19,7 +19,8 @@
 #include "kernel/raytracing/TSceneKit.h"
 #include "libraries/geometry/Vector3D.h"
 
-SO_NODEENGINE_SOURCE( GraphicRootTracker );
+SO_NODEENGINE_SOURCE(GraphicRootTracker)
+
 
 void GraphicRootTracker::initClass()
 {
@@ -32,8 +33,8 @@ GraphicRootTracker::GraphicRootTracker()
     SO_NODEENGINE_CONSTRUCTOR( GraphicRootTracker );
 
     // Define input fields and their default values
-    SO_NODE_ADD_FIELD( m_azimuth, ( 0.0 ) );
-    SO_NODE_ADD_FIELD( m_zenith, ( 90.0 ) );
+    SO_NODE_ADD_FIELD( m_azimuth, (0.) );
+    SO_NODE_ADD_FIELD( m_zenith, (90.) );
 
     //ConstructEngineOutput();
     SO_NODEENGINE_ADD_OUTPUT( outputTranslation, SoSFVec3f);
@@ -41,8 +42,6 @@ GraphicRootTracker::GraphicRootTracker()
     SO_NODEENGINE_ADD_OUTPUT( outputScaleFactor, SoSFVec3f);
     SO_NODEENGINE_ADD_OUTPUT( outputScaleOrientation, SoSFRotation);
     SO_NODEENGINE_ADD_OUTPUT( outputCenter, SoSFVec3f);
-
-
 }
 
 GraphicRootTracker::~GraphicRootTracker()
@@ -67,16 +66,13 @@ void GraphicRootTracker::SetZenithAngle( trt::TONATIUH_REAL* zenithField )
     m_zenith.connectFrom(zenithField);
 }
 
-
 QString GraphicRootTracker::getIcon()
 {
-
-    return QString( QLatin1String( ":/images/GraphicRootTracker.png" ) );
+    return ":/images/GraphicRootTracker.png";
 }
 
 void GraphicRootTracker::evaluate()
 {
-
     if (!m_azimuth.isConnected() || !m_zenith.isConnected() ) return;
 
     //double alpha = gc::Pi - GetAzimuth();

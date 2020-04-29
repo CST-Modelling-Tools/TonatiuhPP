@@ -2,7 +2,7 @@
 
 #include "kernel/random/RandomDeviate.h"
 
-const double LongIntegerToDouble = 1.0 / 4294967296.0;
+const double LongIntegerToDouble = 1./4294967296.;
 
 class RandomMersenneTwister: public RandomDeviate
 {
@@ -15,7 +15,7 @@ public:
     void FillArray(double* array, const ulong arraySize);
     ulong RandomUInt();
 
-    static const char* getClassName() {return "MersenneTwister";}
+    NAME_ICON_FUNCTIONS("Mersenne-Twister", ":/RandomX.png")
 
 private:
     enum { N = 624, M = 397 };

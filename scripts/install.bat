@@ -1,6 +1,6 @@
 @ECHO OFF
 
-SET BUILD=..\build-Tonatiuh-Desktop_Qt_5_14_2_MinGW_64_bit-Profile
+SET BUILD=..\build-Tonatiuh-Desktop_Qt_5_14_2_MinGW_64_bit-Release
 SET COIN=C:\Users\Victor\Neo\Programming\Qt\Libraries\Coin\release\bin
 SET QT=C:\Qt\Qt5.14.2\5.14.2\mingw73_64
 

@@ -1,19 +1,17 @@
 #pragma once
 
 #include "kernel/random/RandomDeviate.h"
-
 #include <random>
 
 
 class RandomMersenneTwisterSTL: public RandomDeviate
 {
-
 public:
     RandomMersenneTwisterSTL(ulong seed, long size = 10'000'000);
 
     void FillArray(double* array, ulong size);
 
-    static const char* getClassName() {return "MersenneTwisterSTL";}
+    NAME_ICON_FUNCTIONS("Mersenne-Twister(STL)", ":/RandomX.png")
 
 private:
     std::mt19937_64 m_generator;

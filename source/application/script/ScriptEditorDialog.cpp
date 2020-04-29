@@ -6,8 +6,8 @@
 
 #include "FilesModel.h"
 #include "ScriptEditorDialog.h"
-#include "raytracing/ScriptRayTracer.h"
-#include "raytracing/tonatiuh_script.h"
+#include "ScriptRayTracer.h"
+#include "tonatiuh_script.h"
 
 
  Q_DECLARE_METATYPE(QVector<QVariant>)
@@ -16,13 +16,13 @@
  * Creates a dialog to edit scripts and run them. The list \a listRandomFactory is
  * the random generator types that can be defined in the scripts to run Tonatiuh. The dialog explorer shows the directories and scripts files from \a dirName path.
  */
-ScriptEditorDialog::ScriptEditorDialog( QVector< RandomFactory* > listRandomFactory, QWidget* parent )
-:QDialog( parent ),
- m_currentScritFileName( "" ),
- m_fileModel( 0 ),
- m_interpreter( 0 )
+ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory, QWidget* parent ):
+    QDialog(parent),
+    m_currentScritFileName(""),
+    m_fileModel(0),
+    m_interpreter(0)
 {
-    setupUi( this );
+    setupUi(this);
     setWindowFlags( windowFlags() | Qt::WindowMinMaxButtonsHint );
 
     QSize windowSize = size();
@@ -66,8 +66,6 @@ ScriptEditorDialog::ScriptEditorDialog( QVector< RandomFactory* > listRandomFact
     QScriptValue import = m_interpreter->newFunction(ScriptEditorDialog::ImportExtension);
     m_interpreter->globalObject().setProperty("Import", import, QScriptValue::ReadOnly);
 
-
-
     connect( fileTree, SIGNAL( doubleClicked( const QModelIndex& ) ), this, SLOT( OpenScriptFile( const QModelIndex& ) ) );
     connect( codeEditorWidget, SIGNAL( FileOpened( QString ) ), this, SLOT( SetCurrentFile( QString ) ) );
     connect( codeEditorWidget, SIGNAL( FileSaved( QString ) ), this, SLOT( SetCurrentFile( QString ) ) );
@@ -96,7 +94,6 @@ void ScriptEditorDialog::ExecuteScript( QString tonatiuhScriptFile )
          Close( true);
      }
 }
-
 
 void ScriptEditorDialog::AbortEvaluation( QString error )
 {

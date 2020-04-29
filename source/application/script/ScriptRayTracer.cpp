@@ -10,7 +10,7 @@
 #include <Inventor/nodes/SoSelection.h>
 
 #include "main/Document.h"
-#include "gui/GraphicRoot.h"
+#include "view/GraphicRoot.h"
 #include "gui/SceneModel.h"
 #include "ScriptRayTracer.h"
 #include "kernel/random/RandomDeviate.h"

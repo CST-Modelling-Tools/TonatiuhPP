@@ -7,7 +7,7 @@
 
 #include <Inventor/Qt/SoQt.h>
 
-#include "gui/GraphicRootTracker.h"
+#include "kernel/tracker/GraphicRootTracker.h"
 #include "gui/MainWindow.h"
 #include "kernel/shape/ShapeCube.h"
 #include "kernel/material/TDefaultMaterial.h"
@@ -28,8 +28,8 @@
 #include <QScriptEngine>
 #include <QTextStream>
 #include "gui/PluginManager.h"
-#include "raytracing/ScriptRayTracer.h"
-#include "raytracing/tonatiuh_script.h"
+#include "script/ScriptRayTracer.h"
+#include "script/tonatiuh_script.h"
 
 /*!
    \mainpage

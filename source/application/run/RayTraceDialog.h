@@ -23,7 +23,7 @@ public:
     RayTraceDialog(
         int numRays,
         QVector<RandomFactory*> randomFactoryList, int selectedRandomFactory = 0,
-        int widthDivisions = 200,int heightDivisions = 200,
+        int widthDivisions = 200, int heightDivisions = 200,
         bool drawRays = true, bool drawPhotons = false,
         int photonMapSize = 1'000'000, bool increasePhotonMap = false,
         QWidget* parent = 0, Qt::WindowFlags f = 0
@@ -40,7 +40,6 @@ public:
     bool IncreasePhotonMap() const {return m_increasePhotonMap;}
 
 public slots:
-    void applyChanges(QAbstractButton* button);
     void saveChanges();
 
 private:

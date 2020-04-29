@@ -10,9 +10,9 @@
  * Creates a new dialog object to define the export settings. The available export mode types are listed into \a typeList.
  */
 ExportPhotonsDialog::ExportPhotonsDialog(
-        SceneModel& scene,
-        QVector<PhotonExportFactory*> typeList,
-        QWidget* parent):
+    SceneModel& scene,
+    QVector<PhotonExportFactory*> typeList,
+    QWidget* parent):
     QDialog(parent),
     m_scene(&scene)
 {
@@ -32,10 +32,12 @@ ExportPhotonsDialog::ExportPhotonsDialog(
             m_parameters << 0;
             parametersWidget->addWidget(new QWidget);
         }
-
     }
     ChangeCurrentStoreTypeParameters();
-    SetupTriggers();
+
+    connect(storeTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeCurrentStoreTypeParameters()) );
+    connect(addSurfaceButton, SIGNAL(clicked()), this, SLOT(AddSurface()) );
+    connect(deleteSurfaceButton, SIGNAL(clicked()), this, SLOT(DeleteSurface()) );
 }
 
 /*!
@@ -100,19 +102,10 @@ void ExportPhotonsDialog::AddSurface()
  */
 void ExportPhotonsDialog::DeleteSurface()
 {
-    if (!surfacesListWidget->currentItem() ) return;
+    if (!surfacesListWidget->currentItem()) return;
     int n = m_surfaces.indexOf(surfacesListWidget->currentItem()->text());
     if (n < 0) return;
     m_surfaces.removeAt(n);
     delete surfacesListWidget->item(n);
 }
 
-/*!
- * Setups triggers for the dialog buttons.
- */
-void ExportPhotonsDialog::SetupTriggers()
-{
-    connect(storeTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeCurrentStoreTypeParameters()) );
-    connect(addSurfaceButton, SIGNAL(clicked()), this, SLOT(AddSurface()) );
-    connect(deleteSurfaceButton, SIGNAL(clicked()), this, SLOT(DeleteSurface()) );
-}

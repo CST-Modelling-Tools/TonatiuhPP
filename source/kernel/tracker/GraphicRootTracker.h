@@ -8,7 +8,7 @@
 
 class QString;
 
-class GraphicRootTracker: public TTracker
+class TONATIUH_KERNEL GraphicRootTracker: public TTracker
 {
     SO_NODEENGINE_HEADER(GraphicRootTracker);
 
@@ -16,7 +16,6 @@ public:
     static void initClass();
     QString getIcon();
 
-    //Constructor
     GraphicRootTracker();
 
     void Disconnect();

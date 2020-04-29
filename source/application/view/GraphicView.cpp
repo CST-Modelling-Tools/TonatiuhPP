@@ -5,7 +5,7 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
-#include "gui/GraphicRoot.h"
+#include "GraphicRoot.h"
 #include "GraphicView.h"
 #include "gui/PathWrapper.h"
 
@@ -14,10 +14,10 @@
  *
  * Use setModel() to set the model.
  */
-GraphicView::GraphicView(QWidget* parent)
-    : QAbstractItemView(parent),
-      m_sceneGraphRoot(0),
-      m_myRenderArea(0)
+GraphicView::GraphicView(QWidget* parent):
+    QAbstractItemView(parent),
+    m_sceneGraphRoot(0),
+    m_myRenderArea(0)
 {
 
 }
@@ -60,6 +60,7 @@ QModelIndex GraphicView::indexAt(const QPoint& /*point*/) const
 
 void GraphicView::scrollTo(const QModelIndex& /*index*/, ScrollHint /*hint*/)
 {
+
 }
 
 QRect GraphicView::visualRect (const QModelIndex& /*index*/) const

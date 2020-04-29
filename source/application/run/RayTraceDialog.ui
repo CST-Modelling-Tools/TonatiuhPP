@@ -6,53 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>322</width>
-    <height>518</height>
+    <width>299</width>
+    <height>416</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Options</string>
-  </property>
-  <property name="sizeGripEnabled">
-   <bool>true</bool>
+   <string>Ray Tracing Options</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="spacing">
-    <number>20</number>
-   </property>
-   <property name="leftMargin">
-    <number>20</number>
-   </property>
-   <property name="topMargin">
-    <number>20</number>
-   </property>
-   <property name="rightMargin">
-    <number>20</number>
-   </property>
-   <property name="bottomMargin">
-    <number>20</number>
-   </property>
    <item>
     <widget class="QGroupBox" name="settingsGroup">
      <property name="title">
       <string>Settings</string>
      </property>
      <layout class="QGridLayout" name="settingsLayout">
-      <property name="leftMargin">
-       <number>10</number>
-      </property>
-      <property name="topMargin">
-       <number>10</number>
-      </property>
-      <property name="rightMargin">
-       <number>10</number>
-      </property>
-      <property name="bottomMargin">
-       <number>10</number>
-      </property>
-      <property name="spacing">
-       <number>10</number>
-      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="numberRaysLabel">
         <property name="minimumSize">
@@ -73,9 +40,6 @@
           <width>0</width>
           <height>0</height>
          </size>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -99,12 +63,6 @@
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="randomLabel">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
         <property name="text">
          <string>Random generator:</string>
         </property>
@@ -117,9 +75,6 @@
           <width>0</width>
           <height>0</height>
          </size>
-        </property>
-        <property name="sizeAdjustPolicy">
-         <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
         </property>
        </widget>
       </item>
@@ -180,38 +135,14 @@
    </item>
    <item>
     <widget class="QGroupBox" name="drawBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
      <property name="title">
       <string>Draw</string>
      </property>
      <layout class="QGridLayout" name="drawLayout">
-      <property name="leftMargin">
-       <number>10</number>
-      </property>
-      <property name="topMargin">
-       <number>10</number>
-      </property>
-      <property name="rightMargin">
-       <number>10</number>
-      </property>
-      <property name="bottomMargin">
-       <number>10</number>
-      </property>
-      <property name="spacing">
-       <number>10</number>
-      </property>
       <item row="0" column="0">
        <widget class="QCheckBox" name="showRaysCheck">
         <property name="text">
          <string>Show rays</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -220,12 +151,6 @@
       </item>
       <item row="1" column="0">
        <widget class="QCheckBox" name="showPhotonsCheck">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
         <property name="text">
          <string>Show photons</string>
         </property>
@@ -240,45 +165,15 @@
       <string>Photon Map</string>
      </property>
      <layout class="QGridLayout" name="photonMapLayout">
-      <property name="leftMargin">
-       <number>10</number>
-      </property>
-      <property name="topMargin">
-       <number>10</number>
-      </property>
-      <property name="rightMargin">
-       <number>10</number>
-      </property>
-      <property name="bottomMargin">
-       <number>10</number>
-      </property>
-      <property name="spacing">
-       <number>10</number>
-      </property>
       <item row="1" column="1">
        <widget class="QRadioButton" name="newMapRadio">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
         <property name="text">
          <string>New</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
        <widget class="QSpinBox" name="bufferSizeSpin">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
@@ -301,12 +196,6 @@
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="constructionLabel">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
         <property name="text">
          <string>Contruction:</string>
         </property>
@@ -314,12 +203,6 @@
       </item>
       <item row="2" column="1">
        <widget class="QRadioButton" name="increaseMapRadio">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>25</height>
-         </size>
-        </property>
         <property name="text">
          <string>Append</string>
         </property>
@@ -337,14 +220,8 @@
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>30</height>
-      </size>
-     </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
@@ -353,9 +230,13 @@
  <tabstops>
   <tabstop>raysSpinBox</tabstop>
   <tabstop>randomCombo</tabstop>
+  <tabstop>widthDivisionsSpinBox</tabstop>
+  <tabstop>heightDivisionsSpinBox</tabstop>
+  <tabstop>showRaysCheck</tabstop>
+  <tabstop>showPhotonsCheck</tabstop>
+  <tabstop>bufferSizeSpin</tabstop>
   <tabstop>newMapRadio</tabstop>
   <tabstop>increaseMapRadio</tabstop>
-  <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -366,12 +247,12 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>143</x>
-     <y>322</y>
+     <x>70</x>
+     <y>404</y>
     </hint>
     <hint type="destinationlabel">
-     <x>179</x>
-     <y>175</y>
+     <x>95</x>
+     <y>172</y>
     </hint>
    </hints>
   </connection>
@@ -382,12 +263,12 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>143</x>
-     <y>322</y>
+     <x>162</x>
+     <y>404</y>
     </hint>
     <hint type="destinationlabel">
-     <x>179</x>
-     <y>175</y>
+     <x>182</x>
+     <y>170</y>
     </hint>
    </hints>
   </connection>

@@ -6,8 +6,9 @@
 #include "libraries/geometry/gf.h"
 
 #include "GraphicRoot.h"
-#include "GraphicRootTracker.h"
+#include "kernel/tracker/GraphicRootTracker.h"
 #include "kernel/raytracing/TSceneKit.h"
+
 
 void selectionFinishCallback( void * userData, SoSelection* selection )
 {
@@ -15,14 +16,15 @@ void selectionFinishCallback( void * userData, SoSelection* selection )
     if ( root ) root->SelectionChanged( selection );
 }
 
-GraphicRoot::GraphicRoot()
-:m_graphicsRoot( 0 ),
- m_pGrid( 0 ),
- m_pRays( 0 ),
- m_pRootTransform( 0 ),
- m_pSceneSeparator( 0 ),
- m_pSelectionNode( 0 ),
- m_pTracker( 0 )
+
+GraphicRoot::GraphicRoot():
+    m_graphicsRoot(0),
+    m_pGrid(0),
+    m_pRays(0),
+    m_pRootTransform(0),
+    m_pSceneSeparator(0),
+    m_pSelectionNode(0),
+    m_pTracker(0)
 {
     m_graphicsRoot = new SoSeparator;
     m_graphicsRoot->ref();
@@ -60,8 +62,7 @@ GraphicRoot::GraphicRoot()
 
 GraphicRoot::~GraphicRoot()
 {
-    if( m_pGrid )
-    {
+    if (m_pGrid) {
         while ( m_pGrid->getRefCount( ) > 1 )    m_pGrid->unref();
         m_pGrid = 0;
     }
@@ -85,8 +86,6 @@ GraphicRoot::~GraphicRoot()
         while ( m_graphicsRoot->getRefCount( ) > 1 )    m_graphicsRoot->unref();
         m_graphicsRoot = 0;
     }
-
-
 }
 
 void GraphicRoot::AddGrid( SoSeparator* grid )
@@ -104,8 +103,7 @@ void GraphicRoot::AddRays( SoSeparator* rays )
 
 void GraphicRoot::AddModel( TSceneKit* sceneModel )
 {
-    if( sceneModel )
-    {
+    if (sceneModel) {
         m_pSelectionNode->addChild( sceneModel );
         m_pTracker->SetSceneKit( sceneModel );
         m_pTracker->SetAzimuthAngle( sceneModel->GetAzimuthAngle() );
@@ -140,14 +138,12 @@ void GraphicRoot::RemoveGrid()
 
 void GraphicRoot::RemoveRays()
 {
-    if( m_pRays )
-    {
+    if (m_pRays) {
         m_pRays->removeAllChildren();
         if ( m_pRays->getRefCount() > 1 ) gf::SevereError( "RemoveRays: m_pRays referenced in excess ");
         m_pRays->unref();
         m_pRays = 0;
     }
-
 }
 
 void GraphicRoot::RemoveModel()
@@ -165,13 +161,11 @@ void GraphicRoot::Select(const SoPath* path )
 {
     m_pSelectionNode->select( path );
     m_pSelectionNode->touch();
-
 }
 
 void GraphicRoot::SelectionChanged( SoSelection* selection )
 {
     emit ChangeSelection( selection );
-
 }
 
 void GraphicRoot::ShowBackground( bool view )
@@ -200,7 +194,6 @@ void GraphicRoot::ShowBackground( bool view )
         vrmlBackground->skyColor.setValues( 0,6,color );
         vrmlBackground->skyAngle.setValue( angle );
     }
-
 }
 
 void GraphicRoot::ShowGrid( bool view )
@@ -209,7 +202,6 @@ void GraphicRoot::ShowGrid( bool view )
         m_graphicsRoot->addChild( m_pGrid );
     else if( !view )
         if ( m_pGrid->getRefCount( ) > 0 )    m_graphicsRoot->removeChild( m_pGrid );
-
 }
 
 void GraphicRoot::ShowRays( bool view )

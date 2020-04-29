@@ -8,6 +8,7 @@ class NodesFilterModel;
 //class QItemSelectionModel;
 class SceneModel;
 
+
 class SelectSurfaceDialog: public QDialog, private Ui::SelectSurfaceDialog
 {
     Q_OBJECT

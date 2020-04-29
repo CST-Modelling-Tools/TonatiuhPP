@@ -1,13 +1,13 @@
 #pragma once
 
 #include "kernel/TonatiuhKernel.h"
+#include "kernel/raytracing/TAbstract.h"
 #include <qglobal.h>
 
 //!  RandomDeviate is the base class for random generators.
 /*!
    A random generator class can be written based on this class.
  */
-
 class TONATIUH_KERNEL RandomDeviate
 {
 public:
@@ -20,7 +20,7 @@ public:
     ulong NumbersGenerated() const {return m_total;}
     ulong NumbersProvided() const { return m_total - m_size + m_index;}
 
-    static const char* getClassName() {return "RandomDeviate";}
+    NAME_ICON_FUNCTIONS("X", ":/RandomX.png")
 
 private:
     double* m_numbers;

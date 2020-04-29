@@ -60,7 +60,6 @@ void SelectSurfaceDialog::accept()
     QItemSelectionModel* selectionModel = sceneModelView->selectionModel();
     if (sceneRadio->isChecked() && selectionModel->hasSelection() )
     {
-
         QModelIndex selectedIndex = selectionModel->currentIndex();
         QModelIndex currentIndex = m_pNodeFilterModel->mapToSource(selectedIndex);
 
@@ -95,5 +94,3 @@ QString SelectSurfaceDialog::GetSelectedSurfaceURL() const
 
     return (currentNode->GetNodeURL() );
 }
-
-

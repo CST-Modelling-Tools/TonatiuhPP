@@ -61,15 +61,15 @@
 #include "commands/CmdPaste.h"
 #include "commands/CmdTransmissivityModified.h"
 
-#include "GraphicRoot.h"
+#include "view/GraphicRoot.h"
 #include "MainWindow.h"
 #include "PluginManager.h"
-#include "ProgressUpdater.h"
+//#include "ProgressUpdater.h"
 #include "SceneModel.h"
 #include "calculator/SunCalculatorDialog.h"
-#include "flux/ExportPhotonsDialog.h"
-#include "flux/FluxAnalysis.h"
-#include "flux/FluxAnalysisDialog.h"
+#include "run/ExportPhotonsDialog.h"
+#include "run/FluxAnalysis.h"
+#include "run/FluxAnalysisDialog.h"
 #include "kernel/air/AirFactory.h"
 #include "kernel/air/AirAbstract.h"
 #include "kernel/component/ComponentFactory.h"
@@ -99,11 +99,10 @@
 #include "script/ScriptEditorDialog.h"
 #include "view/GraphicView.h"
 #include "widgets/AboutDialog.h"
-#include "widgets/ExportDialog.h"
 #include "widgets/GridDialog.h"
 #include "widgets/SunDialog.h"
 #include "widgets/NetworkConnectionsDialog.h"
-#include "widgets/RayTraceDialog.h"
+#include "run/RayTraceDialog.h"
 #include "widgets/AirDialog.h"
 
 
@@ -515,8 +514,6 @@ void MainWindow::RunCompleteRayTracer()
  */
 void MainWindow::RunFluxAnalysisRayTracer()
 {
-
-
     TSceneKit* coinScene = m_document->GetSceneKit();
     if (!coinScene) return;
 
@@ -535,11 +532,10 @@ void MainWindow::RunFluxAnalysisRayTracer()
     }
 
     //Create the random generator
-    RandomDeviate*     pRandomDeviate =  randomDeviateFactoryList[m_selectedRandomDeviate]->create();
+    RandomDeviate* pRandomDeviate =  randomDeviateFactoryList[m_selectedRandomDeviate]->create();
 
     FluxAnalysisDialog dialog(coinScene, *m_sceneModel, rootSeparatorInstance, m_widthDivisions, m_heightDivisions, pRandomDeviate);
     dialog.exec();
-
 }
 
 
@@ -1809,7 +1805,7 @@ void MainWindow::Run()
         QFutureWatcher<void> futureWatcher;
         QObject::connect(&futureWatcher, SIGNAL(finished()), &progressDialog, SLOT(reset()));
         QObject::connect(&progressDialog, SIGNAL(canceled()), &futureWatcher, SLOT(cancel()));
-        QObject::connect(&futureWatcher, SIGNAL(progressRangeChanged(int,int)), &progressDialog, SLOT(setRange(int,int)));
+        QObject::connect(&futureWatcher, SIGNAL(progressRangeChanged(int, int)), &progressDialog, SLOT(setRange(int, int)));
         QObject::connect(&futureWatcher, SIGNAL(progressValueChanged(int)), &progressDialog, SLOT(setValue(int)));
 
         std::cout << "QtConcurrent started: " << timer.elapsed() << std::endl;
