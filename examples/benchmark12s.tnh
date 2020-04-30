@@ -128,7 +128,7 @@ TSceneKit {
                     appearance 
                     AppearanceKit {
                       material 
-                      DEF Specular_Standard_Material MaterialStandardSpecular {
+                      DEF Specular MaterialSpecular {
                         fields [ SFFloat m_reflectivity, SFFloat m_sigmaSlope, SFEnum m_distribution, MFColor m_ambientColor, MFColor m_diffuseColor, MFColor m_specularColor, MFColor m_emissiveColor, MFFloat m_shininess, MFFloat m_transparency ]
                         m_reflectivity 1
 

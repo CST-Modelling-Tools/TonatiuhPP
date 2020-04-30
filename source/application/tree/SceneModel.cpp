@@ -266,12 +266,13 @@ QModelIndex SceneModel::parent(const QModelIndex& index) const
 //    return createIndex(row, childModelIndex.column(), instanceParent);
 }
 
-QVariant SceneModel::headerData( int section, Qt::Orientation orientation, int role ) const
+QVariant SceneModel::headerData(int section, Qt::Orientation orientation, int role ) const
 {
     if (orientation == Qt::Horizontal) {
         if (role == Qt::DisplayRole) {
-            if (section == 0) return tr("Node");
-            if (section == 1) return tr("References");
+            if (section == 0) return "Parameter";
+            if (section == 0) return "Node";
+            if (section == 1) return "References";
         }
     }
     return QVariant();
@@ -345,7 +346,7 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
             else if( coinNode->getTypeId().isDerivedFrom(MaterialAbstract::getClassTypeId() ) )
             {
                 MaterialAbstract* material = static_cast<MaterialAbstract*>( coinNode );
-                return QIcon(material->getIcon());
+                return QIcon(material->getTypeIcon());
             }
             else if( coinNode->getTypeId().isDerivedFrom(TTracker::getClassTypeId() ) )
             {

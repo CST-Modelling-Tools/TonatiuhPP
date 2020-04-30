@@ -19,6 +19,7 @@
 #include "ParametersModel.h"
 #include "libraries/fields/UserMField.h"
 #include "libraries/fields/UserSField.h"
+#include <QHeaderView>
 
 /*!
  * Creates an empty widget.
@@ -54,9 +55,6 @@ FieldContainerWidget::FieldContainerWidget(SoNode* fieldContainer, QString conta
     m_pFieldContainer(fieldContainer),
     m_pModel(0)
 {
-//    setAlternatingRowColors(true);
-
-
     setStyleSheet(R"(
 QAbstractItemView {
 outline: 0;
@@ -74,18 +72,23 @@ background-color: #c8dbe5;
 QAbstractItemView::item:hover:!selected {
 background-color: #eeeeee;
 }
+
+QHeaderView::section
+{
+background-color: #d2dddb;
+}
     )");
 
     m_delegate = new ParametersDelegate;
     setItemDelegate(m_delegate);
 
-    m_pModel = new ParametersModel();
+    m_pModel = new ParametersModel;
     m_pModel->SetEditable(true);
-    m_pModel->setHorizontalHeaderLabels(QStringList() << tr("Parameter") << tr("Value") );
+    m_pModel->setHorizontalHeaderLabels({"Parameter", "Value"});
     setModel(m_pModel);
 
     if (m_pFieldContainer) ReadFields();
-    resizeColumnToContents (1);
+    resizeColumnToContents(0);
 }
 
 /**

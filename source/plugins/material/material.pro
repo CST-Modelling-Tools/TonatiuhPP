@@ -4,6 +4,6 @@ TEMPLATE = subdirs
 #SUBDIRS += MaterialAngleDependentSpecular
 #SUBDIRS += MaterialBasicRefractive
 #SUBDIRS += MaterialOneSideSpecular
-SUBDIRS += MaterialStandardSpecular
+SUBDIRS += MaterialSpecular
 #SUBDIRS += MaterialStandardRoughSpecular
 #SUBDIRS += MaterialVirtual

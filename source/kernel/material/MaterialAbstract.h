@@ -1,12 +1,12 @@
 #pragma once
 
 #include "kernel/TonatiuhKernel.h"
+#include "kernel/scene/TAbstract.h"
 #include <Inventor/nodes/SoMaterial.h>
 
 struct DifferentialGeometry;
 class RandomAbstract;
 class Ray;
-class QString;
 
 
 class TONATIUH_KERNEL MaterialAbstract: public SoMaterial
@@ -16,12 +16,12 @@ class TONATIUH_KERNEL MaterialAbstract: public SoMaterial
 public:
     static void initClass();
 
-    virtual QString getIcon() = 0;
-    virtual bool OutputRay(const Ray& incident, DifferentialGeometry* dg, RandomAbstract& rand, Ray* outputRay  ) const = 0;
+    //Ray* OutputRay( const Ray& incident, DifferentialGeometry* dg, RandomDeviate& rand) const;
+    virtual bool OutputRay(const Ray& incident, DifferentialGeometry* dg, RandomAbstract& rand, Ray* outputRay) const = 0;
 
-    static const char* getClassName() {return "Material";}
+    NAME_ICON_FUNCTIONS("X", ":/MaterialX.png")
 
 protected:
-    MaterialAbstract();
-    virtual ~MaterialAbstract();
+    MaterialAbstract() {}
+    ~MaterialAbstract() {}
 };

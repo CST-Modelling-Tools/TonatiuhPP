@@ -1,8 +1,8 @@
 #include "ParametersModel.h"
 #include "ParametersItem.h"
 
-ParametersModel::ParametersModel(QObject * parent)
-:QStandardItemModel (parent )
+ParametersModel::ParametersModel(QObject * parent):
+    QStandardItemModel (parent )
 {
 
 }

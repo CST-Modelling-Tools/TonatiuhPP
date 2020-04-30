@@ -12,6 +12,7 @@
 #include "tree/SceneModel.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
+#include <QHeaderView>
 
 /**
  * Creates a new view for a model. This
@@ -39,7 +40,18 @@ background-color: #c8dbe5;
 QAbstractItemView::item:hover:!selected {
 background-color: #eeeeee;
 }
+
+QHeaderView::section
+{
+background-color: #d2dddb;
+}
+
     )");
+
+    header()->setFont(font()); // Qt bug
+
+//    header()->setFrameShape(QFrame::NoFrame);
+//    header()->setFrameShadow(QFrame::Plain);
 
     m_itemsDelegate = new NodeNameDelegate();
     setItemDelegate(m_itemsDelegate);
