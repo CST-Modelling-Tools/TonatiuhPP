@@ -3,7 +3,7 @@
 #include "libraries/geometry/gf.h"
 
 #include "CmdPaste.h"
-#include "gui/SceneModel.h"
+#include "tree/SceneModel.h"
 #include "kernel/run/InstanceNode.h"
 
 /**

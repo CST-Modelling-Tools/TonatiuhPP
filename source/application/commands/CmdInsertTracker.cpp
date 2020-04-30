@@ -4,7 +4,7 @@
 #include <Inventor/nodekits/SoBaseKit.h>
 #include <Inventor/nodekits/SoSceneKit.h>
 
-#include "gui/SceneModel.h"
+#include "tree/SceneModel.h"
 #include "libraries/geometry/gf.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/sun/TLightKit.h"

@@ -3,7 +3,7 @@
 #include <Inventor/nodekits/SoSceneKit.h>
 #include <Inventor/nodekits/SoNodeKitListPart.h>
 #include "libraries/geometry/gf.h"
-#include "gui/SceneModel.h"
+#include "tree/SceneModel.h"
 #include "kernel/sun/TLightKit.h"
 
 /**

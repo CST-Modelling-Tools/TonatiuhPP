@@ -14,6 +14,7 @@ class TLightKit;
 class TSeparatorKit;
 class TSceneKit;
 
+
 class SceneModel: public QAbstractItemModel
 {
     Q_OBJECT
@@ -27,19 +28,17 @@ public:
     void SetCoinRoot(SoSeparator& coinRoot);
     void SetCoinScene(TSceneKit& coinScene);
 
-
     QModelIndex index(int row, int column, const QModelIndex& parentModelIndex = QModelIndex()) const;
     int rowCount(const QModelIndex& parentModelIndex) const;
-    int columnCount (const QModelIndex&) const;
-    QModelIndex parent (const QModelIndex& childModelIndex) const;
-    QVariant headerData (int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+    int columnCount(const QModelIndex&parent) const;
+    QModelIndex parent(const QModelIndex& index) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     QVariant data(const QModelIndex& modelIndex, int role = Qt::DisplayRole) const;
     Qt::ItemFlags flags(const QModelIndex& index) const;
     Qt::DropActions supportedDropActions() const;
     Qt::DropActions supportedDragActions() const;
 
     bool Cut(SoBaseKit& coinParent, int row);
-
 
     QModelIndex IndexFromNodeUrl(QString nodeUrl) const;
     QModelIndex IndexFromPath(const SoNodeKitPath& coinNodePath) const;

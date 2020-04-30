@@ -160,7 +160,7 @@ public:
 
     //View menu actions
     void on_actionAxis_toggled();
-    void on_actionEdit_Mode_toggled();
+    void on_actionQuadView_toggled();
     void on_actionSunPlane_triggered();
     void on_action_X_Y_Plane_triggered();
     void on_action_X_Z_Plane_triggered();
@@ -263,7 +263,7 @@ private:
     int m_gridZElements;
     double m_gridXSpacing;
     double m_gridZSpacing;
-    std::vector<GraphicView*> m_graphicView;
+    QVector<GraphicView*> m_graphicView;
     int m_focusView;
     bool m_saveCoordinates;
     bool m_saveSide;

@@ -27,14 +27,14 @@ FieldContainerWidget::FieldContainerWidget(QWidget* parent):
     QTreeView(parent),
     m_containerName(QString("") ),
     m_currentIndex(),
-    m_pDelegate(0),
+    m_delegate(0),
     m_pFieldContainer(0),
     m_pModel(0)
 {
-    setAlternatingRowColors(true);
+//    setAlternatingRowColors(true);
 
-    m_pDelegate = new ParametersDelegate;
-    setItemDelegate(m_pDelegate);
+    m_delegate = new ParametersDelegate;
+    setItemDelegate(m_delegate);
 
     m_pModel = new ParametersModel();
     m_pModel->SetEditable(true);
@@ -50,14 +50,34 @@ FieldContainerWidget::FieldContainerWidget(SoNode* fieldContainer, QString conta
     QTreeView(parent),
     m_containerName(containerName),
     m_currentIndex(),
-    m_pDelegate(0),
+    m_delegate(0),
     m_pFieldContainer(fieldContainer),
     m_pModel(0)
 {
-    setAlternatingRowColors(true);
+//    setAlternatingRowColors(true);
 
-    m_pDelegate = new ParametersDelegate;
-    setItemDelegate(m_pDelegate);
+
+    setStyleSheet(R"(
+QAbstractItemView {
+outline: 0;
+}
+
+QAbstractItemView::item:selected {
+color: black;
+background-color: #c8dbe5;
+}
+
+QAbstractItemView::item:hover:selected {
+background-color: #c8dbe5;
+}
+
+QAbstractItemView::item:hover:!selected {
+background-color: #eeeeee;
+}
+    )");
+
+    m_delegate = new ParametersDelegate;
+    setItemDelegate(m_delegate);
 
     m_pModel = new ParametersModel();
     m_pModel->SetEditable(true);
@@ -73,7 +93,7 @@ FieldContainerWidget::FieldContainerWidget(SoNode* fieldContainer, QString conta
  */
 FieldContainerWidget::~FieldContainerWidget()
 {
-    delete m_pDelegate;
+    delete m_delegate;
     delete m_pModel;
 }
 

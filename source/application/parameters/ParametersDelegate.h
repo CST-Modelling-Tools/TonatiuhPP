@@ -1,13 +1,15 @@
 #pragma once
-#include <QItemDelegate>
+
+#include <QStyledItemDelegate>
 #include <QObject>
 
-class ParametersDelegate : public QItemDelegate
+
+class ParametersDelegate: public QStyledItemDelegate
 {
     Q_OBJECT
 
 public:
-    ParametersDelegate( QObject* parent = 0 );
+    ParametersDelegate(QObject* parent = 0);
     ~ParametersDelegate();
     
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,

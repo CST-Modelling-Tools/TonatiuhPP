@@ -64,7 +64,7 @@
 #include "commands/CmdAirModified.h"
 
 #include "PluginManager.h"
-#include "SceneModel.h"
+#include "tree/SceneModel.h"
 #include "calculator/SunCalculatorDialog.h"
 #include "kernel/air/AirAbstract.h"
 #include "kernel/air/AirFactory.h"
@@ -836,26 +836,26 @@ void MainWindow::on_actionAxis_toggled()
     m_graphicView[3]->ViewCoordinateSystem(actionAxis->isChecked() );
 }
 
-void MainWindow::on_actionEdit_Mode_toggled()
+void MainWindow::on_actionQuadView_toggled()
 {
-    if (!actionEdit_Mode->isChecked() )
-    {
+    if (!actionQuadView->isChecked()) {
         m_graphicView[1]->hide();
         m_graphicView[2]->hide();
         m_graphicView[3]->hide();
         m_focusView = 0;
-    }
-    else
-    {
+        QSplitter* splitter = findChild<QSplitter*>("graphicSplitterH2");
+        splitter->hide();
+    } else {
         m_graphicView[1]->show();
         m_graphicView[2]->show();
         m_graphicView[3]->show();
+        QSplitter* splitter = findChild<QSplitter*>("graphicSplitterH2");
+        splitter->show();
     }
 }
 
 void MainWindow::on_actionSunPlane_triggered()
 {
-
     SoSceneKit* coinScene = m_document->GetSceneKit();
     if (!coinScene) return;
 
@@ -1200,11 +1200,10 @@ void MainWindow::CreateGroupNode()
         cmdInsertSeparatorKit->setText("Insert node");
         m_commandStack->push(cmdInsertSeparatorKit);
 
+        QString name("Node");
         int count = 0;
-        QString name;
-        do {
-            name = QString("Node-%1").arg(++count);
-        } while (!m_sceneModel->SetNodeName(separatorKit, name));
+        while (!m_sceneModel->SetNodeName(separatorKit, name))
+            name = QString("Node_%1").arg(++count);
 
         UpdateLightSize();
         m_document->SetDocumentModified(true);
@@ -1231,7 +1230,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
     QVector<ComponentFactory*> factoryList = m_pluginManager->getComponentFactories();
     if (factoryList.size() == 0) return;
 
-    QVector< QString > componentNames;
+    QVector<QString> componentNames;
     for (int i = 0; i < factoryList.size(); i++)
         componentNames << factoryList[i]->name();
 
@@ -1347,7 +1346,7 @@ void MainWindow::CreateShape(QString shapeType, int numberOfParameters, QVector<
         return;
     }
 
-    CreateShape(factoryList[ selectedShape ], numberOfParameters, parametersList);
+    CreateShape(factoryList[selectedShape], numberOfParameters, parametersList);
 }
 
 /*!
@@ -1357,7 +1356,7 @@ void MainWindow::CreateSurfaceNode()
 {
     QModelIndex parentIndex;
     if ((!sceneModelView->currentIndex().isValid() ) || (sceneModelView->currentIndex() == sceneModelView->rootIndex()))
-        parentIndex = m_sceneModel->index(0,0, sceneModelView->rootIndex());
+        parentIndex = m_sceneModel->index(0, 0, sceneModelView->rootIndex());
     else
         parentIndex = sceneModelView->currentIndex();
 
@@ -1376,11 +1375,10 @@ void MainWindow::CreateSurfaceNode()
         CmdInsertShapeKit* insertShapeKit = new CmdInsertShapeKit(parentIndex, shapeKit, m_sceneModel);
         m_commandStack->push(insertShapeKit);
 
+        QString name("Shape");
         int count = 0;
-        QString name;
-        do {
-            name = QString("Shape-%1").arg(++count);
-        } while (!m_sceneModel->SetNodeName(shapeKit, name));
+        while (!m_sceneModel->SetNodeName(shapeKit, name))
+            name = QString("Shape_%1").arg(++count);
 
         UpdateLightSize();
         m_document->SetDocumentModified(true);
@@ -2754,13 +2752,13 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
     int x = pos.x();
     int y = pos.y() - 64;
 
-    QSplitter* pSplitter = findChild<QSplitter*>("graphicHorizontalSplitter");
+    QSplitter* pSplitter = findChild<QSplitter*>("graphicSplitterV");
     QRect mainViewRect = pSplitter->geometry();
 
     if (mainViewRect.contains(x, y) )
     {
-        QSplitter* pvSplitter1 = findChild<QSplitter*>("graphicVerticalSplitter1");
-        QSplitter* pvSplitter2 = findChild<QSplitter*>("graphicVerticalSplitter1");
+        QSplitter* pvSplitter1 = findChild<QSplitter*>("graphicSplitterH1");
+        QSplitter* pvSplitter2 = findChild<QSplitter*>("graphicSplitterH1");
         QRect vViewRect1 = pvSplitter1->geometry();
         if (vViewRect1.contains(x,y))
         {
@@ -3457,114 +3455,51 @@ void MainWindow::SetupGraphcisRoot()
 }
 
 /*!
- * Initializates tonatiuh graphic view.
+ * Initializates graphic view.
  */
 void MainWindow::SetupGraphicView()
 {
-    //SetupGraphcisRoot();
+    QSplitter* splitter = findChild<QSplitter*>("horizontalSplitter");
 
-    QSplitter* pSplitter = findChild<QSplitter*>("horizontalSplitter");
-
-    QSplitter* graphicHorizontalSplitter = new QSplitter();
-    graphicHorizontalSplitter->setObjectName(QString::fromUtf8("graphicHorizontalSplitter") );
-    graphicHorizontalSplitter->setOrientation(Qt::Vertical);
-    pSplitter->insertWidget(0, graphicHorizontalSplitter);
+    QSplitter* splitterV = new QSplitter();
+    splitterV->setObjectName("graphicSplitterV");
+    splitterV->setOrientation(Qt::Vertical);
+    splitter->insertWidget(0, splitterV);
 
     QList<int> sizes;
     sizes << 500 << 200;
-    pSplitter->setSizes (sizes);
+    splitter->setSizes(sizes);
 
+    QSplitter* splitterH1 = new QSplitter(splitterV);
+    splitterH1->setObjectName("graphicSplitterH1");
+    splitterH1->setOrientation(Qt::Horizontal);
 
-    QSplitter* graphicVerticalSplitter1 = new QSplitter();
-    graphicVerticalSplitter1->setObjectName(QString::fromUtf8("graphicVerticalSplitter1") );
-    graphicVerticalSplitter1->setOrientation(Qt::Horizontal);
-    graphicHorizontalSplitter->insertWidget(0, graphicVerticalSplitter1);
+    QSplitter* splitterH2 = new QSplitter(splitterV);
+    splitterH2->setObjectName("graphicSplitterH2");
+    splitterH2->setOrientation(Qt::Horizontal);
 
-    QSplitter* graphicVerticalSplitter2 = new QSplitter();
-    graphicVerticalSplitter2->setObjectName(QString::fromUtf8("graphicVerticalSplitter2"));
-    graphicVerticalSplitter2->setOrientation(Qt::Horizontal);
-    graphicHorizontalSplitter->insertWidget(1, graphicVerticalSplitter2);
+    m_graphicView << new GraphicView(splitterH1);
+    m_graphicView << new GraphicView(splitterH1);
+    m_graphicView << new GraphicView(splitterH2);
+    m_graphicView << new GraphicView(splitterH2);
 
-    QList<int> height;
-    height << 200 << 200;
-    graphicHorizontalSplitter->setSizes (height);
-
-    GraphicView* graphicView1 = new GraphicView(graphicVerticalSplitter1);
-    graphicView1->setObjectName(QString::fromUtf8("graphicView1"));
-    m_graphicView.push_back(graphicView1);
-    GraphicView* graphicView2 = new GraphicView(graphicVerticalSplitter1);
-    graphicView2->setObjectName(QString::fromUtf8("graphicView2"));
-    m_graphicView.push_back(graphicView2);
-    GraphicView* graphicView3 = new GraphicView(graphicVerticalSplitter2);
-    graphicView3->setObjectName(QString::fromUtf8("graphicView3"));
-    m_graphicView.push_back(graphicView3);
-    GraphicView* graphicView4 = new GraphicView(graphicVerticalSplitter2);
-    graphicView4->setObjectName(QString::fromUtf8("graphicView4"));
-    m_graphicView.push_back(graphicView4);
-
-    graphicVerticalSplitter1->addWidget(m_graphicView[0]);
-    graphicVerticalSplitter1->addWidget(m_graphicView[1]);
-    graphicVerticalSplitter2->addWidget(m_graphicView[2]);
-    graphicVerticalSplitter2->addWidget(m_graphicView[3]);
-
-    QList<int> widthSizes;
-    widthSizes << 100 << 100;
-    graphicVerticalSplitter1->setSizes (widthSizes);
-    graphicVerticalSplitter2->setSizes (widthSizes);
-
-    if (graphicVerticalSplitter1 && graphicVerticalSplitter2)
-    {
-        m_graphicView[0] = graphicVerticalSplitter1->findChild< GraphicView* >("graphicView1");
-        if (m_graphicView[0] != NULL)
-        {
-            m_graphicView[0]->resize(600, 400);
-            m_graphicView[0]->SetSceneGraph(m_graphicsRoot);
-            m_graphicView[0]->setModel(m_sceneModel);
-            m_graphicView[0]->setSelectionModel(m_selectionModel);
-        }
-        else gf::SevereError("MainWindow::InitializeGraphicView: graphicView[0] not found");
-
-        if (m_graphicView[1] != NULL)
-        {
-            m_graphicView[1]->resize(600, 400);
-            m_graphicView[1]->SetSceneGraph(m_graphicsRoot);
-            m_graphicView[1]->setModel(m_sceneModel);
-            m_graphicView[1]->setSelectionModel(m_selectionModel);
-            m_focusView = 1;
-            on_action_X_Y_Plane_triggered();
-        }
-        else gf::SevereError("MainWindow::InitializeGraphicView: graphicView[1] not found");
-
-        m_graphicView[2] = graphicVerticalSplitter2->findChild< GraphicView* >("graphicView3");
-        if (m_graphicView[2] != NULL)
-        {
-            m_graphicView[2]->resize(600, 400);
-            m_graphicView[2]->SetSceneGraph(m_graphicsRoot);
-            m_graphicView[2]->setModel(m_sceneModel);
-            m_graphicView[2]->setSelectionModel(m_selectionModel);
-            m_focusView = 2;
-            on_action_Y_Z_Plane_triggered();
-        }
-        else gf::SevereError("MainWindow::InitializeGraphicView: graphicView[2] not found");
-
-        m_graphicView[3] = graphicVerticalSplitter2->findChild< GraphicView* >("graphicView4");
-        if (m_graphicView[3] !=  NULL)
-        {
-            m_graphicView[3]->resize(600, 400);
-            m_graphicView[3]->SetSceneGraph(m_graphicsRoot);
-            m_graphicView[3]->setModel(m_sceneModel);
-            m_graphicView[3]->setSelectionModel(m_selectionModel);
-            m_focusView = 3;
-            on_action_X_Z_Plane_triggered();
-        }
-        else gf::SevereError("MainWindow::InitializeGraphicView: graphicView[3] not found");
+    for (int n = 0; n < 4; n++){
+        m_graphicView[n]->SetSceneGraph(m_graphicsRoot);
+        m_graphicView[n]->setModel(m_sceneModel);
+        m_graphicView[n]->setSelectionModel(m_selectionModel);
     }
-    else gf::SevereError("MainWindow::InitializeGraphicView: verticalSplitter not found");
 
-    m_graphicView[1]->hide();
-    m_graphicView[2]->hide();
-    m_graphicView[3]->hide();
-    m_focusView = 0;
+    m_focusView = 1;
+    on_action_X_Y_Plane_triggered();
+    m_focusView = 2;
+    on_action_Y_Z_Plane_triggered();
+    m_focusView = 3;
+    on_action_X_Z_Plane_triggered();
+
+    // 0 splitterH1 1              tree
+    //   splitterV      splitter
+    // 2 spliter H2 3              parameters
+    on_actionQuadView_toggled();
 }
 
 /*!
@@ -3596,11 +3531,15 @@ void MainWindow::SetupModels()
  */
 void MainWindow::SetupParametersView()
 {
-    connect (parametersView, SIGNAL(valueModificated(SoNode*,QString,QString)),
-             this, SLOT(SetParameterValue(SoNode*,QString,QString)) );
+    connect(
+        parametersView, SIGNAL(valueModificated(SoNode*, QString, QString)),
+        this, SLOT(SetParameterValue(SoNode*, QString, QString))
+    );
 
-    connect(m_selectionModel, SIGNAL(currentChanged (const QModelIndex&,const QModelIndex&)),
-            this, SLOT(ChangeSelection(const QModelIndex&)) );
+    connect(
+        m_selectionModel, SIGNAL(currentChanged (const QModelIndex&,const QModelIndex&)),
+        this, SLOT(ChangeSelection(const QModelIndex&))
+    );
 }
 
 /*!
@@ -3627,7 +3566,12 @@ void MainWindow::SetupTreeView()
 {
     sceneModelView->setModel(m_sceneModel);
     sceneModelView->setSelectionModel(m_selectionModel);
-    sceneModelView->setRootIndex(m_sceneModel->IndexFromNodeUrl(QString("//SunNode") ) );
+    sceneModelView->setRootIndex(m_sceneModel->IndexFromNodeUrl("//SunNode"));
+
+//    sceneModelView->header()->setStretchLastSection(false);
+//    sceneModelView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+//    sceneModelView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+//    sceneModelView->header()->resizeSection(1, 80);
 
     connect(sceneModelView, SIGNAL(dragAndDrop(const QModelIndex&,const QModelIndex&)),
             this, SLOT (ItemDragAndDrop(const QModelIndex&,const QModelIndex&)) );

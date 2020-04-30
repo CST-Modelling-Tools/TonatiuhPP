@@ -11,7 +11,7 @@
 
 #include "main/Document.h"
 #include "view/GraphicRoot.h"
-#include "gui/SceneModel.h"
+#include "tree/SceneModel.h"
 #include "ScriptRayTracer.h"
 #include "kernel/random/RandomAbstract.h"
 #include "kernel/random/RandomFactory.h"

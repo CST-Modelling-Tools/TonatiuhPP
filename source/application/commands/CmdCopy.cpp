@@ -2,7 +2,7 @@
 
 #include "CmdCopy.h"
 #include "kernel/run/InstanceNode.h"
-#include "gui/SceneModel.h"
+#include "tree/SceneModel.h"
 
 /**
  * Creates a new copy command that represents the copy of the node located with \a index in the \a model to the \a clipborad.

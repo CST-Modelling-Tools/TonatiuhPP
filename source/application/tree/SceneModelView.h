@@ -36,6 +36,6 @@ private:
     void startDrag(QMouseEvent* event);
 
     QModelIndex m_currentIndex;
-    NodeNameDelegate* m_iteimsDelegate;
+    NodeNameDelegate* m_itemsDelegate;
     QPoint startPos;
 };

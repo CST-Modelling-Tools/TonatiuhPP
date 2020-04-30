@@ -14,7 +14,7 @@
 
 #include "CmdModifyParameter.h"
 #include "kernel/run/InstanceNode.h"
-#include "gui/SceneModel.h"
+#include "tree/SceneModel.h"
 
 /**
  * CmdModifyParameter creates a new command that represents a scene node parameter value modification. This object saves the \a parameterName parameter value of \a nodeIndex node and the new one

@@ -3,7 +3,7 @@
 #include <Inventor/nodekits/SoBaseKit.h>
 #include "CmdInsertSeparatorKit.h"
 #include "kernel/run/InstanceNode.h"
-#include "gui/SceneModel.h"
+#include "tree/SceneModel.h"
 #include "kernel/scene/TSeparatorKit.h"
 
 /**

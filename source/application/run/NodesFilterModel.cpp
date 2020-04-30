@@ -1,6 +1,6 @@
 #include "kernel/run/InstanceNode.h"
 #include "NodesFilterModel.h"
-#include "gui/SceneModel.h"
+#include "tree/SceneModel.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeAbstract.h"

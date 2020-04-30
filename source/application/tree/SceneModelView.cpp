@@ -9,21 +9,40 @@
 
 #include "kernel/run/InstanceNode.h"
 #include "SceneModelView.h"
-#include "gui/SceneModel.h"
+#include "tree/SceneModel.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
 
 /**
  * Creates a new view for a model. This
  */
-SceneModelView::SceneModelView( QWidget *parent )
-: QTreeView(parent),
-  m_currentIndex( ),
-  m_iteimsDelegate( 0 )
+SceneModelView::SceneModelView(QWidget* parent):
+    QTreeView(parent),
+    m_currentIndex(),
+    m_itemsDelegate(0)
 {
 
-    m_iteimsDelegate = new NodeNameDelegate( );
-    setItemDelegate( m_iteimsDelegate );
+    setStyleSheet(R"(
+QAbstractItemView {
+outline: 0;
+}
+
+QAbstractItemView::item:selected {
+color: black;
+background-color: #c8dbe5;
+}
+
+QAbstractItemView::item:hover:selected {
+background-color: #c8dbe5;
+}
+
+QAbstractItemView::item:hover:!selected {
+background-color: #eeeeee;
+}
+    )");
+
+    m_itemsDelegate = new NodeNameDelegate();
+    setItemDelegate(m_itemsDelegate);
 
     //setAcceptDrops(true);
 //    setAnimated(false);
@@ -37,9 +56,9 @@ SceneModelView::SceneModelView( QWidget *parent )
 /*!
  * Destoryes view object.
  */
-SceneModelView::~SceneModelView( )
+SceneModelView::~SceneModelView()
 {
-    delete m_iteimsDelegate;
+    delete m_itemsDelegate;
 }
 
 /**
@@ -47,7 +66,6 @@ SceneModelView::~SceneModelView( )
  */
 void SceneModelView::mousePressEvent(QMouseEvent *event)
 {
-    
     if (event->button() == Qt::LeftButton){
         startPos = event->pos();
     }
@@ -150,9 +168,7 @@ void SceneModelView::dropEvent(QDropEvent *event)
             event->accept();
         }
     }
-
 }
-
 
 /*!
  * Sets \a current as the view current element index.
@@ -160,24 +176,22 @@ void SceneModelView::dropEvent(QDropEvent *event)
 void SceneModelView::currentChanged( const QModelIndex& current, const QModelIndex& previous )
 {
     m_currentIndex = current;
-    QTreeView::currentChanged( current, previous );
+    QTreeView::currentChanged(current, previous);
 }
 
 void SceneModelView::closeEditor( QWidget* editor, QAbstractItemDelegate::EndEditHint hint )
 {
-
     QLineEdit* textEdit = qobject_cast<QLineEdit *>(editor);
-    QString    newValue = textEdit->text();
+    QString newValue = textEdit->text();
 
      emit nodeNameModificated( m_currentIndex, newValue );
      QTreeView::closeEditor( editor, hint );
 }
 
-
 /**
  * Resizes the view to the size of its contents.
  */
-void SceneModelView::resizeViewToContents( const QModelIndex& index )
+void SceneModelView::resizeViewToContents(const QModelIndex& index)
 {
     resizeColumnToContents( index.column() );
 }
@@ -185,7 +199,7 @@ void SceneModelView::resizeViewToContents( const QModelIndex& index )
 /**
  * Not yet docummented
  */
-void SceneModelView::startDrag(QMouseEvent *event)
+void SceneModelView::startDrag(QMouseEvent* event)
 {
     QPoint position = event->pos();
     QModelIndex index = indexAt(position);

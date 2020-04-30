@@ -12,7 +12,7 @@
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
 #include <Inventor/nodes/SoTransform.h>
 
-#include "gui/SceneModel.h"
+#include "tree/SceneModel.h"
 #include "kernel/air/AirAbstract.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/photons/PhotonMap.h"

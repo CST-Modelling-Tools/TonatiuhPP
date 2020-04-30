@@ -5,10 +5,10 @@
 class SoPath;
 
 
-class PathWrapper
+class SoPathVariant
 {
 public:
-    PathWrapper(SoPath* path = 0);
+    SoPathVariant(SoPath* path = 0);
     SoPath* GetPath() const {return m_path;}
     
 private:
@@ -16,4 +16,4 @@ private:
 };
 
 
-Q_DECLARE_METATYPE(PathWrapper)
+Q_DECLARE_METATYPE(SoPathVariant)

@@ -15,7 +15,7 @@
 
 #include "CmdChangeNodeName.h"
 #include "kernel/run/InstanceNode.h"
-#include "gui/SceneModel.h"
+#include "tree/SceneModel.h"
 
 /*!
  * Creates a new CmdChangeNodeName command.

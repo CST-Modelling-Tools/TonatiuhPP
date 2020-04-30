@@ -6,7 +6,7 @@
 
 #include "kernel/run/InstanceNode.h"
 #include "kernel/scene/TShapeKit.h"
-#include "gui/SceneModel.h"
+#include "tree/SceneModel.h"
 #include "tree/SceneModelView.h"
 
 /*!

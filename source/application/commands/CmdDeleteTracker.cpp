@@ -3,7 +3,7 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodekits/SoSceneKit.h>
 #include "libraries/geometry/gf.h"
-#include "gui/SceneModel.h"
+#include "tree/SceneModel.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/sun/TLightKit.h"
 #include "kernel/scene/TSeparatorKit.h"

@@ -10,7 +10,7 @@
 
 #include "libraries/geometry/gf.h"
 
-#include "PathWrapper.h"
+#include "tree/SoPathVariant.h"
 #include "SceneModel.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/material/MaterialAbstract.h"
@@ -74,7 +74,7 @@ void SceneModel::SetCoinScene(TSceneKit& coinScene)
  */
 void SceneModel::Clear()
 {
-    DeleteInstanceTree( *m_instanceRoot );
+    DeleteInstanceTree(*m_instanceRoot);
 
     delete m_instanceRoot;
     m_instanceRoot = 0;
@@ -87,10 +87,10 @@ void SceneModel::Clear()
  */
 void SceneModel::SetRoot()
 {
-    m_instanceRoot = new InstanceNode( m_coinScene );
+    m_instanceRoot = new InstanceNode(m_coinScene);
     QList< InstanceNode* > instanceRootNodeList;
-    m_mapCoinQt.insert( std::make_pair( m_coinScene, instanceRootNodeList ) );
-    m_mapCoinQt[m_coinScene].append( m_instanceRoot );
+    m_mapCoinQt.insert(std::make_pair(m_coinScene, instanceRootNodeList) );
+    m_mapCoinQt[m_coinScene].append(m_instanceRoot);
 }
 
 void SceneModel::SetLight()
@@ -121,7 +121,6 @@ void SceneModel::SetConcentrator()
         sunSeparatorKit->setPart( "tracker", sceneTracker );
         sceneTracker->SetSceneKit( m_coinScene );
 
-
         //Create Concentrator coordinate system node
         TSeparatorKit* separatorKit = new TSeparatorKit();
         separatorKit->setName( "RootNode" );
@@ -145,7 +144,6 @@ void SceneModel::SetConcentrator()
             TTracker* trackerNode = static_cast< TTracker* >( tracker );
             trackerNode->SetSceneKit( m_coinScene );
         }
-
 
         TSeparatorKit* separatorKit = static_cast< TSeparatorKit* >( sunSeparatorChildList->getChild( 0 ) );
         if( !separatorKit )    return;
@@ -240,92 +238,83 @@ InstanceNode* SceneModel::NodeFromIndex( const QModelIndex& modelIndex ) const
     else return m_instanceRoot;
 }
 
-int SceneModel::rowCount( const QModelIndex& parentModelIndex ) const
+int SceneModel::rowCount(const QModelIndex& parentModelIndex) const
 {
-    InstanceNode* instanceParent = NodeFromIndex( parentModelIndex );
-    return ( instanceParent ) ? ( instanceParent->children.count() ) : 0;
+    InstanceNode* instanceParent = NodeFromIndex(parentModelIndex);
+    return instanceParent ? instanceParent->children.count() : 0;
 }
 
-int SceneModel::columnCount( const QModelIndex& ) const
+int SceneModel::columnCount(const QModelIndex& parent) const
 {
+    Q_UNUSED(parent)
     return 1;
 }
 
-QModelIndex SceneModel::parent( const QModelIndex& childModelIndex ) const
+QModelIndex SceneModel::parent(const QModelIndex& index) const
 {
-    InstanceNode* instanceChild = NodeFromIndex( childModelIndex );
-    if ( !instanceChild ) return QModelIndex();
+    InstanceNode* instanceChild = NodeFromIndex(index);
+    if (!instanceChild) return QModelIndex();
 
     InstanceNode* instanceParent = instanceChild->GetParent();
-    if ( !instanceParent ) return QModelIndex();
+    if (!instanceParent) return QModelIndex();
 
     InstanceNode* instanceGrandparent = instanceParent->GetParent();
-    if ( !instanceGrandparent ) return QModelIndex();
+    if (!instanceGrandparent) return QModelIndex();
 
-    int row = instanceGrandparent->children.indexOf( instanceParent );
-    return createIndex( row, childModelIndex.column(), instanceParent );
+    int row = instanceGrandparent->children.indexOf(instanceParent);
+    return createIndex(row, 0, instanceParent);
+//    return createIndex(row, childModelIndex.column(), instanceParent);
 }
 
 QVariant SceneModel::headerData( int section, Qt::Orientation orientation, int role ) const
 {
-    if ( orientation == Qt::Horizontal && role == Qt::DisplayRole)
-    {
-        if ( section == 0 ) return tr( "Node" );
+    if (orientation == Qt::Horizontal) {
+        if (role == Qt::DisplayRole) {
+            if (section == 0) return tr("Node");
+            if (section == 1) return tr("References");
+        }
     }
     return QVariant();
 }
 
-QVariant SceneModel::data( const QModelIndex& modelIndex, int role ) const
+QVariant SceneModel::data(const QModelIndex& index, int role) const
 {
+    if (role != Qt::DisplayRole && role != Qt::UserRole && role != Qt::DecorationRole) return QVariant();
 
-    if ( role != Qt::DisplayRole && role != Qt::UserRole && role != Qt::DecorationRole ) return QVariant();
+    InstanceNode* instanceNode = NodeFromIndex(index);
+    if (!instanceNode) return QVariant();
 
-    InstanceNode* instanceNode = NodeFromIndex( modelIndex );
-    if ( !instanceNode ) return QVariant();
+    SoNode* coinNode = instanceNode->GetNode();
+    if (!coinNode) return QVariant();
 
-
-    if ( modelIndex.column() == 0 )
+    if (index.column() == 0)
     {
-        SoNode* coinNode = instanceNode->GetNode();
-        if ( !coinNode ) return QVariant();
-
-        if ( role == Qt::DisplayRole )
+        if (role == Qt::DisplayRole)
         {
-            if ( coinNode )
-            {
-                QString nodeName;
-                if ( coinNode->getName() == SbName() )
-                     nodeName = QLatin1String( coinNode->getTypeId().getName().getString() );
-                else
-                    nodeName = QLatin1String( coinNode->getName().getString() );
+            QString name;
+            if ( coinNode->getName() == SbName() )
+                name = coinNode->getTypeId().getName().getString();
+            else
+                name = coinNode->getName().getString();
 
+            SoSearchAction action;
+            action.setNode(coinNode);
+            action.setInterest(SoSearchAction::ALL);
+            action.apply(m_coinRoot);
 
-                SoSearchAction coinSearch;
-                coinSearch.setNode( coinNode );
-                coinSearch.setInterest( SoSearchAction::ALL);
-                coinSearch.apply( m_coinRoot );
+            int count = action.getPaths().getLength();
+            if (count > 1)
+                name = QString("%1 [%2]").arg(name).arg(count);
 
-                int numReferences = coinSearch.getPaths( ).getLength();
-
-                QString references( QLatin1String( " ( " ) );
-                references += QString::number( numReferences, 10);
-                references +=  QLatin1String( " )  ");
-
-                //delete coinSearch;
-
-                return references + nodeName;
-            }
-            else return QVariant();
+            return name;
         }
-
-        if ( role == Qt::UserRole )
+        if (role == Qt::UserRole)
         {
-            SoNodeKitPath* coinKitPath = PathFromIndex(modelIndex);
-            if ( coinKitPath )
+            SoNodeKitPath* coinKitPath = PathFromIndex(index);
+            if (coinKitPath)
             {
-                PathWrapper pathWrapper( coinKitPath );
-                return QVariant::fromValue( pathWrapper );
-
+                SoPathVariant pathWrapper(coinKitPath);
+                return QVariant::fromValue(pathWrapper);
             }
             coinKitPath->unref();
             return  QVariant();
@@ -365,6 +354,20 @@ QVariant SceneModel::data( const QModelIndex& modelIndex, int role ) const
             }
          }
     }
+    else if (index.column() == 1)
+    { // references
+        if (role == Qt::DisplayRole) {
+            SoSearchAction action;
+            action.setNode(coinNode);
+            action.setInterest(SoSearchAction::ALL);
+            action.apply(m_coinRoot);
+
+            int count = action.getPaths().getLength();
+            if (count > 1)
+                return QString::number(count);
+        }
+    }
+
     return QVariant();
 }
 
@@ -380,7 +383,6 @@ int SceneModel::InsertCoinNode( SoNode& coinChild, SoBaseKit& coinParent )
         }
         else
         {
-
             SoNodeKitListPart* coinPartList = static_cast< SoNodeKitListPart* >( coinParent.getPart( "childList", true ) );
             if ( !coinPartList ) return -1;
 
@@ -395,7 +397,6 @@ int SceneModel::InsertCoinNode( SoNode& coinChild, SoBaseKit& coinParent )
                 if( coinParent.getPart( "tracker", false ) ) row++;
             }
         }
-
     }
     else
     {

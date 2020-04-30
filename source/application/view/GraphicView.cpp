@@ -7,7 +7,7 @@
 
 #include "GraphicRoot.h"
 #include "GraphicView.h"
-#include "gui/PathWrapper.h"
+#include "tree/SoPathVariant.h"
 
 /**
  * Creates a new GraphicView with a \a parerent for the model data 3D representation.
@@ -132,9 +132,9 @@ void GraphicView::currentChanged(const QModelIndex& current, const QModelIndex& 
         SoFullPath* path;
         QVariant variant = current.data(Qt::UserRole);
 
-        if (variant.canConvert<PathWrapper>() )
+        if (variant.canConvert<SoPathVariant>() )
         {
-            path = static_cast< SoFullPath*>(variant.value< PathWrapper >().GetPath() );
+            path = static_cast< SoFullPath*>(variant.value< SoPathVariant >().GetPath() );
             m_sceneGraphRoot->Select(path);
         }
 

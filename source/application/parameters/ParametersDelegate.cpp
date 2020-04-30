@@ -12,8 +12,9 @@
 #include "libraries/fields/UserSField.h"
 #include "libraries/fields/UserMField.h"
 
-ParametersDelegate::ParametersDelegate(  QObject* parent)
- : QItemDelegate(parent)
+
+ParametersDelegate::ParametersDelegate(QObject* parent):
+    QStyledItemDelegate(parent)
 {
     
 } 

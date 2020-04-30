@@ -35,7 +35,7 @@ private:
 
     QString m_containerName;
     QModelIndex m_currentIndex;
-    ParametersDelegate* m_pDelegate;
+    ParametersDelegate* m_delegate;
     SoNode* m_pFieldContainer;
     ParametersModel* m_pModel;
 };

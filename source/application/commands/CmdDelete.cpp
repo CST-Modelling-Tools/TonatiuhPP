@@ -2,7 +2,7 @@
 
 #include "CmdDelete.h"
 #include "kernel/run/InstanceNode.h"
-#include "gui/SceneModel.h"
+#include "tree/SceneModel.h"
 
 /**
  * Creates a new delete command that represents the \a selectedIndex node in the \a model deletion.

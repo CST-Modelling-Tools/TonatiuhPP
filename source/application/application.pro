@@ -14,7 +14,6 @@ HEADERS += \
     $$files(calculator/*.h) \
     $$files(commands/*.h) \
     $$files(run/*.h) \
-    $$files(gui/*.h) \
     $$files(main/*.h) \
     $$files(parameters/*.h) \
     $$files(script/*.h) \
@@ -27,7 +26,6 @@ SOURCES += \
     $$files(calculator/*.cpp) \
     $$files(commands/*.cpp) \
     $$files(run/*.cpp) \
-    $$files(gui/*.cpp) \
     $$files(main/*.cpp) \
     $$files(parameters/*.cpp) \
     $$files(script/*.cpp) \
@@ -38,12 +36,12 @@ SOURCES += \
 FORMS += \
     $$files(calculator/*.ui) \
     $$files(run/*.ui) \
-    $$files(gui/*.ui) \
+    $$files(main/*.ui) \
     $$files(script/*.ui) \
     $$files(widgets/*.ui)
 
 RESOURCES += resources.qrc
 
-win32 { # icon in windows explorer
+win32 { # icon for windows explorer
     RC_ICONS = images/about/Tonatiuh.ico
 }

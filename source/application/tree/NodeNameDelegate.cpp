@@ -8,13 +8,13 @@
 
 #include "kernel/run/InstanceNode.h"
 #include "NodeNameDelegate.h"
-#include "gui/SceneModel.h"
+#include "tree/SceneModel.h"
 
 /**
  * Creates a new delegate to facilitate editing node names.
  */
-NodeNameDelegate::NodeNameDelegate(QObject* parent)
-    : QItemDelegate(parent)
+NodeNameDelegate::NodeNameDelegate(QObject* parent):
+    QStyledItemDelegate(parent)
 {
 
 }

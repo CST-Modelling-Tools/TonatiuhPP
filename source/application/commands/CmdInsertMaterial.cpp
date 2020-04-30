@@ -1,7 +1,7 @@
 #include "libraries/geometry/gf.h"
 
 #include "CmdInsertMaterial.h"
-#include "gui/SceneModel.h"
+#include "tree/SceneModel.h"
 #include "kernel/material/MaterialAbstract.h"
 #include "kernel/scene/TShapeKit.h"
 

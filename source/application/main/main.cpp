@@ -7,7 +7,7 @@
 
 #include <Inventor/Qt/SoQt.h>
 
-#include "gui/MainWindow.h"
+#include "MainWindow.h"
 #include "kernel/air/AirAbstract.h"
 #include "kernel/air/AirVacuum.h"
 #include "kernel/material/TDefaultMaterial.h"
@@ -27,7 +27,7 @@
 
 #include <QScriptEngine>
 #include <QTextStream>
-#include "gui/PluginManager.h"
+#include "PluginManager.h"
 #include "script/ScriptRayTracer.h"
 #include "script/tonatiuh_script.h"
 
@@ -64,7 +64,7 @@ int main(int argc, char** argv)
     a.setApplicationVersion(APP_VERSION);
 
 //    qDebug() << QStyleFactory::keys();
-//    a.setStyle(QStyleFactory::create("Windows"));
+//    a.setStyle(QStyleFactory::create("Fusion"));
 
     QSplashScreen* splash = new QSplashScreen;
     splash->setPixmap(QPixmap(":/images/about/SplashScreen.png") );

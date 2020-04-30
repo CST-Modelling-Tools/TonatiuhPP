@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QItemDelegate>
+#include <QStyledItemDelegate>
 
 class SceneModel;
 
@@ -9,7 +9,7 @@ class SceneModel;
    NodeNameDelegate can be used to display and edit the name of a selected node. When a node is selected to edit this class shows an editor with a validator to enable only names with a valid regular expresion.
  */
 
-class NodeNameDelegate: public QItemDelegate
+class NodeNameDelegate: public QStyledItemDelegate
 {
     Q_OBJECT
 

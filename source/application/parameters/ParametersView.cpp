@@ -8,12 +8,19 @@
 /**
  * Creates a new ParametersView with parent \a parent.
  */
-ParametersView::ParametersView( QWidget* parent )
-: QTabWidget( parent ),
-  m_actualCoinNode( 0 ), m_isPart(false)
+ParametersView::ParametersView(QWidget* parent):
+    QTabWidget(parent),
+    m_actualCoinNode(0),
+    m_isPart(false)
 {
-    addTab( new FieldContainerWidget( 0, "" ), tr("Transform") );
-    addTab( new FieldContainerWidget( 0, "" ), tr("Shape") );
+    addTab( new FieldContainerWidget(0, "" ), tr("Transform") );
+    addTab( new FieldContainerWidget(0, "" ), tr("Shape") );
+
+    setStyleSheet(R"(
+QTabWidget::pane {
+border:none;
+}
+    )");
 
 }
 /*!
@@ -24,11 +31,10 @@ ParametersView::~ParametersView()
 
 }
 
-
 /*!
  * Changes the parameters view to show \a coinNode \a parts parameters.
  */
-void ParametersView::SelectionChangedToPart( SoNode* coinPart )
+void ParametersView::SelectionChangedToPart(SoNode* coinPart)
 {
     clear();
 
