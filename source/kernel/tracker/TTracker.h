@@ -12,7 +12,7 @@ class QString;
 class TSceneKit;
 class TLightKit;
 class Transform;
-class Vector3D;
+struct Vector3D;
 
 
 class TONATIUH_KERNEL TTracker: public SoNodeEngine

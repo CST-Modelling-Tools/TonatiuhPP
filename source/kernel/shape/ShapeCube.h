@@ -36,7 +36,10 @@ protected:
 private:
     // Face NormalVectors. These are static because they are computed
     // once and are shared by all instances
-    static SbVec3d frontNormal, rearNormal;
-    static SbVec3d leftNormal, rightNormal;
-    static SbVec3d baseNormal, topNormal;
+    static SbVec3d frontNormal;
+    static SbVec3d rearNormal;
+    static SbVec3d leftNormal;
+    static SbVec3d rightNormal;
+    static SbVec3d baseNormal;
+    static SbVec3d topNormal;
 };

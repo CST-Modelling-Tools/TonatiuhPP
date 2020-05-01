@@ -8,7 +8,7 @@
 #include "kernel/TonatiuhFunctions.h"
 
 class QString;
-class Vector3D;
+struct Vector3D;
 class Transform;
 
 
