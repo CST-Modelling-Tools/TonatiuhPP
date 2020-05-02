@@ -23,50 +23,33 @@ void ShapeSquare::initClass()
 ShapeSquare::ShapeSquare()
 {
     SO_NODE_CONSTRUCTOR(ShapeSquare);
-    SO_NODE_ADD_FIELD(m_sideLength, (10.0));
+    SO_NODE_ADD_FIELD(m_sideLength, (10.));
 }
 
-ShapeSquare::~ShapeSquare()
-{
-
-}
-
-double ShapeSquare::GetArea() const
+double ShapeSquare::getArea() const
 {
     return m_sideLength.getValue() * m_sideLength.getValue();
 }
 
 
-BBox ShapeSquare::GetBBox() const
+BBox ShapeSquare::getBox() const
 {
     Point3D min = Point3D(-m_sideLength.getValue()/2,0.0, -m_sideLength.getValue()/2);
     Point3D max = Point3D(m_sideLength.getValue()/2,0.0,m_sideLength.getValue()/2);
-
-    return BBox( min, max );
+    return BBox(min, max);
 }
 
-
-QString ShapeSquare::GetIcon() const
-{
-    return ":/images/:/images/node.png";//?
-}
-
-bool ShapeSquare::Intersect(const Ray& /*objectRay*/, double* /*tHit*/, DifferentialGeometry* /*dg*/) const
+bool ShapeSquare::intersect(const Ray& /*objectRay*/, double* /*tHit*/, DifferentialGeometry* /*dg*/) const
 {
     return true;
 }
 
-bool ShapeSquare::IntersectP(const Ray& objectRay) const
+bool ShapeSquare::intersectP(const Ray& objectRay) const
 {
-    return Intersect(objectRay, 0, 0);
+    return intersect(objectRay, 0, 0);
 }
 
-Point3D ShapeSquare::Sample(double u, double v) const
-{
-    return GetPoint3D(u, v);
-}
-
-Point3D ShapeSquare::GetPoint3D (double u, double v) const
+Point3D ShapeSquare::getPoint (double u, double v) const
 {
     if ((u < 0.0 && u > 1) && (v < 0.0 && v > 1) )
         gf::SevereError( "Function ShapeSquare::GetPoint3D called with invalid parameters" );
@@ -77,25 +60,9 @@ Point3D ShapeSquare::GetPoint3D (double u, double v) const
     return Point3D(x,0,z);
 }
 
-Vector3D ShapeSquare::GetNormal (double /*u*/, double /*v*/) const
+Vector3D ShapeSquare::getNormal(double /*u*/, double /*v*/) const
 {
     return Vector3D(0, 1, 0);
-}
-
-
-void ShapeSquare::computeBBox(SoAction*, SbBox3f& box, SbVec3f& center)
-{
-    BBox bBox = GetBBox();
-    // These points define the min and max extents of the box.
-    SbVec3f min, max;
-
-    min.setValue( bBox.pMin.x, bBox.pMin.y, bBox.pMin.z );
-    max.setValue( bBox.pMax.x, bBox.pMax.y, bBox.pMax.z );;
-
-    // Set the box to bound the two extreme points.
-    box.setBounds(min, max);
-
-   center.setValue(0.0, 0.0, 0.0);
 }
 
 void ShapeSquare::generatePrimitives(SoAction *action)
@@ -134,8 +101,8 @@ void ShapeSquare::generatePrimitives(SoAction *action)
     {
         for ( int j = 0 ; j < columns ; ++j )
         {
-            Point3D point = GetPoint3D(ui, vj);
-            Vector3D normal = GetNormal(ui, vj);
+            Point3D point = getPoint(ui, vj);
+            Vector3D normal = getNormal(ui, vj);
 
             vertex[h][0] = point.x;
             vertex[h][1] = point.y;

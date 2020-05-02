@@ -217,7 +217,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
 
     QVector< InstanceNode* > exportSuraceList;
     QModelIndex nodeIndex = m_pCurrentSceneModel->IndexFromNodeUrl(m_surfaceURL);
-    if (!nodeIndex.isValid()  ) return;
+    if (!nodeIndex.isValid()) return;
 
     InstanceNode* surfaceNode = m_pCurrentSceneModel->NodeFromIndex(nodeIndex);
     if (!surfaceNode || surfaceNode == 0) return;
@@ -250,7 +250,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     m_pPhotonMap->SetConcentratorToWorld(m_pRootSeparatorInstance->GetIntersectionTransform() );
 
     QStringList disabledNodes = QString(lightKit->disabledNodes.getValue().getString() ).split(";", QString::SkipEmptyParts);
-    QVector< QPair< TShapeKit*, Transform > > surfacesList;
+    QVector< QPair<TShapeKit*, Transform> > surfacesList;
     trf::ComputeFistStageSurfaceList(m_pRootSeparatorInstance, disabledNodes, &surfacesList);
     lightKit->ComputeLightSourceArea(m_sunWidthDivisions, m_sunHeightDivisions, surfacesList);
     if (surfacesList.count() < 1) return;
@@ -281,12 +281,12 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     QMutex mutex;
     QMutex mutexPhotonMap;
     QFuture<void> photonMap;
-        photonMap = QtConcurrent::map(raysPerThread, RayTracer(m_pRootSeparatorInstance,
-            lightInstance, raycastingSurface, sunShape, lightToWorld,
-            transmissivity,
-            *m_pRandomDeviate,
-            &mutex, m_pPhotonMap, &mutexPhotonMap,
-            exportSuraceList) );
+    photonMap = QtConcurrent::map(raysPerThread, RayTracer(
+        m_pRootSeparatorInstance,
+        lightInstance, raycastingSurface, sunShape, lightToWorld,
+        transmissivity,
+        *m_pRandomDeviate, &mutex, m_pPhotonMap, &mutexPhotonMap, exportSuraceList
+    ));
 
     futureWatcher.setFuture(photonMap);
 

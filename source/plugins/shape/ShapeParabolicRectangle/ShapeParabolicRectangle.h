@@ -1,9 +1,5 @@
 #pragma once
 
-#include <Inventor/fields/SoSFDouble.h>
-#include <Inventor/fields/SoSFEnum.h>
-#include <Inventor/fields/SoSFFloat.h>
-
 #include "kernel/shape/ShapeAbstract.h"
 #include "kernel/TonatiuhTypes.h"
 
@@ -13,29 +9,25 @@ class ShapeParabolicRectangle: public ShapeAbstract
 	SO_NODE_HEADER(ShapeParabolicRectangle);
 
 public:
-
+    static void initClass();
 	ShapeParabolicRectangle();
-	static void initClass();
 
-	BBox GetBBox() const;
+    BBox getBox() const;
+    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
 
-    bool Intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
-
-    Point3D Sample(double u, double v) const;
-
-	trt::TONATIUH_REAL focusLength;
+    trt::TONATIUH_REAL focus;
 	trt::TONATIUH_REAL widthX;
 	trt::TONATIUH_REAL widthZ;
-	SoSFEnum activeSide;
+
+    SoSFEnum activeSide;
 
     NAME_ICON_FUNCTIONS("ParabolicRectangle", ":/ShapeParabolicRectangle.png")
 
 protected:
-    Point3D GetPoint3D (double u, double v) const;
-    Vector3D GetNormal(double u, double v) const;
+    Point3D getPoint(double u, double v) const;
+    Vector3D getNormal(double u, double v) const;
     void generatePrimitives(SoAction* action);
 };
-
 
 
 

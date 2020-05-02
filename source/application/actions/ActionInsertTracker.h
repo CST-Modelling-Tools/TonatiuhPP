@@ -9,21 +9,19 @@ class TrackerFactory;
   ActionInsertTracker is the action added to menu and toolbar for each tracker plugin.
 */
 
-class ActionInsertTracker : public QAction
+class ActionInsertTracker: public QAction
 {
     Q_OBJECT
 
 public:
-    ActionInsertTracker( const QString& text, QObject* parent, TrackerFactory* pTrackerFactory );
-    ~ActionInsertTracker();
-    
-signals:
-    void CreateTracker( TrackerFactory* pTrackerFactory );
-    
+    ActionInsertTracker(TrackerFactory* factory, QObject* parent);
+       
 public slots:
-    void OnActionInsertTrackerTriggered();
+    void onTriggered();
+
+signals:
+    void CreateTracker(TrackerFactory* factory);
     
 private:
-    TrackerFactory* m_pTrackerFactory;
-    
+    TrackerFactory* m_factory;
 };

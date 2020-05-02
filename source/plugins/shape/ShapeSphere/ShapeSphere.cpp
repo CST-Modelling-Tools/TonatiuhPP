@@ -33,10 +33,12 @@ ShapeSphere::ShapeSphere( ):
     m_sensor_phiMax(0)
 {
 	SO_NODE_CONSTRUCTOR(ShapeSphere);
+
 	SO_NODE_ADD_FIELD( radius, (0.5) );
 	SO_NODE_ADD_FIELD( yMin, (-0.5) );
 	SO_NODE_ADD_FIELD( yMax, (0.5) );
 	SO_NODE_ADD_FIELD( phiMax, ( gc::TwoPi) );
+
 	SO_NODE_DEFINE_ENUM_VALUE( Side, INSIDE );
 	SO_NODE_DEFINE_ENUM_VALUE( Side, OUTSIDE );
 	SO_NODE_SET_SF_ENUM_TYPE( activeSide, Side );
@@ -72,7 +74,7 @@ SoNode* ShapeSphere::copy(SbBool copyConnections) const
     return shape;
 }
 
-bool ShapeSphere::Intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg ) const
+bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const
 {
     // intersection with full shape
     // |r0 + t*d|^2 = R^2  (local coordinates)
@@ -114,8 +116,9 @@ bool ShapeSphere::Intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     }
 
     // differential geometry
-    if( ( tHit == 0 ) && ( dg == 0 ) ) return true;
-    else if( ( tHit == 0 ) || ( dg == 0 ) ) gf::SevereError( "Function ShapeSphere::Intersect(...) called with null pointers" );
+    if ( ( tHit == 0 ) && ( dg == 0 ) ) return true;
+    else if( ( tHit == 0 ) || ( dg == 0 ) )
+        gf::SevereError( "Function ShapeSphere::Intersect(...) called with null pointers" );
 
     // Find parametric representation of ShapeSphere hit
     double cosTheta = hitPoint.y / radius.getValue();
@@ -157,18 +160,18 @@ bool ShapeSphere::Intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     return true;
 }
 
-double ShapeSphere::GetArea() const
+double ShapeSphere::getArea() const
 {
     double r = radius.getValue();
     return 4.*gc::Pi*r*r;
 }
-double ShapeSphere::GetVolume() const
+double ShapeSphere::getVolume() const
 {
     double r = radius.getValue();
     return 4.*gc::Pi*r*r*r/3.;
 }
 
-BBox ShapeSphere::GetBBox() const
+BBox ShapeSphere::getBox() const
 {
 	double cosPhiMax = cos( phiMax.getValue() );
    	double sinPhiMax = sin( phiMax.getValue() );
@@ -197,9 +200,9 @@ BBox ShapeSphere::GetBBox() const
 }
 
 
-Point3D ShapeSphere::GetPoint3D(double u, double v) const
+Point3D ShapeSphere::getPoint(double u, double v) const
 {
-    if ( OutOfRange(u, v) )
+    if ( isInside(u, v) )
         gf::SevereError( "Function Poligon::GetPoint3D called with invalid parameters" );
 
     double thetaMin = acos(yMax.getValue()/radius.getValue());
@@ -215,7 +218,7 @@ Point3D ShapeSphere::GetPoint3D(double u, double v) const
     return radius.getValue()*p;
 }
 
-Vector3D ShapeSphere::GetNormal(double u, double v) const
+Vector3D ShapeSphere::getNormal(double u, double v) const
 {
     double thetaMin = acos(yMax.getValue()/radius.getValue());
     double thetaMax = acos(yMin.getValue()/radius.getValue());

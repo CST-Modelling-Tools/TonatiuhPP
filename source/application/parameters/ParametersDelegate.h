@@ -10,7 +10,6 @@ class ParametersDelegate: public QStyledItemDelegate
 
 public:
     ParametersDelegate(QObject* parent = 0);
-    ~ParametersDelegate();
     
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
                            const QModelIndex &index) const;                       

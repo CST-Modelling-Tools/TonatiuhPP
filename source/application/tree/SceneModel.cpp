@@ -19,8 +19,8 @@
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeAbstract.h"
 #include "kernel/sun/TLightKit.h"
-#include "kernel/tracker/TSceneTracker.h"
-#include "kernel/tracker/TTracker.h"
+#include "kernel/trackers/TSceneTracker.h"
+#include "kernel/trackers/TrackerAbstract.h"
 
 /*!
  * Creates an empty model.
@@ -141,7 +141,7 @@ void SceneModel::SetConcentrator()
         SoNode* tracker = sunSeparatorKit->getPart( "tracker", false );
         if( tracker )
         {
-            TTracker* trackerNode = static_cast< TTracker* >( tracker );
+            TrackerAbstract* trackerNode = static_cast< TrackerAbstract* >( tracker );
             trackerNode->SetSceneKit( m_coinScene );
         }
 
@@ -207,7 +207,7 @@ void SceneModel::GenerateTSeparatorKitSubTree( InstanceNode& instanceNodeParent,
         SoNode* tracker = parentKit->getPart( "tracker", false );
         if( tracker )
         {
-            TTracker* trackerNode = static_cast< TTracker* >( tracker );
+            TrackerAbstract* trackerNode = static_cast< TrackerAbstract* >( tracker );
             trackerNode->SetSceneKit( m_coinScene );
             AddInstanceNode( instanceNodeParent, tracker );
         }
@@ -225,14 +225,14 @@ void SceneModel::GenerateTSeparatorKitSubTree( InstanceNode& instanceNodeParent,
     }
 }
 
-QModelIndex SceneModel::index( int row, int column, const QModelIndex& parentModelIndex ) const
+QModelIndex SceneModel::index(int row, int column, const QModelIndex& parentModelIndex) const
 {
-    if ( !m_instanceRoot ) return QModelIndex();
-    InstanceNode* instanceParent = NodeFromIndex( parentModelIndex );
-    return createIndex( row, column, instanceParent->children[ row ] );
+    if (!m_instanceRoot) return QModelIndex();
+    InstanceNode* instanceParent = NodeFromIndex(parentModelIndex);
+    return createIndex(row, column, instanceParent->children[row]);
 }
 
-InstanceNode* SceneModel::NodeFromIndex( const QModelIndex& modelIndex ) const
+InstanceNode* SceneModel::NodeFromIndex(const QModelIndex& modelIndex) const
 {
     if ( modelIndex.isValid() ) return static_cast< InstanceNode* >( modelIndex.internalPointer() );
     else return m_instanceRoot;
@@ -270,9 +270,7 @@ QVariant SceneModel::headerData(int section, Qt::Orientation orientation, int ro
 {
     if (orientation == Qt::Horizontal) {
         if (role == Qt::DisplayRole) {
-            if (section == 0) return "Parameter";
             if (section == 0) return "Node";
-            if (section == 1) return "References";
         }
     }
     return QVariant();
@@ -285,21 +283,21 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
     InstanceNode* instanceNode = NodeFromIndex(index);
     if (!instanceNode) return QVariant();
 
-    SoNode* coinNode = instanceNode->GetNode();
-    if (!coinNode) return QVariant();
+    SoNode* nodeCoin = instanceNode->GetNode();
+    if (!nodeCoin) return QVariant();
 
     if (index.column() == 0)
     {
         if (role == Qt::DisplayRole)
         {
             QString name;
-            if ( coinNode->getName() == SbName() )
-                name = coinNode->getTypeId().getName().getString();
+            if ( nodeCoin->getName() == SbName() )
+                name = nodeCoin->getTypeId().getName().getString();
             else
-                name = coinNode->getName().getString();
+                name = nodeCoin->getName().getString();
 
             SoSearchAction action;
-            action.setNode(coinNode);
+            action.setNode(nodeCoin);
             action.setInterest(SoSearchAction::ALL);
             action.apply(m_coinRoot);
 
@@ -322,51 +320,38 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
         }
         if (role == Qt::DecorationRole)
         {
-            if( coinNode->getTypeId().isDerivedFrom( TLightKit::getClassTypeId() ) )
+            if (nodeCoin->getTypeId().isDerivedFrom( TLightKit::getClassTypeId() ) )
             {
-                return QIcon( QLatin1String( ":/images/scene/environmentSun.png" ) );
+                return QIcon(":/images/scene/environmentSun.png");
             }
-            else if( coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
+            else if (nodeCoin->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
             {
-                TSeparatorKit* separatorKit = static_cast<TSeparatorKit*>( coinNode );
+                TSeparatorKit* separatorKit = static_cast<TSeparatorKit*>( nodeCoin );
                 return QIcon( separatorKit->getIcon() );
             }
-            else if( coinNode->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) )
+            else if (nodeCoin->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) )
             {
 //                SoBaseKit* nodeKit = static_cast< SoBaseKit* >( coinNode );
 //                TShape* kit = static_cast<TShape*>( nodeKit->getPart( "shape", false ) );
 //                if( kit ) return QIcon( kit->GetIcon() );
                 return QIcon(":/images/scene/nodeShape.png");
             }
-            else if( coinNode->getTypeId().isDerivedFrom(SoShape::getClassTypeId() ) )
+            else if (nodeCoin->getTypeId().isDerivedFrom(SoShape::getClassTypeId() ) )
             {
-                ShapeAbstract* shape = static_cast<ShapeAbstract*>(coinNode);
-                return QIcon( shape->getTypeIcon() );
+                ShapeAbstract* shape = static_cast<ShapeAbstract*>(nodeCoin);
+                return QIcon(shape->getTypeIcon());
             }
-            else if( coinNode->getTypeId().isDerivedFrom(MaterialAbstract::getClassTypeId() ) )
+            else if (nodeCoin->getTypeId().isDerivedFrom(MaterialAbstract::getClassTypeId() ) )
             {
-                MaterialAbstract* material = static_cast<MaterialAbstract*>( coinNode );
+                MaterialAbstract* material = static_cast<MaterialAbstract*>( nodeCoin );
                 return QIcon(material->getTypeIcon());
             }
-            else if( coinNode->getTypeId().isDerivedFrom(TTracker::getClassTypeId() ) )
+            else if (nodeCoin->getTypeId().isDerivedFrom(TrackerAbstract::getClassTypeId() ) )
             {
-                TTracker* tracer = static_cast<TTracker*>( coinNode );
-                return QIcon(tracer->getIcon());
+                TrackerAbstract* tracker = static_cast<TrackerAbstract*>(nodeCoin);
+                return QIcon(tracker->getTypeIcon());
             }
          }
-    }
-    else if (index.column() == 1)
-    { // references
-        if (role == Qt::DisplayRole) {
-            SoSearchAction action;
-            action.setNode(coinNode);
-            action.setInterest(SoSearchAction::ALL);
-            action.apply(m_coinRoot);
-
-            int count = action.getPaths().getLength();
-            if (count > 1)
-                return QString::number(count);
-        }
     }
 
     return QVariant();
@@ -377,7 +362,7 @@ int SceneModel::InsertCoinNode( SoNode& coinChild, SoBaseKit& coinParent )
     int row = -1;
     if (coinParent.getTypeId().isDerivedFrom( TSeparatorKit::getClassTypeId() ) )
     {
-        if( coinChild.getTypeId().isDerivedFrom( TTracker::getClassTypeId() ) )
+        if( coinChild.getTypeId().isDerivedFrom( TrackerAbstract::getClassTypeId() ) )
         {
             coinParent.setPart( "tracker", &coinChild );
             row = 0;
@@ -440,7 +425,7 @@ void SceneModel::InsertLightNode(TLightKit& lightKit)
     m_coinScene->setPart("lightList[0]", &lightKit);
 
     SoSearchAction trackersSearch;
-    trackersSearch.setType( TTracker::getClassTypeId() );
+    trackersSearch.setType( TrackerAbstract::getClassTypeId() );
     trackersSearch.setInterest( SoSearchAction::ALL);
     trackersSearch.apply( m_coinRoot );
     SoPathList& trackersPath = trackersSearch.getPaths();
@@ -448,7 +433,7 @@ void SceneModel::InsertLightNode(TLightKit& lightKit)
     for( int index = 0; index < trackersPath.getLength(); ++index )
     {
         SoFullPath* trackerPath = static_cast< SoFullPath* > ( trackersPath[index] );
-        TTracker* tracker = static_cast< TTracker* >( trackerPath->getTail() );
+        TrackerAbstract* tracker = static_cast< TrackerAbstract* >( trackerPath->getTail() );
         tracker->SetAzimuthAngle( &lightKit.azimuth );
         tracker->SetZenithAngle( &lightKit.zenith );
     }
@@ -503,7 +488,7 @@ void SceneModel::RemoveLightNode(TLightKit& coinLight)
     m_instanceRoot->children.remove( 0 );
 
     SoSearchAction trackersSearch;
-    trackersSearch.setType( TTracker::getClassTypeId() );
+    trackersSearch.setType( TrackerAbstract::getClassTypeId() );
     trackersSearch.setInterest( SoSearchAction::ALL);
     trackersSearch.apply( m_coinRoot );
     SoPathList& trackersPath = trackersSearch.getPaths();
@@ -511,7 +496,7 @@ void SceneModel::RemoveLightNode(TLightKit& coinLight)
     for( int index = 0; index <trackersPath.getLength(); ++index )
     {
         SoFullPath* trackerPath = static_cast< SoFullPath* > ( trackersPath[index] );
-        TTracker* tracker = dynamic_cast< TTracker* >( trackerPath->getTail() );
+        TrackerAbstract* tracker = dynamic_cast< TrackerAbstract* >( trackerPath->getTail() );
         tracker->Disconnect();
     }
 
@@ -762,10 +747,10 @@ bool SceneModel::Paste( tgc::PasteType type, SoBaseKit& coinParent, SoNode& coin
     }
     if( !coinChild->getTypeId().isDerivedFrom( SoBaseKit::getClassTypeId() ) )
     {
-        if( coinChild->getTypeId().isDerivedFrom( TTracker::getClassTypeId() ) )
+        if( coinChild->getTypeId().isDerivedFrom( TrackerAbstract::getClassTypeId() ) )
         {
             TSeparatorKit* separatorKit = static_cast< TSeparatorKit* >( pCoinParent );
-            TTracker* tracker = static_cast< TTracker* >( separatorKit->getPart( "tracker", false ) );
+            TrackerAbstract* tracker = static_cast< TrackerAbstract* >( separatorKit->getPart( "tracker", false ) );
             if (tracker)
             {
                 QMessageBox::warning( 0, tr( "Tonatiuh warning" ), tr( "This TSeparatorKit already contains a tracker" ) );

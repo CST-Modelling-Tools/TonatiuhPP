@@ -45,3 +45,6 @@ RESOURCES += resources.qrc
 win32 { # icon for windows explorer
     RC_ICONS = images/about/Tonatiuh.ico
 }
+
+DISTFILES += \
+    images/run/runScript.png

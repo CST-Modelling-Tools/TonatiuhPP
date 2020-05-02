@@ -6,7 +6,7 @@
 #include "libraries/geometry/gf.h"
 
 #include "GraphicRoot.h"
-#include "kernel/tracker/GraphicRootTracker.h"
+#include "kernel/trackers/GraphicRootTracker.h"
 #include "kernel/scene/TSceneKit.h"
 
 

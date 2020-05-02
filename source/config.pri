@@ -24,12 +24,15 @@ QMAKE_CXXFLAGS_RELEASE += -O3 -march=native
 }
 
 msvc {
-COINDIR = C:/Users/Victor/Neo/Programming/Qt/Libraries/Coin/msvs
+COINDIR = C:/Users/Victor/Neo/Programming/Qt/Libraries/Coin/msvc
 INCLUDEPATH += $$COINDIR/include
 DEFINES += COIN_DLL SOQT_DLL
 LIBS += -L$$COINDIR/lib # for linking
 LIBS += -lCoin4 -lSoQt1
 LIBS += -L$$COINDIR/bin # for running
+
+QMAKE_CFLAGS_RELEASE += /arch:AVX
+QMAKE_CXXFLAGS_RELEASE += /arch:AVX
 }
 
 CONFIG -= debug_and_release # separate folders for debug and release

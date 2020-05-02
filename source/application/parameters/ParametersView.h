@@ -42,7 +42,7 @@ public slots:
 
 private:
     void AddTab(SoNode* coinNode, QString partName);
-    QStringList ContainerNodeParts(SoBaseKit* coinNode);
+    QStringList ContainerNodeParts(SoBaseKit* kit);
 
     SoNode* m_actualCoinNode;
     bool m_isPart;

@@ -21,45 +21,39 @@ void ShapeCylinder::initClass()
     SO_NODE_INIT_CLASS(ShapeCylinder, ShapeAbstract, "ShapeAbstract");
 }
 
-ShapeCylinder::ShapeCylinder( )
+ShapeCylinder::ShapeCylinder()
 {
-	SO_NODE_CONSTRUCTOR(ShapeCylinder);
-	SO_NODE_ADD_FIELD( radius, (0.5) );
+    SO_NODE_CONSTRUCTOR(ShapeCylinder);
+
+    SO_NODE_ADD_FIELD( radius, (0.5) );
     SO_NODE_ADD_FIELD( length, (1.) );
 	SO_NODE_ADD_FIELD( phiMax, (gc::TwoPi) );
 
-	SO_NODE_DEFINE_ENUM_VALUE( Side, INSIDE );
-	SO_NODE_DEFINE_ENUM_VALUE( Side, OUTSIDE );
-	SO_NODE_SET_SF_ENUM_TYPE( activeSide, Side );
-	SO_NODE_ADD_FIELD( activeSide, (OUTSIDE) );
+    SO_NODE_DEFINE_ENUM_VALUE(Side, INSIDE);
+    SO_NODE_DEFINE_ENUM_VALUE(Side, OUTSIDE);
+    SO_NODE_SET_SF_ENUM_TYPE(activeSide, Side);
+    SO_NODE_ADD_FIELD( activeSide, (OUTSIDE) );
 }
 
-ShapeCylinder::~ShapeCylinder()
-{
-}
-
-double ShapeCylinder::GetArea() const
+double ShapeCylinder::getArea() const
 {
     return 2.*gc::Pi*radius.getValue()*length.getValue();
 }
 
-double ShapeCylinder::GetVolume() const
+double ShapeCylinder::getVolume() const
 {
     return gc::Pi*radius.getValue()*radius.getValue()*length.getValue();
 }
 
-/*!
- * Return the shape bounding box.
- */
-BBox ShapeCylinder::GetBBox() const
+BBox ShapeCylinder::getBox() const
 {
     double cosPhiMax = cos(phiMax.getValue());
     double sinPhiMax = sin(phiMax.getValue());
 
 	double xmin = ( phiMax.getValue() >= gc::Pi ) ? -radius.getValue() : radius.getValue() * cosPhiMax;
 	double xmax = radius.getValue();
-	double ymin = 0.0;
-	if( phiMax.getValue() > gc::Pi )
+    double ymin = 0.;
+    if (phiMax.getValue() > gc::Pi)
 		ymin = ( phiMax.getValue() < ( 1.5 * gc::Pi ) ) ? radius.getValue() * sinPhiMax : -radius.getValue();
 	double ymax = ( phiMax.getValue() < ( gc::Pi / 2.0 ) )? radius.getValue() * sinPhiMax : radius.getValue();
 
@@ -72,7 +66,7 @@ BBox ShapeCylinder::GetBBox() const
     );
 }
 
-bool ShapeCylinder::Intersect( const Ray& ray, double* tHit, DifferentialGeometry* dg ) const
+bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const
 {
 	// Compute quadratic cylinder coefficients
 //	Vector3D vObjectRayOrigin = Vector3D( objectRay.origin );
@@ -108,7 +102,7 @@ bool ShapeCylinder::Intersect( const Ray& ray, double* tHit, DifferentialGeometr
 
         hitPoint = ray(thit);
 		phi = atan2( hitPoint.y, hitPoint.x );
-		if ( phi < 0. ) phi += gc::TwoPi;
+        if (phi < 0.) phi += gc::TwoPi;
         if ( (thit - ray.tMin) < tol  || hitPoint.z < zmin || hitPoint.z > zmax || phi > phiMax.getValue() ) return false;
 	}
 	// Now check if the fucntion is being called from IntersectP,
@@ -120,8 +114,8 @@ bool ShapeCylinder::Intersect( const Ray& ray, double* tHit, DifferentialGeometr
 
 
 	// Find parametric representation of Cylinder hit
-	double u = phi / phiMax.getValue();
-	double v = hitPoint.z /length.getValue();
+    double u = phi/phiMax.getValue();
+    double v = hitPoint.z/length.getValue();
 
 	// Compute cylinder \dpdu and \dpdv
 	//double zradius = sqrt( hitPoint.x*hitPoint.x + hitPoint.y*hitPoint.y );
@@ -144,9 +138,9 @@ bool ShapeCylinder::Intersect( const Ray& ray, double* tHit, DifferentialGeometr
 	return true;
 }
 
-Point3D ShapeCylinder::GetPoint3D(double u, double v) const
+Point3D ShapeCylinder::getPoint(double u, double v) const
 {
-    if ( OutOfRange(u, v) )
+    if ( isInside(u, v) )
         gf::SevereError("Function Function Poligon::GetPoint3D called with invalid parameters");
 
     double phi = u*phiMax.getValue();
@@ -159,7 +153,7 @@ Point3D ShapeCylinder::GetPoint3D(double u, double v) const
     return Point3D(x, y, z);
 }
 
-Vector3D ShapeCylinder::GetNormal(double u, double /* v */) const
+Vector3D ShapeCylinder::getNormal(double u, double /* v */) const
 {
     double phi = u*phiMax.getValue();
     double x = cos(phi);

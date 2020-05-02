@@ -1,24 +1,22 @@
 #include "ActionInsertTracker.h"
 
-/**
- * Constructor.
- */
-ActionInsertTracker::ActionInsertTracker( const QString& text, QObject* parent, TrackerFactory* pTrackerFactory )
-: QAction(text,parent), m_pTrackerFactory(pTrackerFactory)
+#include "kernel/trackers/TrackerFactory.h"
+
+
+ActionInsertTracker::ActionInsertTracker(TrackerFactory* factory, QObject* parent):
+    QAction(parent),
+    m_factory(factory)
 {
+    setText(factory->name());
+    setIcon(factory->icon());
+
+     connect(
+        this, SIGNAL(triggered()),
+        this, SLOT(onTriggered())
+     );
 }
 
-/**
- * Destructor.
- */
-ActionInsertTracker::~ActionInsertTracker()
+void ActionInsertTracker::onTriggered()
 {
-}
-
-/**
- * Emits a create tracker signal.
- */
-void ActionInsertTracker::OnActionInsertTrackerTriggered()
-{
-    emit CreateTracker( m_pTrackerFactory );
+    emit CreateTracker(m_factory);
 }

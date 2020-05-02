@@ -41,5 +41,6 @@
         <file>images/view/viewXY.png</file>
         <file>images/view/viewXZ.png</file>
         <file>images/view/viewYZ.png</file>
+        <file>images/run/runScript.png</file>
     </qresource>
 </RCC>

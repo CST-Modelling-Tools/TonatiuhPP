@@ -8,32 +8,34 @@
 #include "kernel/shape/ShapeAbstract.h"
 #include "kernel/TonatiuhTypes.h"
 
+
 class ShapeCylinder: public ShapeAbstract
 {
 	SO_NODE_HEADER(ShapeCylinder);
 
 public:
+    static void initClass();
     ShapeCylinder();
-	static void initClass();
-	double GetArea() const;
-	double GetVolume() const;
-	BBox GetBBox() const;
 
-    bool Intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
+    double getArea() const;
+    double getVolume() const;
+    BBox getBox() const;
+    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
 
 	trt::TONATIUH_REAL radius;
 	trt::TONATIUH_REAL length;
 	trt::TONATIUH_REAL phiMax;
-	SoSFEnum activeSide;
+
+    SoSFEnum activeSide;
 
     NAME_ICON_FUNCTIONS("Cylinder", ":/ShapeCylinder.png")
 
 protected:
-    Point3D GetPoint3D(double u, double v) const;
-    Vector3D GetNormal(double u, double v) const;
+    ~ShapeCylinder() {}
 
+    Point3D getPoint(double u, double v) const;
+    Vector3D getNormal(double u, double v) const;
     void generatePrimitives(SoAction* action);
-	virtual ~ShapeCylinder();
 };
 
 

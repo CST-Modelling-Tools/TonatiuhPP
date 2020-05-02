@@ -223,7 +223,7 @@ void TLightKit::ComputeLightSourceArea(int widthDivisions, int heigthDivisions, 
         ShapeAbstract* shapeNode = static_cast< ShapeAbstract* > (surfaceKit->getPart("shape", false) );
         if (shapeNode)
         {
-            BBox shapeBB = shapeNode->GetBBox();
+            BBox shapeBB = shapeNode->getBox();
 
             Point3D p1(shapeBB.pMin.x, shapeBB.pMin.y, shapeBB.pMin.z);
             Point3D p2(shapeBB.pMax.x, shapeBB.pMin.y, shapeBB.pMin.z);

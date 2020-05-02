@@ -3,7 +3,7 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTransform.h>
 
-#include "kernel/tracker/TDefaultTracker.h"
+#include "kernel/trackers/TDefaultTracker.h"
 #include "TSeparatorKit.h"
 
 SO_KIT_SOURCE(TSeparatorKit)
@@ -24,20 +24,13 @@ TSeparatorKit::TSeparatorKit()
 {
     SO_KIT_CONSTRUCTOR(TSeparatorKit);
 
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tracker, SoNode, TDefaultTracker, TRUE, this, "", TRUE);
+    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tracker, SoNode, TrackerAbstract, TRUE, this, "", TRUE);
     SO_KIT_INIT_INSTANCE();
 
     SoTransform* transform = new SoTransform;
     setPart("transform", transform);
 }
 
-/**
- * TSeparatorKit destructor.
- */
-TSeparatorKit::~TSeparatorKit()
-{
-
-}
 /**
  * Returns a pointer to the node part with \a partname.
  */
@@ -67,7 +60,7 @@ SbBool  TSeparatorKit::setPart(const SbName& partname, SoNode* from)
         }
         else
         {
-            TTracker* trackerNode = static_cast<TTracker*>(from);
+            TrackerAbstract* trackerNode = static_cast<TrackerAbstract*>(from);
             trackerNode->ConnectParentTranform(parentTransform);
         }
     }

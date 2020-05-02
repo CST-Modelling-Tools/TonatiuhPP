@@ -1,8 +1,9 @@
 #pragma once
 
-#include "kernel/TonatiuhKernel.h"
 #include "kernel/scene/TAbstract.h"
+
 #include <Inventor/nodes/SoShape.h>
+#include <Inventor/fields/SoSFEnum.h>
 
 struct BBox;
 struct DifferentialGeometry;
@@ -20,26 +21,29 @@ class TONATIUH_KERNEL ShapeAbstract: public SoShape
 public:
     static void initClass();
 
-    virtual bool IntersectP(const Ray& ray) const;
-    virtual bool Intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const = 0;
+    virtual double getArea() const {return -1.;}
+    virtual double getVolume() const {return 0.;}
+    virtual BBox getBox() const = 0;
 
-    virtual double GetArea() const {return -1.;}
-    virtual double GetVolume() const {return 0.;}
-    virtual BBox GetBBox() const = 0;
+    // with computing dg
+    virtual bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const = 0;
+    // without computing dg
+    virtual bool intersectP(const Ray& ray) const;
 
     enum Side {
         INSIDE = 0,
         OUTSIDE = 1,
     };
 
+
     NAME_ICON_FUNCTIONS("X", ":/ShapeX.png")
 
-    protected:
+protected:
     virtual void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
 
-    virtual bool OutOfRange(double u, double v) const;
-    virtual Point3D GetPoint3D(double u, double v) const = 0;
-    virtual Vector3D GetNormal(double u, double v) const = 0;
+    virtual bool isInside(double u, double v) const;
+    virtual Point3D getPoint(double u, double v) const = 0;
+    virtual Vector3D getNormal(double u, double v) const = 0;
     virtual void generatePrimitives(SoAction* action) = 0;
     void generateQuads(SoAction* action, const QSize& dims, bool reverseNormals = false, bool reverseClock = false);
 

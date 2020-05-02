@@ -55,7 +55,7 @@ void ParametersView::SelectionChangedToPart(SoNode* coinPart)
     else
     {
         m_actualCoinNode = coinPart;
-        m_isPart =true;
+        m_isPart = true;
         AddTab( coinPart, "" );
     }
 }
@@ -67,10 +67,10 @@ void ParametersView::SelectionChangedToKit( SoBaseKit* coinNode/*, QStringList p
 {
     clear();
 
-    QStringList    parts = ContainerNodeParts( coinNode );
+    QStringList parts = ContainerNodeParts(coinNode);
 
     m_actualCoinNode = coinNode;
-    m_isPart =false;
+    m_isPart = false;
     for( int i = 0; i< parts.size(); ++i )
     {
         QString partName = parts[i];
@@ -105,28 +105,30 @@ void ParametersView::SelectionChangedToKit( SoBaseKit* coinNode/*, QStringList p
  */
 void ParametersView::UpdateView()
 {
-    if (m_isPart) SelectionChangedToPart (m_actualCoinNode);
-    else SelectionChangedToKit(  (SoBaseKit*)m_actualCoinNode );
+    if (m_isPart) //?
+        SelectionChangedToPart (m_actualCoinNode);
+    else
+        SelectionChangedToKit(  (SoBaseKit*)m_actualCoinNode );
 }
 
 /*!
  * Emits a valueModificated signal with \a node as the actual node, \a paramenterName and \a newValue.
  */
-void ParametersView::SetValue( SoNode* node, QString paramenterName, QString newValue )
+void ParametersView::SetValue(SoNode* node, QString paramenterName, QString newValue)
 {
-    emit valueModificated( node, paramenterName, newValue );
+    emit valueModificated(node, paramenterName, newValue);
 }
 
 /*!
  * Adds a new tab to the view with \a coinNode \a partName parameters.
  */
-void ParametersView::AddTab( SoNode* coinNode, QString partName )
+void ParametersView::AddTab(SoNode* coinNode, QString partName)
 {
     QString type = coinNode->getName().getString();
-    if (type.length()<=0) type = coinNode->getTypeId().getName().getString();
+    if (type.length() <= 0) type = coinNode->getTypeId().getName().getString();
 
     FieldContainerWidget* nodeContainer = new FieldContainerWidget( coinNode, partName, this );
-    addTab( nodeContainer, type );
+    addTab(nodeContainer, type);
     connect( nodeContainer, SIGNAL( valueModificated( SoNode*, QString, QString ) ), this, SLOT( SetValue( SoNode*, QString, QString ) ) );
 }
 
@@ -135,19 +137,21 @@ void ParametersView::AddTab( SoNode* coinNode, QString partName )
  *
  * If the \a coinNode is not a container node, return a empty list.
  */
-QStringList ParametersView::ContainerNodeParts( SoBaseKit* coinNode )
+QStringList ParametersView::ContainerNodeParts(SoBaseKit* kit)
 {
-    QStringList parts;
-    if( !coinNode && ! coinNode->getTypeId().isDerivedFrom( SoBaseKit::getClassTypeId() ) )    return parts;
+    if (!kit) return {};
+    if (!dynamic_cast<SoBaseKit*>(kit)) return {}; //?
 
-    SoBaseKit* nodeKit = static_cast< SoBaseKit* >( coinNode );
-    QString type = nodeKit->getTypeId().getName().getString();
+    QString type = kit->getTypeId().getName().getString();
 
-    if ( type == "TLightKit" )    parts<<QString( "transform" )<<QString( "icon" )<<QString( "tsunshape" );
-    else if( type == "TShapeKit" )    parts<<QString( "shape" )<<QString( "appearance.material" );
-    else if( type == "TAnalyzerKit" )    parts<<QString( "parameter" )<<QString( "result" )<<QString( "levelList*" )<<QString( "transform" );
-    else if( type == "TAnalyzerResultKit" )    parts<<QString( "result" );
-    else    parts<<QString( "transform" );
-
-    return parts;
+    if (type == "TLightKit")
+        return {"transform", "icon", "tsunshape"};
+    else if (type == "TShapeKit")
+        return {"shape", "appearance.material"};
+    else if (type == "TAnalyzerKit")
+        return {"parameter", "result", "levelList*", "transform"};
+    else if (type == "TAnalyzerResultKit")
+        return {"result"};
+    else
+        return {"transform"};
 }

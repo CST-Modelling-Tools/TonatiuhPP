@@ -8,7 +8,7 @@
 #include "kernel/air/AirVacuum.h"
 #include "TSceneKit.h"
 #include "TSeparatorKit.h"
-#include "kernel/tracker/TTracker.h"
+#include "kernel/trackers/TrackerAbstract.h"
 #include "kernel/air/AirAbstract.h"
 
 SO_KIT_SOURCE(TSceneKit)
@@ -131,7 +131,7 @@ void TSceneKit::UpdateTrackersTransform( SoBaseKit* branch, Vector3D sunVector, 
     if( tracker )
     {
 
-        TTracker* trackerNode = static_cast< TTracker* >( tracker );
+        TrackerAbstract* trackerNode = static_cast< TrackerAbstract* >( tracker );
         trackerNode->Evaluate( sunVector, parentOTW.GetInverse() );
         return;
     }

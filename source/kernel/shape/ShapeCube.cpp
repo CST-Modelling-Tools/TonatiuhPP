@@ -16,10 +16,12 @@ using namespace std;
 
 SO_NODE_SOURCE(ShapeCube)
 
-// Normals to the six sides of the cube
-   SbVec3d ShapeCube::frontNormal, ShapeCube::rearNormal;
-   SbVec3d ShapeCube::leftNormal, ShapeCube::rightNormal;
-   SbVec3d ShapeCube::baseNormal, ShapeCube::topNormal;
+SbVec3d ShapeCube::frontNormal(0.0, 0.0, 1.0);
+SbVec3d ShapeCube::rearNormal(0.0, 0.0, -1.0);
+SbVec3d ShapeCube::leftNormal(1.0, 0.0, 0.0);
+SbVec3d ShapeCube::rightNormal(-1.0, 0.0, 0.0);
+SbVec3d ShapeCube::baseNormal(0.0, -1.0, 0.0);
+SbVec3d ShapeCube::topNormal(0.0, 1.0, 0.0);
 
 void ShapeCube::initClass()
 {
@@ -29,86 +31,56 @@ void ShapeCube::initClass()
 ShapeCube::ShapeCube()
 {
     SO_NODE_CONSTRUCTOR(ShapeCube);
-    SO_NODE_ADD_FIELD(m_width, (2.0));
-    SO_NODE_ADD_FIELD(m_height, (2.0));
-    SO_NODE_ADD_FIELD(m_depth, (2.0));
 
-    // If this is the first time the constructor is called, set
-    // up the static normals.
-    if ( SO_NODE_IS_FIRST_INSTANCE() )
-    {
-        frontNormal.setValue( 0.0, 0.0, 1.0 );
-        rearNormal.setValue( 0.0, 0.0, -1.0 );
-        leftNormal.setValue( 1.0, 0.0, 0.0 );
-        rightNormal.setValue( -1.0, 0.0, 0.0 );
-        baseNormal.setValue( 0.0, -1.0, 0.0 );
-        topNormal.setValue( 0.0, 1.0, 0.0 );
-    }
+    SO_NODE_ADD_FIELD(m_widthX, (2.));
+    SO_NODE_ADD_FIELD(m_widthY, (2.));
+    SO_NODE_ADD_FIELD(m_widthZ, (2.));
 }
 
-ShapeCube::~ShapeCube()
+double ShapeCube::getArea() const
 {
-
+    double frontArea = m_widthX.getValue()*m_widthY.getValue();
+    double leftArea = m_widthY.getValue()*m_widthZ.getValue();
+    double baseArea = m_widthX.getValue()*m_widthZ.getValue();
+    return 2.*(frontArea + leftArea + baseArea);
 }
 
-
-double ShapeCube::GetArea() const
+double ShapeCube::getVolume() const
 {
-    double frontArea = m_width.getValue() * m_height.getValue();
-    double leftArea = m_height.getValue() * m_depth.getValue();
-    double baseArea = m_depth.getValue() * m_depth.getValue();
-
-    return ( 2 * frontArea ) + ( 2 * leftArea ) + (2 * baseArea );
-
+    return m_widthX.getValue()*m_widthY.getValue()*m_widthZ.getValue();
 }
 
-double ShapeCube::GetVolume() const
+BBox ShapeCube::getBox() const
 {
-    return m_width.getValue() * m_height.getValue() * m_depth.getValue();
+    BBox box;
+
+    double wx = m_widthX.getValue()/2.;
+    double wy = m_widthY.getValue()/2.;
+    double wz = m_widthZ.getValue()/2.;
+
+    box.pMin = Point3D(-wx, -wy, -wz);
+    box.pMax = Point3D(wx, wy, wz);
+
+    return box;
 }
 
-/*!
- * Return the shape bounding box.
- */
-BBox ShapeCube::GetBBox() const
-{
-    BBox bBox;
-
-    // Compute the half-width, half-height, and half-depth of
-     // the pyramid. We'll use this info to set the min and max
-     // points.
-    double halfWidth = m_width.getValue()/2.0;
-    double halfHeight = m_height.getValue()/2.0;
-    double halfDepth = m_depth.getValue()/2.0;
-
-    bBox.pMin = Point3D( -halfWidth, -halfHeight, -halfDepth );
-    bBox.pMax = Point3D( halfWidth, halfHeight, halfDepth );
-
-    return bBox;
-}
-
-QString ShapeCube::GetIcon() const
-{
-    return QLatin1String( ":/images/tcube.png" );
-}
-
-bool ShapeCube::Intersect(const Ray& /*objectRay*/, double* /*tHit*/, DifferentialGeometry* /*dg*/) const
+bool ShapeCube::intersect(const Ray& /*objectRay*/, double* /*tHit*/, DifferentialGeometry* /*dg*/) const
 {
     //Yet to be implemented
     return false;
 }
 
-bool ShapeCube::IntersectP( const Ray& ray ) const
+bool ShapeCube::intersectP(const Ray& ray) const
 {
     double t0 = ray.tMin;
     double t1 = ray.tMax;
     double tmin, tmax, tymin, tymax, tzmin, tzmax;
-    double halfWidth = m_width.getValue()/2.0;
-    double halfHeight = m_height.getValue()/2.0;
-    double halfDepth = m_depth.getValue()/2.0;
+    double halfWidth = m_widthX.getValue()/2.0;
+    double halfHeight = m_widthY.getValue()/2.0;
+    double halfDepth = m_widthZ.getValue()/2.0;
 
     double invDirection = ray.invDirection().x;
-    if( invDirection >= 0.0 )
+    if (invDirection >= 0.)
     {
        tmin = ( -halfWidth - ray.origin.x ) * invDirection;
        tmax = ( halfWidth - ray.origin.x ) * invDirection;
@@ -120,7 +92,7 @@ bool ShapeCube::IntersectP( const Ray& ray ) const
     }
 
     invDirection = ray.invDirection().y;
-    if( invDirection >= 0.0 )
+    if (invDirection >= 0.)
     {
        tymin = ( -halfHeight - ray.origin.y ) * invDirection;
        tymax = ( halfHeight - ray.origin.y ) * invDirection;
@@ -133,11 +105,11 @@ bool ShapeCube::IntersectP( const Ray& ray ) const
 
     if ( ( tmin > tymax ) || ( tymin > tmax ) ) return false;
 
-    if ( tymin > tmin ) tmin = tymin;
-    if ( tymax < tmax ) tmax = tymax;
+    if (tymin > tmin) tmin = tymin;
+    if (tymax < tmax) tmax = tymax;
 
     invDirection = ray.invDirection().z;
-    if( invDirection >= 0.0 )
+    if (invDirection >= 0.)
     {
        tzmin = ( -halfDepth - ray.origin.z ) * invDirection;
        tzmax = ( halfDepth - ray.origin.z ) * invDirection;
@@ -159,25 +131,7 @@ bool ShapeCube::IntersectP( const Ray& ray ) const
     else return false;
 }
 
-void ShapeCube::computeBBox(SoAction*, SbBox3f& box, SbVec3f& center)
-{
-    BBox bBox = GetBBox();
-    // These points define the min and max extents of the box.
-    SbVec3f min, max;
-
-    min.setValue( bBox.pMin.x, bBox.pMin.y, bBox.pMin.z );
-    max.setValue( bBox.pMax.x, bBox.pMax.y, bBox.pMax.z );;
-
-    // Set the box to bound the two extreme points.
-    box.setBounds(min, max);
-
-   // This defines the "natural center" of the ShapeCube. We could
-   // define it to be the center of the base, if we want, but
-   // let's just make it the center of the bounding box.
-   center.setValue(0.0, 0.0, 0.0);
-}
-
-void ShapeCube::generatePrimitives(SoAction *action)
+void ShapeCube::generatePrimitives(SoAction* action)
 {
     // The ShapeCube will generate 6 quads: 1 for each side
     // This variable is used to store each vertex.
@@ -202,11 +156,10 @@ void ShapeCube::generatePrimitives(SoAction *action)
      texCoord[3] = 1.0;
    }
 
-
    // We need the size to adjust the coordinates.
-   double halfWidth = m_width.getValue()/2.0;
-   double halfHeight = m_height.getValue()/2.0;
-   double halfDepth = m_depth.getValue()/2.0;
+   double halfWidth = m_widthX.getValue()/2.0;
+   double halfHeight = m_widthY.getValue()/2.0;
+   double halfDepth = m_widthZ.getValue()/2.0;
 
    // We'll use this macro to make the code easier. It uses the
    // "point" variable to store the primitive vertex's point.
@@ -269,22 +222,15 @@ void ShapeCube::generatePrimitives(SoAction *action)
      GEN_VERTEX(pv, -1.0, -1.0, -1.0, 1.0,  0.0, leftNormal);
 
      endShape();
-
 }
 
-Point3D ShapeCube::Sample( double /*u1*/, double /*u2*/ ) const
+Point3D ShapeCube::getPoint(double /*u1*/, double /*u2*/ ) const
 {
     //Yet to be implemented
     return Point3D( 0, 0, 0 );
 }
 
-Point3D ShapeCube::GetPoint3D( double /*u1*/, double /*u2*/ ) const
-{
-    //Yet to be implemented
-    return Point3D( 0, 0, 0 );
-}
-
-Vector3D ShapeCube::GetNormal(double /*u*/, double /*v*/ ) const
+Vector3D ShapeCube::getNormal(double /*u*/, double /*v*/ ) const
 {
     return Vector3D(0, 1, 0);
 }

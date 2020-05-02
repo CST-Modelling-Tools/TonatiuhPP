@@ -185,7 +185,7 @@ void SceneModelView::dropEvent(QDropEvent *event)
 /*!
  * Sets \a current as the view current element index.
  */
-void SceneModelView::currentChanged( const QModelIndex& current, const QModelIndex& previous )
+void SceneModelView::currentChanged(const QModelIndex& current, const QModelIndex& previous )
 {
     m_currentIndex = current;
     QTreeView::currentChanged(current, previous);

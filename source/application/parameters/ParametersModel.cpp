@@ -2,11 +2,7 @@
 #include "ParametersItem.h"
 
 ParametersModel::ParametersModel(QObject * parent):
-    QStandardItemModel (parent )
-{
-
-}
-ParametersModel::~ParametersModel()
+    QStandardItemModel(parent)
 {
 
 }
@@ -16,7 +12,7 @@ QVariant ParametersModel::data ( const QModelIndex & index, int role ) const
     ParametersItem* parameter =static_cast<ParametersItem* > ( itemFromIndex( index ) );
     return parameter->data( role );
 }
-bool ParametersModel::setData ( const QModelIndex & index, const QVariant & value, int role )
+bool ParametersModel::setData(const QModelIndex & index, const QVariant & value, int role )
 {
     ParametersItem* parameter = static_cast<ParametersItem* > ( itemFromIndex( index ) );
     if( parameter )
@@ -42,7 +38,7 @@ ParametersItem* ParametersModel::ModelItem( const QModelIndex & index ) const
     return item;
 }
 
-void ParametersModel::SetEditable( bool editable )
+void ParametersModel::SetEditable(bool editable)
 {
     m_editable = editable;
 }

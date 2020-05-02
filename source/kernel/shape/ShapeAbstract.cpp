@@ -18,12 +18,12 @@ void ShapeAbstract::initClass()
     SO_NODE_INIT_ABSTRACT_CLASS(ShapeAbstract, SoShape, "Shape");
 }
 
-bool ShapeAbstract::IntersectP(const Ray& ray) const
+bool ShapeAbstract::intersectP(const Ray& ray) const
 {
-     return Intersect(ray, 0, 0);
+     return intersect(ray, 0, 0);
 }
 
-bool ShapeAbstract::OutOfRange(double u, double v) const
+bool ShapeAbstract::isInside(double u, double v) const
 {
     return u < 0. || u > 1. || v < 0. || v > 1.;
 }
@@ -33,10 +33,12 @@ void ShapeAbstract::computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center)
     Q_UNUSED(action)
     Q_UNUSED(center)
 
-    BBox bBox = GetBBox();
-    SbVec3f min(bBox.pMin.x, bBox.pMin.y, bBox.pMin.z);
-    SbVec3f max(bBox.pMax.x, bBox.pMax.y, bBox.pMax.z);
+    BBox b = getBox();
+    SbVec3f min(b.pMin.x, b.pMin.y, b.pMin.z);
+    SbVec3f max(b.pMax.x, b.pMax.y, b.pMax.z);
     box.setBounds(min, max);
+
+//    center.setValue(0., 0., 0.);
 }
 
 void ShapeAbstract::generateQuads(SoAction* action, const QSize& dims, bool reverseNormals, bool reverseClock)
@@ -51,8 +53,8 @@ void ShapeAbstract::generateQuads(SoAction* action, const QSize& dims, bool reve
         for (int j = 0; j < jMax; ++j) {
             double v = j/double(jMax - 1);
 
-            Point3D point = GetPoint3D(u, v);
-            Vector3D normal = GetNormal(u, v);
+            Point3D point = getPoint(u, v);
+            Vector3D normal = getNormal(u, v);
             if (reverseNormals) normal = -normal;
 
             vertices << SbVec3f(point.x, point.y, point.z);

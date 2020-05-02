@@ -300,6 +300,7 @@
    </attribute>
    <addaction name="actionRun"/>
    <addaction name="actionRunFluxAnalysis"/>
+   <addaction name="actionOpenScriptEditor"/>
   </widget>
   <action name="actionNew">
    <property name="icon">
@@ -463,7 +464,7 @@
     <string>Delete</string>
    </property>
    <property name="shortcut">
-    <string>Del</string>
+    <string>Ctrl+D</string>
    </property>
   </action>
   <action name="actionUndoView">
@@ -697,6 +698,10 @@
    </property>
   </action>
   <action name="actionOpenScriptEditor">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/run/runScript.png</normaloff>:/images/run/runScript.png</iconset>
+   </property>
    <property name="text">
     <string>Script...</string>
    </property>

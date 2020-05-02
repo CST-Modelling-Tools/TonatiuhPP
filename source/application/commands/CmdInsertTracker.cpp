@@ -8,14 +8,14 @@
 #include "libraries/geometry/gf.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/sun/TLightKit.h"
-#include "kernel/tracker/TTracker.h"
+#include "kernel/trackers/TrackerAbstract.h"
 
 /**
  * Creates a new tracker insert command that adds a \a tracker to a parent node with \a parentIndex in the \a model.
  *
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
-CmdInsertTracker::CmdInsertTracker(TTracker* tracker,  const QModelIndex& parentIndex, SoSceneKit* scene, SceneModel* model, QUndoCommand* parent):
+CmdInsertTracker::CmdInsertTracker(TrackerAbstract* tracker,  const QModelIndex& parentIndex, SoSceneKit* scene, SceneModel* model, QUndoCommand* parent):
     QUndoCommand("Insert Tracker", parent), m_tracker (tracker), m_coinParent(0), m_scene(scene), m_pModel(model), m_row(0)
 {
     if (!m_tracker) gf::SevereError("CmdInsertTracker Null tracker.");

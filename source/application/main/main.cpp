@@ -18,10 +18,10 @@
 #include "kernel/shape/ShapeSquare.h"
 #include "kernel/sun/TLightKit.h"
 #include "kernel/sun/TLightShape.h"
-#include "kernel/tracker/GraphicRootTracker.h"
-#include "kernel/tracker/TDefaultTracker.h"
-#include "kernel/tracker/TSceneTracker.h"
-#include "kernel/tracker/TTrackerForAiming.h"
+#include "kernel/trackers/GraphicRootTracker.h"
+#include "kernel/trackers/TDefaultTracker.h"
+#include "kernel/trackers/TSceneTracker.h"
+#include "kernel/trackers/TTrackerForAiming.h"
 #include "libraries/fields/UserMField.h"
 #include "libraries/fields/UserSField.h"
 
@@ -96,7 +96,7 @@ int main(int argc, char** argv)
     MaterialAbstract::initClass();
     TDefaultMaterial::initClass();
 
-    TTracker::initClass();
+    TrackerAbstract::initClass();
     TTrackerForAiming::initClass();
     TDefaultTracker::initClass();
     TSceneTracker::initClass();

@@ -4,7 +4,7 @@
 #include <QModelIndex>
 
 class InstanceNode;
-class TTracker;
+class TrackerAbstract;
 class SceneModel;
 class SoSceneKit;
 class SoBaseKit;
@@ -17,14 +17,14 @@ class SoBaseKit;
 class CmdInsertTracker : public QUndoCommand
 {
 public:
-    CmdInsertTracker(TTracker* tracker, const QModelIndex& parentIndex, SoSceneKit* scene, SceneModel* model, QUndoCommand* parent = 0 );
+    CmdInsertTracker(TrackerAbstract* tracker, const QModelIndex& parentIndex, SoSceneKit* scene, SceneModel* model, QUndoCommand* parent = 0 );
     ~CmdInsertTracker();
 
     virtual void undo();
     virtual void redo();
 
 private:
-    TTracker* m_tracker;
+    TrackerAbstract* m_tracker;
     SoBaseKit* m_coinParent;
     SoSceneKit* m_scene;
     SceneModel* m_pModel;

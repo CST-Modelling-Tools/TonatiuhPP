@@ -18,7 +18,7 @@ HEADERS += \
     $$files(run/*.h) \
     $$files(shape/*.h) \
     $$files(sun/*.h) \
-    $$files(tracker/*.h)
+    $$files(trackers/*.h)
 
 SOURCES += \
     $$files(*.cpp) \
@@ -31,7 +31,7 @@ SOURCES += \
     $$files(run/*.cpp) \
     $$files(shape/*.cpp) \
     $$files(sun/*.cpp) \
-    $$files(tracker/*.cpp)
+    $$files(trackers/*.cpp)
 
 RESOURCES += resources.qrc
 

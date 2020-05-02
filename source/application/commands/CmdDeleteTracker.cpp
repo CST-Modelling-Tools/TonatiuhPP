@@ -7,7 +7,7 @@
 #include "kernel/run/InstanceNode.h"
 #include "kernel/sun/TLightKit.h"
 #include "kernel/scene/TSeparatorKit.h"
-#include "kernel/tracker/TTracker.h"
+#include "kernel/trackers/TrackerAbstract.h"
 
 /*!
  * Contructor.
@@ -24,7 +24,7 @@ CmdDeleteTracker::CmdDeleteTracker(const QModelIndex& selectedIndex, SoSceneKit*
     m_coinParent = static_cast< TSeparatorKit* > (instanceSelection->GetParent()->GetNode() );
     if (!m_coinParent) gf::SevereError("CmdDeleteTracker called with invalid tracker parent.");
 
-    m_tracker = dynamic_cast<TTracker*> (m_coinParent->getPart("tracker", false) );
+    m_tracker = dynamic_cast<TrackerAbstract*> (m_coinParent->getPart("tracker", false) );
     if (!m_tracker) gf::SevereError("CmdDeleteTracker Null tracker.");
     m_tracker->ref();
 

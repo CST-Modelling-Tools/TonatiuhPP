@@ -89,9 +89,9 @@
 #include "kernel/sun/TLightKit.h"
 #include "kernel/sun/TLightShape.h"
 #include "kernel/TonatiuhFunctions.h"
-#include "kernel/tracker/TDefaultTracker.h"
-#include "kernel/tracker/TTracker.h"
-#include "kernel/tracker/TrackerFactory.h"
+#include "kernel/trackers/TDefaultTracker.h"
+#include "kernel/trackers/TrackerAbstract.h"
+#include "kernel/trackers/TrackerFactory.h"
 #include "main/Document.h"
 #include "run/ExportPhotonsDialog.h"
 #include "run/FluxAnalysis.h"
@@ -1260,7 +1260,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
     {
 
         SoSearchAction trackersSearch;
-        trackersSearch.setType(TTracker::getClassTypeId() );
+        trackersSearch.setType(TrackerAbstract::getClassTypeId() );
         trackersSearch.setInterest(SoSearchAction::ALL);
         trackersSearch.apply(componentRootNode);
         SoPathList& trackersPath = trackersSearch.getPaths();
@@ -1268,7 +1268,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
         for (int index = 0; index <trackersPath.getLength(); ++index)
         {
             SoFullPath* trackerPath = static_cast< SoFullPath* > (trackersPath[index]);
-            TTracker* tracker = static_cast< TTracker* >(trackerPath->getTail() );
+            TrackerAbstract* tracker = static_cast< TrackerAbstract* >(trackerPath->getTail() );
             tracker->SetAzimuthAngle(&lightKit->azimuth);
             tracker->SetZenithAngle(&lightKit->zenith);
         }
@@ -1509,9 +1509,42 @@ void MainWindow::Delete(QString nodeURL)
 }
 
 /*!
+ * Creates a new delete command, where the \a index node was deleted.
+ *
+ * Returns \a true if the node was successfully deleted, otherwise returns \a false.
+ */
+bool MainWindow::Delete(QModelIndex index)
+{
+    if (!index.isValid()) return false;
+    if (index == sceneModelView->rootIndex() ) return false;
+    if (index.parent() == sceneModelView->rootIndex() ) return false;
+
+    InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(index);
+    SoNode* coinNode = instanceNode->GetNode();
+
+    if (coinNode->getTypeId().isDerivedFrom(TrackerAbstract::getClassTypeId() ) )
+    {
+        CmdDeleteTracker* commandDelete = new CmdDeleteTracker(index, m_document->GetSceneKit(), *m_sceneModel);
+        m_commandStack->push(commandDelete);
+    }
+    else if (coinNode->getTypeId().isDerivedFrom(TLightKit::getClassTypeId() ) ) return false;
+    else
+    {
+        CmdDelete* commandDelete = new CmdDelete(index, *m_sceneModel);
+
+        m_commandStack->push(commandDelete);
+    }
+
+
+    UpdateLightSize();
+    m_document->SetDocumentModified(true);
+
+    return true;
+}
+
+/*!
  * Save all photon map data into \a fileName file.
  */
-
 double MainWindow::GetwPhoton(){
     //Compute photon power
     TSceneKit* coinScene = m_document->GetSceneKit();
@@ -1604,7 +1637,7 @@ void MainWindow::InsertFileComponent(QString componentFileName)
     {
 
         SoSearchAction trackersSearch;
-        trackersSearch.setType(TTracker::getClassTypeId() );
+        trackersSearch.setType(TrackerAbstract::getClassTypeId() );
         trackersSearch.setInterest(SoSearchAction::ALL);
         trackersSearch.apply(componentRootNode);
         SoPathList& trackersPath = trackersSearch.getPaths();
@@ -1612,7 +1645,7 @@ void MainWindow::InsertFileComponent(QString componentFileName)
         for (int index = 0; index <trackersPath.getLength(); ++index)
         {
             SoFullPath* trackerPath = static_cast< SoFullPath* > (trackersPath[index]);
-            TTracker* tracker = static_cast< TTracker* >(trackerPath->getTail() );
+            TrackerAbstract* tracker = static_cast< TrackerAbstract* >(trackerPath->getTail() );
             tracker->SetAzimuthAngle(&lightKit->azimuth);
             tracker->SetZenithAngle(&lightKit->zenith);
         }
@@ -2709,7 +2742,7 @@ void MainWindow::CreateTracker(TrackerFactory* pTrackerFactory)
     if (parentNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) {
         /**/
         TSeparatorKit* separatorKit = static_cast< TSeparatorKit* >(parentNode);
-        TTracker* trak = static_cast< TTracker* >(separatorKit->getPart("tracker", false) );
+        TrackerAbstract* trak = static_cast< TrackerAbstract* >(separatorKit->getPart("tracker", false) );
 
         if (trak)
         {
@@ -2717,7 +2750,7 @@ void MainWindow::CreateTracker(TrackerFactory* pTrackerFactory)
                                      "This TSeparatorKit already contains a tracker node", 1);
             return;
         }
-        TTracker* tracker = pTrackerFactory->create();
+        TrackerAbstract* tracker = pTrackerFactory->create();
 
         tracker->SetSceneKit(scene);
         tracker->setName(pTrackerFactory->name().toStdString().c_str() );
@@ -2927,41 +2960,6 @@ PhotonExport* MainWindow::CreatePhotonMapExport() const
     pExportMode->SetSceneModel(*m_sceneModel);
 
     return pExportMode;
-}
-
-/*!
- * Creates a new delete command, where the \a index node was deleted.
- *
- * Returns \a true if the node was successfully deleted, otherwise returns \a false.
- */
-bool MainWindow::Delete(QModelIndex index)
-{
-
-    if (!index.isValid()) return false;
-    if (index == sceneModelView->rootIndex() ) return false;
-    if (index.parent() == sceneModelView->rootIndex() ) return false;
-
-    InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(index);
-    SoNode* coinNode = instanceNode->GetNode();
-
-    if (coinNode->getTypeId().isDerivedFrom(TTracker::getClassTypeId() ) )
-    {
-        CmdDeleteTracker* commandDelete = new CmdDeleteTracker(index, m_document->GetSceneKit(), *m_sceneModel);
-        m_commandStack->push(commandDelete);
-    }
-    else if (coinNode->getTypeId().isDerivedFrom(TLightKit::getClassTypeId() ) ) return false;
-    else
-    {
-        CmdDelete* commandDelete = new CmdDelete(index, *m_sceneModel);
-
-        m_commandStack->push(commandDelete);
-    }
-
-
-    UpdateLightSize();
-    m_document->SetDocumentModified(true);
-
-    return true;
 }
 
 /*!
@@ -3260,9 +3258,7 @@ void MainWindow::SetupActionsInsertMaterial()
     }
 
     QPushButton* button = new QPushButton;
-//    tb->setText("Material");
     button->setIcon(QIcon(":/images/scene/nodeSurface.png"));
-//    tb->setFlat(true);
     button->setMenu(menu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
 }
@@ -3299,52 +3295,29 @@ void MainWindow::SetupActionsInsertShape()
     }
 
     QPushButton* button = new QPushButton;
-//    tb->setText("Shape");
     button->setIcon(QIcon(":/images/scene/nodeSurface.png"));
-//    tb->setFlat(true);
     button->setMenu(menu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
 }
 
 void MainWindow::SetupActionsInsertTracker()
 {
-    QMenu* pTrackerMenu = menuInsert->findChild<QMenu*>("menuTracker");
-    if (!pTrackerMenu) return;
-    if (pTrackerMenu->isEmpty() )
+    QMenu* menu = menuInsert->findChild<QMenu*>("menuTracker");
+
+    for (TrackerFactory* f : m_pluginManager->getTrackerFactories())
     {
-        //Enable material menu
-        pTrackerMenu->setEnabled(true);
+        ActionInsertTracker* a = new ActionInsertTracker(f, this);
+        menu->addAction(a);
+        connect(
+            a, SIGNAL(CreateTracker(TrackerFactory*)),
+            this, SLOT(CreateTracker(TrackerFactory*))
+        );
     }
 
-    QToolBar* pTrackersToolBar = findChild< QToolBar* >("trackersToolBar");
-    //Create a new toolbar for trackers
-    if (!pTrackersToolBar)
-    {
-        pTrackersToolBar = new QToolBar(pTrackerMenu);
-        if (!pTrackersToolBar) gf::SevereError("MainWindow::SetupToolBars: NULL pTrackersToolBar");
-        pTrackersToolBar->setObjectName("trackersToolBar");
-        pTrackersToolBar->setOrientation(Qt::Horizontal);
-        pTrackersToolBar->setWindowTitle("Trackers");
-        addToolBar(pTrackersToolBar);
-
-    }
-
-    if (!m_pluginManager) return;
-    QVector< TrackerFactory* > trackerFactoryList = m_pluginManager->getTrackerFactories();
-    if (!(trackerFactoryList.size() > 0) ) return;
-
-    for (int i = 0; i < trackerFactoryList.size(); ++i)
-    {
-        TrackerFactory* pTrackerFactory = trackerFactoryList[i];
-        ActionInsertTracker* actionInsertTracker = new ActionInsertTracker(pTrackerFactory->name(), this, pTrackerFactory);
-        actionInsertTracker->setIcon(pTrackerFactory->icon() );
-
-        pTrackerMenu->addAction(actionInsertTracker);
-        pTrackersToolBar->addAction(actionInsertTracker);
-        pTrackersToolBar->addSeparator();
-        connect(actionInsertTracker, SIGNAL(triggered()), actionInsertTracker, SLOT(OnActionInsertTrackerTriggered()) );
-        connect(actionInsertTracker, SIGNAL(CreateTracker(TrackerFactory*)), this, SLOT(CreateTracker(TrackerFactory*)) );
-    }
+    QPushButton* button = new QPushButton;
+    button->setIcon(QIcon(":/images/scene/nodeSurface.png"));
+    button->setMenu(menu);
+    findChild<QToolBar*>("insertToolBar")->addWidget(button);
 }
 
 /**

@@ -13,6 +13,7 @@ public:
     virtual QIcon icon() const = 0;
     virtual AirAbstract* create() const = 0;
 };
+
 Q_DECLARE_INTERFACE(AirFactory, "tonatiuh.AirFactory")
 
 

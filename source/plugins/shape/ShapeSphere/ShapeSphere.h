@@ -1,9 +1,5 @@
 #pragma once
 
-#include <Inventor/fields/SoSFDouble.h>
-#include <Inventor/fields/SoSFEnum.h>
-#include <Inventor/fields/SoSFFloat.h>
-
 #include "kernel/shape/ShapeAbstract.h"
 #include "kernel/TonatiuhTypes.h"
 
@@ -20,19 +16,18 @@ public:
     static void initClass();
     SoNode* copy(SbBool copyConnections) const;
 
-    bool Intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
-
-    double GetArea() const;
-    double GetVolume() const;
-    BBox GetBBox() const;
+    double getArea() const;
+    double getVolume() const;
+    BBox getBox() const;
+    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
 
     NAME_ICON_FUNCTIONS("Sphere", ":/ShapeSphere.png")
 
 protected:
     ~ShapeSphere();
 
-    Point3D GetPoint3D(double u, double v) const;
-    Vector3D GetNormal(double u, double v) const;
+    Point3D getPoint(double u, double v) const;
+    Vector3D getNormal(double u, double v) const;
     void generatePrimitives(SoAction* action);
 
     static void update_radius(void* data, SoSensor*);
@@ -45,6 +40,7 @@ public:
     trt::TONATIUH_REAL yMax;
     trt::TONATIUH_REAL yMin;
     trt::TONATIUH_REAL phiMax;
+
     SoSFEnum activeSide;
 
 private:

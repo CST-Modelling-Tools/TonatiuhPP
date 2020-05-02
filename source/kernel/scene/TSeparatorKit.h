@@ -60,5 +60,5 @@ public:
     QString getIcon();
 
 protected:
-    virtual ~TSeparatorKit();
+    ~TSeparatorKit() {}
 };

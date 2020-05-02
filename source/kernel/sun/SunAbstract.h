@@ -1,13 +1,12 @@
 #pragma once
 
-#include <Inventor/nodes/SoNode.h>
-#include <Inventor/nodes/SoSubNode.h>
-#include <Inventor/fields/SoSFDouble.h>
-
-#include "kernel/TonatiuhKernel.h"
 #include "kernel/scene/TAbstract.h"
 #include "kernel/random/RandomAbstract.h"
 #include "libraries/geometry/Vector3D.h"
+
+#include <Inventor/nodes/SoNode.h>
+#include <Inventor/nodes/SoSubNode.h>
+#include <Inventor/fields/SoSFDouble.h>
 
 
 class TONATIUH_KERNEL SunAbstract: public SoNode

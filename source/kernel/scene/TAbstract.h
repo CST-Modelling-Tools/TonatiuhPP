@@ -1,5 +1,7 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
+
 #define NAME_ICON_FUNCTIONS(NAME, ICON) \
 static const char* getClassName() {return NAME;} \
 static const char* getClassIcon() {return ICON;} \

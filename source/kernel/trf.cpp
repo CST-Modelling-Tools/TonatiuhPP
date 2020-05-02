@@ -166,7 +166,7 @@ void trf::ComputeSceneTreeMap(InstanceNode* instanceNode, Transform parentWTO, b
             if (shapeInstance)
             {
                 ShapeAbstract* shapeNode = static_cast< ShapeAbstract* > (shapeInstance->GetNode() );
-                shapeBB = shapeToWorld(shapeNode->GetBBox() );
+                shapeBB = shapeToWorld(shapeNode->getBox() );
 
                 instanceNode->SetIntersectionTransform(shapeTransform);
                 instanceNode->SetIntersectionBBox(shapeBB);

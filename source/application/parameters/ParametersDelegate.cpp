@@ -19,11 +19,6 @@ ParametersDelegate::ParametersDelegate(QObject* parent):
     
 } 
 
-ParametersDelegate::~ParametersDelegate()
-{
-    
-}
-
 QWidget* ParametersDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem& option, const QModelIndex &index) const
 {
     const ParametersModel* model = static_cast< const ParametersModel* >( index.model() );
@@ -110,7 +105,6 @@ void ParametersDelegate::setEditorData(QWidget *editor,
         QLineEdit  *textEdit = static_cast<QLineEdit *>(editor);
         textEdit->setText(value);
     }
-
 }
 
 void ParametersDelegate::CloseEditor()

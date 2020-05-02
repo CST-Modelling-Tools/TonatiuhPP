@@ -24,7 +24,7 @@
 #include "kernel/air/AirVacuum.h"
 #include "kernel/air/AirPolynomial.h"
 #include "kernel/air/AirExponential.h"
-#include "kernel/tracker/TrackerFactory.h"
+#include "kernel/trackers/TrackerFactory.h"
 #include "libraries/geometry/gf.h"
 
 
@@ -153,7 +153,8 @@ void PluginManager::loadTonatiuhPlugin(TFactory* p)
     }
     else if (auto f = dynamic_cast<TrackerFactory*>(p))
     {
-        f->create();
+        f->init();
         m_trackerFactories << f;
+        m_trackersMap[f->name()] = f;
     }
 }

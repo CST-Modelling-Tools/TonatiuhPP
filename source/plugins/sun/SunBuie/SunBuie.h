@@ -12,8 +12,8 @@ class SunBuie: public SunAbstract
     SO_NODE_HEADER(SunBuie);
 
 public:
-    SunBuie();
     static void initClass();
+    SunBuie();
     SoNode* copy(SbBool copyConnections) const;
 
     void generateRay(Vector3D& direction, RandomAbstract& rand) const;

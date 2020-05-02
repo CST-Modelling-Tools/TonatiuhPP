@@ -13,8 +13,8 @@
 #include "kernel/shape/ShapeAbstract.h"
 #include "scene/TShapeKit.h"
 #include "sun/TLightKit.h"
-#include "tracker/TTracker.h"
-#include "tracker/TTrackerForAiming.h"
+#include "trackers/TrackerAbstract.h"
+#include "trackers/TTrackerForAiming.h"
 
 
 InstanceNode::InstanceNode(SoNode* node):
@@ -118,7 +118,7 @@ bool InstanceNode::Intersect(const Ray& ray, RandomAbstract& rand, bool* isShape
         {
             double thit = 0.;
             DifferentialGeometry dg;
-            if (!tshape->Intersect(childCoordinatesRay, &thit, &dg) ) return false;
+            if (!tshape->intersect(childCoordinatesRay, &thit, &dg) ) return false;
             ray.tMax = thit;
             *modelNode = this;
 

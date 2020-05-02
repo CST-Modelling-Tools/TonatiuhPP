@@ -1,6 +1,5 @@
 #pragma once
 
-#include "kernel/TonatiuhKernel.h"
 #include "kernel/scene/TAbstract.h"
 #include <Inventor/nodes/SoMaterial.h>
 
