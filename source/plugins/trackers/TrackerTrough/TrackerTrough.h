@@ -4,7 +4,6 @@
 #include <Inventor/fields/SoSFEnum.h>
 
 #include "kernel/trackers/TTrackerForAiming.h"
-//#include "trt.h"
 
 
 class TrackerTrough: public TTrackerForAiming

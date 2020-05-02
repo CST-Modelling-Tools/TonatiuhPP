@@ -50,12 +50,12 @@ BBox ShapeCylinder::getBox() const
     double cosPhiMax = cos(phiMax.getValue());
     double sinPhiMax = sin(phiMax.getValue());
 
-	double xmin = ( phiMax.getValue() >= gc::Pi ) ? -radius.getValue() : radius.getValue() * cosPhiMax;
+    double xmin = phiMax.getValue() >= gc::Pi ? -radius.getValue() : radius.getValue() * cosPhiMax;
 	double xmax = radius.getValue();
     double ymin = 0.;
     if (phiMax.getValue() > gc::Pi)
-		ymin = ( phiMax.getValue() < ( 1.5 * gc::Pi ) ) ? radius.getValue() * sinPhiMax : -radius.getValue();
-	double ymax = ( phiMax.getValue() < ( gc::Pi / 2.0 ) )? radius.getValue() * sinPhiMax : radius.getValue();
+        ymin =  phiMax.getValue() <  1.5*gc::Pi ? radius.getValue() * sinPhiMax : -radius.getValue();
+    double ymax =  phiMax.getValue() <  gc::Pi/2. ? radius.getValue() * sinPhiMax : radius.getValue();
 
     double zmin = 0.;
 	double zmax = length.getValue();

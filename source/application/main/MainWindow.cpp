@@ -1425,12 +1425,11 @@ void MainWindow::Cut()
         emit Abort(tr("Cut: No valid node selected to cut.") );
         return;
     }
-    CmdCut* command = new CmdCut(m_selectionModel->currentIndex(), m_coinNode_Buffer, m_sceneModel);
-    m_commandStack->push(command);
+    CmdCut* cmd = new CmdCut(m_selectionModel->currentIndex(), m_coinNode_Buffer, m_sceneModel);
+    m_commandStack->push(cmd);
 
     UpdateLightSize();
     m_document->SetDocumentModified(true);
-
 }
 
 /*!

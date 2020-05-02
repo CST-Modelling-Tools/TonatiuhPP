@@ -9,7 +9,7 @@ SO_NODEENGINE_ABSTRACT_SOURCE(TTrackerForAiming)
 
 void TTrackerForAiming::initClass()
 {
-    SO_NODEENGINE_INIT_ABSTRACT_CLASS(TTrackerForAiming, TrackerAbstract, "TTracker");
+    SO_NODEENGINE_INIT_ABSTRACT_CLASS(TTrackerForAiming, TrackerAbstract, "TrackerAbstract");
 }
 
 TTrackerForAiming::TTrackerForAiming()

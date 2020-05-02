@@ -25,7 +25,7 @@ SbVec3d ShapeCube::topNormal(0.0, 1.0, 0.0);
 
 void ShapeCube::initClass()
 {
-    SO_NODE_INIT_CLASS(ShapeCube, ShapeAbstract, "TShape");
+    SO_NODE_INIT_CLASS(ShapeCube, ShapeAbstract, "ShapeAbstract");
 }
 
 ShapeCube::ShapeCube()

@@ -17,7 +17,7 @@ SO_NODE_SOURCE(ShapeSquare)
 
 void ShapeSquare::initClass()
 {
-    SO_NODE_INIT_CLASS(ShapeSquare, ShapeAbstract, "TShape");
+    SO_NODE_INIT_CLASS(ShapeSquare, ShapeAbstract, "ShapeAbstract");
 }
 
 ShapeSquare::ShapeSquare()

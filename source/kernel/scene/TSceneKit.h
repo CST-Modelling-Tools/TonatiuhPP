@@ -34,6 +34,6 @@ public:
     trt::TONATIUH_REAL zenith;
 
 protected:
-    virtual ~TSceneKit();
+    ~TSceneKit() {}
     void UpdateTrackersTransform(SoBaseKit* branch, Vector3D sunVector, Transform parentOTW);
 };

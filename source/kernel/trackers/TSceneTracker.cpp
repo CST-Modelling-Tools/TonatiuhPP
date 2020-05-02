@@ -22,7 +22,7 @@ SO_NODEENGINE_SOURCE(TSceneTracker)
 
 void TSceneTracker::initClass()
 {
-    SO_NODEENGINE_INIT_CLASS(TSceneTracker, TrackerAbstract, "TTracker");
+    SO_NODEENGINE_INIT_CLASS(TSceneTracker, TrackerAbstract, "TrackerAbstract");
 }
 
 TSceneTracker::TSceneTracker()

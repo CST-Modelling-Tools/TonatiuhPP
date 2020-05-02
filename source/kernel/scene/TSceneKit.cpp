@@ -48,14 +48,6 @@ TSceneKit::TSceneKit()
     setPart("transmissivity", new AirVacuum);
 }
 
-/**
- * TSceneKit destructor.
- */
-TSceneKit::~TSceneKit()
-{
-
-}
-
 trt::TONATIUH_REAL* TSceneKit::GetAzimuthAngle()
 {
     return &azimuth;
@@ -65,7 +57,6 @@ trt::TONATIUH_REAL* TSceneKit::GetZenithAngle()
 {
     return &zenith;
 }
-
 
 /*!
  * Returns the path from the scene node to the node in \a action.

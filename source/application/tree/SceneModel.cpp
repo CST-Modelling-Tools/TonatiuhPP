@@ -541,14 +541,18 @@ Qt::DropActions SceneModel::supportedDragActions() const
  *
  * Returns whether the cut is successfully done.
 **/
-bool SceneModel::Cut( SoBaseKit& coinParent, int row )
+bool SceneModel::Cut(SoBaseKit& coinParent, int row)
 {
-    if( row < 0 ) return false;
+    if (row < 0) return false;
 
-    QList<InstanceNode*> instanceListParent = m_mapCoinQt[ &coinParent ];
+    QList<InstanceNode*> instanceListParent = m_mapCoinQt[&coinParent];
     InstanceNode* instanceParent = instanceListParent[0];
 
     SoNode* coinChild = instanceParent->children[row]->GetNode();
+
+    QModelIndex parentIndex = createIndex(instanceParent->GetParent()->children.indexOf(instanceParent), 0, instanceParent);
+    beginRemoveRows(parentIndex, row, row);
+
     if( !coinChild->getTypeId().isDerivedFrom( SoBaseKit::getClassTypeId() ) )
     {
         SbString partName = coinParent.getPartString( coinChild );
@@ -615,6 +619,7 @@ bool SceneModel::Cut( SoBaseKit& coinParent, int row )
         }
     }
 
+    endRemoveRows();
     emit layoutChanged();
 
     return true;

@@ -24,7 +24,7 @@ SO_NODEENGINE_SOURCE(GraphicRootTracker)
 
 void GraphicRootTracker::initClass()
 {
-    SO_NODEENGINE_INIT_CLASS(GraphicRootTracker, TrackerAbstract, "TTracker");
+    SO_NODEENGINE_INIT_CLASS(GraphicRootTracker, TrackerAbstract, "TrackerAbstract");
 }
 
 GraphicRootTracker::GraphicRootTracker()

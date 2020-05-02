@@ -16,7 +16,7 @@ SO_NODEENGINE_SOURCE(TDefaultTracker)
  */
 void TDefaultTracker::initClass()
 {
-    SO_NODEENGINE_INIT_CLASS(TDefaultTracker, TrackerAbstract, "TTracker");
+    SO_NODEENGINE_INIT_CLASS(TDefaultTracker, TrackerAbstract, "TrackerAbstract");
 }
 
 /**
