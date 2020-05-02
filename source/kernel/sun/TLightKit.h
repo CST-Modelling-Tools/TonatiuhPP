@@ -68,6 +68,6 @@ public:
     SoSFString disabledNodes;
 
 private:
-    virtual ~TLightKit();
+    ~TLightKit();
     void UpdateSunPosition();
 };

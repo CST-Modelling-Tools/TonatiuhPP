@@ -143,7 +143,6 @@ void TLightKit::Update(BBox box)
     double zMin = box.pMin.z;
     double zMax = box.pMax.z;
 
-
     double distMax = box.pMax.y + 10 - box.pMin.y;
     double back = box.pMax.y + 10;
 

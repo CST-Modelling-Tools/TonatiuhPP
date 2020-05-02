@@ -18,5 +18,5 @@ protected:
     ~TSceneTracker();
 
 private:
-    virtual void evaluate();
+    void evaluate();
 };

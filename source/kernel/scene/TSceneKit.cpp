@@ -118,10 +118,9 @@ void TSceneKit::UpdateTrackersTransform( SoBaseKit* branch, Vector3D sunVector, 
 {
     if (!branch) return;
 
-    SoNode* tracker = branch->getPart( "tracker", false );
-    if( tracker )
+    SoNode* tracker = branch->getPart("tracker", false);
+    if (tracker)
     {
-
         TrackerAbstract* trackerNode = static_cast< TrackerAbstract* >( tracker );
         trackerNode->Evaluate( sunVector, parentOTW.GetInverse() );
         return;

@@ -63,10 +63,7 @@ void TrackerAbstract::ConnectParentTranform(SoTransform* parentTransform)
     parentTransform->center.connectFrom(&outputCenter);
 }
 
-void TrackerAbstract::Evaluate(Vector3D /*sunVector*/, Transform /*parentWT0*/)
-{
-
-}
+void TrackerAbstract::Evaluate(Vector3D, Transform) {}
 
 void TrackerAbstract::SetEngineOutputIdentity()
 {

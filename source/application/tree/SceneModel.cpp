@@ -111,7 +111,7 @@ void SceneModel::SetConcentrator()
     {
         //Create Sun coordinate system node
         TSeparatorKit* sunSeparatorKit = new TSeparatorKit();
-        sunSeparatorKit->setName( "SunNode" );
+        sunSeparatorKit->setName("SunNode");
         coinPartList->addChild( sunSeparatorKit );
         sunSeparatorKit->setSearchingChildren( true );
         InstanceNode* instanceNode = AddInstanceNode( *m_instanceRoot, sunSeparatorKit );
@@ -123,11 +123,22 @@ void SceneModel::SetConcentrator()
 
         //Create Concentrator coordinate system node
         TSeparatorKit* separatorKit = new TSeparatorKit();
-        separatorKit->setName( "RootNode" );
+        separatorKit->setName("RootNode");
         sunSeparatorChildList->addChild( separatorKit );
         separatorKit->setSearchingChildren( true );
 
         m_instanceConcentrator = AddInstanceNode( *instanceNode, separatorKit );
+
+
+
+        //
+        TLightKit* lightKit = dynamic_cast<TLightKit*>(m_coinScene->getPart("lightList[0]", false));
+        if (lightKit) {
+
+                sceneTracker->SetAzimuthAngle( &lightKit->azimuth );
+                sceneTracker->SetZenithAngle( &lightKit->zenith );
+
+        }
     }
     else
     {
@@ -869,12 +880,10 @@ void SceneModel::UpdateSceneModel()
     }
     */
     emit layoutChanged();
-
 }
 
-void SceneModel::DeleteInstanceTree( InstanceNode& instanceNode )
+void SceneModel::DeleteInstanceTree(InstanceNode& instanceNode)
 {
-
     while (instanceNode.children.count()>0)
     {
         InstanceNode* childInstance = instanceNode.children[instanceNode.children.count()-1];
@@ -882,7 +891,6 @@ void SceneModel::DeleteInstanceTree( InstanceNode& instanceNode )
         delete childInstance;
         childInstance = 0;
     }
-
 
     QList<InstanceNode*>& instanceList = m_mapCoinQt[ instanceNode.GetNode()];
     instanceList.removeAt( instanceList.indexOf( &instanceNode ) );
@@ -893,7 +901,6 @@ void SceneModel::DeleteInstanceTree( InstanceNode& instanceNode )
         int row = instanceParent->children.indexOf( &instanceNode );
         instanceParent->children.remove( row );
     }
-
 }
 
 SoNodeKitPath* SceneModel::PathFromIndex( const QModelIndex& modelIndex ) const
@@ -904,7 +911,6 @@ SoNodeKitPath* SceneModel::PathFromIndex( const QModelIndex& modelIndex ) const
         QModelIndex parentIndex = parent( modelIndex );
         SoNodeKitPath* parentPath = PathFromIndex( parentIndex );
         return parentPath;
-
     }
     else
     {

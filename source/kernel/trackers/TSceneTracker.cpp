@@ -58,6 +58,6 @@ void TSceneTracker::evaluate()
 
     SbRotation xRotation( SbVec3f(1., 0., 0.), -zenith );
 
-    SbRotation rotation = yRotation * xRotation;
+    SbRotation rotation = yRotation*xRotation;
     SetEngineOutputRotation(rotation);
 }

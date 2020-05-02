@@ -312,7 +312,7 @@ void MainWindow::DefineSunLight()
     parametersView->UpdateView();
     m_document->SetDocumentModified(true);
 
-    actionCalculateSunPosition->setEnabled(true);
+//    actionCalculateSunPosition->setEnabled(true);
     actionDisplayRays->setEnabled(false);
     actionDisplayRays->setChecked(false);
 }
@@ -3704,7 +3704,6 @@ QString MainWindow::StrippedName(const QString& fullFileName)
  */
 void MainWindow::UpdateLightSize()
 {
-
     SoSceneKit* coinScene = m_document->GetSceneKit();
 
     TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
@@ -3729,7 +3728,6 @@ void MainWindow::UpdateLightSize()
     }
 
     m_sceneModel->UpdateSceneModel();
-
 }
 
 /*!

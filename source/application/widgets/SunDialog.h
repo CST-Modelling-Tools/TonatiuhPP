@@ -28,7 +28,6 @@ class SunDialog: public QDialog, private Ui::SunDialog
 
 public:
     SunDialog(SceneModel& sceneModel, TLightKit* currentLightKit, QMap<QString, SunFactory*> sunShapeMap, QWidget* parent = 0);
-    ~SunDialog();
 
     TLightKit* getLightKit();
 

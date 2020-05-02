@@ -85,7 +85,7 @@ void TrackerHeliostat::Evaluate(Vector3D sunVectorW, Transform parentWT0)
 
 	Vector3D t = CrossProduct( n, Axe1 );
 	//Vector3D t( n[2], 0.0f, -n[0] );
-	if( t.length() == 0.0f ) return;
+    if( t.length() == 0.0f ) return; // happens!!!! for zenith
 	t = Normalize(t);
 
 	Vector3D p = CrossProduct( t, n );

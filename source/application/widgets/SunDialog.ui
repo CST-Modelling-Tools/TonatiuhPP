@@ -31,6 +31,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
      <widget class="QWidget" name="sunShapeTab">
       <attribute name="title">
        <string>Shape</string>
@@ -94,24 +97,6 @@
        </property>
        <item row="0" column="1">
         <widget class="QDoubleSpinBox" name="azimuthSpin">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
          <property name="decimals">
           <number>4</number>
          </property>
@@ -122,18 +107,6 @@
        </item>
        <item row="1" column="1">
         <widget class="QDoubleSpinBox" name="elevationSpin">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
          <property name="decimals">
           <number>4</number>
          </property>

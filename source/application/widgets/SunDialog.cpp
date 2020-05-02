@@ -43,16 +43,8 @@ SunDialog::SunDialog(
     }
 
     makeSunShapeTab();
-    makeSunApertureTab();
     makeSunPositionTab();
-}
-
-/*!
- * Destroys the LightDialog object.
- */
-SunDialog::~SunDialog()
-{
-
+    makeSunApertureTab();
 }
 
 /*!
@@ -67,7 +59,7 @@ TLightKit* SunDialog::getLightKit()
 
     lightKit->ChangePosition(
         azimuthSpin->value()*gc::Degree,
-        (90 - elevationSpin->value())*gc::Degree
+        (90. - elevationSpin->value())*gc::Degree
     );
 
     QString nodes("");

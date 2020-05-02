@@ -29,7 +29,7 @@ public:
     void SetZenithAngle(trt::TONATIUH_REAL* zenithField);
     void Disconnect();
     void ConnectParentTranform(SoTransform* parentTransform);
-    virtual void Evaluate(Vector3D sunVectorW, Transform parentWT0);
+    virtual void Evaluate(Vector3D /*sunVectorW*/, Transform /*parentWT0*/);
 
     //void SetLightAngles(TLightKit * coinLight );
     //void SetAnglesToScene();

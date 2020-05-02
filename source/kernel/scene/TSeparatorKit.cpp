@@ -42,11 +42,10 @@ SoNode* TSeparatorKit::getPart( const SbName &partname, SbBool makeifneeded)
 /**
  * Set \a from node as \a partname node.
  */
-SbBool  TSeparatorKit::setPart(const SbName& partname, SoNode* from)
+SbBool TSeparatorKit::setPart(const SbName& partname, SoNode* from)
 {
     if (partname == "tracker")
     {
-
         SoTransform* parentTransform = static_cast< SoTransform* > ( getPart("transform", true ) );
         if (!parentTransform) return false;
 
