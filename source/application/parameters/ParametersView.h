@@ -11,14 +11,14 @@ class SoNode;
 class ParametersModel;
 
 
-class FieldContainerWidget: public QTreeView
+class ParametersView: public QTreeView
 {
     Q_OBJECT
 
 public:
-    FieldContainerWidget(QWidget* parent = 0);
-    FieldContainerWidget(SoNode* fieldContainer, QString name, QWidget* parent = 0);
-    ~FieldContainerWidget();
+    ParametersView(QWidget* parent = 0);
+    ParametersView(SoNode* fieldContainer, QString name, QWidget* parent = 0);
+    ~ParametersView();
 
     void SetContainer(SoNode* node, QString name);
     void SetEditable(bool editable);

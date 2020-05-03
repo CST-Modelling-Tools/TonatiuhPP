@@ -17,6 +17,12 @@ class ShapeFactory;
 class SunFactory;
 class TrackerFactory;
 
+
+/*!
+ * \class PluginManager
+ * \brief PluginManager class manages plugin loading.
+ * PluginManager is used to load plugins, manage the list of loaded plugins.
+ */
 class PluginManager
 {
 

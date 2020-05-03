@@ -1,4 +1,4 @@
-#include "FieldContainerWidget.h"
+#include "ParametersView.h"
 
 #include <iostream>
 #include <QComboBox>
@@ -27,7 +27,7 @@
 /*!
  * Creates an empty widget.
  */
-FieldContainerWidget::FieldContainerWidget(QWidget* parent):
+ParametersView::ParametersView(QWidget* parent):
     QTreeView(parent),
     m_name(QString("") ),
     m_delegate(0),
@@ -46,11 +46,11 @@ FieldContainerWidget::FieldContainerWidget(QWidget* parent):
 }
 
 /**
- * Creates a new FieldContainerWidget for the parameters in the \a fieldContainer with parent \a parent.
+ * Creates a new ParametersView for the parameters in the \a fieldContainer with parent \a parent.
  *
  * The container name is \a containerName.
  */
-FieldContainerWidget::FieldContainerWidget(SoNode* node, QString name, QWidget* parent):
+ParametersView::ParametersView(SoNode* node, QString name, QWidget* parent):
     QTreeView(parent),
     m_node(node),
     m_name(name),
@@ -95,9 +95,9 @@ background-color: #d2dddb;
 }
 
 /**
- * Destroys the FieldContainerWidget object.
+ * Destroys the ParametersView object.
  */
-FieldContainerWidget::~FieldContainerWidget()
+ParametersView::~ParametersView()
 {
     delete m_delegate;
     delete m_model;
@@ -106,7 +106,7 @@ FieldContainerWidget::~FieldContainerWidget()
 /*!
  * Sets \a fieldContainer as widget container and \a containerName as its containerName name.
  */
-void FieldContainerWidget::SetContainer(SoNode* node, QString name)
+void ParametersView::SetContainer(SoNode* node, QString name)
 {
     m_model->clear();
 
@@ -120,7 +120,7 @@ void FieldContainerWidget::SetContainer(SoNode* node, QString name)
 /**
  * Sets if the parameters values can be modified.
  */
-void FieldContainerWidget::SetEditable(bool editable)
+void ParametersView::SetEditable(bool editable)
 {
     m_model->SetEditable(editable);
 }
@@ -128,12 +128,12 @@ void FieldContainerWidget::SetEditable(bool editable)
 /*!
  * Sets \a current as the view current element index.
  */
-void FieldContainerWidget::currentChanged(const QModelIndex& current, const QModelIndex& /*previous*/)
+void ParametersView::currentChanged(const QModelIndex& current, const QModelIndex& /*previous*/)
 {
     m_index = current;
 }
 
-void FieldContainerWidget::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint)
+void ParametersView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint)
 {
     QString value;
     SoField* field = m_model->ModelItem(m_index)->getField();
@@ -177,7 +177,7 @@ void FieldContainerWidget::closeEditor(QWidget* editor, QAbstractItemDelegate::E
 /**
  * Reads container parameters and for each parameters adds its name and value to the widget.
  */
-void FieldContainerWidget::ReadFields()
+void ParametersView::ReadFields()
 {
     m_model->clear();
     m_model->setHorizontalHeaderLabels({"Parameter", "Value"});

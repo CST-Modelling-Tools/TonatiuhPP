@@ -2,7 +2,7 @@
 
 #include <Inventor/nodekits/SoBaseKit.h>
 
-#include "FieldContainerWidget.h"
+#include "ParametersView.h"
 #include "ParametersTabs.h"
 
 /**
@@ -13,8 +13,8 @@ ParametersTabs::ParametersTabs(QWidget* parent):
     m_actualCoinNode(0),
     m_isPart(false)
 {
-    addTab( new FieldContainerWidget(0, "" ), tr("Transform") );
-    addTab( new FieldContainerWidget(0, "" ), tr("Shape") );
+    addTab( new ParametersView(0, "" ), tr("Transform") );
+    addTab( new ParametersView(0, "" ), tr("Shape") );
 
     setStyleSheet(R"(
 QTabWidget::pane {
@@ -127,7 +127,7 @@ void ParametersTabs::AddTab(SoNode* coinNode, QString partName)
     QString type = coinNode->getName().getString();
     if (type.length() <= 0) type = coinNode->getTypeId().getName().getString();
 
-    FieldContainerWidget* nodeContainer = new FieldContainerWidget(coinNode, partName, this);
+    ParametersView* nodeContainer = new ParametersView(coinNode, partName, this);
     addTab(nodeContainer, type);
     connect(
         nodeContainer, SIGNAL(valueModified(SoNode*, QString, QString)),

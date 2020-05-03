@@ -9,9 +9,9 @@ class SoNode;
 /*!
  * ParametersView provides a page for each of the parts of a node. The tab bar shows the node part name and the tab area shows the part parameters list.
  *
- * The tab area containes a FieldContainerWidget.
+ * The tab area containes a ParametersView.
  *
- * \sa FieldContainerWidget
+ * \sa ParametersView
  *
  */
 

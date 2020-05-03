@@ -11,7 +11,7 @@
 #include "kernel/sun/SunFactory.h"
 #include "kernel/sun/TLightKit.h"
 #include "libraries/geometry/gc.h"
-#include "parameters/FieldContainerWidget.h"
+#include "parameters/ParametersView.h"
 
 /**
  * Creates a new dialog for the light definition.

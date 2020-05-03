@@ -29,7 +29,7 @@
     </layout>
    </item>
    <item>
-    <widget class="FieldContainerWidget" name="airParameters"/>
+    <widget class="ParametersView" name="airParameters"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
@@ -45,9 +45,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>FieldContainerWidget</class>
+   <class>ParametersView</class>
    <extends>QTreeView</extends>
-   <header>parameters/FieldContainerWidget.h</header>
+   <header>parameters/ParametersView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

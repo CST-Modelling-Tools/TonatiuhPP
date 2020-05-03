@@ -1,15 +1,9 @@
-/*!
- * \class PluginManager
- * \brief PluginManager class manages plugin loading.
- * PluginManager is used to load plugins, manage the list of loaded plugins.
- */
-
 #include "PluginManager.h"
 
 #include <QDir>
 #include <QPluginLoader>
 #include <QStringList>
-#include <iostream>
+//#include <iostream>
 
 #include "kernel/air/AirFactory.h"
 #include "kernel/component/ComponentFactory.h"
@@ -24,6 +18,7 @@
 #include "kernel/air/AirVacuum.h"
 #include "kernel/air/AirPolynomial.h"
 #include "kernel/air/AirExponential.h"
+#include "kernel/random/RandomSTL.h"
 #include "kernel/trackers/TrackerFactory.h"
 #include "libraries/geometry/gf.h"
 
@@ -72,6 +67,8 @@ void PluginManager::load(QDir dir)
 
     loadTonatiuhPlugin(new ShapeFactoryT<ShapeSquare>);
     loadTonatiuhPlugin(new ShapeFactoryT<ShapeCube>);
+
+    loadTonatiuhPlugin(new RandomFactoryT<RandomSTL>);
 
     sort();
 }
