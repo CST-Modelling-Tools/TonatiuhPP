@@ -1,45 +1,48 @@
+#include "FieldContainerWidget.h"
+
 #include <iostream>
 #include <QComboBox>
 #include <QLineEdit>
 #include <QTreeView>
 #include <QVBoxLayout>
+#include <QHeaderView>
 
 #include <Inventor/SbName.h>
 #include <Inventor/SbString.h>
 #include <Inventor/fields/SoField.h>
 #include <Inventor/fields/SoFieldContainer.h>
 #include <Inventor/fields/SoSFEnum.h>
+#include <Inventor/fields/SoSFBool.h>
 #include <Inventor/lists/SoFieldList.h>
 #include <Inventor/nodes/SoNode.h>
 
-#include "FieldContainerWidget.h"
 #include "libraries/fields/FieldEditor.h"
+#include "libraries/fields/UserMField.h"
+#include "libraries/fields/UserSField.h"
+
 #include "ParametersDelegate.h"
 #include "ParametersItem.h"
 #include "ParametersModel.h"
-#include "libraries/fields/UserMField.h"
-#include "libraries/fields/UserSField.h"
-#include <QHeaderView>
 
 /*!
  * Creates an empty widget.
  */
 FieldContainerWidget::FieldContainerWidget(QWidget* parent):
     QTreeView(parent),
-    m_containerName(QString("") ),
-    m_currentIndex(),
+    m_name(QString("") ),
     m_delegate(0),
-    m_pFieldContainer(0),
-    m_pModel(0)
+    m_node(0),
+    m_model(0),
+    m_index()
 {
 //    setAlternatingRowColors(true);
 
     m_delegate = new ParametersDelegate;
     setItemDelegate(m_delegate);
 
-    m_pModel = new ParametersModel();
-    m_pModel->SetEditable(true);
-    setModel(m_pModel);
+    m_model = new ParametersModel();
+    m_model->SetEditable(true);
+    setModel(m_model);
 }
 
 /**
@@ -47,13 +50,13 @@ FieldContainerWidget::FieldContainerWidget(QWidget* parent):
  *
  * The container name is \a containerName.
  */
-FieldContainerWidget::FieldContainerWidget(SoNode* fieldContainer, QString containerName, QWidget* parent):
+FieldContainerWidget::FieldContainerWidget(SoNode* node, QString name, QWidget* parent):
     QTreeView(parent),
-    m_containerName(containerName),
-    m_currentIndex(),
+    m_node(node),
+    m_name(name),
     m_delegate(0),
-    m_pFieldContainer(fieldContainer),
-    m_pModel(0)
+    m_model(0),
+    m_index()
 {
     setStyleSheet(R"(
 QAbstractItemView {
@@ -82,12 +85,12 @@ background-color: #d2dddb;
     m_delegate = new ParametersDelegate;
     setItemDelegate(m_delegate);
 
-    m_pModel = new ParametersModel;
-    m_pModel->SetEditable(true);
-    m_pModel->setHorizontalHeaderLabels({"Parameter", "Value"});
-    setModel(m_pModel);
+    m_model = new ParametersModel;
+    m_model->SetEditable(true);
+    m_model->setHorizontalHeaderLabels({"Parameter", "Value"});
+    setModel(m_model);
 
-    if (m_pFieldContainer) ReadFields();
+    if (m_node) ReadFields();
     resizeColumnToContents(0);
 }
 
@@ -97,20 +100,20 @@ background-color: #d2dddb;
 FieldContainerWidget::~FieldContainerWidget()
 {
     delete m_delegate;
-    delete m_pModel;
+    delete m_model;
 }
 
 /*!
  * Sets \a fieldContainer as widget container and \a containerName as its containerName name.
  */
-void FieldContainerWidget::SetContainer(SoNode* fieldContainer, QString containerName)
+void FieldContainerWidget::SetContainer(SoNode* node, QString name)
 {
-    m_pModel->clear();
+    m_model->clear();
 
-    m_pFieldContainer = fieldContainer;
-    m_containerName = containerName;
+    m_node = node;
+    m_name = name;
 
-    if (m_pFieldContainer) ReadFields();
+    if (m_node) ReadFields();
     resizeColumnToContents(1);
 }
 
@@ -119,7 +122,7 @@ void FieldContainerWidget::SetContainer(SoNode* fieldContainer, QString containe
  */
 void FieldContainerWidget::SetEditable(bool editable)
 {
-    m_pModel->SetEditable(editable);
+    m_model->SetEditable(editable);
 }
 
 /*!
@@ -127,73 +130,76 @@ void FieldContainerWidget::SetEditable(bool editable)
  */
 void FieldContainerWidget::currentChanged(const QModelIndex& current, const QModelIndex& /*previous*/)
 {
-    m_currentIndex = current;
+    m_index = current;
 }
 
 void FieldContainerWidget::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint)
 {
-    QString newValue;
-    SoField* field = m_pModel->ModelItem(m_currentIndex)->GetField();
-    if (field->getTypeId().isDerivedFrom(SoSFEnum::getClassTypeId() ) )
+    QString value;
+    SoField* field = m_model->ModelItem(m_index)->getField();
+
+    if (dynamic_cast<SoSFEnum*>(field))
     {
-        QComboBox* combo = qobject_cast<QComboBox*>(editor);
-        newValue = combo->currentText();
+        QComboBox* w = qobject_cast<QComboBox*>(editor);
+        value = w->currentText();
     }
-
-    else if (field->getTypeId().isDerivedFrom(UserSField::getClassTypeId() ) )
+    else if (dynamic_cast<SoSFBool*>(field))
     {
-        FieldEditor* fieldEdit = static_cast< FieldEditor*>(editor);
-        newValue = fieldEdit->GetData();
-
+        QComboBox* w = qobject_cast<QComboBox*>(editor);
+        value = w->currentText();
     }
-
-    else if (field->getTypeId().isDerivedFrom(UserMField::getClassTypeId() ) )
+    else if (dynamic_cast<UserSField*>(field))
     {
-        FieldEditor* fieldEdit = static_cast< FieldEditor*>(editor);
-        newValue = fieldEdit->GetData();
-
+        FieldEditor* w = static_cast<FieldEditor*>(editor);
+        value = w->GetData();
+    }
+    else if (dynamic_cast<UserMField*>(field))
+    {
+        FieldEditor* w = static_cast< FieldEditor*>(editor);
+        value = w->GetData();
     }
     else
     {
-        QLineEdit* textEdit = qobject_cast<QLineEdit*>(editor);
-        newValue = textEdit->text();
+        QLineEdit* w = static_cast<QLineEdit*>(editor);
+        value = w->text();
     }
-    SbName fieldName;
-    m_pFieldContainer->getFieldName(field, fieldName);
-    QString parameterName(fieldName.getString() );
 
-    if (!newValue.isEmpty() ) emit valueModificated(m_pFieldContainer, parameterName, newValue);
+    SbName nameField;
+    m_node->getFieldName(field, nameField);
+    QString name = nameField.getString();
+
+    if (!value.isEmpty())
+        emit valueModified(m_node, name, value);
+
     QTreeView::closeEditor(editor, hint);
-
 }
 
 /**
- * Reads container parameters and for each parameters adds its name and value to de widget.
+ * Reads container parameters and for each parameters adds its name and value to the widget.
  */
 void FieldContainerWidget::ReadFields()
 {
-    m_pModel->clear();
-    m_pModel->setHorizontalHeaderLabels(QStringList() << tr("Parameter") << tr("Value") );
+    m_model->clear();
+    m_model->setHorizontalHeaderLabels({"Parameter", "Value"});
 
-    SoFieldList fieldList;
-    int totalFields = m_pFieldContainer->getFields(fieldList);
+    SoFieldList fields;
+    int nMax = m_node->getFields(fields);
 
-    SoField* pField = 0;
-    SbName fieldName;
-    SbString fieldValue = "null";
+    SoField* field;
+    SbName name;
+    SbString value;
 
-    for (int index = 0; index < totalFields; ++index)
+    for (int n = 0; n < nMax; ++n)
     {
-        pField = fieldList.get(index);
-        if (pField)
+        field = fields.get(n);
+        if (!field) continue;
+        field->get(value);
+        if (m_node->getFieldName(field, name) )
         {
-            pField->get(fieldValue);
-            if (m_pFieldContainer->getFieldName(pField, fieldName) )
-            {
-                m_pModel->setItem(index, false, new ParametersItem (QString(fieldName.getString()), false, pField));
-                ParametersItem* valueItem = new ParametersItem (QString(fieldValue.getString()), true, pField);
-                m_pModel->setItem(index, true, valueItem);
-            }
+            ParametersItem* itemName = new ParametersItem(name.getString(), false, field);
+            m_model->setItem(n, 0, itemName);
+            ParametersItem* itemValue = new ParametersItem(value.getString(), true, field);
+            m_model->setItem(n, 1, itemValue);
         }
     }
 }

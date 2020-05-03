@@ -78,7 +78,7 @@ TLightKit* SunDialog::getLightKit()
 void SunDialog::makeSunShapeTab()
 {
     connect(
-        sunshapeParameters, SIGNAL(valueModificated(SoNode*, QString, QString)),
+        sunshapeParameters, SIGNAL(valueModified(SoNode*, QString, QString)),
         this, SLOT(SetValue(SoNode*, QString, QString))
     );
     connect(

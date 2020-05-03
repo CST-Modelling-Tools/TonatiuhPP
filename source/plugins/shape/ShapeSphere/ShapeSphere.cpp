@@ -23,7 +23,7 @@ void ShapeSphere::initClass()
     SO_NODE_INIT_CLASS(ShapeSphere, ShapeAbstract, "ShapeAbstract");
 }
 
-ShapeSphere::ShapeSphere( ):
+ShapeSphere::ShapeSphere():
     m_radiusOld(0.5),
     m_yMaxOld(0.5),
     m_yMinOld(-0.5),
@@ -72,6 +72,45 @@ SoNode* ShapeSphere::copy(SbBool copyConnections) const
     shape->m_yMinOld = m_yMinOld;
 
     return shape;
+}
+
+double ShapeSphere::getArea() const
+{
+    double r = radius.getValue();
+    return 4.*gc::Pi*r*r;
+}
+double ShapeSphere::getVolume() const
+{
+    double r = radius.getValue();
+    return 4.*gc::Pi*r*r*r/3.;
+}
+
+BBox ShapeSphere::getBox() const
+{
+    double cosPhiMax = cos( phiMax.getValue() );
+    double sinPhiMax = sin( phiMax.getValue() );
+
+    double thetaMin = acos( yMax.getValue() / radius.getValue() );
+    double thetaMax = acos( yMin.getValue()/radius.getValue() );
+    double maxRadius = ( yMax.getValue() * yMin.getValue() > 0.0 ) ?  std::max( sin(thetaMin) * radius.getValue() , sin(thetaMax) * radius.getValue() )
+                                                                    : radius.getValue();
+    double minRadius = std::min( sin(thetaMin) * radius.getValue(), sin(thetaMax) * radius.getValue() );
+    double xmin = ( phiMax.getValue() < gc::Pi  ) ?  0.0
+                                : ( phiMax.getValue() < 1.5 * gc::Pi  ) ? sinPhiMax * maxRadius
+                                        : -maxRadius;
+    double xmax = ( phiMax.getValue() >= gc::Pi / 2 ) ? maxRadius : sinPhiMax * maxRadius;
+
+    double ymin = yMin.getValue();
+    double ymax = yMax.getValue();
+
+    double zmin = ( phiMax.getValue() > gc::Pi ) ? -maxRadius
+                    :( phiMax.getValue() > gc::Pi / 2 ) ? maxRadius* cosPhiMax : std::min( maxRadius * cosPhiMax, minRadius * cosPhiMax );
+    double zmax = maxRadius;
+
+    return BBox(
+        Point3D(xmin, ymin, zmin),
+        Point3D(xmax, ymax, zmax)
+    );
 }
 
 bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const
@@ -159,46 +198,6 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     *tHit = thit;
     return true;
 }
-
-double ShapeSphere::getArea() const
-{
-    double r = radius.getValue();
-    return 4.*gc::Pi*r*r;
-}
-double ShapeSphere::getVolume() const
-{
-    double r = radius.getValue();
-    return 4.*gc::Pi*r*r*r/3.;
-}
-
-BBox ShapeSphere::getBox() const
-{
-	double cosPhiMax = cos( phiMax.getValue() );
-   	double sinPhiMax = sin( phiMax.getValue() );
-
-   	double thetaMin = acos( yMax.getValue() / radius.getValue() );
-   	double thetaMax = acos( yMin.getValue()/radius.getValue() );
-   	double maxRadius = ( yMax.getValue() * yMin.getValue() > 0.0 ) ?  std::max( sin(thetaMin) * radius.getValue() , sin(thetaMax) * radius.getValue() )
-																	: radius.getValue();
-   	double minRadius = std::min( sin(thetaMin) * radius.getValue(), sin(thetaMax) * radius.getValue() );
-   	double xmin = ( phiMax.getValue() < gc::Pi  ) ?  0.0
-								: ( phiMax.getValue() < 1.5 * gc::Pi  ) ? sinPhiMax * maxRadius
-										: -maxRadius;
-   	double xmax = ( phiMax.getValue() >= gc::Pi / 2 ) ? maxRadius : sinPhiMax * maxRadius;
-
-   	double ymin = yMin.getValue();
-	double ymax = yMax.getValue();
-
-	double zmin = ( phiMax.getValue() > gc::Pi ) ? -maxRadius
-					:( phiMax.getValue() > gc::Pi / 2 ) ? maxRadius* cosPhiMax : std::min( maxRadius * cosPhiMax, minRadius * cosPhiMax );
-	double zmax = maxRadius;
-
-    return BBox(
-        Point3D(xmin, ymin, zmin),
-        Point3D(xmax, ymax, zmax)
-    );
-}
-
 
 Point3D ShapeSphere::getPoint(double u, double v) const
 {

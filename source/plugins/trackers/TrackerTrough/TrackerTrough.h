@@ -31,10 +31,9 @@ protected:
     ~TrackerTrough() {}
 
 private:
-    void evaluate();
-
 	int m_previousAimingPointType;
 };
+
 
 
 #include "kernel/trackers/TrackerFactory.h"

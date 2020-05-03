@@ -24,7 +24,7 @@ AirDialog::AirDialog(QMap<QString, AirFactory*> airMap, QWidget* parent, Qt::Win
         this, SLOT(changeModel(int))
     );
     connect(
-        ui->airParameters, SIGNAL(valueModificated(SoNode*, QString, QString)),
+        ui->airParameters, SIGNAL(valueModified(SoNode*, QString, QString)),
         this, SLOT(setValue(SoNode*, QString, QString))
     );
 }

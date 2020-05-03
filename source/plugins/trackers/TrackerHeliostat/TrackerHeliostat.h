@@ -11,7 +11,7 @@ public:
     static void initClass();
     TrackerHeliostat();
 
-    void Evaluate(Vector3D sunVectorW, Transform parentWT0);
+    void Evaluate(const Vector3D& vSunW, const Transform& tW2O);
 
     enum Rotations {
 		YX = 0,
@@ -29,8 +29,6 @@ protected:
     ~TrackerHeliostat() {}
 
 private:
-    void evaluate();
-
 	int m_previousAimingPointType;
     SoFieldSensor* m_sensorAiming;
 };

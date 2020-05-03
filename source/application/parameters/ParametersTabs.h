@@ -15,13 +15,13 @@ class SoNode;
  *
  */
 
-class ParametersView: public QTabWidget
+class ParametersTabs: public QTabWidget
 {
     Q_OBJECT
 
 public:
-    ParametersView(QWidget* parent = 0);
-    ~ParametersView();
+    ParametersTabs(QWidget* parent = 0);
+    ~ParametersTabs();
 
     void SelectionChangedToPart(SoNode* coinPart);
     void SelectionChangedToKit(SoBaseKit* coinNode);
@@ -35,10 +35,10 @@ signals:
      *
      * The new value for the parameter is \a newValue.
      * */
-    void valueModificated(SoNode* coinNode, QString parameterName, QString newValue);
+    void valueModified(SoNode* coinNode, QString parameterName, QString newValue);
 
 public slots:
-    void SetValue(SoNode* node, QString paramenterName, QString newValue);
+    void SetValue(SoNode* node, QString parameterName, QString newValue);
 
 private:
     void AddTab(SoNode* coinNode, QString partName);

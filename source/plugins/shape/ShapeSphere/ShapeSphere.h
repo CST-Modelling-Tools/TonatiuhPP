@@ -41,8 +41,6 @@ public:
     trt::TONATIUH_REAL yMin;
     trt::TONATIUH_REAL phiMax;
 
-    SoSFEnum activeSide;
-
 private:
     double m_radiusOld;
     double m_yMaxOld;

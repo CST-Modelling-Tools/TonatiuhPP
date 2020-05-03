@@ -12,14 +12,9 @@ class TONATIUH_KERNEL TTrackerForAiming: public TrackerAbstract
 public:
     static void initClass();
 
-    enum AimingPointType {
-        Absolute = 0,
-        Relative = 1
-    };
+    SoSFBool isAimingAbsolute;
 
-    SoSFEnum typeOfAimingPoint;
-
-    void SetAimingPointRelativity(bool relative);
+    void setAimingAbsolute(bool enable);
 
 protected:
     TTrackerForAiming();

@@ -19,8 +19,6 @@ public:
 	trt::TONATIUH_REAL widthX;
 	trt::TONATIUH_REAL widthZ;
 
-    SoSFEnum activeSide;
-
     NAME_ICON_FUNCTIONS("ParabolicRectangle", ":/ShapeParabolicRectangle.png")
 
 protected:

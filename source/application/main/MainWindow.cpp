@@ -309,7 +309,7 @@ void MainWindow::DefineSunLight()
     m_commandStack->push(cmd);
     UpdateLightSize();
 
-    parametersView->UpdateView();
+    parametersTabs->UpdateView();
     m_document->SetDocumentModified(true);
 
 //    actionCalculateSunPosition->setEnabled(true);
@@ -2185,7 +2185,7 @@ void MainWindow::SetSunshape(QString sunshapeType)
     //UpdateLightDimensions();
     UpdateLightSize();
 
-    parametersView->UpdateView();
+    parametersTabs->UpdateView();
     m_document->SetDocumentModified(true);
 
     actionCalculateSunPosition->setEnabled(true);
@@ -2542,11 +2542,11 @@ void MainWindow::ChangeSelection(const QModelIndex& current)
     if (selectedCoinNode->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) )
     {
         SoBaseKit* selectedCoinNodeKit = static_cast< SoBaseKit* >(selectedCoinNode);
-        parametersView->SelectionChangedToKit(selectedCoinNodeKit);
+        parametersTabs->SelectionChangedToKit(selectedCoinNodeKit);
     }
     else
     {
-        parametersView->SelectionChangedToPart(selectedCoinNode);
+        parametersTabs->SelectionChangedToPart(selectedCoinNode);
     }
 }
 
@@ -3504,7 +3504,7 @@ void MainWindow::SetupModels()
 void MainWindow::SetupParametersView()
 {
     connect(
-        parametersView, SIGNAL(valueModificated(SoNode*, QString, QString)),
+        parametersTabs, SIGNAL(valueModified(SoNode*, QString, QString)),
         this, SLOT(SetParameterValue(SoNode*, QString, QString))
     );
 

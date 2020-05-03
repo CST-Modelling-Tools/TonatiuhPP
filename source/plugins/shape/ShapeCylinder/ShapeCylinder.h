@@ -26,8 +26,6 @@ public:
 	trt::TONATIUH_REAL length;
 	trt::TONATIUH_REAL phiMax;
 
-    SoSFEnum activeSide;
-
     NAME_ICON_FUNCTIONS("Cylinder", ":/ShapeCylinder.png")
 
 protected:

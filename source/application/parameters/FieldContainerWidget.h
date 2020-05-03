@@ -17,10 +17,10 @@ class FieldContainerWidget: public QTreeView
 
 public:
     FieldContainerWidget(QWidget* parent = 0);
-    FieldContainerWidget(SoNode* fieldContainer, QString containerName, QWidget* parent = 0);
+    FieldContainerWidget(SoNode* fieldContainer, QString name, QWidget* parent = 0);
     ~FieldContainerWidget();
 
-    void SetContainer(SoNode* fieldContainer, QString containerName);
+    void SetContainer(SoNode* node, QString name);
     void SetEditable(bool editable);
 
 protected slots:
@@ -28,14 +28,14 @@ protected slots:
     void closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint);
 
 signals:
-    void valueModificated(SoNode* nodeContainer, QString parameterName, QString newValue);
+    void valueModified(SoNode* nodeContainer, QString parameterName, QString newValue);
 
 private:
     void ReadFields();
 
-    QString m_containerName;
-    QModelIndex m_currentIndex;
+    SoNode* m_node;
+    QString m_name;
+    ParametersModel* m_model;
+    QModelIndex m_index;
     ParametersDelegate* m_delegate;
-    SoNode* m_pFieldContainer;
-    ParametersModel* m_pModel;
 };

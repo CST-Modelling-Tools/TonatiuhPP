@@ -5,6 +5,7 @@
 #include "kernel/random/RandomAbstract.h"
 #include "TonatiuhFunctions.h"
 #include "libraries/geometry/Transform.h"
+#include "libraries/geometry/Point3D.h"
 
 
 double tgf::AlternateBoxMuller(RandomAbstract& rand)
@@ -57,30 +58,26 @@ SbMatrix tgf::MatrixFromTransform(const Transform& transform)
 
     SbVec3f axis1(m00, m10, m20);
     SbVec3f axis2(m01, m11, m21);
-    //axis2.normalize();
-
     SbVec3f axis3(m02, m12, m22);
+    //axis2.normalize();
     //axis3.normalize();
 
-    return SbMatrix( axis1[0], axis2[0], axis3[0], m03,
-            axis1[1], axis2[1], axis3[1], m13,
-            axis1[2], axis2[2], axis3[2], m23,
-            m30, m31, m32, m33);
-
+    return SbMatrix(
+        axis1[0], axis2[0], axis3[0], m03,
+        axis1[1], axis2[1], axis3[1], m13,
+        axis1[2], axis2[2], axis3[2], m23,
+        m30, m31, m32, m33
+    );
 }
 
-Transform tgf::TransformFromMatrix(SbMatrix const& matrix)
+Transform tgf::TransformFromMatrix(SbMatrix const& m)
 {
-    Transform transform;
-    /*if( matrix.det4() < tgc::Epsilon )
-        transform = Transform( new Matrix4x4(), new Matrix4x4() );
-    else*/
-        transform = Transform( matrix[0][0], matrix[1][0], matrix[2][0], matrix[3][0],
-                             matrix[0][1], matrix[1][1], matrix[2][1], matrix[3][1],
-                             matrix[0][2], matrix[1][2], matrix[2][2], matrix[3][2],
-                             matrix[0][3], matrix[1][3], matrix[2][3], matrix[3][3] );
-
-    return transform;
+    return Transform(
+        m[0][0], m[1][0], m[2][0], m[3][0],
+        m[0][1], m[1][1], m[2][1], m[3][1],
+        m[0][2], m[1][2], m[2][2], m[3][2],
+        m[0][3], m[1][3], m[2][3], m[3][3]
+    );
 }
 
 Transform tgf::TransformFromSoTransform(SoTransform* const& soTransform)
@@ -99,4 +96,9 @@ SbMatrix tgf::MatrixFromSoTransform(SoTransform* const& soTransform)
         soTransform->center.getValue()
     );
     return sbMatrix;
+}
+
+Point3D tgf::makePoint3D(const SbVec3f& v)
+{
+    return Point3D(v[0], v[1], v[2]);
 }

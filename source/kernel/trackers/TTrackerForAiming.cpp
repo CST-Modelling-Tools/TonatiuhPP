@@ -24,13 +24,8 @@ TTrackerForAiming::TTrackerForAiming()
     m_infoDisplayed->attach( &typeOfAimingPoint );*/
 }
 
-void TTrackerForAiming::SetAimingPointRelativity(bool relative)
+void TTrackerForAiming::setAimingAbsolute(bool enable)
 {
-    if ((typeOfAimingPoint.getValue() == AimingPointType::Relative) == relative)
-        return;
-
-    if (relative)
-        typeOfAimingPoint.setValue(AimingPointType::Relative);
-    else
-        typeOfAimingPoint.setValue(AimingPointType::Absolute);
+    if ((isAimingAbsolute.getValue() == TRUE) == enable) return;
+    isAimingAbsolute.setValue(enable ? TRUE : FALSE);
 }

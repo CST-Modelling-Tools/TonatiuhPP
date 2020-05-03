@@ -1,13 +1,14 @@
+#include "ParametersDelegate.h"
+
 #include <QComboBox>
 #include <QLineEdit>
-#include <QModelIndex>
-#include <QString>
 
-#include <Inventor/fields/SoSFEnum.h> 
+#include <Inventor/fields/SoSFEnum.h>
+#include <Inventor/fields/SoSFBool.h>
 
-#include "ParametersItem.h"
-#include "ParametersDelegate.h"
 #include "ParametersModel.h"
+#include "ParametersItem.h"
+
 #include "libraries/fields/FieldEditor.h"
 #include "libraries/fields/UserSField.h"
 #include "libraries/fields/UserMField.h"
@@ -16,99 +17,76 @@
 ParametersDelegate::ParametersDelegate(QObject* parent):
     QStyledItemDelegate(parent)
 {
-    
-} 
 
-QWidget* ParametersDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem& option, const QModelIndex &index) const
+}
+
+QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-    const ParametersModel* model = static_cast< const ParametersModel* >( index.model() );
-    SoField* field = model->ModelItem( index )->GetField();
+    const ParametersModel* model = static_cast<const ParametersModel*>(index.model());
+    SoField* field = model->ModelItem(index)->getField();
 
-    if( field->getTypeId().isDerivedFrom( SoSFEnum::getClassTypeId() ) )
+    if (SoSFEnum* f = dynamic_cast<SoSFEnum*>(field))
     {
-        QComboBox* editor = new QComboBox( parent );
-        SoSFEnum* enumField = static_cast< SoSFEnum* >( field );
-        for( int i = 0; i < enumField->getNumEnums() ; ++i )
+        QComboBox* editor = new QComboBox(parent);
+        SbName name;
+        for (int n = 0; n < f->getNumEnums(); ++n)
         {
-            SbName enumName;
-            enumField->getEnum( i , enumName );
-            editor->addItem( enumName.getString() );
+            f->getEnum(n, name);
+            editor->addItem(name.getString());
         }
+        editor->setCurrentIndex(f->getValue());
         return editor;
     }
-    else if( field->getTypeId().isDerivedFrom( UserSField::getClassTypeId() ) )
+    else if (SoSFBool* f = dynamic_cast<SoSFBool*>(field))
     {
-        UserSField* mField = static_cast< UserSField* >(field);
-
-        FieldEditor* fieldEdit = mField->GetEditor();
-        fieldEdit->setGeometry(option.rect);
-        fieldEdit->setParent(parent);
-
-        connect( fieldEdit, SIGNAL( editingFinished( )  ), this, SLOT( CloseEditor() ));
-        return fieldEdit;
+        QComboBox* editor = new QComboBox(parent);
+        editor->addItem("FALSE");
+        editor->addItem("TRUE");
+        editor->setCurrentIndex(f->getValue() ? 1 : 0);
+        return editor;
     }
-    else if( field->getTypeId().isDerivedFrom( UserMField::getClassTypeId() ) )
+    else if (UserSField* f = dynamic_cast<UserSField*>(field))
     {
-        UserMField* mField = static_cast< UserMField* >(field);
-
-        FieldEditor* fieldEdit = mField->GetEditor();
-        fieldEdit->setGeometry(option.rect);
-        fieldEdit->setParent(parent);
-
-        connect( fieldEdit, SIGNAL( editingFinished( )  ), this, SLOT( CloseEditor() ));
-        return fieldEdit;
+        FieldEditor* editor = f->GetEditor();
+        editor->setGeometry(option.rect);
+        editor->setParent(parent);
+        connect(
+            editor, SIGNAL(editingFinished()),
+            this, SLOT(onCloseEditor())
+            );
+        QString s = model->data(index, Qt::DisplayRole).toString();
+        editor->SetData(s);
+        return editor;
+    }
+    else if (UserMField* f = dynamic_cast<UserMField*>(field))
+    {
+        FieldEditor* editor = f->GetEditor();
+        editor->setGeometry(option.rect);
+        editor->setParent(parent);
+        connect(
+            editor, SIGNAL(editingFinished()),
+            this, SLOT(onCloseEditor())
+            );
+        QString s = model->data(index, Qt::DisplayRole).toString();
+        editor->SetData(s);
+        return editor;
     }
     else
     {
         QLineEdit* editor = new QLineEdit(parent);
+        QString s = model->data(index, Qt::DisplayRole).toString();
+        editor->setText(s);
         return editor;
     }
 }
 
-void ParametersDelegate::setEditorData(QWidget *editor,
-                                     const QModelIndex &index) const
+void ParametersDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
-    const ParametersModel* model = static_cast< const ParametersModel* >( index.model() );
-    SoField* field = model->ModelItem( index )->GetField();
-    
-    if( field->getTypeId().isDerivedFrom( SoSFEnum::getClassTypeId() ) )
-    {
 
-        SoSFEnum* enumField = static_cast< SoSFEnum* >( field );
-        int selectedIndex = enumField->getValue();
-        
-        QComboBox* combo = static_cast<QComboBox *>(editor);
-        combo->setCurrentIndex( selectedIndex );
-
-    }
-    else if( field->getTypeId().isDerivedFrom( UserSField::getClassTypeId() ) )
-    {
-
-        FieldEditor* fieldEdit = static_cast< FieldEditor *>(editor);
-
-        QString value = index.model()->data(index, Qt::DisplayRole).toString();
-        fieldEdit->SetData( value );
-
-    }
-    else if( field->getTypeId().isDerivedFrom( UserMField::getClassTypeId() ) )
-    {
-
-        FieldEditor* fieldEdit = static_cast< FieldEditor *>(editor);
-
-        QString value = index.model()->data(index, Qt::DisplayRole).toString();
-        fieldEdit->SetData( value );
-    }
-    else
-    {
-        QString value = index.model()->data(index, Qt::DisplayRole).toString();
-            
-        QLineEdit  *textEdit = static_cast<QLineEdit *>(editor);
-        textEdit->setText(value);
-    }
 }
 
-void ParametersDelegate::CloseEditor()
+void ParametersDelegate::onCloseEditor()
 {
-    QWidget *editor = qobject_cast<QWidget *>(sender());
+    QWidget* editor = qobject_cast<QWidget*>(sender());
     emit closeEditor(editor);
 }

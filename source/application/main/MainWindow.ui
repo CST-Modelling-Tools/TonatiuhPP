@@ -38,7 +38,7 @@
          <enum>QAbstractItemView::DragDrop</enum>
         </property>
        </widget>
-       <widget class="ParametersView" name="parametersView">
+       <widget class="ParametersTabs" name="parametersTabs">
         <widget class="QWidget" name="tab">
          <attribute name="title">
           <string>Tab 1</string>
@@ -777,9 +777,9 @@
    <header>tree/SceneModelView.h</header>
   </customwidget>
   <customwidget>
-   <class>ParametersView</class>
+   <class>ParametersTabs</class>
    <extends>QTabWidget</extends>
-   <header>parameters/ParametersView.h</header>
+   <header>parameters/ParametersTabs.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

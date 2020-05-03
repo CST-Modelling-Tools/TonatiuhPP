@@ -32,6 +32,6 @@ public:
 
 private:
     QStringList m_dimensionsNames;
-    FieldEditor* m_pEditor;
+    FieldEditor* m_editor;
     static SoType classTypeId;
 };

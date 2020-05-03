@@ -3,12 +3,12 @@
 #include <Inventor/nodekits/SoBaseKit.h>
 
 #include "FieldContainerWidget.h"
-#include "ParametersView.h"
+#include "ParametersTabs.h"
 
 /**
  * Creates a new ParametersView with parent \a parent.
  */
-ParametersView::ParametersView(QWidget* parent):
+ParametersTabs::ParametersTabs(QWidget* parent):
     QTabWidget(parent),
     m_actualCoinNode(0),
     m_isPart(false)
@@ -26,7 +26,7 @@ border:none;
 /*!
  * Destroys the parameters view widget.
  */
-ParametersView::~ParametersView()
+ParametersTabs::~ParametersTabs()
 {
 
 }
@@ -34,7 +34,7 @@ ParametersView::~ParametersView()
 /*!
  * Changes the parameters view to show \a coinNode \a parts parameters.
  */
-void ParametersView::SelectionChangedToPart(SoNode* coinPart)
+void ParametersTabs::SelectionChangedToPart(SoNode* coinPart)
 {
     clear();
 
@@ -56,14 +56,14 @@ void ParametersView::SelectionChangedToPart(SoNode* coinPart)
     {
         m_actualCoinNode = coinPart;
         m_isPart = true;
-        AddTab( coinPart, "" );
+        AddTab(coinPart, "");
     }
 }
 
 /*!
  * Changes the parameters view to show \a coinNode \a parts parameters.
  */
-void ParametersView::SelectionChangedToKit( SoBaseKit* coinNode/*, QStringList parts*/ )
+void ParametersTabs::SelectionChangedToKit( SoBaseKit* coinNode/*, QStringList parts*/ )
 {
     clear();
 
@@ -71,7 +71,7 @@ void ParametersView::SelectionChangedToKit( SoBaseKit* coinNode/*, QStringList p
 
     m_actualCoinNode = coinNode;
     m_isPart = false;
-    for( int i = 0; i< parts.size(); ++i )
+    for (int i = 0; i < parts.size(); ++i)
     {
         QString partName = parts[i];
 
@@ -103,7 +103,7 @@ void ParametersView::SelectionChangedToKit( SoBaseKit* coinNode/*, QStringList p
 /*!
  * Updates selected node parametes views.
  */
-void ParametersView::UpdateView()
+void ParametersTabs::UpdateView()
 {
     if (m_isPart) //?
         SelectionChangedToPart (m_actualCoinNode);
@@ -112,24 +112,27 @@ void ParametersView::UpdateView()
 }
 
 /*!
- * Emits a valueModificated signal with \a node as the actual node, \a paramenterName and \a newValue.
+ * Emits a valueModified signal with \a node as the actual node, \a paramenterName and \a newValue.
  */
-void ParametersView::SetValue(SoNode* node, QString paramenterName, QString newValue)
+void ParametersTabs::SetValue(SoNode* node, QString parameterName, QString newValue)
 {
-    emit valueModificated(node, paramenterName, newValue);
+    emit valueModified(node, parameterName, newValue);
 }
 
 /*!
  * Adds a new tab to the view with \a coinNode \a partName parameters.
  */
-void ParametersView::AddTab(SoNode* coinNode, QString partName)
+void ParametersTabs::AddTab(SoNode* coinNode, QString partName)
 {
     QString type = coinNode->getName().getString();
     if (type.length() <= 0) type = coinNode->getTypeId().getName().getString();
 
-    FieldContainerWidget* nodeContainer = new FieldContainerWidget( coinNode, partName, this );
+    FieldContainerWidget* nodeContainer = new FieldContainerWidget(coinNode, partName, this);
     addTab(nodeContainer, type);
-    connect( nodeContainer, SIGNAL( valueModificated( SoNode*, QString, QString ) ), this, SLOT( SetValue( SoNode*, QString, QString ) ) );
+    connect(
+        nodeContainer, SIGNAL(valueModified(SoNode*, QString, QString)),
+        this, SLOT(SetValue(SoNode*, QString, QString))
+    );
 }
 
 /*!
@@ -137,7 +140,7 @@ void ParametersView::AddTab(SoNode* coinNode, QString partName)
  *
  * If the \a coinNode is not a container node, return a empty list.
  */
-QStringList ParametersView::ContainerNodeParts(SoBaseKit* kit)
+QStringList ParametersTabs::ContainerNodeParts(SoBaseKit* kit)
 {
     if (!kit) return {};
     if (!dynamic_cast<SoBaseKit*>(kit)) return {}; //?

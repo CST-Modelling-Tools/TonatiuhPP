@@ -1,3 +1,5 @@
+#include "ParametersItem.h"
+
 #include <QString>
 
 #include <Inventor/SbString.h>
@@ -6,60 +8,54 @@
 #include <Inventor/lists/SoFieldList.h>
 #include <Inventor/sensors/SoFieldSensor.h>
 
-#include "ParametersItem.h"
 
-void updateItem(void *data, SoSensor* )
+void updateItem(void* data, SoSensor*)
 {
-    ParametersItem* parametersItem = (ParametersItem *) data;
-    parametersItem->setData(parametersItem->data(Qt::DisplayRole), Qt::DisplayRole );
+    ParametersItem* item = (ParametersItem*) data;
+    item->setData(item->data(Qt::DisplayRole), Qt::DisplayRole);
 }
 
-ParametersItem::ParametersItem( QString text,  bool editable, SoField* field  )
-:QStandardItem( text ),
- m_pField( field ),
- m_pFieldSensor( 0 ),
- m_text( text )
+ParametersItem::ParametersItem(QString text, bool editable, SoField* field):
+    QStandardItem(text),
+    m_text(text),
+    m_field(field),
+    m_sensor(0)
 {
-     setEditable (editable );
-     m_pFieldSensor = new SoFieldSensor(updateItem, this);
-     m_pFieldSensor->attach( m_pField );
-
+     setEditable(editable);
+     m_sensor = new SoFieldSensor(updateItem, this);
+     m_sensor->attach(m_field);
 }
 
 ParametersItem::~ParametersItem()
 {
-    delete m_pFieldSensor;
+    delete m_sensor;
 }
 
-QVariant ParametersItem::data ( int role ) const
+QVariant ParametersItem::data(int role) const
 {
-    if( role == Qt::DisplayRole )
+    if (role == Qt::DisplayRole)
     {
-        if ( column() == 0 ) return m_text;
+        if (column() == 0) return m_text;
 
         SbString fieldValue = "null";
-        m_pField->get( fieldValue );
-        return QString( fieldValue.getString() );
+        m_field->get(fieldValue);
+        return QString(fieldValue.getString());
     }
     else
-        return QStandardItem::data( role );
+        return QStandardItem::data(role);
 }
 
-void ParametersItem::setData ( const QVariant& value, int role )
+void ParametersItem::setData(const QVariant& value, int role)
 {
-    if( role == Qt::EditRole ){
-        if ( column() == 1 )
+    if (role == Qt::EditRole) {
+        if (column() == 1)
             m_text = value.toString();
     }
-    else if( role == Qt::UserRole )
+    else if (role == Qt::UserRole)
     {
-        if( m_pField ) m_pField->set( value.toString().toStdString().c_str() );
+        if (m_field)
+            m_field->set(value.toString().toStdString().c_str());
     }
     else
-        return QStandardItem::setData( value, role );
-}
-
-QString ParametersItem::text () const
-{
-    return m_text;
+        return QStandardItem::setData(value, role);
 }

@@ -11,17 +11,17 @@ class SoFieldSensor;
 class ParametersItem: public QStandardItem
 {
 public:
-
-    ParametersItem(QString text, bool editable, SoField* field);
+    ParametersItem(QString getText, bool editable, SoField* field);
     ~ParametersItem();
-    SoField* GetField() const {return m_pField;}
+
+    QString getText() const {return m_text;}
+    SoField* getField() const {return m_field;}
     
-    QVariant data (int role = Qt::UserRole + 1) const;
-    void setData (const QVariant & value, int role = Qt::UserRole + 1);
-    QString text () const; 
+    QVariant data(int role = Qt::UserRole + 1) const;
+    void setData(const QVariant& value, int role = Qt::UserRole + 1);
     
 private:
-    SoField* m_pField;
-    SoFieldSensor* m_pFieldSensor;
     QString m_text;
+    SoField* m_field;
+    SoFieldSensor* m_sensor;
 };

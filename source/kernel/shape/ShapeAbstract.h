@@ -35,6 +35,7 @@ public:
         OUTSIDE = 1,
     };
 
+    SoSFEnum activeSide;
 
     NAME_ICON_FUNCTIONS("X", ":/ShapeX.png")
 

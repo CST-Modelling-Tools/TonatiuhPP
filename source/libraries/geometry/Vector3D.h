@@ -54,7 +54,7 @@ struct TONATIUH_LIBRARIES Vector3D
 
     Vector3D& operator/=(double s)
     {
-        double inv = 1.0 / s;
+        double inv = 1./s;
         x *= inv;
         y *= inv;
         z *= inv;
@@ -96,6 +96,17 @@ struct TONATIUH_LIBRARIES Vector3D
 
     double length() const {
         return std::sqrt(x*x + y*y + z*z);
+    }
+
+    double norm() const {
+        return std::sqrt(x*x + y*y + z*z);
+    }
+
+    void normalize()
+    {
+        double n = norm();
+        if (n > 0.)
+            *this /= n;
     }
 
     double x;
