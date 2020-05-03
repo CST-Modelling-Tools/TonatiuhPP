@@ -3,7 +3,6 @@
 #include <QDir>
 #include <QPluginLoader>
 #include <QStringList>
-//#include <iostream>
 
 #include "kernel/air/AirFactory.h"
 #include "kernel/component/ComponentFactory.h"
@@ -19,6 +18,8 @@
 #include "kernel/air/AirPolynomial.h"
 #include "kernel/air/AirExponential.h"
 #include "kernel/random/RandomSTL.h"
+#include "kernel/photons/PhotonExportNull.h"
+#include "kernel/photons/PhotonExportWidget.h"
 #include "kernel/trackers/TrackerFactory.h"
 #include "libraries/geometry/gf.h"
 
@@ -69,6 +70,7 @@ void PluginManager::load(QDir dir)
     loadTonatiuhPlugin(new ShapeFactoryT<ShapeCube>);
 
     loadTonatiuhPlugin(new RandomFactoryT<RandomSTL>);
+    loadTonatiuhPlugin(new PhotonExportFactoryT<PhotonExportNull, PhotonExportWidget>);
 
     sort();
 }

@@ -4,5 +4,6 @@
         <file>images/AirPolynomial.png</file>
         <file>images/AirVacuum.png</file>
         <file>images/AirExponential.png</file>
+        <file>images/PhotonExportNull.png</file>
     </qresource>
 </RCC>
