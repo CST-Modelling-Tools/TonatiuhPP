@@ -49,7 +49,7 @@ TrackerTrough::TrackerTrough():
 	SO_NODEENGINE_ADD_OUTPUT( outputCenter, SoSFVec3f);
 }
 
-void TrackerTrough::Evaluate(Vector3D sunVectorW, Transform parentWT0)
+void TrackerTrough::Evaluate(const Vector3D& sunVectorW, const Transform& parentWT0)
 {
 	Vector3D i = parentWT0( sunVectorW );
 

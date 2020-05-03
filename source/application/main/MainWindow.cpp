@@ -762,8 +762,8 @@ void MainWindow::ShowMenu(const QModelIndex& index)
     if (type.isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
     {
         QMenu* trackersMenu = popupmenu.addMenu("Trackers");
-        trackersMenu->addAction(actionSetAimingPointRelative);
-        trackersMenu->addAction(actionSetAimingPointAbsolute);
+//        trackersMenu->addAction(actionSetAimingPointRelative);
+//        trackersMenu->addAction(actionSetAimingPointAbsolute);
 
         QMenu* transformMenu = popupmenu.addMenu("Convert to");
         //QMenu transformMenu( "Convert to", &popupmenu );
@@ -1563,29 +1563,6 @@ double MainWindow::GetwPhoton(){
     return double(inputAperture * irradiance) / m_raysTraced;
 }
 
-void MainWindow::SetAimingPointRelativity(bool relative)
-{
-    if (!m_selectionModel->hasSelection() ) return;
-    SetAimingPointRelativity(m_selectionModel->currentIndex(),relative);
-}
-
-/*!
- * * Set all subnodes as relative or absolute.
- *
- * If \a nodeURL is not a valid node url, nothing is done.
- */
-
-bool MainWindow::SetAimingPointRelativity(QModelIndex nodeIndex,bool relative)
-{
-    if (!nodeIndex.isValid() ) return false;
-
-    InstanceNode* ancestor = m_sceneModel->NodeFromIndex(nodeIndex);
-    ancestor->SetAimingPointRelativity(relative);
-
-    return true;
-
-}
-
 /*!
  *
  * Inserts an existing tonatiuh component into the tonatiuh model as a selected node child.
@@ -1947,22 +1924,6 @@ void MainWindow::SelectNode(QString nodeUrl)
 {
     QModelIndex nodeIndex = m_sceneModel->IndexFromNodeUrl(nodeUrl);
     m_selectionModel->setCurrentIndex(nodeIndex, QItemSelectionModel::ClearAndSelect);
-}
-
-/*!
- * Sets current tracker aiming .
- */
-void MainWindow::SetAimingPointAbsolute()
-{
-    SetAimingPointRelativity(false);
-}
-
-/*!
- * Disables current tracker aiming.
- */
-void MainWindow::SetAimingPointRelative()
-{
-    SetAimingPointRelativity(true);
 }
 
 /*!
@@ -3546,13 +3507,13 @@ void MainWindow::SetupTreeView()
 //    sceneModelView->header()->resizeSection(1, 80);
 
     connect(sceneModelView, SIGNAL(dragAndDrop(const QModelIndex&,const QModelIndex&)),
-            this, SLOT (ItemDragAndDrop(const QModelIndex&,const QModelIndex&)) );
+            this, SLOT(ItemDragAndDrop(const QModelIndex&,const QModelIndex&)) );
     connect(sceneModelView, SIGNAL(dragAndDropCopy(const QModelIndex&,const QModelIndex&)),
-            this, SLOT (ItemDragAndDropCopy(const QModelIndex&,const QModelIndex&)) );
+            this, SLOT(ItemDragAndDropCopy(const QModelIndex&,const QModelIndex&)) );
     connect(sceneModelView, SIGNAL(showMenu(const QModelIndex&)),
-            this, SLOT (ShowMenu(const QModelIndex&)) );
+            this, SLOT(ShowMenu(const QModelIndex&)) );
     connect(sceneModelView, SIGNAL(nodeNameModificated(const QModelIndex&,const QString&)),
-            this, SLOT (ChangeNodeName(const QModelIndex&,const QString&)) );
+            this, SLOT(ChangeNodeName(const QModelIndex&,const QString&)) );
 }
 
 /*!
@@ -3560,44 +3521,42 @@ void MainWindow::SetupTreeView()
  */
 void MainWindow::SetupTriggers()
 {
-    // file actions
-    connect(actionNew, SIGNAL(triggered()), this, SLOT (New()) );
-    connect(actionOpen, SIGNAL(triggered()), this, SLOT (Open()) );
-    connect(actionSave, SIGNAL(triggered()), this, SLOT (Save()) );
-    connect(actionSaveAs, SIGNAL(triggered()), this, SLOT (SaveAs()) );
-    connect(actionSaveComponent, SIGNAL(triggered()), this, SLOT (SaveComponent()) );
-    connect(actionClose, SIGNAL(triggered()), this, SLOT (close()) );
+    // file
+    connect(actionNew, SIGNAL(triggered()), this, SLOT(New()) );
+    connect(actionOpen, SIGNAL(triggered()), this, SLOT(Open()) );
+    connect(actionSave, SIGNAL(triggered()), this, SLOT(Save()) );
+    connect(actionSaveAs, SIGNAL(triggered()), this, SLOT(SaveAs()) );
+    connect(actionSaveComponent, SIGNAL(triggered()), this, SLOT(SaveComponent()) );
+    connect(actionClose, SIGNAL(triggered()), this, SLOT(close()) );
 
-    // edit actions
-    connect(actionUndo, SIGNAL(triggered()), this, SLOT (Undo()) );
-    connect(actionRedo, SIGNAL(triggered()), this, SLOT (Redo()) );
-    connect(actionUndoView, SIGNAL(triggered()), this, SLOT (ShowCommandView()) );
-    connect(actionCut, SIGNAL(triggered()), this, SLOT (Cut()) );
-    connect(actionCopy, SIGNAL(triggered()), this, SLOT (Copy()) );
-    connect(actionPasteCopy, SIGNAL(triggered()), this, SLOT (PasteCopy()) );
-    connect(actionPasteLink, SIGNAL(triggered()), this, SLOT (PasteLink()) );
-    connect(actionDelete, SIGNAL(triggered()), this, SLOT (Delete()) );
-    connect(actionSetAimingPointRelative, SIGNAL(triggered()), this, SLOT (SetAimingPointRelative()) );
-    connect(actionSetAimingPointAbsolute, SIGNAL(triggered()), this, SLOT (SetAimingPointAbsolute()) );
+    // edit
+    connect(actionUndo, SIGNAL(triggered()), this, SLOT(Undo()) );
+    connect(actionRedo, SIGNAL(triggered()), this, SLOT(Redo()) );
+    connect(actionUndoView, SIGNAL(triggered()), this, SLOT(ShowCommandView()) );
+    connect(actionCut, SIGNAL(triggered()), this, SLOT(Cut()) );
+    connect(actionCopy, SIGNAL(triggered()), this, SLOT(Copy()) );
+    connect(actionPasteCopy, SIGNAL(triggered()), this, SLOT(PasteCopy()) );
+    connect(actionPasteLink, SIGNAL(triggered()), this, SLOT(PasteLink()) );
+    connect(actionDelete, SIGNAL(triggered()), this, SLOT(Delete()) );
 
-    // insert actions
-    connect(actionNode, SIGNAL(triggered()), this, SLOT (CreateGroupNode()) );
-    connect(actionSurfaceNode, SIGNAL(triggered()), this, SLOT (CreateSurfaceNode()) );
-    connect(actionUserComponent, SIGNAL(triggered()), this, SLOT (InsertUserDefinedComponent()) );
+    // insert
+    connect(actionNode, SIGNAL(triggered()), this, SLOT(CreateGroupNode()) );
+    connect(actionSurfaceNode, SIGNAL(triggered()), this, SLOT(CreateSurfaceNode()) );
+    connect(actionUserComponent, SIGNAL(triggered()), this, SLOT(InsertUserDefinedComponent()) );
 
-    // environment actions
-    connect(actionDefineSunLight, SIGNAL(triggered()), this, SLOT (DefineSunLight()) );
-    connect(actionCalculateSunPosition, SIGNAL(triggered()), this, SLOT (CalculateSunPosition()) );
-    connect(actionDisconnect_All_Trackers, SIGNAL(toggled(bool)), this, SLOT (DisconnectAllTrackers(bool)) );
-    connect(actionDefineTransmissivity, SIGNAL(triggered()), this, SLOT (DefineTransmissivity()) );
+    // scene
+    connect(actionDefineSunLight, SIGNAL(triggered()), this, SLOT(DefineSunLight()) );
+    connect(actionCalculateSunPosition, SIGNAL(triggered()), this, SLOT(CalculateSunPosition()) );
+    connect(actionDisconnect_All_Trackers, SIGNAL(toggled(bool)), this, SLOT(DisconnectAllTrackers(bool)) );
+    connect(actionDefineTransmissivity, SIGNAL(triggered()), this, SLOT(DefineTransmissivity()) );
 
-    // run actions
-    connect(actionDisplayRays, SIGNAL(toggled(bool)), this, SLOT (DisplayRays(bool)) );
-    connect(actionRun, SIGNAL(triggered()), this, SLOT (RunCompleteRayTracer()) );
-    connect(actionRunFluxAnalysis, SIGNAL(triggered()), this, SLOT (RunFluxAnalysisRayTracer()) );
+    // run
+    connect(actionDisplayRays, SIGNAL(toggled(bool)), this, SLOT(DisplayRays(bool)) );
+    connect(actionRun, SIGNAL(triggered()), this, SLOT(RunCompleteRayTracer()) );
+    connect(actionRunFluxAnalysis, SIGNAL(triggered()), this, SLOT(RunFluxAnalysisRayTracer()) );
     connect(actionRayTraceOptions, SIGNAL(triggered()), this, SLOT(ShowRayTracerOptionsDialog())  );
 
-    // view actions
+    // view
     connect(actionGrid, SIGNAL(triggered()), this, SLOT(ShowGrid())  );
     connect(actionGridSettings, SIGNAL(triggered()), this, SLOT(ChangeGridSettings())  );
     connect(actionBackground, SIGNAL(triggered()), this, SLOT(ShowBackground())  );
@@ -3635,18 +3594,14 @@ void MainWindow::ShowRaysIn3DView()
 
         if (m_drawRays)
         {
-
             SoSeparator* currentRays = trf::DrawPhotonMapRays(*m_pPhotonMap, m_raysTracedTotal);
             if (currentRays) rays->addChild(currentRays);
-
         }
         m_graphicsRoot->AddRays(rays);
 
         actionDisplayRays->setEnabled(true);
         actionDisplayRays->setChecked(true);
     }
-
-
 }
 
 /*!
@@ -3669,7 +3624,7 @@ bool MainWindow::StartOver(const QString& fileName)
     m_commandStack->clear();
     m_sceneModel->Clear();
 
-    SetSunPositionCalculatorEnabled(0);
+//    SetSunPositionCalculatorEnabled(0);
 
     QStatusBar* statusbar = new QStatusBar();
     setStatusBar(statusbar);
@@ -3688,6 +3643,7 @@ bool MainWindow::StartOver(const QString& fileName)
     }
 
     ChangeModelScene();
+    sceneModelView->expandToDepth(1);
     return true;
 }
 

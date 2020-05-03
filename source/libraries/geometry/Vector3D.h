@@ -102,11 +102,16 @@ struct TONATIUH_LIBRARIES Vector3D
         return std::sqrt(x*x + y*y + z*z);
     }
 
-    void normalize()
+    double norm2() const {
+        return x*x + y*y + z*z;
+    }
+
+    bool normalize()
     {
-        double n = norm();
-        if (n > 0.)
-            *this /= n;
+        double s = norm();
+        if (s == 0.) return false;
+        *this /= s;
+        return true;
     }
 
     double x;
@@ -114,43 +119,43 @@ struct TONATIUH_LIBRARIES Vector3D
     double z;
 };
 
-inline Vector3D operator+(Vector3D lhs, const Vector3D& rhs)
+inline Vector3D operator+(Vector3D a, const Vector3D& b)
 {
     //lhs take by value to let the compile to make the copy
-    return lhs += rhs;
+    return a += b;
 }
-inline Vector3D operator-(Vector3D lhs, const Vector3D& rhs)
+inline Vector3D operator-(Vector3D a, const Vector3D& b)
 {
     //lhs take by value to let the compile to make the copy
-    return lhs -= rhs;
+    return a -= b;
 }
-inline Vector3D operator*(double scalar, const Vector3D& vector)
+inline Vector3D operator*(double s, const Vector3D& v)
 {
-    return Vector3D(scalar * vector.x, scalar * vector.y, scalar * vector.z);
+    return Vector3D(s * v.x, s * v.y, s * v.z);
 }
 
 TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const Vector3D& vector);
 
-inline double DotProduct(const Vector3D& vA, const Vector3D& vB)
+inline double dot(const Vector3D& a, const Vector3D& b)
 {
-    return vA.x * vB.x + vA.y * vB.y + vA.z * vB.z;
+    return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-inline double DotProduct(const Vector3D& vA, const NormalVector& nB)
+inline double dot(const Vector3D& v, const NormalVector& n)
 {
-    return vA.x * nB.x + vA.y * nB.y + vA.z * nB.z;
+    return v.x * n.x + v.y * n.y + v.z * n.z;
 }
 
-inline double DotProduct(const NormalVector& nA, const Vector3D& vB)
+inline double dot(const NormalVector& n, const Vector3D& v)
 {
-    return nA.x * vB.x + nA.y * vB.y + nA.z * vB.z;
+    return n.x * v.x + n.y * v.y + n.z * v.z;
 }
 
 TONATIUH_LIBRARIES double AbsDotProduct(const Vector3D& vA, const Vector3D& vB);
 TONATIUH_LIBRARIES double AbsDotProduct(const Vector3D& vA, const NormalVector& nB);
 TONATIUH_LIBRARIES double AbsDotProduct(const NormalVector& nA, const Vector3D& vB);
 
-inline Vector3D CrossProduct(const Vector3D& vA, const Vector3D& vB)
+inline Vector3D cross(const Vector3D& vA, const Vector3D& vB)
 {
     return Vector3D(
         vA.y*vB.z - vA.z*vB.y,
@@ -159,14 +164,14 @@ inline Vector3D CrossProduct(const Vector3D& vA, const Vector3D& vB)
     );
 }
 
-inline Vector3D CrossProduct(const Vector3D& vA, const NormalVector& nB)
+inline Vector3D cross(const Vector3D& vA, const NormalVector& nB)
 {
     return Vector3D( (vA.y * nB.z) - (vA.z * nB.y),
                      (vA.z * nB.x) - (vA.x * nB.z),
                      (vA.x * nB.y) - (vA.y * nB.x) );
 }
 
-inline Vector3D CrossProduct(const NormalVector& nA, const Vector3D& vB)
+inline Vector3D cross(const NormalVector& nA, const Vector3D& vB)
 {
     return Vector3D( (nA.y * vB.z) - (nA.z * vB.y),
                      (nA.z * vB.x) - (nA.x * vB.z),

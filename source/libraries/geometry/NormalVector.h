@@ -38,7 +38,7 @@ TONATIUH_LIBRARIES NormalVector operator+(NormalVector lhs, const NormalVector& 
 TONATIUH_LIBRARIES NormalVector operator-(NormalVector lhs, const NormalVector& rhs);
 TONATIUH_LIBRARIES NormalVector operator*(double scalar, const NormalVector& nV);
 TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const NormalVector& nV);
-TONATIUH_LIBRARIES double DotProduct(const NormalVector& nA, const NormalVector& nB);
+TONATIUH_LIBRARIES double dot(const NormalVector& nA, const NormalVector& nB);
 TONATIUH_LIBRARIES double AbsDotProduct(const NormalVector& nA, const NormalVector& nB);
 TONATIUH_LIBRARIES NormalVector Normalize(const NormalVector& nV);
 

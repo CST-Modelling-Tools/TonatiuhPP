@@ -121,7 +121,7 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     Vector3D rayOrigin = Vector3D(ray.origin);
     double r = radius.getValue();
     double A = ray.direction().lengthSquared();
-    double B = 2. * DotProduct( rayOrigin, ray.direction() );
+    double B = 2. * dot( rayOrigin, ray.direction() );
     double C = rayOrigin.lengthSquared() - r*r;
     double t0, t1;
     if (!gf::Quadratic(A, B, C, &t0, &t1)) return false;
@@ -193,7 +193,7 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     );
 
     *dg = DifferentialGeometry(hitPoint, u, v, dpdu, dpdv, N, this);
-    dg->shapeFrontSide = DotProduct(N, ray.direction()) <= 0.;
+    dg->shapeFrontSide = dot(N, ray.direction()) <= 0.;
 
     *tHit = thit;
     return true;

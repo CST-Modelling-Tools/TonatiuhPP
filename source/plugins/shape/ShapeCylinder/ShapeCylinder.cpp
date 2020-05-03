@@ -127,11 +127,11 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
     Vector3D dpdv(0., 0., length.getValue());
 
 
-    Vector3D N = Normalize(CrossProduct(dpdu, dpdv));
+    Vector3D N = Normalize(cross(dpdu, dpdv));
 
 
     *dg = DifferentialGeometry(hitPoint, u, v, dpdu, dpdv, N, this);
-    dg->shapeFrontSide = DotProduct(N, ray.direction()) <= 0.;
+    dg->shapeFrontSide = dot(N, ray.direction()) <= 0.;
 
     *tHit = thit;
 

@@ -52,10 +52,10 @@ public:
     void ExecuteScriptFile(QString tonatiuhScriptFile);
     void SetPluginManager(PluginManager* pluginManager);
 
-    signals:
+signals:
     void Abort(QString error);
 
-    public slots:
+public slots:
     void AddExportSurfaceURL(QString nodeURL);
     void ChangeSunPosition(double azimuth, double elevation);
     void ChangeSunPosition(int year, int month, int day, double hours, double minutes, double seconds, double latitude, double longitude);
@@ -73,10 +73,10 @@ public:
     void Cut(QString nodeURL);
     void Delete();
     void Delete(QString nodeURL);
-    void InsertFileComponent(QString componentFileName = QString( "" ) );
+    void InsertFileComponent(QString componentFileName = "");
     void New();
     void Open(QString fileName);
-    void Paste(QString nodeURL, QString pasteType = QString("Shared") );
+    void Paste(QString nodeURL, QString pasteType = "Shared");
     void PasteCopy();
     void PasteLink();
     void Run();
@@ -85,8 +85,6 @@ public:
     void SaveComponent(QString componentFileName);
     void SaveAs(QString fileName);
     void SelectNode(QString nodeUrl);
-    void SetAimingPointAbsolute();
-    void SetAimingPointRelative();
     void SetExportAllPhotonMap();
     void SetExportCoordinates(bool enabled, bool global);
     void SetExportIntersectionSurface(bool enabled);
@@ -183,8 +181,6 @@ private:
     QSplitter* GetHorizontalSplitterPointer();
     bool OkToContinue();
     bool Paste( QModelIndex nodeIndex, tgc::PasteType type );
-    void SetAimingPointRelativity(bool relative);
-    bool SetAimingPointRelativity( QModelIndex nodeIndex, bool relative);
     QDir PluginDirectory();
 
     void ReadSettings();

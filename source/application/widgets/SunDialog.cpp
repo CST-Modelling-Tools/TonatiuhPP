@@ -42,8 +42,8 @@ SunDialog::SunDialog(
             m_sunNew = static_cast<SunAbstract*>(node->copy(true));
     }
 
-    makeSunShapeTab();
     makeSunPositionTab();
+    makeSunShapeTab();
     makeSunApertureTab();
 }
 

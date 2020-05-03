@@ -74,7 +74,7 @@ bool Document::ReadFile(const QString& fileName)
         m_scene->setSearchingChildren(true);
         m_isModified = false;
 
-        return (true);
+        return true;
     }
 
     return false;

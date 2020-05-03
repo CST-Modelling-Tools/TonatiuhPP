@@ -150,13 +150,6 @@
     <property name="title">
      <string>Scene</string>
     </property>
-    <widget class="QMenu" name="menuTrackers_2">
-     <property name="title">
-      <string>Trackers</string>
-     </property>
-     <addaction name="actionSetAimingPointAbsolute"/>
-     <addaction name="actionSetAimingPointRelative"/>
-    </widget>
     <addaction name="actionDefineSunLight"/>
     <addaction name="actionCalculateSunPosition"/>
     <addaction name="separator"/>
@@ -165,7 +158,6 @@
     <addaction name="actionUserComponent"/>
     <addaction name="actionSaveComponent"/>
     <addaction name="separator"/>
-    <addaction name="menuTrackers_2"/>
     <addaction name="actionDisconnect_All_Trackers"/>
    </widget>
    <widget class="QMenu" name="menuRun">
@@ -736,16 +728,6 @@
   <action name="actionReset_Analyzer_Values">
    <property name="text">
     <string>Reset Analyzer Values</string>
-   </property>
-  </action>
-  <action name="actionSetAimingPointRelative">
-   <property name="text">
-    <string>Set Aiming Point Relative</string>
-   </property>
-  </action>
-  <action name="actionSetAimingPointAbsolute">
-   <property name="text">
-    <string>Set Aiming Point Absolute</string>
    </property>
   </action>
   <action name="actionNetworkConnections">

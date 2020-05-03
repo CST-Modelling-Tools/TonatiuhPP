@@ -29,11 +29,11 @@
  */
 ParametersView::ParametersView(QWidget* parent):
     QTreeView(parent),
-    m_name(QString("") ),
-    m_delegate(0),
     m_node(0),
+    m_name(QString("")),
     m_model(0),
-    m_index()
+    m_index(),
+    m_delegate(0)
 {
 //    setAlternatingRowColors(true);
 
@@ -54,9 +54,9 @@ ParametersView::ParametersView(SoNode* node, QString name, QWidget* parent):
     QTreeView(parent),
     m_node(node),
     m_name(name),
-    m_delegate(0),
     m_model(0),
-    m_index()
+    m_index(),
+    m_delegate(0)
 {
     setStyleSheet(R"(
 QAbstractItemView {

@@ -6,6 +6,7 @@
 #include "TonatiuhFunctions.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/Point3D.h"
+#include "libraries/geometry/Vector3D.h"
 
 
 double tgf::AlternateBoxMuller(RandomAbstract& rand)
@@ -101,4 +102,9 @@ SbMatrix tgf::MatrixFromSoTransform(SoTransform* const& soTransform)
 Point3D tgf::makePoint3D(const SbVec3f& v)
 {
     return Point3D(v[0], v[1], v[2]);
+}
+
+Vector3D tgf::makeVector3D(const SbVec3f& v)
+{
+    return Vector3D(v[0], v[1], v[2]);
 }

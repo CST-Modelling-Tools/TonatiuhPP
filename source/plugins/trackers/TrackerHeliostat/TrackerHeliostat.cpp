@@ -24,87 +24,94 @@ TrackerHeliostat::TrackerHeliostat():
 {
     SO_NODEENGINE_CONSTRUCTOR(TrackerHeliostat);
 
-    SO_NODE_ADD_FIELD( m_azimuth, (0.f) );
-    SO_NODE_ADD_FIELD( m_zenith, (90.f) );
+    SO_NODE_ADD_FIELD( primaryAxis, (0.f, 1.f, 0.f) );
+    SO_NODE_ADD_FIELD( secondaryAxis, (1.f, 0.f, 0.f) );
+    SO_NODE_ADD_FIELD( mirrorNormal, (0.f, 1.f, 0.f) );
 
     SO_NODE_ADD_FIELD( isAimingAbsolute, (TRUE) );
+    SO_NODE_ADD_FIELD( aimingPoint, (0.f, 1.f, 0.f) );
 
-    SO_NODE_ADD_FIELD( aimingPoint, ( 0.f, 0.f, 0.f ) );
+    SO_NODEENGINE_ADD_OUTPUT(outputTranslation, SoSFVec3f);
+    SO_NODEENGINE_ADD_OUTPUT(outputRotation, SoSFRotation);
+    SO_NODEENGINE_ADD_OUTPUT(outputScaleFactor, SoSFVec3f);
+    SO_NODEENGINE_ADD_OUTPUT(outputScaleOrientation, SoSFRotation);
+    SO_NODEENGINE_ADD_OUTPUT(outputCenter, SoSFVec3f);
 
-	SO_NODE_DEFINE_ENUM_VALUE( Rotations, YX );
-	SO_NODE_DEFINE_ENUM_VALUE( Rotations, YZ );
-	SO_NODE_DEFINE_ENUM_VALUE( Rotations, XZ );
-	SO_NODE_DEFINE_ENUM_VALUE( Rotations, ZX );
-	SO_NODE_SET_SF_ENUM_TYPE( typeOfRotation, Rotations );
-	SO_NODE_ADD_FIELD( typeOfRotation, (YX) );
-
-	//ConstructEngineOutput();
-	SO_NODEENGINE_ADD_OUTPUT( outputTranslation, SoSFVec3f);
-	SO_NODEENGINE_ADD_OUTPUT( outputRotation, SoSFRotation);
-	SO_NODEENGINE_ADD_OUTPUT( outputScaleFactor, SoSFVec3f);
-	SO_NODEENGINE_ADD_OUTPUT( outputScaleOrientation, SoSFRotation);
-	SO_NODEENGINE_ADD_OUTPUT( outputCenter, SoSFVec3f);
+//    SO_NODE_ADD_FIELD( m_azimuth, (0.) );// for copy and paste
+//    SO_NODE_ADD_FIELD( m_zenith, (90.) );
 }
 
-void TrackerHeliostat::Evaluate(const Vector3D& vSunW, const Transform& tW2O)
+inline double findAngle(Vector3D& a, Vector3D& m, Vector3D& v, double av)
 {
-    Vector3D vSun = tW2O(vSunW);
+    return atan2(dot(a, cross(m, v)), dot(m, v) - av*av);
+}
+
+Vector3D findAngles(
+    Vector3D& a, Vector3D& b,
+    Vector3D& v, Vector3D& m, Vector3D& v0,
+    double av, double bv0
+)
+{
+    double alpha = findAngle(a, m, v, av);
+    double beta = findAngle(b, v0, m, bv0);
+    return Vector3D(alpha, beta, abs(alpha) + abs(beta));
+}
+
+void TrackerHeliostat::Evaluate(const Vector3D& vSunW, const Transform& transformWtO)
+{
+    // normal
+    Vector3D vSun = transformWtO(vSunW);
     vSun.normalize();
 
     Point3D rAim = tgf::makePoint3D(aimingPoint.getValue());
-
-    Vector3D vAim;
     if (isAimingAbsolute.getValue())
-        vAim = Vector3D( tW2O( rAim ) );
-	else
-        vAim = Vector3D(rAim);
+        rAim = transformWtO(rAim);
+    Vector3D vAim(rAim);
+    if (!vAim.normalize()) return;
 
+    Vector3D v = vSun + vAim;
+    if (!v.normalize()) return;
 
-    if( vAim.length() == 0.0f ) return;
-    vAim.normalize();
+    // cache
+    Vector3D a = tgf::makeVector3D(primaryAxis.getValue());
+    Vector3D b = tgf::makeVector3D(secondaryAxis.getValue());
+    Vector3D v0 = tgf::makeVector3D(mirrorNormal.getValue());
+    a.normalize();
+    b.normalize();
+    v0.normalize();
 
-    Vector3D n = vSun + vAim;
-	if( n.length() == 0.0f ) return;
-    n.normalize();
+    Vector3D k = cross(a, b);
+    double k2 = k.norm2();
+    double ab = dot(a, b);
+    double det = 1. - ab*ab;
+    double av = dot(a, v);
+    double bv0 = dot(b, v0);
 
-	Vector3D Axe1;
-	if ((typeOfRotation.getValue() == 0 ) || (typeOfRotation.getValue() == 1 ))// YX or YZ
-		Axe1 = Vector3D( 0.0f, 1.0f, 0.0f );
+    // algorithm
+    if (qFuzzyIsNull(det)) return;
+    double ma = (av - ab*bv0)/det;
+    double mb = (bv0 - ab*av)/det;
+    double mk = 1. - ma*ma - mb*mb - 2.*ma*mb*ab;
+    if (mk < 0.) return;
+    mk = sqrt(mk/k2);
+    Vector3D m0 = ma*a + mb*b;
 
-	else if (typeOfRotation.getValue() == 2 ) // XZ
-		Axe1 = Vector3D( 1.0f, 0.0f, 0.0f );
+    Vector3D m1 = m0 - mk*k;
+    Vector3D sol1 = findAngles(a, b, v, m1, v0, av, bv0);
+    Vector3D m2 = m0 + mk*k;
+    Vector3D sol2 = findAngles(a, b, v, m2, v0, av, bv0);
 
-	else // ZX
-		Axe1 = Vector3D(0.0f, 0.0f, 1.0f);
+    // select smallest rotation
+    Vector3D* sol;
+    if (sol1.z < sol2.z)
+        sol = &sol1;
+    else
+        sol = &sol2;
 
-	Vector3D t = CrossProduct( n, Axe1 );
-	//Vector3D t( n[2], 0.0f, -n[0] );
-    if( t.length() == 0.0f ) return; // happens!!!! for zenith
-	t = Normalize(t);
+    SbRotation rotationA(primaryAxis.getValue(), sol->x);
+    SbRotation rotationB(secondaryAxis.getValue(), sol->y);
+    SbRotation rotation = rotationB*rotationA;
 
-	Vector3D p = CrossProduct( t, n );
-	if (p.length() == 0.0f) return;
-	p = Normalize(p);
-
-	SbMatrix transformMatrix;
-	if ((typeOfRotation.getValue() == 0 ) || (typeOfRotation.getValue() == 3 ))// YX ou  ZX
-	{
-		 transformMatrix = SbMatrix( t[0], t[1], t[2], 0.0,
-								  n[0], n[1], n[2], 0.0,
-								  p[0], p[1], p[2], 0.0,
-								  0.0, 0.0, 0.0, 1.0 );
-	}
-	else // YZ
-	{
-		transformMatrix = SbMatrix( p[0], p[1], p[2], 0.0,
-								  n[0], n[1], n[2], 0.0,
-								  t[0], t[1], t[2], 0.0,
-								  0.0, 0.0, 0.0, 1.0 );
-	}
-
-
-	SoTransform* newTransform = new SoTransform();
-	newTransform->setMatrix( transformMatrix );
-
-	SetEngineOutput(newTransform);
+    SetEngineOutputRotation(rotation);
+//    SO_ENGINE_OUTPUT(outputRotation, SoSFRotation, setValue(rotation) );
 }

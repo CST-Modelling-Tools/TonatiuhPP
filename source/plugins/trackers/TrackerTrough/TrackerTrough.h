@@ -14,7 +14,7 @@ public:
     static void initClass();
 
     TrackerTrough();
-    void Evaluate(Vector3D sunVectorW, Transform parentWT0);
+    void Evaluate(const Vector3D& vSunW, const Transform& transformWtO);
 
     enum Axis {
 		X = 0,

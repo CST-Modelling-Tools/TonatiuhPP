@@ -106,10 +106,10 @@ bool ShapeParabolicRectangle::intersect(const Ray& ray, double *tHit, Differenti
     Vector3D dpdu(wX, ((-0.5 + u)*wX*wX)/(2.*f), 0.);
     Vector3D dpdv(0., ((-0.5 + v)*wZ*wZ)/(2.*f), wZ);
 
-    Vector3D N = Normalize(CrossProduct(dpdu, dpdv));
+    Vector3D N = Normalize(cross(dpdu, dpdv));
 
     *dg = DifferentialGeometry(hitPoint, u, v, dpdu, dpdv, N, this);
-    dg->shapeFrontSide = DotProduct(N, ray.direction()) <= 0;
+    dg->shapeFrontSide = dot(N, ray.direction()) <= 0;
 
 	*tHit = thit;
 	return true;
@@ -130,7 +130,7 @@ Vector3D ShapeParabolicRectangle::getNormal(double u, double v) const
 {
 	Vector3D dpdu( widthX.getValue(), ( (-0.5 + u) * widthX.getValue() *  widthX.getValue() )/(2 * focus.getValue()), 0 );
 	Vector3D dpdv( 0.0, (( -0.5 + v) * widthZ.getValue() *  widthZ.getValue() ) /( 2 * focus.getValue() ), widthZ.getValue() );
-    return Normalize(CrossProduct(dpdu, dpdv));
+    return Normalize(cross(dpdu, dpdv));
 }
 
 void ShapeParabolicRectangle::generatePrimitives(SoAction* action)

@@ -11,17 +11,13 @@ public:
     static void initClass();
     TrackerHeliostat();
 
-    void Evaluate(const Vector3D& vSunW, const Transform& tW2O);
+    void Evaluate(const Vector3D& vSunW, const Transform& transformWtO);
 
-    enum Rotations {
-		YX = 0,
-        YZ = 1,
-        XZ = 2,
-        ZX = 3
-	};
+    SoSFVec3f primaryAxis;
+    SoSFVec3f secondaryAxis;
+    SoSFVec3f mirrorNormal;
 
-	SoSFEnum typeOfRotation;
-	trt::TONATIUH_REALVECTOR3 aimingPoint;
+    SoSFVec3f aimingPoint;
 
     NAME_ICON_FUNCTIONS("TrackerHeliostat", ":/TrackerHeliostat.png")
 

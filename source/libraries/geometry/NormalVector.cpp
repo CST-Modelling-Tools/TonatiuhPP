@@ -127,14 +127,14 @@ std::ostream& operator<<(std::ostream& os, const NormalVector& nV)
     return os;
 }
 
-double DotProduct(const NormalVector& nA, const NormalVector& nB)
+double dot(const NormalVector& nA, const NormalVector& nB)
 {
     return nA.x * nB.x + nA.y * nB.y + nA.z * nB.z;
 }
 
 double AbsDotProduct(const NormalVector& nA, const NormalVector& nB)
 {
-    return fabs(DotProduct(nA, nB) );
+    return fabs(dot(nA, nB) );
 }
 
 NormalVector Normalize(const NormalVector& nV)

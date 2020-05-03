@@ -63,8 +63,6 @@ void TrackerAbstract::ConnectParentTranform(SoTransform* parentTransform)
     parentTransform->center.connectFrom(&outputCenter);
 }
 
-void TrackerAbstract::Evaluate(Vector3D, Transform) {}
-
 void TrackerAbstract::SetEngineOutputIdentity()
 {
     SO_ENGINE_OUTPUT(outputTranslation, SoSFVec3f, setValue(0., 0., 0.) );

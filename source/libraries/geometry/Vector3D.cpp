@@ -36,17 +36,17 @@ std::ostream& operator<<(std::ostream& os, const Vector3D& vector)
 
 double AbsDotProduct(const Vector3D& vA, const Vector3D& vB)
 {
-    return fabs(DotProduct(vA, vB) );
+    return fabs(dot(vA, vB) );
 }
 
 double AbsDotProduct(const Vector3D& vA, const NormalVector& nB)
 {
-    return fabs(DotProduct(vA, nB) );
+    return fabs(dot(vA, nB) );
 }
 
 double AbsDotProduct(const NormalVector& nA, const Vector3D& vB)
 {
-    return fabs(DotProduct(nA, vB) );
+    return fabs(dot(nA, vB) );
 }
 
 bool SameHemisphere(const Vector3D& vA, const Vector3D& vB)

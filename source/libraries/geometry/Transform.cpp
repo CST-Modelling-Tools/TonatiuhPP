@@ -366,8 +366,8 @@ Transform LookAt(const Point3D& pos, const Point3D& look, const Vector3D& up)
     m[3][3] = 1.0;
 
     Vector3D dir = Normalize(look - pos);
-    Vector3D right = CrossProduct(dir, Normalize(up) );
-    Vector3D newUp = CrossProduct(right, dir);
+    Vector3D right = cross(dir, Normalize(up) );
+    Vector3D newUp = cross(right, dir);
 
     m[0][0] = right.x;
     m[1][0] = right.y;
