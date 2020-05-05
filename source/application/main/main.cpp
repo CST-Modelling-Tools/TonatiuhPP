@@ -3,27 +3,12 @@
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QSplashScreen>
-#include <QTime>
+
+#include <iostream>
 
 #include <Inventor/Qt/SoQt.h>
 
 #include "MainWindow.h"
-#include "kernel/air/AirAbstract.h"
-#include "kernel/air/AirVacuum.h"
-#include "kernel/material/TDefaultMaterial.h"
-#include "kernel/scene/TSceneKit.h"
-#include "kernel/scene/TSeparatorKit.h"
-#include "kernel/scene/TShapeKit.h"
-#include "kernel/shape/ShapeCube.h"
-#include "kernel/shape/ShapeSquare.h"
-#include "kernel/sun/TLightKit.h"
-#include "kernel/sun/TLightShape.h"
-#include "kernel/trackers/GraphicRootTracker.h"
-#include "kernel/trackers/TDefaultTracker.h"
-#include "kernel/trackers/TSceneTracker.h"
-#include "kernel/trackers/TTrackerForAiming.h"
-#include "libraries/fields/UserMField.h"
-#include "libraries/fields/UserSField.h"
 
 #include <QScriptEngine>
 #include <QTextStream>
@@ -51,10 +36,11 @@
    application specific Coin3D extension subclasses, and the application loop.
  */
 
-Q_DECLARE_METATYPE(QVector<QVariant>)
+//Q_DECLARE_METATYPE(QVector<QVariant>)
 
 #include <QStyleFactory>
 #include <QDebug>
+
 
 int main(int argc, char** argv)
 {
@@ -69,46 +55,20 @@ int main(int argc, char** argv)
     QSplashScreen* splash = new QSplashScreen;
     splash->setPixmap(QPixmap(":/images/about/SplashScreen.png") );
     splash->show();
+    int splashAlignment = Qt::AlignLeft | Qt::AlignBottom;
 
-    Qt::Alignment topRight = Qt::AlignRight | Qt::AlignTop;
-
-    splash->showMessage(QObject::tr("Loading libraries..."), topRight, Qt::black);
-
-
-    QApplication::addLibraryPath(QApplication::applicationDirPath()
-                                 + QDir::separator() + "marble");
-
+    splash->showMessage("Loading Coin3D...", splashAlignment);
     SoQt::init( (QWidget*) NULL);
 
-    UserMField::initClass();
-    UserSField::initClass();
 
-    TSceneKit::initClass();
-    TSeparatorKit::initClass();
-
-    TLightShape::initClass();
-    TLightKit::initClass();
-    AirAbstract::initClass();
-    SunAbstract::initClass();
-
-    TShapeKit::initClass();
-    ShapeAbstract::initClass();
-    MaterialAbstract::initClass();
-    TDefaultMaterial::initClass();
-
-    TrackerAbstract::initClass();
-    TTrackerForAiming::initClass();
-    TDefaultTracker::initClass();
-    TSceneTracker::initClass();
-    GraphicRootTracker::initClass();
-
-    splash->showMessage(QObject::tr("Setting up the main window..."), topRight, Qt::black);
+    splash->showMessage("Loading plugins...", splashAlignment);
 
     QDir pluginsDirectory(qApp->applicationDirPath() );
     pluginsDirectory.cd("plugins");
     PluginManager pluginManager;
     pluginManager.load(pluginsDirectory);
 
+    splash->showMessage("Opening scene...", splashAlignment);
     int exit;
     if (argc > 1)
     {

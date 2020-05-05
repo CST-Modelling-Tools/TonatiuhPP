@@ -4,24 +4,36 @@
 #include <QPluginLoader>
 #include <QStringList>
 
+#include "kernel/air/AirExponential.h"
 #include "kernel/air/AirFactory.h"
+#include "kernel/air/AirPolynomial.h"
+#include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/material/MaterialFactory.h"
+#include "kernel/material/TDefaultMaterial.h"
 #include "kernel/photons/PhotonExportFactory.h"
+#include "kernel/photons/PhotonExportNull.h"
+#include "kernel/photons/PhotonExportWidget.h"
 #include "kernel/random/RandomFactory.h"
-#include "kernel/shape/ShapeFactory.h"
+#include "kernel/random/RandomSTL.h"
+#include "kernel/scene/TSceneKit.h"
+#include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeCube.h"
+#include "kernel/shape/ShapeFactory.h"
 #include "kernel/shape/ShapeSquare.h"
 #include "kernel/sun/SunFactory.h"
 #include "kernel/sun/SunPillbox.h"
-#include "kernel/air/AirVacuum.h"
-#include "kernel/air/AirPolynomial.h"
-#include "kernel/air/AirExponential.h"
-#include "kernel/random/RandomSTL.h"
-#include "kernel/photons/PhotonExportNull.h"
-#include "kernel/photons/PhotonExportWidget.h"
+#include "kernel/sun/TLightKit.h"
+#include "kernel/sun/TLightShape.h"
+#include "kernel/trackers/GraphicRootTracker.h"
+#include "kernel/trackers/TDefaultTracker.h"
+#include "kernel/trackers/TSceneTracker.h"
+#include "kernel/trackers/TTrackerForAiming.h"
 #include "kernel/trackers/TrackerFactory.h"
+#include "libraries/fields/UserMField.h"
+#include "libraries/fields/UserSField.h"
 #include "libraries/geometry/gf.h"
+#include "view/SkyBackground.h"
 
 
 template <class T>
@@ -43,6 +55,32 @@ void sortFactories(const QStringList& sorting, QVector<T*>& factories) {
     }
 }
 
+
+PluginManager::PluginManager()
+{
+    UserMField::initClass();
+    UserSField::initClass();
+
+    TSceneKit::initClass();
+    TSeparatorKit::initClass();
+
+    TLightShape::initClass();
+    TLightKit::initClass();
+    AirAbstract::initClass();
+    SunAbstract::initClass();
+
+    TShapeKit::initClass();
+    ShapeAbstract::initClass();
+    MaterialAbstract::initClass();
+    TDefaultMaterial::initClass();
+
+    TrackerAbstract::initClass();
+    TTrackerForAiming::initClass();
+    TDefaultTracker::initClass();
+    TSceneTracker::initClass();
+    GraphicRootTracker::initClass();
+    SkyBackground::initClass();
+}
 
 /*!
  * Loads all the valid plugins from "plugins" subdirecotry of the directory in
@@ -66,8 +104,8 @@ void PluginManager::load(QDir dir)
     loadTonatiuhPlugin(new AirFactoryT<AirExponential>);
     loadTonatiuhPlugin(new AirFactoryT<AirPolynomial>);
 
-    loadTonatiuhPlugin(new ShapeFactoryT<ShapeSquare>);
-    loadTonatiuhPlugin(new ShapeFactoryT<ShapeCube>);
+//    loadTonatiuhPlugin(new ShapeFactoryT<ShapeSquare>);
+//    loadTonatiuhPlugin(new ShapeFactoryT<ShapeCube>);
 
     loadTonatiuhPlugin(new RandomFactoryT<RandomSTL>);
     loadTonatiuhPlugin(new PhotonExportFactoryT<PhotonExportNull, PhotonExportWidget>);

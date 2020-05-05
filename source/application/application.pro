@@ -6,8 +6,9 @@ include(../config.pri)
 QT += concurrent # for multithreading
 QT += script # for scripting
 QT += printsupport # for customplot
+QT += gui # QVector3D
 
-LIBS += -lTonatiuhKernel -lTonatiuhLibraries
+LIBS += -lTonatiuhKernel -lTonatiuhLibraries -lOpengl32
 
 HEADERS += \
     $$files(actions/*.h) \

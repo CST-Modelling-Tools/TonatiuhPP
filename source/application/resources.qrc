@@ -42,5 +42,7 @@
         <file>images/view/viewXZ.png</file>
         <file>images/view/viewYZ.png</file>
         <file>images/run/runScript.png</file>
+        <file>images/scene/nodeMaterial.png</file>
+        <file>images/scene/nodeTracker.png</file>
     </qresource>
 </RCC>

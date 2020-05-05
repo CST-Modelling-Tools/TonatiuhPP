@@ -88,7 +88,6 @@ TLightKit::TLightKit()
     SO_NODE_ADD_FIELD(zenith, (0.) );
     SO_NODE_ADD_FIELD(disabledNodes, ("") );
 
-
     SO_KIT_INIT_INSTANCE();
 
     SoDirectionalLight* light = static_cast<SoDirectionalLight*>(getPart("light", true) );
@@ -98,7 +97,7 @@ TLightKit::TLightKit()
     setPart("transform", transform);
 
     SoMaterial* lightMaterial = static_cast<SoMaterial*>(getPart("iconMaterial", true) );
-    lightMaterial->transparency = 0.5;
+    lightMaterial->transparency = 0.75f;
     setPart("iconMaterial", lightMaterial);
 
     int widthPixeles = 10;
@@ -109,7 +108,7 @@ TLightKit::TLightKit()
     SoTexture2* texture = new SoTexture2;
     texture->image.setValue(SbVec2s(heightPixeles, widthPixeles), 1, bitmap.data());
     texture->model = SoTexture2::BLEND;
-    texture->blendColor.setValue(0.933f, 0.91f, 0.666f);
+    texture->blendColor.setValue(1.f, 1.f, 1.f);
     setPart("iconTexture", texture);
 
     TLightShape* iconShape = new TLightShape;
@@ -146,7 +145,6 @@ void TLightKit::Update(BBox box)
     double distMax = box.pMax.y + 10 - box.pMin.y;
     double back = box.pMax.y + 10;
 
-
     if (-gc::Infinity  == box.Volume() )
     {
         xMin = 0.0;
@@ -170,12 +168,10 @@ void TLightKit::Update(BBox box)
     shape->zMax.setValue( (zMax + delta) );
     shape->delta.setValue(delta);
 
-
     SoTransform* lightTransform = static_cast< SoTransform* >(this->getPart("transform", false) );
     if (!lightTransform) return;
     SbVec3f translation(0.0, back, 0.0);
     lightTransform->translation.setValue(translation);
-
 }
 
 void TLightKit::ComputeLightSourceArea(int widthDivisions, int heigthDivisions, QVector< QPair< TShapeKit*, Transform > > surfacesList)
@@ -186,7 +182,6 @@ void TLightKit::ComputeLightSourceArea(int widthDivisions, int heigthDivisions, 
     double width =  shape->xMax.getValue() - shape->xMin.getValue();
     double height = shape->zMax.getValue() - shape->zMin.getValue();
 
-
     int widthPixeles = widthDivisions;
     while ( (width / widthPixeles) < shape->delta.getValue() ) widthPixeles--;
     double pixelWidth = double( width / widthPixeles );
@@ -194,7 +189,6 @@ void TLightKit::ComputeLightSourceArea(int widthDivisions, int heigthDivisions, 
     int heightPixeles = heigthDivisions;
     while ( (height / heightPixeles) < shape->delta.getValue() ) heightPixeles--;
     double pixelHeight = height / heightPixeles;
-
 
     QImage* sourceImage = new QImage(widthPixeles, heightPixeles, QImage::Format_RGB32);
     sourceImage->setOffset(QPoint(0.5, 0.5) );
@@ -233,7 +227,6 @@ void TLightKit::ComputeLightSourceArea(int widthDivisions, int heigthDivisions, 
             Point3D p7(shapeBB.pMax.x, shapeBB.pMax.y, shapeBB.pMax.z);
             Point3D p8(shapeBB.pMin.x, shapeBB.pMax.y, shapeBB.pMax.z);
 
-
             Point3D tP1 = shapeToWorld(p1);
             Point3D tP2 = shapeToWorld(p2);
             Point3D tP3 = shapeToWorld(p3);
@@ -259,7 +252,6 @@ void TLightKit::ComputeLightSourceArea(int widthDivisions, int heigthDivisions, 
             QPointF polygon5[4] = { qP3, qP4, qP8, qP7 };
             QPointF polygon6[4] = { qP5, qP6, qP7, qP8 };
 
-
             painter.drawPoint(qP1);
             painter.drawPoint(qP2);
             painter.drawPoint(qP3);
@@ -268,7 +260,6 @@ void TLightKit::ComputeLightSourceArea(int widthDivisions, int heigthDivisions, 
             painter.drawPoint(qP6);
             painter.drawPoint(qP7);
             painter.drawPoint(qP8);
-
 
             painter.drawPolygon(polygon1, 4);
             painter.drawPolygon(polygon2, 4);
@@ -296,7 +287,6 @@ void TLightKit::ComputeLightSourceArea(int widthDivisions, int heigthDivisions, 
     {
         for (int j = 0; j < heightPixeles; j++)
         {
-
             double pixelIntensity = (sourceImage->pixel(i, j) == black) ? 1 : 0;
             if ( (i - 1) >= 0 && (j - 1) >= 0) pixelIntensity += (sourceImage->pixel(i - 1, j - 1) == black) ? 1 : 0;
             if ( (j - 1) >= 0) pixelIntensity += (sourceImage->pixel(i, j - 1) == black) ? 1 : 0;
@@ -317,10 +307,8 @@ void TLightKit::ComputeLightSourceArea(int widthDivisions, int heigthDivisions, 
                 areaMatrix[j][i] = 0;
                 bitmap[ i * heightPixeles +  j ] = 255;
             }
-
         }
     }
-
 
 //    SoTexture2* texture = static_cast< SoTexture2* >(getPart("iconTexture", true) );
 //    texture->image.setValue(SbVec2s(heightPixeles, widthPixeles), 1, bitmap);

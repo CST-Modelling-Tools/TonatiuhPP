@@ -761,7 +761,7 @@ void MainWindow::ShowMenu(const QModelIndex& index)
 
     if (type.isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
     {
-        QMenu* trackersMenu = popupmenu.addMenu("Trackers");
+//        QMenu* trackersMenu = popupmenu.addMenu("Trackers");
 //        trackersMenu->addAction(actionSetAimingPointRelative);
 //        trackersMenu->addAction(actionSetAimingPointAbsolute);
 
@@ -772,7 +772,6 @@ void MainWindow::ShowMenu(const QModelIndex& index)
         SoTransform* transform = static_cast< SoTransform* >(coinKit->getPart("transform", true) );
         SoType transformType = transform->getTypeId();
 
-
         if (!transformType.isDerivedFrom(SoCenterballManip::getClassTypeId()) ) transformMenu->addAction(tr("SoCenterballManip"),  this, SLOT(SoTransform_to_SoCenterballManip()));
         if (!transformType.isDerivedFrom(SoHandleBoxManip::getClassTypeId()) ) transformMenu->addAction(tr("SoHandleBoxManip"), this, SLOT(SoTransform_to_SoHandleBoxManip()));
         if (!transformType.isDerivedFrom(SoJackManip::getClassTypeId()) ) transformMenu->addAction(tr("SoJackManip"), this, SLOT(SoTransform_to_SoJackManip()));
@@ -781,15 +780,11 @@ void MainWindow::ShowMenu(const QModelIndex& index)
         if (!transformType.isDerivedFrom(SoTransformBoxManip::getClassTypeId()) ) transformMenu->addAction(tr("SoTransformBoxManip"), this, SLOT(SoTransform_to_SoTransformBoxManip()));
         if (!transformType.isDerivedFrom(SoTransformerManip::getClassTypeId()) ) transformMenu->addAction(tr("SoTransformerManip"), this, SLOT(SoTransform_to_SoTransformerManip()));
 
-
-
         if (transformType.isDerivedFrom(SoTransformManip::getClassTypeId()) ) transformMenu->addAction(tr("SoTransform"), this, SLOT(SoManip_to_SoTransform()) );
-
     }
 
     //Mostramos el menu contextual
     popupmenu.exec(QCursor::pos() );
-
 }
 
 /*!
@@ -797,12 +792,13 @@ void MainWindow::ShowMenu(const QModelIndex& index)
  */
 void MainWindow::ShowRayTracerOptionsDialog()
 {
-    QVector< RandomFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
-    RayTraceDialog* options = new RayTraceDialog(m_raysTraced,
-                                                 randomDeviateFactoryList, m_selectedRandomDeviate,
-                                                 m_widthDivisions,m_heightDivisions,
-                                                 m_drawRays, m_drawPhotons,
-                                                 m_bufferPhotons, m_increasePhotonMap, this);
+    QVector<RandomFactory*> randomDeviateFactoryList = m_pluginManager->getRandomFactories();
+    RayTraceDialog* options = new RayTraceDialog(
+        m_raysTraced,
+        randomDeviateFactoryList, m_selectedRandomDeviate,
+        m_widthDivisions,m_heightDivisions,
+        m_drawRays, m_drawPhotons,
+        m_bufferPhotons, m_increasePhotonMap, this);
     options->exec();
 
     SetRaysPerIteration(options->GetNumRays() );
@@ -864,7 +860,6 @@ void MainWindow::on_actionSunPlane_triggered()
     TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
     if (!lightKit) return;
 
-
     SoSearchAction coinSearch;
     coinSearch.setNode(lightKit);
     coinSearch.setInterest(SoSearchAction::FIRST);
@@ -914,7 +909,6 @@ void MainWindow::on_action_X_Y_Plane_triggered()
 
     //SbViewportRegion vpr = m_graphicView[m_focusView]->GetViewportRegion();
     //cam->viewAll( m_graphicsRoot->GetNode(), vpr );
-
 }
 
 void MainWindow::on_action_X_Z_Plane_triggered()
@@ -1304,7 +1298,7 @@ void MainWindow::CreateMaterial(QString materialType)
         return;
     }
 
-    CreateMaterial(factoryList[ selectedMaterial ]);
+    CreateMaterial(factoryList[selectedMaterial]);
 }
 
 /*!
@@ -1408,7 +1402,7 @@ void MainWindow::CreateTracker(QString trackerType)
         return;
     }
 
-    CreateTracker(factoryList[ selectedTracker ]);
+    CreateTracker(factoryList[selectedTracker]);
 }
 
 /*!
@@ -3201,7 +3195,6 @@ void MainWindow::SetupActionsInsertComponent()
         connect(actionInsertComponent, SIGNAL(CreateComponent(ComponentFactory*)),
                 this, SLOT(CreateComponent(ComponentFactory*)) );
     }
-
 }
 
 void MainWindow::SetupActionsInsertMaterial()
@@ -3218,7 +3211,7 @@ void MainWindow::SetupActionsInsertMaterial()
     }
 
     QPushButton* button = new QPushButton;
-    button->setIcon(QIcon(":/images/scene/nodeSurface.png"));
+    button->setIcon(QIcon(":/images/scene/nodeMaterial.png"));
     button->setMenu(menu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
 }
@@ -3275,7 +3268,7 @@ void MainWindow::SetupActionsInsertTracker()
     }
 
     QPushButton* button = new QPushButton;
-    button->setIcon(QIcon(":/images/scene/nodeSurface.png"));
+    button->setIcon(QIcon(":/images/scene/nodeTracker.png"));
     button->setMenu(menu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
 }

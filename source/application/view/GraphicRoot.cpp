@@ -4,21 +4,24 @@
 #include <Inventor/VRMLnodes/SoVRMLBackground.h>
 
 #include "libraries/geometry/gf.h"
+#include "libraries/geometry/gc.h"
 
 #include "GraphicRoot.h"
 #include "kernel/trackers/GraphicRootTracker.h"
 #include "kernel/scene/TSceneKit.h"
 
 
-void selectionFinishCallback( void * userData, SoSelection* selection )
+void selectionFinishCallback(void* userData, SoSelection* selection)
 {
-    GraphicRoot* root = static_cast< GraphicRoot* >( userData  );
-    if ( root ) root->SelectionChanged( selection );
+    GraphicRoot* root = static_cast<GraphicRoot*>(userData);
+    if (root) root->SelectionChanged(selection);
 }
 
 
+#include "SkyBackground.h"
+
 GraphicRoot::GraphicRoot():
-    m_graphicsRoot(0),
+    m_nodeRoot(0),
     m_pGrid(0),
     m_pRays(0),
     m_pRootTransform(0),
@@ -26,24 +29,44 @@ GraphicRoot::GraphicRoot():
     m_pSelectionNode(0),
     m_pTracker(0)
 {
-    m_graphicsRoot = new SoSeparator;
-    m_graphicsRoot->ref();
+    m_nodeRoot = new SoSeparator;
+    m_nodeRoot->ref();
 
-    SoVRMLBackground* vrmlBackground = new SoVRMLBackground;
-    //float gcolor[][3] = { {0.9843f, 0.8862f, 0.6745f},{ 0.7843f, 0.6157f, 0.4785f } };
-    float gcolor[][3] = { {0.7, 0.42, 0.15f},{ 0.7f, 0.42f, 0.15f } };
+//    SoVRMLBackground* nodeSky = new SoVRMLBackground;
+//    //float gcolor[][3] = { {0.9843f, 0.8862f, 0.6745f},{ 0.7843f, 0.6157f, 0.4785f } };
+//    float gcolor[][3] = {{0.7, 0.42, 0.15f}, {0.7f, 0.42f, 0.15f}};
+//    float gangles[] = {1.570f};
+//    nodeSky->groundColor.setValues(0, 6, gcolor);
+//    nodeSky->groundAngle.setValues(0, 1, gangles);
 
-    float gangle= 1.570f;
-    vrmlBackground->groundColor.setValues( 0, 6, gcolor );
-    vrmlBackground->groundAngle.setValue( gangle );
-    float scolor[][3] = { {0.0157f, 0.0235f, 0.4509f}, {0.5569f, 0.6157f, 0.8471f} };
-    float sangle= 1.570f;
-    vrmlBackground->skyColor.setValues( 0,6,scolor );
-    vrmlBackground->skyAngle.setValue( sangle );
-    m_graphicsRoot->addChild( vrmlBackground );
+//    float scolor[][3] = {{0.0157f, 0.0235f, 0.4509f}, {0.5569f, 0.6157f, 0.8471f}};
+//    float sangle = 1.570f;
+////    nodeSky->skyColor.setValues(0, 6, scolor);
+////    nodeSky->skyAngle.setValue(sangle);
+
+//    SkyGradient gr;
+//    gr.cZ = QColor("#60769d");
+//    gr.cH = QColor("#b2c3d2");
+//    gr.g = QVector3D(0.3, 0.3, 0.3);
+
+//    QVector<double> thetas = {0.001, 30., 60., 70, 80., 85, 89.999};
+//    int nMax = thetas.size();
+//    nodeSky->skyColor.setNum(nMax);
+//    nodeSky->skyAngle.setNum(nMax - 1);
+
+//    for (int n = 0; n < nMax; ++n) {
+//        double t = thetas[n]*gc::Degree;
+//        QColor c = gr.find(t);
+//        nodeSky->skyColor.set1Value(n, c.redF(), c.greenF(), c.blueF());
+//        if (n == 0) continue;
+//        nodeSky->skyAngle.set1Value(n - 1, t);
+//    }
+
+    SkyBackground* nodeSky = new SkyBackground;
+    m_nodeRoot->addChild(nodeSky);
 
     m_pSceneSeparator = new SoSeparator;
-    m_graphicsRoot->addChild( m_pSceneSeparator );
+    m_nodeRoot->addChild( m_pSceneSeparator );
 
     m_pRootTransform = new SoTransform;
     m_pRootTransform->ref();
@@ -81,10 +104,10 @@ GraphicRoot::~GraphicRoot()
         while ( m_pRootTransform->getRefCount( ) > 1 )    m_pRootTransform->unref();
         m_pRootTransform = 0;
     }
-    if( m_graphicsRoot)
+    if( m_nodeRoot)
     {
-        while ( m_graphicsRoot->getRefCount( ) > 1 )    m_graphicsRoot->unref();
-        m_graphicsRoot = 0;
+        while ( m_nodeRoot->getRefCount( ) > 1 )    m_nodeRoot->unref();
+        m_nodeRoot = 0;
     }
 }
 
@@ -119,7 +142,7 @@ void GraphicRoot::DeselectAll()
 
 SoSeparator* GraphicRoot::GetNode() const
 {
-    return m_graphicsRoot;
+    return m_nodeRoot;
 }
 
 void GraphicRoot::RemoveGrid()
@@ -168,9 +191,9 @@ void GraphicRoot::SelectionChanged( SoSelection* selection )
     emit ChangeSelection( selection );
 }
 
-void GraphicRoot::ShowBackground( bool view )
+void GraphicRoot::ShowBackground( bool view ) //?
 {
-    SoVRMLBackground* vrmlBackground = static_cast< SoVRMLBackground* > ( m_graphicsRoot->getChild( 0 ) );
+    SoVRMLBackground* vrmlBackground = static_cast< SoVRMLBackground* > ( m_nodeRoot->getChild( 0 ) );
 
     if( view )
     {
@@ -199,9 +222,9 @@ void GraphicRoot::ShowBackground( bool view )
 void GraphicRoot::ShowGrid( bool view )
 {
     if( view && m_pGrid )
-        m_graphicsRoot->addChild( m_pGrid );
+        m_nodeRoot->addChild( m_pGrid );
     else if( !view )
-        if ( m_pGrid->getRefCount( ) > 0 )    m_graphicsRoot->removeChild( m_pGrid );
+        if ( m_pGrid->getRefCount( ) > 0 )    m_nodeRoot->removeChild( m_pGrid );
 }
 
 void GraphicRoot::ShowRays( bool view )

@@ -34,7 +34,7 @@ void GraphicView::SetSceneGraph(GraphicRoot* sceneGraphRoot)
 
     SoBoxHighlightRenderAction* highlighter = new SoBoxHighlightRenderAction();
     highlighter->setColor(SbColor(100/255., 180/255., 120/255.));
-    highlighter->setLineWidth(1.);
+    highlighter->setLineWidth(2.);
     m_myRenderArea->setGLRenderAction(highlighter);
 
     m_myRenderArea->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);

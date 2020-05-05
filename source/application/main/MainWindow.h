@@ -193,11 +193,13 @@ private:
     bool SaveFile(const QString& fileName);
     void SetCurrentFile(const QString& fileName);
     bool SetPhotonMapExportSettings();
+
     void SetupActions();
     void SetupActionsInsertComponent();
     void SetupActionsInsertMaterial();
     void SetupActionsInsertShape();
     void SetupActionsInsertTracker();
+
     void SetupCommandView();
     void SetupDocument();
     void SetupGraphcisRoot();

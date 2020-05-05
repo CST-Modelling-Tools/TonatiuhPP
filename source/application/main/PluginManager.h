@@ -27,7 +27,7 @@ class PluginManager
 {
 
 public:
-    PluginManager() {}
+    PluginManager();
 
     QVector<AirFactory*> getAirFactories() const {return m_airFactories;}
     QVector<ComponentFactory*> getComponentFactories() const {return m_componentFactories;}
@@ -68,3 +68,5 @@ private:
     QMap<QString, SunFactory*> m_sunMap;
     QMap<QString, TrackerFactory*> m_trackersMap;
 };
+
+

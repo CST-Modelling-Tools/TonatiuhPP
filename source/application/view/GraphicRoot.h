@@ -43,7 +43,7 @@ private:
 
     SoSeparator* CreateGrid(int xDimension, int zDimension, double xSpacing, double zSpacing);
 
-    SoSeparator* m_graphicsRoot;
+    SoSeparator* m_nodeRoot;
     SoSeparator* m_pGrid;
     SoSeparator* m_pRays;
     SoTransform* m_pRootTransform;
