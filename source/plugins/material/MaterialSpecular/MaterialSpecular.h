@@ -22,14 +22,14 @@ public:
         NORMAL = 1,
     };
 
+    static void initClass();
     MaterialSpecular();
-	static void initClass();
 
-    bool OutputRay(const Ray& incident, DifferentialGeometry* dg, RandomAbstract& rand, Ray* outputRay) const;
+    bool OutputRay(const Ray& rayIn, DifferentialGeometry* dg, RandomAbstract& rand, Ray* rayOut) const;
 
-	trt::TONATIUH_REAL m_reflectivity;
-	trt::TONATIUH_REAL m_sigmaSlope;
-	SoSFEnum m_distribution;
+    SoSFDouble reflectivity;
+    SoSFDouble sigmaSlope;
+    SoSFEnum distribution;
 
     SoMFColor m_ambientColor;
     SoMFColor m_diffuseColor;

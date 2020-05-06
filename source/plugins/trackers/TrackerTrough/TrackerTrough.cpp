@@ -27,10 +27,6 @@ TrackerTrough::TrackerTrough():
 {
     SO_NODEENGINE_CONSTRUCTOR(TrackerTrough);
 
-	// Define input fields and their default values
-	//SO_NODE_ADD_FIELD( m_azimuth, ( 0.0 ) );
-	//SO_NODE_ADD_FIELD( m_zenith, ( 90.0 ) );
-
     SO_NODE_ADD_FIELD( isAimingAbsolute, (FALSE) );
 
     SO_NODE_DEFINE_ENUM_VALUE(Axis, X);
@@ -55,12 +51,12 @@ void TrackerTrough::Evaluate(const Vector3D& sunVectorW, const Transform& parent
 
 	Vector3D localAxis;
 	Point3D focusPoint;
-	if( activeAxis.getValue() == 0 )
+    if (activeAxis.getValue() == 0)
 	{
-		localAxis  =  Vector3D( 1.0, 0.0, 0.0 ) ;
-		focusPoint = Point3D( 0.0, axisOrigin.getValue()[0], axisOrigin.getValue()[1] ) ;
+        localAxis  =  Vector3D(1., 0., 0.) ;
+        focusPoint = Point3D(0., axisOrigin.getValue()[0], axisOrigin.getValue()[1] ) ;
 	}
-	else if( activeAxis.getValue() == 1 )
+    else if (activeAxis.getValue() == 1)
 	{
 		localAxis =  Vector3D( 0.0, 1.0, 0.0 );
 		focusPoint = Point3D( axisOrigin.getValue()[0], 0.0, axisOrigin.getValue()[1] ) ;
@@ -82,7 +78,7 @@ void TrackerTrough::Evaluate(const Vector3D& sunVectorW, const Transform& parent
     double angle = 0.;
 	//Dawann : in a Fresnel concentrator we use the project of the sun vector on the normal plan of the axis
 	//it= the projection of the sun on the normal plan of the axis...
-	if( localAxis == Vector3D( 1.0, 0.0, 0.0 ) )
+    if (localAxis == Vector3D(1., 0., 0.))
 	{
 		Vector3D r = Normalize( Vector3D( 0.0, focus.y, focus.z ) );
 		Vector3D it = Normalize( Vector3D( 0.0, i.y, i.z ) );
@@ -94,7 +90,7 @@ void TrackerTrough::Evaluate(const Vector3D& sunVectorW, const Transform& parent
 		Vector3D r = Normalize( Vector3D( focus.x, 0.0, focus.z ) );
 		Vector3D it = Normalize( Vector3D( i.x, 0.0, i.z ) );
 		Vector3D n = Normalize( it + r );
-		if( fabs( n.z ) > 0.0  )	angle = - atan2( n.z, n.x );
+        if (fabs( n.z ) > 0.)	angle = - atan2( n.z, n.x );
 	}
 	else
 	{

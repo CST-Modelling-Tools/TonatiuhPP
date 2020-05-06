@@ -224,10 +224,10 @@ void ShapeCube::generatePrimitives(SoAction* action)
      endShape();
 }
 
-Point3D ShapeCube::getPoint(double /*u1*/, double /*u2*/ ) const
+Vector3D ShapeCube::getPoint(double /*u1*/, double /*u2*/ ) const
 {
     //Yet to be implemented
-    return Point3D( 0, 0, 0 );
+    return Vector3D(0, 0, 0);
 }
 
 Vector3D ShapeCube::getNormal(double /*u*/, double /*v*/ ) const

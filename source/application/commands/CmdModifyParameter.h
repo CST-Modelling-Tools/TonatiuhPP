@@ -5,21 +5,19 @@
 class SceneModel;
 class SoNode;
 
-class CmdModifyParameter : public QUndoCommand
+class CmdModifyParameter: public QUndoCommand
 {
 
 public:
-    CmdModifyParameter( SoNode* node, QString parameterName, QString parameterValue, SceneModel* model, QUndoCommand* parent = 0 );
-    ~CmdModifyParameter();
+    CmdModifyParameter(SoNode* node, QString name, QString value, SceneModel* model, QUndoCommand* parent = 0);
 
-     virtual void undo();
-     virtual void redo();
+     void undo();
+     void redo();
 
 private:
      SoNode* m_coinNode;
-    QString m_newValue;
-    QString m_oldValue;
-    QString m_parameterName;
-    SceneModel* m_pModel;
-
+     QString m_newValue;
+     QString m_oldValue;
+     QString m_parameterName;
+     SceneModel* m_pModel;
 };

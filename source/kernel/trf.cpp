@@ -32,8 +32,8 @@ SoSeparator* trf::DrawPhotons(const PhotonMap& map)
     uint n = 0;
     for (Photon* photon : map.GetAllPhotons())
     {
-        Point3D& p = photon->pos;
-        coordinates->point.set1Value(n++, p.x, p.y, p.z);
+        Point3D& pos = photon->pos;
+        coordinates->point.set1Value(n++, pos.x, pos.y, pos.z);
     }
     ans->addChild(coordinates);
 
@@ -42,7 +42,7 @@ SoSeparator* trf::DrawPhotons(const PhotonMap& map)
     ans->addChild(material);
 
     SoDrawStyle* style = new SoDrawStyle;
-    style->pointSize = 2;
+    style->pointSize = 3;
     ans->addChild(style);
 
     SoPointSet* points = new SoPointSet;
@@ -56,24 +56,20 @@ SoSeparator* trf::DrawRays(const PhotonMap& map, unsigned long /*numberOfRays*/)
     SoSeparator* ans = new SoSeparator;
 
     SoCoordinate3* points = new SoCoordinate3;
-    const std::vector<Photon*>& photons = map.GetAllPhotons();
-    uint nPhoton = 0;
-    int nRay = 0;
     QVector<int> rayLengths;
-    ulong s = 0;
-    for (Photon* photon : photons)
+    uint n = 0;
+    int s = 0;
+    for (Photon* photon : map.GetAllPhotons())
     {
         if (photon->id == 0 && s > 0) {
-            nRay++;
             rayLengths << s;
             s = 0;
         }
-
         Point3D& pos = photon->pos;
-        points->point.set1Value(nPhoton++, pos.x, pos.y, pos.z);
+        points->point.set1Value(n++, pos.x, pos.y, pos.z);
         s++;
-
-    }      
+    }
+    rayLengths << s;
     ans->addChild(points);
 
     SoMaterial* material = new SoMaterial;

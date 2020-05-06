@@ -31,7 +31,7 @@ public:
 protected:
     ~ShapeCylinder() {}
 
-    Point3D getPoint(double u, double v) const;
+    Vector3D getPoint(double u, double v) const;
     Vector3D getNormal(double u, double v) const;
     void generatePrimitives(SoAction* action);
 };

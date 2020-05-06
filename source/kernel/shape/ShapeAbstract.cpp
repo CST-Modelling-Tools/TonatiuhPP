@@ -53,7 +53,7 @@ void ShapeAbstract::generateQuads(SoAction* action, const QSize& dims, bool reve
         for (int j = 0; j < jMax; ++j) {
             double v = j/double(jMax - 1);
 
-            Point3D point = getPoint(u, v);
+            Vector3D point = getPoint(u, v);
             Vector3D normal = getNormal(u, v);
             if (reverseNormals) normal = -normal;
 

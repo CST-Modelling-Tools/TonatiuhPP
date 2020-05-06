@@ -49,7 +49,7 @@ bool ShapeSquare::intersectP(const Ray& objectRay) const
     return intersect(objectRay, 0, 0);
 }
 
-Point3D ShapeSquare::getPoint (double u, double v) const
+Vector3D ShapeSquare::getPoint(double u, double v) const
 {
     if ((u < 0.0 && u > 1) && (v < 0.0 && v > 1) )
         gf::SevereError( "Function ShapeSquare::GetPoint3D called with invalid parameters" );
@@ -57,7 +57,7 @@ Point3D ShapeSquare::getPoint (double u, double v) const
     double x = (u * m_sideLength.getValue()) - (m_sideLength.getValue()/2);
     double z = v * m_sideLength.getValue() - (m_sideLength.getValue()/2);
 
-    return Point3D(x,0,z);
+    return Vector3D(x, 0, z);
 }
 
 Vector3D ShapeSquare::getNormal(double /*u*/, double /*v*/) const
@@ -101,7 +101,7 @@ void ShapeSquare::generatePrimitives(SoAction *action)
     {
         for ( int j = 0 ; j < columns ; ++j )
         {
-            Point3D point = getPoint(ui, vj);
+            Vector3D point = getPoint(ui, vj);
             Vector3D normal = getNormal(ui, vj);
 
             vertex[h][0] = point.x;
@@ -146,7 +146,7 @@ void ShapeSquare::generatePrimitives(SoAction *action)
     float u = 1;
     float v = 1;
 
-    beginShape(action, QUADS );
+    beginShape(action, QUADS);
     for( int i = 0; i < totalIndices; ++i )
     {
         SbVec3f  point( finalvertex[i][0], finalvertex[i][1],  finalvertex[i][2] );

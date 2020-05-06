@@ -23,18 +23,19 @@ bool gf::IsOdd(int number)
     return answer;
 }
 
-bool gf::Quadratic(double A, double B, double C, double* t0, double* t1)
+bool gf::solveQuadratic(double a, double b, double c, double* t0, double* t1)
 {
-    // Find discriminant
-    double discrim = B * B - 4.0 * A * C;
-    if (discrim < 0.) return false;
+    double d = b*b - 4.*a*c;
+    if (d < 0.) return false;
 
-    // Compute quadratic root values
     double q = -0.5;
-    if (B < 0) q *= B - sqrt(discrim);
-    else q *= B + sqrt(discrim);
-    *t0 = q / A;
-    *t1 = C / q;
+    if (b > 0.)
+        q *= b + sqrt(d);
+    else
+        q *= b - sqrt(d);
+
+    *t0 = q/a;
+    *t1 = c/q;
     if (*t0 > *t1) std::swap(*t0, *t1);
     return true;
 }

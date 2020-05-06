@@ -49,7 +49,7 @@ GraphicRoot::GraphicRoot():
     m_pSelectionNode->ref();
     m_pSelectionNode->policy = SoSelection::SINGLE;
     m_pSelectionNode->addFinishCallback( selectionFinishCallback, static_cast< void*>( this ) );
-    m_pSceneSeparator->addChild( m_pSelectionNode );
+    m_pSceneSeparator->addChild(m_pSelectionNode);
 }
 
 GraphicRoot::~GraphicRoot()

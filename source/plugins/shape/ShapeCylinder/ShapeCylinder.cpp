@@ -76,7 +76,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
 
 	// Solve quadratic equation for _t_ values
 	double t0, t1;
-    if (!gf::Quadratic(A, B, C, &t0, &t1)) return false;
+    if (!gf::solveQuadratic(A, B, C, &t0, &t1)) return false;
 
 	// Compute intersection distance along ray
     if (t0 > ray.tMax || t1 < ray.tMin) return false;
@@ -127,7 +127,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
     Vector3D dpdv(0., 0., length.getValue());
 
 
-    Vector3D N = Normalize(cross(dpdu, dpdv));
+    Vector3D N = cross(dpdu, dpdv).normalized();
 
 
     *dg = DifferentialGeometry(hitPoint, u, v, dpdu, dpdv, N, this);
@@ -138,7 +138,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
 	return true;
 }
 
-Point3D ShapeCylinder::getPoint(double u, double v) const
+Vector3D ShapeCylinder::getPoint(double u, double v) const
 {
     if ( isInside(u, v) )
         gf::SevereError("Function Function Poligon::GetPoint3D called with invalid parameters");
@@ -150,7 +150,7 @@ Point3D ShapeCylinder::getPoint(double u, double v) const
     double y = radius.getValue()*sin(phi);
 	double z = ilength;
 
-    return Point3D(x, y, z);
+    return Vector3D(x, y, z);
 }
 
 Vector3D ShapeCylinder::getNormal(double u, double /* v */) const

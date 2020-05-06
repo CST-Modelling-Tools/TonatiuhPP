@@ -22,32 +22,24 @@
  *
  * The \a parent is command object parent.
  */
-CmdModifyParameter::CmdModifyParameter(  SoNode* node, QString parameterName, QString parameterValue, SceneModel* model, QUndoCommand* parent )
-:QUndoCommand( parent ),
- m_coinNode(  node ),
- m_newValue ( parameterValue ),
- m_oldValue( "" ),
- m_parameterName( parameterName ),
- m_pModel( model )
+CmdModifyParameter::CmdModifyParameter(SoNode* node, QString name, QString value, SceneModel* model, QUndoCommand* parent ):
+    QUndoCommand(parent),
+    m_coinNode(node),
+    m_newValue (value),
+    m_oldValue(""),
+    m_parameterName(name),
+    m_pModel(model)
 {
-    if( !m_coinNode )        gf::SevereError( "CmdModifyParameter called with invalid node." );
+    if (!m_coinNode)
+        gf::SevereError("CmdModifyParameter called with invalid node." );
 
     SoField* parameterField = m_coinNode->getField( SbName( m_parameterName.toStdString().c_str() ) );
-    if( !parameterField )    gf::SevereError( "CmdModifyParameter called with invalid parameterName." );
+    if (!parameterField)
+        gf::SevereError( "CmdModifyParameter called with invalid parameterName." );
 
     SbString fieldValue;
-    parameterField->get( fieldValue );
-    m_oldValue = QString( fieldValue.getString() );
-
-
-}
-
-/*!
- * Destroys CmdModifyParameter object.
- */
-CmdModifyParameter::~CmdModifyParameter()
-{
-
+    parameterField->get(fieldValue);
+    m_oldValue = QString(fieldValue.getString());
 }
 
 /*!
@@ -57,8 +49,8 @@ CmdModifyParameter::~CmdModifyParameter()
 void CmdModifyParameter::undo()
 {
     SoField* parameterField = m_coinNode->getField( m_parameterName.toStdString().c_str() );
-    if( parameterField )    parameterField->set( m_oldValue.toStdString().c_str() );
-
+    if (parameterField)
+        parameterField->set( m_oldValue.toStdString().c_str() );
 }
 
 /*!
@@ -67,12 +59,8 @@ void CmdModifyParameter::undo()
  */
 void CmdModifyParameter::redo()
 {
-
-    SoField* parameterField = m_coinNode->getField( m_parameterName.toStdString().c_str() );
-    if( parameterField )
-    {
-        parameterField->set( m_newValue.toStdString().c_str() );
-    }
-
+    SoField* field = m_coinNode->getField(m_parameterName.toStdString().c_str());
+    if (field)
+        field->set(m_newValue.toStdString().c_str());
 }
 

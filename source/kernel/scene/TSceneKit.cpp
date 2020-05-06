@@ -34,7 +34,7 @@ TSceneKit::TSceneKit()
     SO_KIT_CONSTRUCTOR(TSceneKit);
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY( transmissivity, AirAbstract, AirVacuum, TRUE, topSeparator, "", TRUE);
 
-    SO_NODE_ADD_FIELD( azimuth, (gc::Pi) );
+    SO_NODE_ADD_FIELD( azimuth, (0.f) );
     SO_NODE_ADD_FIELD( zenith, (0.f) );
 
     SO_KIT_INIT_INSTANCE();
@@ -63,12 +63,11 @@ trt::TONATIUH_REAL* TSceneKit::GetZenithAngle()
  */
 SoPath* TSceneKit::GetSoPath( SoSearchAction* action )
 {
-    TSeparatorKit* sunNode = static_cast< TSeparatorKit* > (getPart( "childList[0]", false ) );
-    if( !sunNode )    return NULL;
+    TSeparatorKit* sunNode = static_cast< TSeparatorKit* > (getPart("childList[0]", false) );
+    if (!sunNode) return NULL;
 
-    TSeparatorKit* rootNode = static_cast< TSeparatorKit* > ( sunNode->getPart( "childList[0]", false ) );
-    if( !rootNode )    return NULL;
-
+    TSeparatorKit* rootNode = static_cast< TSeparatorKit* > (sunNode->getPart("childList[0]", false) );
+    if (!rootNode) return NULL;
 
     action->setInterest( SoSearchAction::FIRST );
     action->apply( rootNode );
@@ -82,11 +81,10 @@ void TSceneKit::UpdateSunPosition(double azimuthValue, double zenithValue)
     zenith = zenithValue;
 
     Vector3D sunVector(
-        sin( azimuth.getValue() ) * sin( zenith.getValue()  ),
-        cos( zenith.getValue()  ),
-        -sin( zenith.getValue() ) * cos( azimuth.getValue()  )
-    );
-
+        sin(azimuthValue)*sin(zenithValue),
+        cos(azimuthValue)*sin(zenithValue),
+        cos(zenithValue)
+    ); // to sun
 
     Transform sceneOTW(
         1, 0, 0, 0,

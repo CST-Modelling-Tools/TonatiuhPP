@@ -20,4 +20,12 @@ namespace tgf
     TONATIUH_KERNEL SbMatrix MatrixFromSoTransform(SoTransform* const& soTransform);
     TONATIUH_KERNEL Point3D makePoint3D(const SbVec3f& v);
     TONATIUH_KERNEL Vector3D makeVector3D(const SbVec3f& v);
+
+    template<class T>
+    T clamp(T x, T a, T b)
+    {
+        if (x <= a) return a;
+        if (x >= b) return b;
+        return x;
+    }
 }

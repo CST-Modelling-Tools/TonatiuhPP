@@ -114,6 +114,13 @@ struct TONATIUH_LIBRARIES Vector3D
         return true;
     }
 
+    Vector3D normalized() const
+    {
+        double s = norm();
+        if (s > 0.) return *this/s;
+        return *this;
+    }
+
     double x;
     double y;
     double z;
@@ -131,7 +138,7 @@ inline Vector3D operator-(Vector3D a, const Vector3D& b)
 }
 inline Vector3D operator*(double s, const Vector3D& v)
 {
-    return Vector3D(s * v.x, s * v.y, s * v.z);
+    return Vector3D(s*v.x, s*v.y, s*v.z);
 }
 
 TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const Vector3D& vector);
@@ -180,7 +187,8 @@ inline Vector3D cross(const NormalVector& nA, const Vector3D& vB)
 
 inline Vector3D Normalize(const Vector3D& vA)
 {
-    if (vA.length() > 0.) return vA / vA.length();
+    if (vA.length() > 0.)
+        return vA / vA.length();
     return vA;
 }
 

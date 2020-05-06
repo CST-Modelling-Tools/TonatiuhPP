@@ -66,7 +66,7 @@ bool ShapeParabolicRectangle::intersect(const Ray& ray, double *tHit, Differenti
 
 	// Solve quadratic equation for _t_ values
 	double t0, t1;
-    if (!gf::Quadratic(A, B, C, &t0, &t1)) return false;
+    if (!gf::solveQuadratic(A, B, C, &t0, &t1)) return false;
 
 	// Compute intersection distance along ray
     if (t0 > ray.tMax || t1 < ray.tMin) return false;
@@ -106,7 +106,7 @@ bool ShapeParabolicRectangle::intersect(const Ray& ray, double *tHit, Differenti
     Vector3D dpdu(wX, ((-0.5 + u)*wX*wX)/(2.*f), 0.);
     Vector3D dpdv(0., ((-0.5 + v)*wZ*wZ)/(2.*f), wZ);
 
-    Vector3D N = Normalize(cross(dpdu, dpdv));
+    Vector3D N = cross(dpdu, dpdv).normalized();
 
     *dg = DifferentialGeometry(hitPoint, u, v, dpdu, dpdv, N, this);
     dg->shapeFrontSide = dot(N, ray.direction()) <= 0;
@@ -115,7 +115,7 @@ bool ShapeParabolicRectangle::intersect(const Ray& ray, double *tHit, Differenti
 	return true;
 }
 
-Point3D ShapeParabolicRectangle::getPoint(double u, double v) const
+Vector3D ShapeParabolicRectangle::getPoint(double u, double v) const
 {
     if (isInside(u, v) )
         gf::SevereError("Function Poligon::GetPoint3D called with invalid parameters");
@@ -123,7 +123,7 @@ Point3D ShapeParabolicRectangle::getPoint(double u, double v) const
     double x = (u - 0.5)*widthX.getValue();
     double z = (v - 0.5)*widthZ.getValue();
     double y = (x*x + z*z)/(4.*focus.getValue());
-    return Point3D(x, y, z);
+    return Vector3D(x, y, z);
 }
 
 Vector3D ShapeParabolicRectangle::getNormal(double u, double v) const

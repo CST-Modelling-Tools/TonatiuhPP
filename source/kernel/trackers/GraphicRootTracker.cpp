@@ -56,12 +56,12 @@ void GraphicRootTracker::evaluate()
 {
     if (!m_azimuth.isConnected() || !m_zenith.isConnected()) return;
 
-    double alpha = gc::Pi - m_azimuth.getValue();
-    SbRotation yRotation(SbVec3f(0., 0., -1.), alpha);
+    double gamma = gc::Pi - m_azimuth.getValue();
+    SbRotation azRotation(SbVec3f(0., 0., -1.), gamma);
 
     double zenith = m_zenith.getValue();
-    SbRotation xRotation(SbVec3f(1., 0., 0.), zenith);
+    SbRotation elRotation(SbVec3f(1., 0., 0.), zenith);
 
-    SbRotation rotation = xRotation*yRotation;
+    SbRotation rotation = elRotation*azRotation;
     SetEngineOutputRotation(rotation);
 }

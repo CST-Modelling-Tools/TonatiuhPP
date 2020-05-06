@@ -92,7 +92,7 @@ void RayTracer::operator()(ulong nRays)
         if (!bExportAll && !m_exportSuraceList.contains(intersectedSurface)) continue;
         // limit length of other rays
         if (ray.tMax == gc::Infinity) {// always true?
-            ray.tMax = 0.1;
+            ray.tMax = 1.;
             isFront = 0; // ? back for air
         }
         photons.push_back(Photon( (ray)(ray.tMax), isFront, ++rayLength, intersectedSurface) );

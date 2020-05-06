@@ -53,11 +53,11 @@ void TSceneTracker::evaluate()
     double zenith = m_zenith.getValue();
     m_scene->UpdateSunPosition(azimuth, zenith);
 
-    double alpha = gc::Pi - azimuth;
-    SbRotation yRotation(SbVec3f(0., 0., -1.), -alpha);
+    double gamma = gc::Pi - azimuth;
+    SbRotation azRotation(SbVec3f(0., 0., -1.), -gamma);
 
-    SbRotation xRotation(SbVec3f(1., 0., 0.), -zenith);
+    SbRotation elRotation(SbVec3f(1., 0., 0.), -zenith);
 
-    SbRotation rotation = yRotation*xRotation;
+    SbRotation rotation = azRotation*elRotation;
     SetEngineOutputRotation(rotation);
 }

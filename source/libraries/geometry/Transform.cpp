@@ -328,7 +328,7 @@ Transform RotateZ(double angle)
 Transform Rotate(double angle, const Vector3D& axis)
 {
     // angle is assumed to be in radians.
-    Vector3D a = Normalize(axis);
+    Vector3D a = axis.normalized();
     double s = sin(angle);
     double c = cos(angle);
     double m[4][4];
@@ -363,26 +363,26 @@ Transform LookAt(const Point3D& pos, const Point3D& look, const Vector3D& up)
     m[0][3] = pos.x;
     m[1][3] = pos.y;
     m[2][3] = pos.z;
-    m[3][3] = 1.0;
+    m[3][3] = 1.;
 
     Vector3D dir = Normalize(look - pos);
-    Vector3D right = cross(dir, Normalize(up) );
+    Vector3D right = cross(dir, up).normalized();
     Vector3D newUp = cross(right, dir);
 
     m[0][0] = right.x;
     m[1][0] = right.y;
     m[2][0] = right.z;
-    m[3][0] = 0.0;
+    m[3][0] = 0.;
 
     m[0][1] = dir.x;
     m[1][1] = dir.y;
     m[2][1] = dir.z;
-    m[3][1] = 0.0;
+    m[3][1] = 0.;
 
     m[0][2] = newUp.x;
     m[1][2] = newUp.y;
     m[2][2] = newUp.z;
-    m[3][2] = 0.0;
+    m[3][2] = 0.;
 
     Ptr<Matrix4x4> camToWorld = new Matrix4x4(m);
     return Transform(camToWorld->Inverse(), camToWorld);

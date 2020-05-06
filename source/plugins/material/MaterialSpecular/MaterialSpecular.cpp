@@ -22,13 +22,13 @@ MaterialSpecular::MaterialSpecular():
     m_sigmaOpt(0)
 {
     SO_NODE_CONSTRUCTOR(MaterialSpecular);
-    SO_NODE_ADD_FIELD(m_reflectivity, (0.) );
-    SO_NODE_ADD_FIELD(m_sigmaSlope, (2.) );
+    SO_NODE_ADD_FIELD(reflectivity, (0.9) );
+    SO_NODE_ADD_FIELD(sigmaSlope, (2.) );
 
     //SO_NODE_DEFINE_ENUM_VALUE(Distribution, PILLBOX);
     SO_NODE_DEFINE_ENUM_VALUE(Distribution, NORMAL);
-    SO_NODE_SET_SF_ENUM_TYPE(m_distribution, Distribution);
-    SO_NODE_ADD_FIELD(m_distribution, (NORMAL) );
+    SO_NODE_SET_SF_ENUM_TYPE(distribution, Distribution);
+    SO_NODE_ADD_FIELD(distribution, (NORMAL) );
 
     SO_NODE_ADD_FIELD(m_ambientColor, (0.2f, 0.2f, 0.2f) );
     SO_NODE_ADD_FIELD(m_diffuseColor, (0.8f, 0.8f, 0.8f) );
@@ -38,8 +38,7 @@ MaterialSpecular::MaterialSpecular():
     SO_NODE_ADD_FIELD(m_transparency, (0.0f) );
 
     m_reflectivitySensor = new SoFieldSensor(updateReflectivity, this);
-    m_reflectivitySensor->setPriority(1);
-    m_reflectivitySensor->attach(&m_reflectivity);
+    m_reflectivitySensor->attach(&reflectivity);
 
     m_ambientColorSensor = new SoFieldSensor(updateAmbientColor, this);
     m_ambientColorSensor->attach(&m_ambientColor);
@@ -66,11 +65,52 @@ MaterialSpecular::~MaterialSpecular()
     delete m_transparencySensor;
 }
 
+bool MaterialSpecular::OutputRay(const Ray& rayIn, DifferentialGeometry* dg, RandomAbstract& rand, Ray* rayOut) const
+{
+    double randomNumber = rand.RandomDouble();
+    if (randomNumber >= reflectivity.getValue() ) return false;
+
+    // Compute reflected ray (local coordinates)
+    rayOut->origin = dg->point;
+
+    Vector3D normal;
+    double slope = sigmaSlope.getValue() / 1000.; // from mrad to rad
+    if (slope > 0.) {
+        Vector3D errorNormal;
+        if (distribution.getValue() == 0)
+        { // pillbox
+            double phi = gc::TwoPi*rand.RandomDouble();
+            double theta = slope*rand.RandomDouble();
+
+            errorNormal.x = sin(theta)*sin(phi);
+            errorNormal.y = sin(theta)*cos(phi);
+            errorNormal.z = cos(theta);
+        }
+        else if (distribution.getValue() == Distribution::NORMAL)
+        { // normal
+            errorNormal.x = slope*tgf::AlternateBoxMuller(rand);
+            errorNormal.y = slope*tgf::AlternateBoxMuller(rand);
+            errorNormal.z = 1.;
+        }
+        Vector3D vx = dg->dpdu.normalized();
+        Vector3D vy = dg->dpdv.normalized();
+        Vector3D vz = dg->normal;
+        normal = (vx*errorNormal.x + vy*errorNormal.y + vz*errorNormal.z).normalized();
+    } else
+        normal = dg->normal;
+
+    Vector3D d = rayIn.direction() - 2.*normal*dot(normal, rayIn.direction());
+    rayOut->setDirection(d.normalized());
+    return true;
+}
+
 void MaterialSpecular::updateReflectivity(void* data, SoSensor*)
 {
-    MaterialSpecular* material = static_cast< MaterialSpecular* >(data);
-    if (material->m_reflectivity.getValue() < 0.0) material->m_reflectivity = 0.0;
-    if (material->m_reflectivity.getValue() > 1.0) material->m_reflectivity = 1.0;
+    MaterialSpecular* material = static_cast<MaterialSpecular*>(data);
+    if (material->reflectivity.getValue() < 0.)
+        material->reflectivity = 0.;
+    if (material->reflectivity.getValue() > 1.)
+        material->reflectivity = 1.;
 }
 
 void MaterialSpecular::updateAmbientColor(void* data, SoSensor*)
@@ -107,43 +147,4 @@ void MaterialSpecular::updateTransparency(void* data, SoSensor*)
 {
     MaterialSpecular* material = static_cast< MaterialSpecular* >(data);
     material->transparency.setValue(material->m_transparency[0]);
-}
-
-bool MaterialSpecular::OutputRay(const Ray& incident, DifferentialGeometry* dg, RandomAbstract& rand, Ray* outputRay) const
-{
-    double randomNumber = rand.RandomDouble();
-    if (randomNumber >= m_reflectivity.getValue() ) return false;
-
-    //Compute reflected ray (local coordinates )
-    outputRay->origin = dg->point;
-
-    Vector3D normalVector;
-    double sigmaSlope = m_sigmaSlope.getValue() / 1000.; // from mrad to rad
-    if (sigmaSlope > 0.) {
-        Vector3D errorNormal;
-        if (m_distribution.getValue() == 0)
-        { // pillbox
-            double phi = gc::TwoPi * rand.RandomDouble();
-            double theta = sigmaSlope * rand.RandomDouble();
-
-            errorNormal.x = sin(theta) * sin(phi);
-            errorNormal.y = cos(theta);
-            errorNormal.z = sin(theta) * cos(phi);
-        }
-        else if (m_distribution.getValue() == Distribution::NORMAL)
-        { // normal
-            errorNormal.x = sigmaSlope * tgf::AlternateBoxMuller(rand);
-            errorNormal.y = 1.;
-            errorNormal.z = sigmaSlope * tgf::AlternateBoxMuller(rand);
-        }
-        Vector3D r = dg->normal;
-        Vector3D s = Normalize(dg->dpdu);
-        Vector3D t = Normalize(dg->dpdv);
-        normalVector = Normalize(s*errorNormal.x + r*errorNormal.y + t*errorNormal.z);
-    } else
-        normalVector = dg->normal;
-
-    double cosTheta = dot(normalVector, incident.direction() );
-    outputRay->setDirection(Normalize(incident.direction() - 2. * normalVector * cosTheta) );
-    return true;
 }

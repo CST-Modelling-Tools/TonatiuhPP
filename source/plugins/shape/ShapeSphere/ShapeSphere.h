@@ -12,9 +12,8 @@ class ShapeSphere: public ShapeAbstract
     SO_NODE_HEADER(ShapeSphere);
 
 public:
-    ShapeSphere();
     static void initClass();
-    SoNode* copy(SbBool copyConnections) const;
+    ShapeSphere();
 
     double getArea() const;
     double getVolume() const;
@@ -26,29 +25,25 @@ public:
 protected:
     ~ShapeSphere();
 
-    Point3D getPoint(double u, double v) const;
+    Vector3D getPoint(double u, double v) const;
     Vector3D getNormal(double u, double v) const;
     void generatePrimitives(SoAction* action);
 
     static void update_radius(void* data, SoSensor*);
-    static void update_yMin(void* data, SoSensor*);
-    static void update_yMax(void* data, SoSensor*);
     static void update_phiMax(void* data, SoSensor*);
+    static void update_alphaMin(void* data, SoSensor*);
+    static void update_alphaMax(void* data, SoSensor*);
 
 public:
     trt::TONATIUH_REAL radius;
-    trt::TONATIUH_REAL yMax;
-    trt::TONATIUH_REAL yMin;
     trt::TONATIUH_REAL phiMax;
+    trt::TONATIUH_REAL alphaMin;
+    trt::TONATIUH_REAL alphaMax;
 
 private:
-    double m_radiusOld;
-    double m_yMaxOld;
-    double m_yMinOld;
-
     SoFieldSensor* m_sensor_radius;
-    SoFieldSensor* m_sensor_yMin;
-    SoFieldSensor* m_sensor_yMax;
+    SoFieldSensor* m_sensor_alphaMin;
+    SoFieldSensor* m_sensor_alphaMax;
     SoFieldSensor* m_sensor_phiMax;
 };
 

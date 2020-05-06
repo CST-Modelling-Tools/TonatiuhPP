@@ -111,6 +111,7 @@
     <addaction name="separator"/>
     <addaction name="actionQuadView"/>
     <addaction name="separator"/>
+    <addaction name="actionView_All"/>
    </widget>
    <widget class="QMenu" name="menuInsert">
     <property name="title">
@@ -748,6 +749,11 @@
   <action name="actionC">
    <property name="text">
     <string>C</string>
+   </property>
+  </action>
+  <action name="actionView_All">
+   <property name="text">
+    <string>View All</string>
    </property>
   </action>
  </widget>

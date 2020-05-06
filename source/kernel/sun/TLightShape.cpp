@@ -55,11 +55,10 @@ double TLightShape::GetValidArea() const
     double yWidth = yMax.getValue() - yMin.getValue();
     double pixelHeight = yWidth / m_heightElements;
 
-    double validArea = ( pixelWidth * pixelHeight ) * numberOfValidAreas;
+    double validArea = (pixelWidth*pixelHeight) * numberOfValidAreas;
 
     return validArea;
 }
-
 
 /*!
  * Returns the indexes of the valid areas to the ray tracer.
@@ -84,7 +83,7 @@ void TLightShape::SetLightSourceArea(int h, int w, int** lightArea)
 {
     if (m_lightAreaMatrix)
     {
-        for( int i = 0; i < m_heightElements; i++ )
+        for (int i = 0; i < m_heightElements; i++ )
             delete[] m_lightAreaMatrix[i];
         delete[] m_lightAreaMatrix;
     }
@@ -97,21 +96,19 @@ void TLightShape::SetLightSourceArea(int h, int w, int** lightArea)
 
     for( int i = 0; i < m_heightElements; i++ )
         for( int j = 0; j < m_widthElements; j++ )
-            if( m_lightAreaMatrix[i][j] == 1 )    m_validAreasVector.push_back( QPair< int, int >( i, j ) );
+            if( m_lightAreaMatrix[i][j] == 1 )
+                m_validAreasVector.push_back( QPair< int, int >( i, j ) );
 
 }
 
 void TLightShape::computeBBox(SoAction*, SbBox3f& box, SbVec3f& /*center*/ )
 {
-    SbVec3f min, max;
-
-    min.setValue(xMin.getValue(), yMin.getValue(), 0.);
-    max.setValue(xMax.getValue(), yMax.getValue(), 0.);
-
+    SbVec3f min(xMin.getValue(), yMin.getValue(), 0.);
+    SbVec3f max(xMax.getValue(), yMax.getValue(), 0.);
     box.setBounds(min, max);
 }
 
-void TLightShape::generatePrimitives(SoAction *action)
+void TLightShape::generatePrimitives(SoAction* action)
 {
     SoPrimitiveVertex   pv;
     SoState  *state = action->getState();

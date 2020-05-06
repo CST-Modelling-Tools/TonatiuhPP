@@ -707,9 +707,9 @@ void MainWindow::SelectionFinish(SoSelection* selection)
 /*!
  * Changes to the node defined by \a node the value of the \a parameter to \a value.
  */
-void MainWindow::SetParameterValue(SoNode* node, QString paramenterName, QString newValue)
+void MainWindow::SetParameterValue(SoNode* node, QString name, QString value)
 {
-    CmdModifyParameter* command = new CmdModifyParameter(node, paramenterName, newValue, m_sceneModel);
+    CmdModifyParameter* command = new CmdModifyParameter(node, name, value, m_sceneModel);
     if (m_commandStack) m_commandStack->push(command);
 
     UpdateLightSize();
@@ -3637,6 +3637,7 @@ bool MainWindow::StartOver(const QString& fileName)
 
     ChangeModelScene();
     sceneModelView->expandToDepth(1);
+    on_actionView_All_triggered();
     return true;
 }
 
@@ -3724,4 +3725,11 @@ void MainWindow::WriteSettings()
 
     settings.setValue("recentFiles", m_recentFiles);
 
+}
+
+void MainWindow::on_actionView_All_triggered()
+{
+    SbViewportRegion vpr = m_graphicView[m_focusView]->GetViewportRegion();
+    SoCamera* camera = m_graphicView[m_focusView]->GetCamera();
+    camera->viewAll(m_graphicsRoot->GetNode(), vpr);
 }

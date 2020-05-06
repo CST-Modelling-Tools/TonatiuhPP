@@ -4,7 +4,7 @@
 
 #include "commands/tgc.h"
 
-#include "ui_mainwindow.h"
+#include "ui_MainWindow.h"
 
 class Document;
 class GraphicRoot;
@@ -134,7 +134,7 @@ public slots:
     bool SaveAs();
     bool SaveComponent();
     void SelectionFinish(SoSelection* selection);
-    void SetParameterValue(SoNode* node, QString paramenterName, QString newValue);
+    void SetParameterValue(SoNode* node, QString paramenterName, QString value);
     void SetSunPositionCalculatorEnabled(int enabled);
     void ShowBackground();
     void ShowCommandView();
@@ -171,6 +171,8 @@ public slots:
     void on_actionAbout_triggered();
     //void on_actionCheckForUpdates_triggered();
 
+
+    void on_actionView_All_triggered();
 
 private:
     void ChangeModelScene();

@@ -7,7 +7,6 @@
 
 struct BBox;
 struct DifferentialGeometry;
-struct Point3D;
 struct Vector3D;
 class QString;
 class QSize;
@@ -43,7 +42,7 @@ protected:
     virtual void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
 
     virtual bool isInside(double u, double v) const;
-    virtual Point3D getPoint(double u, double v) const = 0;
+    virtual Vector3D getPoint(double u, double v) const = 0;
     virtual Vector3D getNormal(double u, double v) const = 0;
     virtual void generatePrimitives(SoAction* action) = 0;
     void generateQuads(SoAction* action, const QSize& dims, bool reverseNormals = false, bool reverseClock = false);

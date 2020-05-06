@@ -20,8 +20,8 @@ class TONATIUH_KERNEL TLightShape: public SoShape
     SO_NODE_HEADER(TLightShape);
 
 public:
-    TLightShape( );
     static void initClass();
+    TLightShape();
 
     double GetValidArea() const;
     const std::vector< QPair<int, int> >& GetValidAreasCoord() const
@@ -44,7 +44,7 @@ public:
     trt::TONATIUH_REAL delta;
 
 protected:
-    Point3D GetPoint3D (double u, double v, int h, int w) const;
+    Point3D GetPoint3D(double u, double v, int h, int w) const;
     bool OutOfRange(double u, double v) const
     {
         return u < 0. || u > 1. || v < 0. || v > 1.;
