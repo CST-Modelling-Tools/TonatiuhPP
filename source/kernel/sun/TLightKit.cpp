@@ -91,7 +91,7 @@ TLightKit::TLightKit()
     SO_KIT_INIT_INSTANCE();
 
     SoDirectionalLight* light = static_cast<SoDirectionalLight*>(getPart("light", true) );
-    light->direction.setValue(SbVec3f(0, -1, 0) );
+    light->direction.setValue(SbVec3f(0, 0, -1) );
 
     SoTransform* transform = new SoTransform;
     setPart("transform", transform);
@@ -139,59 +139,57 @@ void TLightKit::Update(BBox box)
 {
     double xMax = box.pMax.x;
     double xMin = box.pMin.x;
-    double zMin = box.pMin.z;
-    double zMax = box.pMax.z;
+    double yMin = box.pMin.y;
+    double yMax = box.pMax.y;
 
-    double distMax = box.pMax.y + 10 - box.pMin.y;
-    double back = box.pMax.y + 10;
+    double distMax = box.pMax.z + 10. - box.pMin.z;
+    double back = box.pMax.z + 10.;
 
-    if (-gc::Infinity  == box.Volume() )
+    if (-gc::Infinity == box.Volume() )
     {
-        xMin = 0.0;
-        xMax = 0.0;
-        zMin = 0.0;
-        zMax = 0.0;
-        distMax = 0.0;
+        xMin = 0.;
+        xMax = 0.;
+        yMin = 0.;
+        yMax = 0.;
+        distMax = 0.;
     }
 
-    SunAbstract* sunshape = static_cast< SunAbstract* >(this->getPart("tsunshape", false) );
+    double delta = 0.01;
+    SunAbstract* sunshape = static_cast<SunAbstract*>(getPart("tsunshape", false));
     if (!sunshape) return;
     double thetaMax = sunshape->getThetaMax();
-    double delta = 0.01;
-    if (thetaMax > 0.0) delta = distMax * tan(thetaMax);
+    if (thetaMax > 0.)
+        delta = distMax*tan(thetaMax);
 
-    TLightShape* shape = static_cast< TLightShape* >(this->getPart("icon", false) );
+    TLightShape* shape = static_cast<TLightShape*>(getPart("icon", false));
     if (!shape) return;
-    shape->xMin.setValue( (xMin - delta) );
-    shape->xMax.setValue( (xMax + delta) );
-    shape->zMin.setValue( (zMin - delta) );
-    shape->zMax.setValue( (zMax + delta) );
+    shape->xMin.setValue(xMin - delta);
+    shape->xMax.setValue(xMax + delta);
+    shape->yMin.setValue(yMin - delta);
+    shape->yMax.setValue(yMax + delta);
     shape->delta.setValue(delta);
 
-    SoTransform* lightTransform = static_cast< SoTransform* >(this->getPart("transform", false) );
-    if (!lightTransform) return;
-    SbVec3f translation(0.0, back, 0.0);
-    lightTransform->translation.setValue(translation);
+    SoTransform* transform = static_cast<SoTransform*>(this->getPart("transform", false) );
+    if (!transform) return;
+    transform->translation.setValue(0., 0., back);
 }
 
-void TLightKit::ComputeLightSourceArea(int widthDivisions, int heigthDivisions, QVector< QPair< TShapeKit*, Transform > > surfacesList)
+void TLightKit::ComputeLightSourceArea(int xPixels, int yPixels, QVector< QPair< TShapeKit*, Transform > > surfacesList)
 {
-    TLightShape* shape = static_cast< TLightShape* >(this->getPart("icon", false) );
+    TLightShape* shape = static_cast<TLightShape*>(getPart("icon", false));
     if (!shape) return;
 
-    double width =  shape->xMax.getValue() - shape->xMin.getValue();
-    double height = shape->zMax.getValue() - shape->zMin.getValue();
+    double xWidth = shape->xMax.getValue() - shape->xMin.getValue();
+    double yWidth = shape->yMax.getValue() - shape->yMin.getValue();
 
-    int widthPixeles = widthDivisions;
-    while ( (width / widthPixeles) < shape->delta.getValue() ) widthPixeles--;
-    double pixelWidth = double( width / widthPixeles );
+    while ( xWidth / xPixels < shape->delta.getValue() ) xPixels--;
+    double xWidthPixel = xWidth/xPixels;
 
-    int heightPixeles = heigthDivisions;
-    while ( (height / heightPixeles) < shape->delta.getValue() ) heightPixeles--;
-    double pixelHeight = height / heightPixeles;
+    while ( yWidth / yPixels < shape->delta.getValue() ) yPixels--;
+    double yWidthPixel = yWidth/yPixels;
 
-    QImage* sourceImage = new QImage(widthPixeles, heightPixeles, QImage::Format_RGB32);
-    sourceImage->setOffset(QPoint(0.5, 0.5) );
+    QImage* sourceImage = new QImage(xPixels, yPixels, QImage::Format_RGB32);
+    sourceImage->setOffset(QPoint(0.5, 0.5));
     sourceImage->fill(Qt::white);
 
     QPainter painter(sourceImage);
@@ -211,101 +209,75 @@ void TLightKit::ComputeLightSourceArea(int widthDivisions, int heigthDivisions, 
     {
         TShapeKit* surfaceKit = surfacesList[s].first;
         Transform surfaceTransform = surfacesList[s].second;
-        Transform shapeToWorld = surfaceTransform.GetInverse();
+        Transform transformOtW = surfaceTransform.GetInverse();
 
-        ShapeAbstract* shapeNode = static_cast< ShapeAbstract* > (surfaceKit->getPart("shape", false) );
+        ShapeAbstract* shapeNode = static_cast<ShapeAbstract*>(surfaceKit->getPart("shape", false));
         if (shapeNode)
         {
-            BBox shapeBB = shapeNode->getBox();
+            BBox shapeBox = shapeNode->getBox();
 
-            Point3D p1(shapeBB.pMin.x, shapeBB.pMin.y, shapeBB.pMin.z);
-            Point3D p2(shapeBB.pMax.x, shapeBB.pMin.y, shapeBB.pMin.z);
-            Point3D p3(shapeBB.pMax.x, shapeBB.pMin.y, shapeBB.pMax.z);
-            Point3D p4(shapeBB.pMin.x, shapeBB.pMin.y, shapeBB.pMax.z);
-            Point3D p5(shapeBB.pMin.x, shapeBB.pMax.y, shapeBB.pMin.z);
-            Point3D p6(shapeBB.pMax.x, shapeBB.pMax.y, shapeBB.pMin.z);
-            Point3D p7(shapeBB.pMax.x, shapeBB.pMax.y, shapeBB.pMax.z);
-            Point3D p8(shapeBB.pMin.x, shapeBB.pMax.y, shapeBB.pMax.z);
+            QVector<Point3D> ps;
+            ps << Point3D(shapeBox.pMin.x, shapeBox.pMin.y, shapeBox.pMin.z);
+            ps << Point3D(shapeBox.pMax.x, shapeBox.pMin.y, shapeBox.pMin.z);
+            ps << Point3D(shapeBox.pMax.x, shapeBox.pMin.y, shapeBox.pMax.z);
+            ps << Point3D(shapeBox.pMin.x, shapeBox.pMin.y, shapeBox.pMax.z);
+            ps << Point3D(shapeBox.pMin.x, shapeBox.pMax.y, shapeBox.pMin.z);
+            ps << Point3D(shapeBox.pMax.x, shapeBox.pMax.y, shapeBox.pMin.z);
+            ps << Point3D(shapeBox.pMax.x, shapeBox.pMax.y, shapeBox.pMax.z);
+            ps << Point3D(shapeBox.pMin.x, shapeBox.pMax.y, shapeBox.pMax.z);
 
-            Point3D tP1 = shapeToWorld(p1);
-            Point3D tP2 = shapeToWorld(p2);
-            Point3D tP3 = shapeToWorld(p3);
-            Point3D tP4 = shapeToWorld(p4);
-            Point3D tP5 = shapeToWorld(p5);
-            Point3D tP6 = shapeToWorld(p6);
-            Point3D tP7 = shapeToWorld(p7);
-            Point3D tP8 = shapeToWorld(p8);
+            QVector<QPointF> qps;
+            for (Point3D& p : ps) {
+                p = transformOtW(p);
+                qps <<  QPoint((p.x - shape->xMin.getValue())/xWidthPixel, (p.y - shape->yMin.getValue())/yWidthPixel);
+            }
 
-            QPoint qP1( (tP1.x - shape->xMin.getValue() ) / pixelWidth, (tP1.z - shape->zMin.getValue() ) / pixelHeight);
-            QPoint qP2( (tP2.x - shape->xMin.getValue() ) / pixelWidth, (tP2.z - shape->zMin.getValue() ) / pixelHeight);
-            QPoint qP3( (tP3.x - shape->xMin.getValue() ) / pixelWidth, (tP3.z - shape->zMin.getValue() ) / pixelHeight);
-            QPoint qP4( (tP4.x - shape->xMin.getValue() ) / pixelWidth, (tP4.z - shape->zMin.getValue() ) / pixelHeight);
-            QPoint qP5( (tP5.x - shape->xMin.getValue() ) / pixelWidth, (tP5.z - shape->zMin.getValue() ) / pixelHeight);
-            QPoint qP6( (tP6.x - shape->xMin.getValue() ) / pixelWidth, (tP6.z - shape->zMin.getValue() ) / pixelHeight);
-            QPoint qP7( (tP7.x - shape->xMin.getValue() ) / pixelWidth, (tP7.z - shape->zMin.getValue() ) / pixelHeight);
-            QPoint qP8( (tP8.x - shape->xMin.getValue() ) / pixelWidth, (tP8.z - shape->zMin.getValue() ) / pixelHeight);
+            QPolygonF polygon1({qps[0], qps[1], qps[2], qps[3]});
+            QPolygonF polygon2({qps[0], qps[1], qps[5], qps[4]});
+            QPolygonF polygon3({qps[0], qps[3], qps[7], qps[4]});
+            QPolygonF polygon4({qps[1], qps[2], qps[6], qps[5]});
+            QPolygonF polygon5({qps[2], qps[3], qps[7], qps[6]});
+            QPolygonF polygon6({qps[4], qps[5], qps[6], qps[7]});
 
-            QPointF polygon1[4] = { qP1, qP2, qP3, qP4 };
-            QPointF polygon2[4] = { qP1, qP2, qP6, qP5 };
-            QPointF polygon3[4] = { qP1, qP4, qP8, qP5 };
-            QPointF polygon4[4] = { qP2, qP3, qP7, qP6 };
-            QPointF polygon5[4] = { qP3, qP4, qP8, qP7 };
-            QPointF polygon6[4] = { qP5, qP6, qP7, qP8 };
-
-            painter.drawPoint(qP1);
-            painter.drawPoint(qP2);
-            painter.drawPoint(qP3);
-            painter.drawPoint(qP4);
-            painter.drawPoint(qP5);
-            painter.drawPoint(qP6);
-            painter.drawPoint(qP7);
-            painter.drawPoint(qP8);
-
-            painter.drawPolygon(polygon1, 4);
-            painter.drawPolygon(polygon2, 4);
-            painter.drawPolygon(polygon3, 4);
-            painter.drawPolygon(polygon4, 4);
-            painter.drawPolygon(polygon5, 4);
-            painter.drawPolygon(polygon6, 4);
+            painter.drawPolygon(polygon1);
+            painter.drawPolygon(polygon2);
+            painter.drawPolygon(polygon3);
+            painter.drawPolygon(polygon4);
+            painter.drawPolygon(polygon5);
+            painter.drawPolygon(polygon6);
         }
-
     }
 
-    int** areaMatrix = new int*[heightPixeles];
-    for (int i = 0; i < heightPixeles; i++)
-    {
-        areaMatrix[i] = new int[widthPixeles];
-    }
+    int** areaMatrix = new int*[yPixels];
+    for (int i = 0; i < yPixels; i++)
+        areaMatrix[i] = new int[xPixels];
 
-
-    //unsigned char bitmap[ widthPixeles * heightPixeles ];
-    unsigned char* bitmap = new unsigned char[ widthPixeles * heightPixeles ];
+    unsigned char* bitmap = new unsigned char[xPixels*yPixels];
 
     QRgb black = qRgb(0, 0, 0);
 
-    for (int i = 0; i < widthPixeles; i++)
+    for (int i = 0; i < xPixels; i++)
     {
-        for (int j = 0; j < heightPixeles; j++)
+        for (int j = 0; j < yPixels; j++)
         {
-            double pixelIntensity = (sourceImage->pixel(i, j) == black) ? 1 : 0;
-            if ( (i - 1) >= 0 && (j - 1) >= 0) pixelIntensity += (sourceImage->pixel(i - 1, j - 1) == black) ? 1 : 0;
-            if ( (j - 1) >= 0) pixelIntensity += (sourceImage->pixel(i, j - 1) == black) ? 1 : 0;
-            if ( (i + 1) < widthPixeles && (j - 1) >= 0) pixelIntensity += (sourceImage->pixel(i + 1, j - 1) == black) ? 1 : 0;
-            if ( (i - 1) >= 0) pixelIntensity += (sourceImage->pixel(i - 1, j) == black) ? 1 : 0;
-            if ( (i + 1) < widthPixeles) pixelIntensity += (sourceImage->pixel(i + 1, j) == black) ? 1 : 0;
-            if ( (i - 1) >= 0 && (j + 1) < heightPixeles) pixelIntensity += (sourceImage->pixel(i - 1, j + 1) == black) ? 1 : 0;
-            if ( (j + 1) < heightPixeles) pixelIntensity += (sourceImage->pixel(i, j + 1) == black) ? 1 : 0;
-            if ( (i + 1) < widthPixeles && (j + 1) < heightPixeles) pixelIntensity += (sourceImage->pixel(i + 1, j + 1) == black) ? 1 : 0;
+            int pixelIntensity = 0;
+            for (int qi = i - 1; qi <= i + 1; ++qi)
+            for (int qj = j - 1; qj <= j + 1; ++qj)
+            {
+                if (qi < 0 || qi >= xPixels) continue;
+                if (qj < 0 || qj >= yPixels) continue;
+                pixelIntensity += sourceImage->pixel(qi, qj) == black ? 1 : 0;
+            }
 
-            if (pixelIntensity > 0.0)
+            if (pixelIntensity > 0)
             {
                 areaMatrix[j][i] = 1;
-                bitmap[ i * heightPixeles +  j ] = 0;
+                bitmap[i*yPixels + j] = 0;
             }
             else
             {
                 areaMatrix[j][i] = 0;
-                bitmap[ i * heightPixeles +  j ] = 255;
+                bitmap[i*yPixels + j] = 255;
             }
         }
     }
@@ -317,5 +289,5 @@ void TLightKit::ComputeLightSourceArea(int widthDivisions, int heigthDivisions, 
 
     delete[] bitmap;
 
-    shape->SetLightSourceArea(heightPixeles, widthPixeles, areaMatrix);
+    shape->SetLightSourceArea(yPixels, xPixels, areaMatrix);
 }

@@ -55,10 +55,7 @@ void PhotonMap::EndStore(double wPhoton)
 /*!
  *
  */
-std::vector<Photon*> PhotonMap::GetAllPhotons() const
-{
-    return m_photonsInMemory;
-}
+
 
 /*!
  * Returns the export mode. If not export mode defined return null.

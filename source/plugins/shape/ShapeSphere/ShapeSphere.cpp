@@ -204,30 +204,30 @@ Point3D ShapeSphere::getPoint(double u, double v) const
     if ( isInside(u, v) )
         gf::SevereError( "Function Poligon::GetPoint3D called with invalid parameters" );
 
-    double thetaMin = acos(yMax.getValue()/radius.getValue());
-    double thetaMax = acos(yMin.getValue()/radius.getValue());
-    double theta = thetaMin + u*(thetaMax - thetaMin);
-    double phi = v*phiMax.getValue();
+    double alphaMin = acos(yMax.getValue()/radius.getValue());
+    double alphaMax = acos(yMin.getValue()/radius.getValue());
+    double alpha = alphaMin + u*(alphaMax - alphaMin);
+    double gamma = v*phiMax.getValue();
 
     Point3D p(
-        sin(theta)*sin(phi),
-        cos(theta),
-        sin(theta)*cos(phi)
+        sin(gamma)*cos(alpha),
+        cos(gamma)*cos(alpha),
+        sin(alpha)
     );
     return radius.getValue()*p;
 }
 
 Vector3D ShapeSphere::getNormal(double u, double v) const
 {
-    double thetaMin = acos(yMax.getValue()/radius.getValue());
-    double thetaMax = acos(yMin.getValue()/radius.getValue());
-    double theta = thetaMin + u*(thetaMax - thetaMin);
-    double phi = v*phiMax.getValue();
+    double alphaMin = acos(yMax.getValue()/radius.getValue());
+    double alphaMax = acos(yMin.getValue()/radius.getValue());
+    double alpha = alphaMin + u*(alphaMax - alphaMin);
+    double gamma = v*phiMax.getValue();
 
     Vector3D p(
-        sin(theta)*sin(phi),
-        cos(theta),
-        sin(theta)*cos(phi)
+        sin(gamma)*cos(alpha),
+        cos(gamma)*cos(alpha),
+        sin(alpha)
     );
     return p;
 }
@@ -258,7 +258,7 @@ void ShapeSphere::update_radius(void* data, SoSensor*)
 void ShapeSphere::update_yMin(void* data, SoSensor*)
 {
     ShapeSphere* shape = (ShapeSphere *) data;
-    if( shape->yMin.getValue() >= shape->yMax.getValue() )
+    if ( shape->yMin.getValue() >= shape->yMax.getValue() )
     {
         QMessageBox::warning( 0,
                 QLatin1String( "Tonatiuh" ),
@@ -277,7 +277,7 @@ void ShapeSphere::update_yMin(void* data, SoSensor*)
 void ShapeSphere::update_yMax(void* data, SoSensor*)
 {
     ShapeSphere* shape = (ShapeSphere *) data;
-    if( shape->yMax.getValue() < shape->yMin.getValue() )
+    if ( shape->yMax.getValue() < shape->yMin.getValue() )
 	{
         QMessageBox::warning(0, "Tonatiuh",
 				QObject::tr( "Sphere y max must be larger than y min value. ") );

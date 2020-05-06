@@ -97,7 +97,7 @@ void SkyBackground::addSky()
 
     SkyGradient grGround;
     grGround.cH = QColor("#e0ddd0");
-    grGround.cZ = QColor("#c9c7be");
+    grGround.cZ = QColor("#e6e3d1"); // c9c7be
     grGround.g = QVector3D(0.1, 0.1, 0.1);
 
     int nMax = 24; // azimuth
@@ -121,8 +121,8 @@ void SkyBackground::addSky()
         for (float alpha : alphas)
         {
             float x = cos(phi)*cos(alpha);
-            float y = sin(alpha);
-            float z = sin(phi)*cos(alpha);
+            float y = sin(phi)*cos(alpha);
+            float z = sin(alpha);
             vertices << SbVec3f(x, y, z);
 
             if (alpha > 0.)

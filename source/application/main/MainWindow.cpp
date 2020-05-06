@@ -879,14 +879,14 @@ void MainWindow::on_actionSunPlane_triggered()
 
     delete getmatrixaction;
 
-    SbVec3f target = getTargetOfCamera(cam);
+    SbVec3f target = getTarget(cam);
 
     cam->position.setValue(target + SbVec3f(camPosition.x, camPosition.y, camPosition.z) );
     cam->pointAt(target);
     //cam->viewAll( m_graphicsRoot->GetNode(), vpr );
 }
 
-SbVec3f MainWindow::getTargetOfCamera(SoCamera* cam)
+SbVec3f MainWindow::getTarget(SoCamera* cam)
 {
     SbVec3f axis;
     float angle;
@@ -902,7 +902,7 @@ void MainWindow::on_action_X_Y_Plane_triggered()
 {
     SoCamera* cam = m_graphicView[m_focusView]->GetCamera();
 
-    SbVec3f target = getTargetOfCamera(cam);
+    SbVec3f target = getTarget(cam);
 
     cam->position.setValue(target + SbVec3f(0, 0, cam->focalDistance.getValue() ) );
     cam->pointAt(target, SbVec3f(0, 1, 0)  );
@@ -913,11 +913,11 @@ void MainWindow::on_action_X_Y_Plane_triggered()
 
 void MainWindow::on_action_X_Z_Plane_triggered()
 {
-    SoCamera* cam = m_graphicView[m_focusView]->GetCamera();
-    SbVec3f target = getTargetOfCamera(cam);
+    SoCamera* camera = m_graphicView[m_focusView]->GetCamera();
+    SbVec3f target = getTarget(camera);
 
-    cam->position.setValue(target + SbVec3f(0, cam->focalDistance.getValue(), 0) );
-    cam->pointAt(target, SbVec3f(0, 0, 1)  );
+    camera->position.setValue(target + SbVec3f(0, 0, camera->focalDistance.getValue()) );
+    camera->pointAt(target, SbVec3f(0., 1., 0.) );
 
     //SbViewportRegion vpr = m_graphicView[m_focusView]->GetViewportRegion();
     //cam->viewAll( m_graphicsRoot->GetNode(), vpr );
@@ -926,7 +926,7 @@ void MainWindow::on_action_X_Z_Plane_triggered()
 void MainWindow::on_action_Y_Z_Plane_triggered()
 {
     SoCamera* cam = m_graphicView[m_focusView]->GetCamera();
-    SbVec3f target = getTargetOfCamera(cam);
+    SbVec3f target = getTarget(cam);
 
     cam->position.setValue(target + SbVec3f(-cam->focalDistance.getValue(), 0, 0) );
     cam->pointAt(target, SbVec3f(0, 1, 0)  );
@@ -3581,13 +3581,13 @@ void MainWindow::ShowRaysIn3DView()
 
         if (m_drawPhotons)
         {
-            SoSeparator* points = trf::DrawPhotonMapPoints(*m_pPhotonMap);
+            SoSeparator* points = trf::DrawPhotons(*m_pPhotonMap);
             rays->addChild(points);
         }
 
         if (m_drawRays)
         {
-            SoSeparator* currentRays = trf::DrawPhotonMapRays(*m_pPhotonMap, m_raysTracedTotal);
+            SoSeparator* currentRays = trf::DrawRays(*m_pPhotonMap, m_raysTracedTotal);
             if (currentRays) rays->addChild(currentRays);
         }
         m_graphicsRoot->AddRays(rays);

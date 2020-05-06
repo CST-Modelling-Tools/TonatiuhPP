@@ -144,7 +144,7 @@ public slots:
     void ShowWarning(QString message);
     void Undo();
 
-    SbVec3f getTargetOfCamera(SoCamera* cam);
+    SbVec3f getTarget(SoCamera* cam);
 
     //Manipulators actions
     void SoTransform_to_SoCenterballManip();

@@ -11,7 +11,7 @@ public:
     ~PhotonMap();
 
     void EndStore(double wPhoton);
-    std::vector<Photon*> GetAllPhotons() const;
+    const std::vector<Photon*>& GetAllPhotons() const {return m_photonsInMemory;}
     PhotonExport* GetExportMode() const;
     void SetBufferSize(ulong nPhotons);
     void SetConcentratorToWorld(Transform concentratorToWorld);

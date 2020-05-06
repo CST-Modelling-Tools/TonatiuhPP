@@ -26,16 +26,16 @@ void TLightShape::initClass()
 }
 
 TLightShape::TLightShape():
-    m_heightElements( 0 ),
-    m_lightAreaMatrix( 0 ),
-    m_widthElements( 0 )
+    m_heightElements(0),
+    m_lightAreaMatrix(0),
+    m_widthElements(0)
 {
     SO_NODE_CONSTRUCTOR(TLightShape);
     SO_NODE_ADD_FIELD( xMin, (-0.5) );
     SO_NODE_ADD_FIELD( xMax, (0.5) );
-    SO_NODE_ADD_FIELD( zMin, (-0.5) );
-    SO_NODE_ADD_FIELD( zMax, (0.5) );
-    SO_NODE_ADD_FIELD( delta, (100.0) );
+    SO_NODE_ADD_FIELD( yMin, (-0.5) );
+    SO_NODE_ADD_FIELD( yMax, (0.5) );
+    SO_NODE_ADD_FIELD( delta, (100.) );
 }
 
 TLightShape::~TLightShape()
@@ -49,11 +49,11 @@ double TLightShape::GetValidArea() const
 {
     int numberOfValidAreas = m_validAreasVector.size();
 
-    double width =  xMax.getValue() - xMin.getValue();
-    double pixelWidth = width / m_widthElements;
+    double xWidth =  xMax.getValue() - xMin.getValue();
+    double pixelWidth = xWidth / m_widthElements;
 
-    double height = zMax.getValue() - zMin.getValue();
-    double pixelHeight = height / m_heightElements;
+    double yWidth = yMax.getValue() - yMin.getValue();
+    double pixelHeight = yWidth / m_heightElements;
 
     double validArea = ( pixelWidth * pixelHeight ) * numberOfValidAreas;
 
@@ -64,9 +64,6 @@ double TLightShape::GetValidArea() const
 /*!
  * Returns the indexes of the valid areas to the ray tracer.
  */
-
-
-
 Point3D TLightShape::GetPoint3D(double u, double v, int h, int w) const //? w <> h
 {
     if ( OutOfRange(u, v) )
@@ -74,18 +71,18 @@ Point3D TLightShape::GetPoint3D(double u, double v, int h, int w) const //? w <>
 
     // size of cells the sun is divided
     double xWidth = (xMax.getValue() - xMin.getValue())/m_widthElements;
-    double zWidth = (zMax.getValue() - zMin.getValue())/m_heightElements;
+    double zWidth = (yMax.getValue() - yMin.getValue())/m_heightElements;
 
     // calculate the photon coordinate
     double x = xMin.getValue() + (u + w)*xWidth;
-    double z = zMin.getValue() + (v + h)*zWidth;
+    double y = yMin.getValue() + (v + h)*zWidth;
 
-    return Point3D(x, 0., z);
+    return Point3D(x, y, 0.);
 }
 
-void TLightShape::SetLightSourceArea( int h, int w, int** lightArea )
+void TLightShape::SetLightSourceArea(int h, int w, int** lightArea)
 {
-    if( m_lightAreaMatrix != 0 )
+    if (m_lightAreaMatrix)
     {
         for( int i = 0; i < m_heightElements; i++ )
             delete[] m_lightAreaMatrix[i];
@@ -106,15 +103,12 @@ void TLightShape::SetLightSourceArea( int h, int w, int** lightArea )
 
 void TLightShape::computeBBox(SoAction*, SbBox3f& box, SbVec3f& /*center*/ )
 {
-    // These points define the min and max extents of the box.
     SbVec3f min, max;
 
-    min.setValue( xMin.getValue(), 0.0, zMin.getValue() );
-    max.setValue( xMax.getValue(), 0.0, zMax.getValue() );
+    min.setValue(xMin.getValue(), yMin.getValue(), 0.);
+    max.setValue(xMax.getValue(), yMax.getValue(), 0.);
 
-    // Set the box to bound the two extreme points.
-    box.setBounds( min, max );
-
+    box.setBounds(min, max);
 }
 
 void TLightShape::generatePrimitives(SoAction *action)
@@ -128,77 +122,76 @@ void TLightShape::generatePrimitives(SoAction *action)
 
     const SoTextureCoordinateElement* tce = 0;
     SbVec4f texCoord;
-    if (useTexFunc)    tce = SoTextureCoordinateElement::getInstance(state);
+    if (useTexFunc)
+        tce = SoTextureCoordinateElement::getInstance(state);
     else
     {
-        texCoord[2] = 0.0;
-        texCoord[3] = 1.0;
+        texCoord[2] = 0.;
+        texCoord[3] = 1.;
     }
 
-    SbVec3f normal( 0.0, -1.0, 0.0 );
+    SbVec3f normal(0., 0., -1.);
     beginShape(action, TRIANGLE_STRIP);
 
      //P1
-     SbVec3f point( xMin.getValue(), 0.0, zMax.getValue() );
-     if (useTexFunc )
+     SbVec3f point( xMin.getValue(), yMax.getValue(), 0.);
+     if (useTexFunc)
          texCoord = tce->get(point, normal);
      else
      {
-         texCoord[0] = 1.0;
-         texCoord[1] = 0.0;
+         texCoord[0] = 0.;
+         texCoord[1] = 1.;
      }
-
-    pv.setPoint( point );
-    pv.setNormal( normal );
-    pv.setTextureCoords( texCoord );
-    shapeVertex( &pv );
+    pv.setPoint(point);
+    pv.setNormal(normal);
+    pv.setTextureCoords(texCoord);
+    shapeVertex(&pv);
 
      //P2
-    point = SbVec3f( xMin.getValue(), 0.0, zMin.getValue() );
+    point = SbVec3f( xMin.getValue(), yMin.getValue(), 0.);
 
      if (useTexFunc )
          texCoord = tce->get(point, normal);
      else
      {
-         texCoord[0] = 0.0;
-         texCoord[1] = 0.0;
+         texCoord[0] = 0.;
+         texCoord[1] = 0.;
      }
 
-    pv.setPoint( point );
-    pv.setNormal( normal );
-    pv.setTextureCoords( texCoord );
-    shapeVertex( &pv );
+    pv.setPoint(point);
+    pv.setNormal(normal);
+    pv.setTextureCoords(texCoord);
+    shapeVertex(&pv);
 
      //P3
-    point = SbVec3f( xMax.getValue(), 0.0, zMax.getValue() );
+    point = SbVec3f( xMax.getValue(), yMax.getValue(), 0.);
      if (useTexFunc )
          texCoord = tce->get(point, normal);
      else
      {
-         texCoord[0] = 1.0;
-         texCoord[1] = 1.0;
+         texCoord[0] = 1.;
+         texCoord[1] = 1.;
      }
 
-    pv.setPoint( point );
-    pv.setNormal( normal );
-    pv.setTextureCoords( texCoord );
-    shapeVertex( &pv );
+    pv.setPoint(point);
+    pv.setNormal(normal);
+    pv.setTextureCoords(texCoord);
+    shapeVertex(&pv);
 
      //P4
-    point = SbVec3f( xMax.getValue(), 0.0, zMin.getValue() );
+    point = SbVec3f( xMax.getValue(), yMin.getValue(), 0.);
      if (useTexFunc )
          texCoord = tce->get(point, normal);
      else
      {
-         texCoord[0] = 0.0;
-         texCoord[1] = 1.0;
+         texCoord[0] = 1.;
+         texCoord[1] = 0.;
      }
 
-    pv.setPoint( point );
-    pv.setNormal( SbVec3f( 0.0, -1.0, 0.0 ) );
-    pv.setTextureCoords( texCoord );
-    shapeVertex( &pv );
+    pv.setPoint(point);
+    pv.setNormal(normal);
+    pv.setTextureCoords(texCoord);
+    shapeVertex(&pv);
 
-     endShape();
-
+    endShape();
 }

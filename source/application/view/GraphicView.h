@@ -50,5 +50,5 @@ protected:
 
 private:
     GraphicRoot* m_sceneGraphRoot;
-    SoQtExaminerViewer* m_myRenderArea;
+    SoQtExaminerViewer* m_viewer;
 };

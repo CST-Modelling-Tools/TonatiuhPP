@@ -29,7 +29,7 @@ namespace trf
     TONATIUH_KERNEL void ComputeFistStageSurfaceList(InstanceNode* instanceNode, QStringList disabledNodesURL, QVector< QPair< TShapeKit*, Transform > >* surfacesList);
     TONATIUH_KERNEL void CreatePhotonMap(PhotonMap*& photonMap, QPair<PhotonMap*, std::vector<Photon> > photonsList);
 
-    TONATIUH_KERNEL SoSeparator* DrawPhotonMapPoints(const PhotonMap& map);
-    TONATIUH_KERNEL SoSeparator* DrawPhotonMapRays(const PhotonMap& map, ulong numberOfRays);
+    TONATIUH_KERNEL SoSeparator* DrawPhotons(const PhotonMap& map);
+    TONATIUH_KERNEL SoSeparator* DrawRays(const PhotonMap& map, ulong numberOfRays);
     TONATIUH_KERNEL Transform GetObjectToWorld(SoPath* nodePath);
 }

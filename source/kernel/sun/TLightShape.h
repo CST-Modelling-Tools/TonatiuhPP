@@ -39,8 +39,8 @@ public:
 
     trt::TONATIUH_REAL xMin;
     trt::TONATIUH_REAL xMax;
-    trt::TONATIUH_REAL zMin;
-    trt::TONATIUH_REAL zMax;
+    trt::TONATIUH_REAL yMin;
+    trt::TONATIUH_REAL yMax;
     trt::TONATIUH_REAL delta;
 
 protected:

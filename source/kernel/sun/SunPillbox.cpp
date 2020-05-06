@@ -15,7 +15,7 @@ SunPillbox::SunPillbox()
 {
     SO_NODE_CONSTRUCTOR(SunPillbox);
     SO_NODE_ADD_FIELD( irradiance, (1000.) );
-    SO_NODE_ADD_FIELD( thetaMax, (0.00465) );
+    SO_NODE_ADD_FIELD( thetaMax, (4.65e-3) );
     updateTheta(this, 0);
 
     m_sensorTheta = new SoFieldSensor(updateTheta, this);
@@ -41,9 +41,9 @@ void SunPillbox::generateRay(Vector3D& direction, RandomAbstract& rand) const
     double cosPhi = cos(phi);
     double sinPhi = sin(phi);
 
-    direction.x = sinTheta*sinPhi;
-    direction.y = -cosTheta;
-    direction.z = sinTheta*cosPhi;
+    direction.x = sinTheta*cosPhi;
+    direction.y = sinTheta*sinPhi;
+    direction.z = -cosTheta;
 }
 
 double SunPillbox::getIrradiance(void) const

@@ -67,9 +67,9 @@ void SunBuie::generateRay(Vector3D& direction, RandomAbstract& rand) const
     double cosPhi = cos(phi);
     double sinPhi = sin(phi);
 
-    direction.x = sinTheta*sinPhi;
-    direction.y = -cosTheta;
-    direction.z = sinTheta*cosPhi;
+    direction.x = sinTheta*cosPhi;
+    direction.y = sinTheta*sinPhi;
+    direction.z = -cosTheta;
 }
 
 double SunBuie::getIrradiance() const

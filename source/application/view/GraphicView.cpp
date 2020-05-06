@@ -17,40 +17,46 @@
 GraphicView::GraphicView(QWidget* parent):
     QAbstractItemView(parent),
     m_sceneGraphRoot(0),
-    m_myRenderArea(0)
+    m_viewer(0)
 {
 
 }
 
 GraphicView::~GraphicView()
 {
-    delete m_myRenderArea;
+    delete m_viewer;
 }
 
+//#include <Inventor/nodes/SoPerspectiveCamera.h>
 void GraphicView::SetSceneGraph(GraphicRoot* sceneGraphRoot)
 {
     m_sceneGraphRoot = sceneGraphRoot;
-    m_myRenderArea = new SoQtExaminerViewer(this);
+    m_viewer = new SoQtExaminerViewer(this);
 
     SoBoxHighlightRenderAction* highlighter = new SoBoxHighlightRenderAction();
     highlighter->setColor(SbColor(100/255., 180/255., 120/255.));
     highlighter->setLineWidth(2.);
-    m_myRenderArea->setGLRenderAction(highlighter);
+    m_viewer->setGLRenderAction(highlighter);
 
-    m_myRenderArea->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
-    m_myRenderArea->setSceneGraph(m_sceneGraphRoot->GetNode() );
+    m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
+    m_viewer->setSceneGraph(m_sceneGraphRoot->GetNode() );
+
+//    SoPerspectiveCamera* camera = dynamic_cast<SoPerspectiveCamera*>(m_myRenderArea->getCamera());
+//    camera->scaleHeight(-1.); // left-handed to right-handed
 
     ViewCoordinateSystem(true);
+    m_viewer->setHeadlight(false);
+    m_viewer->setAntialiasing(true, 1); // disable if slow
 }
 
 SbViewportRegion GraphicView::GetViewportRegion() const
 {
-    return m_myRenderArea->getViewportRegion();
+    return m_viewer->getViewportRegion();
 }
 
 SoCamera* GraphicView::GetCamera() const
 {
-    return m_myRenderArea->getCamera();
+    return m_viewer->getCamera();
 }
 
 QModelIndex GraphicView::indexAt(const QPoint& /*point*/) const
@@ -70,12 +76,12 @@ QRect GraphicView::visualRect (const QModelIndex& /*index*/) const
 
 void GraphicView::ViewCoordinateSystem(bool view)
 {
-    m_myRenderArea->setFeedbackVisibility(view);
+    m_viewer->setFeedbackVisibility(view);
 }
 
 void GraphicView::ViewDecoration(bool view)
 {
-    m_myRenderArea->setDecoration(view);
+    m_viewer->setDecoration(view);
 }
 
 void GraphicView::dataChanged(const QModelIndex& /*topLeft*/, const QModelIndex& /*bottomRight*/)

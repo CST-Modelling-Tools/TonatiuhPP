@@ -24,82 +24,67 @@
 #include "scene/TShapeKit.h"
 
 
-SoSeparator* trf::DrawPhotonMapPoints(const PhotonMap& map)
+SoSeparator* trf::DrawPhotons(const PhotonMap& map)
 {
-    SoSeparator* drawpoints = new SoSeparator;
-    SoCoordinate3* points = new SoCoordinate3;
-    std::vector< Photon* > photonsList = map.GetAllPhotons();
-    uint numRays = 0;
+    SoSeparator* ans = new SoSeparator;
 
-    for (uint i = 0; i < photonsList.size(); i++)
+    SoCoordinate3* coordinates = new SoCoordinate3;
+    uint n = 0;
+    for (Photon* photon : map.GetAllPhotons())
     {
-        Point3D photon = photonsList[i]->pos;
-        points->point.set1Value(numRays, photon.x, photon.y, photon.z);
-        numRays++;
+        Point3D& p = photon->pos;
+        coordinates->point.set1Value(n++, p.x, p.y, p.z);
     }
+    ans->addChild(coordinates);
 
-    SoMaterial* myMaterial = new SoMaterial;
-    myMaterial->diffuseColor.setValue(1.0, 1.0, 0.0);
-    drawpoints->addChild(myMaterial);
-    drawpoints->addChild(points);
+    SoMaterial* material = new SoMaterial;
+    material->diffuseColor.setValue(1.f, 1.f, 0.f);
+    ans->addChild(material);
 
-    SoDrawStyle* drawstyle = new SoDrawStyle;
-    drawstyle->pointSize = 3;
-    drawpoints->addChild(drawstyle);
+    SoDrawStyle* style = new SoDrawStyle;
+    style->pointSize = 2;
+    ans->addChild(style);
 
-    SoPointSet* pointset = new SoPointSet;
-    drawpoints->addChild(pointset);
+    SoPointSet* points = new SoPointSet;
+    ans->addChild(points);
 
-    return drawpoints;
-
+    return ans;
 }
 
-SoSeparator* trf::DrawPhotonMapRays(const PhotonMap& map, unsigned long /*numberOfRays*/)
+SoSeparator* trf::DrawRays(const PhotonMap& map, unsigned long /*numberOfRays*/)
 {
+    SoSeparator* ans = new SoSeparator;
 
-    SoSeparator* drawrays = new SoSeparator;
     SoCoordinate3* points = new SoCoordinate3;
-
-    QVector< int >  rayLengths;
-    std::vector< Photon* > allRaysLists = map.GetAllPhotons();
-
-
+    const std::vector<Photon*>& photons = map.GetAllPhotons();
+    uint nPhoton = 0;
     int nRay = 0;
-    unsigned int photonIndex = 0;
-    while (photonIndex < allRaysLists.size() )
+    QVector<int> rayLengths;
+    ulong s = 0;
+    for (Photon* photon : photons)
     {
-        unsigned long rayLength = 0;
-        do
-        {
-            Photon* photon = allRaysLists[photonIndex];
-            Point3D photonPosistion = photon->pos;
-            points->point.set1Value(photonIndex, photonPosistion.x, photonPosistion.y, photonPosistion.z);
-            photonIndex++;
-            rayLength++;
-        }while(photonIndex < allRaysLists.size() && allRaysLists[photonIndex]->id > 0);
+        if (photon->id == 0 && s > 0) {
+            nRay++;
+            rayLengths << s;
+            s = 0;
+        }
 
+        Point3D& pos = photon->pos;
+        points->point.set1Value(nPhoton++, pos.x, pos.y, pos.z);
+        s++;
 
-        rayLengths.push_back(rayLength);
-        nRay++;
+    }      
+    ans->addChild(points);
 
-    }
-
-    SoMaterial* myMaterial = new SoMaterial;
-    myMaterial->diffuseColor.setValue(1.0f, 1.0f, 0.8f);
-    drawrays->addChild(myMaterial);
-    drawrays->addChild(points);
-
-    int* lines = new int[rayLengths.size()];
-    for (int l = 0; l < rayLengths.size(); l++)
-        lines[l] =  rayLengths[l];
+    SoMaterial* material = new SoMaterial;
+    material->diffuseColor.setValue(1.0f, 1.0f, 0.8f);
+    ans->addChild(material);
 
     SoLineSet* lineset = new SoLineSet;
-    lineset->numVertices.setValues(0, rayLengths.size(), lines);
-    drawrays->addChild(lineset);
+    lineset->numVertices.setValues(0, rayLengths.size(), rayLengths.data());
+    ans->addChild(lineset);
 
-
-    delete[] lines;
-    return drawrays;
+    return ans;
 }
 
 /**
