@@ -30,39 +30,39 @@ MaterialSpecular::MaterialSpecular():
     SO_NODE_SET_SF_ENUM_TYPE(distribution, Distribution);
     SO_NODE_ADD_FIELD(distribution, (NORMAL) );
 
-    SO_NODE_ADD_FIELD(m_ambientColor, (0.2f, 0.2f, 0.2f) );
-    SO_NODE_ADD_FIELD(m_diffuseColor, (0.8f, 0.8f, 0.8f) );
-    SO_NODE_ADD_FIELD(m_specularColor, (0.0, 0.0, 0.0) );
-    SO_NODE_ADD_FIELD(m_emissiveColor, (0.0, 0.0, 0.0) );
-    SO_NODE_ADD_FIELD(m_shininess, (0.2f) );
-    SO_NODE_ADD_FIELD(m_transparency, (0.0f) );
+    SO_NODE_ADD_FIELD(ambientColor, (0.2f, 0.2f, 0.2f) );
+    SO_NODE_ADD_FIELD(diffuseColor, (0.8f, 0.8f, 0.8f) );
+    SO_NODE_ADD_FIELD(specularColor, (0.0, 0.0, 0.0) );
+    SO_NODE_ADD_FIELD(emissiveColor, (0.0, 0.0, 0.0) );
+    SO_NODE_ADD_FIELD(shininess, (0.2f) );
+    SO_NODE_ADD_FIELD(transparency, (0.0f) );
 
     m_reflectivitySensor = new SoFieldSensor(updateReflectivity, this);
     m_reflectivitySensor->attach(&reflectivity);
 
-    m_ambientColorSensor = new SoFieldSensor(updateAmbientColor, this);
-    m_ambientColorSensor->attach(&m_ambientColor);
-    m_diffuseColorSensor = new SoFieldSensor(updateDiffuseColor, this);
-    m_diffuseColorSensor->attach(&m_diffuseColor);
-    m_specularColorSensor = new SoFieldSensor(updateSpecularColor, this);
-    m_specularColorSensor->attach(&m_specularColor);
-    m_emissiveColorSensor = new SoFieldSensor(updateEmissiveColor, this);
-    m_emissiveColorSensor->attach(&m_emissiveColor);
-    m_shininessSensor = new SoFieldSensor(updateShininess, this);
-    m_shininessSensor->attach(&m_shininess);
-    m_transparencySensor = new SoFieldSensor(updateTransparency, this);
-    m_transparencySensor->attach(&m_transparency);
+//    m_ambientColorSensor = new SoFieldSensor(updateAmbientColor, this);
+//    m_ambientColorSensor->attach(&m_ambientColor);
+//    m_diffuseColorSensor = new SoFieldSensor(updateDiffuseColor, this);
+//    m_diffuseColorSensor->attach(&m_diffuseColor);
+//    m_specularColorSensor = new SoFieldSensor(updateSpecularColor, this);
+//    m_specularColorSensor->attach(&m_specularColor);
+//    m_emissiveColorSensor = new SoFieldSensor(updateEmissiveColor, this);
+//    m_emissiveColorSensor->attach(&m_emissiveColor);
+//    m_shininessSensor = new SoFieldSensor(updateShininess, this);
+//    m_shininessSensor->attach(&m_shininess);
+//    m_transparencySensor = new SoFieldSensor(updateTransparency, this);
+//    m_transparencySensor->attach(&m_transparency);
 }
 
 MaterialSpecular::~MaterialSpecular()
 {
     delete m_reflectivitySensor;
-    delete m_ambientColorSensor;
-    delete m_diffuseColorSensor;
-    delete m_specularColorSensor;
-    delete m_emissiveColorSensor;
-    delete m_shininessSensor;
-    delete m_transparencySensor;
+//    delete m_ambientColorSensor;
+//    delete m_diffuseColorSensor;
+//    delete m_specularColorSensor;
+//    delete m_emissiveColorSensor;
+//    delete m_shininessSensor;
+//    delete m_transparencySensor;
 }
 
 bool MaterialSpecular::OutputRay(const Ray& rayIn, DifferentialGeometry* dg, RandomAbstract& rand, Ray* rayOut) const
@@ -113,6 +113,7 @@ void MaterialSpecular::updateReflectivity(void* data, SoSensor*)
         material->reflectivity = 1.;
 }
 
+/*
 void MaterialSpecular::updateAmbientColor(void* data, SoSensor*)
 {
     MaterialSpecular* material = static_cast< MaterialSpecular* >(data);
@@ -147,4 +148,4 @@ void MaterialSpecular::updateTransparency(void* data, SoSensor*)
 {
     MaterialSpecular* material = static_cast< MaterialSpecular* >(data);
     material->transparency.setValue(material->m_transparency[0]);
-}
+}*/

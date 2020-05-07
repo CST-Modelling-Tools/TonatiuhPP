@@ -58,30 +58,6 @@ ParametersView::ParametersView(SoNode* node, QString name, QWidget* parent):
     m_index(),
     m_delegate(0)
 {
-    setStyleSheet(R"(
-QAbstractItemView {
-outline: 0;
-}
-
-QAbstractItemView::item:selected {
-color: black;
-background-color: #c8dbe5;
-}
-
-QAbstractItemView::item:hover:selected {
-background-color: #c8dbe5;
-}
-
-QAbstractItemView::item:hover:!selected {
-background-color: #eeeeee;
-}
-
-QHeaderView::section
-{
-background-color: #d2dddb;
-}
-    )");
-
     m_delegate = new ParametersDelegate;
     setItemDelegate(m_delegate);
 

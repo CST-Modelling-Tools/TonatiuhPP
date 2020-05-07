@@ -23,9 +23,6 @@ public:
     TSceneKit();
     static void initClass();
 
-    trt::TONATIUH_REAL* GetAzimuthAngle();
-    trt::TONATIUH_REAL* GetZenithAngle();
-
     SoPath* GetSoPath(SoSearchAction* action);
 
     void UpdateSunPosition(double azimuthValue, double zenithValue);

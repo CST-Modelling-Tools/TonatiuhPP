@@ -15,5 +15,5 @@ public:
     double transmission(double distance) const;
     SoSFDouble constant;
 
-    NAME_ICON_FUNCTIONS("Exponential", ":/images/AirExponential.png")
+    NAME_ICON_FUNCTIONS("Exponential", ":/images/AirAbstract.png")
 };

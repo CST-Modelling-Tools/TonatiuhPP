@@ -13,7 +13,7 @@ public:
 
     virtual double transmission(double /*distance*/) const = 0;
 
-    NAME_ICON_FUNCTIONS("X", ":/AirX.png")
+    NAME_ICON_FUNCTIONS("X", ":/images/AirAbstract.png")
 
 protected:
     AirAbstract() {}

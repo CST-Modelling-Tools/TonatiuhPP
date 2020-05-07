@@ -113,6 +113,8 @@ TLightKit::TLightKit()
 
     TLightShape* iconShape = new TLightShape;
     setPart("icon", iconShape);
+
+    setName("Light");
 }
 
 /**

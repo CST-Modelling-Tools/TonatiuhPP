@@ -4,6 +4,7 @@
 
 class SoSeparator;
 class SoPerspectiveCamera;
+class QString;
 
 
 // a background which rotates with camera but does not move
@@ -23,5 +24,10 @@ public:
 
 protected:
     ~SkyBackground();
-    void addSky();
+
+    SoSeparator* makeSky();
+    SoSeparator* makeLabels();
+    void makeLabelAE(SoSeparator* parent, double azimuth, double elevation, const QString& text);
 };
+
+

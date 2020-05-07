@@ -159,10 +159,10 @@ public slots:
     //View menu actions
     void on_actionAxis_toggled();
     void on_actionQuadView_toggled();
-    void on_actionSunPlane_triggered();
-    void on_action_X_Y_Plane_triggered();
-    void on_action_X_Z_Plane_triggered();
-    void on_action_Y_Z_Plane_triggered();
+    void on_actionViewTop_triggered();
+    void on_actionViewSun_triggered();
+//    void on_action_X_Y_Plane_triggered();
+//    void on_action_Y_Z_Plane_triggered();
 
     //Automation menu actions
     void on_actionOpenScriptEditor_triggered();
@@ -172,7 +172,7 @@ public slots:
     //void on_actionCheckForUpdates_triggered();
 
 
-    void on_actionView_All_triggered();
+    void on_actionViewAll_triggered();
 
 private:
     void ChangeModelScene();

@@ -4,18 +4,21 @@
 TSceneKit {
   fields [ SFFloat azimuth, SFFloat zenith, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode transmissivity, SFNode topSeparator ]
   azimuth 0
-  zenith 0
+  zenith 1.0471976
   lightList 
   NodeKitListPart {
     childTypeNames "LightKit"
     containerNode 
     Group {
 
-      DEF _+0 TLightKit {
+      DEF _ TLightKit {
         fields [ SFFloat azimuth, SFFloat zenith, SFString disabledNodes, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
+        azimuth 0
+        zenith 1.0471976
+        disabledNodes ""
         transform 
         Transform {
-          translation 0 0 11
+          translation 0 0 11.366026
 
         }
         light 
@@ -26,11 +29,11 @@ TSceneKit {
         icon 
         TLightShape {
           fields [ SFFloat xMin, SFFloat xMax, SFFloat yMin, SFFloat yMax, SFFloat delta ]
-          xMin -1.0558006
-          xMax 1.0558006
-          yMin -1.0558006
-          yMax 1.0558006
-          delta 0.055800401
+          xMin -1.0592046
+          xMax 1.0592046
+          yMin -1.4252299
+          yMax 1.4252299
+          delta 0.059204463
 
         }
         iconMaterial 
@@ -61,6 +64,8 @@ TSceneKit {
         tsunshape 
         SunPillbox {
           fields [ SFDouble irradiance, SFDouble thetaMax ]
+          irradiance 1000
+          thetaMax 0.00465
 
         }
 
@@ -80,22 +85,22 @@ TSceneKit {
         transform 
         Transform {
           translation 0 0 0 =
-          DEF _+1 TSceneTracker {
+          DEF _+0 TSceneTracker {
             fields [ SFFloat m_azimuth, SFFloat m_zenith ]
             m_azimuth 0 =
-            USE _+0            . azimuth
-            m_zenith 0 =
-            USE _+0            . zenith
+            USE _            . azimuth
+            m_zenith 1.0471976 =
+            USE _            . zenith
 
           }          . outputTranslation
-          rotation 0 0 1  3.1415927 =
-          USE _+1          . outputRotation
+          rotation 2.1855694e-008 0.5 0.86602539  3.1415927 =
+          USE _+0          . outputRotation
           scaleFactor 1 1 1 =
-          USE _+1          . outputScaleFactor
+          USE _+0          . outputScaleFactor
           scaleOrientation 0 0 1  0 =
-          USE _+1          . outputScaleOrientation
+          USE _+0          . outputScaleOrientation
           center 0 0 0 =
-          USE _+1          . outputCenter
+          USE _+0          . outputCenter
 
         }
         childList 
@@ -147,7 +152,7 @@ TSceneKit {
 
         }
         tracker 
-        USE _+1
+        USE _+0
 
       }
     }

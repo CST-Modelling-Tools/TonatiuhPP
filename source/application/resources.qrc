@@ -38,11 +38,9 @@
         <file>images/tcube.png</file>
         <file>images/view/viewGrid.png</file>
         <file>images/view/viewSun.png</file>
-        <file>images/view/viewXY.png</file>
-        <file>images/view/viewXZ.png</file>
-        <file>images/view/viewYZ.png</file>
         <file>images/run/runScript.png</file>
         <file>images/scene/nodeMaterial.png</file>
         <file>images/scene/nodeTracker.png</file>
+        <file>images/view/ViewTop.png</file>
     </qresource>
 </RCC>

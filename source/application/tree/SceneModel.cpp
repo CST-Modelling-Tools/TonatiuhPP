@@ -104,60 +104,56 @@ void SceneModel::SetLight()
 
 void SceneModel::SetConcentrator()
 {
-    SoNodeKitListPart* coinPartList = static_cast< SoNodeKitListPart* >( m_coinScene->getPart( "childList", true ) );
+    SoNodeKitListPart* coinPartList = static_cast<SoNodeKitListPart*>( m_coinScene->getPart( "childList", true ) );
 
     //TSeparatorKit* separatorKit;
-    if ( coinPartList && coinPartList->getNumChildren() == 0 )
+    if (coinPartList && coinPartList->getNumChildren() == 0)
     {
         //Create Sun coordinate system node
-        TSeparatorKit* sunSeparatorKit = new TSeparatorKit();
-        sunSeparatorKit->setName("SunNode");
-        coinPartList->addChild( sunSeparatorKit );
-        sunSeparatorKit->setSearchingChildren( true );
-        InstanceNode* instanceNode = AddInstanceNode( *m_instanceRoot, sunSeparatorKit );
-        SoNodeKitListPart* sunSeparatorChildList = static_cast< SoNodeKitListPart* >( sunSeparatorKit->getPart( "childList", true ) );
+        TSeparatorKit* nodeSun = new TSeparatorKit();
+        nodeSun->setName("SunNode");
+        coinPartList->addChild(nodeSun);
+        nodeSun->setSearchingChildren(true);
+        InstanceNode* instanceNode = AddInstanceNode( *m_instanceRoot, nodeSun );
+        SoNodeKitListPart* nodeSunChild = static_cast< SoNodeKitListPart* >( nodeSun->getPart( "childList", true ) );
 
         TSceneTracker* sceneTracker = new TSceneTracker;
-        sunSeparatorKit->setPart( "tracker", sceneTracker );
-        sceneTracker->SetSceneKit( m_coinScene );
+        nodeSun->setPart("tracker", sceneTracker);
+        sceneTracker->SetSceneKit(m_coinScene);
 
         //Create Concentrator coordinate system node
-        TSeparatorKit* separatorKit = new TSeparatorKit();
-        separatorKit->setName("RootNode");
-        sunSeparatorChildList->addChild( separatorKit );
-        separatorKit->setSearchingChildren( true );
+        TSeparatorKit* nodeRoot = new TSeparatorKit();
+        nodeRoot->setName("RootNode");
+        nodeSunChild->addChild(nodeRoot);
+        nodeRoot->setSearchingChildren(true);
 
-        m_instanceConcentrator = AddInstanceNode( *instanceNode, separatorKit );
-
-
+        m_instanceConcentrator = AddInstanceNode( *instanceNode, nodeRoot );
 
         //
         TLightKit* lightKit = dynamic_cast<TLightKit*>(m_coinScene->getPart("lightList[0]", false));
         if (lightKit) {
-
-                sceneTracker->SetAzimuthAngle( &lightKit->azimuth );
-                sceneTracker->SetZenithAngle( &lightKit->zenith );
-
+            sceneTracker->SetAzimuthAngle(&lightKit->azimuth);
+            sceneTracker->SetZenithAngle(&lightKit->zenith);
         }
     }
     else
     {
         TSeparatorKit* sunSeparatorKit = static_cast< TSeparatorKit* >( coinPartList->getChild( 0 ) );
-        if ( !sunSeparatorKit ) return;
+        if (!sunSeparatorKit) return;
 
         InstanceNode* sunInstanceNode = AddInstanceNode( *m_instanceRoot, sunSeparatorKit );
         SoNodeKitListPart* sunSeparatorChildList = static_cast< SoNodeKitListPart* >( sunSeparatorKit->getPart( "childList", true ) );
-        if ( !sunSeparatorChildList ) return;
+        if (!sunSeparatorChildList) return;
 
         SoNode* tracker = sunSeparatorKit->getPart( "tracker", false );
-        if( tracker )
+        if (tracker)
         {
             TrackerAbstract* trackerNode = static_cast< TrackerAbstract* >( tracker );
-            trackerNode->SetSceneKit( m_coinScene );
+            trackerNode->SetSceneKit(m_coinScene);
         }
 
         TSeparatorKit* separatorKit = static_cast< TSeparatorKit* >( sunSeparatorChildList->getChild( 0 ) );
-        if( !separatorKit )    return;
+        if (!separatorKit) return;
 
         m_instanceConcentrator = AddInstanceNode( *sunInstanceNode, separatorKit );
         GenerateInstanceTree( *m_instanceConcentrator );
@@ -445,8 +441,8 @@ void SceneModel::InsertLightNode(TLightKit& lightKit)
     {
         SoFullPath* trackerPath = static_cast< SoFullPath* > ( trackersPath[index] );
         TrackerAbstract* tracker = static_cast< TrackerAbstract* >( trackerPath->getTail() );
-        tracker->SetAzimuthAngle( &lightKit.azimuth );
-        tracker->SetZenithAngle( &lightKit.zenith );
+        tracker->SetAzimuthAngle(&lightKit.azimuth);
+        tracker->SetZenithAngle(&lightKit.zenith);
     }
 
     InstanceNode* instanceLight = new InstanceNode(&lightKit);

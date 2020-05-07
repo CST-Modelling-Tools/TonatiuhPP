@@ -126,6 +126,18 @@ void PluginManager::sort()
         "File"
     };
     sortFactories(exportNames, m_exportFactories);
+
+    QStringList trackerNames = {
+        "Trough",
+        "Heliostat"
+    };
+    sortFactories(trackerNames, m_trackerFactories);
+
+    QStringList sunNames = {
+        "Pillbox",
+        "Buie"
+    };
+    sortFactories(sunNames, m_sunFactories);
 }
 
 /*!

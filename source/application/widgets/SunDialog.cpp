@@ -45,6 +45,10 @@ SunDialog::SunDialog(
     makeSunPositionTab();
     makeSunShapeTab();
     makeSunApertureTab();
+
+    Qt::WindowFlags flags = windowFlags();
+    flags ^= Qt::WindowContextHelpButtonHint;
+    setWindowFlags(flags);
 }
 
 /*!
@@ -53,7 +57,7 @@ SunDialog::SunDialog(
 TLightKit* SunDialog::getLightKit()
 {
     TLightKit* lightKit = new TLightKit;
-    lightKit->setName("Light");
+
 
     if (m_sunNew) lightKit->setPart("tsunshape", m_sunNew);
 

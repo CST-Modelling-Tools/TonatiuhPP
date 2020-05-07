@@ -32,7 +32,31 @@
      <item>
       <widget class="QLabel" name="label_links">
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Git repository&lt;br/&gt;&lt;a href=&quot;https://scmt.cyi.ac.cy/bitbucket/scm/t20/tonatiuh.git&quot;&gt;&lt;span style=&quot;color:#305a87;&quot;&gt;https://scmt.cyi.ac.cy/bitbucket/scm/t20/tonatiuh.git&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Cyprus Institute&lt;br/&gt;&lt;a href=&quot;https://www.cyi.ac.cy/&quot;&gt;&lt;span style=&quot;color:#305a87;&quot;&gt;https://www.cyi.ac.cy/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head&gt;
+&lt;style&gt;
+a {
+color:#305a87;
+text-decoration: none;
+}
+&lt;/style&gt;
+&lt;/head&gt;&lt;body&gt;
+
+&lt;p&gt;Git repositories&lt;br/&gt;
+
+&lt;a href=&quot;https://github.com/iat-cener/tonatiuh.git&quot;&gt;https://github.com/iat-cener/tonatiuh.git&lt;/a&gt;&lt;br/&gt;
+
+&lt;a href=&quot;https://scmt.cyi.ac.cy/bitbucket/scm/tnh/main.git&quot;&gt;https://scmt.cyi.ac.cy/bitbucket/scm/tnh/main.git&lt;/a&gt;&lt;br/&gt;
+
+&lt;a href=&quot;https://scmt.cyi.ac.cy/bitbucket/scm/t20/tonatiuh.git&quot;&gt;https://scmt.cyi.ac.cy/bitbucket/scm/t20/tonatiuh.git&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;The Cyprus Institute&lt;br/&gt;
+
+&lt;a href=&quot;https://www.cyi.ac.cy/&quot;&gt;https://www.cyi.ac.cy/&lt;/a&gt;
+
+&lt;/p&gt;
+
+&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

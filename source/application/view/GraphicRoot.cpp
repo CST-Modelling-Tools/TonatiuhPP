@@ -19,6 +19,24 @@ void selectionFinishCallback(void* userData, SoSelection* selection)
 
 #include "SkyBackground.h"
 
+/*
+m_nodeRoot SoSeparator
+    nodeSky SkyBackground
+    m_pSceneSeparator SoSeparator
+        m_pRootTransform SoTransform
+            m_pTracker GraphicRootTracker(TSceneKit)
+        m_pSelectionNode SoSelection
+            TSceneKit(azel, from TSceneTracker)
+
+            lightlist
+                tlightkit (azel dialog)
+            childList
+                SunNode
+                   TSceneTracker(lightKit)
+                    RootNode
+
+*/
+
 GraphicRoot::GraphicRoot():
     m_nodeRoot(0),
     m_pGrid(0),
@@ -35,11 +53,11 @@ GraphicRoot::GraphicRoot():
     m_nodeRoot->addChild(nodeSky);
 
     m_pSceneSeparator = new SoSeparator;
-    m_nodeRoot->addChild( m_pSceneSeparator );
+    m_nodeRoot->addChild(m_pSceneSeparator);
 
     m_pRootTransform = new SoTransform;
     m_pRootTransform->ref();
-    m_pSceneSeparator->addChild( m_pRootTransform );
+    m_pSceneSeparator->addChild(m_pRootTransform);
 
     m_pTracker = new GraphicRootTracker;
     //m_pTracker->ref();
@@ -93,13 +111,13 @@ void GraphicRoot::AddRays( SoSeparator* rays )
     m_pRays->ref();
 }
 
-void GraphicRoot::AddModel( TSceneKit* sceneModel )
+void GraphicRoot::AddModel(TSceneKit* sceneModel)
 {
     if (sceneModel) {
-        m_pSelectionNode->addChild( sceneModel );
-        m_pTracker->SetSceneKit( sceneModel );
-        m_pTracker->SetAzimuthAngle( sceneModel->GetAzimuthAngle() );
-        m_pTracker->SetZenithAngle( sceneModel->GetZenithAngle() );
+        m_pSelectionNode->addChild(sceneModel);
+        m_pTracker->SetSceneKit(sceneModel);
+        m_pTracker->SetAzimuthAngle(&sceneModel->azimuth);
+        m_pTracker->SetZenithAngle(&sceneModel->zenith);
     }
 }
 

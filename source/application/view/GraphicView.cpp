@@ -27,7 +27,7 @@ GraphicView::~GraphicView()
     delete m_viewer;
 }
 
-//#include <Inventor/nodes/SoPerspectiveCamera.h>
+#include <Inventor/nodes/SoPerspectiveCamera.h>
 void GraphicView::SetSceneGraph(GraphicRoot* sceneGraphRoot)
 {
     m_sceneGraphRoot = sceneGraphRoot;
@@ -47,6 +47,8 @@ void GraphicView::SetSceneGraph(GraphicRoot* sceneGraphRoot)
     ViewCoordinateSystem(true);
     m_viewer->setHeadlight(false);
     m_viewer->setAntialiasing(true, 1); // disable if slow
+
+//    m_viewer->
 }
 
 SbViewportRegion GraphicView::GetViewportRegion() const

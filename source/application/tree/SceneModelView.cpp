@@ -22,32 +22,6 @@ SceneModelView::SceneModelView(QWidget* parent):
     m_currentIndex(),
     m_itemsDelegate(0)
 {
-
-    setStyleSheet(R"(
-QAbstractItemView {
-outline: 0;
-}
-
-QAbstractItemView::item:selected {
-color: black;
-background-color: #c8dbe5;
-}
-
-QAbstractItemView::item:hover:selected {
-background-color: #c8dbe5;
-}
-
-QAbstractItemView::item:hover:!selected {
-background-color: #eeeeee;
-}
-
-QHeaderView::section
-{
-background-color: #d2dddb;
-}
-
-    )");
-
     header()->setFont(font()); // Qt bug
 
 //    header()->setFrameShape(QFrame::NoFrame);

@@ -25,7 +25,7 @@ public:
 
 	trt::TONATIUH_REALVECTOR2 axisOrigin;
 
-    NAME_ICON_FUNCTIONS("TrackerTrough", ":/TrackerTrough.png")
+    NAME_ICON_FUNCTIONS("Trough", ":/TrackerTrough.png")
 
 protected:
     ~TrackerTrough() {}

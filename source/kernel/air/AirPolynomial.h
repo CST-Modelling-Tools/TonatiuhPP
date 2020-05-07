@@ -34,7 +34,7 @@ public:
     SoSFDouble a2;
     SoSFDouble a3;
 
-    NAME_ICON_FUNCTIONS("Polynomial", ":/images/AirPolynomial.png")
+    NAME_ICON_FUNCTIONS("Polynomial", ":/images/AirAbstract.png")
 
 protected:
     static void update_coefficients(void* data, SoSensor*);

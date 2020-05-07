@@ -19,7 +19,7 @@ public:
 
     SoSFVec3f aimingPoint;
 
-    NAME_ICON_FUNCTIONS("TrackerHeliostat", ":/TrackerHeliostat.png")
+    NAME_ICON_FUNCTIONS("Heliostat", ":/TrackerHeliostat.png")
 
 protected:
     ~TrackerHeliostat() {}

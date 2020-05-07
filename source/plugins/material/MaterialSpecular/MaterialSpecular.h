@@ -31,12 +31,12 @@ public:
     SoSFDouble sigmaSlope;
     SoSFEnum distribution;
 
-    SoMFColor m_ambientColor;
-    SoMFColor m_diffuseColor;
-    SoMFColor m_specularColor;
-    SoMFColor m_emissiveColor;
-	SoMFFloat m_shininess;
-    SoMFFloat m_transparency;
+//    SoMFColor m_ambientColor;
+//    SoMFColor m_diffuseColor;
+//    SoMFColor m_specularColor;
+//    SoMFColor m_emissiveColor;
+//	SoMFFloat m_shininess;
+//    SoMFFloat m_transparency;
 
     NAME_ICON_FUNCTIONS("Specular", ":/MaterialSpecular.png")
 
@@ -46,21 +46,21 @@ protected:
     double m_sigmaOpt;
 
     static void updateReflectivity(void* data, SoSensor*);
-    static void updateAmbientColor(void* data, SoSensor*);
-    static void updateDiffuseColor(void* data, SoSensor*);
-    static void updateSpecularColor(void* data, SoSensor*);
-    static void updateEmissiveColor(void* data, SoSensor*);
-    static void updateShininess(void* data, SoSensor*);
-    static void updateTransparency(void* data, SoSensor*);
+//    static void updateAmbientColor(void* data, SoSensor*);
+//    static void updateDiffuseColor(void* data, SoSensor*);
+//    static void updateSpecularColor(void* data, SoSensor*);
+//    static void updateEmissiveColor(void* data, SoSensor*);
+//    static void updateShininess(void* data, SoSensor*);
+//    static void updateTransparency(void* data, SoSensor*);
 
 private:
     SoFieldSensor* m_reflectivitySensor;
-    SoFieldSensor* m_ambientColorSensor;
-    SoFieldSensor* m_diffuseColorSensor;
-    SoFieldSensor* m_specularColorSensor;
-    SoFieldSensor* m_emissiveColorSensor;
-    SoFieldSensor* m_shininessSensor;
-    SoFieldSensor* m_transparencySensor;
+//    SoFieldSensor* m_ambientColorSensor;
+//    SoFieldSensor* m_diffuseColorSensor;
+//    SoFieldSensor* m_specularColorSensor;
+//    SoFieldSensor* m_emissiveColorSensor;
+//    SoFieldSensor* m_shininessSensor;
+//    SoFieldSensor* m_transparencySensor;
 };
 
 

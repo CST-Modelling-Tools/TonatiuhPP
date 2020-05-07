@@ -178,10 +178,45 @@ MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags fl
 
     fileToolBar->hide();
     editToolBar->hide();
+
+
+    setStyleSheet(R"(
+QAbstractItemView {
+outline: 0;
+}
+
+QAbstractItemView::item:selected {
+color: black;
+background-color: #c8dbe5;
+}
+
+QAbstractItemView::item:hover:selected {
+background-color: #c8dbe5;
+}
+
+QAbstractItemView::item:hover:!selected {
+background-color: #eeeeee;
+}
+
+QHeaderView::section
+{
+background-color: #d2dddb;
+border-width: 0 1 1 0;
+border-style: solid;
+border-color: #abbaba;
+padding-left: 8;
+}
+
+QHeaderView::section:last, QHeaderView::section:only-one
+{
+border-width: 0 0 1 0;
+}
+
+    )");
 }
 
 /*!
- * Destroyes MainWindow object.
+ * Destroys MainWindow object.
  */
 MainWindow::~MainWindow()
 {
@@ -299,7 +334,7 @@ void MainWindow::DefineSunLight()
     if (coinScene->getPart("lightList[0]", false) )
         lightKitOld = static_cast<TLightKit*>(coinScene->getPart("lightList[0]", false) );
 
-    SunDialog dialog(*m_sceneModel, lightKitOld, m_pluginManager->getSunMap());
+    SunDialog dialog(*m_sceneModel, lightKitOld, m_pluginManager->getSunMap(), this);
     if (!dialog.exec()) return;
 
     TLightKit* lightKit = dialog.getLightKit();
@@ -322,7 +357,7 @@ void MainWindow::DefineSunLight()
  */
 void MainWindow::DefineTransmissivity()
 {
-    AirDialog dialog(m_pluginManager->getAirMap());
+    AirDialog dialog(m_pluginManager->getAirMap(), this);
 
     TSceneKit* sceneKit = m_document->GetSceneKit();
     if (!sceneKit) return;
@@ -850,7 +885,7 @@ void MainWindow::on_actionQuadView_toggled()
     }
 }
 
-void MainWindow::on_actionSunPlane_triggered()
+void MainWindow::on_actionViewSun_triggered()
 {
     SoSceneKit* coinScene = m_document->GetSceneKit();
     if (!coinScene) return;
@@ -898,20 +933,20 @@ SbVec3f MainWindow::getTarget(SoCamera* cam)
     return center;
 }
 
-void MainWindow::on_action_X_Y_Plane_triggered()
-{
-    SoCamera* cam = m_graphicView[m_focusView]->GetCamera();
+//void MainWindow::on_action_X_Y_Plane_triggered()
+//{
+//    SoCamera* cam = m_graphicView[m_focusView]->GetCamera();
 
-    SbVec3f target = getTarget(cam);
+//    SbVec3f target = getTarget(cam);
 
-    cam->position.setValue(target + SbVec3f(0, 0, cam->focalDistance.getValue() ) );
-    cam->pointAt(target, SbVec3f(0, 1, 0)  );
+//    cam->position.setValue(target + SbVec3f(0, 0, cam->focalDistance.getValue() ) );
+//    cam->pointAt(target, SbVec3f(0, 1, 0)  );
 
-    //SbViewportRegion vpr = m_graphicView[m_focusView]->GetViewportRegion();
-    //cam->viewAll( m_graphicsRoot->GetNode(), vpr );
-}
+//    //SbViewportRegion vpr = m_graphicView[m_focusView]->GetViewportRegion();
+//    //cam->viewAll( m_graphicsRoot->GetNode(), vpr );
+//}
 
-void MainWindow::on_action_X_Z_Plane_triggered()
+void MainWindow::on_actionViewTop_triggered()
 {
     SoCamera* camera = m_graphicView[m_focusView]->GetCamera();
     SbVec3f target = getTarget(camera);
@@ -923,14 +958,14 @@ void MainWindow::on_action_X_Z_Plane_triggered()
     //cam->viewAll( m_graphicsRoot->GetNode(), vpr );
 }
 
-void MainWindow::on_action_Y_Z_Plane_triggered()
-{
-    SoCamera* cam = m_graphicView[m_focusView]->GetCamera();
-    SbVec3f target = getTarget(cam);
+//void MainWindow::on_action_Y_Z_Plane_triggered()
+//{
+//    SoCamera* cam = m_graphicView[m_focusView]->GetCamera();
+//    SbVec3f target = getTarget(cam);
 
-    cam->position.setValue(target + SbVec3f(-cam->focalDistance.getValue(), 0, 0) );
-    cam->pointAt(target, SbVec3f(0, 1, 0)  );
-}
+//    cam->position.setValue(target + SbVec3f(-cam->focalDistance.getValue(), 0, 0) );
+//    cam->pointAt(target, SbVec3f(0, 1, 0)  );
+//}
 
 void MainWindow::on_actionOpenScriptEditor_triggered()
 {
@@ -1252,7 +1287,6 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
     TLightKit* lightKit = static_cast< TLightKit* >(scene->getPart("lightList[0]", false) );
     if (lightKit)
     {
-
         SoSearchAction trackersSearch;
         trackersSearch.setType(TrackerAbstract::getClassTypeId() );
         trackersSearch.setInterest(SoSearchAction::ALL);
@@ -3168,7 +3202,7 @@ void MainWindow::SetupActions()
 
 void MainWindow::SetupActionsInsertComponent()
 {
-    QMenu* pComponentMenu = menuInsert->findChild< QMenu* >("menuComponent");
+    QMenu* pComponentMenu = menuInsert->findChild<QMenu*>("menuComponent");
     if (!pComponentMenu) return;
     if (pComponentMenu->isEmpty() )
     {
@@ -3177,7 +3211,7 @@ void MainWindow::SetupActionsInsertComponent()
     }
 
     if (!m_pluginManager) return;
-    QVector< ComponentFactory* > componentFactoryList = m_pluginManager->getComponentFactories();
+    QVector<ComponentFactory*> componentFactoryList = m_pluginManager->getComponentFactories();
     if (!(componentFactoryList.size() > 0) ) return;
 
     for (int i = 0; i < componentFactoryList.size(); ++i)
@@ -3212,6 +3246,7 @@ void MainWindow::SetupActionsInsertMaterial()
 
     QPushButton* button = new QPushButton;
     button->setIcon(QIcon(":/images/scene/nodeMaterial.png"));
+    button->setToolTip("Materials");
     button->setMenu(menu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
 }
@@ -3249,6 +3284,7 @@ void MainWindow::SetupActionsInsertShape()
 
     QPushButton* button = new QPushButton;
     button->setIcon(QIcon(":/images/scene/nodeSurface.png"));
+    button->setToolTip("Shapes");
     button->setMenu(menu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
 }
@@ -3269,6 +3305,7 @@ void MainWindow::SetupActionsInsertTracker()
 
     QPushButton* button = new QPushButton;
     button->setIcon(QIcon(":/images/scene/nodeTracker.png"));
+    button->setToolTip("Trackers");
     button->setMenu(menu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
 }
@@ -3416,11 +3453,11 @@ void MainWindow::SetupGraphicView()
     }
 
     m_focusView = 1;
-    on_action_X_Y_Plane_triggered();
+//    on_action_X_Y_Plane_triggered();
     m_focusView = 2;
-    on_action_Y_Z_Plane_triggered();
+//    on_action_Y_Z_Plane_triggered();
     m_focusView = 3;
-    on_action_X_Z_Plane_triggered();
+    on_actionViewTop_triggered();
 
     // 0 splitterH1 1              tree
     //   splitterV      splitter
@@ -3637,7 +3674,7 @@ bool MainWindow::StartOver(const QString& fileName)
 
     ChangeModelScene();
     sceneModelView->expandToDepth(1);
-    on_actionView_All_triggered();
+    on_actionViewAll_triggered();
     return true;
 }
 
@@ -3727,7 +3764,7 @@ void MainWindow::WriteSettings()
 
 }
 
-void MainWindow::on_actionView_All_triggered()
+void MainWindow::on_actionViewAll_triggered()
 {
     SbViewportRegion vpr = m_graphicView[m_focusView]->GetViewportRegion();
     SoCamera* camera = m_graphicView[m_focusView]->GetCamera();
