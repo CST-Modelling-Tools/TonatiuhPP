@@ -51,7 +51,7 @@ QString PhotonExportFileWidget::GetParameterValue( QString parameter ) const
  */
 void PhotonExportFileWidget::SelectSaveDirectory()
 {
-    QSettings settings("NREL UTB CENER", "Tonatiuh");
+    QSettings settings("CyI", "Tonatiuh");
     QString lastUsedDirectory = settings.value( "PhotonExportFileWidget.directoryToExport",
             ".").toString();
 

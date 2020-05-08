@@ -1,11 +1,11 @@
 TEMPLATE = lib
-TARGET = TonatiuhKernel
+TARGET = Tonatiuh-Kernel
 DESTDIR = ..
 DEFINES += TONATIUH_KERNEL_EXPORT
 
 include(../config.pri)
 
-LIBS += -lTonatiuhLibraries
+LIBS += -lTonatiuh-Libraries
 
 HEADERS += \
     $$files(*.h) \

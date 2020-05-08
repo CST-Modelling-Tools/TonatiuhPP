@@ -118,6 +118,8 @@ void GraphicRoot::AddModel(TSceneKit* sceneModel)
         m_pTracker->SetSceneKit(sceneModel);
         m_pTracker->SetAzimuthAngle(&sceneModel->azimuth);
         m_pTracker->SetZenithAngle(&sceneModel->zenith);
+
+        sceneModel->m_root = m_nodeRoot; // cycle?
     }
 }
 

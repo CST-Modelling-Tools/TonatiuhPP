@@ -135,7 +135,7 @@ QDateTime SunCalculatorDialog::GetTime()
 
 void SunCalculatorDialog::ReadSettings()
 {
-    QSettings settings("TonatiuhCyprus", "Tonatiuh");
+    QSettings settings("CyI", "Tonatiuh");
     calendarWidget->setSelectedDate(settings.value("SunCalculator.date").toDate() );
     utRadio->setChecked(settings.value("SunCalculator.utTimeSelected", true).toBool() );
     ctRadio->setChecked(settings.value("SunCalculator.ctTimeSelected", false).toBool() );
@@ -148,7 +148,7 @@ void SunCalculatorDialog::ReadSettings()
 
 void SunCalculatorDialog::WriteSettings()
 {
-    QSettings settings("TonatiuhCyprus", "Tonatiuh");
+    QSettings settings("CyI", "Tonatiuh");
     settings.setValue("SunCalculator.date", calendarWidget->selectedDate() );
     settings.setValue("SunCalculator.utTimeSelected", utRadio->isChecked() );
     settings.setValue("SunCalculator.ctTimeSelected", ctRadio->isChecked() );

@@ -407,7 +407,7 @@ void MainWindow::InsertUserDefinedComponent()
 
     if (!coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) return;
 
-    QSettings settings("NREL UTB CENER", "Tonatiuh");
+    QSettings settings("CyI", "Tonatiuh");
     QString openDirectory = settings.value("componentOpenDirectory", QString(".") ).toString();
 
     QString fileName = QFileDialog::getOpenFileName(this,
@@ -475,17 +475,20 @@ void MainWindow::Open()
 {
     if (OkToContinue() )
     {
-        QSettings settings("NREL UTB CENER", "Tonatiuh");
-        QString openDirectory = settings.value("openDirectory", QString(".") ).toString();
+        // HKEY_CURRENT_USER\Software\CyI\Tonatiuh
+        QSettings settings("CyI", "Tonatiuh");
+        QString openDirectory = settings.value("openDirectory", QString("../examples") ).toString();
 
-        QString fileName = QFileDialog::getOpenFileName(this,
-                                                        tr("Open"), openDirectory,
-                                                        tr("Tonatiuh files (*.tnh)") );
+        QString fileName = QFileDialog::getOpenFileName(
+            this,
+            tr("Open"), openDirectory,
+            tr("Tonatiuh files (*.tnh)")
+        );
 
         if (fileName.isEmpty() ) return;
 
         QFileInfo file(fileName);
-        settings.setValue("openDirectory", file.absolutePath() );
+        settings.setValue("openDirectory", file.path());
         StartOver(fileName);
     }
 }
@@ -638,22 +641,23 @@ void MainWindow::SaveComponent(QString componentFileName)
  */
 bool MainWindow::SaveAs()
 {
+    QSettings settings("CyI", "Tonatiuh");
+    QString saveDirectory = settings.value("saveDirectory", ".").toString();
 
-    QSettings settings("NREL UTB CENER", "Tonatiuh");
+    QString fileName = QFileDialog::getSaveFileName(
+        this,
+        tr("Save"),
+        saveDirectory,
+        "Tonatiuh files (*.tnh);; Tonatiuh debug (*.tnhd)"
+    );
 
-    QString saveDirectory = settings.value("saveDirectory", QString(".") ).toString();
-
-    QString tonatiuhFilter("Tonatiuh files (*.tnh)");
-    QString fileName = QFileDialog::getSaveFileName(this,
-                                                    tr("Save"), saveDirectory,
-                                                    tonatiuhFilter, &tonatiuhFilter);
     if (fileName.isEmpty() ) return false;
 
     QFileInfo file(fileName);
     settings.setValue("saveDirectory", file.absolutePath() );
 
-    if (file.completeSuffix().compare("tnh") )
-        fileName.append(".tnh");
+//    if (file.completeSuffix().compare("tnh") )
+//        fileName.append(".tnh");
     return SaveFile(fileName);
 }
 
@@ -3034,7 +3038,7 @@ QDir MainWindow::PluginDirectory()
  **/
 void MainWindow::ReadSettings()
 {
-    QSettings settings("NREL UTB CENER", "Tonatiuh");
+    QSettings settings("CyI", "Tonatiuh");
     QRect rect = settings.value("geometry", QRect(200, 200, 400, 400) ).toRect();
     move(rect.topLeft() );
     resize(rect.size() );
@@ -3286,6 +3290,12 @@ void MainWindow::SetupActionsInsertShape()
     button->setIcon(QIcon(":/images/scene/nodeSurface.png"));
     button->setToolTip("Shapes");
     button->setMenu(menu);
+    findChild<QToolBar*>("insertToolBar")->addWidget(button);
+
+    button = new QPushButton;
+    button->setIcon(QIcon(":/images/scene/nodeSurface.png"));
+    button->setToolTip("Apertures");
+    button->setMenu(new QMenu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
 }
 
@@ -3745,7 +3755,7 @@ void MainWindow::UpdateRecentFileActions()
  */
 void MainWindow::WriteSettings()
 {
-    QSettings settings("NREL UTB CENER", "Tonatiuh");
+    QSettings settings("CyI", "Tonatiuh");
     settings.setValue("geometry", geometry() );
 
     Qt::WindowStates states = windowState();

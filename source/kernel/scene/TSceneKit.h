@@ -30,6 +30,8 @@ public:
     trt::TONATIUH_REAL azimuth;
     trt::TONATIUH_REAL zenith;
 
+    SoSeparator* m_root; // graphicRoot
+
 protected:
     ~TSceneKit() {}
     void UpdateTrackersTransform(SoBaseKit* branch, Vector3D sunVector, Transform parentOTW);

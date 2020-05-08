@@ -97,7 +97,7 @@ void CodeEditorWidget::OpenScriptFile()
 {
     if( !OkToContinue() ) return;
 
-    QSettings settings( "NREL UTB CENER", "Tonatiuh" );
+    QSettings settings( "CyI", "Tonatiuh" );
     QString dirName = settings.value( "codeeditorwidget.openDirectory", "." ).toString();
 
 
@@ -128,7 +128,7 @@ void CodeEditorWidget::Run()
  */
 bool CodeEditorWidget::SaveAsScriptFile()
 {
-    QSettings settings( "NREL UTB CENER", "Tonatiuh" );
+    QSettings settings("CyI", "Tonatiuh");
 
     QString dirName = settings.value( "codeeditorwidget.saveDirectory", "." ).toString();
 

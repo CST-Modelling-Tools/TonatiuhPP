@@ -4,4 +4,4 @@ DESTDIR = ..
 include( ../config.pri)
 
 LIBS += -L../../..
-LIBS += -lTonatiuhKernel -lTonatiuhLibraries
+LIBS += -lTonatiuh-Kernel -lTonatiuh-Libraries

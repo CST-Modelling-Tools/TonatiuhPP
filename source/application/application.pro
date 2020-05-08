@@ -8,7 +8,7 @@ QT += script # for scripting
 QT += printsupport # for customplot
 QT += gui # QVector3D
 
-LIBS += -lTonatiuhKernel -lTonatiuhLibraries -lOpengl32
+LIBS += -lTonatiuh-Kernel -lTonatiuh-Libraries -lOpengl32
 
 HEADERS += \
     $$files(actions/*.h) \

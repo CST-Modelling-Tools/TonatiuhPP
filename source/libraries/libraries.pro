@@ -1,5 +1,5 @@
 TEMPLATE = lib
-TARGET = TonatiuhLibraries
+TARGET = Tonatiuh-Libraries
 DESTDIR = ..
 DEFINES += TONATIUH_LIBRARIES_EXPORT
 

@@ -87,8 +87,8 @@ bool Document::ReadFile(const QString& fileName)
  */
 bool Document::WriteFile(const QString& fileName)
 {
-    SoWriteAction SceneOuput;
-    if (!SceneOuput.getOutput()->openFile(fileName.toLatin1().constData() ) )
+    SoWriteAction action;
+    if (!action.getOutput()->openFile(fileName.toLatin1().constData() ) )
     {
         QString message = QString("Cannot open file %1.").arg(fileName);
         emit Warning(message);
@@ -97,10 +97,16 @@ bool Document::WriteFile(const QString& fileName)
     }
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    SceneOuput.getOutput()->setBinary(false);
-    SceneOuput.apply(m_scene);
-    SceneOuput.getOutput()->closeFile();
+    action.getOutput()->setBinary(false);
+
+    if (fileName.endsWith(".tnh")) // normal
+        action.apply(m_scene);
+    else if (fileName.endsWith(".tnhd")) // debug
+        action.apply(m_scene->m_root);
+
+    action.getOutput()->closeFile();
     QApplication::restoreOverrideCursor();
+
     m_isModified = false;
     return true;
 }

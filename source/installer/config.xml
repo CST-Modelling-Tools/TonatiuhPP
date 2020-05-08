@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Title>Tonatiuh (Cyprus Edition)</Title>
+    <Name>Tonatiuh</Name>
+    <Version>2.3.0</Version>
+    <Publisher>The Cyprus Institute</Publisher>
+    <TargetDir>@HomeDir@/CyI/Tonatiuh</TargetDir>
+    <StartMenuDir>Tonatiuh (CyI)</StartMenuDir>
+    <WizardStyle>Modern</WizardStyle>
+<!--    <Logo>logo.png</Logo>-->
+</Installer>
