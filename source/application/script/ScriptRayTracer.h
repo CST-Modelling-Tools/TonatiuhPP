@@ -16,12 +16,13 @@ class SceneModel;
 class PhotonMap;
 class Transform;
 
+
 class ScriptRayTracer: public QObject
 {
     Q_OBJECT
 
 public:
-    ScriptRayTracer(QVector< RandomFactory* > listRandomFactory);
+    ScriptRayTracer(QVector<RandomFactory*> listRandomFactory);
     ~ScriptRayTracer();
 
     void Clear();
@@ -70,7 +71,7 @@ private:
     PhotonMap* m_photonMap;
     bool m_photonMapToFile;
 
-    QVector< RandomFactory* > m_RandomFactoryList;
+    QVector<RandomFactory*> m_RandomFactoryList;
     RandomAbstract* m_randomDeviate;
 
     SceneModel* m_sceneModel;

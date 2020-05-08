@@ -8,7 +8,7 @@
 #include <Inventor/nodekits/SoNodeKitListPart.h>
 
 #include "kernel/run/InstanceNode.h"
-#include "SceneModelView.h"
+#include "SceneView.h"
 #include "tree/SceneModel.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
@@ -17,7 +17,7 @@
 /**
  * Creates a new view for a model. This
  */
-SceneModelView::SceneModelView(QWidget* parent):
+SceneView::SceneView(QWidget* parent):
     QTreeView(parent),
     m_currentIndex(),
     m_itemsDelegate(0)
@@ -27,7 +27,7 @@ SceneModelView::SceneModelView(QWidget* parent):
 //    header()->setFrameShape(QFrame::NoFrame);
 //    header()->setFrameShadow(QFrame::Plain);
 
-    m_itemsDelegate = new NodeNameDelegate();
+    m_itemsDelegate = new SceneDelegate();
     setItemDelegate(m_itemsDelegate);
 
     //setAcceptDrops(true);
@@ -42,7 +42,7 @@ SceneModelView::SceneModelView(QWidget* parent):
 /*!
  * Destoryes view object.
  */
-SceneModelView::~SceneModelView()
+SceneView::~SceneView()
 {
     delete m_itemsDelegate;
 }
@@ -50,7 +50,7 @@ SceneModelView::~SceneModelView()
 /**
  * Not yet docummented
  */
-void SceneModelView::mousePressEvent(QMouseEvent *event)
+void SceneView::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton){
         startPos = event->pos();
@@ -65,7 +65,7 @@ void SceneModelView::mousePressEvent(QMouseEvent *event)
 /**
  * Not yet docummented
  */
-void SceneModelView::mouseMoveEvent(QMouseEvent *event)
+void SceneView::mouseMoveEvent(QMouseEvent *event)
 {
     if (event->buttons() & Qt::LeftButton) {
         int distance = (event->pos() - startPos).manhattanLength();
@@ -78,7 +78,7 @@ void SceneModelView::mouseMoveEvent(QMouseEvent *event)
 /**
  * Not yet docummented
  */
-void SceneModelView::dragEnterEvent(QDragEnterEvent *event)
+void SceneView::dragEnterEvent(QDragEnterEvent *event)
 {
     event->setDropAction(Qt::MoveAction);
     event->accept();
@@ -87,7 +87,7 @@ void SceneModelView::dragEnterEvent(QDragEnterEvent *event)
 /**
  * Not yet docummented
  */
-void SceneModelView::dragMoveEvent(QDragMoveEvent *event)
+void SceneView::dragMoveEvent(QDragMoveEvent *event)
 {
     event->setDropAction(Qt::MoveAction);
     event->accept();
@@ -96,7 +96,7 @@ void SceneModelView::dragMoveEvent(QDragMoveEvent *event)
 /**
  * Not yet docummented
  */
-void SceneModelView::dropEvent(QDropEvent *event)
+void SceneView::dropEvent(QDropEvent *event)
 {
     QModelIndex newParent= indexAt(event->pos());
     if ( newParent.isValid() )
@@ -159,13 +159,13 @@ void SceneModelView::dropEvent(QDropEvent *event)
 /*!
  * Sets \a current as the view current element index.
  */
-void SceneModelView::currentChanged(const QModelIndex& current, const QModelIndex& previous )
+void SceneView::currentChanged(const QModelIndex& current, const QModelIndex& previous )
 {
     m_currentIndex = current;
     QTreeView::currentChanged(current, previous);
 }
 
-void SceneModelView::closeEditor( QWidget* editor, QAbstractItemDelegate::EndEditHint hint )
+void SceneView::closeEditor( QWidget* editor, QAbstractItemDelegate::EndEditHint hint )
 {
     QLineEdit* textEdit = qobject_cast<QLineEdit *>(editor);
     QString newValue = textEdit->text();
@@ -177,7 +177,7 @@ void SceneModelView::closeEditor( QWidget* editor, QAbstractItemDelegate::EndEdi
 /**
  * Resizes the view to the size of its contents.
  */
-void SceneModelView::resizeViewToContents(const QModelIndex& index)
+void SceneView::resizeViewToContents(const QModelIndex& index)
 {
     resizeColumnToContents( index.column() );
 }
@@ -185,7 +185,7 @@ void SceneModelView::resizeViewToContents(const QModelIndex& index)
 /**
  * Not yet docummented
  */
-void SceneModelView::startDrag(QMouseEvent* event)
+void SceneView::startDrag(QMouseEvent* event)
 {
     QPoint position = event->pos();
     QModelIndex index = indexAt(position);

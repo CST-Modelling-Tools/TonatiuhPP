@@ -85,7 +85,7 @@ void ParametersDelegate::setEditorData(QWidget* editor, const QModelIndex& index
 
 }
 
-void ParametersDelegate::onCloseEditor()
+void ParametersDelegate::onCloseEditor() // not used?
 {
     QWidget* editor = qobject_cast<QWidget*>(sender());
     emit closeEditor(editor);

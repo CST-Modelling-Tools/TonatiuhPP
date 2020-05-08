@@ -42,7 +42,7 @@ SceneModel::~SceneModel()
 /*!
  * Sets \a coinRoot as the model root.
  */
-void SceneModel::SetCoinRoot( SoSeparator& coinRoot )
+void SceneModel::SetCoinRoot(SoSeparator& coinRoot)
 {
     m_coinRoot = &coinRoot;
     m_mapCoinQt.clear();

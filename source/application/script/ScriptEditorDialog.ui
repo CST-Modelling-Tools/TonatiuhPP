@@ -26,9 +26,6 @@
       <enum>Qt::Vertical</enum>
      </property>
      <widget class="QSplitter" name="mainSplitter">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
       <widget class="QTreeView" name="fileTree"/>
       <widget class="CodeEditorWidget" name="codeEditorWidget" native="true"/>
      </widget>
@@ -41,6 +38,12 @@
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
        </property>
       </spacer>
      </item>

@@ -2,15 +2,15 @@
 
 #include <QTreeView>
 
-#include "NodeNameDelegate.h"
+#include "SceneDelegate.h"
 
-class SceneModelView: public QTreeView
+class SceneView: public QTreeView
 {
     Q_OBJECT
 
 public:
-    SceneModelView(QWidget* parent = 0);
-    ~SceneModelView();
+    SceneView(QWidget* parent = 0);
+    ~SceneView();
 
 signals:
     void dragAndDrop(const QModelIndex& newParent, const QModelIndex& item);
@@ -26,8 +26,8 @@ protected:
     void dropEvent(QDropEvent* event);
 
 protected slots:
-    void currentChanged (const QModelIndex& current, const QModelIndex& previous);
-    void closeEditor (QWidget* editor, QAbstractItemDelegate::EndEditHint hint);
+    void currentChanged(const QModelIndex& current, const QModelIndex& previous);
+    void closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint);
     void resizeViewToContents(const QModelIndex& index);
 
 protected slots:
@@ -36,6 +36,6 @@ private:
     void startDrag(QMouseEvent* event);
 
     QModelIndex m_currentIndex;
-    NodeNameDelegate* m_itemsDelegate;
+    SceneDelegate* m_itemsDelegate;
     QPoint startPos;
 };

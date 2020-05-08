@@ -34,9 +34,9 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory
     fileNamesFilter << "*.tnhs";
 
     m_fileModel = new FilesModel;
-    m_fileModel->setRootPath( "" );
-    m_fileModel->setNameFilters( fileNamesFilter );
-    fileTree->setModel( m_fileModel );
+    m_fileModel->setRootPath("");
+    m_fileModel->setNameFilters(fileNamesFilter);
+    fileTree->setModel(m_fileModel);
 
     QString pluginsDirectory= QApplication::applicationDirPath() + QDir::separator() + "plugins";
     QCoreApplication::addLibraryPath(pluginsDirectory );

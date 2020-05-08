@@ -27,7 +27,7 @@
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <widget class="SceneModelView" name="sceneModelView">
+       <widget class="SceneView" name="sceneModelView">
         <property name="acceptDrops">
          <bool>true</bool>
         </property>
@@ -97,21 +97,21 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
-    <addaction name="actionAxis"/>
-    <addaction name="actionBackground"/>
-    <addaction name="actionGrid"/>
+    <addaction name="actionViewAxes"/>
+    <addaction name="actionViewBackground"/>
+    <addaction name="actionViewGrid"/>
     <addaction name="actionGridSettings"/>
-    <addaction name="actionDisplayRays"/>
+    <addaction name="actionViewRays"/>
     <addaction name="separator"/>
-    <addaction name="actionViewTop"/>
-    <addaction name="actionViewSun"/>
     <addaction name="actionViewAll"/>
     <addaction name="actionViewSelected"/>
     <addaction name="separator"/>
+    <addaction name="actionViewTop"/>
     <addaction name="actionLookNorth"/>
     <addaction name="actionLookEast"/>
     <addaction name="actionLookSouth"/>
     <addaction name="actionLookWest"/>
+    <addaction name="actionViewSun"/>
     <addaction name="separator"/>
     <addaction name="actionQuadView"/>
     <addaction name="separator"/>
@@ -172,9 +172,9 @@
      <property name="title">
       <string>Test</string>
      </property>
-     <addaction name="actionA"/>
-     <addaction name="actionB"/>
-     <addaction name="actionC"/>
+     <addaction name="actionTestA"/>
+     <addaction name="actionTestB"/>
+     <addaction name="actionTestC"/>
     </widget>
     <addaction name="actionRun"/>
     <addaction name="actionRayTraceOptions"/>
@@ -277,7 +277,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionGrid"/>
+   <addaction name="actionViewGrid"/>
    <addaction name="actionViewTop"/>
    <addaction name="actionViewSun"/>
   </widget>
@@ -487,7 +487,7 @@
     <string>Shape</string>
    </property>
   </action>
-  <action name="actionAxis">
+  <action name="actionViewAxes">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -498,13 +498,13 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Axis</string>
+    <string>Axes</string>
    </property>
    <property name="toolTip">
     <string>Draw Shape Local Axis</string>
    </property>
   </action>
-  <action name="actionBackground">
+  <action name="actionViewBackground">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -515,7 +515,7 @@
     <string>Background</string>
    </property>
   </action>
-  <action name="actionGrid">
+  <action name="actionViewGrid">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -536,18 +536,6 @@
     <string>Ctrl+G</string>
    </property>
   </action>
-  <action name="actionViewSun">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/images/view/viewSun.png</normaloff>:/images/view/viewSun.png</iconset>
-   </property>
-   <property name="text">
-    <string>Sun View</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+0</string>
-   </property>
-  </action>
   <action name="actionGridSettings">
    <property name="enabled">
     <bool>false</bool>
@@ -556,12 +544,34 @@
     <string>Grid Settings...</string>
    </property>
   </action>
-  <action name="actionLookNorth">
+  <action name="actionViewRays">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
-    <string>Look North</string>
+    <string>Rays</string>
+   </property>
+  </action>
+  <action name="actionViewAll">
+   <property name="text">
+    <string>View All</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+8</string>
+    <string>Ctrl+*</string>
+   </property>
+  </action>
+  <action name="actionViewSelected">
+   <property name="text">
+    <string>View Selected</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+.</string>
    </property>
   </action>
   <action name="actionViewTop">
@@ -576,12 +586,48 @@
     <string>Ctrl+5</string>
    </property>
   </action>
+  <action name="actionLookNorth">
+   <property name="text">
+    <string>Look North</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+8</string>
+   </property>
+  </action>
   <action name="actionLookEast">
    <property name="text">
     <string>Look East</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+6</string>
+   </property>
+  </action>
+  <action name="actionLookSouth">
+   <property name="text">
+    <string>Look South</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+2</string>
+   </property>
+  </action>
+  <action name="actionLookWest">
+   <property name="text">
+    <string>Look West</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+4</string>
+   </property>
+  </action>
+  <action name="actionViewSun">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/view/viewSun.png</normaloff>:/images/view/viewSun.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sun View</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+0</string>
    </property>
   </action>
   <action name="actionDefineSunLight">
@@ -608,20 +654,6 @@
    </property>
    <property name="text">
     <string>Air...</string>
-   </property>
-  </action>
-  <action name="actionDisplayRays">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>false</bool>
-   </property>
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Rays</string>
    </property>
   </action>
   <action name="actionQuadView">
@@ -731,60 +763,28 @@
     <string>Network Connections...</string>
    </property>
   </action>
-  <action name="actionA">
+  <action name="actionTestA">
    <property name="text">
     <string>A</string>
    </property>
   </action>
-  <action name="actionB">
+  <action name="actionTestB">
    <property name="text">
     <string>B</string>
    </property>
   </action>
-  <action name="actionC">
+  <action name="actionTestC">
    <property name="text">
     <string>C</string>
-   </property>
-  </action>
-  <action name="actionViewAll">
-   <property name="text">
-    <string>View All</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+*</string>
-   </property>
-  </action>
-  <action name="actionViewSelected">
-   <property name="text">
-    <string>View Selected</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+.</string>
-   </property>
-  </action>
-  <action name="actionLookSouth">
-   <property name="text">
-    <string>Look South</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+2</string>
-   </property>
-  </action>
-  <action name="actionLookWest">
-   <property name="text">
-    <string>Look West</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+4</string>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="9"/>
  <customwidgets>
   <customwidget>
-   <class>SceneModelView</class>
+   <class>SceneView</class>
    <extends>QTreeView</extends>
-   <header>tree/SceneModelView.h</header>
+   <header>tree/SceneView.h</header>
   </customwidget>
   <customwidget>
    <class>ParametersTabs</class>
@@ -798,7 +798,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>actionGrid</sender>
+   <sender>actionViewGrid</sender>
    <signal>toggled(bool)</signal>
    <receiver>actionGridSettings</receiver>
    <slot>setEnabled(bool)</slot>

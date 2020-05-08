@@ -157,7 +157,7 @@ public slots:
     void SoManip_to_SoTransform();
 
     //View menu actions
-    void on_actionAxis_toggled();
+    void on_actionViewAxes_toggled();
     void on_actionQuadView_toggled();
     void on_actionViewTop_triggered();
     void on_actionViewSun_triggered();
@@ -176,7 +176,7 @@ public slots:
 
 private:
     void ChangeModelScene();
-    SoSeparator* CreateGrid( int xDimension, int zDimension, double xSpacing, double zSpacing );
+    SoSeparator* CreateGrid();
     PhotonExport* CreatePhotonMapExport() const;
     QToolBar* CreateTrackerTooBar( QMenu* pMaterialsMenu );
     bool Delete( QModelIndex index );

@@ -210,9 +210,9 @@ void GraphicRoot::ShowBackground( bool view ) //?
 
 void GraphicRoot::ShowGrid(bool view)
 {
-    if( view && m_pGrid )
-        m_nodeRoot->addChild( m_pGrid );
-    else if( !view )
+    if (view && m_pGrid)
+        m_nodeRoot->addChild(m_pGrid);
+    else if (!view)
         if ( m_pGrid->getRefCount( ) > 0 )    m_nodeRoot->removeChild( m_pGrid );
 }
 

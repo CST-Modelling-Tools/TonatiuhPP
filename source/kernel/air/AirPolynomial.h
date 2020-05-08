@@ -21,10 +21,10 @@ public:
 
     enum Coefficients {
         Custom,
-        VittitoeBiggsClear,
-        VittitoeBiggsHazy,
-        BallestrinClear,
-        BallestrinHazy
+        VittitoeBiggs_clear,
+        VittitoeBiggs_hazy,
+        Ballestrin_clear,
+        Ballestrin_hazy
     };
 
     SoSFEnum coefficients;

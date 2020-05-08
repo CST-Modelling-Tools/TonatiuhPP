@@ -7,8 +7,8 @@
 #include <iostream>
 
 
-Image::Image(QString fileName)
-    : QImage(), countries()
+Image::Image(QString fileName):
+    QImage(), countries()
 {
     load(fileName);
     addCountries();
@@ -22,6 +22,7 @@ QString Image::country(int x, int y)
     QString country = (QString)countries.at(gray);
     return country;
 }
+
 void Image::addCountries()
 {
     countries << "Afghanistan";

@@ -15,18 +15,12 @@ CodeEditArea::CodeEditArea( QWidget* parent )
     UpdateCurrentLine();
 }
 
-
-CodeEditArea::~CodeEditArea()
-{
-
-}
-
-int CodeEditArea::BlockTop( const QTextBlock & block ) const
+int CodeEditArea::BlockTop(const QTextBlock& block) const
 {
     return (int) blockBoundingGeometry(block).translated(contentOffset()).top();
 }
 
-int CodeEditArea::BlockHeight( const QTextBlock & block ) const
+int CodeEditArea::BlockHeight(const QTextBlock& block) const
 {
     return (int) blockBoundingRect(block).height();
 }

@@ -7,7 +7,7 @@
 #include "kernel/run/InstanceNode.h"
 #include "kernel/scene/TShapeKit.h"
 #include "tree/SceneModel.h"
-#include "tree/SceneModelView.h"
+#include "tree/SceneView.h"
 
 /*!
  * Creates a dialog object to select a surface from the \a currentSceneModel.

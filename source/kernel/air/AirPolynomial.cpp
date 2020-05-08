@@ -16,10 +16,10 @@ AirPolynomial::AirPolynomial()
     setName("Polynomial");
 
     SO_NODE_DEFINE_ENUM_VALUE(Coefficients, Custom);
-    SO_NODE_DEFINE_ENUM_VALUE(Coefficients, VittitoeBiggsClear);
-    SO_NODE_DEFINE_ENUM_VALUE(Coefficients, VittitoeBiggsHazy);
-    SO_NODE_DEFINE_ENUM_VALUE(Coefficients, BallestrinClear);
-    SO_NODE_DEFINE_ENUM_VALUE(Coefficients, BallestrinHazy);
+    SO_NODE_DEFINE_ENUM_VALUE(Coefficients, VittitoeBiggs_clear);
+    SO_NODE_DEFINE_ENUM_VALUE(Coefficients, VittitoeBiggs_hazy);
+    SO_NODE_DEFINE_ENUM_VALUE(Coefficients, Ballestrin_clear);
+    SO_NODE_DEFINE_ENUM_VALUE(Coefficients, Ballestrin_hazy);
 
     SO_NODE_SET_SF_ENUM_TYPE(coefficients, Coefficients);
     SO_NODE_ADD_FIELD( coefficients, (Custom) );
@@ -48,22 +48,22 @@ double AirPolynomial::transmission(double distance) const
 void AirPolynomial::update_coefficients(void* data, SoSensor*)
 {
     AirPolynomial* air = (AirPolynomial*) data;
-    if (air->coefficients.getValue() == VittitoeBiggsClear) {
+    if (air->coefficients.getValue() == VittitoeBiggs_clear) {
         air->a0 = 0.99326;
         air->a1 = -0.1046;
         air->a2 = 0.017;
         air->a3 = -0.002845;
-    } else if (air->coefficients.getValue() == VittitoeBiggsHazy) {
+    } else if (air->coefficients.getValue() == VittitoeBiggs_hazy) {
         air->a0 = 0.98707;
         air->a1 = -0.2748;
         air->a2 = 0.03394;
         air->a3 = 0.;
-    } else if (air->coefficients.getValue() == BallestrinClear) {
+    } else if (air->coefficients.getValue() == Ballestrin_clear) {
         air->a0 = 0.9970456;
         air->a1 = -0.1522128;
         air->a2 = 0.018598;
         air->a3 = -0.0015182;
-    } else if (air->coefficients.getValue() == BallestrinHazy) {
+    } else if (air->coefficients.getValue() == Ballestrin_hazy) {
         air->a0 = 0.9922059;
         air->a1 = -0.5549083;
         air->a2 = 0.147887;

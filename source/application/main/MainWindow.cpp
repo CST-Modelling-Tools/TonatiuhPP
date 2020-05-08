@@ -348,8 +348,8 @@ void MainWindow::DefineSunLight()
     m_document->SetDocumentModified(true);
 
 //    actionCalculateSunPosition->setEnabled(true);
-    actionDisplayRays->setEnabled(false);
-    actionDisplayRays->setChecked(false);
+    actionViewRays->setEnabled(false);
+    actionViewRays->setChecked(false);
 }
 
 /*!
@@ -863,12 +863,12 @@ void MainWindow::Undo()
 }
 
 //View menu actions
-void MainWindow::on_actionAxis_toggled()
+void MainWindow::on_actionViewAxes_toggled()
 {
-    m_graphicView[0]->ViewCoordinateSystem(actionAxis->isChecked() );
-    m_graphicView[1]->ViewCoordinateSystem(actionAxis->isChecked() );
-    m_graphicView[2]->ViewCoordinateSystem(actionAxis->isChecked() );
-    m_graphicView[3]->ViewCoordinateSystem(actionAxis->isChecked() );
+    m_graphicView[0]->ViewCoordinateSystem(actionViewAxes->isChecked() );
+    m_graphicView[1]->ViewCoordinateSystem(actionViewAxes->isChecked() );
+    m_graphicView[2]->ViewCoordinateSystem(actionViewAxes->isChecked() );
+    m_graphicView[3]->ViewCoordinateSystem(actionViewAxes->isChecked() );
 }
 
 void MainWindow::on_actionQuadView_toggled()
@@ -999,51 +999,47 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::ChangeGridSettings()
 {
     GridDialog gridDialog(m_gridXElements, m_gridZElements, m_gridXSpacing, m_gridZSpacing);
-    if (gridDialog.exec() )
+    if (!gridDialog.exec()) return;
+
+    m_graphicsRoot->RemoveGrid();
+
+    m_gridXElements = gridDialog.GetXDimension();
+    m_gridZElements = gridDialog.GetZDimension();
+
+    if (gridDialog.IsSizeDefined() )
     {
-        m_graphicsRoot->RemoveGrid();
+        m_gridXSpacing = gridDialog.GetXSpacing();
+        m_gridZSpacing = gridDialog.GetZSpacing();
+    }
+    else
+    {
+        InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
+        if (!sceneInstance) return;
+        InstanceNode* rootInstance = sceneInstance->children[sceneInstance->children.size() - 1 ];
+        if (!rootInstance) return;
 
-        m_gridXElements = gridDialog.GetXDimension();
-        m_gridZElements = gridDialog.GetZDimension();
+        SoGetBoundingBoxAction* bbAction = new SoGetBoundingBoxAction(SbViewportRegion() );
+        rootInstance->GetNode()->getBoundingBox(bbAction);
 
-        if (gridDialog.IsSizeDefined() )
+        SbBox3f box = bbAction->getXfBoundingBox().project();
+        delete bbAction;
+
+        m_gridXSpacing = 10;
+        m_gridZSpacing = 10;
+
+        if (!box.isEmpty() )
         {
-            m_gridXSpacing = gridDialog.GetXSpacing();
-            m_gridZSpacing = gridDialog.GetZSpacing();
+            SbVec3f min, max;
+            box.getBounds(min, max);
+
+            m_gridXSpacing = (2 *  std::max(fabs(max[0]), fabs(min[0]) ) + 5) / m_gridXElements;
+            m_gridZSpacing = (2 *  std::max(fabs(max[2]), fabs(min[2]) ) + 5) / m_gridZElements;
         }
-        else
-        {
-
-            InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
-            if (!sceneInstance) return;
-            InstanceNode* rootInstance = sceneInstance->children[sceneInstance->children.size() - 1 ];
-            if (!rootInstance) return;
-
-            SoGetBoundingBoxAction* bbAction = new SoGetBoundingBoxAction(SbViewportRegion() );
-            rootInstance->GetNode()->getBoundingBox(bbAction);
-
-            SbBox3f box = bbAction->getXfBoundingBox().project();
-            delete bbAction;
-
-
-            m_gridXSpacing = 10;
-            m_gridZSpacing = 10;
-
-            if (!box.isEmpty() )
-            {
-                SbVec3f min, max;
-                box.getBounds(min, max);
-
-                m_gridXSpacing = (2 *  std::max(fabs(max[0]), fabs(min[0]) ) + 5) / m_gridXElements;
-                m_gridZSpacing = (2 *  std::max(fabs(max[2]), fabs(min[2]) ) + 5) / m_gridZElements;
-
-            }
-
-        }
-        m_graphicsRoot->AddGrid(CreateGrid(m_gridXElements, m_gridZElements, m_gridXSpacing, m_gridZSpacing) );
-        m_graphicsRoot->ShowGrid(true);
     }
 
+//    m_graphicsRoot->AddGrid(CreateGrid(m_gridXElements, m_gridZElements, m_gridXSpacing, m_gridZSpacing) );
+    m_graphicsRoot->AddGrid(CreateGrid() );
+    m_graphicsRoot->ShowGrid(true);
 }
 
 /*!
@@ -1097,8 +1093,8 @@ void MainWindow::ChangeSunPosition(double azimuth, double elevation)
     m_document->SetDocumentModified(true);
 
 
-    actionDisplayRays->setEnabled(false);
-    actionDisplayRays->setChecked(false);
+    actionViewRays->setEnabled(false);
+    actionViewRays->setChecked(false);
 
 }
 
@@ -1128,8 +1124,8 @@ void MainWindow::ChangeSunPosition(int year, int month, int day, double hours, d
     ChangeSunPosition(results.dAzimuth, (90 - results.dZenithAngle) );
 
 
-    actionDisplayRays->setEnabled(false);
-    actionDisplayRays->setChecked(false);
+    actionViewRays->setEnabled(false);
+    actionViewRays->setChecked(false);
 
 
 }
@@ -1873,8 +1869,8 @@ void MainWindow::Run()
         if (exportSuraceList.count() < 1)
             ShowRaysIn3DView();
         else {
-            actionDisplayRays->setEnabled(false);
-            actionDisplayRays->setChecked(false);
+            actionViewRays->setEnabled(false);
+            actionViewRays->setChecked(false);
         }
 
         double irradiance = sunShape->getIrradiance();
@@ -2846,65 +2842,12 @@ void MainWindow::CalculateSunPosition()
 /*!
  * Creates a \a xDimension by \a zDimension grid and shows in the 3D view. Each grid cell is a \a xSpacing x \a zSpacing.
  */
-SoSeparator* MainWindow::CreateGrid(int xDimension, int zDimension, double xSpacing, double zSpacing)
+#include "view/GroundGrid.h"
+SoSeparator* MainWindow::CreateGrid()
 {
-
-    double xWidth = xDimension * xSpacing;
-    double zWidth = zDimension * zSpacing;
-
-    int nVertex = xDimension * zDimension + 4;
-    SbVec3f* vertex = new SbVec3f[nVertex];
-
-    int nLines = xDimension + zDimension + 2;
-    int* lines = new int[nLines];
-
-
-    int vNum = 0;
-    int lNum = 0;
-    for (int xIndex = 0; xIndex <= xDimension; ++xIndex)
-    {
-        double xValue = -(xWidth / 2) + xIndex * xSpacing;
-        vertex[vNum++].setValue(xValue, 0.0, zWidth / 2);
-        vertex[vNum++].setValue(xValue, 0.0, -zWidth / 2);
-        lines[lNum++] = 2;
-    }
-
-    vertex[vNum++].setValue(-xWidth / 2, 0.0, zWidth / 2);
-    vertex[vNum++].setValue(xWidth / 2, 0.0, zWidth / 2);
-    lines[lNum++] = 2;
-    vertex[vNum++].setValue(-xWidth / 2, 0.0, -zWidth / 2);
-    vertex[vNum++].setValue(xWidth / 2, 0.0, -zWidth / 2);
-    lines[lNum++] = 2;
-
-    for (int zIndex = 1; zIndex < zDimension; ++zIndex)
-    {
-        double zValue = -(zWidth / 2) + zIndex * zSpacing;
-        vertex[vNum++].setValue(xWidth / 2, 0.0, zValue);
-        vertex[vNum++].setValue(-xWidth / 2, 0.0, zValue);
-        lines[lNum++] = 2;
-    }
-
-
-    SoSeparator* grid = new SoSeparator;
-
-    SoMaterial* mat = new SoMaterial;
-    static float colors[2][3] = { {0.4f, 0.4f, 0.4f}, {0.6f, 0.6f, 0.6f} };
-    mat->diffuseColor.setValues(0, 2, colors);
-    grid->addChild(mat);
-
-    SoCoordinate3* line_coords = new SoCoordinate3;
-    line_coords->point.setValues(0, nVertex, vertex);
-    grid->addChild(line_coords);
-
-    SoLineSet* lineset = new SoLineSet;
-    lineset->numVertices.setValues(0,lNum,lines);
-    grid->addChild(lineset);
-
-
-    delete[] vertex;
-    delete[] lines;
-    return grid;
-
+    GroundGrid grid;
+// todo
+    return grid.makeGrid();
 }
 
 
@@ -3325,7 +3268,7 @@ void MainWindow::SetupActionsInsertTracker()
  */
 void MainWindow::ShowBackground()
 {
-    if (actionBackground->isChecked() ) m_graphicsRoot->ShowBackground(true);
+    if (actionViewBackground->isChecked() ) m_graphicsRoot->ShowBackground(true);
     else m_graphicsRoot->ShowBackground(false);
 }
 
@@ -3349,12 +3292,9 @@ void MainWindow::SetupCommandView()
  */
 void MainWindow::ShowGrid()
 {
-    if (actionGrid->isChecked() )
-        m_graphicsRoot->ShowGrid(true);
-    else
-        m_graphicsRoot->ShowGrid(false);
+    m_graphicsRoot->ShowGrid(actionViewGrid->isChecked());
 
-    /*if( actionGrid->isChecked() )
+    /*if( actionViewGrid->isChecked() )
            {
             InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex( sceneModelView->rootIndex() );
             if ( !sceneInstance )  return;
@@ -3421,7 +3361,8 @@ void MainWindow::SetupGraphcisRoot()
         m_gridXSpacing = 10;
         m_gridZSpacing = 10;
 
-        m_graphicsRoot->AddGrid(CreateGrid(m_gridXElements, m_gridZElements, m_gridXSpacing, m_gridZSpacing) );
+//        m_graphicsRoot->AddGrid(CreateGrid(m_gridXElements, m_gridZElements, m_gridXSpacing, m_gridZSpacing) );
+        m_graphicsRoot->AddGrid(CreateGrid() );
 
     }
     else gf::SevereError("MainWindow::SetupDocument: Fail to create new document");
@@ -3591,15 +3532,15 @@ void MainWindow::SetupTriggers()
     connect(actionDefineTransmissivity, SIGNAL(triggered()), this, SLOT(DefineTransmissivity()) );
 
     // run
-    connect(actionDisplayRays, SIGNAL(toggled(bool)), this, SLOT(DisplayRays(bool)) );
+    connect(actionViewRays, SIGNAL(toggled(bool)), this, SLOT(DisplayRays(bool)) );
     connect(actionRun, SIGNAL(triggered()), this, SLOT(RunCompleteRayTracer()) );
     connect(actionRunFluxAnalysis, SIGNAL(triggered()), this, SLOT(RunFluxAnalysisRayTracer()) );
     connect(actionRayTraceOptions, SIGNAL(triggered()), this, SLOT(ShowRayTracerOptionsDialog())  );
 
     // view
-    connect(actionGrid, SIGNAL(triggered()), this, SLOT(ShowGrid())  );
+    connect(actionViewGrid, SIGNAL(triggered()), this, SLOT(ShowGrid())  );
     connect(actionGridSettings, SIGNAL(triggered()), this, SLOT(ChangeGridSettings())  );
-    connect(actionBackground, SIGNAL(triggered()), this, SLOT(ShowBackground())  );
+    connect(actionViewBackground, SIGNAL(triggered()), this, SLOT(ShowBackground())  );
 }
 
 /*!
@@ -3618,8 +3559,8 @@ void MainWindow::SetupViews()
  */
 void MainWindow::ShowRaysIn3DView()
 {
-    actionDisplayRays->setEnabled(false);
-    actionDisplayRays->setChecked(false);
+    actionViewRays->setEnabled(false);
+    actionViewRays->setChecked(false);
 
     if (m_drawRays || m_drawPhotons)
     {
@@ -3639,8 +3580,8 @@ void MainWindow::ShowRaysIn3DView()
         }
         m_graphicsRoot->AddRays(rays);
 
-        actionDisplayRays->setEnabled(true);
-        actionDisplayRays->setChecked(true);
+        actionViewRays->setEnabled(true);
+        actionViewRays->setChecked(true);
     }
 }
 
@@ -3655,8 +3596,8 @@ bool MainWindow::StartOver(const QString& fileName)
     InstanceNode* concentratorRoot = sceneInstance->children[ sceneInstance->children.size() - 1 ];
     m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 
-    actionDisplayRays->setEnabled(false);
-    actionDisplayRays->setChecked(false);
+    actionViewRays->setEnabled(false);
+    actionViewRays->setChecked(false);
 
     m_graphicsRoot->RemoveRays();
     m_graphicsRoot->RemoveModel();
