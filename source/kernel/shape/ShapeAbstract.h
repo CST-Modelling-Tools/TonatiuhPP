@@ -5,12 +5,12 @@
 #include <Inventor/nodes/SoShape.h>
 #include <Inventor/fields/SoSFEnum.h>
 
-struct BBox;
-struct DifferentialGeometry;
 struct Vector3D;
-class QString;
-class QSize;
+struct BBox;
 class Ray;
+struct DifferentialGeometry;
+//class QString;
+class QSize;
 
 
 class TONATIUH_KERNEL ShapeAbstract: public SoShape
@@ -31,7 +31,7 @@ public:
 
     enum Side {
         INSIDE = 0, // FRONT
-        OUTSIDE = 1, // BACK
+        OUTSIDE = 1 // BACK
     };
 
     SoSFEnum activeSide;

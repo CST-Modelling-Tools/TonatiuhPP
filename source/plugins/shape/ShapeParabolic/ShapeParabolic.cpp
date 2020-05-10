@@ -1,8 +1,5 @@
 #include "ShapeParabolic.h"
 
-#include <vector>
-#include <algorithm>
-
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/gf.h"
 #include "libraries/geometry/BBox.h"
@@ -34,16 +31,11 @@ ShapeParabolic::ShapeParabolic()
 BBox ShapeParabolic::getBox() const
 {
     double xMax = widthX.getValue()/2.;
-    double xMin = -xMax;
-
     double yMax = widthY.getValue()/2.;
-    double yMin = -yMax;
-
-    double zMin = 0.;
     double zMax = (xMax*xMax+ yMax*yMax)/(4.*focus.getValue());
 
     return BBox(
-        Point3D(xMin, yMin, zMin),
+        Point3D(-xMax, -yMax, 0.),
         Point3D(xMax, yMax, zMax)
     );
 }
@@ -51,54 +43,45 @@ BBox ShapeParabolic::getBox() const
 bool ShapeParabolic::intersect(const Ray& ray, double *tHit, DifferentialGeometry *dg) const
 {
     double f = focus.getValue();
-	double wX = widthX.getValue();
-    double wY = widthY.getValue();
 
     // intersection with full shape
     // (x0 + t*d_x)^2 + (y0 + t*d_y)^2 = 4*f*(z0 + t*d_z)
     double A = ray.direction().x*ray.direction().x + ray.direction().y*ray.direction().y;
     double B = 2.*(ray.direction().x*ray.origin.x + ray.direction().y*ray.origin.y) - 4.*f*ray.direction().z;
     double C = ray.origin.x*ray.origin.x + ray.origin.y*ray.origin.y - 4.*f*ray.origin.z;
-	double t0, t1;
-    if (!gf::solveQuadratic(A, B, C, &t0, &t1)) return false;
+    double ts[2];
+    if (!gf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
 
 
     // intersection with clipped shape
-    double tolerance = 1e-5;
-    double raytMin = ray.tMin + tolerance;
-    if (t0 > ray.tMax || t1 < raytMin) return false;
-    double t = t0 > raytMin ? t0 : t1;
-    if (t > ray.tMax) return false;
+    double raytMin = ray.tMin + 1e-5;
+    for (int i = 0; i < 2; ++i)
+    {
+        double t = ts[i];
+        if (t < raytMin || t > ray.tMax) continue;
 
+        Point3D pHit = ray(t);
+        if (2.*abs(pHit.x) > widthX.getValue() || 2.*abs(pHit.y) > widthY.getValue())
+            continue;
 
-    Point3D pHit = ray(t);
-    if (abs(pHit.x) > wX / 2 || abs(pHit.y) > wY / 2)
-	{
-        if (t == t1) return false;
-        t = t1;
-        if (t > ray.tMax) return false;
+        // differential geometry
+        if (tHit == 0 && dg == 0)
+            return true;
+        else if (tHit == 0 || dg == 0)
+            gf::SevereError("Function ParabolicCyl::Intersect(...) called with null pointers");
 
-        pHit = ray(t);
-        if (abs(pHit.x) > wX / 2 || abs(pHit.y) > wY / 2)
-            return false;
-	}
+        Vector3D dpdu(1., 0., pHit.x/(2.*f));
+        Vector3D dpdv(0., 1., pHit.y/(2.*f));
+        Vector3D normal(-pHit.x, -pHit.y, 2.*f);
+        normal.normalize();
 
-    // differential geometry
-    if (tHit == 0 && dg == 0)
+        bool isFront = dot(normal, ray.direction()) <= 0.;
+        *dg = DifferentialGeometry(pHit, pHit.x, pHit.y, dpdu, dpdv, normal, this, isFront);
+
+        *tHit = t;
         return true;
-    else if (tHit == 0 || dg == 0)
-        gf::SevereError("Function ParabolicCyl::Intersect(...) called with null pointers");
-
-    Vector3D dpdu(1., 0., pHit.x/(2.*f));
-    Vector3D dpdv(0., 1., pHit.y/(2.*f));
-    Vector3D normal(-pHit.x, -pHit.y, 2.*f);
-    normal.normalize();
-
-    *dg = DifferentialGeometry(pHit, pHit.x, pHit.y, dpdu, dpdv, normal, this);
-    dg->shapeFrontSide = dot(normal, ray.direction()) <= 0;
-
-    *tHit = t;
-	return true;
+    }
+    return false;
 }
 
 Vector3D ShapeParabolic::getPoint(double u, double v) const

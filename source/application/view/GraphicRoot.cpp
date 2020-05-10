@@ -169,18 +169,18 @@ void GraphicRoot::RemoveModel()
     }
 }
 
-void GraphicRoot::Select(const SoPath* path )
+void GraphicRoot::Select(const SoPath* path)
 {
-    m_pSelectionNode->select( path );
+    m_pSelectionNode->select(path);
     m_pSelectionNode->touch();
 }
 
-void GraphicRoot::SelectionChanged( SoSelection* selection )
+void GraphicRoot::SelectionChanged(SoSelection* selection)
 {
-    emit ChangeSelection( selection );
+    emit ChangeSelection(selection);
 }
 
-void GraphicRoot::ShowBackground( bool view ) //?
+void GraphicRoot::ShowBackground( bool /*view*/ ) //?
 {
 //    SoVRMLBackground* vrmlBackground = static_cast< SoVRMLBackground* > ( m_nodeRoot->getChild( 0 ) );
 

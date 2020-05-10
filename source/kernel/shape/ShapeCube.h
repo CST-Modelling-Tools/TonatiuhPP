@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Inventor/fields/SoSFDouble.h>
 #include "ShapeAbstract.h"
 #include "kernel/TonatiuhTypes.h"
 
@@ -18,23 +17,14 @@ public:
     BBox getBox() const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
     bool intersectP(const Ray& ray) const;
-    Point3D Sample(double u1, double u2) const;
 
-    trt::TONATIUH_REAL m_widthX;
-    trt::TONATIUH_REAL m_widthY;
-    trt::TONATIUH_REAL m_widthZ;
+    trt::TONATIUH_REAL widthX;
+    trt::TONATIUH_REAL widthY;
+    trt::TONATIUH_REAL widthZ;
 
 protected:
+    ~ShapeCube() {}
     Vector3D getPoint(double u, double v) const;
     Vector3D getNormal(double u, double v) const;
-    void generatePrimitives(SoAction *action);
-    ~ShapeCube() {}
-
-private:
-    static SbVec3d frontNormal;
-    static SbVec3d rearNormal;
-    static SbVec3d leftNormal;
-    static SbVec3d rightNormal;
-    static SbVec3d baseNormal;
-    static SbVec3d topNormal;
+    void generatePrimitives(SoAction* action);
 };

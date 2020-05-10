@@ -20,7 +20,6 @@
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeCube.h"
 #include "kernel/shape/ShapeFactory.h"
-#include "kernel/shape/ShapeSquare.h"
 #include "kernel/sun/SunFactory.h"
 #include "kernel/sun/SunPillbox.h"
 #include "kernel/sun/TLightKit.h"
@@ -104,7 +103,6 @@ void PluginManager::load(QDir dir)
     loadTonatiuhPlugin(new AirFactoryT<AirExponential>);
     loadTonatiuhPlugin(new AirFactoryT<AirPolynomial>);
 
-//    loadTonatiuhPlugin(new ShapeFactoryT<ShapeSquare>);
 //    loadTonatiuhPlugin(new ShapeFactoryT<ShapeCube>);
 
     loadTonatiuhPlugin(new RandomFactoryT<RandomSTL>);

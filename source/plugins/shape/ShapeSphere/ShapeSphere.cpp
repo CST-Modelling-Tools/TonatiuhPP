@@ -118,63 +118,44 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     double A = ray.direction().norm2();
     double B = 2.*dot(ray.direction(), r0);
     double C = r0.norm2() - r*r;
-    double t0, t1;
-    if (!gf::solveQuadratic(A, B, C, &t0, &t1)) return false;
+    double ts[2];
+    if (!gf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
 
     // intersection with clipped shape
-    double tolerance = 1e-5;
-    double raytMin = ray.tMin + tolerance;
-    if (t0 > ray.tMax || t1 < raytMin) return false;
-    double t = t0 > raytMin ? t0 : t1;
-    if (t > ray.tMax) return false;
-
-    Point3D pHit = ray(t);
-    double phi = atan2(pHit.y, pHit.x);
-    if (phi < 0.) phi += gc::TwoPi;
-    double alpha = asin(tgf::clamp(pHit.z/r, -1., 1.));
-    if (phi > phiMax.getValue() || alpha < alphaMin.getValue() || alpha > alphaMax.getValue())
+    double raytMin = ray.tMin + 1e-5;
+    for (int i = 0; i < 2; ++i)
     {
-        if (t == t1) return false;
-        t = t1;
-        if (t > ray.tMax) return false;
+        double t = ts[i];
+        if (t < raytMin || t > ray.tMax) continue;
 
-        pHit = ray(t);
-        phi = atan2(pHit.y, pHit.x);
+        Point3D pHit = ray(t);
+        double phi = atan2(pHit.y, pHit.x);
         if (phi < 0.) phi += gc::TwoPi;
-        alpha = asin(tgf::clamp(pHit.z/r, -1., 1.));
+        double alpha = asin(tgf::clamp(pHit.z/r, -1., 1.));
+
         if (phi > phiMax.getValue() || alpha < alphaMin.getValue() || alpha > alphaMax.getValue())
-            return false;
-    }
+            continue;
 
-    // differential geometry
-    if (tHit == 0 && dg == 0)
+        // differential geometry
+        if (tHit == 0 && dg == 0)
+            return true;
+        else if (tHit == 0 || dg == 0)
+            gf::SevereError("Function ShapeSphere::Intersect(...) called with null pointers");
+
+        *tHit = t;
+
+        dg->point = pHit;
+        dg->u = phi;
+        dg->v = alpha;
+        dg->dpdu = Vector3D(-pHit.y, pHit.x, 0.);
+        dg->dpdv = Vector3D(-cos(phi)*pHit.z, -sin(phi)*pHit.z, r*cos(alpha));
+        dg->normal = Vector3D(pHit)/r;
+        dg->shape = this;
+        dg->isFront = dot(dg->normal, ray.direction()) <= 0.;
+
         return true;
-    else if (tHit == 0 || dg == 0)
-        gf::SevereError("Function ShapeSphere::Intersect(...) called with null pointers");
-
-    Vector3D dpdu(
-        -pHit.y,
-        pHit.x,
-        0.
-    );
-
-    Vector3D dpdv(
-        -cos(phi)*pHit.z,
-        -sin(phi)*pHit.z,
-        r*cos(alpha)
-    );
-
-    Vector3D normal(
-        pHit.x/r,
-        pHit.y/r,
-        pHit.z/r
-    );
-
-    *dg = DifferentialGeometry(pHit, phi, alpha, dpdu, dpdv, normal, this);
-    dg->shapeFrontSide = dot(normal, ray.direction()) <= 0.;
-
-    *tHit = t;
-    return true;
+    }
+    return false;
 }
 
 Vector3D ShapeSphere::getPoint(double u, double v) const

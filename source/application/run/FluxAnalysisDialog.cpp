@@ -89,18 +89,18 @@ FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* currentScene, SceneModel& curr
     contourPlotWidget->axisRect()->setupFullAxesBox(true);
 
     contourPlotWidget->plotLayout()->insertRow(0);
-    contourPlotWidget->plotLayout()->addElement(0, 0, new QCPPlotTitle(contourPlotWidget, "Incident Flux Distribution") );
+    contourPlotWidget->plotLayout()->addElement(0, 0, new QCPTextElement(contourPlotWidget, "Incident Flux Distribution") );
     contourPlotWidget->xAxis->setLabel("X (unit length)");
     contourPlotWidget->yAxis->setLabel("Y (unit length)");
 
     horizontaSectorPlot->plotLayout()->insertRow(0);
-    horizontaSectorPlot->plotLayout()->addElement(0, 0, new QCPPlotTitle(horizontaSectorPlot, "Horizontal Sector") );
+    horizontaSectorPlot->plotLayout()->addElement(0, 0, new QCPTextElement(horizontaSectorPlot, "Horizontal Sector") );
     // give the axes some labels:
     horizontaSectorPlot->xAxis->setLabel("Y (unit length)");
     horizontaSectorPlot->yAxis->setLabel("Flux ( (unit power) / (unit length)^2 )");
 
     verticalSectorPlot->plotLayout()->insertRow(0);
-    verticalSectorPlot->plotLayout()->addElement(0, 0, new QCPPlotTitle(verticalSectorPlot, "Vertical Sector") );
+    verticalSectorPlot->plotLayout()->addElement(0, 0, new QCPTextElement(verticalSectorPlot, "Vertical Sector") );
     // give the axes some labels:
     verticalSectorPlot->xAxis->setLabel("X (unit length)");
     verticalSectorPlot->yAxis->setLabel("Flux ( (unit power) / (unit length)^2 )");
@@ -407,7 +407,7 @@ void FluxAnalysisDialog::UpdateFluxMapPlot(int** photonCounts, double wPhoton, i
 
 	// Create a QCPColorMap object to draw flux distribution
     QCPColorMap* colorMap = new QCPColorMap(contourPlotWidget->xAxis, contourPlotWidget->yAxis);
-    contourPlotWidget->addPlottable(colorMap);
+//    contourPlotWidget->addPlottable(colorMap);
 
     colorMap->data()->setSize(widthDivisions, heightDivisions);   // we want the color map to have widthDivisions * heightDivisions data points
     colorMap->data()->setRange(QCPRange(xmin, xmax), QCPRange(ymin, ymax) );      // and span the coordinate range -4..4 in both key (x) and value (y) dimensions
@@ -463,7 +463,7 @@ void FluxAnalysisDialog::CreateSectorPlots(double xmin, double ymin, double xmax
     hSectorXCoordSpin->setMinimum(xmin);
     hSectorXCoordSpin->setMaximum(xmax);
     hSectorXCoordSpin->setSingleStep( (xmax - xmin) / 10);
-    contourPlotWidget->addItem(tickVLine);
+//    contourPlotWidget->addItem(tickVLine);
 
     tickVLine->start->setCoords(0, ymin - 1);
     tickVLine->end->setCoords(0, ymax + 1);
@@ -473,7 +473,7 @@ void FluxAnalysisDialog::CreateSectorPlots(double xmin, double ymin, double xmax
     hSectorYCoordSpin->setMinimum(ymin);
     hSectorYCoordSpin->setMaximum(ymax);
     hSectorYCoordSpin->setSingleStep( (ymax - ymin) / 10);
-    contourPlotWidget->addItem(tickHLine);
+//    contourPlotWidget->addItem(tickHLine);
 
     tickHLine->start->setCoords(xmin - 1,  0);
     tickHLine->end->setCoords(xmax + 1, 0);

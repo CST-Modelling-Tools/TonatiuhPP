@@ -1,10 +1,5 @@
 #pragma once
 
-#include <Inventor/fields/SoSFDouble.h>
-#include <Inventor/fields/SoSFEnum.h>
-#include <Inventor/fields/SoSFFloat.h>
-#include <Inventor/nodes/SoShape.h>
-
 #include "kernel/shape/ShapeAbstract.h"
 #include "kernel/TonatiuhTypes.h"
 
@@ -23,8 +18,8 @@ public:
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
 
 	trt::TONATIUH_REAL radius;
+    trt::TONATIUH_REAL phiMax;
 	trt::TONATIUH_REAL length;
-	trt::TONATIUH_REAL phiMax;
 
     NAME_ICON_FUNCTIONS("Cylinder", ":/ShapeCylinder.png")
 

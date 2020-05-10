@@ -20,6 +20,11 @@ public:
     BBox getBox() const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
 
+    trt::TONATIUH_REAL radius;
+    trt::TONATIUH_REAL phiMax;
+    trt::TONATIUH_REAL alphaMin;
+    trt::TONATIUH_REAL alphaMax;
+
     NAME_ICON_FUNCTIONS("Sphere", ":/ShapeSphere.png")
 
 protected:
@@ -34,13 +39,6 @@ protected:
     static void update_alphaMin(void* data, SoSensor*);
     static void update_alphaMax(void* data, SoSensor*);
 
-public:
-    trt::TONATIUH_REAL radius;
-    trt::TONATIUH_REAL phiMax;
-    trt::TONATIUH_REAL alphaMin;
-    trt::TONATIUH_REAL alphaMax;
-
-private:
     SoFieldSensor* m_sensor_radius;
     SoFieldSensor* m_sensor_alphaMin;
     SoFieldSensor* m_sensor_alphaMax;

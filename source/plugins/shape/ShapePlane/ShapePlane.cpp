@@ -1,8 +1,8 @@
 #include "ShapePlane.h"
 
+#include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/gf.h"
 #include "libraries/geometry/BBox.h"
-#include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/Ray.h"
 
 SO_NODE_SOURCE(ShapePlane)
@@ -43,15 +43,18 @@ BBox ShapePlane::getBox() const
 
 bool ShapePlane::intersect(const Ray& ray, double *tHit, DifferentialGeometry* dg) const
 {
+    // intersection with full shape (in local coordinates)
+    // r0_z + d_z*t = 0
     if (ray.origin.z == 0 && ray.direction().z == 0) return false;
     double t = -ray.origin.z*ray.invDirection().z;
 
     double tolerance = 1e-5;
-    if (t > ray.tMax || t < ray.tMin + tolerance) return false;
+    if (t < ray.tMin + tolerance || t > ray.tMax) return false;
 
     // intersection with clipped shape
     Point3D pHit = ray(t);
-    if (2.*abs(pHit.x) > widthX.getValue() || 2.*abs(pHit.y) > widthY.getValue()) return false;
+    if (2.*abs(pHit.x) > widthX.getValue() || 2.*abs(pHit.y) > widthY.getValue())
+        return false;
 
     if (tHit == 0 && dg == 0) return true;
     else if (tHit == 0 || dg == 0)
@@ -61,8 +64,8 @@ bool ShapePlane::intersect(const Ray& ray, double *tHit, DifferentialGeometry* d
     Vector3D dpdv(0., 1., 0.);
     Vector3D normal(0., 0., 1.);
 
-    *dg = DifferentialGeometry(pHit, pHit.x, pHit.y, dpdu, dpdv, normal, this);
-    dg->shapeFrontSide = dot(normal, ray.direction()) <= 0.;
+    bool isFront = dot(normal, ray.direction()) <= 0.;
+    *dg = DifferentialGeometry(pHit, pHit.x, pHit.y, dpdu, dpdv, normal, this, isFront);
 
     *tHit = t;
 	return true;

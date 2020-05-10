@@ -12,7 +12,7 @@ struct TONATIUH_KERNEL DifferentialGeometry
         double u, double v,
         const Vector3D& dpdu, const Vector3D& dpdv,
         const Vector3D& normal,
-        const ShapeAbstract* shape);
+        const ShapeAbstract* shape, bool isFront);
 
     Point3D point;
     double u;
@@ -22,5 +22,5 @@ struct TONATIUH_KERNEL DifferentialGeometry
     Vector3D normal;
 
     const ShapeAbstract* shape;
-    bool shapeFrontSide;
+    bool isFront;
 };

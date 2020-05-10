@@ -122,7 +122,7 @@ bool InstanceNode::Intersect(const Ray& ray, RandomAbstract& rand, bool* isShape
             ray.tMax = thit;
             *modelNode = this;
 
-            *isShapeFront = dg.shapeFrontSide;
+            *isShapeFront = dg.isFront;
 
             if (tmaterial)
             {
