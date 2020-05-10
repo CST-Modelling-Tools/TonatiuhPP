@@ -59,7 +59,7 @@ private:
 
 #include "kernel/sun/SunFactory.h"
 
-class SunPillboxFactory:
+class SunBuieFactory:
     public QObject, public SunFactoryT<SunBuie>
 {
     Q_OBJECT

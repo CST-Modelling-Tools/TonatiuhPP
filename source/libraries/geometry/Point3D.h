@@ -14,6 +14,7 @@ struct TONATIUH_LIBRARIES Point3D
     Point3D& operator+=(const Vector3D& vector);
     Point3D operator+(const Vector3D& vector) const;
     Point3D& operator-=(const Vector3D& vector);
+    Point3D operator-() const {return Point3D(-x, -y, -z);}
     Point3D operator-(const Vector3D& vector) const;
     Vector3D operator-(const Point3D& point) const;
 

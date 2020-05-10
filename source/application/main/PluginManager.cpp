@@ -116,6 +116,7 @@ void PluginManager::load(QDir dir)
 void PluginManager::sort()
 {
     QStringList shapeNames = {
+        "Plane",
         "Sphere",
         "Cylinder"
     };

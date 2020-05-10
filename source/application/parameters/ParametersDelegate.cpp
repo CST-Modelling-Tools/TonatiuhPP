@@ -80,10 +80,10 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
     }
 }
 
-void ParametersDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
-{
+//void ParametersDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
+//{
 
-}
+//}
 
 void ParametersDelegate::onCloseEditor() // not used?
 {

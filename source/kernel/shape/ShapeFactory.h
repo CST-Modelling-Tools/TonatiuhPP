@@ -9,12 +9,12 @@ class ShapeAbstract;
 
 
 
-class TONATIUH_KERNEL ShapeFactory: public TFactory
+class ShapeFactory: public TFactory
 {
 public:
     virtual ShapeAbstract* create() const = 0;
     virtual ShapeAbstract* create(QVector<QVariant> /*parameters*/) const {return create();}
-    virtual bool isFlat() {return false;}
+    virtual bool isFlat() = 0; // better without const?
 };
 
 Q_DECLARE_INTERFACE(ShapeFactory, "tonatiuh.ShapeFactory")
@@ -31,4 +31,5 @@ public:
     QIcon icon() const {return QIcon(T::getClassIcon());}
     void init() const {T::initClass();}
     T* create() const {return new T;}
+    bool isFlat() {return T::isFlat();}
 };

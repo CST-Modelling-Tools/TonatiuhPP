@@ -30,13 +30,14 @@ public:
     virtual bool intersectP(const Ray& ray) const;
 
     enum Side {
-        INSIDE = 0,
-        OUTSIDE = 1,
+        INSIDE = 0, // FRONT
+        OUTSIDE = 1, // BACK
     };
 
     SoSFEnum activeSide;
 
     NAME_ICON_FUNCTIONS("X", ":/ShapeX.png")
+    static bool isFlat() {return false;}
 
 protected:
     virtual void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);

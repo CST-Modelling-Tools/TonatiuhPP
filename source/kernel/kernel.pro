@@ -34,7 +34,3 @@ SOURCES += \
     $$files(trackers/*.cpp)
 
 RESOURCES += resources.qrc
-
-DISTFILES += \
-    images/AirPolynomial.png \
-    images/AirVacuum.png

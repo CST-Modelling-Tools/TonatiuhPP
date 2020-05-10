@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/" >
-        <file>icons/ShapeFlatRectangle.png</file>
+        <file>ShapePlane.png</file>
     </qresource>
 </RCC>

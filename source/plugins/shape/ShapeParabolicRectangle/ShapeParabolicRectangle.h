@@ -31,7 +31,8 @@ protected:
 
 #include "kernel/shape/ShapeFactory.h"
 
-class ShapeSphereFactory: public QObject, public ShapeFactoryT<ShapeParabolicRectangle>
+class ShapeParabolicRectangleFactory:
+    public QObject, public ShapeFactoryT<ShapeParabolicRectangle>
 {
     Q_OBJECT
     Q_INTERFACES(ShapeFactory)

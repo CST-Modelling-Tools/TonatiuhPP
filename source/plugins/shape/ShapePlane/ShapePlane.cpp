@@ -1,0 +1,96 @@
+#include "ShapePlane.h"
+
+#include <QString>
+
+#include <Inventor/SoPrimitiveVertex.h>
+#include <Inventor/actions/SoGLRenderAction.h>
+#include <Inventor/elements/SoGLTextureCoordinateElement.h>
+#include <Inventor/elements/SoMaterialBindingElement.h>
+
+#include "libraries/geometry/gf.h"
+#include "libraries/geometry/BBox.h"
+#include "kernel/shape/DifferentialGeometry.h"
+#include "libraries/geometry/Ray.h"
+
+SO_NODE_SOURCE(ShapePlane)
+
+
+void ShapePlane::initClass()
+{
+    SO_NODE_INIT_CLASS(ShapePlane, ShapeAbstract, "ShapeAbstract");
+}
+
+ShapePlane::ShapePlane()
+{
+    SO_NODE_CONSTRUCTOR(ShapePlane);
+    SO_NODE_ADD_FIELD( sizeX, (1.) );
+    SO_NODE_ADD_FIELD( sizeY, (1.) );
+
+    SO_NODE_DEFINE_ENUM_VALUE( Side, INSIDE );
+    SO_NODE_DEFINE_ENUM_VALUE( Side, OUTSIDE );
+    SO_NODE_SET_SF_ENUM_TYPE( activeSide, Side );
+    SO_NODE_ADD_FIELD( activeSide, (OUTSIDE) );
+}
+
+double ShapePlane::getArea() const
+{
+    return sizeX.getValue()*sizeY.getValue();
+}
+
+/*!
+ * Return the shape bounding box.
+ */
+BBox ShapePlane::getBox() const
+{
+    double xMax = sizeX.getValue()/2.;
+    double yMax = sizeY.getValue()/2.;
+    double eps = 0.01*std::min(xMax, yMax);
+    return BBox(
+        Point3D(-xMax, -yMax, -eps),
+        Point3D(xMax, yMax, eps)
+    );
+}
+
+bool ShapePlane::intersect(const Ray& ray, double *tHit, DifferentialGeometry* dg) const
+{
+    if (ray.origin.z == 0 && ray.direction().z == 0) return false;
+    double t = -ray.origin.z*ray.invDirection().z;
+
+    double tolerance = 1e-5;
+    if (t > ray.tMax || t < ray.tMin + tolerance) return false;
+
+    // intersection with clipped shape
+    Point3D pHit = ray(t);
+    if (2.*abs(pHit.x) > sizeX.getValue() || 2.*abs(pHit.y) > sizeY.getValue()) return false;
+
+    if (tHit == 0 && dg == 0) return true;
+    else if (tHit == 0 || dg == 0)
+        gf::SevereError( "Function Sphere::Intersect(...) called with null pointers" );
+
+    Vector3D dpdu(1., 0., 0.);
+    Vector3D dpdv(0., 1., 0.);
+    Vector3D normal(0., 0., 1.);
+
+    *dg = DifferentialGeometry(pHit, pHit.x, pHit.y, dpdu, dpdv, normal, this);
+    dg->shapeFrontSide = dot(normal, ray.direction()) <= 0.;
+
+    *tHit = t;
+	return true;
+}
+
+Vector3D ShapePlane::getPoint(double u, double v) const
+{
+    double x = (u - 0.5)*sizeX.getValue();
+    double y = (v - 0.5)*sizeY.getValue();
+    return Vector3D(x, y, 0.);
+}
+
+Vector3D ShapePlane::getNormal(double /*u*/, double /*v*/) const
+{
+    return Vector3D(0., 0., 1.);
+}
+
+void ShapePlane::generatePrimitives(SoAction* action)
+{
+     generateQuads(action, QSize(2, 2), activeSide.getValue() == Side::INSIDE);
+}

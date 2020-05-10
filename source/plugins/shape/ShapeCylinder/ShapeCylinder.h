@@ -40,7 +40,7 @@ protected:
 
 #include "kernel/shape/ShapeFactory.h"
 
-class ShapeSphereFactory: public QObject, public ShapeFactoryT<ShapeCylinder>
+class ShapeCylinderFactory: public QObject, public ShapeFactoryT<ShapeCylinder>
 {
     Q_OBJECT
     Q_INTERFACES(ShapeFactory)
