@@ -16,8 +16,8 @@ public:
     BBox getBox() const;
     bool intersect(const Ray &ray, double *tHit, DifferentialGeometry *dg ) const;
 
-    trt::TONATIUH_REAL sizeX;
-    trt::TONATIUH_REAL sizeY;
+    trt::TONATIUH_REAL widthX;
+    trt::TONATIUH_REAL widthY;
 	SoSFEnum activeSide;
 
     NAME_ICON_FUNCTIONS("Plane", ":/ShapePlane.png")

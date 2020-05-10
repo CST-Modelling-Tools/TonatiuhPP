@@ -1,19 +1,16 @@
 #include "ShapeSphere.h"
 
-//#include <QObject>
-
 #include <Inventor/sensors/SoFieldSensor.h>
 
+#include "kernel/shape/DifferentialGeometry.h"
+#include "kernel/TonatiuhFunctions.h"
 #include "libraries/geometry/gc.h"
 #include "libraries/geometry/gf.h"
 #include "libraries/geometry/BBox.h"
 #include "libraries/geometry/Ray.h"
 
-#include "kernel/shape/DifferentialGeometry.h"
-#include "kernel/TonatiuhFunctions.h"
 
 SO_NODE_SOURCE(ShapeSphere)
-
 
 
 void ShapeSphere::initClass()
@@ -150,9 +147,10 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     }
 
     // differential geometry
-    if (tHit == 0 && dg == 0) return true;
+    if (tHit == 0 && dg == 0)
+        return true;
     else if (tHit == 0 || dg == 0)
-        gf::SevereError( "Function ShapeSphere::Intersect(...) called with null pointers" );
+        gf::SevereError("Function ShapeSphere::Intersect(...) called with null pointers");
 
     Vector3D dpdu(
         -pHit.y,

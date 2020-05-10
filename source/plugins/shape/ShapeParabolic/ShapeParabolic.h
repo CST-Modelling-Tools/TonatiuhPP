@@ -4,22 +4,22 @@
 #include "kernel/TonatiuhTypes.h"
 
 
-class ShapeParabolicRectangle: public ShapeAbstract
+class ShapeParabolic: public ShapeAbstract
 {
-	SO_NODE_HEADER(ShapeParabolicRectangle);
+    SO_NODE_HEADER(ShapeParabolic);
 
 public:
     static void initClass();
-	ShapeParabolicRectangle();
+    ShapeParabolic();
 
     BBox getBox() const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
 
     trt::TONATIUH_REAL focus;
 	trt::TONATIUH_REAL widthX;
-	trt::TONATIUH_REAL widthZ;
+    trt::TONATIUH_REAL widthY;
 
-    NAME_ICON_FUNCTIONS("ParabolicRectangle", ":/ShapeParabolicRectangle.png")
+    NAME_ICON_FUNCTIONS("Parabolic", ":/ShapeParabolic.png")
 
 protected:
     Vector3D getPoint(double u, double v) const;
@@ -31,8 +31,8 @@ protected:
 
 #include "kernel/shape/ShapeFactory.h"
 
-class ShapeParabolicRectangleFactory:
-    public QObject, public ShapeFactoryT<ShapeParabolicRectangle>
+class ShapeParabolicFactory:
+    public QObject, public ShapeFactoryT<ShapeParabolic>
 {
     Q_OBJECT
     Q_INTERFACES(ShapeFactory)

@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/" >
-        <file>ShapeParabolicRectangle.png</file>
+        <file>ShapeParabolic.png</file>
     </qresource>
 </RCC>

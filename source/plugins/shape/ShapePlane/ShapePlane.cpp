@@ -1,12 +1,5 @@
 #include "ShapePlane.h"
 
-#include <QString>
-
-#include <Inventor/SoPrimitiveVertex.h>
-#include <Inventor/actions/SoGLRenderAction.h>
-#include <Inventor/elements/SoGLTextureCoordinateElement.h>
-#include <Inventor/elements/SoMaterialBindingElement.h>
-
 #include "libraries/geometry/gf.h"
 #include "libraries/geometry/BBox.h"
 #include "kernel/shape/DifferentialGeometry.h"
@@ -23,8 +16,8 @@ void ShapePlane::initClass()
 ShapePlane::ShapePlane()
 {
     SO_NODE_CONSTRUCTOR(ShapePlane);
-    SO_NODE_ADD_FIELD( sizeX, (1.) );
-    SO_NODE_ADD_FIELD( sizeY, (1.) );
+    SO_NODE_ADD_FIELD( widthX, (1.) );
+    SO_NODE_ADD_FIELD( widthY, (1.) );
 
     SO_NODE_DEFINE_ENUM_VALUE( Side, INSIDE );
     SO_NODE_DEFINE_ENUM_VALUE( Side, OUTSIDE );
@@ -34,16 +27,13 @@ ShapePlane::ShapePlane()
 
 double ShapePlane::getArea() const
 {
-    return sizeX.getValue()*sizeY.getValue();
+    return widthX.getValue()*widthY.getValue();
 }
 
-/*!
- * Return the shape bounding box.
- */
 BBox ShapePlane::getBox() const
 {
-    double xMax = sizeX.getValue()/2.;
-    double yMax = sizeY.getValue()/2.;
+    double xMax = widthX.getValue()/2.;
+    double yMax = widthY.getValue()/2.;
     double eps = 0.01*std::min(xMax, yMax);
     return BBox(
         Point3D(-xMax, -yMax, -eps),
@@ -61,7 +51,7 @@ bool ShapePlane::intersect(const Ray& ray, double *tHit, DifferentialGeometry* d
 
     // intersection with clipped shape
     Point3D pHit = ray(t);
-    if (2.*abs(pHit.x) > sizeX.getValue() || 2.*abs(pHit.y) > sizeY.getValue()) return false;
+    if (2.*abs(pHit.x) > widthX.getValue() || 2.*abs(pHit.y) > widthY.getValue()) return false;
 
     if (tHit == 0 && dg == 0) return true;
     else if (tHit == 0 || dg == 0)
@@ -80,8 +70,8 @@ bool ShapePlane::intersect(const Ray& ray, double *tHit, DifferentialGeometry* d
 
 Vector3D ShapePlane::getPoint(double u, double v) const
 {
-    double x = (u - 0.5)*sizeX.getValue();
-    double y = (v - 0.5)*sizeY.getValue();
+    double x = (u - 0.5)*widthX.getValue();
+    double y = (v - 0.5)*widthY.getValue();
     return Vector3D(x, y, 0.);
 }
 
