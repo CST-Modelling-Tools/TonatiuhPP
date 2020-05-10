@@ -66,7 +66,4 @@ private:
     int m_maximumPhotonsYCoord;
     int m_maximumPhotonsError;
     double m_totalPower;
-
-protected:
-
 };

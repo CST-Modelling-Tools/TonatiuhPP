@@ -26,6 +26,7 @@
 #include "kernel/sun/TLightShape.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/gc.h"
+#include "kernel/air/AirVacuum.h"
 
 /******************************************
  * FluxAnalysis
@@ -89,18 +90,18 @@ FluxAnalysis::~FluxAnalysis()
 QString FluxAnalysis::GetSurfaceType(QString nodeURL)
 {
     QModelIndex nodeIndex = m_pCurrentSceneModel->IndexFromNodeUrl(nodeURL);
-    if (!nodeIndex.isValid()  ) return QLatin1String("");
+    if (!nodeIndex.isValid()  ) return "";
 
     InstanceNode* instanceNode = m_pCurrentSceneModel->NodeFromIndex(nodeIndex);
-    if (!instanceNode || instanceNode == 0) return QLatin1String("");
+    if (!instanceNode || instanceNode == 0) return "";
 
     TShapeKit* shapeKit = static_cast<TShapeKit* > (instanceNode->GetNode() );
-    if (!shapeKit || shapeKit == 0) return QLatin1String("");
+    if (!shapeKit || shapeKit == 0) return "";
 
     ShapeAbstract* shape = static_cast< ShapeAbstract* >(shapeKit->getPart("shape", false) );
-    if (!shape || shape == 0) return QLatin1String("");
+    if (!shape || shape == 0) return "";
 
-    return (shape->getTypeId().getName().getString() );
+    return shape->getTypeId().getName().getString();
 }
 
 /*
@@ -109,12 +110,9 @@ QString FluxAnalysis::GetSurfaceType(QString nodeURL)
 bool FluxAnalysis::CheckSurface()
 {
     QString surfaceType = GetSurfaceType(m_surfaceURL);
-
-    if ( surfaceType != "ShapeFlatRectangle" &&
-         surfaceType != "ShapeFlatDisk" &&
-         surfaceType != "ShapeCylinder" )
-        return false;
-
+    if (surfaceType == "ShapeFlatRectangle") return true;
+    if (surfaceType == "ShapeFlatDisk") return true;
+    if (surfaceType == "ShapeCylinder") return true;
     return true;
 }
 
@@ -127,17 +125,17 @@ bool FluxAnalysis::CheckSurfaceSide()
 
     if (surfaceType == "ShapeFlatRectangle")
     {
-        if ( (m_surfaceSide != "FRONT") && (m_surfaceSide != "BACK") )
+        if (m_surfaceSide != "FRONT" && m_surfaceSide != "BACK")
             return false;
     }
     else if (surfaceType == "ShapeFlatDisk")
     {
-        if ( (m_surfaceSide != "FRONT") && (m_surfaceSide != "BACK") )
+        if (m_surfaceSide != "FRONT" && m_surfaceSide != "BACK")
             return false;
     }
     else if (surfaceType == "ShapeCylinder")
     {
-        if ( (m_surfaceSide != "INSIDE") && (m_surfaceSide != "OUTSIDE") )
+        if (m_surfaceSide != "INSIDE" && m_surfaceSide != "OUTSIDE")
             return false;
     }
 
@@ -281,10 +279,14 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     QMutex mutex;
     QMutex mutexPhotonMap;
     QFuture<void> photonMap;
+    AirAbstract* airTemp = 0;
+    if (!dynamic_cast<AirVacuum*>(transmissivity))
+        airTemp = transmissivity;
+
     photonMap = QtConcurrent::map(raysPerThread, RayTracer(
         m_pRootSeparatorInstance,
         lightInstance, raycastingSurface, sunShape, lightToWorld,
-        transmissivity,
+        airTemp,
         *m_pRandomDeviate, &mutex, m_pPhotonMap, &mutexPhotonMap, exportSuraceList
     ));
 
@@ -402,22 +404,22 @@ void FluxAnalysis::FluxAnalysisCylinder(InstanceNode* node)
 
     Transform worldToObject = node->GetIntersectionTransform();
 
-    m_xmin = 0.0;
-    m_ymin = 0.0;
-    m_xmax = phiMax  * radius;
-    m_ymax = length;
+    m_xmin = 0.;
+    m_xmax = phiMax*radius;
+    m_ymin = -length/2;
+    m_ymax = length/2;
 
-    std::vector< Photon* > photonList = m_pPhotonMap->GetAllPhotons();
+    std::vector<Photon*> photonList = m_pPhotonMap->GetAllPhotons();
     int totalPhotons = 0;
-    for (unsigned int p = 0; p < photonList.size(); p++)
+    for (uint p = 0; p < photonList.size(); p++)
     {
         Photon* photon = photonList[p];
         if (photon->side == activeSideID)
         {
             totalPhotons++;
             Point3D photonLocalCoord = worldToObject(photon->pos);
-            double phi  = atan2(photonLocalCoord.y, photonLocalCoord.x);
-            if (phi < 0.0) phi += 2 * gc::Pi;
+            double phi = atan2(photonLocalCoord.y, photonLocalCoord.x);
+            if (phi < 0.) phi += 2 * gc::Pi;
             double arcLength = phi * radius;
 
             int xbin = floor( (arcLength - m_xmin) / (m_xmax - m_xmin) * m_widthDivisions);

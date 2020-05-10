@@ -115,10 +115,10 @@ FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* currentScene, SceneModel& curr
  */
 FluxAnalysisDialog::~FluxAnalysisDialog()
 {
-	delete m_fluxAnalysis;
-	delete m_pGridWidthVal;
-	delete m_pGridHeightVal;
-	delete m_pNOfRays;
+    delete m_fluxAnalysis;
+    delete m_pGridWidthVal;
+    delete m_pGridHeightVal;
+    delete m_pNOfRays;
 }
 
 /*!
@@ -164,10 +164,10 @@ void FluxAnalysisDialog::ChangeCurrentSurface()
  */
 void FluxAnalysisDialog::ChangeCurrentSurfaceSide()
 {
-	m_fluxAnalysis->clearPhotonMap();
+    m_fluxAnalysis->clearPhotonMap();
     appendCheck->setChecked(false);
     appendCheck->setEnabled(false);
-	ClearCurrentAnalysis();
+    ClearCurrentAnalysis();
 }
 
 /*
@@ -592,21 +592,21 @@ void FluxAnalysisDialog::UpdateLabelsUnits()
  */
 void FluxAnalysisDialog::UpdateSectorPlotSlot()
 {
-	int** photonCounts = m_fluxAnalysis->photonCountsValue();
+    int** photonCounts = m_fluxAnalysis->photonCountsValue();
     if (!photonCounts || photonCounts == 0) return;
 
-	double xmin = m_fluxAnalysis->xminValue();
-	double ymin = m_fluxAnalysis->yminValue();
-	double xmax = m_fluxAnalysis->xmaxValue();
-	double ymax = m_fluxAnalysis->ymaxValue();
-	double wPhoton = m_fluxAnalysis->wPhotonValue();
+    double xmin = m_fluxAnalysis->xminValue();
+    double ymin = m_fluxAnalysis->yminValue();
+    double xmax = m_fluxAnalysis->xmaxValue();
+    double ymax = m_fluxAnalysis->ymaxValue();
+    double wPhoton = m_fluxAnalysis->wPhotonValue();
     QString withValue = gridWidthLine->text();
     QString heightValue = gridHeightLine->text();
-	int widthDivisions = withValue.toInt();
-	int heightDivisions = heightValue.toInt();
+    int widthDivisions = withValue.toInt();
+    int heightDivisions = heightValue.toInt();
     double widthCell = (xmax - xmin) / widthDivisions;
     double heightCell = (ymax - ymin) / heightDivisions;
-	double areaCell = widthCell * heightCell;
+    double areaCell = widthCell * heightCell;
     double maximumFlux = (m_fluxAnalysis->maximumPhotonsValue() * wPhoton) / areaCell;
     UpdateSectorPlots(photonCounts, wPhoton, widthDivisions, heightDivisions, xmin, ymin, xmax, ymax, maximumFlux);
 }
@@ -616,7 +616,7 @@ void FluxAnalysisDialog::UpdateSectorPlotSlot()
  */
 void FluxAnalysisDialog::SelectExportFile()
 {
-	QString path = QFileDialog::getExistingDirectory(this, "Choose a directory to save");
+    QString path = QFileDialog::getExistingDirectory(this, "Choose a directory to save");
     fileDirEdit->setText(path);
 }
 
@@ -650,27 +650,27 @@ void FluxAnalysisDialog::SelectSurface()
  */
 void FluxAnalysisDialog::ClearCurrentAnalysis()
 {
-	//Delete previous sector plots
-	verticalSectorPlot->clearPlottables();
+    //Delete previous sector plots
+    verticalSectorPlot->clearPlottables();
     verticalSectorPlot->yAxis->setRange(0, 1.05);
-	verticalSectorPlot->replot();
-	horizontaSectorPlot->clearPlottables();
+    verticalSectorPlot->replot();
+    horizontaSectorPlot->clearPlottables();
     horizontaSectorPlot->yAxis->setRange(0, 1.05);
-	horizontaSectorPlot->replot();
-	//Delete previous colormap, scale
-	contourPlotWidget->clearPlottables();
-	//see how many elements there are
-	int elementCount = contourPlotWidget->plotLayout()->elementCount();
-	//loop over the elements
+    horizontaSectorPlot->replot();
+    //Delete previous colormap, scale
+    contourPlotWidget->clearPlottables();
+    //see how many elements there are
+    int elementCount = contourPlotWidget->plotLayout()->elementCount();
+    //loop over the elements
     for (int i = 0; i < elementCount; i++)
-	{
-        //test to see if any of the layout elements are of QCPColorScale type
-        if (qobject_cast<QCPColorScale* > (contourPlotWidget->plotLayout()->elementAt(i) ) )
-            contourPlotWidget->plotLayout()->removeAt(i);
-        //collapse the empty elements
-        contourPlotWidget->plotLayout()->simplify();
-	}
-	contourPlotWidget->replot();
+    {
+    //test to see if any of the layout elements are of QCPColorScale type
+    if (qobject_cast<QCPColorScale* > (contourPlotWidget->plotLayout()->elementAt(i) ) )
+    contourPlotWidget->plotLayout()->removeAt(i);
+    //collapse the empty elements
+    contourPlotWidget->plotLayout()->simplify();
+    }
+    contourPlotWidget->replot();
 
     hSectorXCoordSpin->setValue(0.00);
     hSectorXCoordSpin->setMinimum(0.00);
@@ -680,15 +680,14 @@ void FluxAnalysisDialog::ClearCurrentAnalysis()
     hSectorYCoordSpin->setMaximum(0.00);
 
     totalPowerValue->setText(QString::number(0.0)  );
-
     minimumFluxValue->setText(QString::number(0.0)  );
     averageFluxValue->setText(QString::number(0.0)  );
     maximumFluxValue->setText(QString::number(0.0) );
 
-    maxCoordinatesValue->setText(QLatin1String(" ; ") );
+    maxCoordinatesValue->setText(" ; ");
     errorValue->setText(QString::number(0.0) );
     uniformityValue->setText(QString::number(0.0) );
-    centroidValue->setText(QLatin1String(" ; ") );
+    centroidValue->setText(" ; ");
 }
 
 /*!
@@ -696,26 +695,26 @@ void FluxAnalysisDialog::ClearCurrentAnalysis()
  */
 void FluxAnalysisDialog::UpdateSurfaceSides(QString selectedSurfaceURL)
 {
-	sidesCombo->clear();
+    sidesCombo->clear();
 
     QString surfaceType = m_fluxAnalysis->GetSurfaceType(selectedSurfaceURL);
 
     if (!surfaceType.isEmpty() )
-	{
-        if (surfaceType == QLatin1String("ShapeFlatRectangle") )
-		{
-            sidesCombo->addItem(QLatin1String("FRONT") );
-            sidesCombo->addItem(QLatin1String("BACK") );
-		}
-        else if (surfaceType == QLatin1String("ShapeFlatDisk") )
-		{
-            sidesCombo->addItem(QLatin1String("FRONT") );
-            sidesCombo->addItem(QLatin1String("BACK") );
-		}
-        else if (surfaceType == QLatin1String("ShapeCylinder") )
-		{
-            sidesCombo->addItem(QLatin1String("INSIDE") );
-            sidesCombo->addItem(QLatin1String("OUTSIDE") );
-		}
-	}
+    {
+            if (surfaceType == QLatin1String("ShapeFlatRectangle") )
+            {
+                    sidesCombo->addItem(QLatin1String("FRONT") );
+                    sidesCombo->addItem(QLatin1String("BACK") );
+            }
+            else if (surfaceType == QLatin1String("ShapeFlatDisk") )
+            {
+                    sidesCombo->addItem("FRONT");
+                    sidesCombo->addItem("BACK");
+            }
+            else if (surfaceType == "ShapeCylinder")
+            {
+                    sidesCombo->addItem("INSIDE");
+                    sidesCombo->addItem("OUTSIDE");
+            }
+    }
 }
