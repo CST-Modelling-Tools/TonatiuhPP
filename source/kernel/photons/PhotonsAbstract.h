@@ -15,7 +15,7 @@ public:
     virtual ~PhotonsAbstract() {}
 
     virtual void EndExport() {}
-    virtual void SavePhotonMap(std::vector<Photon*> /*raysLists*/) {}
+    virtual void SavePhotonMap(const std::vector<Photon>& /*raysLists*/) {}
     void SetConcentratorToWorld(Transform concentratorToWorld);
     virtual void SetPowerPerPhoton(double /*wPhoton*/) {}
 
@@ -35,7 +35,7 @@ public:
     const char* getIcon() const {return getClassIcon();}
 
 protected:
-    Transform m_concentratorToWorld;
+    Transform m_transform;
     SceneModel* m_pSceneModel;
     bool m_saveAllPhotonsData;
     bool m_saveCoordinates;

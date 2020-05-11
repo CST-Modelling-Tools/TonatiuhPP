@@ -2,7 +2,7 @@
     <qresource prefix="/">
         <file>images/SunPillbox.png</file>
         <file>images/AirVacuum.png</file>
-        <file>images/PhotonExportNull.png</file>
+        <file>images/PhotonsDefault.png</file>
         <file>images/AirAbstract.png</file>
         <file>images/MaterialVirtual.png</file>
     </qresource>

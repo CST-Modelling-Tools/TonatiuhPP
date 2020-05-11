@@ -21,7 +21,7 @@ PhotonsAbstract::PhotonsAbstract():
  */
 void PhotonsAbstract::SetConcentratorToWorld(Transform concentratorToWorld)
 {
-    m_concentratorToWorld = concentratorToWorld;
+    m_transform = concentratorToWorld;
 }
 
 /*!

@@ -98,13 +98,13 @@ GraphicRoot::~GraphicRoot()
     }
 }
 
-void GraphicRoot::AddGrid( SoSeparator* grid )
+void GraphicRoot::AddGrid(SoSeparator* grid)
 {
     m_pGrid = grid;
     grid->ref();
 }
 
-void GraphicRoot::AddRays( SoSeparator* rays )
+void GraphicRoot::AddRays(SoSeparator* rays)
 {
     RemoveRays();
     m_pRays = rays;
@@ -145,7 +145,6 @@ void GraphicRoot::RemoveGrid()
         m_pGrid->unref();
         m_pGrid = 0;
     }
-
 }
 
 void GraphicRoot::RemoveRays()
@@ -162,8 +161,8 @@ void GraphicRoot::RemoveModel()
 {
     if( m_pSelectionNode->getNumChildren() > 0 )
     {
-        m_pTracker->SetSceneKit(0);
-        m_pTracker->Disconnect();
+//        m_pTracker->SetSceneKit(0);
+//        m_pTracker->Disconnect();
 
         m_pSelectionNode->removeAllChildren();
     }
@@ -213,7 +212,7 @@ void GraphicRoot::ShowGrid(bool view)
     if (view && m_pGrid)
         m_nodeRoot->addChild(m_pGrid);
     else if (!view)
-        if ( m_pGrid->getRefCount( ) > 0 )    m_nodeRoot->removeChild( m_pGrid );
+        if ( m_pGrid->getRefCount() > 0 )    m_nodeRoot->removeChild( m_pGrid );
 }
 
 void GraphicRoot::ShowRays( bool view )

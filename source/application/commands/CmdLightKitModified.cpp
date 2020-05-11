@@ -4,7 +4,7 @@
 #include <Inventor/nodekits/SoNodeKitListPart.h>
 #include "libraries/geometry/gf.h"
 #include "tree/SceneModel.h"
-#include "kernel/scene/TSceneKit.h""
+#include "kernel/scene/TSceneKit.h"
 #include "kernel/sun/TLightKit.h"
 
 /**
@@ -64,7 +64,7 @@ void CmdLightKitModified::undo()
     if (m_hasOld) {
         TLightKit* lightKit = static_cast<TLightKit*> (m_sceneKit->getPart("lightList[0]", false) );
         lightKit->setPart("tsunshape", m_sunShapeOld);
-        lightKit->ChangePosition(m_azimuthOld, m_zenithOld);
+        lightKit->setPosition(m_azimuthOld, m_zenithOld);
         lightKit->disabledNodes.setValue(m_nodesOld.toStdString().c_str() );
     } else
         m_sceneModel->RemoveLightNode(*m_lightKitNew);
@@ -82,7 +82,7 @@ void CmdLightKitModified::redo()
         SunAbstract* shape = static_cast<SunAbstract*>(m_lightKitNew->getPart("tsunshape", false));
         lightKit->setPart("tsunshape", shape);
         TSceneKit* sceneKit = m_sceneModel->getSceneKit();
-        lightKit->ChangePosition(sceneKit->azimuth.getValue(), sceneKit->elevation.getValue());
+        lightKit->setPosition(sceneKit->azimuth.getValue(), sceneKit->elevation.getValue());
         lightKit->disabledNodes.setValue(m_lightKitNew->disabledNodes.getValue() );
     } else
         m_sceneModel->InsertLightNode(*m_lightKitNew);

@@ -4,16 +4,16 @@
 
 #include "kernel/photons/PhotonsWidget.h"
 
-#include "ui_photonexportfilewidget.h"
+#include "ui_PhotonsFilewidget.h"
 
 
-class PhotonExportFileWidget: public PhotonsWidget, private Ui::PhotonExportFileWidget
+class PhotonsFileWidget: public PhotonsWidget, private Ui::PhotonsFileWidget
 {
     Q_OBJECT
 
 public:
-    PhotonExportFileWidget(QWidget* parent = 0);
-    ~PhotonExportFileWidget() {}
+    PhotonsFileWidget(QWidget* parent = 0);
+    ~PhotonsFileWidget() {}
 
     QStringList GetParameterNames() const;
     QString GetParameterValue(QString parameter) const;

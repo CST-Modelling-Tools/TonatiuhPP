@@ -2,13 +2,13 @@
 #include <QMessageBox>
 #include <QSettings>
 
-#include "PhotonExportFile.h"
-#include "PhotonExportFileWidget.h"
+#include "PhotonsFile.h"
+#include "PhotonsFileWidget.h"
 
 /*!
  * Creates a widget for the plugin parameters.
  */
-PhotonExportFileWidget::PhotonExportFileWidget(QWidget* parent):
+PhotonsFileWidget::PhotonsFileWidget(QWidget* parent):
     PhotonsWidget(parent)
 {
     setupUi(this);
@@ -18,15 +18,15 @@ PhotonExportFileWidget::PhotonExportFileWidget(QWidget* parent):
 /*!
  * Returns the plugin parameters names.
  */
-QStringList PhotonExportFileWidget::GetParameterNames() const
+QStringList PhotonsFileWidget::GetParameterNames() const
 {
-    return PhotonExportFile::GetParameterNames();
+    return PhotonsFile::GetParameterNames();
 }
 
 /*!
  * Return the value of
  */
-QString PhotonExportFileWidget::GetParameterValue( QString parameter ) const
+QString PhotonsFileWidget::GetParameterValue( QString parameter ) const
 {
 	QStringList parametersName = GetParameterNames();
 
@@ -49,10 +49,10 @@ QString PhotonExportFileWidget::GetParameterValue( QString parameter ) const
 /*!
  * Select existing directory to save the data exported from the photon.
  */
-void PhotonExportFileWidget::SelectSaveDirectory()
+void PhotonsFileWidget::SelectSaveDirectory()
 {
     QSettings settings("CyI", "Tonatiuh");
-    QString lastUsedDirectory = settings.value( "PhotonExportFileWidget.directoryToExport",
+    QString lastUsedDirectory = settings.value( "PhotonsFileWidget.directoryToExport",
             ".").toString();
 
 
@@ -68,14 +68,14 @@ void PhotonExportFileWidget::SelectSaveDirectory()
 
 	}
 
-    settings.setValue("PhotonExportFileWidget.directoryToExport", directoryToExport );
+    settings.setValue("PhotonsFileWidget.directoryToExport", directoryToExport );
 	saveDirectoryLine->setText( directoryToExport );
 }
 
 /*!
  * Setups triggers for the buttons.
  */
-void PhotonExportFileWidget::SetupTriggers()
+void PhotonsFileWidget::SetupTriggers()
 {
 	connect( selectDirectoryButton, SIGNAL( clicked() ), this, SLOT( SelectSaveDirectory() ) );
 }

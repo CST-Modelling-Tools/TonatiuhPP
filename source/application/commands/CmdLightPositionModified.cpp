@@ -31,7 +31,7 @@ CmdLightPositionModified::~CmdLightPositionModified()
  */
 void CmdLightPositionModified::undo()
 {
-    lightKit->ChangePosition(m_oldAzimuth, m_oldZenith);
+    lightKit->setPosition(m_oldAzimuth, m_oldZenith);
 }
 
 /*!
@@ -40,5 +40,5 @@ void CmdLightPositionModified::undo()
  */
 void CmdLightPositionModified::redo()
 {
-    lightKit->ChangePosition(m_newAzimuth, m_newZenith);
+    lightKit->setPosition(m_newAzimuth, m_newZenith);
 }

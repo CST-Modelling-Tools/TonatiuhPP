@@ -135,7 +135,7 @@ MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags fl
     m_selectionModel(0),
     m_rand(0),
     m_selectedRandomDeviate(-1),
-    m_bufferPhotons(5000000),
+    m_bufferPhotons(1000000),
     m_increasePhotonMap(false),
     m_pExportModeSettings(0),
     m_pPhotonMap(0),
@@ -1806,7 +1806,7 @@ void MainWindow::Run()
         QStringList disabledNodes = QString(light->disabledNodes.getValue().getString() ).split(";", QString::SkipEmptyParts);
         QVector< QPair< TShapeKit*, Transform > > surfacesList;
         trf::ComputeFistStageSurfaceList(rootSeparatorInstance, disabledNodes, &surfacesList);
-        light->ComputeLightSourceArea(m_widthDivisions, m_heightDivisions, surfacesList);
+        light->findTexture(m_widthDivisions, m_heightDivisions, surfacesList);
         if (surfacesList.count() < 1)
         {
             emit Abort(tr("There are no surfaces defined for ray tracing") );
@@ -3663,7 +3663,7 @@ void MainWindow::UpdateLightSize()
         sceneBox.pMin = Point3D(box.getMin()[0], box.getMin()[1], box.getMin()[2]);
         sceneBox.pMax = Point3D(box.getMax()[0], box.getMax()[1], box.getMax()[2]);
 
-        if (lightKit) lightKit->Update(sceneBox);
+        if (lightKit) lightKit->setBox(sceneBox);
     }
 
     m_sceneModel->UpdateSceneModel();

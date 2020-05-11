@@ -58,14 +58,13 @@ public:
     TLightKit();
     static void initClass();
 
-    void ChangePosition(double azimuth, double elevation);
-
-    void Update(BBox box);
-    void ComputeLightSourceArea(int widthDivisions, int heightDivisions, QVector< QPair<TShapeKit*, Transform> > surfacesList);
+    void setPosition(double azimuth, double elevation);
+    void setBox(BBox box);
+    void findTexture(int widthDivisions, int heightDivisions, QVector< QPair<TShapeKit*, Transform> > surfacesList);
 
     SoSFString disabledNodes;
 
 private:
     ~TLightKit();
-    void UpdateSunPosition();
+//    void UpdateSunPosition();
 };

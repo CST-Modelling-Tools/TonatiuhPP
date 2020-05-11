@@ -16,8 +16,8 @@ Photons::Photons():
 
 Photons::~Photons()
 {
-    for (Photon* p : m_photons)
-        delete p;
+//    for (Photon* p : m_photons)
+//        delete p;
 }
 
 /*!
@@ -59,15 +59,15 @@ void Photons::addPhotons(std::vector<Photon>& photons)
         if (m_exporter)
             m_exporter->SavePhotonMap(m_photons);
 
-        for (Photon* p : m_photons)
-            delete p;
+//        for (Photon* p : m_photons)
+//            delete p;
         m_photons.clear();
         m_photonsBuffered = 0;
     }
 
 //    uint nMax = std::min(uint(m_bufferSize), raysListSize);
     for (uint n = 0; n < nMax; n++)
-        m_photons.push_back(new Photon(photons[n]) );
+        m_photons.push_back(photons[n]);
 
     m_photonsBuffered += nMax;
     m_photonsTotal += nMax;
@@ -83,8 +83,8 @@ void Photons::endExport(double wPhoton)
         if (m_exporter)
             m_exporter->SavePhotonMap(m_photons);
 
-        for (Photon* p : m_photons)
-            delete p;
+//        for (Photon* p : m_photons)
+//            delete p;
         m_photons.clear();
         m_photonsBuffered = 0;
     }

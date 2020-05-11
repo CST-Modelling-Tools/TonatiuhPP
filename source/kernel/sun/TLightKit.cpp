@@ -77,6 +77,7 @@ TLightKit::TLightKit()
     setPart("icon", iconShape);
 
     setName("Light");
+    setPosition(0., gc::Pi/2.);
 }
 
 /**
@@ -93,7 +94,7 @@ TLightKit::~TLightKit()
  * Azimuth and Zenith are in radians.
  * \sa redo().
  */
-void TLightKit::ChangePosition(double azimuth, double elevation)
+void TLightKit::setPosition(double azimuth, double elevation)
 {
     SoTransform* transform = (SoTransform*) getPart("transform", false);
 
@@ -103,7 +104,7 @@ void TLightKit::ChangePosition(double azimuth, double elevation)
     transform->rotation = elRotation*azRotation;
 }
 
-void TLightKit::Update(BBox box)
+void TLightKit::setBox(BBox box)
 {
     SoTransform* transform = (SoTransform*) getPart("transform", false);
     SbMatrix mr;
@@ -153,7 +154,7 @@ void TLightKit::Update(BBox box)
     transform->translation = res;
 }
 
-void TLightKit::ComputeLightSourceArea(int xPixels, int yPixels, QVector< QPair< TShapeKit*, Transform > > surfacesList)
+void TLightKit::findTexture(int xPixels, int yPixels, QVector< QPair< TShapeKit*, Transform > > surfacesList)
 {
     TLightShape* shape = static_cast<TLightShape*>(getPart("icon", false));
     if (!shape) return;

@@ -17,7 +17,7 @@ public:
 
     void addPhotons(std::vector<Photon>& photons);
     void endExport(double wPhoton);
-    const std::vector<Photon*>& getPhotons() const {return m_photons;}
+    const std::vector<Photon>& getPhotons() const {return m_photons;}
 
 private:
     ulong m_bufferSize;
@@ -26,5 +26,5 @@ private:
 //    const SceneModel* m_sceneModel;
     ulong m_photonsBuffered;
     ulong m_photonsTotal;
-    std::vector<Photon*> m_photons; // buffer
+    std::vector<Photon> m_photons; // buffer
 };

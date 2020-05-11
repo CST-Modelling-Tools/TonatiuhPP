@@ -189,7 +189,7 @@ int ScriptRayTracer::SetSunPositionToScene()
         if ((coinScene)&& (coinScene->getPart("lightList[0]", false) ))
         {
             TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
-            if (m_sunPosistionChanged) lightKit->ChangePosition(m_sunAzimuth, gc::Pi / 2 - m_sunElevation);
+            if (m_sunPosistionChanged) lightKit->setPosition(m_sunAzimuth, gc::Pi / 2 - m_sunElevation);
             return 1;
         }
         std::cerr << "ScriptRayTracer::SetSunPositionToScene() light not found in scene" << std::endl;

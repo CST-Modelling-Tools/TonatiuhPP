@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PhotonExportFileWidget</class>
- <widget class="QWidget" name="PhotonExportFileWidget">
+ <class>PhotonsFileWidget</class>
+ <widget class="QWidget" name="PhotonsFileWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

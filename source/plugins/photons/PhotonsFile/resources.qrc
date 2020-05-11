@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/" >
-        <file>PhotonExportFile.png</file>
+        <file>PhotonsFile.png</file>
     </qresource>
 </RCC>

@@ -18,6 +18,6 @@ public:
     bool StartExport() {return true;}
 
     static const char* getClassName() {return "No export";}
-    static const char* getClassIcon() {return ":/images/PhotonExportNull.png";}
+    static const char* getClassIcon() {return ":/images/PhotonsDefault.png";}
     const char* getIcon() const {return getClassIcon();}
 };

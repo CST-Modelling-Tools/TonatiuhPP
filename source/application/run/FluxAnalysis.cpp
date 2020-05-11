@@ -237,7 +237,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     {
         sceneBox.pMin = Point3D(box.getMin()[0], box.getMin()[1], box.getMin()[2]);
         sceneBox.pMax = Point3D(box.getMax()[0], box.getMax()[1], box.getMax()[2]);
-        if (lightKit) lightKit->Update(sceneBox);
+        if (lightKit) lightKit->setBox(sceneBox);
     }
 
     m_pCurrentSceneModel->UpdateSceneModel();
@@ -250,7 +250,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     QStringList disabledNodes = QString(lightKit->disabledNodes.getValue().getString() ).split(";", QString::SkipEmptyParts);
     QVector< QPair<TShapeKit*, Transform> > surfacesList;
     trf::ComputeFistStageSurfaceList(m_pRootSeparatorInstance, disabledNodes, &surfacesList);
-    lightKit->ComputeLightSourceArea(m_sunWidthDivisions, m_sunHeightDivisions, surfacesList);
+    lightKit->findTexture(m_sunWidthDivisions, m_sunHeightDivisions, surfacesList);
     if (surfacesList.count() < 1) return;
 
     QVector< long > raysPerThread;
@@ -409,15 +409,15 @@ void FluxAnalysis::FluxAnalysisCylinder(InstanceNode* node)
     m_ymin = -length/2;
     m_ymax = length/2;
 
-    std::vector<Photon*> photonList = m_pPhotonMap->getPhotons();
+    const std::vector<Photon>& photonList = m_pPhotonMap->getPhotons();
     int totalPhotons = 0;
     for (uint p = 0; p < photonList.size(); p++)
     {
-        Photon* photon = photonList[p];
-        if (photon->side == activeSideID)
+        const Photon& photon = photonList[p];
+        if (photon.side == activeSideID)
         {
             totalPhotons++;
-            Point3D photonLocalCoord = worldToObject(photon->pos);
+            Point3D photonLocalCoord = worldToObject(photon.pos);
             double phi = atan2(photonLocalCoord.y, photonLocalCoord.x);
             if (phi < 0.) phi += 2 * gc::Pi;
             double arcLength = phi * radius;
@@ -492,15 +492,15 @@ void FluxAnalysis::FluxAnalysisFlatDisk(InstanceNode* node)
     m_xmax = radius;
     m_ymax = radius;
 
-    std::vector< Photon* > photonList = m_pPhotonMap->getPhotons();
+    const std::vector<Photon>& photonList = m_pPhotonMap->getPhotons();
     int totalPhotons = 0;
-    for (unsigned int p = 0; p < photonList.size(); p++)
+    for (uint p = 0; p < photonList.size(); p++)
     {
-        Photon* photon = photonList[p];
-        if (photon->side == activeSideID)
+        const Photon& photon = photonList[p];
+        if (photon.side == activeSideID)
         {
             totalPhotons++;
-            Point3D photonLocalCoord = worldToObject(photon->pos);
+            Point3D photonLocalCoord = worldToObject(photon.pos);
             int xbin = floor( (photonLocalCoord.x - m_xmin) / (m_xmax - m_xmin) * m_widthDivisions);
             int ybin = floor( (photonLocalCoord.z - m_ymin) / (m_ymax - m_ymin) * m_heightDivisions);
             m_photonCounts[ybin][xbin] += 1;
@@ -573,15 +573,15 @@ void FluxAnalysis::FluxAnalysisFlatRectangle(InstanceNode* node)
     m_xmax = 0.5 * surfaceHeight;
     m_ymax = 0.5 * surfaceWidth;
 
-    std::vector< Photon* > photonList = m_pPhotonMap->getPhotons();
+    const std::vector<Photon>& photonList = m_pPhotonMap->getPhotons();
     int totalPhotons = 0;
-    for (unsigned int p = 0; p < photonList.size(); p++)
+    for (uint p = 0; p < photonList.size(); p++)
     {
-        Photon* photon = photonList[p];
-        if (photon->side == activeSideID)
+        const Photon& photon = photonList[p];
+        if (photon.side == activeSideID)
         {
             totalPhotons++;
-            Point3D photonLocalCoord = worldToObject(photon->pos);
+            Point3D photonLocalCoord = worldToObject(photon.pos);
             int xbin = floor( (photonLocalCoord.x - m_xmin) / (m_xmax - m_xmin) * m_widthDivisions);
             int ybin = floor( (photonLocalCoord.z - m_ymin) / (m_ymax - m_ymin) * m_heightDivisions);
 

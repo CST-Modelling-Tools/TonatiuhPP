@@ -30,9 +30,9 @@ SoSeparator* trf::DrawPhotons(const Photons& map)
 
     SoCoordinate3* coordinates = new SoCoordinate3;
     uint n = 0;
-    for (Photon* photon : map.getPhotons())
+    for (const Photon& photon : map.getPhotons())
     {
-        Point3D& pos = photon->pos;
+        const Point3D& pos = photon.pos;
         coordinates->point.set1Value(n++, pos.x, pos.y, pos.z);
     }
     ans->addChild(coordinates);
@@ -59,13 +59,13 @@ SoSeparator* trf::DrawRays(const Photons& map, unsigned long /*numberOfRays*/)
     QVector<int> rayLengths;
     uint n = 0;
     int s = 0;
-    for (Photon* photon : map.getPhotons())
+    for (const Photon& photon : map.getPhotons())
     {
-        if (photon->id == 0 && s > 0) {
+        if (photon.id == 0 && s > 0) {
             rayLengths << s;
             s = 0;
         }
-        Point3D& pos = photon->pos;
+        const Point3D& pos = photon.pos;
         points->point.set1Value(n++, pos.x, pos.y, pos.z);
         s++;
     }
