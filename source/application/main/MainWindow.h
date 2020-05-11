@@ -144,7 +144,7 @@ public slots:
     void ShowWarning(QString message);
     void Undo();
 
-    SbVec3f getTarget(SoCamera* cam);
+    SbVec3f getTarget(SoCamera* camera);
 
     //Manipulators actions
     void SoTransform_to_SoCenterballManip();
@@ -158,11 +158,19 @@ public slots:
 
     //View menu actions
     void on_actionViewAxes_toggled();
-    void on_actionQuadView_toggled();
+
+    void on_actionViewAll_triggered();
+    void on_actionViewSelected_triggered();
+
     void on_actionViewTop_triggered();
+    void on_actionLookNorth_triggered();
+    void on_actionLookEast_triggered();
+    void on_actionLookSouth_triggered();
+    void on_actionLookWest_triggered();
     void on_actionViewSun_triggered();
-//    void on_action_X_Y_Plane_triggered();
-//    void on_action_Y_Z_Plane_triggered();
+
+    void on_actionQuadView_toggled();
+
 
     //Automation menu actions
     void on_actionOpenScriptEditor_triggered();
@@ -172,17 +180,16 @@ public slots:
     //void on_actionCheckForUpdates_triggered();
 
 
-    void on_actionViewAll_triggered();
 
 private:
     void ChangeModelScene();
     SoSeparator* CreateGrid();
     PhotonsAbstract* CreatePhotonMapExport() const;
-    QToolBar* CreateTrackerTooBar( QMenu* pMaterialsMenu );
-    bool Delete( QModelIndex index );
+    QToolBar* CreateTrackerTooBar(QMenu* pMaterialsMenu);
+    bool Delete(QModelIndex index);
     QSplitter* GetHorizontalSplitterPointer();
     bool OkToContinue();
-    bool Paste( QModelIndex nodeIndex, tgc::PasteType type );
+    bool Paste(QModelIndex nodeIndex, tgc::PasteType type);
     QDir PluginDirectory();
 
     void ReadSettings();

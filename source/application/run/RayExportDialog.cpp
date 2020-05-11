@@ -1,7 +1,8 @@
+#include "RayExportDialog.h"
+
 #include <iostream>
 #include <QMessageBox>
 
-#include "ExportPhotonsDialog.h"
 #include "kernel/photons/PhotonsWidget.h"
 #include "kernel/photons/PhotonsSettings.h"
 #include "SelectSurfaceDialog.h"
@@ -9,7 +10,7 @@
 /*!
  * Creates a new dialog object to define the export settings. The available export mode types are listed into \a typeList.
  */
-ExportPhotonsDialog::ExportPhotonsDialog(
+RayExportDialog::RayExportDialog(
     SceneModel& scene,
     QVector<PhotonsFactory*> typeList,
     QWidget* parent):
@@ -43,7 +44,7 @@ ExportPhotonsDialog::ExportPhotonsDialog(
 /*!
  *    Returns defined settings into settings class object.
  */
-PhotonsSettings ExportPhotonsDialog::GetExportPhotonMapSettings() const
+PhotonsSettings RayExportDialog::GetExportPhotonMapSettings() const
 {
     PhotonsSettings settings;
     settings.modeTypeName = storeTypeCombo->currentText();
@@ -72,7 +73,7 @@ PhotonsSettings ExportPhotonsDialog::GetExportPhotonMapSettings() const
 /*!
  * Changes the widget of the store type settings to current selected store widget.
  */
-void ExportPhotonsDialog::ChangeCurrentStoreTypeParameters()
+void RayExportDialog::ChangeCurrentStoreTypeParameters()
 {
     parametersWidget->setCurrentIndex(storeTypeCombo->currentIndex() );
 }
@@ -80,7 +81,7 @@ void ExportPhotonsDialog::ChangeCurrentStoreTypeParameters()
 /*!
  * Adds a surface to export surface list.
  */
-void ExportPhotonsDialog::AddSurface()
+void RayExportDialog::AddSurface()
 {
     SelectSurfaceDialog selectSurfaceDialog(*m_scene, true);
     if (!selectSurfaceDialog.exec() ) return;
@@ -100,7 +101,7 @@ void ExportPhotonsDialog::AddSurface()
 /*!
  * Deletes current selected surface from export surface list.
  */
-void ExportPhotonsDialog::DeleteSurface()
+void RayExportDialog::DeleteSurface()
 {
     if (!surfacesListWidget->currentItem()) return;
     int n = m_surfaces.indexOf(surfacesListWidget->currentItem()->text());
@@ -108,4 +109,3 @@ void ExportPhotonsDialog::DeleteSurface()
     m_surfaces.removeAt(n);
     delete surfacesListWidget->item(n);
 }
-

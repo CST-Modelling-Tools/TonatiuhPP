@@ -53,7 +53,7 @@ void CmdDeleteTracker::undo()
     SoTransform* parentTransform = static_cast< SoTransform* > (m_coinParent->getPart("transform", true) );
     if (!parentTransform) gf::SevereError("CmdInsertTracker Null node transform.");
 
-    TLightKit* lightKit = static_cast< TLightKit* >(m_scene->getPart("lightList[0]", false) );
+//    TLightKit* lightKit = static_cast< TLightKit* >(m_scene->getPart("lightList[0]", false) );
 //    if (lightKit)
 //    {
 //        m_tracker->SetAzimuthAngle(&lightKit->azimuth);

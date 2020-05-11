@@ -4,7 +4,7 @@
 
 #include "ui_selectsurfacedialog.h"
 
-class NodesFilterModel;
+class SceneFilter;
 //class QItemSelectionModel;
 class SceneModel;
 
@@ -27,5 +27,5 @@ public slots:
 private:
     bool m_isLightVisible;
     SceneModel* m_pCurrentSceneModel;
-    NodesFilterModel* m_pNodeFilterModel;
+    SceneFilter* m_pNodeFilterModel;
 };

@@ -56,7 +56,7 @@ SbViewportRegion GraphicView::GetViewportRegion() const
     return m_viewer->getViewportRegion();
 }
 
-SoCamera* GraphicView::GetCamera() const
+SoCamera* GraphicView::getCamera() const
 {
     return m_viewer->getCamera();
 }

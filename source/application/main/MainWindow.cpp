@@ -93,10 +93,10 @@
 #include "kernel/trackers/TrackerAbstract.h"
 #include "kernel/trackers/TrackerFactory.h"
 #include "main/Document.h"
-#include "run/ExportPhotonsDialog.h"
+#include "run/RayExportDialog.h"
 #include "run/FluxAnalysis.h"
 #include "run/FluxAnalysisDialog.h"
-#include "run/RayTraceDialog.h"
+#include "run/RayOptionsDialog.h"
 #include "script/ScriptEditorDialog.h"
 #include "view/GraphicRoot.h"
 #include "view/GraphicView.h"
@@ -533,18 +533,17 @@ void MainWindow::RunCompleteRayTracer()
     TLightShape* raycastingSurface = 0;
     AirAbstract* transmissivity = 0;
 
-    QElapsedTimer timer;
-    timer.start();
+//    QElapsedTimer timer;
+//    timer.start();
 
     if (!ReadyForRaytracing(rootSeparatorInstance, lightInstance, lightTransform, sunShape, raycastingSurface, transmissivity) )
         return;
 
+//    std::cout << "Elapsed time (ReadyForRaytracing): " << timer.elapsed() << std::endl;
+
     if (!m_pPhotonMap->getExporter() && !SetPhotonMapExportSettings() ) return;
 
-
     Run();
-
-    std::cout << "Elapsed time (RunCompleteRayTracer): " << timer.elapsed() << std::endl;
 }
 
 
@@ -834,7 +833,7 @@ void MainWindow::ShowMenu(const QModelIndex& index)
 void MainWindow::ShowRayTracerOptionsDialog()
 {
     QVector<RandomFactory*> randomDeviateFactoryList = m_pluginManager->getRandomFactories();
-    RayTraceDialog* options = new RayTraceDialog(
+    RayOptionsDialog* options = new RayOptionsDialog(
         m_raysTraced,
         randomDeviateFactoryList, m_selectedRandomDeviate,
         m_widthDivisions,m_heightDivisions,
@@ -891,87 +890,14 @@ void MainWindow::on_actionQuadView_toggled()
     }
 }
 
-void MainWindow::on_actionViewSun_triggered()
-{
-    SoSceneKit* coinScene = m_document->GetSceneKit();
-    if (!coinScene) return;
-
-    //Check if there is a light and is properly configured
-    if (!coinScene->getPart("lightList[0]", false) ) return;
-    TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
-    if (!lightKit) return;
-
-    SoSearchAction coinSearch;
-    coinSearch.setNode(lightKit);
-    coinSearch.setInterest(SoSearchAction::FIRST);
-    coinSearch.apply(m_graphicsRoot->GetNode() );
-
-    SoPath* lightPath = coinSearch.getPath();
-    if (!lightPath) gf::SevereError("MainWindow Null light path.");
-
-    const SbViewportRegion vpr = m_graphicView[m_focusView]->GetViewportRegion();
-    SoGetMatrixAction* getmatrixaction = new SoGetMatrixAction(vpr);
-    getmatrixaction->apply(lightPath);
-
-    Transform lightToWorld = tgf::TransformFromMatrix(getmatrixaction->getMatrix() );
-
-    SoCamera* cam = m_graphicView[m_focusView]->GetCamera();
-    Point3D camPosition = lightToWorld(Point3D(0.0, cam->focalDistance.getValue(), 0.0) );
-
-    delete getmatrixaction;
-
-    SbVec3f target = getTarget(cam);
-
-    cam->position.setValue(target + SbVec3f(camPosition.x, camPosition.y, camPosition.z) );
-    cam->pointAt(target);
-    //cam->viewAll( m_graphicsRoot->GetNode(), vpr );
+SbVec3f MainWindow::getTarget(SoCamera* camera)
+{ 
+    SbRotation rotation = camera->orientation.getValue();
+    SbVec3f target;
+    rotation.multVec(SbVec3f(0., 0., -camera->focalDistance.getValue()), target);
+    target += camera->position.getValue();
+    return target;
 }
-
-SbVec3f MainWindow::getTarget(SoCamera* cam)
-{
-    SbVec3f axis;
-    float angle;
-    cam->orientation.getValue(axis,angle);
-    SbRotation* rotation  = new SbRotation (axis,angle);
-    SbVec3f center;
-    rotation->multVec(SbVec3f (0, 0, -cam->focalDistance.getValue()), center);
-    center += cam->position.getValue();
-    return center;
-}
-
-//void MainWindow::on_action_X_Y_Plane_triggered()
-//{
-//    SoCamera* cam = m_graphicView[m_focusView]->GetCamera();
-
-//    SbVec3f target = getTarget(cam);
-
-//    cam->position.setValue(target + SbVec3f(0, 0, cam->focalDistance.getValue() ) );
-//    cam->pointAt(target, SbVec3f(0, 1, 0)  );
-
-//    //SbViewportRegion vpr = m_graphicView[m_focusView]->GetViewportRegion();
-//    //cam->viewAll( m_graphicsRoot->GetNode(), vpr );
-//}
-
-void MainWindow::on_actionViewTop_triggered()
-{
-    SoCamera* camera = m_graphicView[m_focusView]->GetCamera();
-    SbVec3f target = getTarget(camera);
-
-    camera->position.setValue(target + SbVec3f(0, 0, camera->focalDistance.getValue()) );
-    camera->pointAt(target, SbVec3f(0., 1., 0.) );
-
-    //SbViewportRegion vpr = m_graphicView[m_focusView]->GetViewportRegion();
-    //cam->viewAll( m_graphicsRoot->GetNode(), vpr );
-}
-
-//void MainWindow::on_action_Y_Z_Plane_triggered()
-//{
-//    SoCamera* cam = m_graphicView[m_focusView]->GetCamera();
-//    SbVec3f target = getTarget(cam);
-
-//    cam->position.setValue(target + SbVec3f(-cam->focalDistance.getValue(), 0, 0) );
-//    cam->pointAt(target, SbVec3f(0, 1, 0)  );
-//}
 
 void MainWindow::on_actionOpenScriptEditor_triggered()
 {
@@ -1794,7 +1720,6 @@ void MainWindow::Run()
             exportSuraceList.push_back(surfaceNode);
         }
 
-
         UpdateLightSize();
 
         //Compute bounding boxes and world to object transforms
@@ -1876,7 +1801,7 @@ void MainWindow::Run()
 
         double irradiance = sunShape->getIrradiance();
         double inputAperture = raycastingSurface->GetValidArea();
-        double wPhoton = (inputAperture * irradiance) / m_raysTracedTotal;
+        double wPhoton = (inputAperture*irradiance) / m_raysTracedTotal;
 
         m_pPhotonMap->endExport(wPhoton);
     }
@@ -1894,7 +1819,7 @@ void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned 
     TSceneKit* coinScene = m_document->GetSceneKit();
     if (!coinScene) return;
 
-    TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
+    TLightKit* lightKit = static_cast<TLightKit*>(coinScene->getPart("lightList[0]", false) );
     if (!lightKit) return;
 
     InstanceNode*  rootSeparatorInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
@@ -1960,10 +1885,8 @@ void MainWindow::SelectNode(QString nodeUrl)
  */
 void MainWindow::SetExportAllPhotonMap()
 {
-
     if (!m_pExportModeSettings) return;
     m_pExportModeSettings->exportSurfaceNodeList.clear();
-
 }
 
 /*!
@@ -2003,7 +1926,7 @@ void MainWindow::SetExportIntersectionSurfaceSide(bool enabled)
  */
 void MainWindow::SetExportPhotonMapType(QString exportModeType)
 {
-    QVector< PhotonsFactory* > factoryList = m_pluginManager->getExportFactories();
+    QVector<PhotonsFactory*> factoryList = m_pluginManager->getExportFactories();
     if (factoryList.size() == 0) return;
 
     QVector< QString > exportPMModeNames;
@@ -2103,7 +2026,6 @@ void MainWindow::SetRandomDeviateType(QString typeName)
         delete m_rand;
         m_rand = 0;
     }
-
 }
 
 /*!
@@ -3012,7 +2934,6 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
                                     TLightShape*& raycastingShape,
                                     AirAbstract*& transmissivity)
 {
-
     //Check if there is a scene
     TSceneKit* coinScene = m_document->GetSceneKit();
     if (!coinScene) return false;
@@ -3055,7 +2976,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
     }
 
     //Create the random generator
-    if (!m_rand) m_rand =  randomDeviateFactoryList[m_selectedRandomDeviate]->create();
+    if (!m_rand) m_rand = randomDeviateFactoryList[m_selectedRandomDeviate]->create();
 
 
     //Create the photon map where photons are going to be stored
@@ -3073,7 +2994,6 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
         m_pPhotonMap->setBufferSize(m_bufferPhotons);
         m_raysTracedTotal = 0;
     }
-
 
     return true;
 }
@@ -3121,14 +3041,14 @@ void MainWindow::SetCurrentFile(const QString& fileName)
  */
 bool MainWindow::SetPhotonMapExportSettings()
 {
-    QVector< PhotonsFactory* > exportPhotonMapModeList = m_pluginManager->getExportFactories();
-    ExportPhotonsDialog exportSettingsDialog(*m_sceneModel, exportPhotonMapModeList);
-    if (!exportSettingsDialog.exec() ) return false;
+    QVector<PhotonsFactory*> exportPhotonMapModeList = m_pluginManager->getExportFactories();
+    RayExportDialog dialog(*m_sceneModel, exportPhotonMapModeList);
+    if (!dialog.exec() ) return false;
 
     if (m_pExportModeSettings) delete m_pExportModeSettings;
 
     m_pExportModeSettings = new PhotonsSettings;
-    *m_pExportModeSettings = exportSettingsDialog.GetExportPhotonMapSettings();
+    *m_pExportModeSettings = dialog.GetExportPhotonMapSettings();
     return true;
 }
 
@@ -3719,6 +3639,84 @@ void MainWindow::WriteSettings()
 void MainWindow::on_actionViewAll_triggered()
 {
     SbViewportRegion vpr = m_graphicView[m_focusView]->GetViewportRegion();
-    SoCamera* camera = m_graphicView[m_focusView]->GetCamera();
+    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
     camera->viewAll(m_graphicsRoot->GetNode(), vpr);
+}
+
+void MainWindow::on_actionViewSelected_triggered()
+{
+    QModelIndex index = m_selectionModel->currentIndex();
+    InstanceNode* node = m_sceneModel->NodeFromIndex(index);
+
+    SoGetBoundingBoxAction* action = new SoGetBoundingBoxAction( SbViewportRegion() ) ;
+    node->GetNode()->getBoundingBox(action);
+    SbBox3f box = action->getBoundingBox();
+    delete action;
+    if ( box.isEmpty() ) return;
+
+    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
+    camera->pointAt(box.getCenter(), SbVec3f(0., 0., 1.));
+}
+
+void MainWindow::on_actionViewTop_triggered()
+{
+    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
+    SbVec3f target = getTarget(camera);
+
+    camera->position = target + SbVec3f(0, 0, camera->focalDistance.getValue());
+    camera->pointAt(target, SbVec3f(0., 1., 0.) );
+}
+
+void MainWindow::on_actionLookNorth_triggered()
+{
+    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
+    SbVec3f target = getTarget(camera);
+
+    camera->position = target + SbVec3f(0., -camera->focalDistance.getValue(), 0.);
+    camera->pointAt(target, SbVec3f(0., 0., 1.));
+}
+
+void MainWindow::on_actionLookEast_triggered()
+{
+    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
+    SbVec3f target = getTarget(camera);
+
+    camera->position = target + SbVec3f(-camera->focalDistance.getValue(), 0., 0.);
+    camera->pointAt(target, SbVec3f(0., 0., 1.));
+}
+
+void MainWindow::on_actionLookSouth_triggered()
+{
+    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
+    SbVec3f target = getTarget(camera);
+
+    camera->position = target + SbVec3f(0., camera->focalDistance.getValue(), 0.);
+    camera->pointAt(target, SbVec3f(0., 0., 1.));
+}
+
+void MainWindow::on_actionLookWest_triggered()
+{
+    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
+    SbVec3f target = getTarget(camera);
+
+    camera->position = target + SbVec3f(camera->focalDistance.getValue(), 0., 0.);
+    camera->pointAt(target, SbVec3f(0., 0., 1.));
+}
+
+void MainWindow::on_actionViewSun_triggered()
+{
+    SoSceneKit* sceneKit = m_document->GetSceneKit();
+    if (!sceneKit) return;
+    TLightKit* lightKit = static_cast<TLightKit*>(sceneKit->getPart("lightList[0]", false));
+    if (!lightKit) return;
+    SoTransform* transform = (SoTransform*)lightKit->getPart("transform", false);
+
+    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
+    SbVec3f target = getTarget(camera);
+
+    SbVec3f shift;
+    transform->rotation.getValue().multVec(SbVec3f(0., 0., -camera->focalDistance.getValue()), shift);
+
+    camera->position = target + shift;
+    camera->pointAt(target, SbVec3f(0., 0., 1.));
 }

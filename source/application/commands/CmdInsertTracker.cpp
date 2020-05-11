@@ -50,7 +50,7 @@ void CmdInsertTracker::undo()
  */
 void CmdInsertTracker::redo()
 {
-    TLightKit* lightKit = static_cast< TLightKit* >(m_scene->getPart("lightList[0]", false) );
+//    TLightKit* lightKit = static_cast< TLightKit* >(m_scene->getPart("lightList[0]", false) );
 //    if (lightKit)
 //    {
 //        m_tracker->SetAzimuthAngle(&lightKit->azimuth);

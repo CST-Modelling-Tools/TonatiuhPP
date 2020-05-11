@@ -1,16 +1,17 @@
+#include "RayOptionsDialog.h"
+
 #include <QAbstractButton>
 #include <QFileDialog>
 #include <QDir>
 
 #include "kernel/random/RandomFactory.h"
-#include "RayTraceDialog.h"
 
 /**
  * Creates a dialog to ray tracer options with the given \a parent and \a f flags.
  *
  * The variables take the default values.
  */
-RayTraceDialog::RayTraceDialog(QWidget* parent, Qt::WindowFlags f):
+RayOptionsDialog::RayOptionsDialog(QWidget* parent, Qt::WindowFlags f):
     QDialog(parent, f),
     m_numRays(0),
     m_selectedRandomFactory(-1),
@@ -30,7 +31,7 @@ RayTraceDialog::RayTraceDialog(QWidget* parent, Qt::WindowFlags f):
  *
  * The variables take the values specified by \a numRats, \a faction, \a drawPhotons and \a increasePhotonMap.
  */
-RayTraceDialog::RayTraceDialog(
+RayOptionsDialog::RayOptionsDialog(
     int numRays,
     QVector<RandomFactory*> randomFactoryList, int selectedRandomFactory,
     int widthDivisions, int heightDivisions,
@@ -75,7 +76,7 @@ RayTraceDialog::RayTraceDialog(
 /**
  * Saves the values of the dialog.
  */
-void RayTraceDialog::saveChanges()
+void RayOptionsDialog::saveChanges()
 {
     m_numRays = raysSpinBox->value();
     m_selectedRandomFactory = randomCombo->currentIndex();

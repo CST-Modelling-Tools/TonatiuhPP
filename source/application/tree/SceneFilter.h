@@ -4,12 +4,12 @@
 #include <QVector>
 
 
-class NodesFilterModel: public QSortFilterProxyModel
+class SceneFilter: public QSortFilterProxyModel
 {
     Q_OBJECT
 
 public:
-    NodesFilterModel(QObject* parent = 0);
+    SceneFilter(QObject* parent = 0);
 
     void AddShapeTypeFilter(QString shapeType);
     void SetShapeTypeFilters(QVector<QString> shapeTypeFilters);

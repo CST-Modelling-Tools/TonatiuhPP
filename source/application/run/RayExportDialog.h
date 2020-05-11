@@ -5,19 +5,19 @@
 
 #include "kernel/photons/PhotonsFactory.h"
 
-#include "ui_ExportPhotonsDialog.h"
+#include "ui_RayExportDialog.h"
 
 class SceneModel;
 class PhotonsWidget;
 struct PhotonsSettings;
 
-class ExportPhotonsDialog: public QDialog, private Ui::ExportPhotonsDialog
+class RayExportDialog: public QDialog, private Ui::RayExportDialog
 {
     Q_OBJECT
 
 public:
-    ExportPhotonsDialog(SceneModel& scene, QVector<PhotonsFactory*> typeList, QWidget* parent = 0);
-    ~ExportPhotonsDialog() {}
+    RayExportDialog(SceneModel& scene, QVector<PhotonsFactory*> typeList, QWidget* parent = 0);
+    ~RayExportDialog() {}
 
     PhotonsSettings GetExportPhotonMapSettings() const;
 

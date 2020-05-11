@@ -1,5 +1,6 @@
+#include "SceneFilter.h"
+
 #include "kernel/run/InstanceNode.h"
-#include "NodesFilterModel.h"
 #include "tree/SceneModel.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
@@ -9,7 +10,7 @@
 /*!
  * Creates model object
  */
-NodesFilterModel::NodesFilterModel(QObject* parent):
+SceneFilter::SceneFilter(QObject* parent):
     QSortFilterProxyModel(parent)
 {
 
@@ -18,16 +19,16 @@ NodesFilterModel::NodesFilterModel(QObject* parent):
 /*!
  * Adds new node type to de filter.
  */
-void NodesFilterModel::AddShapeTypeFilter(QString shapeType)
+void SceneFilter::AddShapeTypeFilter(QString shapeType)
 {
     if (!m_shapeTypeList.contains(shapeType) )
-        m_shapeTypeList.push_back(shapeType);
+        m_shapeTypeList << shapeType;
 }
 
 /*!
  * Sets the shape filters to \a  shapeTypeFilters. Previously defined shape filters will be removed.
  */
-void NodesFilterModel::SetShapeTypeFilters(QVector<QString> shapeTypeFilters)
+void SceneFilter::SetShapeTypeFilters(QVector<QString> shapeTypeFilters)
 {
     m_shapeTypeList.clear();
     m_shapeTypeList = shapeTypeFilters;
@@ -36,7 +37,7 @@ void NodesFilterModel::SetShapeTypeFilters(QVector<QString> shapeTypeFilters)
 /*!
  * Returns true if the \a m_nodetypeList contains the type of the element defined with \a sourceRow and \a sourceParent
  */
-bool NodesFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
+bool SceneFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
     SceneModel* sceneModel = dynamic_cast<SceneModel*> (sourceModel() );
     QModelIndex index = sceneModel->index(sourceRow, 0, sourceParent);
@@ -47,13 +48,13 @@ bool NodesFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex& source
     SoNode* node = nodeInstance->GetNode();
     if (!node) return false;
 
-    if (node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) return (true);
+    if (node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) return true;
     if (node->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) )
     {
-        if (m_shapeTypeList.count() < 1) return (true);
+        if (m_shapeTypeList.count() < 1) return true;
 
         TShapeKit* shapeKit = static_cast<TShapeKit*>(node);
-        if (!shapeKit) return (false);
+        if (!shapeKit) return false;
         ShapeAbstract* shape = static_cast<ShapeAbstract*>(shapeKit->getPart("shape", false) );
 
         if (shape && m_shapeTypeList.contains(shape->getTypeId().getName().getString() ) )

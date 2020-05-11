@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ExportPhotonsDialog</class>
- <widget class="QDialog" name="ExportPhotonsDialog">
+ <class>RayExportDialog</class>
+ <widget class="QDialog" name="RayExportDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,37 +10,10 @@
     <height>630</height>
    </rect>
   </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>16777215</width>
-    <height>16777215</height>
-   </size>
-  </property>
   <property name="windowTitle">
    <string>Photon Map Export Settings</string>
   </property>
   <layout class="QVBoxLayout" name="mainLayout">
-   <property name="spacing">
-    <number>10</number>
-   </property>
-   <property name="leftMargin">
-    <number>10</number>
-   </property>
-   <property name="topMargin">
-    <number>10</number>
-   </property>
-   <property name="rightMargin">
-    <number>10</number>
-   </property>
-   <property name="bottomMargin">
-    <number>10</number>
-   </property>
    <item>
     <widget class="QGroupBox" name="storeTypeGroup">
      <property name="title">
@@ -270,7 +243,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>ExportPhotonsDialog</receiver>
+   <receiver>RayExportDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -286,7 +259,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>ExportPhotonsDialog</receiver>
+   <receiver>RayExportDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

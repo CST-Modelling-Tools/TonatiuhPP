@@ -2,7 +2,7 @@
 #include <QMessageBox>
 
 #include "SelectSurfaceDialog.h"
-#include "NodesFilterModel.h"
+#include "tree/SceneFilter.h"
 
 #include "kernel/run/InstanceNode.h"
 #include "kernel/scene/TShapeKit.h"
@@ -12,8 +12,8 @@
 /*!
  * Creates a dialog object to select a surface from the \a currentSceneModel.
  */
-SelectSurfaceDialog::SelectSurfaceDialog(SceneModel& currentSceneModel, bool enableLight, QWidget* parent)
-    : QDialog(parent),
+SelectSurfaceDialog::SelectSurfaceDialog(SceneModel& currentSceneModel, bool enableLight, QWidget* parent):
+    QDialog(parent),
     m_isLightVisible(enableLight),
     m_pCurrentSceneModel(&currentSceneModel),
     m_pNodeFilterModel(0)
@@ -26,7 +26,7 @@ SelectSurfaceDialog::SelectSurfaceDialog(SceneModel& currentSceneModel, bool ena
         sceneRadio->setVisible(false);
     }
 
-    m_pNodeFilterModel = new NodesFilterModel(this);
+    m_pNodeFilterModel = new SceneFilter(this);
     m_pNodeFilterModel->setSourceModel(m_pCurrentSceneModel);
     sceneModelView->setModel(m_pNodeFilterModel);
 

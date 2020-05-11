@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ui_raytracedialog.h>
+#include <ui_RayOptionsDialog.h>
 
 #include <QDialog>
 #include <QString>
@@ -14,13 +14,13 @@ class RandomFactory;
   The user can modify the number of ray to trace, draw and photon map options.
 */
 
-class RayTraceDialog: public QDialog, private Ui::RayTraceDialog
+class RayOptionsDialog: public QDialog, private Ui::RayOptionsDialog
 {
     Q_OBJECT
 
 public:
-    RayTraceDialog(QWidget* parent = 0, Qt::WindowFlags f = 0);
-    RayTraceDialog(
+    RayOptionsDialog(QWidget* parent = 0, Qt::WindowFlags f = 0);
+    RayOptionsDialog(
         int numRays,
         QVector<RandomFactory*> randomFactoryList, int selectedRandomFactory = 0,
         int widthDivisions = 200, int heightDivisions = 200,
@@ -28,7 +28,7 @@ public:
         int photonMapSize = 1'000'000, bool increasePhotonMap = false,
         QWidget* parent = 0, Qt::WindowFlags f = 0
     );
-    ~RayTraceDialog() {}
+    ~RayOptionsDialog() {}
 
     bool DrawPhotons() const {return m_drawPhotons;}
     bool DrawRays() const {return m_drawRays;}

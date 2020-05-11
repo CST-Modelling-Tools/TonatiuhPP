@@ -26,7 +26,7 @@ public:
     void SetSceneGraph( GraphicRoot* sceneGraphRoot );
 
     SbViewportRegion GetViewportRegion() const;
-    SoCamera* GetCamera() const;
+    SoCamera* getCamera() const;
     virtual QModelIndex indexAt ( const QPoint & point ) const;
     virtual void scrollTo ( const QModelIndex & index, ScrollHint hint = EnsureVisible );
     virtual QRect visualRect ( const QModelIndex & index ) const;

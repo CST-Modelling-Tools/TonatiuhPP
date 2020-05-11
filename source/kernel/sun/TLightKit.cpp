@@ -156,6 +156,11 @@ void TLightKit::setBox(BBox box)
 
 void TLightKit::findTexture(int xPixels, int yPixels, QVector< QPair< TShapeKit*, Transform > > surfacesList)
 {
+    SoTransform* transform = (SoTransform*) getPart("transform", false);
+    SbMatrix mr;
+    mr.setRotate(transform->rotation.getValue());
+    Transform tr = tgf::TransformFromMatrix(mr).GetInverse();
+
     TLightShape* shape = static_cast<TLightShape*>(getPart("icon", false));
     if (!shape) return;
 
@@ -209,6 +214,7 @@ void TLightKit::findTexture(int xPixels, int yPixels, QVector< QPair< TShapeKit*
             QVector<QPointF> qps;
             for (Point3D& p : ps) {
                 p = transformOtW(p);
+                p = tr(p);
                 qps <<  QPoint((p.x - shape->xMin.getValue())/xWidthPixel, (p.y - shape->yMin.getValue())/yWidthPixel);
             }
 
