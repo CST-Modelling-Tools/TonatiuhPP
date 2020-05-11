@@ -9,7 +9,7 @@ class CmdLightPositionModified : public QUndoCommand
 {
 
 public:
-    CmdLightPositionModified( TLightKit* light, double azimuth, double zenith, QUndoCommand* parent = 0 );
+    CmdLightPositionModified(TLightKit* light, double azimuth, double zenith, QUndoCommand* parent = 0 );
     ~CmdLightPositionModified();
 
     virtual void undo();

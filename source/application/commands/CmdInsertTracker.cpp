@@ -51,11 +51,11 @@ void CmdInsertTracker::undo()
 void CmdInsertTracker::redo()
 {
     TLightKit* lightKit = static_cast< TLightKit* >(m_scene->getPart("lightList[0]", false) );
-    if (lightKit)
-    {
-        m_tracker->SetAzimuthAngle(&lightKit->azimuth);
-        m_tracker->SetZenithAngle(&lightKit->zenith);
-    }
+//    if (lightKit)
+//    {
+//        m_tracker->SetAzimuthAngle(&lightKit->azimuth);
+//        m_tracker->SetZenithAngle(&lightKit->zenith);
+//    }
     m_row = m_pModel->InsertCoinNode(*m_tracker, *m_coinParent);
 
 }

@@ -25,10 +25,10 @@ public:
 
     SoPath* GetSoPath(SoSearchAction* action);
 
-    void UpdateSunPosition(double azimuthValue, double zenithValue);
+    void UpdateSunPosition(double az, double el); // in rads
 
-    trt::TONATIUH_REAL azimuth;
-    trt::TONATIUH_REAL zenith;
+    SoSFDouble azimuth;
+    SoSFDouble elevation;
 
     SoSeparator* m_root; // graphicRoot
 

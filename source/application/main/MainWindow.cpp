@@ -323,24 +323,26 @@ void MainWindow::StartManipulation(SoDragger* dragger)
  */
 void MainWindow::DefineSunLight()
 {
-    TSceneKit* coinScene = m_document->GetSceneKit();
-    if (!coinScene) return;
+    TSceneKit* sceneKit = m_document->GetSceneKit();
+    if (!sceneKit) return;
 
     InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
     InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
     m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 
     TLightKit* lightKitOld = 0;
-    if (coinScene->getPart("lightList[0]", false) )
-        lightKitOld = static_cast<TLightKit*>(coinScene->getPart("lightList[0]", false) );
+    if (sceneKit->getPart("lightList[0]", false) )
+        lightKitOld = static_cast<TLightKit*>(sceneKit->getPart("lightList[0]", false) );
 
     SunDialog dialog(*m_sceneModel, lightKitOld, m_pluginManager->getSunMap(), this);
     if (!dialog.exec()) return;
 
     TLightKit* lightKit = dialog.getLightKit();
     if (!lightKit) return;
+    sceneKit->azimuth = dialog.getAzimuth();
+    sceneKit->elevation = dialog.getElevation();
 
-    CmdLightKitModified* cmd = new CmdLightKitModified(lightKit, coinScene, *m_sceneModel);
+    CmdLightKitModified* cmd = new CmdLightKitModified(lightKit, sceneKit, *m_sceneModel);
     m_commandStack->push(cmd);
     UpdateLightSize();
 
@@ -1297,8 +1299,8 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
         {
             SoFullPath* trackerPath = static_cast< SoFullPath* > (trackersPath[index]);
             TrackerAbstract* tracker = static_cast< TrackerAbstract* >(trackerPath->getTail() );
-            tracker->SetAzimuthAngle(&lightKit->azimuth);
-            tracker->SetZenithAngle(&lightKit->zenith);
+//            tracker->SetAzimuthAngle(&lightKit->azimuth);
+//            tracker->SetZenithAngle(&lightKit->zenith);
         }
     }
 
@@ -1650,8 +1652,8 @@ void MainWindow::InsertFileComponent(QString componentFileName)
         {
             SoFullPath* trackerPath = static_cast< SoFullPath* > (trackersPath[index]);
             TrackerAbstract* tracker = static_cast< TrackerAbstract* >(trackerPath->getTail() );
-            tracker->SetAzimuthAngle(&lightKit->azimuth);
-            tracker->SetZenithAngle(&lightKit->zenith);
+//            tracker->SetAzimuthAngle(&lightKit->azimuth);
+//            tracker->SetZenithAngle(&lightKit->zenith);
         }
     }
 
@@ -1661,7 +1663,6 @@ void MainWindow::InsertFileComponent(QString componentFileName)
 
     UpdateLightSize();
     m_document->SetDocumentModified(true);
-
 }
 
 /*!
@@ -3650,14 +3651,14 @@ void MainWindow::UpdateLightSize()
     TSeparatorKit* concentratorRoot = static_cast< TSeparatorKit* >(coinScene->getPart("childList[0]", false) );
     if (!concentratorRoot) return;
 
-    SoGetBoundingBoxAction* bbAction = new SoGetBoundingBoxAction(SbViewportRegion() );
-    concentratorRoot->getBoundingBox(bbAction);
+    SoGetBoundingBoxAction* action = new SoGetBoundingBoxAction(SbViewportRegion() );
+    concentratorRoot->getBoundingBox(action);
 
-    SbBox3f box = bbAction->getXfBoundingBox().project();
-    delete bbAction;
+    SbBox3f box = action->getXfBoundingBox().project();
+    delete action;
 
     BBox sceneBox;
-    if (!box.isEmpty() )
+    if (!box.isEmpty())
     {
         sceneBox.pMin = Point3D(box.getMin()[0], box.getMin()[1], box.getMin()[2]);
         sceneBox.pMax = Point3D(box.getMax()[0], box.getMax()[1], box.getMax()[2]);

@@ -1,6 +1,6 @@
-#include <Inventor/nodekits/SoBaseKit.h>
-
 #include "CmdDelete.h"
+
+#include <Inventor/nodekits/SoBaseKit.h>
 #include "kernel/run/InstanceNode.h"
 #include "tree/SceneModel.h"
 

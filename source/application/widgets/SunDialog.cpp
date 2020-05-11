@@ -10,6 +10,7 @@
 #include "kernel/shape/ShapeFactory.h"
 #include "kernel/sun/SunFactory.h"
 #include "kernel/sun/TLightKit.h"
+#include "kernel/scene/TSceneKit.h"
 #include "libraries/geometry/gc.h"
 #include "parameters/ParametersView.h"
 
@@ -61,10 +62,10 @@ TLightKit* SunDialog::getLightKit()
 
     if (m_sunNew) lightKit->setPart("tsunshape", m_sunNew);
 
-    lightKit->ChangePosition(
-        azimuthSpin->value()*gc::Degree,
-        (90. - elevationSpin->value())*gc::Degree
-    );
+//    lightKit->ChangePosition(
+//        azimuthSpin->value()*gc::Degree,
+//        (90. - elevationSpin->value())*gc::Degree
+//    );
 
     QString nodes("");
     for (int n = 0; n < disabledNodeList->count(); n++) {
@@ -74,6 +75,16 @@ TLightKit* SunDialog::getLightKit()
     lightKit->disabledNodes.setValue( nodes.toStdString().c_str() );
 
     return lightKit;
+}
+
+double SunDialog::getAzimuth()
+{
+    return azimuthSpin->value()*gc::Degree;
+}
+
+double SunDialog::getElevation()
+{
+    return elevationSpin->value()*gc::Degree;
 }
 
 /*!
@@ -111,8 +122,10 @@ void SunDialog::makeSunShapeTab()
 void SunDialog::makeSunPositionTab()
 {
     if (!m_lightKitOld) return;
-    azimuthSpin->setValue(m_lightKitOld->azimuth.getValue()/gc::Degree);
-    elevationSpin->setValue(90. - m_lightKitOld->zenith.getValue()/gc::Degree);
+
+    TSceneKit* scene = m_sceneModel->getSceneKit();
+    azimuthSpin->setValue(scene->azimuth.getValue()/gc::Degree);
+    elevationSpin->setValue(scene->elevation.getValue()/gc::Degree);
 }
 
 /*!

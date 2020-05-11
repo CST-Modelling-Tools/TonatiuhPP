@@ -13,7 +13,12 @@
  * Contructor.
  */
 CmdDeleteTracker::CmdDeleteTracker(const QModelIndex& selectedIndex, SoSceneKit* scene, SceneModel& model, QUndoCommand* parent):
-    QUndoCommand("Delete", parent), m_tracker(0),  m_coinParent(0),  m_scene(scene), m_pModel(&model), m_row(0)
+    QUndoCommand("Delete", parent),
+    m_tracker(0),
+    m_coinParent(0),
+    m_scene(scene),
+    m_pModel(&model),
+    m_row(0)
 {
     //if( !m_scene->getPart("lightList[0]", false) )     gf::SevereError( "CmdDeleteTracker Null lightKit." );
 
@@ -49,13 +54,13 @@ void CmdDeleteTracker::undo()
     if (!parentTransform) gf::SevereError("CmdInsertTracker Null node transform.");
 
     TLightKit* lightKit = static_cast< TLightKit* >(m_scene->getPart("lightList[0]", false) );
-    if (lightKit)
-    {
-        m_tracker->SetAzimuthAngle(&lightKit->azimuth);
-        m_tracker->SetZenithAngle(&lightKit->zenith);
-    }
+//    if (lightKit)
+//    {
+//        m_tracker->SetAzimuthAngle(&lightKit->azimuth);
+//        m_tracker->SetZenithAngle(&lightKit->zenith);
+//    }
 
-    m_tracker->ConnectParentTranform(parentTransform);
+//    m_tracker->ConnectParentTranform(parentTransform);
     m_pModel->Paste(tgc::Shared, *m_coinParent, *m_tracker, m_row);
 }
 

@@ -30,6 +30,8 @@ public:
     SunDialog(SceneModel& sceneModel, TLightKit* currentLightKit, QMap<QString, SunFactory*> sunShapeMap, QWidget* parent = 0);
 
     TLightKit* getLightKit();
+    double getAzimuth(); //temp
+    double getElevation();
 
 public slots:
     void SetValue(SoNode* node, QString parameter, QString value);

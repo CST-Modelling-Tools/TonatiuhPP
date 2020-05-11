@@ -59,9 +59,9 @@ GraphicRoot::GraphicRoot():
     m_pRootTransform->ref();
     m_pSceneSeparator->addChild(m_pRootTransform);
 
-    m_pTracker = new GraphicRootTracker;
-    //m_pTracker->ref();
-    m_pTracker->ConnectParentTranform(m_pRootTransform);
+//    m_pTracker = new GraphicRootTracker;
+//    //m_pTracker->ref();
+//    m_pTracker->ConnectParentTranform(m_pRootTransform);
 
     m_pSelectionNode = new SoSelection;
     m_pSelectionNode->ref();
@@ -115,9 +115,9 @@ void GraphicRoot::AddModel(TSceneKit* sceneModel)
 {
     if (sceneModel) {
         m_pSelectionNode->addChild(sceneModel);
-        m_pTracker->SetSceneKit(sceneModel);
-        m_pTracker->SetAzimuthAngle(&sceneModel->azimuth);
-        m_pTracker->SetZenithAngle(&sceneModel->zenith);
+//        m_pTracker->SetSceneKit(sceneModel);
+//        m_pTracker->SetAzimuthAngle(&sceneModel->azimuth);
+//        m_pTracker->SetZenithAngle(&sceneModel->zenith);
 
         sceneModel->m_root = m_nodeRoot; // cycle?
     }

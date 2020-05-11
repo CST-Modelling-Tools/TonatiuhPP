@@ -27,6 +27,7 @@ public:
 
     void SetCoinRoot(SoSeparator& coinRoot);
     void SetCoinScene(TSceneKit& coinScene);
+    TSceneKit* getSceneKit() const {return m_coinScene;}
 
     QModelIndex index(int row, int column, const QModelIndex& parentModelIndex = QModelIndex()) const;
     int rowCount(const QModelIndex& parentModelIndex) const;

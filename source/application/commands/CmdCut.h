@@ -4,6 +4,8 @@
 
 class QModelIndex;
 class SceneModel;
+class SoNode;
+class SoBaseKit;
 
 //!  CmdCut class is the cut command stored in the command stack.
 /*!
@@ -17,8 +19,8 @@ public:
     CmdCut(const QModelIndex& selectedIndex, SoNode*& clipboard, SceneModel* model, QUndoCommand* parent = 0);
     ~CmdCut();
 
-    virtual void undo();
-    virtual void redo();
+    void undo();
+    void redo();
 
 private:
     SoNode*& m_pClipboard;

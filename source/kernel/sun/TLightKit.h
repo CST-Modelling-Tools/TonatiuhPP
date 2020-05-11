@@ -58,13 +58,11 @@ public:
     TLightKit();
     static void initClass();
 
-    void ChangePosition(double newAzimuth, double newZenith);
+    void ChangePosition(double azimuth, double elevation);
 
     void Update(BBox box);
     void ComputeLightSourceArea(int widthDivisions, int heightDivisions, QVector< QPair<TShapeKit*, Transform> > surfacesList);
 
-    trt::TONATIUH_REAL azimuth;
-    trt::TONATIUH_REAL zenith;
     SoSFString disabledNodes;
 
 private:

@@ -1,7 +1,8 @@
+#include "CmdCut.h"
+
 #include <Inventor/nodekits/SoBaseKit.h>
 
 #include "kernel/run/InstanceNode.h"
-#include "CmdCut.h"
 #include "tree/SceneModel.h"
 
 /**
@@ -10,8 +11,14 @@
  *
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
-CmdCut::CmdCut(const QModelIndex& selectedIndex, SoNode*& clipboard, SceneModel* model, QUndoCommand* parent)
-    : QUndoCommand("Cut", parent), m_pClipboard (clipboard), m_previousNode (0), m_coinNode(0), m_coinParent(0), m_pModel(model), m_row (-1)
+CmdCut::CmdCut(const QModelIndex& selectedIndex, SoNode*& clipboard, SceneModel* model, QUndoCommand* parent):
+    QUndoCommand("Cut", parent),
+    m_pClipboard (clipboard),
+    m_previousNode(0),
+    m_coinNode(0),
+    m_coinParent(0),
+    m_pModel(model),
+    m_row(-1)
 {
     InstanceNode* instanceNode = m_pModel->NodeFromIndex(selectedIndex);
     m_coinNode = instanceNode->GetNode();

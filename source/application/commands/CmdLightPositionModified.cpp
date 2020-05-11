@@ -13,8 +13,8 @@ CmdLightPositionModified::CmdLightPositionModified(TLightKit* light, double azim
 {
     if (light == 0) gf::SevereError("CmdLinghtPositionModified called with NULL TLightKit");
 
-    m_oldAzimuth = light->azimuth.getValue();
-    m_oldZenith = light->zenith.getValue();
+//    m_oldAzimuth = light->azimuth.getValue(); // remove these cmds
+//    m_oldZenith = light->zenith.getValue();
 }
 
 /*!

@@ -20,8 +20,8 @@ public:
     CmdDeleteTracker(const QModelIndex& selectedIndex, SoSceneKit* scene, SceneModel& model, QUndoCommand* parent = 0);
     ~CmdDeleteTracker();
 
-    virtual void undo();
-    virtual void redo();
+    void undo();
+    void redo();
 
 private:
     TrackerAbstract* m_tracker;

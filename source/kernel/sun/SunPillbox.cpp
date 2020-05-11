@@ -43,7 +43,7 @@ void SunPillbox::generateRay(Vector3D& direction, RandomAbstract& rand) const
 
     direction.x = sinTheta*cosPhi;
     direction.y = sinTheta*sinPhi;
-    direction.z = -cosTheta;
+    direction.z = cosTheta;
 }
 
 double SunPillbox::getIrradiance(void) const

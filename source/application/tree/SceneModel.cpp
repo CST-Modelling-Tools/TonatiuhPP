@@ -117,9 +117,9 @@ void SceneModel::SetConcentrator()
         InstanceNode* instanceNode = AddInstanceNode( *m_instanceRoot, nodeSun );
         SoNodeKitListPart* nodeSunChild = static_cast< SoNodeKitListPart* >( nodeSun->getPart( "childList", true ) );
 
-        TSceneTracker* sceneTracker = new TSceneTracker;
-        nodeSun->setPart("tracker", sceneTracker);
-        sceneTracker->SetSceneKit(m_coinScene);
+//        TSceneTracker* sceneTracker = new TSceneTracker;
+//        nodeSun->setPart("tracker", sceneTracker);
+//        sceneTracker->SetSceneKit(m_coinScene);
 
         //Create Concentrator coordinate system node
         TSeparatorKit* nodeRoot = new TSeparatorKit();
@@ -130,11 +130,11 @@ void SceneModel::SetConcentrator()
         m_instanceConcentrator = AddInstanceNode( *instanceNode, nodeRoot );
 
         //
-        TLightKit* lightKit = dynamic_cast<TLightKit*>(m_coinScene->getPart("lightList[0]", false));
-        if (lightKit) {
-            sceneTracker->SetAzimuthAngle(&lightKit->azimuth);
-            sceneTracker->SetZenithAngle(&lightKit->zenith);
-        }
+//        TLightKit* lightKit = dynamic_cast<TLightKit*>(m_coinScene->getPart("lightList[0]", false));
+//        if (lightKit) {
+//            sceneTracker->SetAzimuthAngle(&lightKit->azimuth);
+//            sceneTracker->SetZenithAngle(&lightKit->zenith);
+//        }
     }
     else
     {
@@ -441,8 +441,8 @@ void SceneModel::InsertLightNode(TLightKit& lightKit)
     {
         SoFullPath* trackerPath = static_cast< SoFullPath* > ( trackersPath[index] );
         TrackerAbstract* tracker = static_cast< TrackerAbstract* >( trackerPath->getTail() );
-        tracker->SetAzimuthAngle(&lightKit.azimuth);
-        tracker->SetZenithAngle(&lightKit.zenith);
+//        tracker->SetAzimuthAngle(&lightKit.azimuth);
+//        tracker->SetZenithAngle(&lightKit.zenith);
     }
 
     InstanceNode* instanceLight = new InstanceNode(&lightKit);

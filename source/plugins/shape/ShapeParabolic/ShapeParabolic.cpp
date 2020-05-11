@@ -102,11 +102,11 @@ Vector3D ShapeParabolic::getNormal(double u, double v) const
 
 void ShapeParabolic::generatePrimitives(SoAction* action)
 {
-    double q = 2.*focus.getValue()*gc::Degree;
-    int rows = 1 + ceil(widthX.getValue()/q);
+    double dx = (360*gc::Degree)/48*2.*focus.getValue();
+    int rows = 1 + ceil(widthX.getValue()/dx);
     if (rows > 36) rows = 36;
-    int columns = 1 + ceil(widthY.getValue()/q);
+    int columns = 1 + ceil(widthY.getValue()/dx);
     if (columns > 36) columns = 36;
 
-    generateQuads(action, QSize(rows, columns), activeSide.getValue() == Side::OUTSIDE);
+    generateQuads(action, QSize(rows, columns), activeSide.getValue() == Side::INSIDE);
 }

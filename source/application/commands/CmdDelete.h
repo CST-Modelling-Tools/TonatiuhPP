@@ -1,8 +1,11 @@
 #pragma once
+
 #include <QUndoCommand>
 
 class QModelIndex;
 class SceneModel;
+class SoNode;
+class SoBaseKit;
 
 
 //!  CmdDelete class is the delete command stored in the command stack.
@@ -17,8 +20,8 @@ public:
     CmdDelete(const QModelIndex& selectedIndex, SceneModel& model, QUndoCommand* parent = 0);
     ~CmdDelete();
 
-    virtual void undo();
-    virtual void redo();
+    void undo();
+    void redo();
 
 private:
     SoNode* m_coinNode;
