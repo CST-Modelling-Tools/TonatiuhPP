@@ -11,6 +11,6 @@ Component.prototype.createOperations = function()
 
     if (systemInfo.productType === "windows") {
         component.addOperation("CreateShortcut", "@TargetDir@/bin/Tonatiuh.exe", "@StartMenuDir@/Tonatiuh.lnk",
-            "workingDirectory=@TargetDir@");
+            "workingDirectory=@TargetDir@/bin");
     }
 }

@@ -628,9 +628,9 @@ void FluxAnalysisDialog::SelectExportFile()
 void FluxAnalysisDialog::SelectSurface()
 {
     SelectSurfaceDialog selectSurfaceDialog(*m_pCurrentSceneModel, false, this);
-    selectSurfaceDialog.SetShapeTypeFilters(QVector< QString >() << QLatin1String("ShapeFlatRectangle")
-                                                                 << QLatin1String("ShapeFlatDisk")
-                                                                 << QLatin1String("ShapeCylinder") );
+    selectSurfaceDialog.SetShapeTypeFilters(QVector<QString>() << "ShapeFlatRectangle"
+                                                                 << "ShapeFlatDisk"
+                                                                 << "ShapeCylinder");
     if (!selectSurfaceDialog.exec() ) return;
 
 	QString selectedSurfaceURL = selectSurfaceDialog.GetSelectedSurfaceURL();

@@ -6,6 +6,7 @@ CONFIG -= debug_and_release
 
 # use scripts/deploy.bat to create install packages
 INPUT = $$PWD/config.xml
+INPUT += $$files($$PWD/packages/*.*, true)
 OUTPUT = ../Tonatiuh-Installer
 
 installer.input = INPUT

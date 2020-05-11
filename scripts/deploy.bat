@@ -18,7 +18,7 @@ COPY %PROJECT%\source\installer\packages\main\meta\* %META%
 
 
 MD %DATA%\bin
-COPY %BUILD%\*.exe %DATA%\bin
+COPY %BUILD%\Tonatiuh.exe %DATA%\bin
 COPY %BUILD%\*.dll %DATA%\bin
 FOR %%i IN (air, material, photons, random, shape, sun, trackers) DO (
 	MD %DATA%\bin\plugins\%%i 

@@ -4,6 +4,7 @@
 
 class CodeEditArea;
 
+
 class LineNumberWidget: public QWidget
 {
     Q_OBJECT
