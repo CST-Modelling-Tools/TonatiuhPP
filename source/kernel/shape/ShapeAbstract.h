@@ -9,7 +9,6 @@ struct Vector3D;
 struct BBox;
 class Ray;
 struct DifferentialGeometry;
-//class QString;
 class QSize;
 
 

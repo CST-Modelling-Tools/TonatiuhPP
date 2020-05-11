@@ -10,7 +10,7 @@
 #include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/material/MaterialFactory.h"
-#include "kernel/material/TDefaultMaterial.h"
+#include "kernel/material/MaterialVirtual.h"
 #include "kernel/photons/PhotonExportFactory.h"
 #include "kernel/photons/PhotonExportNull.h"
 #include "kernel/photons/PhotonExportWidget.h"
@@ -71,7 +71,6 @@ PluginManager::PluginManager()
     TShapeKit::initClass();
     ShapeAbstract::initClass();
     MaterialAbstract::initClass();
-    TDefaultMaterial::initClass();
 
     TrackerAbstract::initClass();
     TTrackerForAiming::initClass();
@@ -102,6 +101,8 @@ void PluginManager::load(QDir dir)
     loadTonatiuhPlugin(new AirFactoryT<AirVacuum>);
     loadTonatiuhPlugin(new AirFactoryT<AirExponential>);
     loadTonatiuhPlugin(new AirFactoryT<AirPolynomial>);
+
+    loadTonatiuhPlugin(new MaterialFactoryT<MaterialVirtual>);
 
 //    loadTonatiuhPlugin(new ShapeFactoryT<ShapeCube>);
 

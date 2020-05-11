@@ -6,4 +6,3 @@ TEMPLATE = subdirs
 #SUBDIRS += MaterialOneSideSpecular
 SUBDIRS += MaterialSpecular
 #SUBDIRS += MaterialStandardRoughSpecular
-#SUBDIRS += MaterialVirtual

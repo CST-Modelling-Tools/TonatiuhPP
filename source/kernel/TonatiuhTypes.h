@@ -14,6 +14,7 @@
 #include <Inventor/fields/SoMFVec3f.h>
 #include <Inventor/fields/SoMFVec3d.h>
 
+#include <Inventor/fields/SoSFEnum.h>
 #include <Inventor/fields/SoSubField.h>
 
 

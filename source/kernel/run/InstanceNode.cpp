@@ -20,6 +20,7 @@
 InstanceNode::InstanceNode(SoNode* node):
     m_coinNode(node), m_parent(0)
 {
+
 }
 
 InstanceNode::~InstanceNode()
@@ -67,7 +68,6 @@ void InstanceNode::InsertChild(int row, InstanceNode* instanceChild)
     children.insert(row, instanceChild);
     instanceChild->SetParent(this);
 }
-
 
 //bool InstanceNode::Intersect( const Ray& ray, RandomDeviate& rand, InstanceNode** modelNode, Ray* outputRay )
 bool InstanceNode::Intersect(const Ray& ray, RandomAbstract& rand, bool* isShapeFront, InstanceNode** modelNode, Ray* outputRay)

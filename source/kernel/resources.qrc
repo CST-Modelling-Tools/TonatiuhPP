@@ -4,5 +4,6 @@
         <file>images/AirVacuum.png</file>
         <file>images/PhotonExportNull.png</file>
         <file>images/AirAbstract.png</file>
+        <file>images/MaterialVirtual.png</file>
     </qresource>
 </RCC>
