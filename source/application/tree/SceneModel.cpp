@@ -19,7 +19,7 @@
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeAbstract.h"
 #include "kernel/sun/TLightKit.h"
-#include "kernel/trackers/TSceneTracker.h"
+//#include "kernel/trackers/TSceneTracker.h"
 #include "kernel/trackers/TrackerAbstract.h"
 
 /*!
@@ -220,7 +220,7 @@ void SceneModel::GenerateTSeparatorKitSubTree( InstanceNode& instanceNodeParent,
         }
 
         SoNodeKitListPart* coinPartList = static_cast< SoNodeKitListPart* >( parentKit->getPart( "childList", false ) );
-        if ( coinPartList )
+        if (coinPartList)
         {
             for( int index = 0; index < coinPartList->getNumChildren(); ++index )
             {
@@ -674,7 +674,6 @@ QModelIndex SceneModel::IndexFromNodeUrl( QString nodeUrl ) const
     }
     else
         return QModelIndex();
-
 }
 
 /**
@@ -705,7 +704,7 @@ QModelIndex SceneModel::IndexFromPath( const SoNodeKitPath& coinNodePath ) const
         int row = coinPartList->findChild(coinNode);
         if( coinParent->getTypeId().isDerivedFrom( TSeparatorKit::getClassTypeId() ) )
         {
-            if( coinParent->getPart( "tracker", false ) &&  !coinParent->getPart( "tracker", false )->getTypeId().isDerivedFrom( TSceneTracker::getClassTypeId() ) ) row++;
+            if (coinParent->getPart("tracker", false)) row++;
         }
         if( coinNodePath.getNodeFromTail(1)->getTypeId().isDerivedFrom( SoSceneKit::getClassTypeId() ) )
         {
@@ -730,7 +729,6 @@ QModelIndex SceneModel::IndexFromPath( const SoNodeKitPath& coinNodePath ) const
     }
     else
         return QModelIndex();
-
 }
 
 /**
@@ -743,10 +741,9 @@ bool SceneModel::Paste( tgc::PasteType type, SoBaseKit& coinParent, SoNode& coin
     SoNode* pCoinParent = 0;
     pCoinParent = &coinParent;
 
-    if ( type == tgc::Shared ) coinChild = &coinNode;
+    if (type == tgc::Shared) coinChild = &coinNode;
 
-
-    switch ( type )
+    switch (type)
     {
         case tgc::Copied :
             coinChild = static_cast< SoNode* >( coinNode.copy( true ) );
@@ -757,9 +754,9 @@ bool SceneModel::Paste( tgc::PasteType type, SoBaseKit& coinParent, SoNode& coin
             coinChild = &coinNode;
             break;
     }
-    if( !coinChild->getTypeId().isDerivedFrom( SoBaseKit::getClassTypeId() ) )
+    if ( !coinChild->getTypeId().isDerivedFrom( SoBaseKit::getClassTypeId() ) )
     {
-        if( coinChild->getTypeId().isDerivedFrom( TrackerAbstract::getClassTypeId() ) )
+        if ( coinChild->getTypeId().isDerivedFrom( TrackerAbstract::getClassTypeId() ) )
         {
             TSeparatorKit* separatorKit = static_cast< TSeparatorKit* >( pCoinParent );
             TrackerAbstract* tracker = static_cast< TrackerAbstract* >( separatorKit->getPart( "tracker", false ) );
@@ -771,7 +768,7 @@ bool SceneModel::Paste( tgc::PasteType type, SoBaseKit& coinParent, SoNode& coin
             coinParent.setPart( "tracker", coinChild );
 
         }
-        if( coinChild->getTypeId().isDerivedFrom( SoShape::getClassTypeId() ) )
+        if ( coinChild->getTypeId().isDerivedFrom( SoShape::getClassTypeId() ) )
         {
             TShapeKit* shapeKit = static_cast< TShapeKit* >( pCoinParent );
             if(!shapeKit)    return false;
@@ -784,7 +781,7 @@ bool SceneModel::Paste( tgc::PasteType type, SoBaseKit& coinParent, SoNode& coin
             }
             coinParent.setPart("shape", coinChild );
         }
-        if( coinChild->getTypeId().isDerivedFrom( SoMaterial::getClassTypeId() ) )
+        if ( coinChild->getTypeId().isDerivedFrom( SoMaterial::getClassTypeId() ) )
         {
             TShapeKit* shapeKit = static_cast< TShapeKit* >( pCoinParent );
             if(!shapeKit)    return false;
@@ -831,9 +828,8 @@ bool SceneModel::SetNodeName( SoNode* coinChild, QString newName )
     if( nodeInstances.size() == 0 ) return false;
 
     QList< InstanceNode* > instancesParent;
-    for( int index = 0; index < nodeInstances.size(); ++index )
+    for (int index = 0; index < nodeInstances.size(); ++index )
     {
-
         InstanceNode* instance = nodeInstances[index];
         QVector< InstanceNode* > parentChildren = instance->GetParent()->children;
         int childIndex = parentChildren.indexOf( instance );
@@ -846,10 +842,8 @@ bool SceneModel::SetNodeName( SoNode* coinChild, QString newName )
     }
     coinChild->setName( newName.toStdString().c_str() );
 
-
     emit layoutChanged();
     return true;
-
 }
 
 void SceneModel::UpdateSceneModel()

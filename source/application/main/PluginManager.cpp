@@ -24,9 +24,9 @@
 #include "kernel/sun/SunPillbox.h"
 #include "kernel/sun/TLightKit.h"
 #include "kernel/sun/TLightShape.h"
-#include "kernel/trackers/GraphicRootTracker.h"
+//#include "kernel/trackers/GraphicRootTracker.h"
 #include "kernel/trackers/TDefaultTracker.h"
-#include "kernel/trackers/TSceneTracker.h"
+//#include "kernel/trackers/TSceneTracker.h"
 #include "kernel/trackers/TTrackerForAiming.h"
 #include "kernel/trackers/TrackerFactory.h"
 #include "libraries/fields/UserMField.h"
@@ -75,8 +75,8 @@ PluginManager::PluginManager()
     TrackerAbstract::initClass();
     TTrackerForAiming::initClass();
     TDefaultTracker::initClass();
-    TSceneTracker::initClass();
-    GraphicRootTracker::initClass();
+//    TSceneTracker::initClass();
+//    GraphicRootTracker::initClass();
     SkyBackground::initClass();
 }
 

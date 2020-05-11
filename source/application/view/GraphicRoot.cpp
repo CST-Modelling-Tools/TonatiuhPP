@@ -6,7 +6,7 @@
 #include "libraries/geometry/gc.h"
 
 #include "GraphicRoot.h"
-#include "kernel/trackers/GraphicRootTracker.h"
+//#include "kernel/trackers/GraphicRootTracker.h"
 #include "kernel/scene/TSceneKit.h"
 
 
@@ -43,8 +43,8 @@ GraphicRoot::GraphicRoot():
     m_pRays(0),
     m_pRootTransform(0),
     m_pSceneSeparator(0),
-    m_pSelectionNode(0),
-    m_pTracker(0)
+    m_pSelectionNode(0)
+//    m_pTracker(0)
 {
     m_nodeRoot = new SoSeparator;
     m_nodeRoot->ref();

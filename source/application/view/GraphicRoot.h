@@ -2,7 +2,7 @@
 
 #include <QObject>
 
-class GraphicRootTracker;
+//class GraphicRootTracker;
 class SoPath;
 class SoSelection;
 class SoSeparator;
@@ -48,5 +48,5 @@ private:
     SoTransform* m_pRootTransform;
     SoSeparator* m_pSceneSeparator;
     SoSelection* m_pSelectionNode;
-    GraphicRootTracker* m_pTracker;
+//    GraphicRootTracker* m_pTracker;
 };
