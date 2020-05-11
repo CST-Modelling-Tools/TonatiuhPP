@@ -5,7 +5,7 @@
 #include <QString>
 
 
-struct TONATIUH_KERNEL PhotonExportSettings
+struct TONATIUH_KERNEL PhotonsSettings
 {
     void AddParameter(QString parameterName, QString parameterValue)
     {

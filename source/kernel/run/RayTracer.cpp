@@ -4,7 +4,7 @@
 #include "random/RandomParallel.h"
 #include "libraries/geometry/Ray.h"
 #include "RayTracer.h"
-#include "kernel/photons/PhotonMap.h"
+#include "kernel/photons/Photons.h"
 #include "sun/TLightShape.h"
 #include "sun/SunAbstract.h"
 #include "air/AirAbstract.h"
@@ -19,7 +19,7 @@ RayTracer::RayTracer(
     AirAbstract* transmissivity,
     RandomAbstract& rand,
     QMutex* mutex,
-    PhotonMap* photonMap,
+    Photons* photonMap,
     QMutex* mutexPhotonMap,
     QVector<InstanceNode*> exportSuraceList
 ):
@@ -99,7 +99,7 @@ void RayTracer::operator()(ulong nRays)
     }
 
     m_pPhotonMapMutex->lock();
-    m_photonMap->StoreRays(photons);
+    m_photonMap->addPhotons(photons);
     m_pPhotonMapMutex->unlock();
 }
 

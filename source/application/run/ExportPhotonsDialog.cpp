@@ -2,8 +2,8 @@
 #include <QMessageBox>
 
 #include "ExportPhotonsDialog.h"
-#include "kernel/photons/PhotonExportWidget.h"
-#include "kernel/photons/PhotonExportSettings.h"
+#include "kernel/photons/PhotonsWidget.h"
+#include "kernel/photons/PhotonsSettings.h"
 #include "SelectSurfaceDialog.h"
 
 /*!
@@ -11,7 +11,7 @@
  */
 ExportPhotonsDialog::ExportPhotonsDialog(
     SceneModel& scene,
-    QVector<PhotonExportFactory*> typeList,
+    QVector<PhotonsFactory*> typeList,
     QWidget* parent):
     QDialog(parent),
     m_scene(&scene)
@@ -21,7 +21,7 @@ ExportPhotonsDialog::ExportPhotonsDialog(
     for (int index = 0; index < typeList.size(); index++)
     {
         storeTypeCombo->addItem(typeList[index]->icon(), typeList[index]->name() );
-        PhotonExportWidget* widget = typeList[index]->createWidget();
+        PhotonsWidget* widget = typeList[index]->createWidget();
         if (widget)
         {
             m_parameters << widget;
@@ -43,9 +43,9 @@ ExportPhotonsDialog::ExportPhotonsDialog(
 /*!
  *    Returns defined settings into settings class object.
  */
-PhotonExportSettings ExportPhotonsDialog::GetExportPhotonMapSettings() const
+PhotonsSettings ExportPhotonsDialog::GetExportPhotonMapSettings() const
 {
-    PhotonExportSettings settings;
+    PhotonsSettings settings;
     settings.modeTypeName = storeTypeCombo->currentText();
     //settings.exportAllPhotonMap = ( exportAllPhotonsRadio->isEnabled() && exportAllPhotonsRadio->isChecked() );
     settings.exportCoordinates = (coordCheck->isEnabled() && coordCheck->isChecked() );
@@ -58,7 +58,7 @@ PhotonExportSettings ExportPhotonsDialog::GetExportPhotonMapSettings() const
     else
         settings.exportSurfaceNodeList = m_surfaces;
 
-    PhotonExportWidget* exportTypeWidget = m_parameters[storeTypeCombo->currentIndex()];
+    PhotonsWidget* exportTypeWidget = m_parameters[storeTypeCombo->currentIndex()];
     if (!exportTypeWidget) return settings;
 
     QStringList exportTypeParametersName = exportTypeWidget->GetParameterNames();

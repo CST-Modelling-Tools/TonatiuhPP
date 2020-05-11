@@ -3,15 +3,15 @@
 #include <QMap>
 #include <QString>
 
-#include "kernel/photons/PhotonExport.h"
+#include "kernel/photons/PhotonsAbstract.h"
 
 class Photon;
 
-class TONATIUH_KERNEL PhotonExportNull: public PhotonExport
+class TONATIUH_KERNEL PhotonsDefault: public PhotonsAbstract
 {
 
 public:
-    PhotonExportNull() {}
+    PhotonsDefault() {}
 
     static QStringList GetParameterNames() {return QStringList();}
     void SetSaveParameterValue(QString /*parameterName*/, QString /*parameterValue*/) {}

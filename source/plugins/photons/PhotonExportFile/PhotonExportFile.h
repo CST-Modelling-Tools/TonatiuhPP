@@ -3,11 +3,11 @@
 #include <QMap>
 #include <QString>
 
-#include "kernel/photons/PhotonExport.h"
+#include "kernel/photons/PhotonsAbstract.h"
 
 class Photon;
 
-class PhotonExportFile: public PhotonExport
+class PhotonExportFile: public PhotonsAbstract
 {
 
 public:
@@ -54,14 +54,14 @@ private:
 
 
 
-#include "kernel/photons/PhotonExportFactory.h"
+#include "kernel/photons/PhotonsFactory.h"
 #include "PhotonExportFileWidget.h"
 
 class PhotonExportFileFactory:
     public QObject,
-    public PhotonExportFactoryT<PhotonExportFile, PhotonExportFileWidget>
+    public PhotonsFactoryT<PhotonExportFile, PhotonExportFileWidget>
 {
     Q_OBJECT
-    Q_INTERFACES(PhotonExportFactory)
-    Q_PLUGIN_METADATA(IID "tonatiuh.PhotonExportFactory")
+    Q_INTERFACES(PhotonsFactory)
+    Q_PLUGIN_METADATA(IID "tonatiuh.PhotonsFactory")
 };

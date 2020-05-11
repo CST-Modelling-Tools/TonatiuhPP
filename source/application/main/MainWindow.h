@@ -10,7 +10,7 @@ class Document;
 class GraphicRoot;
 class GraphicView;
 class InstanceNode;
-class PhotonExport;
+class PhotonsAbstract;
 class PluginManager;
 class QDir;
 class QUndoStack;
@@ -23,7 +23,7 @@ class SoTransform;
 class ComponentFactory;
 class TLightShape;
 class MaterialFactory;
-class PhotonMap;
+class Photons;
 class PhotonToMemory;
 class ShapeFactory;
 class SunAbstract;
@@ -31,7 +31,7 @@ class TrackerFactory;
 class AirAbstract;
 class SoCamera;
 
-struct PhotonExportSettings;
+struct PhotonsSettings;
 
 //!  Main window class.
 /*!
@@ -177,7 +177,7 @@ public slots:
 private:
     void ChangeModelScene();
     SoSeparator* CreateGrid();
-    PhotonExport* CreatePhotonMapExport() const;
+    PhotonsAbstract* CreatePhotonMapExport() const;
     QToolBar* CreateTrackerTooBar( QMenu* pMaterialsMenu );
     bool Delete( QModelIndex index );
     QSplitter* GetHorizontalSplitterPointer();
@@ -240,8 +240,8 @@ private:
 
     unsigned long m_bufferPhotons;
     bool m_increasePhotonMap;
-    PhotonExportSettings* m_pExportModeSettings;
-    PhotonMap* m_pPhotonMap;
+    PhotonsSettings* m_pExportModeSettings;
+    Photons* m_pPhotonMap;
 
     QString m_lastExportFileName;
     QString m_lastExportSurfaceUrl;

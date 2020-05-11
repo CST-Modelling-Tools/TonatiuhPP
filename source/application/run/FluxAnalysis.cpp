@@ -15,7 +15,7 @@
 #include "tree/SceneModel.h"
 #include "kernel/air/AirAbstract.h"
 #include "kernel/run/InstanceNode.h"
-#include "kernel/photons/PhotonMap.h"
+#include "kernel/photons/Photons.h"
 #include "kernel/random//RandomAbstract.h"
 #include "kernel/run/RayTracer.h"
 #include "kernel/scene/TSceneKit.h"
@@ -204,10 +204,10 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     //Create the photon map where photons are going to be stored
     if (!m_pPhotonMap  || !increasePhotonMap)
     {
-        if (m_pPhotonMap) m_pPhotonMap->EndStore(-1);
+        if (m_pPhotonMap) m_pPhotonMap->endExport(-1);
         delete m_pPhotonMap;
-        m_pPhotonMap = new PhotonMap();
-        m_pPhotonMap->SetBufferSize(HUGE_VAL);
+        m_pPhotonMap = new Photons();
+        m_pPhotonMap->setBufferSize(HUGE_VAL);
         m_tracedRays = 0;
         m_wPhoton = 0;
         m_totalPower = 0;
@@ -245,7 +245,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     //Compute bounding boxes and world to object transforms
     trf::ComputeSceneTreeMap(m_pRootSeparatorInstance, Transform(new Matrix4x4), true);
 
-    m_pPhotonMap->SetConcentratorToWorld(m_pRootSeparatorInstance->GetIntersectionTransform() );
+    m_pPhotonMap->setTransform(m_pRootSeparatorInstance->GetIntersectionTransform() );
 
     QStringList disabledNodes = QString(lightKit->disabledNodes.getValue().getString() ).split(";", QString::SkipEmptyParts);
     QVector< QPair<TShapeKit*, Transform> > surfacesList;
@@ -409,7 +409,7 @@ void FluxAnalysis::FluxAnalysisCylinder(InstanceNode* node)
     m_ymin = -length/2;
     m_ymax = length/2;
 
-    std::vector<Photon*> photonList = m_pPhotonMap->GetAllPhotons();
+    std::vector<Photon*> photonList = m_pPhotonMap->getPhotons();
     int totalPhotons = 0;
     for (uint p = 0; p < photonList.size(); p++)
     {
@@ -492,7 +492,7 @@ void FluxAnalysis::FluxAnalysisFlatDisk(InstanceNode* node)
     m_xmax = radius;
     m_ymax = radius;
 
-    std::vector< Photon* > photonList = m_pPhotonMap->GetAllPhotons();
+    std::vector< Photon* > photonList = m_pPhotonMap->getPhotons();
     int totalPhotons = 0;
     for (unsigned int p = 0; p < photonList.size(); p++)
     {
@@ -573,7 +573,7 @@ void FluxAnalysis::FluxAnalysisFlatRectangle(InstanceNode* node)
     m_xmax = 0.5 * surfaceHeight;
     m_ymax = 0.5 * surfaceWidth;
 
-    std::vector< Photon* > photonList = m_pPhotonMap->GetAllPhotons();
+    std::vector< Photon* > photonList = m_pPhotonMap->getPhotons();
     int totalPhotons = 0;
     for (unsigned int p = 0; p < photonList.size(); p++)
     {
@@ -755,7 +755,7 @@ double FluxAnalysis::totalPowerValue()
  */
 void FluxAnalysis::clearPhotonMap()
 {
-    if (m_pPhotonMap) m_pPhotonMap->EndStore(-1);
+    if (m_pPhotonMap) m_pPhotonMap->endExport(-1);
     delete m_pPhotonMap;
     m_pPhotonMap = 0;
     m_tracedRays = 0;

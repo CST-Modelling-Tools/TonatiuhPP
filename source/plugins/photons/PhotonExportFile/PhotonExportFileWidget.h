@@ -2,12 +2,12 @@
 
 #include <QWidget>
 
-#include "kernel/photons/PhotonExportWidget.h"
+#include "kernel/photons/PhotonsWidget.h"
 
 #include "ui_photonexportfilewidget.h"
 
 
-class PhotonExportFileWidget: public PhotonExportWidget, private Ui::PhotonExportFileWidget
+class PhotonExportFileWidget: public PhotonsWidget, private Ui::PhotonExportFileWidget
 {
     Q_OBJECT
 

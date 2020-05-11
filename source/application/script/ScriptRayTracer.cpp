@@ -19,7 +19,7 @@
 #include "kernel/TonatiuhFunctions.h"
 #include "kernel/sun/TLightKit.h"
 #include "kernel/sun/TLightShape.h"
-#include "kernel/photons/PhotonMap.h"
+#include "kernel/photons/Photons.h"
 #include "kernel/trf.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/shape/ShapeAbstract.h"

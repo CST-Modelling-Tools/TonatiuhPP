@@ -7,4 +7,3 @@ void MaterialAbstract::initClass()
 {
     SO_NODE_INIT_ABSTRACT_CLASS(MaterialAbstract, SoMaterial, "Material");
 }
-

@@ -15,7 +15,7 @@
  * Creates export object to export photon map photons to a file.
  */
 PhotonExportFile::PhotonExportFile():
-    PhotonExport(),
+    PhotonsAbstract(),
     m_photonsFilename("PhotonMap"),
     m_powerPerPhoton(0.),
     m_currentFile(1),

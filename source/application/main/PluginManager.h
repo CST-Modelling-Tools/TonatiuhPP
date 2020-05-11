@@ -10,7 +10,7 @@ class QObject;
 class TFactory;
 class AirFactory;
 class ComponentFactory;
-class PhotonExportFactory;
+class PhotonsFactory;
 class MaterialFactory;
 class RandomFactory;
 class ShapeFactory;
@@ -31,7 +31,7 @@ public:
 
     QVector<AirFactory*> getAirFactories() const {return m_airFactories;}
     QVector<ComponentFactory*> getComponentFactories() const {return m_componentFactories;}
-    QVector<PhotonExportFactory*> getExportFactories() const {return m_exportFactories;}
+    QVector<PhotonsFactory*> getExportFactories() const {return m_exportFactories;}
     QVector<MaterialFactory*> getMaterialFactories() const {return m_materialFactories;}
     QVector<RandomFactory*> getRandomFactories() const {return m_randomFactories;}
     QVector<ShapeFactory*> getShapeFactories() const {return m_shapeFactories;}
@@ -39,7 +39,7 @@ public:
     QVector<TrackerFactory*> getTrackerFactories() const {return m_trackerFactories;}
 
     const QMap<QString, AirFactory*>& getAirMap() const {return m_airMap;}
-    const QMap<QString, PhotonExportFactory*>& getExportMap() const {return m_exportMap;}
+    const QMap<QString, PhotonsFactory*>& getExportMap() const {return m_exportMap;}
     const QMap<QString, MaterialFactory*>& getMaterialMap() const {return m_materialsMap;}
     const QMap<QString, ShapeFactory*>& getShapeMap() const {return m_shapesMap;}
     const QMap<QString, SunFactory*>& getSunMap() const {return m_sunMap;}
@@ -54,7 +54,7 @@ private:
 
     QVector<AirFactory*> m_airFactories;
     QVector<ComponentFactory*> m_componentFactories;
-    QVector<PhotonExportFactory*> m_exportFactories;
+    QVector<PhotonsFactory*> m_exportFactories;
     QVector<MaterialFactory*> m_materialFactories;
     QVector<RandomFactory*> m_randomFactories;
     QVector<ShapeFactory*> m_shapeFactories;
@@ -62,7 +62,7 @@ private:
     QVector<TrackerFactory*> m_trackerFactories;
 
     QMap<QString, AirFactory*> m_airMap;
-    QMap<QString, PhotonExportFactory*> m_exportMap;
+    QMap<QString, PhotonsFactory*> m_exportMap;
     QMap<QString, MaterialFactory*> m_materialsMap;
     QMap<QString, ShapeFactory*> m_shapesMap;
     QMap<QString, SunFactory*> m_sunMap;

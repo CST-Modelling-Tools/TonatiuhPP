@@ -10,7 +10,7 @@
 #include <Inventor/nodes/SoNode.h>
 
 #include "kernel/photons/Photon.h"
-#include "kernel/photons/PhotonMap.h"
+#include "kernel/photons/Photons.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeAbstract.h"
@@ -21,15 +21,15 @@
 
 class InstanceNode;
 class RandomAbstract;
-class PhotonMap;
+class Photons;
 
 namespace trf
 {
     TONATIUH_KERNEL void ComputeSceneTreeMap(InstanceNode* instanceNode, Transform parentWTO, bool insertInSurfaceList);
     TONATIUH_KERNEL void ComputeFistStageSurfaceList(InstanceNode* instanceNode, QStringList disabledNodesURL, QVector< QPair< TShapeKit*, Transform > >* surfacesList);
-    TONATIUH_KERNEL void CreatePhotonMap(PhotonMap*& photonMap, QPair<PhotonMap*, std::vector<Photon> > photonsList);
+    TONATIUH_KERNEL void CreatePhotonMap(Photons*& photonMap, QPair<Photons*, std::vector<Photon> > photonsList);
 
-    TONATIUH_KERNEL SoSeparator* DrawPhotons(const PhotonMap& map);
-    TONATIUH_KERNEL SoSeparator* DrawRays(const PhotonMap& map, ulong numberOfRays);
+    TONATIUH_KERNEL SoSeparator* DrawPhotons(const Photons& map);
+    TONATIUH_KERNEL SoSeparator* DrawRays(const Photons& map, ulong numberOfRays);
     TONATIUH_KERNEL Transform GetObjectToWorld(SoPath* nodePath);
 }

@@ -17,7 +17,7 @@ class RandomAbstract;
 struct RayTracerPhoton;
 class QMutex;
 class QPoint;
-class PhotonMap;
+class Photons;
 class TLightShape;
 class SunAbstract;
 class AirAbstract;
@@ -35,7 +35,7 @@ public:
               AirAbstract* transmissivity,
               RandomAbstract& rand,
               QMutex* mutex,
-              PhotonMap* photonMap,
+              Photons* photonMap,
               QMutex* mutexPhotonMap,
               QVector<InstanceNode*> exportSuraceList);
 
@@ -54,7 +54,7 @@ private:
     AirAbstract* m_transmissivity;
     RandomAbstract* m_pRand;
     QMutex* m_mutex;
-    PhotonMap* m_photonMap;
+    Photons* m_photonMap;
     QMutex* m_pPhotonMapMutex;
     QVector<InstanceNode*> m_exportSuraceList;
 

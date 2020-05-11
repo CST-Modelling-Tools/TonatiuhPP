@@ -8,11 +8,11 @@
 
 class SceneModel;
 
-class TONATIUH_KERNEL PhotonExport
+class TONATIUH_KERNEL PhotonsAbstract
 {
 public:
-    PhotonExport();
-    virtual ~PhotonExport() {}
+    PhotonsAbstract();
+    virtual ~PhotonsAbstract() {}
 
     virtual void EndExport() {}
     virtual void SavePhotonMap(std::vector<Photon*> /*raysLists*/) {}

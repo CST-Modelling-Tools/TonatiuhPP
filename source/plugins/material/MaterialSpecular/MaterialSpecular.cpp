@@ -23,7 +23,7 @@ MaterialSpecular::MaterialSpecular():
     SO_NODE_CONSTRUCTOR(MaterialSpecular);
 
     SO_NODE_ADD_FIELD(reflectivity, (0.9) );
-    SO_NODE_ADD_FIELD(sigmaSlope, (2.) );
+    SO_NODE_ADD_FIELD(slope, (2.) );
 
     //SO_NODE_DEFINE_ENUM_VALUE(Distribution, PILLBOX);
     SO_NODE_DEFINE_ENUM_VALUE(Distribution, NORMAL);
@@ -49,39 +49,37 @@ MaterialSpecular::~MaterialSpecular()
 bool MaterialSpecular::OutputRay(const Ray& rayIn, DifferentialGeometry* dg, RandomAbstract& rand, Ray* rayOut) const
 {
     double randomNumber = rand.RandomDouble();
-    if (randomNumber >= reflectivity.getValue() ) return false;
+    if (randomNumber >= reflectivity.getValue()) return false;
 
     // Compute reflected ray (local coordinates)
     rayOut->origin = dg->point;
 
     Vector3D normal;
-    double slope = sigmaSlope.getValue() / 1000.; // from mrad to rad
-    if (slope > 0.) {
-        Vector3D errorNormal;
-        if (distribution.getValue() == 0)
-        { // pillbox
+    double sigma = slope.getValue()/1000.; // from mrad to rad
+    if (sigma > 0.) {
+        if (distribution.getValue() == Distribution::PILLBOX)
+        {
             double phi = gc::TwoPi*rand.RandomDouble();
-            double theta = slope*rand.RandomDouble();
-
-            errorNormal.x = sin(theta)*sin(phi);
-            errorNormal.y = sin(theta)*cos(phi);
-            errorNormal.z = cos(theta);
+            double theta = sigma*rand.RandomDouble();
+            normal.x = sin(theta)*sin(phi);
+            normal.y = sin(theta)*cos(phi);
+            normal.z = cos(theta);
         }
         else if (distribution.getValue() == Distribution::NORMAL)
-        { // normal
-            errorNormal.x = slope*tgf::AlternateBoxMuller(rand);
-            errorNormal.y = slope*tgf::AlternateBoxMuller(rand);
-            errorNormal.z = 1.;
+        {
+            normal.x = sigma*tgf::AlternateBoxMuller(rand);
+            normal.y = sigma*tgf::AlternateBoxMuller(rand);
+            normal.z = 1.;
         }
         Vector3D vx = dg->dpdu.normalized();
         Vector3D vy = dg->dpdv.normalized();
         Vector3D vz = dg->normal;
-        normal = (vx*errorNormal.x + vy*errorNormal.y + vz*errorNormal.z).normalized();
+        normal = (vx*normal.x + vy*normal.y + vz*normal.z).normalized();
     } else
         normal = dg->normal;
 
     Vector3D d = rayIn.direction() - 2.*normal*dot(normal, rayIn.direction());
-    rayOut->setDirection(d.normalized());
+    rayOut->setDirection(d.normalized()); // double sided
     return true;
 }
 

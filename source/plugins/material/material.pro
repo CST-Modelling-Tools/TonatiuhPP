@@ -1,8 +1,8 @@
 TEMPLATE = subdirs
 
-#SUBDIRS += MaterialAngleDependentRefractive
-#SUBDIRS += MaterialAngleDependentSpecular
-#SUBDIRS += MaterialBasicRefractive
-#SUBDIRS += MaterialOneSideSpecular
 SUBDIRS += MaterialSpecular
+#SUBDIRS += MaterialOneSideSpecular
 #SUBDIRS += MaterialStandardRoughSpecular
+#SUBDIRS += MaterialRefractive
+#SUBDIRS += MaterialAngleDependentSpecular
+#SUBDIRS += MaterialAngleDependentRefractive

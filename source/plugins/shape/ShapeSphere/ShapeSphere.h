@@ -34,15 +34,15 @@ protected:
     Vector3D getNormal(double u, double v) const;
     void generatePrimitives(SoAction* action);
 
-    static void update_radius(void* data, SoSensor*);
-    static void update_phiMax(void* data, SoSensor*);
-    static void update_alphaMin(void* data, SoSensor*);
-    static void update_alphaMax(void* data, SoSensor*);
-
     SoFieldSensor* m_sensor_radius;
     SoFieldSensor* m_sensor_alphaMin;
     SoFieldSensor* m_sensor_alphaMax;
     SoFieldSensor* m_sensor_phiMax;
+
+    static void update_radius(void* data, SoSensor*);
+    static void update_phiMax(void* data, SoSensor*);
+    static void update_alphaMin(void* data, SoSensor*);
+    static void update_alphaMax(void* data, SoSensor*);
 };
 
 

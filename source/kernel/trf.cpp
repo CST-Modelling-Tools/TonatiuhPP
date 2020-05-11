@@ -15,7 +15,7 @@
 #include "run/InstanceNode.h"
 #include "libraries/geometry/Matrix4x4.h"
 #include "photons/Photon.h"
-#include "photons/PhotonMap.h"
+#include "photons/Photons.h"
 #include "random/RandomAbstract.h"
 #include "libraries/geometry/Ray.h"
 #include "TonatiuhFunctions.h"
@@ -24,13 +24,13 @@
 #include "scene/TShapeKit.h"
 
 
-SoSeparator* trf::DrawPhotons(const PhotonMap& map)
+SoSeparator* trf::DrawPhotons(const Photons& map)
 {
     SoSeparator* ans = new SoSeparator;
 
     SoCoordinate3* coordinates = new SoCoordinate3;
     uint n = 0;
-    for (Photon* photon : map.GetAllPhotons())
+    for (Photon* photon : map.getPhotons())
     {
         Point3D& pos = photon->pos;
         coordinates->point.set1Value(n++, pos.x, pos.y, pos.z);
@@ -51,7 +51,7 @@ SoSeparator* trf::DrawPhotons(const PhotonMap& map)
     return ans;
 }
 
-SoSeparator* trf::DrawRays(const PhotonMap& map, unsigned long /*numberOfRays*/)
+SoSeparator* trf::DrawRays(const Photons& map, unsigned long /*numberOfRays*/)
 {
     SoSeparator* ans = new SoSeparator;
 
@@ -59,7 +59,7 @@ SoSeparator* trf::DrawRays(const PhotonMap& map, unsigned long /*numberOfRays*/)
     QVector<int> rayLengths;
     uint n = 0;
     int s = 0;
-    for (Photon* photon : map.GetAllPhotons())
+    for (Photon* photon : map.getPhotons())
     {
         if (photon->id == 0 && s > 0) {
             rayLengths << s;
@@ -184,10 +184,10 @@ void trf::ComputeFistStageSurfaceList(InstanceNode* instanceNode, QStringList di
     }
 }
 
-void trf::CreatePhotonMap(PhotonMap*& photonMap, QPair<PhotonMap*, std::vector<Photon> > photonsList)
+void trf::CreatePhotonMap(Photons*& photonMap, QPair<Photons*, std::vector<Photon> > photonsList)
 {
     if (!photonMap) photonMap = photonsList.first;
-    photonMap->StoreRays(photonsList.second);
+    photonMap->addPhotons(photonsList.second);
 }
 
 Transform trf::GetObjectToWorld(SoPath* nodePath)

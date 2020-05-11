@@ -9,7 +9,7 @@
  * Creates a widget for the plugin parameters.
  */
 PhotonExportFileWidget::PhotonExportFileWidget(QWidget* parent):
-    PhotonExportWidget(parent)
+    PhotonsWidget(parent)
 {
     setupUi(this);
 	SetupTriggers();

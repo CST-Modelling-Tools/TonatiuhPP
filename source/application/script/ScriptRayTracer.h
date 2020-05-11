@@ -13,7 +13,7 @@ class RandomAbstract;
 class RandomFactory;
 class QScriptContext;
 class SceneModel;
-class PhotonMap;
+class Photons;
 class Transform;
 
 
@@ -68,7 +68,7 @@ private:
 
     unsigned long m_numberOfRays;
 
-    PhotonMap* m_photonMap;
+    Photons* m_photonMap;
     bool m_photonMapToFile;
 
     QVector<RandomFactory*> m_RandomFactoryList;

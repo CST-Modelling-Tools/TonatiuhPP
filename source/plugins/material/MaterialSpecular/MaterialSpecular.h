@@ -13,8 +13,8 @@ class MaterialSpecular: public MaterialAbstract
 
 public:
     enum Distribution {
-        //PILLBOX = 0,
-        NORMAL = 1,
+        PILLBOX = 0,
+        NORMAL = 1
     };
 
     static void initClass();
@@ -23,7 +23,7 @@ public:
     bool OutputRay(const Ray& rayIn, DifferentialGeometry* dg, RandomAbstract& rand, Ray* rayOut) const;
 
     SoSFDouble reflectivity;
-    SoSFDouble sigmaSlope;
+    SoSFDouble slope;
     SoSFEnum distribution;
 
     NAME_ICON_FUNCTIONS("Specular", ":/MaterialSpecular.png")

@@ -2,7 +2,7 @@
 
 #include <QDialog>
 
-#include "kernel/photons/PhotonMap.h"
+#include "kernel/photons/Photons.h"
 
 #include "ui_fluxanalysisdialog.h"
 

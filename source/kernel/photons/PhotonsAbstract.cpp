@@ -1,9 +1,9 @@
-#include "PhotonExport.h"
+#include "PhotonsAbstract.h"
 
 /*!
  * Creates an object to export selected data of the photon map .
  */
-PhotonExport::PhotonExport():
+PhotonsAbstract::PhotonsAbstract():
     m_pSceneModel(0),
     m_saveAllPhotonsData(true),
     m_saveCoordinates(false),
@@ -19,7 +19,7 @@ PhotonExport::PhotonExport():
 /*!
  * Sets the transformation to change from concentrator coordinates to world coordinates.
  */
-void PhotonExport::SetConcentratorToWorld(Transform concentratorToWorld)
+void PhotonsAbstract::SetConcentratorToWorld(Transform concentratorToWorld)
 {
     m_concentratorToWorld = concentratorToWorld;
 }
@@ -27,7 +27,7 @@ void PhotonExport::SetConcentratorToWorld(Transform concentratorToWorld)
 /*!
  * Sets to store all photons selected data.
  */
-void PhotonExport::SetSaveAllPhotonsEnabled()
+void PhotonsAbstract::SetSaveAllPhotonsEnabled()
 {
     m_saveAllPhotonsData = true;
     m_saveSurfacesURLList.clear();
@@ -36,7 +36,7 @@ void PhotonExport::SetSaveAllPhotonsEnabled()
 /*!
  * Sets enabled to save photons intersection coordinates.
  */
-void PhotonExport::SetSaveCoordinatesEnabled(bool enabled)
+void PhotonsAbstract::SetSaveCoordinatesEnabled(bool enabled)
 {
     m_saveCoordinates = enabled;
 }
@@ -45,7 +45,7 @@ void PhotonExport::SetSaveCoordinatesEnabled(bool enabled)
  * Export photons coordinates system into scene global system if \a enabled is true.
  * Otherwise, exports into surface local system.
  */
-void PhotonExport::SetSaveCoordinatesInGlobalSystemEnabled(bool enabled)
+void PhotonsAbstract::SetSaveCoordinatesInGlobalSystemEnabled(bool enabled)
 {
     m_saveCoordinatesInGlobal = enabled;
 }
@@ -53,7 +53,7 @@ void PhotonExport::SetSaveCoordinatesInGlobalSystemEnabled(bool enabled)
 /*!
  * If \a enabled is true, the identifier of the previous and next photons will be exported.
  */
-void PhotonExport::SetSavePreviousNextPhotonsID(bool enabled)
+void PhotonsAbstract::SetSavePreviousNextPhotonsID(bool enabled)
 {
     m_savePrevNexID = enabled;
 }
@@ -61,7 +61,7 @@ void PhotonExport::SetSavePreviousNextPhotonsID(bool enabled)
 /*!
  * Sets enabled to save the side of the intersection with the surface.
  */
-void PhotonExport::SetSaveSideEnabled(bool enabled)
+void PhotonsAbstract::SetSaveSideEnabled(bool enabled)
 {
     m_saveSide = enabled;
 }
@@ -69,7 +69,7 @@ void PhotonExport::SetSaveSideEnabled(bool enabled)
 /*!
  * Sets enabled to save the surface identifier.
  */
-void PhotonExport::SetSaveSurfacesIDEnabled(bool enabled)
+void PhotonsAbstract::SetSaveSurfacesIDEnabled(bool enabled)
 {
     m_saveSurfaceID = enabled;
 }
@@ -77,7 +77,7 @@ void PhotonExport::SetSaveSurfacesIDEnabled(bool enabled)
 /*!
  *    Sets the list of the surfaces url to save.
  */
-void PhotonExport::SetSaveSurfacesURLList(QStringList surfacesURLList)
+void PhotonsAbstract::SetSaveSurfacesURLList(QStringList surfacesURLList)
 {
     m_saveAllPhotonsData = false;
     m_saveSurfacesURLList = surfacesURLList;
@@ -86,7 +86,7 @@ void PhotonExport::SetSaveSurfacesURLList(QStringList surfacesURLList)
 /*!
  * Sets the sceneModel to export mode.
  */
-void PhotonExport::SetSceneModel(SceneModel& sceneModel)
+void PhotonsAbstract::SetSceneModel(SceneModel& sceneModel)
 {
     m_pSceneModel = &sceneModel;
 }

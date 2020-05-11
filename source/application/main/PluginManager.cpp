@@ -11,9 +11,9 @@
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/material/MaterialFactory.h"
 #include "kernel/material/MaterialVirtual.h"
-#include "kernel/photons/PhotonExportFactory.h"
-#include "kernel/photons/PhotonExportNull.h"
-#include "kernel/photons/PhotonExportWidget.h"
+#include "kernel/photons/PhotonsFactory.h"
+#include "kernel/photons/PhotonsDefault.h"
+#include "kernel/photons/PhotonsWidget.h"
 #include "kernel/random/RandomFactory.h"
 #include "kernel/random/RandomSTL.h"
 #include "kernel/scene/TSceneKit.h"
@@ -107,7 +107,7 @@ void PluginManager::load(QDir dir)
 //    loadTonatiuhPlugin(new ShapeFactoryT<ShapeCube>);
 
     loadTonatiuhPlugin(new RandomFactoryT<RandomSTL>);
-    loadTonatiuhPlugin(new PhotonExportFactoryT<PhotonExportNull, PhotonExportWidget>);
+    loadTonatiuhPlugin(new PhotonsFactoryT<PhotonsDefault, PhotonsWidget>);
 
     sort();
 }
@@ -175,7 +175,7 @@ void PluginManager::loadTonatiuhPlugin(TFactory* p)
     {
         m_componentFactories << f;
     }
-    else if (auto f = dynamic_cast<PhotonExportFactory*>(p))
+    else if (auto f = dynamic_cast<PhotonsFactory*>(p))
     {
         m_exportFactories << f;
     }
