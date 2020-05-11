@@ -3514,7 +3514,7 @@ bool MainWindow::StartOver(const QString& fileName)
 {
     InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
 
-    InstanceNode* concentratorRoot = sceneInstance->children[ sceneInstance->children.size() - 1 ];
+    InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
     m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 
     actionViewRays->setEnabled(false);
@@ -3528,18 +3528,15 @@ bool MainWindow::StartOver(const QString& fileName)
 
 //    SetSunPositionCalculatorEnabled(0);
 
-    QStatusBar* statusbar = new QStatusBar();
-    setStatusBar(statusbar);
-    //QStatusBar* statusbar = statusBar();
     if (!fileName.isEmpty() && m_document->ReadFile(fileName) )
     {
-        statusbar->showMessage(tr("File loaded"), 2000);
+        statusBar()->showMessage(tr("File loaded"), 2000);
         SetCurrentFile(fileName);
     }
     else
     {
         m_document->New();
-        statusbar->showMessage(tr("New file"), 2000);
+        statusBar()->showMessage(tr("New file"), 2000);
 
         SetCurrentFile("");
     }

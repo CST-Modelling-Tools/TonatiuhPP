@@ -888,7 +888,7 @@ void SceneModel::DeleteInstanceTree(InstanceNode& instanceNode)
     if( instanceParent )
     {
         int row = instanceParent->children.indexOf( &instanceNode );
-        instanceParent->children.remove( row );
+        instanceParent->children.remove(row);
     }
 }
 
