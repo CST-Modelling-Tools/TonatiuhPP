@@ -38,3 +38,21 @@ TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const Point3D& poi
 TONATIUH_LIBRARIES double Distance(const Point3D& pointA, const Point3D& pointB);
 TONATIUH_LIBRARIES double DistanceSquared(const Point3D& pointA, const Point3D& pointB);
 
+
+inline Point3D min(const Point3D& a, const Point3D& b)
+{
+    return Point3D(
+        std::min(a.x, b.x),
+        std::min(a.y, b.y),
+        std::min(a.z, b.z)
+    );
+}
+
+inline Point3D max(const Point3D& a, const Point3D& b)
+{
+    return Point3D(
+        std::max(a.x, b.x),
+        std::max(a.y, b.y),
+        std::max(a.z, b.z)
+    );
+}

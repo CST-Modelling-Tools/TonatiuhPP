@@ -6,7 +6,7 @@
 #include "kernel/TonatiuhFunctions.h"
 #include "libraries/geometry/gc.h"
 #include "libraries/geometry/gf.h"
-#include "libraries/geometry/BBox.h"
+#include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Ray.h"
 
 

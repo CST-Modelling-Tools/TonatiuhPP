@@ -1,6 +1,6 @@
 #include "gc.h"
 
-#include "BBox.h"
+#include "BoundingBox.h"
 #include "NormalVector.h"
 #include "Ray.h"
 #include "Transform.h"

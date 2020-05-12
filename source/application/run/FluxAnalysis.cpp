@@ -243,7 +243,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     m_pCurrentSceneModel->UpdateSceneModel();
 
     //Compute bounding boxes and world to object transforms
-    trf::ComputeSceneTreeMap(m_pRootSeparatorInstance, Transform(new Matrix4x4), true);
+    m_pRootSeparatorInstance->updateTree(Transform(new Matrix4x4));
 
     m_pPhotonMap->setTransform(m_pRootSeparatorInstance->getTransform() );
 
@@ -263,7 +263,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     if ( (t1 * maximumValueProgressScale) < nOfRays) raysPerThread << (nOfRays - (t1 * maximumValueProgressScale) );
 
     Transform lightToWorld = tgf::TransformFromSoTransform(lightTransform);
-    lightInstance->setTransform(lightToWorld.GetInverse() );
+    lightInstance->setTransform(lightToWorld );
 
     // Create a progress dialog.
     QProgressDialog dialog;

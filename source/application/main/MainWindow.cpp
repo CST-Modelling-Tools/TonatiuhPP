@@ -1960,7 +1960,7 @@ void MainWindow::Run()
         UpdateLightSize();
 
         //Compute bounding boxes and world to object transforms
-        trf::ComputeSceneTreeMap(instanceRoot, Transform(new Matrix4x4), true);
+        instanceRoot->updateTree(Transform(new Matrix4x4));
 
         m_photons->setTransform(instanceRoot->getTransform() );
 
@@ -1987,7 +1987,7 @@ void MainWindow::Run()
 
 
         Transform lightToWorld = tgf::TransformFromSoTransform(transformSun);
-        instanceSun->setTransform(lightToWorld.GetInverse() );
+        instanceSun->setTransform(lightToWorld);
 
         // single thread for gprof
 //        QThreadPool::globalInstance()->setMaxThreadCount(1);

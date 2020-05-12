@@ -1,34 +1,27 @@
-#include <cmath>
+#include "BoundingBox.h"
 
-#include "BBox.h"
+#include <cmath>
 #include "Ray.h"
 #include "gc.h"
 #include "Vector3D.h"
 #include "Point3D.h"
 
 
-
-BoundingBox::BoundingBox()
-    : pMin(gc::Infinity, gc::Infinity, gc::Infinity),
+BoundingBox::BoundingBox():
+    pMin(gc::Infinity, gc::Infinity, gc::Infinity),
     pMax(-gc::Infinity, -gc::Infinity, -gc::Infinity)
 {
 }
 
-BoundingBox::BoundingBox(const Point3D& point)
-    : pMin(point), pMax(point)
+BoundingBox::BoundingBox(const Point3D& point):
+    pMin(point), pMax(point)
 {
 }
 
-BoundingBox::BoundingBox(const Point3D& point1, const Point3D& point2)
+BoundingBox::BoundingBox(const Point3D& a, const Point3D& b)
 {
-    pMin.x = point1.x < point2.x ? point1.x : point2.x;
-    pMin.y = point1.y < point2.y ? point1.y : point2.y;
-    pMin.z = point1.z < point2.z ? point1.z : point2.z;
-
-    pMax.x = point1.x > point2.x ? point1.x : point2.x;
-    pMax.y = point1.y > point2.y ? point1.y : point2.y;
-    pMax.z = point1.z > point2.z ? point1.z : point2.z;
-
+    pMin = min(a, b);
+    pMax = max(a, b);
 }
 
 bool BoundingBox::Overlaps(const BoundingBox& bbox) const
@@ -45,7 +38,7 @@ bool BoundingBox::Inside(const Point3D& point) const
             point.z >= pMin.z && point.z <= pMax.z);
 }
 
-void BoundingBox::Expand(double delta)
+void BoundingBox::expand(double delta)
 {
     pMin.x -= delta;
     pMin.y -= delta;
@@ -54,6 +47,12 @@ void BoundingBox::Expand(double delta)
     pMax.x += delta;
     pMax.y += delta;
     pMax.z += delta;
+}
+
+void BoundingBox::expand(const BoundingBox& b)
+{
+    pMin = min(pMin, b.pMin);
+    pMax = max(pMax, b.pMax);
 }
 
 double BoundingBox::Volume() const
@@ -65,8 +64,10 @@ double BoundingBox::Volume() const
 int BoundingBox::MaximumExtent() const
 {
     Vector3D diagonal = pMax - pMin;
-    if (diagonal.x > diagonal.y && diagonal.x > diagonal.z) return 0;
-    else if (diagonal.y > diagonal.z) return 1;
+    if (diagonal.x > diagonal.y && diagonal.x > diagonal.z)
+        return 0;
+    else if (diagonal.y > diagonal.z)
+        return 1;
     return 2;
 }
 
@@ -168,4 +169,3 @@ std::ostream& operator<<(std::ostream& os, const BoundingBox& bbox)
     os << "pMax: " << bbox.pMax << std::endl;
     return os;
 }
-

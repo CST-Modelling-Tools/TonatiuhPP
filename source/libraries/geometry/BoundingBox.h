@@ -8,10 +8,11 @@ struct TONATIUH_LIBRARIES BoundingBox
 {
     BoundingBox();
     explicit BoundingBox(const Point3D& point);
-    BoundingBox(const Point3D& point1, const Point3D& point2);
+    BoundingBox(const Point3D& a, const Point3D& b);
     bool Overlaps(const BoundingBox& bbox) const;
     bool Inside(const Point3D& point) const;
-    void Expand(double delta);
+    void expand(double delta);
+    void expand(const BoundingBox& b);
     double Volume() const;
     int MaximumExtent() const;
     void BoundingSphere(Point3D& center, double& radius) const;

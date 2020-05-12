@@ -14,7 +14,7 @@
 #include <Inventor/nodekits/SoNodekitCatalog.h>
 
 #include "libraries/geometry/gc.h"
-#include "libraries/geometry/BBox.h"
+#include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Matrix4x4.h"
 #include "libraries/geometry/Point3D.h"
 #include "sun/sunpos.h"

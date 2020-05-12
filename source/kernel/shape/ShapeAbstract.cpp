@@ -2,7 +2,7 @@
 
 #include "libraries/geometry/Point3D.h"
 #include "libraries/geometry/Vector3D.h"
-#include "libraries/geometry/BBox.h"
+#include "libraries/geometry/BoundingBox.h"
 #include <Inventor/actions/SoGLRenderAction.h>
 #include <Inventor/elements/SoGLTextureCoordinateElement.h>
 #include <Inventor/SoPrimitiveVertex.h>

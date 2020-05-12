@@ -3,7 +3,7 @@
 #include <Inventor/nodes/SoNode.h>
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
 
-#include "libraries/geometry/BBox.h"
+#include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/Ray.h"
 #include "shape//DifferentialGeometry.h"
@@ -15,6 +15,7 @@
 #include "sun/TLightKit.h"
 #include "trackers/TrackerAbstract.h"
 #include "trackers/TTrackerForAiming.h"
+#include "kernel/scene/TSeparatorKit.h"
 
 
 InstanceNode::InstanceNode(SoNode* node):
@@ -78,12 +79,12 @@ bool InstanceNode::Intersect(const Ray& ray, RandomAbstract& rand, bool* isShape
     {
         bool isOutputRay = false;
         double t = ray.tMax;
-        for (int index = 0; index < children.size(); ++index)
+        for (int n = 0; n < children.size(); ++n)
         {
             InstanceNode* intersectedChild = 0;
             Ray childOutputRay;
             bool childShapeFront = true;
-            bool isChildOutputRay = children[index]->Intersect(ray, rand, &childShapeFront, &intersectedChild, &childOutputRay);
+            bool isChildOutputRay = children[n]->Intersect(ray, rand, &childShapeFront, &intersectedChild, &childOutputRay);
 
             if (ray.tMax < t) // tMax mutable
             {
@@ -99,7 +100,7 @@ bool InstanceNode::Intersect(const Ray& ray, RandomAbstract& rand, bool* isShape
     }
     else // shapekit
     {
-        Ray childCoordinatesRay(m_transformWtO(ray));
+        Ray rayLocal(m_transformWtO(ray));
 
         ShapeAbstract* tshape = 0;
         MaterialAbstract* tmaterial = 0;
@@ -118,7 +119,7 @@ bool InstanceNode::Intersect(const Ray& ray, RandomAbstract& rand, bool* isShape
         {
             double thit = 0.;
             DifferentialGeometry dg;
-            if (!tshape->intersect(childCoordinatesRay, &thit, &dg) ) return false;
+            if (!tshape->intersect(rayLocal, &thit, &dg) ) return false;
             ray.tMax = thit;
             *modelNode = this;
 
@@ -127,7 +128,7 @@ bool InstanceNode::Intersect(const Ray& ray, RandomAbstract& rand, bool* isShape
             if (tmaterial)
             {
                 Ray surfaceOutputRay;
-                if (tmaterial->OutputRay(childCoordinatesRay, &dg, rand, &surfaceOutputRay) )
+                if (tmaterial->OutputRay(rayLocal, &dg, rand, &surfaceOutputRay) )
                 {
                     *outputRay = m_transformOtW(surfaceOutputRay);
                     return true;
@@ -153,17 +154,67 @@ void InstanceNode::extendBoxForLight(SbBox3f* extendedBox)
  */
 void InstanceNode::setTransform(Transform nodeTransform)
 {
-    m_transformWtO = nodeTransform;
-    m_transformOtW = m_transformWtO.GetInverse();
+    m_transformOtW = nodeTransform;
+    m_transformWtO = nodeTransform.GetInverse();
 }
 
-QDataStream& operator<< (QDataStream& s, const InstanceNode& node)
+void InstanceNode::updateTree(Transform parentOtW)
+{
+    SoBaseKit* nodeRoot = (SoBaseKit*) getNode();
+    if (!nodeRoot) return;
+
+    if (nodeRoot->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
+    {
+        SoTransform* nodeTransform = (SoTransform*) nodeRoot->getPart("transform", true);
+        Transform objectToWorld = tgf::TransformFromSoTransform(nodeTransform);
+
+        BoundingBox box;
+        Transform nodeOtW(parentOtW*objectToWorld);
+        setTransform(nodeOtW);
+
+        for (InstanceNode* child : children)
+        {
+            child->updateTree(nodeOtW);
+            box = Union(box, child->getBox() );
+        }
+        setBox(box);
+    }
+    else if (nodeRoot->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId()))
+    {
+        Transform shapeTransform = parentOtW;
+
+        SoTransform* nodeTransform = (SoTransform*) nodeRoot->getPart("transform", false);
+        if (nodeTransform)
+            shapeTransform = shapeTransform*tgf::TransformFromSoTransform(nodeTransform);
+
+        BoundingBox shapeBox;
+
+        if (children.count() > 0)
+        {
+            InstanceNode* shapeInstance = 0;
+            if (children[0]->getNode()->getTypeId().isDerivedFrom(ShapeAbstract::getClassTypeId() ) )
+                shapeInstance = children[0];
+            else if (children.count() > 1)
+                shapeInstance = children[1];
+
+            if (shapeInstance)
+            {
+                ShapeAbstract* shapeNode = static_cast<ShapeAbstract*>(shapeInstance->getNode() );
+                shapeBox = shapeTransform(shapeNode->getBox());
+                setBox(shapeBox);
+                setTransform(shapeTransform);
+            }
+        }
+    }
+}
+
+QDataStream& operator<<(QDataStream& s, const InstanceNode& node)
 {
     s << node.getNode();
     return s;
 }
 
-QDataStream& operator>> (QDataStream& s, const InstanceNode& node)
+QDataStream& operator>>(QDataStream& s, const InstanceNode& node)
 {
     s >> node;
     return s;
@@ -174,66 +225,3 @@ bool operator==(const InstanceNode& a, const InstanceNode& b)
     return a.getNode() == b.getNode() &&
         a.getParent()->getNode() == b.getParent()->getNode();
 }
-
-/*
-   template<class T> void InstanceNode::RecursivlyApply(void (T::*func)(void))
-   {
-        if ( GetNode()->getTypeId().isDerivedFrom( T::getClassTypeId() ) )
-        {
-           T * elem = static_cast< T* > ( GetNode() );
-           (elem->*func)();
-        }
-        else
-        {
-      for( int index = 0; index < children.size(); ++index )
-      {
-         children[index]->RecursivlyApply<T>(func);
-      }
-        }
-   }
-   template<class T,class Param1> void InstanceNode::RecursivlyApply(void (T::*func)(Param1),Param1 param1)
-   {
-        if (GetNode()->getTypeId().isDerivedFrom( T::getClassTypeId() ) )
-        {
-           T * elem = static_cast< T* > ( GetNode() );
-           (elem->*func)(param1);
-        }
-        else
-        {
-      for( int index = 0; index < children.size(); ++index )
-      {
-         children[index]->RecursivlyApply<T,Param1>(func,param1);
-      }
-        }
-   }
-   template<class T,class Param1> void InstanceNode::RecursivlyApplyWithMto(void (T::*func)(Param1),Param1 param1)
-   {
-        if (GetNode()->getTypeId().isDerivedFrom( T::getClassTypeId() ) )
-        {
-           T * elem = static_cast< T* > ( GetNode() );
-           (elem->*func)(&m_transformWTO, param1);
-        }
-        else
-        {
-      for( int index = 0; index < children.size(); ++index )
-      {
-         children[index]->RecursivlyApplyWithMto<T,Param1>(func,param1);
-      }
-        }
-   }
-   template<class T,class Param1,class Param2> void InstanceNode::RecursivlyApplyWithMto(void (T::*func)(Param1,Param2),Param1 param1,Param1 param2)
-   {
-        if (GetNode()->getTypeId().isDerivedFrom( T::getClassTypeId() ) )
-        {
-           T * elem = static_cast< T* > ( GetNode() );
-           (elem->*func)(&m_transformWTO, param1,param2);
-        }
-        else
-        {
-      for( int index = 0; index < children.size(); ++index )
-      {
-         children[index]->RecursivlyApplyWithMto<T,Param1,Param2>(func,param1,param2);
-      }
-        }
-   }
- */

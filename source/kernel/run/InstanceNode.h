@@ -9,7 +9,7 @@
 #include <Inventor/SbBox3f.h>
 #include <Inventor/SbMatrix.h>
 
-#include "libraries/geometry/BBox.h"
+#include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Transform.h"
 
 class RandomAbstract;
@@ -59,10 +59,12 @@ public:
 
     QVector<InstanceNode*> children;
 
+    void updateTree(Transform parentOtW);
+
 private:
     SoNode* m_node;
     InstanceNode* m_parent;
-    BoundingBox m_box;
+    BoundingBox m_box; // world
     Transform m_transformWtO;
     Transform m_transformOtW;
 };

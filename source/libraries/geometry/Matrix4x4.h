@@ -14,7 +14,7 @@ public:
               double t20, double t21, double t22, double t23,
               double t30, double t31, double t32, double t33);
     Matrix4x4(const Matrix4x4& rhs);
-    ~Matrix4x4();
+
     Ptr<Matrix4x4> Transpose() const;
     Ptr<Matrix4x4> Inverse() const;
 

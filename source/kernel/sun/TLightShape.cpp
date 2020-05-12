@@ -9,7 +9,7 @@
 #include <Inventor/elements/SoMaterialBindingElement.h>
 
 #include <math.h>
-#include "libraries/geometry/BBox.h"
+#include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/Vector3D.h"
