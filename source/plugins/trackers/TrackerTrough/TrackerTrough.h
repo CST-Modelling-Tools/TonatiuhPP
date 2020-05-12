@@ -1,20 +1,18 @@
 #pragma once
 
-#include <Inventor/engines/SoSubNodeEngine.h>
-#include <Inventor/fields/SoSFEnum.h>
 
 #include "kernel/trackers/TTrackerForAiming.h"
 
 
 class TrackerTrough: public TTrackerForAiming
 {
-    SO_NODEENGINE_HEADER(TrackerTrough);
+    SO_NODE_HEADER(TrackerTrough);
 
 public:
     static void initClass();
-
     TrackerTrough();
-    void Evaluate(const Vector3D& vSunW, const Transform& transformWtO);
+
+    void Evaluate(SoNode* parent, const Transform& transform, const Vector3D& vSun);
 
     enum Axis {
 		X = 0,
@@ -29,9 +27,6 @@ public:
 
 protected:
     ~TrackerTrough() {}
-
-private:
-	int m_previousAimingPointType;
 };
 
 

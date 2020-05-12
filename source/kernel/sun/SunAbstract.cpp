@@ -7,4 +7,3 @@ void SunAbstract::initClass()
 {
     SO_NODE_INIT_ABSTRACT_CLASS(SunAbstract, SoNode, "Node");
 }
-

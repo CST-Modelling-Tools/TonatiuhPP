@@ -41,7 +41,7 @@ CmdInsertTracker::~CmdInsertTracker()
  */
 void CmdInsertTracker::undo()
 {
-    m_tracker->Disconnect();
+//    m_tracker->Disconnect();
     m_pModel->RemoveCoinNode(m_row, *m_coinParent);
 }
 

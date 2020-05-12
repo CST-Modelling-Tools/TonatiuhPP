@@ -2,27 +2,15 @@
 
 #include "TrackerAbstract.h"
 
-class QString; 
-class SoFieldSensor;
-class SoSensor;
-
 
 class TONATIUH_KERNEL TDefaultTracker: public TrackerAbstract
 {
-    SO_NODEENGINE_HEADER(TDefaultTracker);
+    SO_NODE_HEADER(TDefaultTracker);
     
 public:
-    static void initClass();
-    QString getIcon()
-    {
-        return "";
-    }
-    
+    static void initClass();  
     TDefaultTracker();
 
 protected:    
-    ~TDefaultTracker();
-
-private:
-    void evaluate();
+    ~TDefaultTracker() {}
 };

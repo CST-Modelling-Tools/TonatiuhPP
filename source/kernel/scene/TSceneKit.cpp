@@ -1,3 +1,5 @@
+#include "TSceneKit.h"
+
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodekits/SoNodeKitListPart.h>
 
@@ -6,7 +8,6 @@
 #include "libraries/geometry/Vector3D.h"
 
 #include "kernel/air/AirVacuum.h"
-#include "TSceneKit.h"
 #include "TSeparatorKit.h"
 #include "kernel/trackers/TrackerAbstract.h"
 #include "kernel/air/AirAbstract.h"
@@ -32,17 +33,16 @@ void TSceneKit::initClass()
 TSceneKit::TSceneKit()
 {
     SO_KIT_CONSTRUCTOR(TSceneKit);
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY( transmissivity, AirAbstract, AirVacuum, TRUE, topSeparator, "", TRUE);
+
+    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(transmissivity, AirAbstract, AirVacuum, TRUE, topSeparator, "", TRUE);
 
     SO_NODE_ADD_FIELD( azimuth, (0.) );
     SO_NODE_ADD_FIELD( elevation, (90.) );
 
     SO_KIT_INIT_INSTANCE();
 
-
     TLightKit* lightKit = new TLightKit;
     lightKit->setPart("tsunshape", new SunPillbox);
-//    getPart("lightList", true);
     setPart("lightList[0]", lightKit);
 
     setPart("transmissivity", new AirVacuum);
@@ -65,71 +65,61 @@ SoPath* TSceneKit::GetSoPath(SoSearchAction* action)
     return nodePath;
 }
 
-void TSceneKit::UpdateSunPosition(double az, double el)
+void TSceneKit::updateTrackers(double az, double el)
 {
     azimuth = az;
     elevation = el;
 
-    Vector3D sunVector(
+    Vector3D vSunW(
         sin(az)*cos(el),
         cos(az)*cos(el),
         sin(el)
     ); // to sun
 
-    Transform sceneOTW(
+    Transform transformOtW(
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
         0, 0, 0, 1
     );
 
-    SoNodeKitListPart* coinPartList = static_cast<SoNodeKitListPart*>(getPart("childList", true));
-    if (!coinPartList || coinPartList->getNumChildren() < 1) return;
+    auto nodes = static_cast<SoNodeKitListPart*>(getPart("childList", true));
+    if (nodes->getNumChildren() < 1) return;
 
+    auto node = static_cast<SoBaseKit*>(nodes->getChild(0));     //SunNode
+    if (!node) return;
 
-    //SunNode
-    SoBaseKit* sunNode = static_cast< SoBaseKit* >( coinPartList->getChild( 0 ) );
-    if (!sunNode) return;
-    SoNodeKitListPart* sunNodePartList = static_cast< SoNodeKitListPart* >(sunNode->getPart("childList", true) );
-    if (!sunNodePartList) return;
+    nodes = static_cast<SoNodeKitListPart*>(node->getPart("childList", true));
 
-    for (int index = 0; index < sunNodePartList->getNumChildren(); ++index)
+    for (int n = 0; n < nodes->getNumChildren(); ++n)
     {
-        SoBaseKit* coinChild = static_cast< SoBaseKit* >( sunNodePartList->getChild( index ) );
-        UpdateTrackersTransform( coinChild, sunVector, sceneOTW );
+        node = static_cast<SoBaseKit*>(nodes->getChild(n));
+        UpdateTrackersTransform(node, vSunW, transformOtW);
     }
 }
 
 /*!
  * Updates all trackers transform for the current sun angles.
  */
-void TSceneKit::UpdateTrackersTransform(SoBaseKit* branch, Vector3D sunVector, Transform parentOTW)
+void TSceneKit::UpdateTrackersTransform(SoBaseKit* parent, const Vector3D& vSunW, Transform transformOtW)
 {
-    if (!branch) return;
+    if (!parent) return;
 
-    SoNode* tracker = branch->getPart("tracker", false);
-    if (tracker)
+    if (auto tracker = (TrackerAbstract*) parent->getPart("tracker", false))
     {
-        TrackerAbstract* trackerNode = static_cast< TrackerAbstract* >(tracker);
-        trackerNode->Evaluate( sunVector, parentOTW.GetInverse() );
-        return;
+        tracker->Evaluate(parent, transformOtW, vSunW);
     }
-
-    if (branch->getTypeId().isDerivedFrom( TSeparatorKit::getClassTypeId() ) )
+    else if (parent->getTypeId().isDerivedFrom( TSeparatorKit::getClassTypeId() ) )
     {
-        SoTransform* nodeTransform = static_cast< SoTransform* >(branch->getPart( "transform", true ) );
-        Transform nodeTransformationOTW = tgf::TransformFromSoTransform( nodeTransform );
-        //Transform nodeTransformationWTO = groupNode->GetTrasformation().GetInverse();
-        Transform nodeOTW = nodeTransformationOTW * parentOTW;
+        SoTransform* nodeTransform = static_cast<SoTransform*>(parent->getPart("transform", true));
+        Transform nodeOTW = transformOtW*tgf::TransformFromSoTransform(nodeTransform);
 
-        SoNodeKitListPart* coinPartList = static_cast< SoNodeKitListPart* >( branch->getPart( "childList", false ) );
-        if (coinPartList)
+        auto nodes = (SoNodeKitListPart*) parent->getPart("childList", false);
+        if (!nodes) return;
+        for (int n = 0; n < nodes->getNumChildren(); ++n)
         {
-            for (int index = 0; index < coinPartList->getNumChildren(); ++index)
-            {
-                SoBaseKit* coinChild = static_cast< SoBaseKit* >( coinPartList->getChild( index ) );
-                if( coinChild )        UpdateTrackersTransform( coinChild, sunVector, nodeOTW );
-            }
+            SoBaseKit* child = static_cast<SoBaseKit*>(nodes->getChild(n));
+            if (child) UpdateTrackersTransform(child, vSunW, nodeOTW);
         }
     }
 }

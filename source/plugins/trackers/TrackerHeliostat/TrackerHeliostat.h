@@ -5,13 +5,13 @@
 
 class TrackerHeliostat: public TTrackerForAiming
 {
-    SO_NODEENGINE_HEADER(TrackerHeliostat);
+    SO_NODE_HEADER(TrackerHeliostat);
 
 public:
     static void initClass();
     TrackerHeliostat();
 
-    void Evaluate(const Vector3D& vSunW, const Transform& transformWtO);
+    void Evaluate(SoNode* parent, const Transform& transform, const Vector3D& vSun);
 
     SoSFVec3f primaryAxis;
     SoSFVec3f secondaryAxis;
@@ -23,10 +23,6 @@ public:
 
 protected:
     ~TrackerHeliostat() {}
-
-private:
-	int m_previousAimingPointType;
-    SoFieldSensor* m_sensorAiming;
 };
 
 

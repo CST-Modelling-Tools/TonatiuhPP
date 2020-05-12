@@ -339,8 +339,7 @@ void MainWindow::DefineSunLight()
 
     TLightKit* lightKit = dialog.getLightKit();
     if (!lightKit) return;
-    sceneKit->azimuth = dialog.getAzimuth();
-    sceneKit->elevation = dialog.getElevation();
+    sceneKit->updateTrackers(dialog.getAzimuth(), dialog.getElevation());
 
     CmdLightKitModified* cmd = new CmdLightKitModified(lightKit, sceneKit, *m_sceneModel);
     m_commandStack->push(cmd);
@@ -2663,7 +2662,7 @@ void MainWindow::CreateTracker(TrackerFactory* pTrackerFactory)
         }
         TrackerAbstract* tracker = pTrackerFactory->create();
 
-        tracker->SetSceneKit(scene);
+//        tracker->SetSceneKit(scene);
         tracker->setName(pTrackerFactory->name().toStdString().c_str() );
         CmdInsertTracker* command = new CmdInsertTracker(tracker, parentIndex, scene, m_sceneModel);
         m_commandStack->push(command);

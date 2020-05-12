@@ -145,12 +145,12 @@ void SceneModel::SetConcentrator()
         SoNodeKitListPart* sunSeparatorChildList = static_cast< SoNodeKitListPart* >( sunSeparatorKit->getPart( "childList", true ) );
         if (!sunSeparatorChildList) return;
 
-        SoNode* tracker = sunSeparatorKit->getPart( "tracker", false );
-        if (tracker)
-        {
-            TrackerAbstract* trackerNode = static_cast< TrackerAbstract* >( tracker );
-            trackerNode->SetSceneKit(m_coinScene);
-        }
+//        SoNode* tracker = sunSeparatorKit->getPart( "tracker", false );
+//        if (tracker)
+//        {
+//            TrackerAbstract* trackerNode = static_cast< TrackerAbstract* >( tracker );
+//            trackerNode->SetSceneKit(m_coinScene);
+//        }
 
         TSeparatorKit* separatorKit = static_cast< TSeparatorKit* >( sunSeparatorChildList->getChild( 0 ) );
         if (!separatorKit) return;
@@ -214,8 +214,8 @@ void SceneModel::GenerateTSeparatorKitSubTree( InstanceNode& instanceNodeParent,
         SoNode* tracker = parentKit->getPart( "tracker", false );
         if( tracker )
         {
-            TrackerAbstract* trackerNode = static_cast< TrackerAbstract* >( tracker );
-            trackerNode->SetSceneKit( m_coinScene );
+//            TrackerAbstract* trackerNode = static_cast< TrackerAbstract* >( tracker );
+//            trackerNode->SetSceneKit( m_coinScene );
             AddInstanceNode( instanceNodeParent, tracker );
         }
 
@@ -431,19 +431,19 @@ void SceneModel::InsertLightNode(TLightKit& lightKit)
 
     m_coinScene->setPart("lightList[0]", &lightKit);
 
-    SoSearchAction trackersSearch;
-    trackersSearch.setType( TrackerAbstract::getClassTypeId() );
-    trackersSearch.setInterest( SoSearchAction::ALL);
-    trackersSearch.apply( m_coinRoot );
-    SoPathList& trackersPath = trackersSearch.getPaths();
+//    SoSearchAction trackersSearch;
+//    trackersSearch.setType( TrackerAbstract::getClassTypeId() );
+//    trackersSearch.setInterest( SoSearchAction::ALL);
+//    trackersSearch.apply( m_coinRoot );
+//    SoPathList& trackersPath = trackersSearch.getPaths();
 
-    for( int index = 0; index < trackersPath.getLength(); ++index )
-    {
-        SoFullPath* trackerPath = static_cast< SoFullPath* > ( trackersPath[index] );
-        TrackerAbstract* tracker = static_cast< TrackerAbstract* >( trackerPath->getTail() );
-//        tracker->SetAzimuthAngle(&lightKit.azimuth);
-//        tracker->SetZenithAngle(&lightKit.zenith);
-    }
+//    for( int index = 0; index < trackersPath.getLength(); ++index )
+//    {
+//        SoFullPath* trackerPath = static_cast< SoFullPath* > ( trackersPath[index] );
+//        TrackerAbstract* tracker = static_cast< TrackerAbstract* >( trackerPath->getTail() );
+////        tracker->SetAzimuthAngle(&lightKit.azimuth);
+////        tracker->SetZenithAngle(&lightKit.zenith);
+//    }
 
     InstanceNode* instanceLight = new InstanceNode(&lightKit);
     m_instanceRoot->InsertChild(0, instanceLight);
@@ -494,18 +494,18 @@ void SceneModel::RemoveLightNode(TLightKit& coinLight)
     if ( lightList ) lightList->removeChild( &coinLight );
     m_instanceRoot->children.remove( 0 );
 
-    SoSearchAction trackersSearch;
-    trackersSearch.setType( TrackerAbstract::getClassTypeId() );
-    trackersSearch.setInterest( SoSearchAction::ALL);
-    trackersSearch.apply( m_coinRoot );
-    SoPathList& trackersPath = trackersSearch.getPaths();
+//    SoSearchAction trackersSearch;
+//    trackersSearch.setType( TrackerAbstract::getClassTypeId() );
+//    trackersSearch.setInterest( SoSearchAction::ALL);
+//    trackersSearch.apply( m_coinRoot );
+//    SoPathList& trackersPath = trackersSearch.getPaths();
 
-    for( int index = 0; index <trackersPath.getLength(); ++index )
-    {
-        SoFullPath* trackerPath = static_cast< SoFullPath* > ( trackersPath[index] );
-        TrackerAbstract* tracker = dynamic_cast< TrackerAbstract* >( trackerPath->getTail() );
-        tracker->Disconnect();
-    }
+//    for( int index = 0; index <trackersPath.getLength(); ++index )
+//    {
+////        SoFullPath* trackerPath = static_cast< SoFullPath* > ( trackersPath[index] );
+////        TrackerAbstract* tracker = dynamic_cast< TrackerAbstract* >( trackerPath->getTail() );
+////        tracker->Disconnect();
+//    }
 
     emit LightNodeStateChanged( 0 );
     emit layoutChanged();

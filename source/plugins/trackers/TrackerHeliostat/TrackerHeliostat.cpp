@@ -3,6 +3,7 @@
 #include <cmath>
 #include <QString>
 #include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoNode.h>
 
 #include "libraries/geometry/NormalVector.h"
 #include "libraries/geometry/Point3D.h"
@@ -12,33 +13,23 @@
 #include "kernel/trf.h"
 
 
-SO_NODEENGINE_SOURCE(TrackerHeliostat)
+SO_NODE_SOURCE(TrackerHeliostat)
 
 void TrackerHeliostat::initClass()
 {
-    SO_NODEENGINE_INIT_CLASS(TrackerHeliostat, TTrackerForAiming, "TTrackerForAiming");
+    SO_NODE_INIT_CLASS(TrackerHeliostat, TTrackerForAiming, "TTrackerForAiming");
 }
 
-TrackerHeliostat::TrackerHeliostat():
-    m_previousAimingPointType(0)
+TrackerHeliostat::TrackerHeliostat()
 {
-    SO_NODEENGINE_CONSTRUCTOR(TrackerHeliostat);
+    SO_NODE_CONSTRUCTOR(TrackerHeliostat);
 
-    SO_NODE_ADD_FIELD( primaryAxis, (0.f, 1.f, 0.f) );
-    SO_NODE_ADD_FIELD( secondaryAxis, (1.f, 0.f, 0.f) );
-    SO_NODE_ADD_FIELD( mirrorNormal, (0.f, 1.f, 0.f) );
+    SO_NODE_ADD_FIELD( primaryAxis, (0.f, 0.f, -1.f) ); // azimuth
+    SO_NODE_ADD_FIELD( secondaryAxis, (1.f, 0.f, 0.f) ); // elevation
+    SO_NODE_ADD_FIELD( mirrorNormal, (0.f, 0.f, 1.f) ); // zenith
 
     SO_NODE_ADD_FIELD( isAimingAbsolute, (TRUE) );
-    SO_NODE_ADD_FIELD( aimingPoint, (0.f, 1.f, 0.f) );
-
-    SO_NODEENGINE_ADD_OUTPUT(outputTranslation, SoSFVec3f);
-    SO_NODEENGINE_ADD_OUTPUT(outputRotation, SoSFRotation);
-    SO_NODEENGINE_ADD_OUTPUT(outputScaleFactor, SoSFVec3f);
-    SO_NODEENGINE_ADD_OUTPUT(outputScaleOrientation, SoSFRotation);
-    SO_NODEENGINE_ADD_OUTPUT(outputCenter, SoSFVec3f);
-
-//    SO_NODE_ADD_FIELD( m_azimuth, (0.) );// for copy and paste
-//    SO_NODE_ADD_FIELD( m_zenith, (90.) );
+    SO_NODE_ADD_FIELD( aimingPoint, (0.f, 0.f, 1.f) );
 }
 
 inline double findAngle(Vector3D& a, Vector3D& m, Vector3D& v, double av)
@@ -57,11 +48,12 @@ Vector3D findAngles(
     return Vector3D(alpha, beta, abs(alpha) + abs(beta));
 }
 
-void TrackerHeliostat::Evaluate(const Vector3D& vSunW, const Transform& transformWtO)
+void TrackerHeliostat::Evaluate(SoNode* parent, const Transform& transform, const Vector3D& vSun)
 {
     // normal
-    Vector3D vSun = transformWtO(vSunW);
-    vSun.normalize();
+    Transform transformWtO = transform.GetInverse();
+    Vector3D vS = transformWtO(vSun);
+    vS.normalize();
 
     Point3D rAim = tgf::makePoint3D(aimingPoint.getValue());
     if (isAimingAbsolute.getValue())
@@ -69,7 +61,7 @@ void TrackerHeliostat::Evaluate(const Vector3D& vSunW, const Transform& transfor
     Vector3D vAim(rAim);
     if (!vAim.normalize()) return;
 
-    Vector3D v = vSun + vAim;
+    Vector3D v = vS + vAim;
     if (!v.normalize()) return;
 
     // cache
@@ -112,6 +104,9 @@ void TrackerHeliostat::Evaluate(const Vector3D& vSunW, const Transform& transfor
     SbRotation rotationB(secondaryAxis.getValue(), sol->y);
     SbRotation rotation = rotationB*rotationA;
 
-    SetEngineOutputRotation(rotation);
-//    SO_ENGINE_OUTPUT(outputRotation, SoSFRotation, setValue(rotation) );
+    SoSeparatorKit* kit = (SoSeparatorKit*) parent;
+    auto node = static_cast<SoBaseKit*>(kit->getPart("childList[0]", false));
+    if (!node) return;
+    SoTransform* tParent = (SoTransform*) node->getPart("transform", true);
+    tParent->rotation = rotation;
 }

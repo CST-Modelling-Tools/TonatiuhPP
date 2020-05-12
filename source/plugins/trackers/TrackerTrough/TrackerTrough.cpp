@@ -14,18 +14,17 @@
 #include "libraries/geometry/Vector3D.h"
 
 
-SO_NODEENGINE_SOURCE(TrackerTrough)
+SO_NODE_SOURCE(TrackerTrough)
 
 void TrackerTrough::initClass()
 {
-    SO_NODEENGINE_INIT_CLASS( TrackerTrough, TTrackerForAiming, "TTrackerForAiming" );
+    SO_NODE_INIT_CLASS( TrackerTrough, TTrackerForAiming, "TTrackerForAiming" );
 }
 
 
-TrackerTrough::TrackerTrough():
-    m_previousAimingPointType(0)
+TrackerTrough::TrackerTrough()
 {
-    SO_NODEENGINE_CONSTRUCTOR(TrackerTrough);
+    SO_NODE_CONSTRUCTOR(TrackerTrough);
 
     SO_NODE_ADD_FIELD( isAimingAbsolute, (FALSE) );
 
@@ -36,18 +35,12 @@ TrackerTrough::TrackerTrough():
 	SO_NODE_ADD_FIELD( activeAxis, (Z) );
 
     SO_NODE_ADD_FIELD(axisOrigin, (0., 0.) );
-
-	//ConstructEngineOutput();
-	SO_NODEENGINE_ADD_OUTPUT( outputTranslation, SoSFVec3f);
-	SO_NODEENGINE_ADD_OUTPUT( outputRotation, SoSFRotation);
-	SO_NODEENGINE_ADD_OUTPUT( outputScaleFactor, SoSFVec3f);
-	SO_NODEENGINE_ADD_OUTPUT( outputScaleOrientation, SoSFRotation);
-	SO_NODEENGINE_ADD_OUTPUT( outputCenter, SoSFVec3f);
 }
 
-void TrackerTrough::Evaluate(const Vector3D& sunVectorW, const Transform& parentWT0)
+void TrackerTrough::Evaluate(SoNode* parent, const Transform& transform, const Vector3D& vSun)
 {
-	Vector3D i = parentWT0( sunVectorW );
+    Transform transformWtO = transform.GetInverse();
+    Vector3D i = transformWtO(vSun);
 
 	Vector3D localAxis;
 	Point3D focusPoint;
@@ -70,8 +63,8 @@ void TrackerTrough::Evaluate(const Vector3D& sunVectorW, const Transform& parent
 	Vector3D focus = Vector3D( focusPoint );
     if (isAimingAbsolute.getValue() == 0 ) //Absolute
 	{
-		localAxis  = parentWT0( localAxis );
-		focus = Vector3D( parentWT0( focusPoint ) );
+        localAxis  = transformWtO( localAxis );
+        focus = Vector3D( transformWtO( focusPoint ) );
 	}
 
 
@@ -83,27 +76,25 @@ void TrackerTrough::Evaluate(const Vector3D& sunVectorW, const Transform& parent
 		Vector3D r = Normalize( Vector3D( 0.0, focus.y, focus.z ) );
 		Vector3D it = Normalize( Vector3D( 0.0, i.y, i.z ) );
 		Vector3D n = Normalize( it + r );
-		if( fabs( n.z ) > 0.0  )	angle = atan2( n.z, n.y );
+        if (fabs(n.z) > 0.)	angle = atan2( n.z, n.y );
 	}
 	else if( localAxis == Vector3D( 0.0, 1.0, 0.0 ) )
 	{
 		Vector3D r = Normalize( Vector3D( focus.x, 0.0, focus.z ) );
 		Vector3D it = Normalize( Vector3D( i.x, 0.0, i.z ) );
 		Vector3D n = Normalize( it + r );
-        if (fabs( n.z ) > 0.)	angle = - atan2( n.z, n.x );
+        if (fabs(n.z) > 0.)	angle = -atan2(n.z, n.x);
 	}
 	else
 	{
 		Vector3D r = Normalize( Vector3D( focus.x, focus.y, 0.0 ) );
 		Vector3D it = Normalize( Vector3D( i.x, i.y, 0.0 ) );
 		Vector3D n = Normalize( it + r );
-		if( fabs( n.x ) > 0.0  )	angle = -atan2( n.x, n.y );
+        if (fabs(n.x) > 0.)	angle = -atan2(n.x, n.y);
 	}
 
 	SbVec3f axis = SbVec3f( localAxis.x, localAxis.y, localAxis.z );
 
 	SoTransform* newTransform = new SoTransform();
-	newTransform->rotation.setValue( axis, angle );
-
-	SetEngineOutput(newTransform);
+    newTransform->rotation.setValue(axis, angle);
 }

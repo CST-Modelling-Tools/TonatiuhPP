@@ -77,8 +77,6 @@ SkyBackground::SkyBackground(void)
     lightmodel->model.setValue(SoLightModel::BASE_COLOR);
     m_root->addChild(lightmodel);
 
-
-
     m_sky = makeSky();
     m_root->addChild(m_sky);
     m_root->addChild(makeLabels());
@@ -219,4 +217,3 @@ void SkyBackground::GLRender(SoGLRenderAction* action)
   glClear(GL_DEPTH_BUFFER_BIT);
   state->pop();
 }
-

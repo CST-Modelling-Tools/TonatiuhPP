@@ -1,13 +1,13 @@
 #pragma once
 
-#include "kernel/TonatiuhKernel.h"
 #include <Inventor/nodekits/SoSceneKit.h>
 #include <Inventor/actions/SoSearchAction.h>
+
 #include "TSeparatorKit.h"
+#include "kernel/TonatiuhKernel.h"
 #include "kernel/TonatiuhTypes.h"
 #include "kernel/TonatiuhFunctions.h"
 
-class QString;
 struct Vector3D;
 class Transform;
 
@@ -25,7 +25,7 @@ public:
 
     SoPath* GetSoPath(SoSearchAction* action);
 
-    void UpdateSunPosition(double az, double el); // in rads
+    void updateTrackers(double az, double el); // in rads
 
     SoSFDouble azimuth;
     SoSFDouble elevation;
@@ -34,5 +34,5 @@ public:
 
 protected:
     ~TSceneKit() {}
-    void UpdateTrackersTransform(SoBaseKit* branch, Vector3D sunVector, Transform parentOTW);
+    void UpdateTrackersTransform(SoBaseKit* branch, const Vector3D& vSunW, Transform transformWtO);
 };

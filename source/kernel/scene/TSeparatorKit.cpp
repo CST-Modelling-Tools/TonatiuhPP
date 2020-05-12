@@ -44,25 +44,25 @@ SoNode* TSeparatorKit::getPart( const SbName &partname, SbBool makeifneeded)
  */
 SbBool TSeparatorKit::setPart(const SbName& partname, SoNode* from)
 {
-    if (partname == "tracker")
-    {
-        SoTransform* parentTransform = static_cast< SoTransform* > ( getPart("transform", true ) );
-        if (!parentTransform) return false;
+//    if (partname == "tracker")
+//    {
+//        SoTransform* parentTransform = static_cast< SoTransform* > ( getPart("transform", true ) );
+//        if (!parentTransform) return false;
 
-        if (!from)
-        {
-            parentTransform->translation.disconnect();
-            parentTransform->rotation.disconnect();
-            parentTransform->scaleFactor.disconnect();
-            parentTransform->scaleOrientation.disconnect();
-            parentTransform->center.disconnect();
-        }
-        else
-        {
-            TrackerAbstract* trackerNode = static_cast<TrackerAbstract*>(from);
-            trackerNode->ConnectParentTranform(parentTransform);
-        }
-    }
+//        if (!from)
+//        {
+//            parentTransform->translation.disconnect();
+//            parentTransform->rotation.disconnect();
+//            parentTransform->scaleFactor.disconnect();
+//            parentTransform->scaleOrientation.disconnect();
+//            parentTransform->center.disconnect();
+//        }
+//        else
+//        {
+//            TrackerAbstract* trackerNode = static_cast<TrackerAbstract*>(from);
+////            trackerNode->ConnectParentTranform(parentTransform);
+//        }
+//    }
 
     return SoSeparatorKit::setPart(partname, from);
 }
