@@ -107,6 +107,13 @@
 #include "widgets/SunDialog.h"
 //#include "ProgressUpdater.h"
 
+/*!
+ * Returns the \a fullFileName file�s name, without path.
+ */
+QString StrippedName(const QString& fullFileName)
+{
+    return QFileInfo(fullFileName).fileName();
+}
 
 void startManipulator(void* data, SoDragger* dragger)
 {
@@ -151,19 +158,14 @@ MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags fl
     m_widthDivisions(200),
     m_drawPhotons(false),
     m_drawRays(true),
-    m_gridXElements(0),
-    m_gridZElements(0),
-    m_gridXSpacing(0),
-    m_gridZSpacing(0),
     m_graphicView(0),
     m_focusView(0)
 {
     setupUi(this);
 
     SetupActions();
-    SetupMenus();
     SetupDocument();
-    SetupGraphcisRoot();
+    SetupGraphicsRoot();
     SetupModels();
     SetupViews();
     SetupPluginsManager();
@@ -174,11 +176,10 @@ MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags fl
     if (!tonatiuhFile.isEmpty() )
         StartOver(tonatiuhFile);
 
-    SelectNode("//SunNode/RootNode");
+//    SelectNode("//SunNode/RootNode");
 
     fileToolBar->hide();
     editToolBar->hide();
-
 
     setStyleSheet(R"(
 QAbstractItemView {
@@ -220,13 +221,263 @@ border-width: 0 0 1 0;
  */
 MainWindow::~MainWindow()
 {
-    //delete m_pPluginManager;
+    //delete m_pPluginManager; //?
     delete m_sceneModel;
     delete m_document;
     delete m_commandStack;
     delete m_commandView;
     delete m_rand;
     delete m_pPhotonMap;
+}
+
+/*!
+ * Creates actions form recent files.
+ */
+void MainWindow::SetupActions()
+{
+    for (int i = 0; i < m_maxRecentFiles; ++i) {
+        QAction* a = new QAction(this);
+        a->setVisible(false);
+        connect(
+            a, SIGNAL(triggered()),
+            this, SLOT(OpenRecentFile())
+        );
+        m_recentFileActions << a;
+    }
+
+    for (QAction* a : m_recentFileActions)
+        menuRecent->addAction(a);
+}
+
+/*!
+ * Initializes tonatiuh document object.
+ */
+void MainWindow::SetupDocument()
+{
+    m_document = new Document();
+    if (!m_document) return;
+    connect(
+        m_document, SIGNAL(Warning(QString)),
+        this, SLOT(ShowWarning(QString))
+    );
+}
+
+/*!
+ * Defines 3D view background.
+ */
+void MainWindow::SetupGraphicsRoot()
+{
+    m_graphicsRoot = new GraphicRoot;
+
+    if (!m_graphicsRoot) {
+        gf::SevereError("MainWindow::SetupDocument: Fail to create new document");
+        return;
+    }
+
+    m_graphicsRoot->AddModel(m_document->getSceneKit());
+
+    connect(
+        m_graphicsRoot, SIGNAL(ChangeSelection(SoSelection*)),
+        this, SLOT(SelectionFinish(SoSelection*))
+    );
+
+    m_graphicsRoot->AddGrid(CreateGrid() );
+}
+
+/*!
+ * Initializes Tonatiuh models.
+ */
+void MainWindow::SetupModels()
+{
+    m_sceneModel = new SceneModel();
+    m_sceneModel->SetCoinRoot(*m_graphicsRoot->GetNode() );
+    m_sceneModel->SetCoinScene(*m_document->getSceneKit() );
+
+    m_selectionModel = new QItemSelectionModel(m_sceneModel);
+
+    connect(
+        m_sceneModel, SIGNAL(LightNodeStateChanged(int)),
+        this, SLOT(SetSunPositionCalculatorEnabled(int))
+    );
+}
+
+/*!
+ * Starts MainWindow views.
+ */
+void MainWindow::SetupViews()
+{
+    SetupCommandView();
+    SetupGraphicView();
+    SetupTreeView();
+    SetupParametersView();
+}
+
+/*!
+ * Creates a view for visualize user done last actions.
+ */
+void MainWindow::SetupCommandView()
+{
+    m_commandStack = new QUndoStack(this);
+    m_commandView = new QUndoView(m_commandStack);
+    m_commandView->setWindowTitle(tr("Command List"));
+    m_commandView->setAttribute(Qt::WA_QuitOnClose, false);
+    connect(m_commandStack, SIGNAL(canRedoChanged(bool)),
+            actionRedo, SLOT(setEnabled(bool)) );
+    connect(m_commandStack, SIGNAL(canUndoChanged(bool)),
+            actionUndo, SLOT(setEnabled(bool)) );
+}
+
+/*!
+ * Initializates graphic view.
+ */
+void MainWindow::SetupGraphicView()
+{
+    QSplitter* splitter = findChild<QSplitter*>("horizontalSplitter");
+
+    QSplitter* splitterV = new QSplitter();
+    splitterV->setObjectName("graphicSplitterV");
+    splitterV->setOrientation(Qt::Vertical);
+    splitter->insertWidget(0, splitterV);
+
+    QList<int> sizes;
+    sizes << 500 << 200;
+    splitter->setSizes(sizes);
+
+    QSplitter* splitterH1 = new QSplitter(splitterV);
+    splitterH1->setObjectName("graphicSplitterH1");
+    splitterH1->setOrientation(Qt::Horizontal);
+
+    QSplitter* splitterH2 = new QSplitter(splitterV);
+    splitterH2->setObjectName("graphicSplitterH2");
+    splitterH2->setOrientation(Qt::Horizontal);
+
+    m_graphicView << new GraphicView(splitterH1);
+    m_graphicView << new GraphicView(splitterH1);
+    m_graphicView << new GraphicView(splitterH2);
+    m_graphicView << new GraphicView(splitterH2);
+
+    for (int n = 0; n < 4; n++){
+        m_graphicView[n]->SetSceneGraph(m_graphicsRoot);
+        m_graphicView[n]->setModel(m_sceneModel);
+        m_graphicView[n]->setSelectionModel(m_selectionModel);
+    }
+
+    m_focusView = 1;
+    on_actionLookNorth_triggered();
+
+    m_focusView = 2;
+    on_actionLookEast_triggered();
+
+    m_focusView = 3;
+    on_actionLookWest_triggered();
+
+    // 0 splitterH1 1              tree
+    //   splitterV      splitter
+    // 2 spliter H2 3              parameters
+    on_actionQuadView_toggled();
+}
+
+/*!
+ * Initializates Tonatiuh objectes tree view.
+ */
+void MainWindow::SetupTreeView()
+{
+    sceneModelView->setModel(m_sceneModel);
+    sceneModelView->setSelectionModel(m_selectionModel);
+    sceneModelView->setRootIndex(m_sceneModel->IndexFromNodeUrl("//SunNode"));
+
+//    sceneModelView->header()->setStretchLastSection(false);
+//    sceneModelView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+//    sceneModelView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+//    sceneModelView->header()->resizeSection(1, 80);
+
+    connect(sceneModelView, SIGNAL(dragAndDrop(const QModelIndex&,const QModelIndex&)),
+            this, SLOT(ItemDragAndDrop(const QModelIndex&,const QModelIndex&)) );
+    connect(sceneModelView, SIGNAL(dragAndDropCopy(const QModelIndex&,const QModelIndex&)),
+            this, SLOT(ItemDragAndDropCopy(const QModelIndex&,const QModelIndex&)) );
+    connect(sceneModelView, SIGNAL(showMenu(const QModelIndex&)),
+            this, SLOT(ShowMenu(const QModelIndex&)) );
+    connect(sceneModelView, SIGNAL(nodeNameModificated(const QModelIndex&,const QString&)),
+            this, SLOT(ChangeNodeName(const QModelIndex&,const QString&)) );
+}
+
+/*!
+ * Initializes the tonatiuh objects parameters view.
+ */
+void MainWindow::SetupParametersView()
+{
+    connect(
+        parametersTabs, SIGNAL(valueModified(SoNode*, QString, QString)),
+        this, SLOT(SetParameterValue(SoNode*, QString, QString))
+    );
+
+    connect(
+        m_selectionModel, SIGNAL(currentChanged (const QModelIndex&,const QModelIndex&)),
+        this, SLOT(ChangeSelection(const QModelIndex&))
+    );
+}
+
+/*!
+ * Initializes plugin manager and load available plugins.
+ */
+void MainWindow::SetupPluginsManager()
+{
+    //m_pPluginManager = new PluginManager;
+    //m_pPluginManager->LoadAvailablePlugins( PluginDirectory() );
+
+    if (!m_pluginManager) return; // ! runs twice with 0 first?
+
+    SetupActionsInsertComponent();
+//    addToolBarBreak();
+    SetupActionsInsertShape();
+    SetupActionsInsertMaterial();
+    SetupActionsInsertTracker();
+}
+
+/*!
+ * Defines slots function for main window signals.
+ */
+void MainWindow::SetupTriggers()
+{
+    // file
+    connect(actionNew, SIGNAL(triggered()), this, SLOT(New()) );
+    connect(actionOpen, SIGNAL(triggered()), this, SLOT(Open()) );
+    connect(actionSave, SIGNAL(triggered()), this, SLOT(Save()) );
+    connect(actionSaveAs, SIGNAL(triggered()), this, SLOT(SaveAs()) );
+    connect(actionSaveComponent, SIGNAL(triggered()), this, SLOT(SaveComponent()) );
+    connect(actionClose, SIGNAL(triggered()), this, SLOT(close()) );
+
+    // edit
+    connect(actionUndo, SIGNAL(triggered()), this, SLOT(Undo()) );
+    connect(actionRedo, SIGNAL(triggered()), this, SLOT(Redo()) );
+    connect(actionUndoView, SIGNAL(triggered()), this, SLOT(ShowCommandView()) );
+    connect(actionCut, SIGNAL(triggered()), this, SLOT(Cut()) );
+    connect(actionCopy, SIGNAL(triggered()), this, SLOT(Copy()) );
+    connect(actionPasteCopy, SIGNAL(triggered()), this, SLOT(PasteCopy()) );
+    connect(actionPasteLink, SIGNAL(triggered()), this, SLOT(PasteLink()) );
+    connect(actionDelete, SIGNAL(triggered()), this, SLOT(Delete()) );
+
+    // insert
+    connect(actionNode, SIGNAL(triggered()), this, SLOT(CreateGroupNode()) );
+    connect(actionSurfaceNode, SIGNAL(triggered()), this, SLOT(CreateSurfaceNode()) );
+    connect(actionUserComponent, SIGNAL(triggered()), this, SLOT(InsertUserDefinedComponent()) );
+
+    // scene
+    connect(actionDefineSunLight, SIGNAL(triggered()), this, SLOT(DefineSunLight()) );
+    connect(actionCalculateSunPosition, SIGNAL(triggered()), this, SLOT(CalculateSunPosition()) );
+    connect(actionDisconnect_All_Trackers, SIGNAL(toggled(bool)), this, SLOT(DisconnectAllTrackers(bool)) );
+    connect(actionDefineTransmissivity, SIGNAL(triggered()), this, SLOT(DefineTransmissivity()) );
+
+    // run
+    connect(actionRun, SIGNAL(triggered()), this, SLOT(RunCompleteRayTracer()) );
+    connect(actionRunFluxAnalysis, SIGNAL(triggered()), this, SLOT(RunFluxAnalysisRayTracer()) );
+    connect(actionRayTraceOptions, SIGNAL(triggered()), this, SLOT(ShowRayTracerOptionsDialog())  );
+
+    // view
+    connect(actionViewRays, SIGNAL(toggled(bool)), this, SLOT(DisplayRays(bool)) );
+    connect(actionViewGrid, SIGNAL(triggered()), this, SLOT(ShowGrid())  );
+    connect(actionGridSettings, SIGNAL(triggered()), this, SLOT(ChangeGridSettings())  );
+    connect(actionViewBackground, SIGNAL(triggered()), this, SLOT(ShowBackground())  );
 }
 
 /*!
@@ -248,7 +499,7 @@ void MainWindow::FinishManipulation()
     m_commandStack->push(command);
 
     UpdateLightSize();
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 
 }
 
@@ -323,7 +574,7 @@ void MainWindow::StartManipulation(SoDragger* dragger)
  */
 void MainWindow::DefineSunLight()
 {
-    TSceneKit* sceneKit = m_document->GetSceneKit();
+    TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
 
     InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
@@ -346,7 +597,7 @@ void MainWindow::DefineSunLight()
     UpdateLightSize();
 
     parametersTabs->UpdateView();
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 
 //    actionCalculateSunPosition->setEnabled(true);
     actionViewRays->setEnabled(false);
@@ -360,7 +611,7 @@ void MainWindow::DefineTransmissivity()
 {
     AirDialog dialog(m_pluginManager->getAirMap(), this);
 
-    TSceneKit* sceneKit = m_document->GetSceneKit();
+    TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
     AirAbstract* airOld = static_cast<AirAbstract*>(sceneKit->getPart("transmissivity", false));
     if (airOld) dialog.setModel(airOld);
@@ -370,7 +621,7 @@ void MainWindow::DefineTransmissivity()
     AirAbstract* airNew = dialog.getModel();
     CmdAirModified* cmd = new CmdAirModified(airNew, sceneKit);
     if (m_commandStack) m_commandStack->push(cmd);
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 void MainWindow::DisconnectAllTrackers(bool disconnect)
@@ -445,7 +696,7 @@ void MainWindow::ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex
         m_commandStack->push(dragAndDrop);
 
         UpdateLightSize();
-        m_document->SetDocumentModified(true);
+        m_document->setModified(true);
     }
 
 }
@@ -466,7 +717,7 @@ void MainWindow::ItemDragAndDropCopy(const QModelIndex& newParent, const QModelI
     m_commandStack->push(dragAndDropCopy);
 
     UpdateLightSize();
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 /*!
@@ -552,7 +803,7 @@ void MainWindow::RunCompleteRayTracer()
  */
 void MainWindow::RunFluxAnalysisRayTracer()
 {
-    TSceneKit* coinScene = m_document->GetSceneKit();
+    TSceneKit* coinScene = m_document->getSceneKit();
     if (!coinScene) return;
 
     TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
@@ -721,7 +972,7 @@ void MainWindow::SelectionFinish(SoSelection* selection)
     SoPath* selectionPath = selection->getPath(0);
     if (!selectionPath) return;
 
-    if (!selectionPath->containsNode (m_document->GetSceneKit() ) ) return;
+    if (!selectionPath->containsNode (m_document->getSceneKit() ) ) return;
 
     SoNodeKitPath* nodeKitPath = static_cast< SoNodeKitPath* >(selectionPath);
     if (nodeKitPath->getTail()->getTypeId().isDerivedFrom(TLightKit::getClassTypeId() ) )
@@ -752,7 +1003,7 @@ void MainWindow::SetParameterValue(SoNode* node, QString name, QString value)
     if (m_commandStack) m_commandStack->push(command);
 
     UpdateLightSize();
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 /*!
@@ -925,48 +1176,48 @@ void MainWindow::on_actionAbout_triggered()
  */
 void MainWindow::ChangeGridSettings()
 {
-    GridDialog gridDialog(m_gridXElements, m_gridZElements, m_gridXSpacing, m_gridZSpacing);
-    if (!gridDialog.exec()) return;
+//    GridDialog dialog();
+//    if (!dialog.exec()) return;
 
-    m_graphicsRoot->RemoveGrid();
+//    m_graphicsRoot->RemoveGrid();
 
-    m_gridXElements = gridDialog.GetXDimension();
-    m_gridZElements = gridDialog.GetZDimension();
+//    m_gridXElements = dialog.GetXDimension();
+//    m_gridZElements = dialog.GetZDimension();
 
-    if (gridDialog.IsSizeDefined() )
-    {
-        m_gridXSpacing = gridDialog.GetXSpacing();
-        m_gridZSpacing = gridDialog.GetZSpacing();
-    }
-    else
-    {
-        InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
-        if (!sceneInstance) return;
-        InstanceNode* rootInstance = sceneInstance->children[sceneInstance->children.size() - 1 ];
-        if (!rootInstance) return;
+//    if (dialog.IsSizeDefined() )
+//    {
+//        m_gridXSpacing = dialog.GetXSpacing();
+//        m_gridZSpacing = dialog.GetZSpacing();
+//    }
+//    else
+//    {
+//        InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
+//        if (!sceneInstance) return;
+//        InstanceNode* rootInstance = sceneInstance->children[sceneInstance->children.size() - 1 ];
+//        if (!rootInstance) return;
 
-        SoGetBoundingBoxAction* bbAction = new SoGetBoundingBoxAction(SbViewportRegion() );
-        rootInstance->GetNode()->getBoundingBox(bbAction);
+//        SoGetBoundingBoxAction* bbAction = new SoGetBoundingBoxAction(SbViewportRegion() );
+//        rootInstance->GetNode()->getBoundingBox(bbAction);
 
-        SbBox3f box = bbAction->getXfBoundingBox().project();
-        delete bbAction;
+//        SbBox3f box = bbAction->getXfBoundingBox().project();
+//        delete bbAction;
 
-        m_gridXSpacing = 10;
-        m_gridZSpacing = 10;
+//        m_gridXSpacing = 10;
+//        m_gridZSpacing = 10;
 
-        if (!box.isEmpty() )
-        {
-            SbVec3f min, max;
-            box.getBounds(min, max);
+//        if (!box.isEmpty() )
+//        {
+//            SbVec3f min, max;
+//            box.getBounds(min, max);
 
-            m_gridXSpacing = (2 *  std::max(fabs(max[0]), fabs(min[0]) ) + 5) / m_gridXElements;
-            m_gridZSpacing = (2 *  std::max(fabs(max[2]), fabs(min[2]) ) + 5) / m_gridZElements;
-        }
-    }
+//            m_gridXSpacing = (2 *  std::max(fabs(max[0]), fabs(min[0]) ) + 5) / m_gridXElements;
+//            m_gridZSpacing = (2 *  std::max(fabs(max[2]), fabs(min[2]) ) + 5) / m_gridZElements;
+//        }
+//    }
 
-//    m_graphicsRoot->AddGrid(CreateGrid(m_gridXElements, m_gridZElements, m_gridXSpacing, m_gridZSpacing) );
-    m_graphicsRoot->AddGrid(CreateGrid() );
-    m_graphicsRoot->ShowGrid(true);
+////    m_graphicsRoot->AddGrid(CreateGrid(m_gridXElements, m_gridZElements, m_gridXSpacing, m_gridZSpacing) );
+//    m_graphicsRoot->AddGrid(CreateGrid() );
+//    m_graphicsRoot->ShowGrid(true);
 }
 
 /*!
@@ -985,7 +1236,7 @@ void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& newName
     command->setText(commandText);
     m_commandStack->push(command);
 
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 
 }
 
@@ -1004,8 +1255,7 @@ void MainWindow::AddExportSurfaceURL(QString nodeURL)
  */
 void MainWindow::ChangeSunPosition(double azimuth, double elevation)
 {
-
-    SoSceneKit* coinScene = m_document->GetSceneKit();
+    SoSceneKit* coinScene = m_document->getSceneKit();
     TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
     if (!lightKit)
     {
@@ -1017,7 +1267,7 @@ void MainWindow::ChangeSunPosition(double azimuth, double elevation)
 
     //UpdateLightDimensions();
     UpdateLightSize();
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 
 
     actionViewRays->setEnabled(false);
@@ -1090,7 +1340,7 @@ void MainWindow::Copy()
     CmdCopy* command = new CmdCopy(m_selectionModel->currentIndex(), m_coinNode_Buffer, m_sceneModel);
     m_commandStack->push(command);
 
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 /*!
@@ -1116,7 +1366,7 @@ void MainWindow::Copy(QString nodeURL)
     CmdCopy* command = new CmdCopy(nodeIndex, m_coinNode_Buffer, m_sceneModel);
     m_commandStack->push(command);
 
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
     return;
 
 }
@@ -1162,7 +1412,7 @@ void MainWindow::CreateGroupNode()
             name = QString("Node_%1").arg(++count);
 
         UpdateLightSize();
-        m_document->SetDocumentModified(true);
+        m_document->setModified(true);
     }
 }
 
@@ -1196,7 +1446,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
         emit Abort(tr("CreateComponentNode: Selected component type is not valid.") );
         return;
     }
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 
     ComponentFactory* pComponentFactory = factoryList[selectedCompoent];
     if (!pComponentFactory) return;
@@ -1210,7 +1460,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
     QString typeName = pComponentFactory->name();
     componentRootNode->setName(nodeName.toStdString().c_str() );
 
-    TSceneKit* scene = m_document->GetSceneKit();
+    TSceneKit* scene = m_document->getSceneKit();
     TLightKit* lightKit = static_cast< TLightKit* >(scene->getPart("lightList[0]", false) );
     if (lightKit)
     {
@@ -1235,7 +1485,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
     m_commandStack->push(cmdInsertSeparatorKit);
 
     UpdateLightSize();
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 /*!
@@ -1336,7 +1586,7 @@ void MainWindow::CreateSurfaceNode()
             name = QString("Shape_%1").arg(++count);
 
         UpdateLightSize();
-        m_document->SetDocumentModified(true);
+        m_document->setModified(true);
     }
 }
 
@@ -1384,7 +1634,7 @@ void MainWindow::Cut()
     m_commandStack->push(cmd);
 
     UpdateLightSize();
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 /*!
@@ -1421,7 +1671,7 @@ void MainWindow::Cut(QString nodeURL)
     m_commandStack->push(command);
 
     UpdateLightSize();
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 /*!
@@ -1478,7 +1728,7 @@ bool MainWindow::Delete(QModelIndex index)
 
     if (coinNode->getTypeId().isDerivedFrom(TrackerAbstract::getClassTypeId() ) )
     {
-        CmdDeleteTracker* commandDelete = new CmdDeleteTracker(index, m_document->GetSceneKit(), *m_sceneModel);
+        CmdDeleteTracker* commandDelete = new CmdDeleteTracker(index, m_document->getSceneKit(), *m_sceneModel);
         m_commandStack->push(commandDelete);
     }
     else if (coinNode->getTypeId().isDerivedFrom(TLightKit::getClassTypeId() ) ) return false;
@@ -1491,7 +1741,7 @@ bool MainWindow::Delete(QModelIndex index)
 
 
     UpdateLightSize();
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 
     return true;
 }
@@ -1501,11 +1751,10 @@ bool MainWindow::Delete(QModelIndex index)
  */
 double MainWindow::GetwPhoton(){
     //Compute photon power
-    TSceneKit* coinScene = m_document->GetSceneKit();
-    if (!coinScene) return 0;
-    if (!coinScene->getPart("lightList[0]", false) ) return 0;
-    TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
-
+    TSceneKit* sceneKit = m_document->getSceneKit();
+    if (!sceneKit) return 0;
+    if (!sceneKit->getPart("lightList[0]", false)) return 0;
+    TLightKit* lightKit = static_cast< TLightKit* >(sceneKit->getPart("lightList[0]", false) );
 
     if (!lightKit->getPart("tsunshape", false) ) return 0;
     SunAbstract* sunShape = static_cast< SunAbstract* >(lightKit->getPart("tsunshape", false) );
@@ -1515,7 +1764,7 @@ double MainWindow::GetwPhoton(){
     TLightShape* raycastingShape = static_cast< TLightShape* >(lightKit->getPart("icon", false) );
     double inputAperture = raycastingShape->GetValidArea();
 
-    return double(inputAperture * irradiance) / m_raysTraced;
+    return double(inputAperture*irradiance)/m_raysTraced;
 }
 
 /*!
@@ -1562,7 +1811,7 @@ void MainWindow::InsertFileComponent(QString componentFileName)
     }
 
     TSeparatorKit* componentRootNode = static_cast< TSeparatorKit* >(componentSeparator->getChild(0) );
-    TSceneKit* scene = m_document->GetSceneKit();
+    TSceneKit* scene = m_document->getSceneKit();
     TLightKit* lightKit = static_cast< TLightKit* >(scene->getPart("lightList[0]", false) );
     if (lightKit)
     {
@@ -1587,7 +1836,7 @@ void MainWindow::InsertFileComponent(QString componentFileName)
     m_commandStack->push(cmdInsertSeparatorKit);
 
     UpdateLightSize();
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 /*!
@@ -1815,7 +2064,7 @@ void MainWindow::Run()
  */
 void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned int nOfRays, int heightDivisions, int widthDivisions, QString directory, QString fileName, bool saveCoords)
 {
-    TSceneKit* coinScene = m_document->GetSceneKit();
+    TSceneKit* coinScene = m_document->getSceneKit();
     if (!coinScene) return;
 
     TLightKit* lightKit = static_cast<TLightKit*>(coinScene->getPart("lightList[0]", false) );
@@ -2060,7 +2309,7 @@ void MainWindow::SetRaysPerIteration(unsigned int rays)
  */
 void MainWindow::SetSunshape(QString sunshapeType)
 {
-    SoSceneKit* coinScene = m_document->GetSceneKit();
+    SoSceneKit* coinScene = m_document->getSceneKit();
     TLightKit* lightKit = 0;
     if (coinScene->getPart("lightList[0]", false) )
     {
@@ -2097,7 +2346,7 @@ void MainWindow::SetSunshape(QString sunshapeType)
     UpdateLightSize();
 
     parametersTabs->UpdateView();
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 
     actionCalculateSunPosition->setEnabled(true);
 }
@@ -2107,7 +2356,7 @@ void MainWindow::SetSunshape(QString sunshapeType)
  */
 void MainWindow::SetSunshapeParameter(QString parameter, QString value)
 {
-    SoSceneKit* coinScene = m_document->GetSceneKit();
+    SoSceneKit* coinScene = m_document->getSceneKit();
     TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
     if (!lightKit)
     {
@@ -2124,7 +2373,7 @@ void MainWindow::SetSunshapeParameter(QString parameter, QString value)
 
     CmdModifyParameter* command = new CmdModifyParameter(sunshape, parameter, value, m_sceneModel);
     if (m_commandStack) m_commandStack->push(command);
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 /*!
@@ -2132,7 +2381,7 @@ void MainWindow::SetSunshapeParameter(QString parameter, QString value)
  */
 void MainWindow::SetTransmissivity(QString transmissivityType)
 {
-    TSceneKit* coinScene = m_document->GetSceneKit();
+    TSceneKit* coinScene = m_document->getSceneKit();
     if (!coinScene)
     {
         emit Abort(tr("SetTransmissivity: Error defining transmissivity.") );
@@ -2169,7 +2418,7 @@ void MainWindow::SetTransmissivity(QString transmissivityType)
 
     CmdAirModified* command = new CmdAirModified(transmissivity, coinScene);
     if (m_commandStack) m_commandStack->push(command);
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 /*!
@@ -2177,7 +2426,7 @@ void MainWindow::SetTransmissivity(QString transmissivityType)
  */
 void MainWindow::SetTransmissivityParameter(QString parameter, QString value)
 {
-    SoSceneKit* coinScene = m_document->GetSceneKit();
+    SoSceneKit* coinScene = m_document->getSceneKit();
     AirAbstract* transmissivity = static_cast< AirAbstract* >(coinScene->getPart("transmissivity", false) );
     if (!transmissivity)
     {
@@ -2187,7 +2436,7 @@ void MainWindow::SetTransmissivityParameter(QString parameter, QString value)
 
     CmdModifyParameter* command = new CmdModifyParameter(transmissivity, parameter, value, m_sceneModel);
     if (m_commandStack) m_commandStack->push(command);
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 /*!
@@ -2260,7 +2509,7 @@ void MainWindow::SoTransform_to_SoCenterballManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 void MainWindow::SoTransform_to_SoJackManip()
@@ -2286,7 +2535,7 @@ void MainWindow::SoTransform_to_SoJackManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 void MainWindow::SoTransform_to_SoHandleBoxManip()
@@ -2312,7 +2561,7 @@ void MainWindow::SoTransform_to_SoHandleBoxManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 void MainWindow::SoTransform_to_SoTabBoxManip()
@@ -2338,7 +2587,7 @@ void MainWindow::SoTransform_to_SoTabBoxManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 void MainWindow::SoTransform_to_SoTrackballManip()
@@ -2364,7 +2613,7 @@ void MainWindow::SoTransform_to_SoTrackballManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 void MainWindow::SoTransform_to_SoTransformBoxManip()
@@ -2391,7 +2640,7 @@ void MainWindow::SoTransform_to_SoTransformBoxManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 void MainWindow::SoTransform_to_SoTransformerManip()
@@ -2418,7 +2667,7 @@ void MainWindow::SoTransform_to_SoTransformerManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 
 }
 
@@ -2442,7 +2691,7 @@ void MainWindow::SoManip_to_SoTransform()
     coinNode->setPart("transform", transform);
     ChangeSelection(currentIndex);
 
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 void MainWindow::ChangeSelection(const QModelIndex& current)
@@ -2510,7 +2759,7 @@ void MainWindow::CreateComponent(ComponentFactory* pComponentFactory)
     m_commandStack->push(cmdInsertSeparatorKit);
 
     UpdateLightSize();
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 
@@ -2551,7 +2800,7 @@ void MainWindow::CreateMaterial(MaterialFactory* pMaterialFactory)
     m_commandStack->push(createMaterial);
 
     UpdateLightSize();
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 /*!
@@ -2590,7 +2839,7 @@ void MainWindow::CreateShape(ShapeFactory* factory)
     m_commandStack->push(cmd);
 
     UpdateLightSize();
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
 }
 
 /*!
@@ -2631,7 +2880,7 @@ void MainWindow::CreateShape(ShapeFactory* pShapeFactory, int /*numberofParamete
             m_commandStack->push(createShape);
 
             UpdateLightSize();
-            m_document->SetDocumentModified(true);
+            m_document->setModified(true);
         }
     }
 }
@@ -2643,7 +2892,7 @@ void MainWindow::CreateTracker(TrackerFactory* pTrackerFactory)
                 m_sceneModel->index (0,0,sceneModelView->rootIndex()) :
                 sceneModelView->currentIndex();
 
-    TSceneKit* scene = m_document->GetSceneKit();
+    TSceneKit* scene = m_document->getSceneKit();
 
     /*Las 2 lineas siguientes son para obtener el valor del nodo padre*/
     InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
@@ -2668,7 +2917,7 @@ void MainWindow::CreateTracker(TrackerFactory* pTrackerFactory)
         m_commandStack->push(command);
 
         UpdateLightSize();
-        m_document->SetDocumentModified(true);
+        m_document->setModified(true);
     }
     /*En caso de que el valor del nodo padre no sea del tipo TSeparatorKit,
          * no realizamos ninguna modicacion en SceneModel*/
@@ -2727,7 +2976,7 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
  */
 void MainWindow::ChangeModelScene()
 {
-    TSceneKit* coinScene = m_document->GetSceneKit();
+    TSceneKit* coinScene = m_document->getSceneKit();
 
     m_sceneModel->SetCoinScene(*coinScene);
     m_graphicsRoot->AddModel(coinScene);
@@ -2748,7 +2997,7 @@ void MainWindow::CalculateSunPosition()
 {
 #ifndef NO_MARBLE
 
-    SoSceneKit* coinScene = m_document->GetSceneKit();
+    SoSceneKit* coinScene = m_document->getSceneKit();
     if (!coinScene->getPart("lightList[0]", false) ) return;
 
     SunCalculatorDialog sunposDialog;
@@ -2835,7 +3084,7 @@ QSplitter* MainWindow::GetHorizontalSplitterPointer()
  */
 bool MainWindow::OkToContinue()
 {
-    if (m_document->IsModified() )
+    if (m_document->isModified() )
     {
         int answer = QMessageBox::warning(this, tr("Tonatiuh"),
                                           tr("The document has been modified.\n"
@@ -2879,7 +3128,7 @@ bool MainWindow::Paste(QModelIndex nodeIndex, tgc::PasteType type)
     m_commandStack->push(commandPaste);
 
     UpdateLightSize();
-    m_document->SetDocumentModified(true);
+    m_document->setModified(true);
     return true;
 
 }
@@ -2904,10 +3153,9 @@ QDir MainWindow::PluginDirectory()
 void MainWindow::ReadSettings()
 {
     QSettings settings("CyI", "Tonatiuh");
-    QRect rect = settings.value("geometry", QRect(200, 200, 400, 400) ).toRect();
-    move(rect.topLeft() );
-    resize(rect.size() );
-
+    QRect rect = settings.value("geometry", QRect(200, 200, 400, 400)).toRect();
+    move(rect.topLeft());
+    resize(rect.size());
 
     setWindowState(Qt::WindowNoState);
     if (settings.value("windowNoState", false).toBool() ) setWindowState(windowState() ^ Qt::WindowNoState);
@@ -2916,11 +3164,9 @@ void MainWindow::ReadSettings()
     if (settings.value("windowFullScreen", false).toBool() ) setWindowState(windowState() ^ Qt::WindowFullScreen);
     if (settings.value("windowActive", false).toBool() ) setWindowState(windowState() ^ Qt::WindowActive);
 
-
     m_recentFiles = settings.value("recentFiles").toStringList();
 
     UpdateRecentFileActions();
-
 }
 
 /*!
@@ -2934,7 +3180,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
                                     AirAbstract*& transmissivity)
 {
     //Check if there is a scene
-    TSceneKit* coinScene = m_document->GetSceneKit();
+    TSceneKit* coinScene = m_document->getSceneKit();
     if (!coinScene) return false;
 
     //Check if there is a transmissivity defined
@@ -3021,7 +3267,7 @@ bool MainWindow::SaveFile(const QString& fileName)
 void MainWindow::SetCurrentFile(const QString& fileName)
 {
     m_currentFile = fileName;
-    m_document->SetDocumentModified(false);
+    m_document->setModified(false);
 
     QString shownName = "Untitled";
     if (!m_currentFile.isEmpty() )
@@ -3051,21 +3297,7 @@ bool MainWindow::SetPhotonMapExportSettings()
     return true;
 }
 
-/*!
- * Creates actions form recent files.
- */
-void MainWindow::SetupActions()
-{
-    for (int i = 0; i < m_maxRecentFiles; ++i) {
-        QAction* a = new QAction(this);
-        a->setVisible(false);
-        connect(
-            a, SIGNAL(triggered()),
-            this, SLOT(OpenRecentFile())
-        );
-        m_recentFileActions << a;
-    }
-}
+
 
 void MainWindow::SetupActionsInsertComponent()
 {
@@ -3192,21 +3424,6 @@ void MainWindow::ShowBackground()
     else m_graphicsRoot->ShowBackground(false);
 }
 
-/*!
- * Creates a view for visualize user done last actions.
- */
-void MainWindow::SetupCommandView()
-{
-    m_commandStack = new QUndoStack(this);
-    m_commandView = new QUndoView(m_commandStack);
-    m_commandView->setWindowTitle(tr("Command List") );
-    m_commandView->setAttribute(Qt::WA_QuitOnClose, false);
-    connect(m_commandStack, SIGNAL(canRedoChanged(bool)),
-            actionRedo, SLOT(setEnabled(bool)) );
-    connect(m_commandStack, SIGNAL(canUndoChanged(bool)),
-            actionUndo, SLOT(setEnabled(bool)) );
-}
-
 /**
  * Action slot to show/hide a grid with the scene dimensions.
  */
@@ -3251,227 +3468,6 @@ void MainWindow::ShowGrid()
            else
             m_pGrid->removeAllChildren();*/
 
-}
-
-/*!
- * Initializes tonatiuh document object.
- */
-void MainWindow::SetupDocument()
-{
-    m_document = new Document();
-    if (m_document)
-        connect(m_document, SIGNAL(Warning(QString)), this, SLOT(ShowWarning(QString)) );
-}
-
-/*!
- * Defines 3D view background.
- */
-void MainWindow::SetupGraphcisRoot()
-{
-    m_graphicsRoot = new GraphicRoot;
-
-    if (m_graphicsRoot)
-    {
-        m_graphicsRoot->AddModel(m_document->GetSceneKit() );
-        connect(m_graphicsRoot, SIGNAL(ChangeSelection(SoSelection*)),
-                this, SLOT(SelectionFinish(SoSelection*)) );
-
-        m_gridXElements = 10;
-        m_gridZElements = 10;
-        m_gridXSpacing = 10;
-        m_gridZSpacing = 10;
-
-//        m_graphicsRoot->AddGrid(CreateGrid(m_gridXElements, m_gridZElements, m_gridXSpacing, m_gridZSpacing) );
-        m_graphicsRoot->AddGrid(CreateGrid() );
-
-    }
-    else gf::SevereError("MainWindow::SetupDocument: Fail to create new document");
-}
-
-/*!
- * Initializates graphic view.
- */
-void MainWindow::SetupGraphicView()
-{
-    QSplitter* splitter = findChild<QSplitter*>("horizontalSplitter");
-
-    QSplitter* splitterV = new QSplitter();
-    splitterV->setObjectName("graphicSplitterV");
-    splitterV->setOrientation(Qt::Vertical);
-    splitter->insertWidget(0, splitterV);
-
-    QList<int> sizes;
-    sizes << 500 << 200;
-    splitter->setSizes(sizes);
-
-    QSplitter* splitterH1 = new QSplitter(splitterV);
-    splitterH1->setObjectName("graphicSplitterH1");
-    splitterH1->setOrientation(Qt::Horizontal);
-
-    QSplitter* splitterH2 = new QSplitter(splitterV);
-    splitterH2->setObjectName("graphicSplitterH2");
-    splitterH2->setOrientation(Qt::Horizontal);
-
-    m_graphicView << new GraphicView(splitterH1);
-    m_graphicView << new GraphicView(splitterH1);
-    m_graphicView << new GraphicView(splitterH2);
-    m_graphicView << new GraphicView(splitterH2);
-
-    for (int n = 0; n < 4; n++){
-        m_graphicView[n]->SetSceneGraph(m_graphicsRoot);
-        m_graphicView[n]->setModel(m_sceneModel);
-        m_graphicView[n]->setSelectionModel(m_selectionModel);
-    }
-
-    m_focusView = 1;
-//    on_action_X_Y_Plane_triggered();
-    m_focusView = 2;
-//    on_action_Y_Z_Plane_triggered();
-    m_focusView = 3;
-    on_actionViewTop_triggered();
-
-    // 0 splitterH1 1              tree
-    //   splitterV      splitter
-    // 2 spliter H2 3              parameters
-    on_actionQuadView_toggled();
-}
-
-/*!
- * Creates a menu for last used files
- */
-void MainWindow::SetupMenus()
-{
-    for (QAction* a : m_recentFileActions)
-        menuRecent->addAction(a);
-}
-
-/*!
- * Initializes Tonatiuh models.
- */
-void MainWindow::SetupModels()
-{
-    m_sceneModel = new SceneModel();
-    m_sceneModel->SetCoinRoot(*m_graphicsRoot->GetNode() );
-    m_sceneModel->SetCoinScene(*m_document->GetSceneKit() );
-
-    m_selectionModel = new QItemSelectionModel(m_sceneModel);
-
-    connect(m_sceneModel, SIGNAL(LightNodeStateChanged(int)),
-            this, SLOT(SetSunPositionCalculatorEnabled(int)) );
-}
-
-/*!
- * Initializes the tonatiuh objects parameters view.
- */
-void MainWindow::SetupParametersView()
-{
-    connect(
-        parametersTabs, SIGNAL(valueModified(SoNode*, QString, QString)),
-        this, SLOT(SetParameterValue(SoNode*, QString, QString))
-    );
-
-    connect(
-        m_selectionModel, SIGNAL(currentChanged (const QModelIndex&,const QModelIndex&)),
-        this, SLOT(ChangeSelection(const QModelIndex&))
-    );
-}
-
-/*!
- * Initializes plugin manager and load available plugins.
- */
-void MainWindow::SetupPluginsManager()
-{
-    //m_pPluginManager = new PluginManager;
-    //m_pPluginManager->LoadAvailablePlugins( PluginDirectory() );
-
-    if (!m_pluginManager) return; // ! runs twice with 0 first?
-
-    SetupActionsInsertComponent();
-//    addToolBarBreak();
-    SetupActionsInsertShape();
-    SetupActionsInsertMaterial();
-    SetupActionsInsertTracker();
-}
-
-/*!
- * Initializates Tonatiuh objectes tree view.
- */
-void MainWindow::SetupTreeView()
-{
-    sceneModelView->setModel(m_sceneModel);
-    sceneModelView->setSelectionModel(m_selectionModel);
-    sceneModelView->setRootIndex(m_sceneModel->IndexFromNodeUrl("//SunNode"));
-
-//    sceneModelView->header()->setStretchLastSection(false);
-//    sceneModelView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-//    sceneModelView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-//    sceneModelView->header()->resizeSection(1, 80);
-
-    connect(sceneModelView, SIGNAL(dragAndDrop(const QModelIndex&,const QModelIndex&)),
-            this, SLOT(ItemDragAndDrop(const QModelIndex&,const QModelIndex&)) );
-    connect(sceneModelView, SIGNAL(dragAndDropCopy(const QModelIndex&,const QModelIndex&)),
-            this, SLOT(ItemDragAndDropCopy(const QModelIndex&,const QModelIndex&)) );
-    connect(sceneModelView, SIGNAL(showMenu(const QModelIndex&)),
-            this, SLOT(ShowMenu(const QModelIndex&)) );
-    connect(sceneModelView, SIGNAL(nodeNameModificated(const QModelIndex&,const QString&)),
-            this, SLOT(ChangeNodeName(const QModelIndex&,const QString&)) );
-}
-
-/*!
- * Defines slots function for main window signals.
- */
-void MainWindow::SetupTriggers()
-{
-    // file
-    connect(actionNew, SIGNAL(triggered()), this, SLOT(New()) );
-    connect(actionOpen, SIGNAL(triggered()), this, SLOT(Open()) );
-    connect(actionSave, SIGNAL(triggered()), this, SLOT(Save()) );
-    connect(actionSaveAs, SIGNAL(triggered()), this, SLOT(SaveAs()) );
-    connect(actionSaveComponent, SIGNAL(triggered()), this, SLOT(SaveComponent()) );
-    connect(actionClose, SIGNAL(triggered()), this, SLOT(close()) );
-
-    // edit
-    connect(actionUndo, SIGNAL(triggered()), this, SLOT(Undo()) );
-    connect(actionRedo, SIGNAL(triggered()), this, SLOT(Redo()) );
-    connect(actionUndoView, SIGNAL(triggered()), this, SLOT(ShowCommandView()) );
-    connect(actionCut, SIGNAL(triggered()), this, SLOT(Cut()) );
-    connect(actionCopy, SIGNAL(triggered()), this, SLOT(Copy()) );
-    connect(actionPasteCopy, SIGNAL(triggered()), this, SLOT(PasteCopy()) );
-    connect(actionPasteLink, SIGNAL(triggered()), this, SLOT(PasteLink()) );
-    connect(actionDelete, SIGNAL(triggered()), this, SLOT(Delete()) );
-
-    // insert
-    connect(actionNode, SIGNAL(triggered()), this, SLOT(CreateGroupNode()) );
-    connect(actionSurfaceNode, SIGNAL(triggered()), this, SLOT(CreateSurfaceNode()) );
-    connect(actionUserComponent, SIGNAL(triggered()), this, SLOT(InsertUserDefinedComponent()) );
-
-    // scene
-    connect(actionDefineSunLight, SIGNAL(triggered()), this, SLOT(DefineSunLight()) );
-    connect(actionCalculateSunPosition, SIGNAL(triggered()), this, SLOT(CalculateSunPosition()) );
-    connect(actionDisconnect_All_Trackers, SIGNAL(toggled(bool)), this, SLOT(DisconnectAllTrackers(bool)) );
-    connect(actionDefineTransmissivity, SIGNAL(triggered()), this, SLOT(DefineTransmissivity()) );
-
-    // run
-    connect(actionViewRays, SIGNAL(toggled(bool)), this, SLOT(DisplayRays(bool)) );
-    connect(actionRun, SIGNAL(triggered()), this, SLOT(RunCompleteRayTracer()) );
-    connect(actionRunFluxAnalysis, SIGNAL(triggered()), this, SLOT(RunFluxAnalysisRayTracer()) );
-    connect(actionRayTraceOptions, SIGNAL(triggered()), this, SLOT(ShowRayTracerOptionsDialog())  );
-
-    // view
-    connect(actionViewGrid, SIGNAL(triggered()), this, SLOT(ShowGrid())  );
-    connect(actionGridSettings, SIGNAL(triggered()), this, SLOT(ChangeGridSettings())  );
-    connect(actionViewBackground, SIGNAL(triggered()), this, SLOT(ShowBackground())  );
-}
-
-/*!
- * Starts MainWindow views.
- */
-void MainWindow::SetupViews()
-{
-    SetupCommandView();
-    SetupGraphicView();
-    SetupTreeView();
-    SetupParametersView();
 }
 
 /*!
@@ -3547,19 +3543,11 @@ bool MainWindow::StartOver(const QString& fileName)
 }
 
 /*!
- * Returns the \a fullFileName file�s name, without path.
- */
-QString MainWindow::StrippedName(const QString& fullFileName)
-{
-    return QFileInfo(fullFileName).fileName();
-}
-
-/*!
  * Computes the new light size to the scene current dimensions.
  */
 void MainWindow::UpdateLightSize()
 {
-    SoSceneKit* coinScene = m_document->GetSceneKit();
+    SoSceneKit* coinScene = m_document->getSceneKit();
 
     TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
     if (!lightKit) return;
@@ -3701,7 +3689,7 @@ void MainWindow::on_actionLookWest_triggered()
 
 void MainWindow::on_actionViewSun_triggered()
 {
-    SoSceneKit* sceneKit = m_document->GetSceneKit();
+    SoSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
     TLightKit* lightKit = static_cast<TLightKit*>(sceneKit->getPart("lightList[0]", false));
     if (!lightKit) return;

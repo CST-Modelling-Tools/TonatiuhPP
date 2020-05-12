@@ -236,7 +236,7 @@ int ScriptRayTracer::SetTonatiuhModelFile (QString filename)
     m_sceneModel = 0;
     m_sceneModel = new SceneModel;
 
-    m_sceneModel->SetCoinScene(*m_document->GetSceneKit() );
+    m_sceneModel->SetCoinScene(*m_document->getSceneKit() );
 
     return 1;
 }

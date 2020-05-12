@@ -179,8 +179,6 @@ public slots:
     void on_actionAbout_triggered();
     //void on_actionCheckForUpdates_triggered();
 
-
-
 private:
     void ChangeModelScene();
     SoSeparator* CreateGrid();
@@ -192,7 +190,6 @@ private:
     bool Paste(QModelIndex nodeIndex, tgc::PasteType type);
     QDir PluginDirectory();
 
-    void ReadSettings();
     bool ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
                             InstanceNode*& lightInstance,
                             SoTransform*& lightTransform,
@@ -204,28 +201,32 @@ private:
     bool SetPhotonMapExportSettings();
 
     void SetupActions();
+    void SetupDocument();
+    void SetupGraphicsRoot();
+    void SetupModels();
+
+    void SetupViews();
+    void SetupCommandView();
+    void SetupGraphicView();
+    void SetupTreeView();
+    void SetupParametersView();
+
+    void SetupPluginsManager();
     void SetupActionsInsertComponent();
     void SetupActionsInsertMaterial();
     void SetupActionsInsertShape();
     void SetupActionsInsertTracker();
 
-    void SetupCommandView();
-    void SetupDocument();
-    void SetupGraphcisRoot();
-    void SetupGraphicView();
-    void SetupMenus();
-    void SetupModels();
-    void SetupParametersView();
-    void SetupPluginsManager();
-    void SetupTreeView();
     void SetupTriggers();
-    void SetupViews();
-    void ShowRaysIn3DView();
-    bool StartOver(const QString& fileName);
-    QString StrippedName(const QString& fullFileName);
-    void UpdateLightSize();
+
+    void ReadSettings();
     void UpdateRecentFileActions();
     void WriteSettings();
+
+    bool StartOver(const QString& fileName);
+
+    void ShowRaysIn3DView();
+    void UpdateLightSize();
     double GetwPhoton();
 
     enum {m_maxRecentFiles = 7};
@@ -245,7 +246,7 @@ private:
     int m_selectedRandomDeviate;
 
 
-    unsigned long m_bufferPhotons;
+    ulong m_bufferPhotons;
     bool m_increasePhotonMap;
     PhotonsSettings* m_pExportModeSettings;
     Photons* m_pPhotonMap;
@@ -258,18 +259,14 @@ private:
     SoNode* m_coinNode_Buffer;
     QStringList* m_manipulators_Buffer;
 
-    unsigned long m_raysTracedTotal;
-    unsigned long m_raysTraced;
+    ulong m_raysTracedTotal;
+    ulong m_raysTraced;
     int m_heightDivisions;
     int m_widthDivisions;
 
     bool m_drawPhotons;
     bool m_drawRays;
 
-    int m_gridXElements;
-    int m_gridZElements;
-    double m_gridXSpacing;
-    double m_gridZSpacing;
     QVector<GraphicView*> m_graphicView;
     int m_focusView;
     bool m_saveCoordinates;

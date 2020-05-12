@@ -20,20 +20,20 @@ class Document: public QObject
 public:
     Document();
     ~Document() {}
-    void SetDocumentModified(bool status);
+
     void New();
     bool ReadFile(const QString& fileName);
     bool WriteFile(const QString& fileName);
 
-    bool IsModified();
-    TSceneKit* GetSceneKit() const;
+    bool isModified() {return m_isModified;}
+    void setModified(bool status) {m_isModified = status;}
+
+    TSceneKit* getSceneKit() const {return m_scene;}
 
 signals:
     void Warning(QString message);
 
 private:
-    TSceneKit* GetSceneKitFromFile(const QString& fileName);
-    void InitializeScene();
     void ClearScene();
 
     TSceneKit* m_scene;

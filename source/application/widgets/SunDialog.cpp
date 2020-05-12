@@ -1,4 +1,5 @@
 #include "SunDialog.h"
+#include "ui_sundialog.h"
 
 #include <QItemSelectionModel>
 #include <QMessageBox>
@@ -28,6 +29,7 @@ SunDialog::SunDialog(
     QWidget* parent
 ):
     QDialog(parent),
+    ui(new Ui::SunDialog),
     m_sceneModel(&sceneModel),
     m_selectionModel(0),
     m_lightKitOld(lightKitOld),
@@ -35,7 +37,7 @@ SunDialog::SunDialog(
     m_sunShapeMap(sunShapeMap),
     m_currentSunShapeIndex(-1)
 {
-    setupUi(this);
+    ui->setupUi(this);
 
     if (lightKitOld) {
         SoNode* node = lightKitOld->getPart("tsunshape", false);
@@ -52,6 +54,11 @@ SunDialog::SunDialog(
     setWindowFlags(flags);
 }
 
+SunDialog::~SunDialog()
+{
+    delete ui;
+}
+
 /*!
  * Returns a lightkit with the parameters defined in the dialog.
  */
@@ -63,13 +70,13 @@ TLightKit* SunDialog::getLightKit()
     if (m_sunNew) lightKit->setPart("tsunshape", m_sunNew);
 
 //    lightKit->ChangePosition(
-//        azimuthSpin->value()*gc::Degree,
-//        (90. - elevationSpin->value())*gc::Degree
+//        ui->azimuthSpin->value()*gc::Degree,
+//        (90. - ui->elevationSpin->value())*gc::Degree
 //    );
 
     QString nodes("");
-    for (int n = 0; n < disabledNodeList->count(); n++) {
-        QString node = disabledNodeList->item(n)->text();
+    for (int n = 0; n < ui->disabledNodeList->count(); n++) {
+        QString node = ui->disabledNodeList->item(n)->text();
         nodes += QString("%1;").arg(node);
     }
     lightKit->disabledNodes.setValue( nodes.toStdString().c_str() );
@@ -79,12 +86,12 @@ TLightKit* SunDialog::getLightKit()
 
 double SunDialog::getAzimuth()
 {
-    return azimuthSpin->value()*gc::Degree;
+    return ui->azimuthSpin->value()*gc::Degree;
 }
 
 double SunDialog::getElevation()
 {
-    return elevationSpin->value()*gc::Degree;
+    return ui->elevationSpin->value()*gc::Degree;
 }
 
 /*!
@@ -93,26 +100,26 @@ double SunDialog::getElevation()
 void SunDialog::makeSunShapeTab()
 {
     connect(
-        sunshapeParameters, SIGNAL(valueModified(SoNode*, QString, QString)),
+        ui->sunshapeParameters, SIGNAL(valueModified(SoNode*, QString, QString)),
         this, SLOT(SetValue(SoNode*, QString, QString))
     );
     connect(
-        sunshapeCombo, SIGNAL(activated(int)),
+        ui->sunshapeCombo, SIGNAL(activated(int)),
         this, SLOT(ChangeSunshape(int))
     );
 
     QList<SunFactory*> sunFactories = m_sunShapeMap.values();
-//    sunshapeCombo->addItem("---");
+//    ui->sunshapeCombo->addItem("---");
     for (SunFactory* f : sunFactories)
-        sunshapeCombo->addItem(f->icon(), f->name());
+        ui->sunshapeCombo->addItem(f->icon(), f->name());
 
     m_currentSunShapeIndex = 0;
     if (m_sunNew) {
         QString name(m_sunNew->getTypeName());
-        m_currentSunShapeIndex = sunshapeCombo->findText(name);
+        m_currentSunShapeIndex = ui->sunshapeCombo->findText(name);
     }
 
-    sunshapeCombo->setCurrentIndex(m_currentSunShapeIndex);
+    ui->sunshapeCombo->setCurrentIndex(m_currentSunShapeIndex);
     ChangeSunshape(m_currentSunShapeIndex);
 }
 
@@ -124,8 +131,8 @@ void SunDialog::makeSunPositionTab()
     if (!m_lightKitOld) return;
 
     TSceneKit* scene = m_sceneModel->getSceneKit();
-    azimuthSpin->setValue(scene->azimuth.getValue()/gc::Degree);
-    elevationSpin->setValue(scene->elevation.getValue()/gc::Degree);
+    ui->azimuthSpin->setValue(scene->azimuth.getValue()/gc::Degree);
+    ui->elevationSpin->setValue(scene->elevation.getValue()/gc::Degree);
 }
 
 /*!
@@ -133,23 +140,23 @@ void SunDialog::makeSunPositionTab()
  */
 void SunDialog::makeSunApertureTab()
 {
-    modelTreeView->setModel(m_sceneModel);
+    ui->modelTreeView->setModel(m_sceneModel);
     m_selectionModel = new QItemSelectionModel(m_sceneModel);
-    modelTreeView->setSelectionModel(m_selectionModel);
-    modelTreeView->setRootIndex(m_sceneModel->IndexFromNodeUrl("//SunNode"));
+    ui->modelTreeView->setSelectionModel(m_selectionModel);
+    ui->modelTreeView->setRootIndex(m_sceneModel->IndexFromNodeUrl("//SunNode"));
 
     if (!m_lightKitOld) return;
 
     QString nodeDisabled = QString(m_lightKitOld->disabledNodes.getValue().getString());
     for (QString s : nodeDisabled.split(";", QString::SkipEmptyParts))
-        disabledNodeList->addItem(s);
+        ui->disabledNodeList->addItem(s);
 
     connect(
-        addNodeButton, SIGNAL(clicked()),
+        ui->addNodeButton, SIGNAL(clicked()),
         this, SLOT(AddNodeToDisabledNodeList())
     );
     connect(
-        removeNodeButton, SIGNAL(clicked()),
+        ui->removeNodeButton, SIGNAL(clicked()),
         this, SLOT(RemoveNodeFromDisabledNodeList())
     );
 }
@@ -165,10 +172,10 @@ void SunDialog::ChangeSunshape(int index)
     if (index == m_currentSunShapeIndex)
         m_sunNew = static_cast<SunAbstract*>(m_lightKitOld->getPart("tsunshape", false)->copy(true));
     else {
-        SunFactory* f = m_sunShapeMap[sunshapeCombo->itemText(index)];
+        SunFactory* f = m_sunShapeMap[ui->sunshapeCombo->itemText(index)];
         m_sunNew = f->create();
     }
-    sunshapeParameters->SetContainer(m_sunNew, QString());
+    ui->sunshapeParameters->SetContainer(m_sunNew, QString());
 }
 
 void SunDialog::SetValue(SoNode* node, QString parameter, QString value)
@@ -187,7 +194,7 @@ void SunDialog::SetValue(SoNode* node, QString parameter, QString value)
 void SunDialog::AddNodeToDisabledNodeList()
 {
     if ( !m_selectionModel->hasSelection() ) return;
-    if ( m_selectionModel->currentIndex() == modelTreeView->rootIndex() ) return;
+    if ( m_selectionModel->currentIndex() == ui->modelTreeView->rootIndex() ) return;
 
     QModelIndex index = m_selectionModel->currentIndex();
     if (!index.isValid()) return;
@@ -195,7 +202,7 @@ void SunDialog::AddNodeToDisabledNodeList()
     InstanceNode* node = m_sceneModel->NodeFromIndex(index);
     if (!node) return;
 
-    disabledNodeList->addItem(node->GetNodeURL());
+    ui->disabledNodeList->addItem(node->GetNodeURL());
 }
 
 /*!
@@ -203,9 +210,9 @@ void SunDialog::AddNodeToDisabledNodeList()
  */
 void SunDialog::RemoveNodeFromDisabledNodeList()
 {
-    QListWidgetItem* currentItem = disabledNodeList->currentItem();
+    QListWidgetItem* currentItem = ui->disabledNodeList->currentItem();
     if (!currentItem) return;
 
-    disabledNodeList->removeItemWidget(currentItem);
+    ui->disabledNodeList->removeItemWidget(currentItem);
     delete currentItem;
 }

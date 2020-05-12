@@ -14,30 +14,9 @@
  * Creates a new document object.
  */
 Document::Document():
-    m_scene(0),
-    m_isModified(false)
+    m_scene(0)
 {
-    InitializeScene();
-}
-
-/*!
- * Set the state of the document to \a status. If the status is true the document have been modified.
- */
-void Document::SetDocumentModified(bool status)
-{
-    m_isModified = status;
-}
-
-/*!
- * Initializes a new empty scene a scene and sets it to the document.
- */
-void Document::InitializeScene()
-{
-    if (m_scene) ClearScene();
-
-    m_scene = new TSceneKit;
-    m_scene->ref();
-    m_scene->setSearchingChildren(true);
+    New();
 }
 
 /*!
@@ -45,21 +24,11 @@ void Document::InitializeScene()
  */
 void Document::New()
 {
-    InitializeScene();
+    if (m_scene) ClearScene();
+    m_scene = new TSceneKit;
+    m_scene->ref();
+    m_scene->setSearchingChildren(true);
     m_isModified = false;
-}
-
-/*!
- * Clears the scene of the document.
- */
-void Document::ClearScene()
-{
-    if (m_scene)
-    {
-        if (m_scene) while (m_scene->getRefCount() > 1) m_scene->unref();
-    }
-
-    m_scene = 0;
 }
 
 /*!
@@ -67,17 +36,40 @@ void Document::ClearScene()
  */
 bool Document::ReadFile(const QString& fileName)
 {
-    if (TSceneKit* inputScene = static_cast< TSceneKit* >(GetSceneKitFromFile(fileName) ) )
-    {
-        if (m_scene) ClearScene();
-        m_scene = inputScene;
-        m_scene->setSearchingChildren(true);
-        m_isModified = false;
+    SoInput input;
 
-        return true;
+    if (!input.openFile(fileName.toLatin1().constData() ) )
+    {
+        QString message = QString("Cannot open file %1.").arg(fileName);
+        emit Warning(message);
+        return false;
     }
 
-    return false;
+    if (!input.isValidFile())
+    {
+        QString message = QString("Error reading file %1.\n").arg(fileName);
+        emit Warning(message);
+        return false;
+    }
+
+    SoSeparator* spearator = SoDB::readAll(&input);
+    input.closeFile();
+
+    if (!spearator)
+    {
+        QString message = QString("Error reading file %1.\n").arg(fileName);
+        emit Warning(message);
+        return false;
+    }
+
+    TSceneKit* scene = dynamic_cast<TSceneKit*>(spearator->getChild(0));
+    if (!scene) return false;
+
+    if (m_scene) ClearScene();
+    m_scene = scene;
+    m_scene->setSearchingChildren(true);
+    m_isModified = false;
+    return true;
 }
 
 /*!
@@ -92,7 +84,6 @@ bool Document::WriteFile(const QString& fileName)
     {
         QString message = QString("Cannot open file %1.").arg(fileName);
         emit Warning(message);
-
         return false;
     }
 
@@ -112,56 +103,14 @@ bool Document::WriteFile(const QString& fileName)
 }
 
 /*!
- * Returns whether the scene was modified.
+ * Clears the scene of the document.
  */
-bool Document::IsModified()
+void Document::ClearScene()
 {
-    return m_isModified;
+    if (m_scene)
+        while (m_scene->getRefCount() > 1)
+            m_scene->unref();
+
+    m_scene = 0;
 }
 
-/*!
- * Returns the document scene.
- */
-TSceneKit* Document::GetSceneKit() const
-{
-    return m_scene;
-}
-
-/*!
- * Reads the scene saved on the file with given \a filename and return a pointer to the scene.
- *
- * Returns null on any error.
- */
-TSceneKit* Document::GetSceneKitFromFile(const QString& fileName)
-{
-    SoInput sceneInput;
-    if (!sceneInput.openFile(fileName.toLatin1().constData() ) )
-    {
-        QString message = QString("Cannot open file %1.").arg(fileName);
-        emit Warning(message);
-
-        return 0;
-    }
-
-    if (!sceneInput.isValidFile() )
-    {
-        QString message = QString("Error reading file %1.\n").arg(fileName);
-        emit Warning(message);
-
-        return 0;
-    }
-
-    SoSeparator* graphSeparator = SoDB::readAll(&sceneInput);
-    sceneInput.closeFile();
-
-    if (!graphSeparator)
-    {
-        QString message = QString("Error reading file %1.\n").arg(fileName);
-        emit Warning(message);
-
-        return 0;
-    }
-
-    return static_cast< TSceneKit* >(graphSeparator->getChild(0) );
-    return 0;
-}

@@ -3,9 +3,7 @@
 #include <QDialog>
 #include <QMap>
 
-
-#include "ui_sundialog.h"
-
+class SoNode;
 class QComboBox;
 class QFrame;
 class QGroupBox;
@@ -18,16 +16,21 @@ class ShapeFactory;
 class SunAbstract;
 class SunFactory;
 
+namespace Ui {
+class SunDialog;
+}
+
 //!  LightDialog class is the dialog to define the light parameters.
 /*!
    LightDialog sets light parameters. The parameters that user can define are light suunshape, light input aperture shape and light position.
  */
-class SunDialog: public QDialog, private Ui::SunDialog
+class SunDialog: public QDialog
 {
     Q_OBJECT
 
 public:
     SunDialog(SceneModel& sceneModel, TLightKit* currentLightKit, QMap<QString, SunFactory*> sunShapeMap, QWidget* parent = 0);
+    ~SunDialog();
 
     TLightKit* getLightKit();
     double getAzimuth(); //temp
@@ -42,6 +45,8 @@ protected slots:
     void RemoveNodeFromDisabledNodeList();
 
 private:
+    Ui::SunDialog* ui;
+
     void makeSunShapeTab();
     void makeSunPositionTab();
     void makeSunApertureTab();
