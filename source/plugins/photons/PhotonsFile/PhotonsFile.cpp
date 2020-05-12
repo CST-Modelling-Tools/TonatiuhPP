@@ -145,7 +145,7 @@ void PhotonsFile::ExportAllPhotonsAllData(QString filename, const std::vector<Ph
 				{
                     m_surfaceIdentfier.push_back( photon.intersectedSurface );
 					urlId = m_surfaceIdentfier.size();
-                    m_surfaceWorldToObject.push_back( photon.intersectedSurface->GetIntersectionTransform() );
+                    m_surfaceWorldToObject.push_back( photon.intersectedSurface->getTransform() );
 				}
 				else
                     urlId = m_surfaceIdentfier.indexOf( photon.intersectedSurface ) + 1;
@@ -199,7 +199,7 @@ void PhotonsFile::ExportAllPhotonsAllData(QString filename, const std::vector<Ph
 				{
                     m_surfaceIdentfier.push_back( photon.intersectedSurface );
 					urlId = m_surfaceIdentfier.size();
-                    worldToObject = photon.intersectedSurface->GetIntersectionTransform();
+                    worldToObject = photon.intersectedSurface->getTransform();
 					m_surfaceWorldToObject.push_back( worldToObject );
 				}
 				else
@@ -252,7 +252,7 @@ void PhotonsFile::ExportAllPhotonsNotNextPrevID(QString filename, const std::vec
 				{
                     m_surfaceIdentfier.push_back( photon.intersectedSurface );
 					urlId = m_surfaceIdentfier.size();
-                    m_surfaceWorldToObject.push_back( photon.intersectedSurface->GetIntersectionTransform() );
+                    m_surfaceWorldToObject.push_back( photon.intersectedSurface->getTransform() );
 				}
 				else
                     urlId = m_surfaceIdentfier.indexOf( photon.intersectedSurface ) + 1;
@@ -291,7 +291,7 @@ void PhotonsFile::ExportAllPhotonsNotNextPrevID(QString filename, const std::vec
 				{
                     m_surfaceIdentfier.push_back( photon.intersectedSurface );
 					urlId = m_surfaceIdentfier.size();
-                    worldToObject = photon.intersectedSurface->GetIntersectionTransform();
+                    worldToObject = photon.intersectedSurface->getTransform();
 					m_surfaceWorldToObject.push_back( worldToObject );
 				}
 				else
@@ -343,7 +343,7 @@ void PhotonsFile::ExportAllPhotonsSelectedData(QString filename, const std::vect
 			{
                 m_surfaceIdentfier.push_back( photon.intersectedSurface );
 				urlId = m_surfaceIdentfier.size();
-                worldToObject = photon.intersectedSurface->GetIntersectionTransform();
+                worldToObject = photon.intersectedSurface->getTransform();
 				m_surfaceWorldToObject.push_back( worldToObject );
 			}
 			else
@@ -413,7 +413,7 @@ void PhotonsFile::ExportSelectedPhotonsAllData(QString filename, const std::vect
 				{
                     m_surfaceIdentfier.push_back( photon.intersectedSurface );
 					urlId = m_surfaceIdentfier.size();
-                    m_surfaceWorldToObject.push_back( photon.intersectedSurface->GetIntersectionTransform() );
+                    m_surfaceWorldToObject.push_back( photon.intersectedSurface->getTransform() );
 				}
 				else
                     urlId = m_surfaceIdentfier.indexOf( photon.intersectedSurface ) + 1;
@@ -465,7 +465,7 @@ void PhotonsFile::ExportSelectedPhotonsAllData(QString filename, const std::vect
 				{
                     m_surfaceIdentfier.push_back( photon.intersectedSurface );
 					urlId = m_surfaceIdentfier.size();
-                    worldToObject = photon.intersectedSurface->GetIntersectionTransform();
+                    worldToObject = photon.intersectedSurface->getTransform();
 					m_surfaceWorldToObject.push_back( worldToObject );
 				}
 				else
@@ -529,7 +529,7 @@ void PhotonsFile::ExportSelectedPhotonsNotNextPrevID( QString filename, const st
 				{
                     m_surfaceIdentfier.push_back( photon.intersectedSurface );
 					urlId = m_surfaceIdentfier.size();
-                    m_surfaceWorldToObject.push_back( photon.intersectedSurface->GetIntersectionTransform() );
+                    m_surfaceWorldToObject.push_back( photon.intersectedSurface->getTransform() );
 				}
 				else
                     urlId = m_surfaceIdentfier.indexOf( photon.intersectedSurface ) + 1;
@@ -569,7 +569,7 @@ void PhotonsFile::ExportSelectedPhotonsNotNextPrevID( QString filename, const st
 				{
                     m_surfaceIdentfier.push_back( photon.intersectedSurface );
 					urlId = m_surfaceIdentfier.size();
-                    worldToObject = photon.intersectedSurface->GetIntersectionTransform();
+                    worldToObject = photon.intersectedSurface->getTransform();
 					m_surfaceWorldToObject.push_back( worldToObject );
 				}
 				else
@@ -626,7 +626,7 @@ void PhotonsFile::ExportSelectedPhotonsSelectedData( QString filename, const std
 			{
                 m_surfaceIdentfier.push_back( photon.intersectedSurface );
 				urlId = m_surfaceIdentfier.size();
-                worldToObject = photon.intersectedSurface->GetIntersectionTransform();
+                worldToObject = photon.intersectedSurface->getTransform();
 				m_surfaceWorldToObject.push_back( worldToObject );
 			}
 			else

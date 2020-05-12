@@ -30,25 +30,15 @@ public:
     InstanceNode(SoNode* node);
     ~InstanceNode();
 
-    void SetNode(SoNode* node)
-    {
-        m_coinNode = node;
-    }
-    void SetParent(InstanceNode* parent)
-    {
-        m_parent = parent;
-    }
-    void AddChild(InstanceNode* child);
+    void setNode(SoNode* node) {m_node = node;}
+    SoNode* getNode() const {return m_node;}
+
+    InstanceNode* getParent() const {return m_parent;}
+    void setParent(InstanceNode* parent) {m_parent = parent;}
+
+    void addChild(InstanceNode* child);
     void InsertChild(int row, InstanceNode* instanceChild);
 
-    SoNode* GetNode() const
-    {
-        return m_coinNode;
-    }
-    InstanceNode* GetParent() const
-    {
-        return m_parent;
-    }
     QString GetNodeURL() const;
     void Print(int level) const;
 
@@ -59,23 +49,22 @@ public:
     //template<class T,class Param1> void RecursivlyApplyWithMto(void (T::*func)(Param1),Param1 param1);
     //template<class T,class Param1,class Param2> void RecursivlyApplyWithMto(void (T::*func)(Param1,Param2),Param1 param1,Param1 param2);
 
-    void DisconnectAllTrackers();
-    void ReconnectAllTrackers(TLightKit* coinLight);
-    void SetAimingPointRelativity(bool relative);
     void extendBoxForLight(SbBox3f* extendedBox);
-    BBox GetIntersectionBBox();
-    Transform GetIntersectionTransform();
-    void SetIntersectionBBox(BBox nodeBBox);
-    void SetIntersectionTransform(Transform nodeTransform);
+
+    const BoundingBox& getBox() const {return m_box;}
+    void setBox(const BoundingBox& box) {m_box = box;}
+
+    Transform getTransform() {return m_transformWtO;}
+    void setTransform(Transform nodeTransform);
 
     QVector<InstanceNode*> children;
 
 private:
-    SoNode* m_coinNode;
+    SoNode* m_node;
     InstanceNode* m_parent;
-    BBox m_bbox;
-    Transform m_transformWTO;
-    Transform m_transformOTW;
+    BoundingBox m_box;
+    Transform m_transformWtO;
+    Transform m_transformOtW;
 };
 
 TONATIUH_KERNEL QDataStream& operator<<(QDataStream& s, const InstanceNode& node);

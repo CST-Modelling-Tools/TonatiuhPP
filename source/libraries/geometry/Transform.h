@@ -8,7 +8,7 @@ struct Point3D;
 struct Vector3D;
 struct NormalVector;
 class Ray;
-struct BBox;
+struct BoundingBox;
 
 class TONATIUH_LIBRARIES Transform
 {
@@ -30,8 +30,8 @@ public:
     void operator()(const NormalVector& normal, NormalVector& transformedNormal) const;
     Ray operator()(const Ray& ray) const;
     void operator()(const Ray& ray, Ray& transformedRay) const;
-    BBox operator()(const BBox& bbox) const;
-    void operator()(const BBox& bbox, BBox& transformedBbox) const;
+    BoundingBox operator()(const BoundingBox& bbox) const;
+    void operator()(const BoundingBox& bbox, BoundingBox& transformedBbox) const;
     Transform operator*(const Transform& rhs) const;
 
     bool operator==(const Transform& mat) const;

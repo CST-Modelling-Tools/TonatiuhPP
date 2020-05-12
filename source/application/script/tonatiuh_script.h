@@ -16,7 +16,6 @@ namespace tonatiuh_script
     QScriptValue tonatiuh_sunposition(QScriptContext* context, QScriptEngine* engine);
     QScriptValue tonatiuh_calculatesun(QScriptContext* context, QScriptEngine* engine);
     QScriptValue tonatiuh_setsunpositiontoscene(QScriptContext* context, QScriptEngine* engine);
-    QScriptValue tonatiuh_setdisconnectalltrackers(QScriptContext* context, QScriptEngine* engine);
     QScriptValue tonatiuh_saveas(QScriptContext* context, QScriptEngine* engine);
     QScriptValue tonatiuh_trace(QScriptContext* context, QScriptEngine* engine);
 }

@@ -47,9 +47,6 @@ int tonatiuh_script::init(QScriptEngine* engine)
     QScriptValue fun_tonatiuh_setsunpositiontoscene = engine->newFunction(tonatiuh_script::tonatiuh_setsunpositiontoscene);
     engine->globalObject().setProperty("tonatiuh_setsunpositiontoscene", fun_tonatiuh_setsunpositiontoscene);
 
-    QScriptValue fun_tonatiuh_setdisconnectalltrackers = engine->newFunction(tonatiuh_script::tonatiuh_setdisconnectalltrackers);
-    engine->globalObject().setProperty("tonatiuh_setdisconnectalltrackers", fun_tonatiuh_setdisconnectalltrackers);
-
     QScriptValue fun_tonatiuh_saveas = engine->newFunction(tonatiuh_script::tonatiuh_saveas);
     engine->globalObject().setProperty("tonatiuh_saveas", fun_tonatiuh_saveas);
 
@@ -282,20 +279,6 @@ QScriptValue tonatiuh_script::tonatiuh_setsunpositiontoscene(QScriptContext* con
     return 1;
 }
 
-QScriptValue tonatiuh_script::tonatiuh_setdisconnectalltrackers(QScriptContext* context, QScriptEngine* engine)
-{
-    QScriptValue rayTracerValue = engine->globalObject().property("rayTracer");
-    ScriptRayTracer* rayTracer = ( ScriptRayTracer* ) rayTracerValue.toQObject();
-        if (!rayTracer) return 0;
-
-        if (context->argumentCount()!=1) context->throwError("tonatiuh_setdisconnectalltrackers() takes exactly one argument.");
-        if (!context->argument(0).isBool() ) context->throwError("tonatiuh_setdisconnectalltrackers: argument is not a bool.");
-        int result = rayTracer->SetDisconnectAllTrackers(context->argument(0).toBool());
-        if (result == 0) context->throwError("tonatiuh_setdisconnectalltrackers() error.");
-
-    return 1;
-}
-
 QScriptValue tonatiuh_script::tonatiuh_saveas(QScriptContext* context, QScriptEngine* engine)
 {
     QScriptValue rayTracerValue = engine->globalObject().property("rayTracer");
@@ -316,7 +299,6 @@ QScriptValue tonatiuh_script::tonatiuh_saveas(QScriptContext* context, QScriptEn
                 QFileInfo absolutefile(currentDir, fileName);
         fileName = absolutefile.absoluteFilePath();
     }
-
 
     int result = rayTracer->Save(fileName);
         if (result == 0) context->throwError("tonatiuh_saveas() error.");

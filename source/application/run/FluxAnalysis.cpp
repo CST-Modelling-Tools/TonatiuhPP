@@ -95,7 +95,7 @@ QString FluxAnalysis::GetSurfaceType(QString nodeURL)
     InstanceNode* instanceNode = m_pCurrentSceneModel->NodeFromIndex(nodeIndex);
     if (!instanceNode || instanceNode == 0) return "";
 
-    TShapeKit* shapeKit = static_cast<TShapeKit* > (instanceNode->GetNode() );
+    TShapeKit* shapeKit = static_cast<TShapeKit* > (instanceNode->getNode() );
     if (!shapeKit || shapeKit == 0) return "";
 
     ShapeAbstract* shape = static_cast< ShapeAbstract* >(shapeKit->getPart("shape", false) );
@@ -176,7 +176,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     //Check if there is a rootSeparator InstanceNode
     if (!m_pRootSeparatorInstance) return;
 
-    InstanceNode* sceneInstance = m_pRootSeparatorInstance->GetParent();
+    InstanceNode* sceneInstance = m_pRootSeparatorInstance->getParent();
     if (!sceneInstance) return;
 
     //Check if there is a light and is properly configured
@@ -232,9 +232,9 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     delete bbAction;
     bbAction = 0;
 
-    BBox sceneBox;
     if (!box.isEmpty() )
     {
+        BoundingBox sceneBox;
         sceneBox.pMin = Point3D(box.getMin()[0], box.getMin()[1], box.getMin()[2]);
         sceneBox.pMax = Point3D(box.getMax()[0], box.getMax()[1], box.getMax()[2]);
         if (lightKit) lightKit->setBox(sceneBox);
@@ -245,7 +245,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     //Compute bounding boxes and world to object transforms
     trf::ComputeSceneTreeMap(m_pRootSeparatorInstance, Transform(new Matrix4x4), true);
 
-    m_pPhotonMap->setTransform(m_pRootSeparatorInstance->GetIntersectionTransform() );
+    m_pPhotonMap->setTransform(m_pRootSeparatorInstance->getTransform() );
 
     QStringList disabledNodes = QString(lightKit->disabledNodes.getValue().getString() ).split(";", QString::SkipEmptyParts);
     QVector< QPair<TShapeKit*, Transform> > surfacesList;
@@ -263,7 +263,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     if ( (t1 * maximumValueProgressScale) < nOfRays) raysPerThread << (nOfRays - (t1 * maximumValueProgressScale) );
 
     Transform lightToWorld = tgf::TransformFromSoTransform(lightTransform);
-    lightInstance->SetIntersectionTransform(lightToWorld.GetInverse() );
+    lightInstance->setTransform(lightToWorld.GetInverse() );
 
     // Create a progress dialog.
     QProgressDialog dialog;
@@ -372,7 +372,7 @@ void FluxAnalysis::UpdatePhotonCounts()
 void FluxAnalysis::FluxAnalysisCylinder(InstanceNode* node)
 {
     if (!node) return;
-    TShapeKit* surfaceNode = static_cast< TShapeKit* > (node->GetNode() );
+    TShapeKit* surfaceNode = static_cast< TShapeKit* > (node->getNode() );
     if (!surfaceNode) return;
 
     ShapeAbstract* shape = static_cast< ShapeAbstract* >(surfaceNode->getPart("shape", false) );
@@ -402,7 +402,7 @@ void FluxAnalysis::FluxAnalysisCylinder(InstanceNode* node)
     if (m_surfaceSide == "INSIDE")
         activeSideID = 0;
 
-    Transform worldToObject = node->GetIntersectionTransform();
+    Transform worldToObject = node->getTransform();
 
     m_xmin = 0.;
     m_xmax = phiMax*radius;
@@ -461,7 +461,7 @@ void FluxAnalysis::FluxAnalysisCylinder(InstanceNode* node)
 void FluxAnalysis::FluxAnalysisFlatDisk(InstanceNode* node)
 {
     if (!node) return;
-    TShapeKit* surfaceNode = static_cast< TShapeKit* > (node->GetNode() );
+    TShapeKit* surfaceNode = static_cast< TShapeKit* > (node->getNode() );
     if (!surfaceNode) return;
 
     ShapeAbstract* shape = static_cast< ShapeAbstract* >(surfaceNode->getPart("shape", false) );
@@ -485,7 +485,7 @@ void FluxAnalysis::FluxAnalysisFlatDisk(InstanceNode* node)
     if (m_surfaceSide == "BACK")
         activeSideID = 0;
 
-    Transform worldToObject = node->GetIntersectionTransform();
+    Transform worldToObject = node->getTransform();
 
     m_xmin = -radius;
     m_ymin = -radius;
@@ -539,7 +539,7 @@ void FluxAnalysis::FluxAnalysisFlatRectangle(InstanceNode* node)
 {
     if (!node) return;
 
-    TShapeKit* surfaceNode = static_cast< TShapeKit* > (node->GetNode() );
+    TShapeKit* surfaceNode = static_cast< TShapeKit* > (node->getNode() );
     if (!surfaceNode) return;
 
     ShapeAbstract* shape = static_cast< ShapeAbstract* >(surfaceNode->getPart("shape", false) );
@@ -566,7 +566,7 @@ void FluxAnalysis::FluxAnalysisFlatRectangle(InstanceNode* node)
     if (m_surfaceSide == "BACK")
         activeSideID = 0;
 
-    Transform worldToObject = node->GetIntersectionTransform();
+    Transform worldToObject = node->getTransform();
 
     m_xmin = -0.5 * surfaceHeight;
     m_ymin = -0.5 * surfaceWidth;

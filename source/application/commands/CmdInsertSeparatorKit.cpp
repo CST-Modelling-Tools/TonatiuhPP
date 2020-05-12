@@ -19,7 +19,7 @@ CmdInsertSeparatorKit::CmdInsertSeparatorKit( TSeparatorKit* separatorKit,  cons
 
     if( !parentIndex.isValid() ) gf::SevereError( "CmdInsertSeparatorKit called with invalid ModelIndex." );
     InstanceNode* instanceParent = m_pModel->NodeFromIndex( parentIndex );
-    m_coinParent = static_cast< SoBaseKit* > ( instanceParent->GetNode() );
+    m_coinParent = static_cast< SoBaseKit* > ( instanceParent->getNode() );
 }
 
 /*!

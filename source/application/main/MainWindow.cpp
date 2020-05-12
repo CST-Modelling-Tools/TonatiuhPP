@@ -144,8 +144,8 @@ MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags fl
     m_selectedRandomDeviate(-1),
     m_bufferPhotons(1000000),
     m_increasePhotonMap(false),
-    m_pExportModeSettings(0),
-    m_pPhotonMap(0),
+    m_photonsSettings(0),
+    m_photons(0),
     m_lastExportFileName(""),
     m_lastExportSurfaceUrl(""),
     m_lastExportInGlobal(true),
@@ -176,7 +176,7 @@ MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags fl
     if (!tonatiuhFile.isEmpty() )
         StartOver(tonatiuhFile);
 
-//    SelectNode("//SunNode/RootNode");
+    SelectNode("//SunNode/RootNode");
 
     fileToolBar->hide();
     editToolBar->hide();
@@ -227,7 +227,7 @@ MainWindow::~MainWindow()
     delete m_commandStack;
     delete m_commandView;
     delete m_rand;
-    delete m_pPhotonMap;
+    delete m_photons;
 }
 
 /*!
@@ -290,8 +290,8 @@ void MainWindow::SetupGraphicsRoot()
 void MainWindow::SetupModels()
 {
     m_sceneModel = new SceneModel();
-    m_sceneModel->SetCoinRoot(*m_graphicsRoot->GetNode() );
-    m_sceneModel->SetCoinScene(*m_document->getSceneKit() );
+    m_sceneModel->setSceneRoot(*m_graphicsRoot->GetNode() );
+    m_sceneModel->setSceneKit(*m_document->getSceneKit() );
 
     m_selectionModel = new QItemSelectionModel(m_sceneModel);
 
@@ -465,7 +465,6 @@ void MainWindow::SetupTriggers()
     // scene
     connect(actionDefineSunLight, SIGNAL(triggered()), this, SLOT(DefineSunLight()) );
     connect(actionCalculateSunPosition, SIGNAL(triggered()), this, SLOT(CalculateSunPosition()) );
-    connect(actionDisconnect_All_Trackers, SIGNAL(toggled(bool)), this, SLOT(DisconnectAllTrackers(bool)) );
     connect(actionDefineTransmissivity, SIGNAL(triggered()), this, SLOT(DefineTransmissivity()) );
 
     // run
@@ -486,7 +485,7 @@ void MainWindow::SetupTriggers()
 void MainWindow::FinishManipulation()
 {
     QModelIndex currentIndex = sceneModelView->currentIndex();
-    SoBaseKit* coinNode = static_cast< SoBaseKit* >(m_sceneModel->NodeFromIndex(currentIndex)->GetNode() );
+    SoBaseKit* coinNode = static_cast< SoBaseKit* >(m_sceneModel->NodeFromIndex(currentIndex)->getNode() );
 
     SoTransform* nodeTransform = static_cast< SoTransform* >(coinNode->getPart("transform", true) );
 
@@ -624,12 +623,6 @@ void MainWindow::DefineTransmissivity()
     m_document->setModified(true);
 }
 
-void MainWindow::DisconnectAllTrackers(bool disconnect)
-{
-    if (disconnect) m_sceneModel->DisconnectAllTrackers();
-    else m_sceneModel->ReconnectAllTrackers();
-}
-
 /*!
  * If actionDisplay_rays is checked the 3D view shows rays representation. Otherwise the representation is hidden.
  */
@@ -655,7 +648,7 @@ void MainWindow::InsertUserDefinedComponent()
     else
         parentIndex = sceneModelView->currentIndex();
 
-    SoNode* coinNode = m_sceneModel->NodeFromIndex(parentIndex)->GetNode();
+    SoNode* coinNode = m_sceneModel->NodeFromIndex(parentIndex)->getNode();
 
     if (!coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) return;
 
@@ -683,9 +676,9 @@ void MainWindow::ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex
 
 
     InstanceNode* nodeInstnace = m_sceneModel->NodeFromIndex(node);
-    if (nodeInstnace->GetParent()&&nodeInstnace->GetParent()->GetNode()->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) )
+    if (nodeInstnace->getParent()&&nodeInstnace->getParent()->getNode()->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) )
     {
-        SoNode* coinNode = nodeInstnace->GetNode();
+        SoNode* coinNode = nodeInstnace->getNode();
         //if( coinNode->getTypeId().isDerivedFrom( TTracker::getClassTypeId() ) ) return;
 
         QUndoCommand* dragAndDrop = new QUndoCommand();
@@ -707,7 +700,7 @@ void MainWindow::ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex
 void MainWindow::ItemDragAndDropCopy(const QModelIndex& newParent, const QModelIndex& node)
 {
     InstanceNode* nodeInstnace = m_sceneModel->NodeFromIndex(node);
-    SoNode* coinNode = nodeInstnace->GetNode();
+    SoNode* coinNode = nodeInstnace->getNode();
     //if( coinNode->getTypeId().isDerivedFrom( TTracker::getClassTypeId() ) ) return;
 
     QUndoCommand* dragAndDropCopy = new QUndoCommand();
@@ -791,7 +784,7 @@ void MainWindow::RunCompleteRayTracer()
 
 //    std::cout << "Elapsed time (ReadyForRaytracing): " << timer.elapsed() << std::endl;
 
-    if (!m_pPhotonMap->getExporter() && !SetPhotonMapExportSettings() ) return;
+    if (!m_photons->getExporter() && !SetPhotonMapExportSettings() ) return;
 
     Run();
 }
@@ -851,7 +844,7 @@ void MainWindow::SaveComponent(QString componentFileName)
     if (m_selectionModel->currentIndex() == sceneModelView->rootIndex() ) return;
 
     QModelIndex componentIndex = sceneModelView->currentIndex();
-    SoNode* coinNode = m_sceneModel->NodeFromIndex(componentIndex)->GetNode();
+    SoNode* coinNode = m_sceneModel->NodeFromIndex(componentIndex)->getNode();
 
     if (!coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
     {
@@ -923,7 +916,7 @@ bool MainWindow::SaveComponent()
 
     QModelIndex componentIndex = sceneModelView->currentIndex();
 
-    SoNode* coinNode = m_sceneModel->NodeFromIndex(componentIndex)->GetNode();
+    SoNode* coinNode = m_sceneModel->NodeFromIndex(componentIndex)->getNode();
 
     if (!coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
     {
@@ -1035,12 +1028,12 @@ void MainWindow::ShowMenu(const QModelIndex& index)
     m_selectionModel->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
 
     InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(index);
-    SoNode* coinNode = instanceNode->GetNode();
+    SoNode* coinNode = instanceNode->getNode();
     SoType type = coinNode->getTypeId();
 
     QMenu popupmenu(this);
 
-    if (instanceNode->GetParent()&&instanceNode->GetParent()->GetNode()->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) )
+    if (instanceNode->getParent()&&instanceNode->getParent()->getNode()->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) )
     {
         popupmenu.addAction(actionCut);
         popupmenu.addAction(actionCopy);
@@ -1229,7 +1222,7 @@ void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& newName
 
     InstanceNode* nodeInstance = m_sceneModel->NodeFromIndex(index);
     if (!nodeInstance) return;
-    if (!nodeInstance->GetNode() ) return;
+    if (!nodeInstance->getNode() ) return;
 
     CmdChangeNodeName* command = new CmdChangeNodeName(index, newName, m_sceneModel);
     QString commandText = QString("Node name changed to: %1").arg(newName);
@@ -1245,8 +1238,8 @@ void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& newName
  */
 void MainWindow::AddExportSurfaceURL(QString nodeURL)
 {
-    if (!m_pExportModeSettings) return;
-    m_pExportModeSettings->exportSurfaceNodeList.push_back(nodeURL);
+    if (!m_photonsSettings) return;
+    m_photonsSettings->exportSurfaceNodeList.push_back(nodeURL);
 }
 
 /*!
@@ -1391,7 +1384,7 @@ void MainWindow::CreateGroupNode()
         return;
     }
 
-    SoNode* coinNode = parentInstance->GetNode();
+    SoNode* coinNode = parentInstance->getNode();
     if (!coinNode)
     {
         emit Abort(tr("CreateGroupNode: Error creating new group node.") );
@@ -1430,7 +1423,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
                 sceneModelView->currentIndex();
 
     InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
-    SoNode* parentNode = parentInstance->GetNode();
+    SoNode* parentNode = parentInstance->getNode();
     if (!parentNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) return;
 
     QVector<ComponentFactory*> factoryList = m_pluginManager->getComponentFactories();
@@ -1570,7 +1563,7 @@ void MainWindow::CreateSurfaceNode()
     InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
     if (!parentInstance) return;
 
-    SoNode* selectedCoinNode = parentInstance->GetNode();
+    SoNode* selectedCoinNode = parentInstance->getNode();
     if (!selectedCoinNode) return;
 
     if (selectedCoinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
@@ -1689,7 +1682,7 @@ void MainWindow::Delete()
     m_selectionModel->clearSelection();
 
     InstanceNode* selectionNode = m_sceneModel->NodeFromIndex(selection);
-    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(selectionNode->GetParent()->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
+    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(selectionNode->getParent()->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 
     Delete(selection);
 }
@@ -1724,7 +1717,7 @@ bool MainWindow::Delete(QModelIndex index)
     if (index.parent() == sceneModelView->rootIndex() ) return false;
 
     InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(index);
-    SoNode* coinNode = instanceNode->GetNode();
+    SoNode* coinNode = instanceNode->getNode();
 
     if (coinNode->getTypeId().isDerivedFrom(TrackerAbstract::getClassTypeId() ) )
     {
@@ -1781,7 +1774,7 @@ void MainWindow::InsertFileComponent(QString componentFileName)
     else
         parentIndex = sceneModelView->currentIndex();
 
-    SoNode* coinNode = m_sceneModel->NodeFromIndex(parentIndex)->GetNode();
+    SoNode* coinNode = m_sceneModel->NodeFromIndex(parentIndex)->getNode();
     if (!coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
     {
         emit Abort(tr("InsertFileComponent: Parent node is not valid node type.") );
@@ -1936,9 +1929,9 @@ void MainWindow::PasteLink()
  */
 void MainWindow::Run()
 {
-    InstanceNode* rootSeparatorInstance = 0;
-    InstanceNode* lightInstance = 0;
-    SoTransform* lightTransform = 0;
+    InstanceNode* instanceRoot = 0;
+    InstanceNode* instanceSun = 0;
+    SoTransform* transformSun = 0;
     SunAbstract* sunShape = 0;
     TLightShape* raycastingSurface = 0;
     AirAbstract* transmissivity = 0;
@@ -1946,44 +1939,39 @@ void MainWindow::Run()
     QElapsedTimer timer;
     timer.start();
 
-    if (ReadyForRaytracing(rootSeparatorInstance, lightInstance, lightTransform, sunShape, raycastingSurface, transmissivity) )
+    if (ReadyForRaytracing(instanceRoot, instanceSun, transformSun, sunShape, raycastingSurface, transmissivity) )
     {
-        if (!m_pPhotonMap->getExporter() )
+        if (!m_photons->getExporter() )
         {
-            if (!m_pExportModeSettings) return;
-            else
-            {
-                PhotonsAbstract* pExportMode = CreatePhotonMapExport();
-                if (!pExportMode) return;
-                if (!m_pPhotonMap->setExporter(pExportMode)  ) return;
-            }
+            if (!m_photonsSettings) return;
+            PhotonsAbstract* photonsExporter = CreatePhotonMapExport();
+            if (!photonsExporter) return;
+            if (!m_photons->setExporter(photonsExporter)) return;
         }
 
         QVector<InstanceNode*> exportSuraceList;
-        QStringList exportSurfaceURLList = m_pExportModeSettings->exportSurfaceNodeList;
-        for (int s = 0; s < exportSurfaceURLList.count(); s++)
+        for (QString s : m_photonsSettings->exportSurfaceNodeList)
         {
-            m_sceneModel->IndexFromNodeUrl(exportSurfaceURLList[s]);
-            InstanceNode* surfaceNode = m_sceneModel->NodeFromIndex(m_sceneModel->IndexFromNodeUrl(exportSurfaceURLList[s]) );
-            exportSuraceList.push_back(surfaceNode);
+            m_sceneModel->IndexFromNodeUrl(s);
+            InstanceNode* node = m_sceneModel->NodeFromIndex(m_sceneModel->IndexFromNodeUrl(s));
+            exportSuraceList << node;
         }
 
         UpdateLightSize();
 
         //Compute bounding boxes and world to object transforms
-        trf::ComputeSceneTreeMap(rootSeparatorInstance, Transform(new Matrix4x4), true);
+        trf::ComputeSceneTreeMap(instanceRoot, Transform(new Matrix4x4), true);
 
-        m_pPhotonMap->setTransform(rootSeparatorInstance->GetIntersectionTransform() );
+        m_photons->setTransform(instanceRoot->getTransform() );
 
-        TLightKit* light = static_cast< TLightKit* > (lightInstance->GetNode() );
+        TLightKit* light = static_cast< TLightKit* > (instanceSun->getNode() );
         QStringList disabledNodes = QString(light->disabledNodes.getValue().getString() ).split(";", QString::SkipEmptyParts);
         QVector< QPair< TShapeKit*, Transform > > surfacesList;
-        trf::ComputeFistStageSurfaceList(rootSeparatorInstance, disabledNodes, &surfacesList);
+        trf::ComputeFistStageSurfaceList(instanceRoot, disabledNodes, &surfacesList);
         light->findTexture(m_widthDivisions, m_heightDivisions, surfacesList);
         if (surfacesList.count() < 1)
         {
             emit Abort(tr("There are no surfaces defined for ray tracing") );
-
             ShowRaysIn3DView();
             return;
         }
@@ -1998,9 +1986,8 @@ void MainWindow::Run()
             raysPerThread << m_raysTraced - (t1*progressMax);
 
 
-        Transform lightToWorld = tgf::TransformFromSoTransform(lightTransform);
-        lightInstance->SetIntersectionTransform(lightToWorld.GetInverse() );
-
+        Transform lightToWorld = tgf::TransformFromSoTransform(transformSun);
+        instanceSun->setTransform(lightToWorld.GetInverse() );
 
         // single thread for gprof
 //        QThreadPool::globalInstance()->setMaxThreadCount(1);
@@ -2025,11 +2012,11 @@ void MainWindow::Run()
         if (!dynamic_cast<AirVacuum*>(transmissivity))
             airTemp = transmissivity;
 
-        photonMap = QtConcurrent::map(raysPerThread, RayTracer(rootSeparatorInstance,
-            lightInstance, raycastingSurface, sunShape, lightToWorld,
+        photonMap = QtConcurrent::map(raysPerThread, RayTracer(instanceRoot,
+            instanceSun, raycastingSurface, sunShape, lightToWorld,
             airTemp,
             *m_rand,
-            &mutex, m_pPhotonMap, &mutexPhotonMap,
+            &mutex, m_photons, &mutexPhotonMap,
             exportSuraceList) );
         futureWatcher.setFuture(photonMap);
 
@@ -2051,7 +2038,7 @@ void MainWindow::Run()
         double inputAperture = raycastingSurface->GetValidArea();
         double wPhoton = (inputAperture*irradiance) / m_raysTracedTotal;
 
-        m_pPhotonMap->endExport(wPhoton);
+        m_photons->endExport(wPhoton);
     }
 
     std::cout << "Elapsed time (Run): " << timer.elapsed() << std::endl;
@@ -2133,8 +2120,8 @@ void MainWindow::SelectNode(QString nodeUrl)
  */
 void MainWindow::SetExportAllPhotonMap()
 {
-    if (!m_pExportModeSettings) return;
-    m_pExportModeSettings->exportSurfaceNodeList.clear();
+    if (!m_photonsSettings) return;
+    m_photonsSettings->exportSurfaceNodeList.clear();
 }
 
 /*!
@@ -2143,10 +2130,9 @@ void MainWindow::SetExportAllPhotonMap()
  */
 void MainWindow::SetExportCoordinates(bool enabled, bool global)
 {
-    if (!m_pExportModeSettings) return;
-    m_pExportModeSettings->exportCoordinates = enabled;
-    m_pExportModeSettings->exportInGlobalCoordinates = global;
-
+    if (!m_photonsSettings) return;
+    m_photonsSettings->exportCoordinates = enabled;
+    m_photonsSettings->exportInGlobalCoordinates = global;
 }
 
 /*!
@@ -2155,8 +2141,8 @@ void MainWindow::SetExportCoordinates(bool enabled, bool global)
  */
 void MainWindow::SetExportIntersectionSurface(bool enabled)
 {
-    if (!m_pExportModeSettings) return;
-    m_pExportModeSettings->exportSurfaceID = enabled;
+    if (!m_photonsSettings) return;
+    m_photonsSettings->exportSurfaceID = enabled;
 }
 
 /*!
@@ -2165,8 +2151,8 @@ void MainWindow::SetExportIntersectionSurface(bool enabled)
  */
 void MainWindow::SetExportIntersectionSurfaceSide(bool enabled)
 {
-    if (!m_pExportModeSettings) return;
-    m_pExportModeSettings->exportIntersectionSurfaceSide = enabled;
+    if (!m_photonsSettings) return;
+    m_photonsSettings->exportIntersectionSurfaceSide = enabled;
 }
 
 /*!
@@ -2187,10 +2173,10 @@ void MainWindow::SetExportPhotonMapType(QString exportModeType)
         return;
     }
 
-    if (!m_pExportModeSettings)
-        m_pExportModeSettings = new PhotonsSettings;
+    if (!m_photonsSettings)
+        m_photonsSettings = new PhotonsSettings;
 
-    m_pExportModeSettings->modeTypeName = exportModeType;
+    m_photonsSettings->modeTypeName = exportModeType;
 }
 
 /*!
@@ -2199,8 +2185,8 @@ void MainWindow::SetExportPhotonMapType(QString exportModeType)
  */
 void MainWindow::SetExportPreviousNextPhotonID(bool enabled)
 {
-    if (!m_pExportModeSettings) return;
-    m_pExportModeSettings->exportPreviousNextPhotonID = enabled;
+    if (!m_photonsSettings) return;
+    m_photonsSettings->exportPreviousNextPhotonID = enabled;
 }
 
 /*!
@@ -2208,8 +2194,8 @@ void MainWindow::SetExportPreviousNextPhotonID(bool enabled)
  */
 void MainWindow::SetExportTypeParameterValue(QString parameterName, QString parameterValue)
 {
-    if (!m_pExportModeSettings) return;
-    m_pExportModeSettings->AddParameter(parameterName, parameterValue);
+    if (!m_photonsSettings) return;
+    m_photonsSettings->AddParameter(parameterName, parameterValue);
 
 }
 
@@ -2464,7 +2450,7 @@ void MainWindow::SetValue(QString nodeUrl, QString parameter, QString value)
         return;
     }
 
-    SoNode* node = nodeInstance->GetNode();
+    SoNode* node = nodeInstance->getNode();
     if (!node) return;
     if (node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
     {
@@ -2492,7 +2478,7 @@ void MainWindow::SoTransform_to_SoCenterballManip()
     QModelIndex currentIndex = sceneModelView->currentIndex();
 
     InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(currentIndex);
-    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->GetNode() );
+    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
     SoTransform* transform = static_cast< SoTransform* >(coinNode->getPart("transform", false) );
 
     SoCenterballManip* manipulator = new SoCenterballManip;
@@ -2518,7 +2504,7 @@ void MainWindow::SoTransform_to_SoJackManip()
     QModelIndex currentIndex = sceneModelView->currentIndex();
 
     InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(currentIndex);
-    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->GetNode() );
+    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
     SoTransform* transform = static_cast< SoTransform* >(coinNode->getPart("transform", false) );
 
     SoJackManip* manipulator = new SoJackManip;
@@ -2544,7 +2530,7 @@ void MainWindow::SoTransform_to_SoHandleBoxManip()
     QModelIndex currentIndex = sceneModelView->currentIndex();
 
     InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(currentIndex);
-    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->GetNode() );
+    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
     SoTransform* transform = static_cast< SoTransform* >(coinNode->getPart("transform", false) );
 
     SoHandleBoxManip* manipulator = new SoHandleBoxManip;
@@ -2570,7 +2556,7 @@ void MainWindow::SoTransform_to_SoTabBoxManip()
     QModelIndex currentIndex = sceneModelView->currentIndex();
 
     InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(currentIndex);
-    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->GetNode() );
+    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
     SoTransform* transform = static_cast< SoTransform* >(coinNode->getPart("transform", false) );
 
     SoTabBoxManip* manipulator = new SoTabBoxManip;
@@ -2596,7 +2582,7 @@ void MainWindow::SoTransform_to_SoTrackballManip()
     QModelIndex currentIndex = sceneModelView->currentIndex();
 
     InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(currentIndex);
-    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->GetNode() );
+    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
     SoTransform* transform = static_cast< SoTransform* >(coinNode->getPart("transform", false) );
 
     SoTrackballManip* manipulator = new SoTrackballManip;
@@ -2622,7 +2608,7 @@ void MainWindow::SoTransform_to_SoTransformBoxManip()
     QModelIndex currentIndex = sceneModelView->currentIndex();
 
     InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(currentIndex);
-    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->GetNode() );
+    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
     SoTransform* transform = static_cast< SoTransform* >(coinNode->getPart("transform", false) );
 
     SoTransformBoxManip* manipulator = new SoTransformBoxManip;
@@ -2649,7 +2635,7 @@ void MainWindow::SoTransform_to_SoTransformerManip()
     QModelIndex currentIndex = sceneModelView->currentIndex();
 
     InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(currentIndex);
-    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->GetNode() );
+    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
     SoTransform* transform = static_cast< SoTransform* >(coinNode->getPart("transform", false) );
 
     SoTransformerManip* manipulator = new SoTransformerManip;
@@ -2677,7 +2663,7 @@ void MainWindow::SoManip_to_SoTransform()
     QModelIndex currentIndex = sceneModelView->currentIndex();
 
     InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(currentIndex);
-    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->GetNode() );
+    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
     SoTransformManip* manipulator = static_cast< SoTransformManip* >(coinNode->getPart("transform", false) );
     if (!manipulator) return;
 
@@ -2697,7 +2683,7 @@ void MainWindow::SoManip_to_SoTransform()
 void MainWindow::ChangeSelection(const QModelIndex& current)
 {
     InstanceNode* instanceSelected = m_sceneModel->NodeFromIndex(current);
-    SoNode* selectedCoinNode = instanceSelected->GetNode();
+    SoNode* selectedCoinNode = instanceSelected->getNode();
 
     if (selectedCoinNode->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) )
     {
@@ -2722,7 +2708,7 @@ void MainWindow::CreateComponent(ComponentFactory* pComponentFactory)
                 sceneModelView->currentIndex();
 
     InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
-    SoNode* parentNode = parentInstance->GetNode();
+    SoNode* parentNode = parentInstance->getNode();
     if (!parentNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) return;
 
     TSeparatorKit* componentRootNode = pComponentFactory->CreateTComponent(m_pluginManager);
@@ -2777,7 +2763,7 @@ void MainWindow::CreateMaterial(MaterialFactory* pMaterialFactory)
     sceneModelView->expand(parentIndex);
 
     InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
-    SoNode* parentNode = parentInstance->GetNode();
+    SoNode* parentNode = parentInstance->getNode();
     if (!parentNode->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId() ) ) return;
 
     TShapeKit* shapeKit = static_cast< TShapeKit* >(parentNode);
@@ -2819,7 +2805,7 @@ void MainWindow::CreateShape(ShapeFactory* factory)
     sceneModelView->expand(parentIndex);
 
     InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
-    SoNode* parentNode = parentInstance->GetNode();
+    SoNode* parentNode = parentInstance->getNode();
     if (!parentNode->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId() ) ) return;
     TShapeKit* shapeKit = static_cast<TShapeKit*>(parentNode);
 
@@ -2857,7 +2843,7 @@ void MainWindow::CreateShape(ShapeFactory* pShapeFactory, int /*numberofParamete
                 m_sceneModel->index (0,0,sceneModelView->rootIndex()) : sceneModelView->currentIndex();
 
     InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
-    SoNode* parentNode = parentInstance->GetNode();
+    SoNode* parentNode = parentInstance->getNode();
     if (!parentNode->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId() ) ) return;
 
     TShapeKit* shapeKit = static_cast< TShapeKit* >(parentNode);
@@ -2896,7 +2882,7 @@ void MainWindow::CreateTracker(TrackerFactory* pTrackerFactory)
 
     /*Las 2 lineas siguientes son para obtener el valor del nodo padre*/
     InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
-    SoNode* parentNode = parentInstance->GetNode();
+    SoNode* parentNode = parentInstance->getNode();
     /*Si el valor del nodo padre es del tipo TseparatorKit, permitimos la creacion del Traker**/
     if (parentNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) {
         /**/
@@ -2978,7 +2964,7 @@ void MainWindow::ChangeModelScene()
 {
     TSceneKit* coinScene = m_document->getSceneKit();
 
-    m_sceneModel->SetCoinScene(*coinScene);
+    m_sceneModel->setSceneKit(*coinScene);
     m_graphicsRoot->AddModel(coinScene);
 
     QModelIndex viewRootNodeIndex = m_sceneModel->IndexFromNodeUrl(QString("//SunNode") );
@@ -3034,7 +3020,7 @@ PhotonsAbstract* MainWindow::CreatePhotonMapExport() const
     for (int i = 0; i < factoryList.size(); i++)
         exportPMModeNames << factoryList[i]->name();
 
-    int exportModeFactoryIndex = exportPMModeNames.indexOf(m_pExportModeSettings->modeTypeName);
+    int exportModeFactoryIndex = exportPMModeNames.indexOf(m_photonsSettings->modeTypeName);
     if (exportModeFactoryIndex < 0) return 0;
 
     PhotonsFactory* pExportModeFactory = factoryList[exportModeFactoryIndex];
@@ -3043,19 +3029,19 @@ PhotonsAbstract* MainWindow::CreatePhotonMapExport() const
     PhotonsAbstract* pExportMode = pExportModeFactory->create();
     if (!pExportMode) return 0;
 
-    pExportMode->SetSaveCoordinatesEnabled(m_pExportModeSettings->exportCoordinates);
-    pExportMode->SetSaveCoordinatesInGlobalSystemEnabled(m_pExportModeSettings->exportInGlobalCoordinates);
-    pExportMode->SetSavePreviousNextPhotonsID(m_pExportModeSettings->exportPreviousNextPhotonID);
-    pExportMode->SetSaveSideEnabled(m_pExportModeSettings->exportIntersectionSurfaceSide);
-    pExportMode->SetSaveSurfacesIDEnabled(m_pExportModeSettings->exportSurfaceID);
+    pExportMode->SetSaveCoordinatesEnabled(m_photonsSettings->exportCoordinates);
+    pExportMode->SetSaveCoordinatesInGlobalSystemEnabled(m_photonsSettings->exportInGlobalCoordinates);
+    pExportMode->SetSavePreviousNextPhotonsID(m_photonsSettings->exportPreviousNextPhotonID);
+    pExportMode->SetSaveSideEnabled(m_photonsSettings->exportIntersectionSurfaceSide);
+    pExportMode->SetSaveSurfacesIDEnabled(m_photonsSettings->exportSurfaceID);
 
 
-    if (m_pExportModeSettings->exportSurfaceNodeList.count() > 0)
+    if (m_photonsSettings->exportSurfaceNodeList.count() > 0)
         pExportMode->SetSaveAllPhotonsEnabled();
     else
-        pExportMode->SetSaveSurfacesURLList(m_pExportModeSettings->exportSurfaceNodeList);
+        pExportMode->SetSaveSurfacesURLList(m_photonsSettings->exportSurfaceNodeList);
 
-    QMap< QString, QString > exportTypeParameters = m_pExportModeSettings->modeTypeParameters;
+    QMap< QString, QString > exportTypeParameters = m_photonsSettings->modeTypeParameters;
     QMap< QString, QString >::const_iterator i = exportTypeParameters.constBegin();
     while (i != exportTypeParameters.constEnd() )
     {
@@ -3111,17 +3097,17 @@ bool MainWindow::Paste(QModelIndex nodeIndex, tgc::PasteType type)
     if (!m_coinNode_Buffer) return false;
 
     InstanceNode* ancestor = m_sceneModel->NodeFromIndex(nodeIndex);
-    SoNode* selectedCoinNode = ancestor->GetNode();
+    SoNode* selectedCoinNode = ancestor->getNode();
 
     if (!selectedCoinNode->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) ) return false;
     if ( (selectedCoinNode->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) ) &&
          (m_coinNode_Buffer->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) ) ) return false;
 
-    if (ancestor->GetNode() == m_coinNode_Buffer) return false;
-    while (ancestor->GetParent() )
+    if (ancestor->getNode() == m_coinNode_Buffer) return false;
+    while (ancestor->getParent() )
     {
-        if (ancestor->GetParent()->GetNode() == m_coinNode_Buffer) return false;
-        ancestor = ancestor->GetParent();
+        if (ancestor->getParent()->getNode() == m_coinNode_Buffer) return false;
+        ancestor = ancestor->getParent();
     }
 
     CmdPaste* commandPaste = new CmdPaste(type, m_selectionModel->currentIndex(), m_coinNode_Buffer, *m_sceneModel);
@@ -3192,7 +3178,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
     rootSeparatorInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
     if (!rootSeparatorInstance) return false;
 
-    InstanceNode* sceneInstance = rootSeparatorInstance->GetParent();
+    InstanceNode* sceneInstance = rootSeparatorInstance->getParent();
     if (!sceneInstance) return false;
 
     //Check if there is a light and is properly configured
@@ -3227,16 +3213,16 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
     //Create the photon map where photons are going to be stored
     if (!m_increasePhotonMap)
     {
-        delete m_pPhotonMap;
-        m_pPhotonMap = new Photons();
-        m_pPhotonMap->setBufferSize(m_bufferPhotons);
+        delete m_photons;
+        m_photons = new Photons();
+        m_photons->setBufferSize(m_bufferPhotons);
         m_raysTracedTotal = 0;
     }
 
-    if (!m_pPhotonMap)
+    if (!m_photons)
     {
-        m_pPhotonMap = new Photons();
-        m_pPhotonMap->setBufferSize(m_bufferPhotons);
+        m_photons = new Photons();
+        m_photons->setBufferSize(m_bufferPhotons);
         m_raysTracedTotal = 0;
     }
 
@@ -3290,10 +3276,10 @@ bool MainWindow::SetPhotonMapExportSettings()
     RayExportDialog dialog(*m_sceneModel, exportPhotonMapModeList);
     if (!dialog.exec() ) return false;
 
-    if (m_pExportModeSettings) delete m_pExportModeSettings;
+    if (m_photonsSettings) delete m_photonsSettings;
 
-    m_pExportModeSettings = new PhotonsSettings;
-    *m_pExportModeSettings = dialog.GetExportPhotonMapSettings();
+    m_photonsSettings = new PhotonsSettings;
+    *m_photonsSettings = dialog.GetExportPhotonMapSettings();
     return true;
 }
 
@@ -3485,13 +3471,13 @@ void MainWindow::ShowRaysIn3DView()
 
         if (m_drawPhotons)
         {
-            SoSeparator* points = trf::DrawPhotons(*m_pPhotonMap);
+            SoSeparator* points = trf::DrawPhotons(*m_photons);
             rays->addChild(points);
         }
 
         if (m_drawRays)
         {
-            SoSeparator* currentRays = trf::DrawRays(*m_pPhotonMap, m_raysTracedTotal);
+            SoSeparator* currentRays = trf::DrawRays(*m_photons, m_raysTracedTotal);
             if (currentRays) rays->addChild(currentRays);
         }
         m_graphicsRoot->AddRays(rays);
@@ -3547,25 +3533,25 @@ bool MainWindow::StartOver(const QString& fileName)
  */
 void MainWindow::UpdateLightSize()
 {
-    SoSceneKit* coinScene = m_document->getSceneKit();
+    SoSceneKit* sceneKit = m_document->getSceneKit();
 
-    TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
+    TLightKit* lightKit = static_cast<TLightKit*>(sceneKit->getPart("lightList[0]", false) );
     if (!lightKit) return;
 
-    TSeparatorKit* concentratorRoot = static_cast< TSeparatorKit* >(coinScene->getPart("childList[0]", false) );
-    if (!concentratorRoot) return;
+    TSeparatorKit* separatorKit = static_cast<TSeparatorKit*>(sceneKit->getPart("childList[0]", false) );
+    if (!separatorKit) return;
 
     SoGetBoundingBoxAction* action = new SoGetBoundingBoxAction(SbViewportRegion() );
-    concentratorRoot->getBoundingBox(action);
-
-    SbBox3f box = action->getXfBoundingBox().project();
+    separatorKit->getBoundingBox(action);
+    SbBox3f box = action->getBoundingBox();
     delete action;
 
-    BBox sceneBox;
     if (!box.isEmpty())
     {
-        sceneBox.pMin = Point3D(box.getMin()[0], box.getMin()[1], box.getMin()[2]);
-        sceneBox.pMax = Point3D(box.getMax()[0], box.getMax()[1], box.getMax()[2]);
+        BoundingBox sceneBox(
+            Point3D(box.getMin()[0], box.getMin()[1], box.getMin()[2]),
+            Point3D(box.getMax()[0], box.getMax()[1], box.getMax()[2])
+        );
 
         if (lightKit) lightKit->setBox(sceneBox);
     }
@@ -3633,7 +3619,7 @@ void MainWindow::on_actionViewSelected_triggered()
     InstanceNode* node = m_sceneModel->NodeFromIndex(index);
 
     SoGetBoundingBoxAction* action = new SoGetBoundingBoxAction( SbViewportRegion() ) ;
-    node->GetNode()->getBoundingBox(action);
+    node->getNode()->getBoundingBox(action);
     SbBox3f box = action->getBoundingBox();
     delete action;
     if ( box.isEmpty() ) return;

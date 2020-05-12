@@ -57,7 +57,7 @@ public:
     virtual SbBool setPart(const SbName& partname, SoNode* from);
     virtual SoNode* getPart(const SbName &partname, SbBool makeifneeded);
 
-    QString getIcon();
+    void getBoundingBox(SoGetBoundingBoxAction * action);
 
 protected:
     ~TSeparatorKit() {}

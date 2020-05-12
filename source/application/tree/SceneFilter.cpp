@@ -45,7 +45,7 @@ bool SceneFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParen
     InstanceNode* nodeInstance = sceneModel->NodeFromIndex(index);
     if (!nodeInstance) return false;
 
-    SoNode* node = nodeInstance->GetNode();
+    SoNode* node = nodeInstance->getNode();
     if (!node) return false;
 
     if (node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) return true;

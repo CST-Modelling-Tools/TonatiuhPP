@@ -33,7 +33,7 @@ void ShapeAbstract::computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center)
     Q_UNUSED(action)
     Q_UNUSED(center)
 
-    BBox b = getBox();
+    BoundingBox b = getBox();
     SbVec3f min(b.pMin.x, b.pMin.y, b.pMin.z);
     SbVec3f max(b.pMax.x, b.pMax.y, b.pMax.z);
     box.setBounds(min, max);

@@ -6,7 +6,7 @@
 #include <Inventor/fields/SoSFEnum.h>
 
 struct Vector3D;
-struct BBox;
+struct BoundingBox;
 class Ray;
 struct DifferentialGeometry;
 class QSize;
@@ -21,7 +21,7 @@ public:
 
     virtual double getArea() const {return -1.;}
     virtual double getVolume() const {return 0.;}
-    virtual BBox getBox() const = 0;
+    virtual BoundingBox getBox() const = 0;
 
     // with computing dg
     virtual bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const = 0;

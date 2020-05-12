@@ -10,7 +10,7 @@
 #include "kernel/TonatiuhTypes.h"
 #include "kernel/sun/SunAbstract.h"
 
-struct BBox;
+struct BoundingBox;
 class Transform;
 class TShapeKit;
 
@@ -59,7 +59,7 @@ public:
     static void initClass();
 
     void setPosition(double azimuth, double elevation);
-    void setBox(BBox box);
+    void setBox(BoundingBox box);
     void findTexture(int widthDivisions, int heightDivisions, QVector< QPair<TShapeKit*, Transform> > surfacesList);
 
     SoSFString disabledNodes;

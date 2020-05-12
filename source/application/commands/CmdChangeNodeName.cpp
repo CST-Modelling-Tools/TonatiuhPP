@@ -26,7 +26,7 @@ CmdChangeNodeName::CmdChangeNodeName( const QModelIndex& index, QString newName,
     if( !index.isValid() ) gf::SevereError( "CmdChangeNodeName called with invalid ModelIndex." );
     InstanceNode* selectedNodeInstance = m_pModel->NodeFromIndex( index );
     if( !selectedNodeInstance ) gf::SevereError( "CmdChangeNodeName called with invalid node." );
-    m_pNode = selectedNodeInstance->GetNode();
+    m_pNode = selectedNodeInstance->getNode();
 
     m_previousName = QString( m_pNode->getName().getString() );
 

@@ -28,13 +28,13 @@ ShapeParabolic::ShapeParabolic()
     SO_NODE_ADD_FIELD( activeSide, (OUTSIDE) );
 }
 
-BBox ShapeParabolic::getBox() const
+BoundingBox ShapeParabolic::getBox() const
 {
     double xMax = widthX.getValue()/2.;
     double yMax = widthY.getValue()/2.;
     double zMax = (xMax*xMax+ yMax*yMax)/(4.*focus.getValue());
 
-    return BBox(
+    return BoundingBox(
         Point3D(-xMax, -yMax, 0.),
         Point3D(xMax, yMax, zMax)
     );

@@ -12,7 +12,7 @@ public:
     static void initClass();
     ShapeParabolic();
 
-    BBox getBox() const;
+    BoundingBox getBox() const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
 
     trt::TONATIUH_REAL focus;

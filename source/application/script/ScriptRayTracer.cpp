@@ -184,7 +184,7 @@ int ScriptRayTracer::SetSunPositionToScene()
     {
         QModelIndex sceneIndex;
         InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex(sceneIndex);
-        SoSceneKit* coinScene =  static_cast< SoSceneKit* >(sceneInstance->GetNode() );
+        SoSceneKit* coinScene =  static_cast< SoSceneKit* >(sceneInstance->getNode() );
 
         if ((coinScene)&& (coinScene->getPart("lightList[0]", false) ))
         {
@@ -194,18 +194,6 @@ int ScriptRayTracer::SetSunPositionToScene()
         }
         std::cerr << "ScriptRayTracer::SetSunPositionToScene() light not found in scene" << std::endl;
         return 0;
-    }
-    std::cerr << "ScriptRayTracer::SetSunPositionToScene() sceneModel not found" << std::endl;
-    return 0;
-}
-
-int ScriptRayTracer::SetDisconnectAllTrackers(bool disconnect)
-{
-    if (m_sceneModel)
-    {
-        if (disconnect) m_sceneModel->DisconnectAllTrackers();
-        else m_sceneModel->ReconnectAllTrackers();
-        return 1;
     }
     std::cerr << "ScriptRayTracer::SetSunPositionToScene() sceneModel not found" << std::endl;
     return 0;
@@ -223,7 +211,6 @@ int ScriptRayTracer::Save(const QString& fileName)
     return 1;
 }
 
-
 int ScriptRayTracer::SetTonatiuhModelFile (QString filename)
 {
     delete m_document;
@@ -236,7 +223,7 @@ int ScriptRayTracer::SetTonatiuhModelFile (QString filename)
     m_sceneModel = 0;
     m_sceneModel = new SceneModel;
 
-    m_sceneModel->SetCoinScene(*m_document->getSceneKit() );
+    m_sceneModel->setSceneKit(*m_document->getSceneKit() );
 
     return 1;
 }

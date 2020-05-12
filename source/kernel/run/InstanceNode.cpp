@@ -18,7 +18,7 @@
 
 
 InstanceNode::InstanceNode(SoNode* node):
-    m_coinNode(node), m_parent(0)
+    m_node(node), m_parent(0)
 {
 
 }
@@ -34,9 +34,9 @@ InstanceNode::~InstanceNode()
 QString InstanceNode::GetNodeURL() const
 {
     QString url;
-    if (GetParent()) url = GetParent()->GetNodeURL();
+    if (getParent()) url = getParent()->GetNodeURL();
     url.append(QLatin1String("/") );
-    const char* nodeName = m_coinNode->getName().getString();
+    const char* nodeName = m_node->getName().getString();
     url.append(QLatin1String(nodeName) );
     return url;
 }
@@ -44,7 +44,7 @@ QString InstanceNode::GetNodeURL() const
 void InstanceNode::Print(int level) const
 {
     for (int i = 0; i < level; ++i) std::cout << " ";
-    std::cout << m_coinNode->getTypeId().getName().getString()
+    std::cout << m_node->getTypeId().getName().getString()
               << " has " << children.size()
               << " children " << std::endl;
     for (int index = 0; index < children.count(); ++index)
@@ -54,10 +54,10 @@ void InstanceNode::Print(int level) const
 /**
  * Appends new \a child node to the end of the child list.
  **/
-void InstanceNode::AddChild(InstanceNode* child)
+void InstanceNode::addChild(InstanceNode* child)
 {
-    children.push_back(child);
-    child->SetParent(this);
+    children << child;
+    child->setParent(this);
 }
 /**
  * Inserts the \a instanceChild node as child number \a row.
@@ -66,15 +66,15 @@ void InstanceNode::InsertChild(int row, InstanceNode* instanceChild)
 {
     if (row > children.size() ) row = children.size();
     children.insert(row, instanceChild);
-    instanceChild->SetParent(this);
+    instanceChild->setParent(this);
 }
 
 //bool InstanceNode::Intersect( const Ray& ray, RandomDeviate& rand, InstanceNode** modelNode, Ray* outputRay )
 bool InstanceNode::Intersect(const Ray& ray, RandomAbstract& rand, bool* isShapeFront, InstanceNode** modelNode, Ray* outputRay)
 {
     //Check if the ray intersects with the BoundingBox
-    if (!m_bbox.IntersectP(ray) ) return false;
-    if (!GetNode()->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) ) // nodekit
+    if (!m_box.IntersectP(ray) ) return false;
+    if (!getNode()->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) ) // nodekit
     {
         bool isOutputRay = false;
         double t = ray.tMax;
@@ -99,19 +99,19 @@ bool InstanceNode::Intersect(const Ray& ray, RandomAbstract& rand, bool* isShape
     }
     else // shapekit
     {
-        Ray childCoordinatesRay(m_transformWTO(ray));
+        Ray childCoordinatesRay(m_transformWtO(ray));
 
         ShapeAbstract* tshape = 0;
         MaterialAbstract* tmaterial = 0;
-        if (children[0]->GetNode()->getTypeId().isDerivedFrom(ShapeAbstract::getClassTypeId() ) )
+        if (children[0]->getNode()->getTypeId().isDerivedFrom(ShapeAbstract::getClassTypeId() ) )
         {
-            tshape = static_cast<ShapeAbstract*>(children[0]->GetNode() );
-            if (children.size() > 1) tmaterial = static_cast<MaterialAbstract*> (children[1]->GetNode() );
+            tshape = static_cast<ShapeAbstract*>(children[0]->getNode() );
+            if (children.size() > 1) tmaterial = static_cast<MaterialAbstract*> (children[1]->getNode() );
         }
         else if (children.count() > 1)
         {
-            tmaterial = static_cast<MaterialAbstract*>(children[0]->GetNode() );
-            tshape = static_cast<ShapeAbstract*>(children[1]->GetNode() );
+            tmaterial = static_cast<MaterialAbstract*>(children[0]->getNode() );
+            tshape = static_cast<ShapeAbstract*>(children[1]->getNode() );
         }
 
         if (tshape)
@@ -129,7 +129,7 @@ bool InstanceNode::Intersect(const Ray& ray, RandomAbstract& rand, bool* isShape
                 Ray surfaceOutputRay;
                 if (tmaterial->OutputRay(childCoordinatesRay, &dg, rand, &surfaceOutputRay) )
                 {
-                    *outputRay = m_transformOTW(surfaceOutputRay);
+                    *outputRay = m_transformOtW(surfaceOutputRay);
                     return true;
                 }
             }
@@ -138,57 +138,28 @@ bool InstanceNode::Intersect(const Ray& ray, RandomAbstract& rand, bool* isShape
     return false;
 }
 
-void InstanceNode::DisconnectAllTrackers()
-{
-    //RecursivlyApply<TTracker>(&TTracker::Disconnect);
-}
-
-void InstanceNode::ReconnectAllTrackers(TLightKit* /*coinLight*/)
-{
-    //RecursivlyApply<TTracker,TLightKit *>(&TTracker::SetLightAngles,coinLight);
-}
-
-void InstanceNode::SetAimingPointRelativity(bool /*relative*/)
-{
-    //RecursivlyApply<TTrackerForAiming,bool>(&TTrackerForAiming::SetAimingPointRelativity, relative);
-}
-
 void InstanceNode::extendBoxForLight(SbBox3f* extendedBox)
 {
     SoGetBoundingBoxAction* bbAction = new SoGetBoundingBoxAction(SbViewportRegion() );
-    GetNode()->getBoundingBox(bbAction);
+    getNode()->getBoundingBox(bbAction);
 
     SbBox3f box = bbAction->getXfBoundingBox().project();
     delete bbAction;
     extendedBox->extendBy(box);
 }
 
-BBox InstanceNode::GetIntersectionBBox()
-{
-    return m_bbox;
-}
-
-Transform InstanceNode::GetIntersectionTransform()
-{
-    return m_transformWTO;
-}
-
-void InstanceNode::SetIntersectionBBox(BBox nodeBBox)
-{
-    m_bbox = nodeBBox;
-}
 /**
  * Set node world to object transform to \a nodeTransform .
  */
-void InstanceNode::SetIntersectionTransform(Transform nodeTransform)
+void InstanceNode::setTransform(Transform nodeTransform)
 {
-    m_transformWTO = nodeTransform;
-    m_transformOTW = m_transformWTO.GetInverse();
+    m_transformWtO = nodeTransform;
+    m_transformOtW = m_transformWtO.GetInverse();
 }
 
 QDataStream& operator<< (QDataStream& s, const InstanceNode& node)
 {
-    s << node.GetNode();
+    s << node.getNode();
     return s;
 }
 
@@ -198,10 +169,10 @@ QDataStream& operator>> (QDataStream& s, const InstanceNode& node)
     return s;
 }
 
-bool operator==(const InstanceNode& thisNode,const InstanceNode& otherNode)
+bool operator==(const InstanceNode& a, const InstanceNode& b)
 {
-    return ( (thisNode.GetNode() == otherNode.GetNode()) &&
-             (thisNode.GetParent()->GetNode() == otherNode.GetParent()->GetNode()) );
+    return a.getNode() == b.getNode() &&
+        a.getParent()->getNode() == b.getParent()->getNode();
 }
 
 /*

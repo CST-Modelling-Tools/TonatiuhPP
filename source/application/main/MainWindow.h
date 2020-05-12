@@ -121,7 +121,6 @@ public slots:
     void CreateTracker(TrackerFactory* pTrackerFactory);
     void DefineSunLight();
     void DefineTransmissivity();
-    void DisconnectAllTrackers(bool disconnect);
     void DisplayRays(bool display);
     void InsertUserDefinedComponent();
     void ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex& node);
@@ -235,7 +234,7 @@ private:
     QString m_currentFile;
     Document* m_document;
     QStringList m_recentFiles;
-    QVector<QAction*> m_recentFileActions;//[m_maxRecentFiles];
+    QVector<QAction*> m_recentFileActions; //[m_maxRecentFiles];
 
     PluginManager* m_pluginManager;
 
@@ -245,11 +244,10 @@ private:
     RandomAbstract* m_rand;
     int m_selectedRandomDeviate;
 
-
     ulong m_bufferPhotons;
     bool m_increasePhotonMap;
-    PhotonsSettings* m_pExportModeSettings;
-    Photons* m_pPhotonMap;
+    PhotonsSettings* m_photonsSettings;
+    Photons* m_photons;
 
     QString m_lastExportFileName;
     QString m_lastExportSurfaceUrl;

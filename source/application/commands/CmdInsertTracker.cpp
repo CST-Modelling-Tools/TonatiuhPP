@@ -23,8 +23,8 @@ CmdInsertTracker::CmdInsertTracker(TrackerAbstract* tracker,  const QModelIndex&
 
     if (!parentIndex.isValid() ) gf::SevereError("CmdInsertTracker called with invalid ModelIndex.");
     InstanceNode* instanceParent = m_pModel->NodeFromIndex(parentIndex);
-    if (!instanceParent->GetNode() ) gf::SevereError("CmdInsertTracker called with NULL parent node.");
-    m_coinParent = static_cast< SoBaseKit* > (instanceParent->GetNode() );
+    if (!instanceParent->getNode() ) gf::SevereError("CmdInsertTracker called with NULL parent node.");
+    m_coinParent = static_cast< SoBaseKit* > (instanceParent->getNode() );
 }
 
 /*!

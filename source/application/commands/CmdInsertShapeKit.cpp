@@ -21,8 +21,8 @@ CmdInsertShapeKit::CmdInsertShapeKit( const QModelIndex& parentIndex, TShapeKit*
 
     if( !parentIndex.isValid() ) gf::SevereError( "CmdInsertShapeKit called with invalid ModelIndex." );
     InstanceNode* instanceParent = m_pModel->NodeFromIndex( parentIndex );
-    if( !instanceParent->GetNode() ) gf::SevereError( "CmdInsertShapeKit called with NULL parent node." );
-    m_coinParent = static_cast< SoBaseKit* > ( instanceParent->GetNode() );
+    if( !instanceParent->getNode() ) gf::SevereError( "CmdInsertShapeKit called with NULL parent node." );
+    m_coinParent = static_cast< SoBaseKit* > ( instanceParent->getNode() );
 
 }
 

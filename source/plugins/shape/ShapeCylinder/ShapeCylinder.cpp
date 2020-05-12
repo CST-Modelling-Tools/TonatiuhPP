@@ -40,7 +40,7 @@ double ShapeCylinder::getVolume() const
     return gc::Pi*radius.getValue()*radius.getValue()*length.getValue();
 }
 
-BBox ShapeCylinder::getBox() const
+BoundingBox ShapeCylinder::getBox() const
 {
     double r = radius.getValue();
     double pM = phiMax.getValue();
@@ -72,7 +72,7 @@ BBox ShapeCylinder::getBox() const
     double zMax = length.getValue()/2.;
     double zMin = -zMax;
 
-    return BBox(
+    return BoundingBox(
         Point3D(xMin, yMin, zMin),
         Point3D(xMax, yMax, zMax)
     );

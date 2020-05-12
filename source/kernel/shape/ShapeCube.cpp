@@ -46,13 +46,13 @@ double ShapeCube::getVolume() const
     return widthX.getValue()*widthY.getValue()*widthZ.getValue();
 }
 
-BBox ShapeCube::getBox() const
+BoundingBox ShapeCube::getBox() const
 {
     double xMax = widthX.getValue()/2.;
     double yMax = widthY.getValue()/2.;
     double zMax = widthZ.getValue()/2.;
 
-    return BBox(
+    return BoundingBox(
         Point3D(-xMax, -yMax, -zMax),
         Point3D(xMax, yMax, zMax)
     );

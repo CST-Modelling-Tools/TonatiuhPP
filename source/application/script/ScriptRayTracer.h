@@ -58,7 +58,6 @@ public:
     int Trace();
 
     int SetSunPositionToScene();
-    int SetDisconnectAllTrackers(bool disconnect);
     int Save(const QString& fileName);
 
 private:
@@ -66,7 +65,7 @@ private:
 
     double m_irradiance;
 
-    unsigned long m_numberOfRays;
+    ulong m_numberOfRays;
 
     Photons* m_photonMap;
     bool m_photonMapToFile;

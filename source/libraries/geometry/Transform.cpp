@@ -115,10 +115,10 @@ void Transform::operator()(const Ray& ray, Ray& transformedRay) const
     transformedRay.tMax = ray.tMax;
 }
 
-BBox Transform::operator()(const BBox& bbox) const
+BoundingBox Transform::operator()(const BoundingBox& bbox) const
 {
     const Transform& M = *this;
-    BBox ret(M(Point3D(bbox.pMin.x, bbox.pMin.y, bbox.pMin.z) ) );
+    BoundingBox ret(M(Point3D(bbox.pMin.x, bbox.pMin.y, bbox.pMin.z) ) );
     ret = Union(ret, M(Point3D(bbox.pMax.x, bbox.pMin.y, bbox.pMin.z) ) );
     ret = Union(ret, M(Point3D(bbox.pMin.x, bbox.pMax.y, bbox.pMin.z) ) );
     ret = Union(ret, M(Point3D(bbox.pMin.x, bbox.pMin.y, bbox.pMax.z) ) );
@@ -129,10 +129,10 @@ BBox Transform::operator()(const BBox& bbox) const
     return ret;
 }
 
-void Transform::operator()(const BBox& bbox, BBox& transformedBbox) const
+void Transform::operator()(const BoundingBox& bbox, BoundingBox& transformedBbox) const
 {
     const Transform& transform = *this;
-    transformedBbox = BBox(transform(Point3D(bbox.pMin.x, bbox.pMin.y, bbox.pMin.z) ) );
+    transformedBbox = BoundingBox(transform(Point3D(bbox.pMin.x, bbox.pMin.y, bbox.pMin.z) ) );
     transformedBbox = Union(transformedBbox, transform(Point3D(bbox.pMax.x, bbox.pMin.y, bbox.pMin.z) ) );
     transformedBbox = Union(transformedBbox, transform(Point3D(bbox.pMin.x, bbox.pMax.y, bbox.pMin.z) ) );
     transformedBbox = Union(transformedBbox, transform(Point3D(bbox.pMin.x, bbox.pMin.y, bbox.pMax.z) ) );

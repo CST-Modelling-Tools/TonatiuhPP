@@ -162,7 +162,6 @@
     <addaction name="actionUserComponent"/>
     <addaction name="actionSaveComponent"/>
     <addaction name="separator"/>
-    <addaction name="actionDisconnect_All_Trackers"/>
    </widget>
    <widget class="QMenu" name="menuRun">
     <property name="title">
@@ -738,19 +737,6 @@
    </property>
    <property name="text">
     <string>Analyzer Node</string>
-   </property>
-  </action>
-  <action name="actionTrackers_Connected">
-   <property name="text">
-    <string>Trackers Connected</string>
-   </property>
-  </action>
-  <action name="actionDisconnect_All_Trackers">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Disconnect All Trackers</string>
    </property>
   </action>
   <action name="actionReset_Analyzer_Values">

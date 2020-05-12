@@ -88,40 +88,38 @@ SoSeparator* trf::DrawRays(const Photons& map, unsigned long /*numberOfRays*/)
  *
  * The map stores for each InstanceNode its BBox and its transform in global coordinates.
  **/
-void trf::ComputeSceneTreeMap(InstanceNode* instanceNode, Transform parentWTO, bool insertInSurfaceList)
+void trf::ComputeSceneTreeMap(InstanceNode* instanceRoot, Transform parentWTO, bool insertInSurfaceList)
 {
-    if (!instanceNode) return;
-    SoBaseKit* coinNode = static_cast<SoBaseKit*> (instanceNode->GetNode() );
-    if (!coinNode) return;
+    if (!instanceRoot) return;
+    SoBaseKit* nodeRoot = (SoBaseKit*) instanceRoot->getNode();
+    if (!nodeRoot) return;
 
-    if (coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
+    if (nodeRoot->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
     {
-        SoTransform* nodeTransform = static_cast< SoTransform* >(coinNode->getPart("transform", true) );
+        SoTransform* nodeTransform = (SoTransform*) nodeRoot->getPart("transform", true);
         Transform objectToWorld = tgf::TransformFromSoTransform(nodeTransform);
         Transform worldToObject = objectToWorld.GetInverse();
 
-        BBox nodeBB;
+        BoundingBox nodeBox;
         Transform nodeWTO(worldToObject*parentWTO);
-        instanceNode->SetIntersectionTransform(nodeWTO);
+        instanceRoot->setTransform(nodeWTO);
 
         bool insertChildInSurfaceList = insertInSurfaceList;
-        for (int index = 0; index < instanceNode->children.count(); ++index)
+        for (int index = 0; index < instanceRoot->children.count(); ++index)
         {
-            InstanceNode* childInstance = instanceNode->children[index];
+            InstanceNode* childInstance = instanceRoot->children[index];
             ComputeSceneTreeMap(childInstance, nodeWTO, insertChildInSurfaceList);
 
-            nodeBB = Union(nodeBB, childInstance->GetIntersectionBBox() );
+            nodeBox = Union(nodeBox, childInstance->getBox() );
         }
-
-        instanceNode->SetIntersectionBBox(nodeBB);
-
+        instanceRoot->setBox(nodeBox);
     }
-    else if (coinNode->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId()))
+    else if (nodeRoot->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId()))
     {
         Transform shapeTransform;
         Transform shapeToWorld;
 
-        SoTransform* nodeTransform = static_cast< SoTransform* >(((SoBaseKit*)coinNode)->getPart("transform", false) );
+        SoTransform* nodeTransform = static_cast< SoTransform* >(((SoBaseKit*)nodeRoot)->getPart("transform", false) );
         if (nodeTransform)
         {
             shapeToWorld = tgf::TransformFromSoTransform(nodeTransform);
@@ -134,27 +132,24 @@ void trf::ComputeSceneTreeMap(InstanceNode* instanceNode, Transform parentWTO, b
             shapeToWorld = shapeTransform.GetInverse();
         }
 
+        BoundingBox shapeBB;
 
-        BBox shapeBB;
-
-        if (instanceNode->children.count() > 0)
+        if (instanceRoot->children.count() > 0)
         {
             InstanceNode* shapeInstance = 0;
-            if (instanceNode->children[0]->GetNode()->getTypeId().isDerivedFrom(ShapeAbstract::getClassTypeId() ) )
-                shapeInstance =  instanceNode->children[0];
-            else if (instanceNode->children.count() > 1) shapeInstance =  instanceNode->children[1];
+            if (instanceRoot->children[0]->getNode()->getTypeId().isDerivedFrom(ShapeAbstract::getClassTypeId() ) )
+                shapeInstance =  instanceRoot->children[0];
+            else if (instanceRoot->children.count() > 1) shapeInstance =  instanceRoot->children[1];
 
             if (shapeInstance)
             {
-                ShapeAbstract* shapeNode = static_cast< ShapeAbstract* > (shapeInstance->GetNode() );
+                ShapeAbstract* shapeNode = static_cast< ShapeAbstract* > (shapeInstance->getNode() );
                 shapeBB = shapeToWorld(shapeNode->getBox() );
 
-                instanceNode->SetIntersectionTransform(shapeTransform);
-                instanceNode->SetIntersectionBBox(shapeBB);
-
+                instanceRoot->setTransform(shapeTransform);
+                instanceRoot->setBox(shapeBB);
             }
         }
-
     }
 }
 
@@ -163,7 +158,7 @@ void trf::ComputeFistStageSurfaceList(InstanceNode* instanceNode, QStringList di
     if (!instanceNode) return;
     if (disabledNodesURL.contains(instanceNode->GetNodeURL() ) ) return;
 
-    SoBaseKit* coinNode = static_cast< SoBaseKit* > (instanceNode->GetNode() );
+    SoBaseKit* coinNode = static_cast< SoBaseKit* > (instanceNode->getNode() );
     if (!coinNode) return;
 
     if (coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
@@ -178,7 +173,7 @@ void trf::ComputeFistStageSurfaceList(InstanceNode* instanceNode, QStringList di
     else if (coinNode->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) )
     {
         TShapeKit* surface = static_cast< TShapeKit* > (coinNode);
-        Transform shapeTransform = instanceNode->GetIntersectionTransform();
+        Transform shapeTransform = instanceNode->getTransform();
 
         surfacesList->push_back(QPair< TShapeKit*, Transform >(surface, shapeTransform) );
     }

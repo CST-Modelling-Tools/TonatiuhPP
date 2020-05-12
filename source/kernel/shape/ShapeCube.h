@@ -14,7 +14,7 @@ public:
 
     double getArea() const;
     double getVolume() const;
-    BBox getBox() const;
+    BoundingBox getBox() const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
     bool intersectP(const Ray& ray) const;
 

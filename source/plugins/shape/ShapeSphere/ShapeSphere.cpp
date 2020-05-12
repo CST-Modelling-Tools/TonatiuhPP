@@ -62,7 +62,7 @@ double ShapeSphere::getVolume() const
     return 4.*gc::Pi*r*r*r/3.;
 }
 
-BBox ShapeSphere::getBox() const
+BoundingBox ShapeSphere::getBox() const
 {
     double r = radius.getValue();
     double pM = phiMax.getValue();
@@ -101,7 +101,7 @@ BBox ShapeSphere::getBox() const
     double zMin = r*sin(aMin);
     double zMax = r*sin(aMax);
 
-    return BBox(
+    return BoundingBox(
         Point3D(xMin, yMin, zMin),
         Point3D(xMax, yMax, zMax)
     );

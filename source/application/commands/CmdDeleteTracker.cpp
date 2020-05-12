@@ -25,15 +25,15 @@ CmdDeleteTracker::CmdDeleteTracker(const QModelIndex& selectedIndex, SoSceneKit*
     if (!selectedIndex.isValid() ) gf::SevereError("CmdDeleteTracker called with invalid ModelIndex.");
     InstanceNode* instanceSelection = m_pModel->NodeFromIndex(selectedIndex);
 
-    if (!instanceSelection->GetNode() ) gf::SevereError("CmdDeleteTracker called with NULL selection node.");
-    m_coinParent = static_cast< TSeparatorKit* > (instanceSelection->GetParent()->GetNode() );
+    if (!instanceSelection->getNode() ) gf::SevereError("CmdDeleteTracker called with NULL selection node.");
+    m_coinParent = static_cast< TSeparatorKit* > (instanceSelection->getParent()->getNode() );
     if (!m_coinParent) gf::SevereError("CmdDeleteTracker called with invalid tracker parent.");
 
     m_tracker = dynamic_cast<TrackerAbstract*> (m_coinParent->getPart("tracker", false) );
     if (!m_tracker) gf::SevereError("CmdDeleteTracker Null tracker.");
     m_tracker->ref();
 
-    m_row = instanceSelection->GetParent()->children.indexOf(instanceSelection);
+    m_row = instanceSelection->getParent()->children.indexOf(instanceSelection);
 }
 
 /*!

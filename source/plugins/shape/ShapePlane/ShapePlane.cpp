@@ -30,12 +30,12 @@ double ShapePlane::getArea() const
     return widthX.getValue()*widthY.getValue();
 }
 
-BBox ShapePlane::getBox() const
+BoundingBox ShapePlane::getBox() const
 {
     double xMax = widthX.getValue()/2.;
     double yMax = widthY.getValue()/2.;
     double eps = 0.01*std::min(xMax, yMax);
-    return BBox(
+    return BoundingBox(
         Point3D(-xMax, -yMax, -eps),
         Point3D(xMax, yMax, eps)
     );

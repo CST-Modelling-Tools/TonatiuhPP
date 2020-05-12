@@ -8,9 +8,8 @@ class TONATIUH_KERNEL Photons
 {
 public:
     Photons();
-    ~Photons();
 
-    PhotonsAbstract* getExporter() const;
+    PhotonsAbstract* getExporter() const {return m_exporter;}
     bool setExporter(PhotonsAbstract* exporter);
     void setBufferSize(ulong size) {m_bufferSize = size;}
     void setTransform(Transform concentratorToWorld);
@@ -23,8 +22,6 @@ private:
     ulong m_bufferSize;
     Transform m_transform;
     PhotonsAbstract* m_exporter;
-//    const SceneModel* m_sceneModel;
-    ulong m_photonsBuffered;
     ulong m_photonsTotal;
     std::vector<Photon> m_photons; // buffer
 };

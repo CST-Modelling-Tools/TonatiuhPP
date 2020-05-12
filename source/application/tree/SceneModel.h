@@ -25,8 +25,8 @@ public:
 
     void Clear();
 
-    void SetCoinRoot(SoSeparator& coinRoot);
-    void SetCoinScene(TSceneKit& coinScene);
+    void setSceneRoot(SoSeparator& coinRoot);
+    void setSceneKit(TSceneKit& coinScene);
     TSceneKit* getSceneKit() const {return m_coinScene;}
 
     QModelIndex index(int row, int column, const QModelIndex& parentModelIndex = QModelIndex()) const;
@@ -41,7 +41,7 @@ public:
 
     bool Cut(SoBaseKit& coinParent, int row);
 
-    QModelIndex IndexFromNodeUrl(QString nodeUrl) const;
+    QModelIndex IndexFromNodeUrl(QString url) const;
     QModelIndex IndexFromPath(const SoNodeKitPath& coinNodePath) const;
 
     int InsertCoinNode(SoNode& coinChild, SoBaseKit& coinParent);
@@ -59,8 +59,6 @@ public:
     bool SetNodeName(SoNode* coinChild, QString newName);
 
     void UpdateSceneModel();
-    void DisconnectAllTrackers();
-    void ReconnectAllTrackers();
 
 signals:
     void LightNodeStateChanged(int newState);

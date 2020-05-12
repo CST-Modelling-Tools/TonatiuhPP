@@ -104,7 +104,7 @@ void TLightKit::setPosition(double azimuth, double elevation)
     transform->rotation = elRotation*azRotation;
 }
 
-void TLightKit::setBox(BBox box)
+void TLightKit::setBox(BoundingBox box)
 {
     SoTransform* transform = (SoTransform*) getPart("transform", false);
     SbMatrix mr;
@@ -199,7 +199,7 @@ void TLightKit::findTexture(int xPixels, int yPixels, QVector< QPair< TShapeKit*
         ShapeAbstract* shapeNode = static_cast<ShapeAbstract*>(surfaceKit->getPart("shape", false));
         if (shapeNode)
         {
-            BBox shapeBox = shapeNode->getBox();
+            BoundingBox shapeBox = shapeNode->getBox();
 
             QVector<Point3D> ps;
             ps << Point3D(shapeBox.pMin.x, shapeBox.pMin.y, shapeBox.pMin.z);

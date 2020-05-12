@@ -36,7 +36,16 @@ TSeparatorKit::TSeparatorKit()
  */
 SoNode* TSeparatorKit::getPart( const SbName &partname, SbBool makeifneeded)
 {
-     return SoSeparatorKit::getPart(partname, makeifneeded);
+    return SoSeparatorKit::getPart(partname, makeifneeded);
+}
+
+#include <Inventor/actions/SoGetBoundingBoxAction.h>
+// use bounding box in world coordinates
+void TSeparatorKit::getBoundingBox(SoGetBoundingBoxAction* action)
+{
+    SoSeparatorKit::getBoundingBox(action);
+    SbXfBox3f& box = action->getXfBoundingBox();
+    box = box.project();
 }
 
 /**
@@ -67,10 +76,3 @@ SbBool TSeparatorKit::setPart(const SbName& partname, SoNode* from)
     return SoSeparatorKit::setPart(partname, from);
 }
 
-/**
- * Returns the icon that represents TSeparatorKit nodes.
- */
-QString TSeparatorKit::getIcon()
-{
-    return ":/images/scene/nodeGroup.png";
-}

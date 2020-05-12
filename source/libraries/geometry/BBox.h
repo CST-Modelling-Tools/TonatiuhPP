@@ -4,12 +4,12 @@
 
 class Ray;
 
-struct TONATIUH_LIBRARIES BBox
+struct TONATIUH_LIBRARIES BoundingBox
 {
-    BBox();
-    explicit BBox(const Point3D& point);
-    BBox(const Point3D& point1, const Point3D& point2);
-    bool Overlaps(const BBox& bbox) const;
+    BoundingBox();
+    explicit BoundingBox(const Point3D& point);
+    BoundingBox(const Point3D& point1, const Point3D& point2);
+    bool Overlaps(const BoundingBox& bbox) const;
     bool Inside(const Point3D& point) const;
     void Expand(double delta);
     double Volume() const;
@@ -21,6 +21,6 @@ struct TONATIUH_LIBRARIES BBox
     Point3D pMax;
 };
 
-TONATIUH_LIBRARIES BBox Union(const BBox& bbox, const Point3D& point);
-TONATIUH_LIBRARIES BBox Union(const BBox& bbox1, const BBox& bbox2);
-TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const BBox& bbox);
+TONATIUH_LIBRARIES BoundingBox Union(const BoundingBox& bbox, const Point3D& point);
+TONATIUH_LIBRARIES BoundingBox Union(const BoundingBox& bbox1, const BoundingBox& bbox2);
+TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const BoundingBox& bbox);
