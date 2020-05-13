@@ -12,6 +12,6 @@ void TrackerAbstract::initClass()
 void TrackerAbstract::Evaluate(SoNode* parent, const Transform& transform, const Vector3D& vSun)
 {
     Q_UNUSED(parent)
-    Q_UNUSED(transform)
+    Q_UNUSED(transform) // transformOtW
     Q_UNUSED(vSun)
 }

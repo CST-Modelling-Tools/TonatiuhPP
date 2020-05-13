@@ -154,7 +154,7 @@ void InstanceNode::extendBoxForLight(SbBox3f* extendedBox)
 void InstanceNode::setTransform(Transform t)
 {
     m_transformOtW = t;
-    m_transformWtO = t.GetInverse();
+    m_transformWtO = t.inversed();
 }
 
 void InstanceNode::updateTree(Transform parentOtW)

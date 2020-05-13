@@ -2,9 +2,6 @@
 
 #include <iostream>
 
-struct Point3D;
-struct NormalVector;
-#include "NormalVector.h"
 #include "Point3D.h"
 #include <cmath>
 
@@ -12,10 +9,6 @@ struct TONATIUH_LIBRARIES Vector3D
 {
     Vector3D(double x = 0., double y = 0., double z = 0.):
         x(x), y(y), z(z)
-    {
-    }
-    Vector3D(const NormalVector& norm):
-        x(norm.x), y(norm.y), z(norm.z)
     {
     }
 
@@ -148,19 +141,7 @@ inline double dot(const Vector3D& a, const Vector3D& b)
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-inline double dot(const Vector3D& v, const NormalVector& n)
-{
-    return v.x * n.x + v.y * n.y + v.z * n.z;
-}
-
-inline double dot(const NormalVector& n, const Vector3D& v)
-{
-    return n.x * v.x + n.y * v.y + n.z * v.z;
-}
-
 TONATIUH_LIBRARIES double AbsDotProduct(const Vector3D& vA, const Vector3D& vB);
-TONATIUH_LIBRARIES double AbsDotProduct(const Vector3D& vA, const NormalVector& nB);
-TONATIUH_LIBRARIES double AbsDotProduct(const NormalVector& nA, const Vector3D& vB);
 
 inline Vector3D cross(const Vector3D& vA, const Vector3D& vB)
 {
@@ -169,20 +150,6 @@ inline Vector3D cross(const Vector3D& vA, const Vector3D& vB)
         vA.z*vB.x - vA.x*vB.z,
         vA.x*vB.y - vA.y*vB.x
     );
-}
-
-inline Vector3D cross(const Vector3D& vA, const NormalVector& nB)
-{
-    return Vector3D( (vA.y * nB.z) - (vA.z * nB.y),
-                     (vA.z * nB.x) - (vA.x * nB.z),
-                     (vA.x * nB.y) - (vA.y * nB.x) );
-}
-
-inline Vector3D cross(const NormalVector& nA, const Vector3D& vB)
-{
-    return Vector3D( (nA.y * vB.z) - (nA.z * vB.y),
-                     (nA.z * vB.x) - (nA.x * vB.z),
-                     (nA.x * vB.y) - (nA.y * vB.x) );
 }
 
 inline Vector3D Normalize(const Vector3D& vA)

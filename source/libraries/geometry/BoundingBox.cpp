@@ -24,18 +24,18 @@ BoundingBox::BoundingBox(const Point3D& a, const Point3D& b)
     pMax = max(a, b);
 }
 
-bool BoundingBox::Overlaps(const BoundingBox& bbox) const
+bool BoundingBox::isInside(const Point3D& p) const
 {
-    return (pMax.x >= bbox.pMin.x) && (pMin.x <= bbox.pMax.x) &&
-           (pMax.y >= bbox.pMin.y) && (pMin.y <= bbox.pMax.y) &&
-           (pMax.z >= bbox.pMin.z) && (pMin.z <= bbox.pMax.z);
+    return p.x >= pMin.x && p.x <= pMax.x &&
+           p.y >= pMin.y && p.y <= pMax.y &&
+           p.z >= pMin.z && p.z <= pMax.z;
 }
 
-bool BoundingBox::Inside(const Point3D& point) const
+bool BoundingBox::Overlaps(const BoundingBox& b) const
 {
-    return (point.x >= pMin.x && point.x <= pMax.x &&
-            point.y >= pMin.y && point.y <= pMax.y &&
-            point.z >= pMin.z && point.z <= pMax.z);
+    return (pMax.x >= b.pMin.x) && (pMin.x <= b.pMax.x) &&
+           (pMax.y >= b.pMin.y) && (pMin.y <= b.pMax.y) &&
+           (pMax.z >= b.pMin.z) && (pMin.z <= b.pMax.z);
 }
 
 void BoundingBox::expand(double delta)
@@ -49,6 +49,12 @@ void BoundingBox::expand(double delta)
     pMax.z += delta;
 }
 
+void BoundingBox::expand(const Point3D& p)
+{
+    pMin = min(pMin, p);
+    pMax = max(pMax, p);
+}
+
 void BoundingBox::expand(const BoundingBox& b)
 {
     pMin = min(pMin, b.pMin);
@@ -57,23 +63,23 @@ void BoundingBox::expand(const BoundingBox& b)
 
 double BoundingBox::Volume() const
 {
-    Vector3D diagonal = pMax - pMin;
-    return diagonal.x * diagonal.y * diagonal.z;
+    Vector3D d = pMax - pMin;
+    return d.x*d.y*d.z;
 }
 
 int BoundingBox::MaximumExtent() const
 {
-    Vector3D diagonal = pMax - pMin;
-    if (diagonal.x > diagonal.y && diagonal.x > diagonal.z)
+    Vector3D d = pMax - pMin;
+    if (d.x > d.y && d.x > d.z)
         return 0;
-    else if (diagonal.y > diagonal.z)
+    else if (d.y > d.z)
         return 1;
     return 2;
 }
 
 void BoundingBox::BoundingSphere(Point3D& center, double& radius) const
 {
-    center = Point3D( (pMin.x + pMax.x) * 0.5, (pMin.y + pMax.y) * 0.5, (pMin.z + pMax.z) * 0.5);
+    center = 0.5*(pMin + pMax);
     radius = Distance(center, pMax);
 }
 
@@ -86,25 +92,25 @@ bool BoundingBox::IntersectP(const Ray& ray, double* hitt0, double* hitt1) const
     double invDirection = ray.invDirection().x;
     if (invDirection >= 0.)
     {
-        tmin = (pMin.x - ray.origin.x) * invDirection;
-        tmax = (pMax.x - ray.origin.x) * invDirection;
+        tmin = (pMin.x - ray.origin.x)*invDirection;
+        tmax = (pMax.x - ray.origin.x)*invDirection;
     }
     else
     {
-        tmin = (pMax.x - ray.origin.x) * invDirection;
-        tmax = (pMin.x - ray.origin.x) * invDirection;
+        tmin = (pMax.x - ray.origin.x)*invDirection;
+        tmax = (pMin.x - ray.origin.x)*invDirection;
     }
 
     invDirection = ray.invDirection().y;
     if (invDirection >= 0.)
     {
-        tymin = (pMin.y - ray.origin.y) * invDirection;
-        tymax = (pMax.y - ray.origin.y) * invDirection;
+        tymin = (pMin.y - ray.origin.y)*invDirection;
+        tymax = (pMax.y - ray.origin.y)*invDirection;
     }
     else
     {
-        tymin = (pMax.y - ray.origin.y) * invDirection;
-        tymax = (pMin.y - ray.origin.y) * invDirection;
+        tymin = (pMax.y - ray.origin.y)*invDirection;
+        tymax = (pMin.y - ray.origin.y)*invDirection;
     }
 
     if (tmin > tymax || tymin > tmax) return false;
@@ -115,13 +121,13 @@ bool BoundingBox::IntersectP(const Ray& ray, double* hitt0, double* hitt1) const
     invDirection = ray.invDirection().z;
     if (invDirection >= 0.)
     {
-        tzmin = (pMin.z - ray.origin.z) * invDirection;
-        tzmax = (pMax.z - ray.origin.z) * invDirection;
+        tzmin = (pMin.z - ray.origin.z)*invDirection;
+        tzmax = (pMax.z - ray.origin.z)*invDirection;
     }
     else
     {
-        tzmin = (pMax.z - ray.origin.z) * invDirection;
-        tzmax = (pMin.z - ray.origin.z) * invDirection;
+        tzmin = (pMax.z - ray.origin.z)*invDirection;
+        tzmax = (pMin.z - ray.origin.z)*invDirection;
     }
 
     if (tmin > tzmax || tzmin > tmax) return false;
@@ -139,28 +145,20 @@ bool BoundingBox::IntersectP(const Ray& ray, double* hitt0, double* hitt1) const
     else return false;
 }
 
-BoundingBox Union(const BoundingBox& bbox, const Point3D& point)
+BoundingBox Union(const BoundingBox& b, const Point3D& p)
 {
-    BoundingBox unionBox;
-    unionBox.pMin.x = (bbox.pMin.x < point.x) ? bbox.pMin.x : point.x;
-    unionBox.pMin.y = (bbox.pMin.y < point.y) ? bbox.pMin.y : point.y;
-    unionBox.pMin.z = (bbox.pMin.z < point.z) ? bbox.pMin.z : point.z;
-    unionBox.pMax.x = (bbox.pMax.x > point.x) ? bbox.pMax.x : point.x;
-    unionBox.pMax.y = (bbox.pMax.y > point.y) ? bbox.pMax.y : point.y;
-    unionBox.pMax.z = (bbox.pMax.z > point.z) ? bbox.pMax.z : point.z;
-    return unionBox;
+    BoundingBox ans;
+    ans.pMin = min(b.pMin, p);
+    ans.pMax = max(b.pMax, p);
+    return ans;
 }
 
-BoundingBox Union(const BoundingBox& bbox1, const BoundingBox& bbox2)
+BoundingBox Union(const BoundingBox& a, const BoundingBox& b)
 {
-    BoundingBox unionBox;
-    unionBox.pMin.x = (bbox1.pMin.x < bbox2.pMin.x) ? bbox1.pMin.x : bbox2.pMin.x;
-    unionBox.pMin.y = (bbox1.pMin.y < bbox2.pMin.y) ? bbox1.pMin.y : bbox2.pMin.y;
-    unionBox.pMin.z = (bbox1.pMin.z < bbox2.pMin.z) ? bbox1.pMin.z : bbox2.pMin.z;
-    unionBox.pMax.x = (bbox1.pMax.x > bbox2.pMax.x) ? bbox1.pMax.x : bbox2.pMax.x;
-    unionBox.pMax.y = (bbox1.pMax.y > bbox2.pMax.y) ? bbox1.pMax.y : bbox2.pMax.y;
-    unionBox.pMax.z = (bbox1.pMax.z > bbox2.pMax.z) ? bbox1.pMax.z : bbox2.pMax.z;
-    return unionBox;
+    BoundingBox ans;
+    ans.pMin = min(a.pMin, b.pMin);
+    ans.pMax = max(a.pMax, b.pMax);
+    return ans;
 }
 
 std::ostream& operator<<(std::ostream& os, const BoundingBox& bbox)

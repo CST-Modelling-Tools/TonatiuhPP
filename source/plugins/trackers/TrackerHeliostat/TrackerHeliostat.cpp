@@ -45,21 +45,20 @@ Vector3D findAngles(
     return Vector3D(alpha, beta, abs(alpha) + abs(beta));
 }
 
-void TrackerHeliostat::Evaluate(SoNode* parent, const Transform& transform, const Vector3D& vSun)
+void TrackerHeliostat::Evaluate(SoNode* parent, const Transform& toGlobal, const Vector3D& vSun)
 {
     // normal
-    Transform transformWtO = transform.GetInverse();
-    Vector3D vS = transformWtO(vSun);
+    Transform toLocal = toGlobal.inversed();
+    Vector3D vS = toLocal.transformVector(vSun);
     vS.normalize();
 
-    Point3D rAim = tgf::makePoint3D(aimingPoint.getValue());
+    Vector3D vT = tgf::makeVector3D(aimingPoint.getValue());
     if (isAimingAbsolute.getValue())
-        rAim = transformWtO(rAim);
-    Vector3D vAim(rAim);
-    if (!vAim.normalize()) return;
+        vT = toLocal.transformPoint(vT);
+    if (!vT.normalize()) return;
 
-    Vector3D v = vS + vAim;
-    if (!v.normalize()) return;
+    Vector3D vN = vS + vT;
+    if (!vN.normalize()) return;
 
     // cache
     Vector3D a = tgf::makeVector3D(primaryAxis.getValue());
@@ -73,7 +72,7 @@ void TrackerHeliostat::Evaluate(SoNode* parent, const Transform& transform, cons
     double k2 = k.norm2();
     double ab = dot(a, b);
     double det = 1. - ab*ab;
-    double av = dot(a, v);
+    double av = dot(a, vN);
     double bv0 = dot(b, v0);
 
     // algorithm
@@ -86,16 +85,12 @@ void TrackerHeliostat::Evaluate(SoNode* parent, const Transform& transform, cons
     Vector3D m0 = ma*a + mb*b;
 
     Vector3D m1 = m0 - mk*k;
-    Vector3D sol1 = findAngles(a, b, v, m1, v0, av, bv0);
+    Vector3D sol1 = findAngles(a, b, vN, m1, v0, av, bv0);
     Vector3D m2 = m0 + mk*k;
-    Vector3D sol2 = findAngles(a, b, v, m2, v0, av, bv0);
+    Vector3D sol2 = findAngles(a, b, vN, m2, v0, av, bv0);
 
     // select smallest rotation
-    Vector3D* sol;
-    if (sol1.z < sol2.z)
-        sol = &sol1;
-    else
-        sol = &sol2;
+    Vector3D* sol = sol1.z < sol2.z ? &sol1 : &sol2;
 
     SbRotation rotationA(primaryAxis.getValue(), sol->x);
     SbRotation rotationB(secondaryAxis.getValue(), sol->y);

@@ -14,24 +14,36 @@ class TONATIUH_LIBRARIES Transform
 {
 public:
     Transform();
-    Transform(double mat[4][4]);
+    Transform(double m[4][4]);
+    Transform(
+        double t00, double t01, double t02, double t03,
+        double t10, double t11, double t12, double t13,
+        double t20, double t21, double t22, double t23,
+        double t30, double t31, double t32, double t33
+    );
     Transform(const Ptr<Matrix4x4>& mdir);
     Transform(const Ptr<Matrix4x4>& mdir, const Ptr<Matrix4x4>& minv);
-    Transform(double t00, double t01, double t02, double t03,
-              double t10, double t11, double t12, double t13,
-              double t20, double t21, double t22, double t23,
-              double t30, double t31, double t32, double t33);
 
-    Point3D operator()(const Point3D& point) const;
-    void operator()(const Point3D& point, Point3D& transformedPoint) const;
-    Vector3D operator()(const Vector3D& vector) const;
-    void operator()(const Vector3D& vector, Vector3D& transformedVector) const;
-    NormalVector operator()(const NormalVector& normal) const;
-    void operator()(const NormalVector& normal, NormalVector& transformedNormal) const;
-    Ray operator()(const Ray& ray) const;
-    void operator()(const Ray& ray, Ray& transformedRay) const;
-    BoundingBox operator()(const BoundingBox& bbox) const;
-    void operator()(const BoundingBox& bbox, BoundingBox& transformedBbox) const;
+    Vector3D transformPoint(const Vector3D& v) const;
+    Vector3D transformVector(const Vector3D& v) const;
+    Vector3D transformNormal(const Vector3D& v) const;
+
+    Point3D operator()(const Point3D& p) const;
+    void operator()(const Point3D& p, Point3D& ans) const;
+
+    Vector3D operator()(const Vector3D& v) const;
+    void operator()(const Vector3D& v, Vector3D& ans) const;
+
+    NormalVector operator()(const NormalVector& n) const;
+    void operator()(const NormalVector& n, NormalVector& ans) const;
+
+    Ray operator()(const Ray& r) const;
+    void operator()(const Ray& r, Ray& ans) const;
+
+    BoundingBox operator()(const BoundingBox& b) const;
+    void operator()(const BoundingBox& b, BoundingBox& ans) const;
+
+
     Transform operator*(const Transform& rhs) const;
 
     bool operator==(const Transform& mat) const;
@@ -39,25 +51,28 @@ public:
     Ptr<Matrix4x4> GetMatrix() const {
         return m_mdir;
     }
-    Transform Transpose() const;
-    Transform GetInverse() const;
+    Transform transposed() const;
+    Transform inversed() const;
     bool SwapsHandedness() const;
-    Vector3D multVecMatrix(const Vector3D& src) const;
+    Vector3D multVecMatrix(const Vector3D& v) const;
     Vector3D multDirMatrix(const Vector3D& src) const;
+
+
+    //static
+    Transform Translate(const Vector3D& delta);
+    Transform Translate(double x, double y, double z);
+    Transform Scale(double x, double y, double z);
+    Transform RotateX(double angle);
+    Transform RotateY(double angle);
+    Transform RotateZ(double angle);
+    Transform Rotate(double angle, const Vector3D& axis);
+    Transform LookAt(const Point3D& pos, const Point3D& look, const Vector3D& up);
 
 private:
     Ptr<Matrix4x4> m_mdir;
     Ptr<Matrix4x4> m_minv;
 };
 
-TONATIUH_LIBRARIES Transform Translate(const Vector3D& delta);
-TONATIUH_LIBRARIES Transform Translate(double x, double y, double z);
-TONATIUH_LIBRARIES Transform Scale(double x, double y, double z);
-TONATIUH_LIBRARIES Transform RotateX(double angle);
-TONATIUH_LIBRARIES Transform RotateY(double angle);
-TONATIUH_LIBRARIES Transform RotateZ(double angle);
-TONATIUH_LIBRARIES Transform Rotate(double angle, const Vector3D& axis);
-TONATIUH_LIBRARIES Transform LookAt(const Point3D& pos, const Point3D& look, const Vector3D& up);
 
 TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const Transform& tran);
 

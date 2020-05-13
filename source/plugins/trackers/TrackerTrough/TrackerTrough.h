@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "kernel/trackers/TrackerAbstract.h"
 
 
@@ -12,7 +11,7 @@ public:
     static void initClass();
     TrackerTrough();
 
-    void Evaluate(SoNode* parent, const Transform& transform, const Vector3D& vSun);
+    void Evaluate(SoNode* parent, const Transform& toGlobal, const Vector3D& vSun);
 
     enum Axis {
 		X = 0,

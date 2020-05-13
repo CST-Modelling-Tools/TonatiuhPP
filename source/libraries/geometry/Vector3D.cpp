@@ -39,16 +39,6 @@ double AbsDotProduct(const Vector3D& vA, const Vector3D& vB)
     return fabs(dot(vA, vB) );
 }
 
-double AbsDotProduct(const Vector3D& vA, const NormalVector& nB)
-{
-    return fabs(dot(vA, nB) );
-}
-
-double AbsDotProduct(const NormalVector& nA, const Vector3D& vB)
-{
-    return fabs(dot(nA, vB) );
-}
-
 bool SameHemisphere(const Vector3D& vA, const Vector3D& vB)
 {
     return (vA.z * vB.z > 0.0);

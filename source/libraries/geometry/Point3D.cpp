@@ -128,3 +128,8 @@ double DistanceSquared(const Point3D& pointA, const Point3D& pointB)
     return (pointA - pointB).lengthSquared();
 }
 
+
+Point3D operator+(const Point3D& a, const Point3D& b)
+{
+    return Point3D(a.x + b.x, a.y + b.y, a.z + b.z);
+}

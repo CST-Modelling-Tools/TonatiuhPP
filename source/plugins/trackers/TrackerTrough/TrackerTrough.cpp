@@ -1,7 +1,7 @@
 #include "TrackerTrough.h"
 
 #include <cmath>
-#include <iostream>
+//#include <iostream>
 #include <QString>
 
 #include <Inventor/nodes/SoTransform.h>
@@ -22,7 +22,6 @@ void TrackerTrough::initClass()
     SO_NODE_INIT_CLASS(TrackerTrough, TrackerAbstract, "TrackerAbstract");
 }
 
-
 TrackerTrough::TrackerTrough()
 {
     SO_NODE_CONSTRUCTOR(TrackerTrough);
@@ -40,8 +39,8 @@ TrackerTrough::TrackerTrough()
 
 void TrackerTrough::Evaluate(SoNode* parent, const Transform& transform, const Vector3D& vSun)
 {
-    Transform transformWtO = transform.GetInverse();
-    Vector3D i = transformWtO(vSun);
+    Transform transformWtO = transform.inversed();
+    Vector3D vS = transformWtO(vSun);
 
 	Vector3D localAxis;
 	Point3D focusPoint;
@@ -75,21 +74,21 @@ void TrackerTrough::Evaluate(SoNode* parent, const Transform& transform, const V
     if (localAxis == Vector3D(1., 0., 0.))
 	{
 		Vector3D r = Normalize( Vector3D( 0.0, focus.y, focus.z ) );
-		Vector3D it = Normalize( Vector3D( 0.0, i.y, i.z ) );
+        Vector3D it = Normalize( Vector3D( 0.0, vS.y, vS.z ) );
 		Vector3D n = Normalize( it + r );
         if (fabs(n.z) > 0.)	angle = atan2( n.z, n.y );
 	}
 	else if( localAxis == Vector3D( 0.0, 1.0, 0.0 ) )
 	{
 		Vector3D r = Normalize( Vector3D( focus.x, 0.0, focus.z ) );
-		Vector3D it = Normalize( Vector3D( i.x, 0.0, i.z ) );
+        Vector3D it = Normalize( Vector3D( vS.x, 0.0, vS.z ) );
 		Vector3D n = Normalize( it + r );
         if (fabs(n.z) > 0.)	angle = -atan2(n.z, n.x);
 	}
 	else
 	{
 		Vector3D r = Normalize( Vector3D( focus.x, focus.y, 0.0 ) );
-		Vector3D it = Normalize( Vector3D( i.x, i.y, 0.0 ) );
+        Vector3D it = Normalize( Vector3D( vS.x, vS.y, 0.0 ) );
 		Vector3D n = Normalize( it + r );
         if (fabs(n.x) > 0.)	angle = -atan2(n.x, n.y);
 	}

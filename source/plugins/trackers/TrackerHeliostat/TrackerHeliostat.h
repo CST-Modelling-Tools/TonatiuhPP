@@ -11,7 +11,7 @@ public:
     static void initClass();
     TrackerHeliostat();
 
-    void Evaluate(SoNode* parent, const Transform& transform, const Vector3D& vSun);
+    void Evaluate(SoNode* parent, const Transform& toGlobal, const Vector3D& vSun);
 
     SoSFVec3f primaryAxis;
     SoSFVec3f secondaryAxis;
@@ -25,6 +25,7 @@ public:
 protected:
     ~TrackerHeliostat() {}
 };
+
 
 
 #include "kernel/trackers/TrackerFactory.h"

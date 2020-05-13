@@ -9,10 +9,16 @@ struct TONATIUH_LIBRARIES BoundingBox
     BoundingBox();
     explicit BoundingBox(const Point3D& point);
     BoundingBox(const Point3D& a, const Point3D& b);
-    bool Overlaps(const BoundingBox& bbox) const;
-    bool Inside(const Point3D& point) const;
+
+    bool isInside(const Point3D& p) const;
+    bool Overlaps(const BoundingBox& b) const;
+
     void expand(double delta);
+    void expand(const Point3D& p);
     void expand(const BoundingBox& b);
+    void operator<<(const Point3D& p) {expand(p);}
+    void operator<<(const BoundingBox& b) {expand(b);}
+
     double Volume() const;
     int MaximumExtent() const;
     void BoundingSphere(Point3D& center, double& radius) const;
@@ -22,6 +28,6 @@ struct TONATIUH_LIBRARIES BoundingBox
     Point3D pMax;
 };
 
-TONATIUH_LIBRARIES BoundingBox Union(const BoundingBox& bbox, const Point3D& point);
-TONATIUH_LIBRARIES BoundingBox Union(const BoundingBox& bbox1, const BoundingBox& bbox2);
+TONATIUH_LIBRARIES BoundingBox Union(const BoundingBox& b, const Point3D& p);
+TONATIUH_LIBRARIES BoundingBox Union(const BoundingBox& a, const BoundingBox& b);
 TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const BoundingBox& bbox);
