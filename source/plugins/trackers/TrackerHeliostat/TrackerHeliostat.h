@@ -11,7 +11,7 @@ public:
     static void initClass();
     TrackerHeliostat();
 
-    void Evaluate(SoNode* parent, const Transform& toGlobal, const Vector3D& vSun);
+    void Evaluate(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun);
 
     SoSFVec3f primaryAxis;
     SoSFVec3f secondaryAxis;

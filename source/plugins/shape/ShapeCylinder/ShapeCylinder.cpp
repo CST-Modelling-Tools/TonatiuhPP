@@ -20,7 +20,7 @@ ShapeCylinder::ShapeCylinder()
 {
     SO_NODE_CONSTRUCTOR(ShapeCylinder);
 
-    SO_NODE_ADD_FIELD( radius, (0.5) );
+    SO_NODE_ADD_FIELD( radius, (1.) );
     SO_NODE_ADD_FIELD( phiMax, (gc::TwoPi) );
     SO_NODE_ADD_FIELD( length, (1.) );
 

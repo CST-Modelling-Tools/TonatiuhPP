@@ -11,17 +11,13 @@ public:
     static void initClass();
     TrackerTrough();
 
-    void Evaluate(SoNode* parent, const Transform& toGlobal, const Vector3D& vSun);
+    void Evaluate(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun);
 
-    enum Axis {
-		X = 0,
-		Y = 1,
-		Z = 2,
-	};
-    SoSFEnum activeAxis;
+    SoSFVec3f trackingAxis;
+    SoSFVec3f mirrorNormal;
+
     SoSFBool isAimingAbsolute;
-
-	trt::TONATIUH_REALVECTOR2 axisOrigin;
+    SoSFVec3f aimingPoint;
 
     NAME_ICON_FUNCTIONS("Trough", ":/TrackerTrough.png")
 

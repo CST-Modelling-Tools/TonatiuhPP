@@ -4,6 +4,7 @@
 
 #include "kernel/TonatiuhTypes.h"
 #include <Inventor/nodes/SoSubNode.h>
+#include <Inventor/nodekits/SoBaseKit.h>
 
 struct Vector3D;
 class Transform;
@@ -16,7 +17,7 @@ class TONATIUH_KERNEL TrackerAbstract: public SoNode
 public:
     static void initClass();
 
-    virtual void Evaluate(SoNode* parent, const Transform& transform, const Vector3D& vSun);
+    virtual void Evaluate(SoBaseKit* parent, const Transform& transform, const Vector3D& vSun);
 
     NAME_ICON_FUNCTIONS("X", ":/TrackerX.png")
 

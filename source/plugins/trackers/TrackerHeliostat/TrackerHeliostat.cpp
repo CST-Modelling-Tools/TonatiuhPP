@@ -29,6 +29,7 @@ TrackerHeliostat::TrackerHeliostat()
     SO_NODE_ADD_FIELD( aimingPoint, (0.f, 0.f, 1.f) );
 }
 
+// rotation around a from m to v
 inline double findAngle(Vector3D& a, Vector3D& m, Vector3D& v, double av)
 {
     return atan2(dot(a, cross(m, v)), dot(m, v) - av*av);
@@ -45,7 +46,7 @@ Vector3D findAngles(
     return Vector3D(alpha, beta, abs(alpha) + abs(beta));
 }
 
-void TrackerHeliostat::Evaluate(SoNode* parent, const Transform& toGlobal, const Vector3D& vSun)
+void TrackerHeliostat::Evaluate(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun)
 {
     // normal
     Transform toLocal = toGlobal.inversed();
@@ -57,8 +58,8 @@ void TrackerHeliostat::Evaluate(SoNode* parent, const Transform& toGlobal, const
         vT = toLocal.transformPoint(vT);
     if (!vT.normalize()) return;
 
-    Vector3D vN = vS + vT;
-    if (!vN.normalize()) return;
+    Vector3D v = vS + vT;
+    if (!v.normalize()) return;
 
     // cache
     Vector3D a = tgf::makeVector3D(primaryAxis.getValue());
@@ -72,7 +73,7 @@ void TrackerHeliostat::Evaluate(SoNode* parent, const Transform& toGlobal, const
     double k2 = k.norm2();
     double ab = dot(a, b);
     double det = 1. - ab*ab;
-    double av = dot(a, vN);
+    double av = dot(a, v);
     double bv0 = dot(b, v0);
 
     // algorithm
@@ -85,9 +86,9 @@ void TrackerHeliostat::Evaluate(SoNode* parent, const Transform& toGlobal, const
     Vector3D m0 = ma*a + mb*b;
 
     Vector3D m1 = m0 - mk*k;
-    Vector3D sol1 = findAngles(a, b, vN, m1, v0, av, bv0);
+    Vector3D sol1 = findAngles(a, b, v, m1, v0, av, bv0);
     Vector3D m2 = m0 + mk*k;
-    Vector3D sol2 = findAngles(a, b, vN, m2, v0, av, bv0);
+    Vector3D sol2 = findAngles(a, b, v, m2, v0, av, bv0);
 
     // select smallest rotation
     Vector3D* sol = sol1.z < sol2.z ? &sol1 : &sol2;
@@ -96,8 +97,7 @@ void TrackerHeliostat::Evaluate(SoNode* parent, const Transform& toGlobal, const
     SbRotation rotationB(secondaryAxis.getValue(), sol->y);
     SbRotation rotation = rotationB*rotationA;
 
-    SoSeparatorKit* kit = (SoSeparatorKit*) parent;
-    auto node = static_cast<SoBaseKit*>(kit->getPart("childList[0]", false));
+    auto node = static_cast<SoBaseKit*>(parent->getPart("childList[0]", false));
     if (!node) return;
     SoTransform* tParent = (SoTransform*) node->getPart("transform", true);
     tParent->rotation = rotation;

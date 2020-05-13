@@ -1,8 +1,6 @@
 #include "TrackerTrough.h"
 
 #include <cmath>
-//#include <iostream>
-#include <QString>
 
 #include <Inventor/nodes/SoTransform.h>
 
@@ -26,75 +24,50 @@ TrackerTrough::TrackerTrough()
 {
     SO_NODE_CONSTRUCTOR(TrackerTrough);
 
+    SO_NODE_ADD_FIELD( trackingAxis, (0.f, 1.f, 0.f) );
+    SO_NODE_ADD_FIELD( mirrorNormal, (0.f, 0.f, 1.f) );
+
     SO_NODE_ADD_FIELD( isAimingAbsolute, (FALSE) );
-
-    SO_NODE_DEFINE_ENUM_VALUE(Axis, X);
-    SO_NODE_DEFINE_ENUM_VALUE(Axis, Y);
-    SO_NODE_DEFINE_ENUM_VALUE(Axis, Z);
-    SO_NODE_SET_SF_ENUM_TYPE(activeAxis, Axis);
-	SO_NODE_ADD_FIELD( activeAxis, (Z) );
-
-    SO_NODE_ADD_FIELD(axisOrigin, (0., 0.) );
+    SO_NODE_ADD_FIELD( aimingPoint, (0.f, 0.f, 1.f) );
 }
 
-void TrackerTrough::Evaluate(SoNode* parent, const Transform& transform, const Vector3D& vSun)
+// rotation around a from m to v
+inline double findAngle(Vector3D& a, Vector3D& m, Vector3D& v, double av)
 {
-    Transform transformWtO = transform.inversed();
-    Vector3D vS = transformWtO(vSun);
+    return atan2(dot(a, cross(m, v)), dot(m, v) - av*av);
+}
 
-	Vector3D localAxis;
-	Point3D focusPoint;
-    if (activeAxis.getValue() == 0)
-	{
-        localAxis  =  Vector3D(1., 0., 0.) ;
-        focusPoint = Point3D(0., axisOrigin.getValue()[0], axisOrigin.getValue()[1] ) ;
-	}
-    else if (activeAxis.getValue() == 1)
-	{
-		localAxis =  Vector3D( 0.0, 1.0, 0.0 );
-		focusPoint = Point3D( axisOrigin.getValue()[0], 0.0, axisOrigin.getValue()[1] ) ;
-	}
-	else
-	{
-		localAxis  = Vector3D( 0.0, 0.0, 1.0 ) ;
-		focusPoint = Point3D( axisOrigin.getValue()[0], axisOrigin.getValue()[1], 0.0 ) ;
-	}
+void TrackerTrough::Evaluate(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun)
+{
+    Vector3D a = tgf::makeVector3D(trackingAxis.getValue());
+    a.normalize();
+    Vector3D v0 = tgf::makeVector3D(mirrorNormal.getValue());
+    v0 -= dot(v0, a)*a;
+    v0.normalize();
 
-	Vector3D focus = Vector3D( focusPoint );
-    if (isAimingAbsolute.getValue() == 0 ) //Absolute
-	{
-        localAxis  = transformWtO( localAxis );
-        focus = Vector3D( transformWtO( focusPoint ) );
-	}
+    Transform toLocal = toGlobal.inversed();
+    Vector3D vS = toLocal(vSun);
+    vS -= dot(vS, a)*a;
+    vS.normalize();
 
+    Vector3D vT = tgf::makeVector3D(aimingPoint.getValue());
+    if (isAimingAbsolute.getValue())
+        vT = toLocal.transformPoint(vT);
+    vT -= dot(vT, a)*a;
+    vT.normalize();
 
-    double angle = 0.;
-	//Dawann : in a Fresnel concentrator we use the project of the sun vector on the normal plan of the axis
-	//it= the projection of the sun on the normal plan of the axis...
-    if (localAxis == Vector3D(1., 0., 0.))
-	{
-		Vector3D r = Normalize( Vector3D( 0.0, focus.y, focus.z ) );
-        Vector3D it = Normalize( Vector3D( 0.0, vS.y, vS.z ) );
-		Vector3D n = Normalize( it + r );
-        if (fabs(n.z) > 0.)	angle = atan2( n.z, n.y );
-	}
-	else if( localAxis == Vector3D( 0.0, 1.0, 0.0 ) )
-	{
-		Vector3D r = Normalize( Vector3D( focus.x, 0.0, focus.z ) );
-        Vector3D it = Normalize( Vector3D( vS.x, 0.0, vS.z ) );
-		Vector3D n = Normalize( it + r );
-        if (fabs(n.z) > 0.)	angle = -atan2(n.z, n.x);
-	}
-	else
-	{
-		Vector3D r = Normalize( Vector3D( focus.x, focus.y, 0.0 ) );
-        Vector3D it = Normalize( Vector3D( vS.x, vS.y, 0.0 ) );
-		Vector3D n = Normalize( it + r );
-        if (fabs(n.x) > 0.)	angle = -atan2(n.x, n.y);
-	}
+    double angle;
+    if (isAimingAbsolute.getValue()) {
+        Vector3D v = vS + vT;
+        if (!v.normalize()) return;
+        angle = findAngle(a, v0, v, dot(a, v));
+    } else {
+        Vector3D vS0 = -(vT - 2.*dot(vT, v0)*v0);
+        angle = findAngle(a, vS0, vS, dot(a, vS));
+    }
 
-	SbVec3f axis = SbVec3f( localAxis.x, localAxis.y, localAxis.z );
-
-	SoTransform* newTransform = new SoTransform();
-    newTransform->rotation.setValue(axis, angle);
+    auto node = static_cast<SoBaseKit*>(parent->getPart("childList[0]", false));
+    if (!node) return;
+    SoTransform* tParent = (SoTransform*) node->getPart("transform", true);
+    tParent->rotation.setValue(trackingAxis.getValue(), angle);
 }

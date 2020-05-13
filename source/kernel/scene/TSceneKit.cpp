@@ -70,13 +70,13 @@ void TSceneKit::updateTrackers(double az, double el)
     azimuth = az;
     elevation = el;
 
-    Vector3D vSunW(
+    Vector3D vSun(
         sin(az)*cos(el),
         cos(az)*cos(el),
         sin(el)
     ); // to sun
 
-    Transform transformOtW(
+    Transform toGlobal(
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
@@ -94,32 +94,32 @@ void TSceneKit::updateTrackers(double az, double el)
     for (int n = 0; n < nodes->getNumChildren(); ++n)
     {
         node = static_cast<SoBaseKit*>(nodes->getChild(n));
-        UpdateTrackersTransform(node, vSunW, transformOtW);
+        updateTrackers(node, toGlobal, vSun);
     }
 }
 
 /*!
  * Updates all trackers transform for the current sun angles.
  */
-void TSceneKit::UpdateTrackersTransform(SoBaseKit* parent, const Vector3D& vSunW, Transform transformOtW)
+void TSceneKit::updateTrackers(SoBaseKit* parent, Transform toGlobal, const Vector3D& vSun)
 {
     if (!parent) return;
 
     if (auto tracker = (TrackerAbstract*) parent->getPart("tracker", false))
     {
-        tracker->Evaluate(parent, transformOtW, vSunW);
+        tracker->Evaluate(parent, toGlobal, vSun);
     }
     else if (parent->getTypeId().isDerivedFrom( TSeparatorKit::getClassTypeId() ) )
     {
         SoTransform* nodeTransform = static_cast<SoTransform*>(parent->getPart("transform", true));
-        Transform nodeOTW = transformOtW*tgf::TransformFromSoTransform(nodeTransform);
+        Transform nodeOTW = toGlobal*tgf::TransformFromSoTransform(nodeTransform);
 
         auto nodes = (SoNodeKitListPart*) parent->getPart("childList", false);
         if (!nodes) return;
         for (int n = 0; n < nodes->getNumChildren(); ++n)
         {
             SoBaseKit* child = static_cast<SoBaseKit*>(nodes->getChild(n));
-            if (child) UpdateTrackersTransform(child, vSunW, nodeOTW);
+            if (child) updateTrackers(child, nodeOTW, vSun);
         }
     }
 }

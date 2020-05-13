@@ -34,5 +34,5 @@ public:
 
 protected:
     ~TSceneKit() {}
-    void UpdateTrackersTransform(SoBaseKit* branch, const Vector3D& vSunW, Transform transformWtO);
+    void updateTrackers(SoBaseKit* branch, Transform toGlobal, const Vector3D& vSun);
 };
