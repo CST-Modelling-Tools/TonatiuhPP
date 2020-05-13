@@ -31,8 +31,8 @@ public:
     virtual void scrollTo ( const QModelIndex & index, ScrollHint hint = EnsureVisible );
     virtual QRect visualRect ( const QModelIndex & index ) const;
 
-    void ViewDecoration( bool view );
-    void ViewCoordinateSystem( bool view );
+    void ViewDecoration(bool view);
+    void ViewCoordinateSystem(bool view);
 
 protected slots:
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);

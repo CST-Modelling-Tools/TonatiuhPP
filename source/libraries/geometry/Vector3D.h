@@ -32,6 +32,7 @@ struct TONATIUH_LIBRARIES Vector3D
         z -= v.z;
         return *this;
     }
+
     Vector3D& operator*=(double s)
     {
         x *= s;
@@ -114,42 +115,45 @@ struct TONATIUH_LIBRARIES Vector3D
         return *this;
     }
 
+    Vector3D reflected(const Vector3D& n) const;
+
     double x;
     double y;
     double z;
 };
 
+
 inline Vector3D operator+(Vector3D a, const Vector3D& b)
 {
-    //lhs take by value to let the compile to make the copy
     return a += b;
 }
 inline Vector3D operator-(Vector3D a, const Vector3D& b)
 {
-    //lhs take by value to let the compile to make the copy
     return a -= b;
 }
+
 inline Vector3D operator*(double s, const Vector3D& v)
 {
     return Vector3D(s*v.x, s*v.y, s*v.z);
 }
 
-TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const Vector3D& vector);
-
 inline double dot(const Vector3D& a, const Vector3D& b)
 {
-    return a.x * b.x + a.y * b.y + a.z * b.z;
+    return a.x*b.x + a.y*b.y + a.z*b.z;
 }
 
-TONATIUH_LIBRARIES double AbsDotProduct(const Vector3D& vA, const Vector3D& vB);
-
-inline Vector3D cross(const Vector3D& vA, const Vector3D& vB)
+inline Vector3D cross(const Vector3D& a, const Vector3D& b)
 {
     return Vector3D(
-        vA.y*vB.z - vA.z*vB.y,
-        vA.z*vB.x - vA.x*vB.z,
-        vA.x*vB.y - vA.y*vB.x
+        a.y*b.z - a.z*b.y,
+        a.z*b.x - a.x*b.z,
+        a.x*b.y - a.y*b.x
     );
+}
+
+inline Vector3D Vector3D::reflected(const Vector3D& n) const
+{
+    return *this - 2.*dot(*this, n)*n;
 }
 
 inline Vector3D Normalize(const Vector3D& vA)
@@ -158,5 +162,9 @@ inline Vector3D Normalize(const Vector3D& vA)
         return vA / vA.length();
     return vA;
 }
+
+TONATIUH_LIBRARIES double AbsDotProduct(const Vector3D& vA, const Vector3D& vB);
+
+TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const Vector3D& vector);
 
 TONATIUH_LIBRARIES bool SameHemisphere(const Vector3D& vA, const Vector3D& vB);

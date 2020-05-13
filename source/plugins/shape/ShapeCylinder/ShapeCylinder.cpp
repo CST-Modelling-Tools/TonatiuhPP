@@ -22,22 +22,22 @@ ShapeCylinder::ShapeCylinder()
 
     SO_NODE_ADD_FIELD( radius, (1.) );
     SO_NODE_ADD_FIELD( phiMax, (gc::TwoPi) );
-    SO_NODE_ADD_FIELD( length, (1.) );
+    SO_NODE_ADD_FIELD( sizeZ, (1.) );
 
-    SO_NODE_DEFINE_ENUM_VALUE(Side, INSIDE);
-    SO_NODE_DEFINE_ENUM_VALUE(Side, OUTSIDE);
+    SO_NODE_DEFINE_ENUM_VALUE(Side, Back);
+    SO_NODE_DEFINE_ENUM_VALUE(Side, Front);
     SO_NODE_SET_SF_ENUM_TYPE(activeSide, Side);
-    SO_NODE_ADD_FIELD( activeSide, (OUTSIDE) );
+    SO_NODE_ADD_FIELD( activeSide, (Front) );
 }
 
 double ShapeCylinder::getArea() const
 {
-    return 2.*gc::Pi*radius.getValue()*length.getValue();
+    return 2.*gc::Pi*radius.getValue()*sizeZ.getValue();
 }
 
 double ShapeCylinder::getVolume() const
 {
-    return gc::Pi*radius.getValue()*radius.getValue()*length.getValue();
+    return gc::Pi*radius.getValue()*radius.getValue()*sizeZ.getValue();
 }
 
 BoundingBox ShapeCylinder::getBox() const
@@ -69,7 +69,7 @@ BoundingBox ShapeCylinder::getBox() const
     else
         yMax = r*sinPhiMax;
 
-    double zMax = length.getValue()/2.;
+    double zMax = sizeZ.getValue()/2.;
     double zMin = -zMax;
 
     return BoundingBox(
@@ -101,7 +101,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
         double phi = atan2(pHit.y, pHit.x);
         if (phi < 0.) phi += gc::TwoPi;
 
-        if (phi > phiMax.getValue() ||  2.*abs(pHit.z) > length.getValue())
+        if (phi > phiMax.getValue() ||  2.*abs(pHit.z) > sizeZ.getValue())
             continue;
 
         // differential geometry
@@ -128,7 +128,7 @@ Vector3D ShapeCylinder::getPoint(double u, double v) const
     double phi = u*phiMax.getValue();
     double x = radius.getValue()*cos(phi);
     double y = radius.getValue()*sin(phi);
-    double z = (v - 0.5)*length.getValue();
+    double z = (v - 0.5)*sizeZ.getValue();
     return Vector3D(x, y, z);
 }
 
@@ -142,5 +142,5 @@ Vector3D ShapeCylinder::getNormal(double u, double /*v*/) const
 
 void ShapeCylinder::generatePrimitives(SoAction* action)
 {
-    generateQuads(action, QSize(48, 2), activeSide.getValue() == Side::INSIDE, activeSide.getValue() != Side::INSIDE);
+    generateQuads(action, QSize(48, 2), activeSide.getValue() == Side::Back, activeSide.getValue() != Side::Back);
 }

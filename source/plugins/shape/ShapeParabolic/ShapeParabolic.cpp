@@ -18,21 +18,22 @@ ShapeParabolic::ShapeParabolic()
 {
     SO_NODE_CONSTRUCTOR(ShapeParabolic);
 
-    SO_NODE_ADD_FIELD( focus, (1.) );
-    SO_NODE_ADD_FIELD( widthX, (1.) );
-    SO_NODE_ADD_FIELD( widthY, (1.) );
+    SO_NODE_ADD_FIELD( focusX, (1.) );
+    SO_NODE_ADD_FIELD( focusY, (1.) );
+    SO_NODE_ADD_FIELD( sizeX, (1.) );
+    SO_NODE_ADD_FIELD( sizeY, (1.) );
 
-    SO_NODE_DEFINE_ENUM_VALUE(Side, INSIDE);
-    SO_NODE_DEFINE_ENUM_VALUE(Side, OUTSIDE);
+    SO_NODE_DEFINE_ENUM_VALUE(Side, Back);
+    SO_NODE_DEFINE_ENUM_VALUE(Side, Front);
     SO_NODE_SET_SF_ENUM_TYPE(activeSide, Side);
-    SO_NODE_ADD_FIELD( activeSide, (OUTSIDE) );
+    SO_NODE_ADD_FIELD( activeSide, (Front) );
 }
 
 BoundingBox ShapeParabolic::getBox() const
 {
-    double xMax = widthX.getValue()/2.;
-    double yMax = widthY.getValue()/2.;
-    double zMax = (xMax*xMax+ yMax*yMax)/(4.*focus.getValue());
+    double xMax = sizeX.getValue()/2.;
+    double yMax = sizeY.getValue()/2.;
+    double zMax = (xMax*xMax/focusX.getValue() + yMax*yMax/focusY.getValue())/4.;
 
     return BoundingBox(
         Point3D(-xMax, -yMax, 0.),
@@ -42,13 +43,14 @@ BoundingBox ShapeParabolic::getBox() const
 
 bool ShapeParabolic::intersect(const Ray& ray, double *tHit, DifferentialGeometry *dg) const
 {
-    double f = focus.getValue();
+    double gX = 1./focusX.getValue();
+    double gY = 1./focusY.getValue();
 
     // intersection with full shape
-    // (x0 + t*d_x)^2 + (y0 + t*d_y)^2 = 4*f*(z0 + t*d_z)
-    double A = ray.direction().x*ray.direction().x + ray.direction().y*ray.direction().y;
-    double B = 2.*(ray.direction().x*ray.origin.x + ray.direction().y*ray.origin.y) - 4.*f*ray.direction().z;
-    double C = ray.origin.x*ray.origin.x + ray.origin.y*ray.origin.y - 4.*f*ray.origin.z;
+    // (x0 + t*d_x)^2*gX + (y0 + t*d_y)^2*gY = 4*(z0 + t*d_z)
+    double A = ray.direction().x*ray.direction().x*gX + ray.direction().y*ray.direction().y*gY;
+    double B = 2.*(ray.direction().x*ray.origin.x*gX + ray.direction().y*ray.origin.y*gY) - 4.*ray.direction().z;
+    double C = ray.origin.x*ray.origin.x*gX + ray.origin.y*ray.origin.y*gY - 4.*ray.origin.z;
     double ts[2];
     if (!gf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
 
@@ -61,18 +63,18 @@ bool ShapeParabolic::intersect(const Ray& ray, double *tHit, DifferentialGeometr
         if (t < raytMin || t > ray.tMax) continue;
 
         Point3D pHit = ray(t);
-        if (2.*abs(pHit.x) > widthX.getValue() || 2.*abs(pHit.y) > widthY.getValue())
+        if (2.*abs(pHit.x) > sizeX.getValue() || 2.*abs(pHit.y) > sizeY.getValue())
             continue;
 
         // differential geometry
         if (tHit == 0 && dg == 0)
             return true;
         else if (tHit == 0 || dg == 0)
-            gf::SevereError("Function ParabolicCyl::Intersect(...) called with null pointers");
+            gf::SevereError("Function Parabolic::Intersect(...) called with null pointers");
 
-        Vector3D dpdu(1., 0., pHit.x/(2.*f));
-        Vector3D dpdv(0., 1., pHit.y/(2.*f));
-        Vector3D normal(-pHit.x, -pHit.y, 2.*f);
+        Vector3D dpdu(1., 0., pHit.x*gX/2.);
+        Vector3D dpdv(0., 1., pHit.y*gY/2.);
+        Vector3D normal(-pHit.x*gX, -pHit.y*gY, 2.);
         normal.normalize();
 
         bool isFront = dot(normal, ray.direction()) <= 0.;
@@ -86,27 +88,31 @@ bool ShapeParabolic::intersect(const Ray& ray, double *tHit, DifferentialGeometr
 
 Vector3D ShapeParabolic::getPoint(double u, double v) const
 {
-    double x = (u - 0.5)*widthX.getValue();
-    double y = (v - 0.5)*widthY.getValue();
-    double z = (x*x + y*y)/(4.*focus.getValue());
+    double x = (u - 0.5)*sizeX.getValue();
+    double y = (v - 0.5)*sizeY.getValue();
+    double z = (x*x/focusX.getValue() + y*y/focusY.getValue())/4.;
     return Vector3D(x, y, z);
 }
 
 Vector3D ShapeParabolic::getNormal(double u, double v) const
 {
-    double x = (u - 0.5)*widthX.getValue();
-    double y = (v - 0.5)*widthY.getValue();
-    Vector3D n(-x, -y, 2.*focus.getValue());
+    double x = (u - 0.5)*sizeX.getValue();
+    double y = (v - 0.5)*sizeY.getValue();
+    Vector3D n(-x/focusX.getValue(), -y/focusY.getValue(), 2.);
     return n.normalized();
 }
 
 void ShapeParabolic::generatePrimitives(SoAction* action)
 {
-    double dx = (360*gc::Degree)/48*2.*focus.getValue();
-    int rows = 1 + ceil(widthX.getValue()/dx);
-    if (rows > 36) rows = 36;
-    int columns = 1 + ceil(widthY.getValue()/dx);
-    if (columns > 36) columns = 36;
+    double s;
 
-    generateQuads(action, QSize(rows, columns), activeSide.getValue() == Side::INSIDE);
+    s = sizeX.getValue()/(360*gc::Degree*2.*focusX.getValue());
+    if (s > 1.) s = 1.;
+    int rows = 1 + ceil(48*s);
+
+    s = sizeY.getValue()/(360*gc::Degree*2.*focusY.getValue());
+    if (s > 1.) s = 1.;
+    int columns = 1 + ceil(48*s);
+
+    generateQuads(action, QSize(rows, columns), activeSide.getValue() == Side::Back);
 }

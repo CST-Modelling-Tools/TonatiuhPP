@@ -187,8 +187,8 @@ void Transform::operator()(const BoundingBox& b, BoundingBox& ans) const
 
 Transform Transform::operator*(const Transform& rhs) const
 {
-    Ptr<Matrix4x4> mdir = Mul(m_mdir, rhs.m_mdir);
-    Ptr<Matrix4x4> minv = Mul(rhs.m_minv, m_minv);
+    Ptr<Matrix4x4> mdir = multiply(m_mdir, rhs.m_mdir);
+    Ptr<Matrix4x4> minv = multiply(rhs.m_minv, m_minv);
     return Transform(mdir, minv);
 }
 
@@ -213,16 +213,11 @@ bool Transform::operator==(const Transform& t) const
              (fabs(m_mdir->m[3][3] - t.m_mdir->m[3][3]) < gc::Epsilon) );
 }
 
-Transform Transform::inversed() const
-{
-    return Transform(m_minv, m_mdir);
-}
 
 Transform Transform::transposed() const
 {
     return Transform(m_mdir->Transpose(), m_mdir->Transpose()->Inverse() ); //?
 }
-
 
 Vector3D Transform::multVecMatrix(const Vector3D& v) const
 {
@@ -273,128 +268,123 @@ bool Transform::SwapsHandedness() const
                    (m_mdir->m[0][2] *
                     (m_mdir->m[1][0]*m_mdir->m[2][1] -
                      m_mdir->m[1][1]*m_mdir->m[2][0]) ) );
-    return det < 0.0;
+    return det < 0.;
 }
 
-
-Transform Transform::Translate(const Vector3D& delta)
+Transform Transform::translate(double x, double y, double z)
 {
-    Ptr<Matrix4x4> mdir = new Matrix4x4(1.0,   0.0,   0.0,  delta.x,
-                                        0.0,   1.0,   0.0,  delta.y,
-                                        0.0,   0.0,   1.0,  delta.z,
-                                        0.0,   0.0,   0.0,      1.0);
+    Ptr<Matrix4x4> mdir = new Matrix4x4(
+        1., 0., 0., x,
+        0., 1., 0., y,
+        0., 0., 1., z,
+        0., 0., 0., 1.
+    );
 
-    Ptr<Matrix4x4> minv = new Matrix4x4(1.0,   0.0,   0.0, -delta.x,
-                                        0.0,   1.0,   0.0, -delta.y,
-                                        0.0,   0.0,   1.0, -delta.z,
-                                        0.0,   0.0,   0.0,      1.0);
+    Ptr<Matrix4x4> minv = new Matrix4x4(
+        1., 0., 0., -x,
+        0., 1., 0., -y,
+        0., 0., 1., -z,
+        0., 0., 0., 1.
+    );
 
     return Transform(mdir, minv);
 }
 
-Transform Transform::Translate(double x, double y, double z)
+Transform Transform::scale(double sx, double sy, double sz)
 {
-    Ptr<Matrix4x4> mdir = new Matrix4x4(1.0,   0.0,   0.0,   x,
-                                        0.0,   1.0,   0.0,   y,
-                                        0.0,   0.0,   1.0,   z,
-                                        0.0,   0.0,   0.0, 1.0);
+    Ptr<Matrix4x4> mdir = new Matrix4x4(
+        sx, 0., 0., 0.,
+        0., sy, 0., 0.,
+        0., 0., sz, 0.,
+        0., 0., 0., 1.
+    );
 
-    Ptr<Matrix4x4> minv = new Matrix4x4(1.0,   0.0,   0.0,   -x,
-                                        0.0,   1.0,   0.0,   -y,
-                                        0.0,   0.0,   1.0,   -z,
-                                        0.0,   0.0,   0.0,  1.0);
+    Ptr<Matrix4x4> minv = new Matrix4x4(
+        1./sx, 0., 0., 0.,
+        0., 1./sy, 0., 0.,
+        0., 0., 1./sz, 0.,
+        0., 0., 0., 1.
+    );
 
     return Transform(mdir, minv);
 }
 
-Transform Transform::Scale(double sx, double sy, double sz)
+// angle in radians
+Transform Transform::rotateX(double angle)
 {
-    Ptr<Matrix4x4> mdir = new Matrix4x4(sx,     0.0,    0.0,  0.0,
-                                        0.0,      sy,    0.0,  0.0,
-                                        0.0,     0.0,     sz,  0.0,
-                                        0.0,     0.0,    0.0,  1.0);
+    double c = cos(angle);
+    double s = sin(angle);
 
-    Ptr<Matrix4x4> minv = new Matrix4x4(1.0 / sx,    0.0,    0.0,  0.0,
-                                        0.0, 1.0 / sy,    0.0,  0.0,
-                                        0.0,    0.0, 1.0 / sz,  0.0,
-                                        0.0,    0.0,    0.0,  1.0);
+    Ptr<Matrix4x4> mdir = new Matrix4x4(
+        1., 0., 0., 0.,
+        0., c, -s, 0.,
+        0., s, c, 0.,
+        0., 0., 0., 1.
+    );
 
-    return Transform(mdir, minv);
+    return Transform(mdir, mdir->Transpose());
 }
 
-Transform Transform::RotateX(double angle)
+Transform Transform::rotateY(double angle)
 {
-    // angle is assumed to be in radians.
-    double sinAngle = sin(angle);
-    double cosAngle = cos(angle);
+    double c = cos(angle);
+    double s = sin(angle);
 
-    Ptr<Matrix4x4> mdir = new Matrix4x4(1.0,      0.0,       0.0, 0.0,
-                                        0.0, cosAngle, -sinAngle, 0.0,
-                                        0.0, sinAngle,  cosAngle, 0.0,
-                                        0.0,      0.0,       0.0, 1.0);
+    Ptr<Matrix4x4> mdir = new Matrix4x4(
+        c, 0., s, 0.,
+        0., 1., 0., 0.,
+        -s, 0., c, 0.,
+        0., 0., 0., 1.
+    );
 
-    return Transform(mdir, mdir->Transpose() );
+    return Transform(mdir, mdir->Transpose());
 }
 
-Transform Transform::RotateY(double angle)
+Transform Transform::rotateZ(double angle)
 {
-    // angle is assumed to be in radians.
-    double sinAngle = sin(angle);
-    double cosAngle = cos(angle);
+    double c = cos(angle);
+    double s = sin(angle);
 
-    Ptr<Matrix4x4> mdir = new Matrix4x4(cosAngle, 0.0, sinAngle, 0.0,
-                                        0.0, 1.0,      0.0, 0.0,
-                                        -sinAngle, 0.0, cosAngle, 0.0,
-                                        0.0, 0.0,      0.0, 1.0);
+    Ptr<Matrix4x4> mdir = new Matrix4x4(
+        c, -s, 0., 0.,
+        s,  c, 0., 0.,
+        0., 0., 1., 0.,
+        0., 0., 0., 1.
+    );
 
-    return Transform(mdir, mdir->Transpose() );
+    return Transform(mdir, mdir->Transpose());
 }
 
-
-Transform Transform::RotateZ(double angle)
+Transform Transform::rotate(double angle, const Vector3D& axis)
 {
-    // angle is assumed to be in radians.
-    double sinAngle = sin(angle);
-    double cosAngle = cos(angle);
-
-    Ptr<Matrix4x4> mdir = new Matrix4x4(cosAngle, -sinAngle, 0.0, 0.0,
-                                        sinAngle,  cosAngle, 0.0, 0.0,
-                                        0.0,       0.0, 1.0, 0.0,
-                                        0.0,       0.0, 0.0, 1.0);
-
-    return Transform(mdir, mdir->Transpose() );
-}
-
-Transform Transform::Rotate(double angle, const Vector3D& axis)
-{
-    // angle is assumed to be in radians.
     Vector3D a = axis.normalized();
     double s = sin(angle);
     double c = cos(angle);
+    double d = 1. - c;
     double m[4][4];
 
-    m[0][0] = a.x*a.x + (1.0 - a.x*a.x)*c;
-    m[0][1] = a.x*a.y*(1.0 - c) - a.z*s;
-    m[0][2] = a.x*a.z*(1.0 - c) + a.y*s;
-    m[0][3] = 0.0;
+    m[0][0] = a.x*a.x*d + c;
+    m[0][1] = a.x*a.y*d - a.z*s;
+    m[0][2] = a.x*a.z*d + a.y*s;
+    m[0][3] = 0.;
 
-    m[1][0] = a.x*a.y*(1.0 - c) + a.z*s;
-    m[1][1] = a.y*a.y + (1.0 - a.y*a.y)*c;
-    m[1][2] = a.y*a.z*(1.0 - c) - a.x*s;
-    m[1][3] = 0.0;
+    m[1][0] = a.y*a.x*d + a.z*s;
+    m[1][1] = a.y*a.y*d + c;
+    m[1][2] = a.y*a.z*d - a.x*s;
+    m[1][3] = 0.;
 
-    m[2][0] = a.x*a.z*(1.0 - c) - a.y*s;
-    m[2][1] = a.y*a.z*(1.0 - c) + a.x*s;
-    m[2][2] = a.z*a.z + (1.0 - a.z*a.z)*c;
-    m[2][3] = 0.0;
+    m[2][0] = a.z*a.x*d - a.y*s;
+    m[2][1] = a.z*a.y*d + a.x*s;
+    m[2][2] = a.z*a.z*d + c;
+    m[2][3] = 0.;
 
-    m[3][0] = 0.0;
-    m[3][1] = 0.0;
-    m[3][2] = 0.0;
-    m[3][3] = 1.0;
+    m[3][0] = 0.;
+    m[3][1] = 0.;
+    m[3][2] = 0.;
+    m[3][3] = 1.;
 
     Ptr<Matrix4x4> mdir = new Matrix4x4(m);
-    return Transform(mdir, mdir->Transpose() );
+    return Transform(mdir, mdir->Transpose());
 }
 
 Transform Transform::LookAt(const Point3D& pos, const Point3D& look, const Vector3D& up)
@@ -430,6 +420,6 @@ Transform Transform::LookAt(const Point3D& pos, const Point3D& look, const Vecto
 
 std::ostream& operator<<(std::ostream& os, const Transform& tran)
 {
-    os << (*tran.GetMatrix());
+    os << *tran.GetMatrix();
     return os;
 }

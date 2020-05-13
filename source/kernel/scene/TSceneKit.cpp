@@ -104,18 +104,20 @@ void TSceneKit::updateTrackers(double az, double el)
 void TSceneKit::updateTrackers(SoBaseKit* parent, Transform toGlobal, const Vector3D& vSun)
 {
     if (!parent) return;
+    if (!parent->getTypeId().isDerivedFrom( TSeparatorKit::getClassTypeId() ) )
+        return;
 
-    if (auto tracker = (TrackerAbstract*) parent->getPart("tracker", false))
+    SoTransform* nodeTransform = static_cast<SoTransform*>(parent->getPart("transform", true));
+    Transform nodeOTW = toGlobal*tgf::TransformFromSoTransform(nodeTransform);
+
+    if (TrackerAbstract* tracker = (TrackerAbstract*) parent->getPart("tracker", false))
     {
-        tracker->Evaluate(parent, toGlobal, vSun);
+        tracker->update(parent, nodeOTW, vSun);
+        return;
     }
-    else if (parent->getTypeId().isDerivedFrom( TSeparatorKit::getClassTypeId() ) )
-    {
-        SoTransform* nodeTransform = static_cast<SoTransform*>(parent->getPart("transform", true));
-        Transform nodeOTW = toGlobal*tgf::TransformFromSoTransform(nodeTransform);
 
-        auto nodes = (SoNodeKitListPart*) parent->getPart("childList", false);
-        if (!nodes) return;
+    if (SoNodeKitListPart* nodes = (SoNodeKitListPart*) parent->getPart("childList", false))
+    {
         for (int n = 0; n < nodes->getNumChildren(); ++n)
         {
             SoBaseKit* child = static_cast<SoBaseKit*>(nodes->getChild(n));

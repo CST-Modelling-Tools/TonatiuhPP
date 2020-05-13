@@ -11,12 +11,13 @@ public:
     static void initClass();
     TrackerTrough();
 
-    void Evaluate(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun);
+    void update(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun);
 
     SoSFVec3f trackingAxis;
+    SoSFVec3f mirrorPoint;
     SoSFVec3f mirrorNormal;
 
-    SoSFBool isAimingAbsolute;
+    SoSFEnum aimingType;
     SoSFVec3f aimingPoint;
 
     NAME_ICON_FUNCTIONS("Trough", ":/TrackerTrough.png")

@@ -3,14 +3,16 @@
 #include <cmath>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoNode.h>
+#include <Inventor/sensors/SoNodeSensor.h>
 
-#include "libraries/geometry/Point3D.h"
-#include "libraries/geometry/Vector3D.h"
 #include "libraries/geometry/Transform.h"
 #include "kernel/trf.h"
 
+#include "HeliostatModel.h"
+#include <algorithm>
 
 SO_NODE_SOURCE(TrackerHeliostat)
+
 
 void TrackerHeliostat::initClass()
 {
@@ -21,84 +23,86 @@ TrackerHeliostat::TrackerHeliostat()
 {
     SO_NODE_CONSTRUCTOR(TrackerHeliostat);
 
+    SO_NODE_ADD_FIELD( primaryShift, (0.f, 0.f, 1.f) );
     SO_NODE_ADD_FIELD( primaryAxis, (0.f, 0.f, -1.f) ); // azimuth
+
+    SO_NODE_ADD_FIELD( secondaryShift, (0.f, 0.f, 0.1f) );
     SO_NODE_ADD_FIELD( secondaryAxis, (1.f, 0.f, 0.f) ); // elevation
-    SO_NODE_ADD_FIELD( mirrorNormal, (0.f, 0.f, 1.f) ); // zenith
 
-    SO_NODE_ADD_FIELD( isAimingAbsolute, (TRUE) );
-    SO_NODE_ADD_FIELD( aimingPoint, (0.f, 0.f, 1.f) );
+    SO_NODE_ADD_FIELD( mirrorPoint, (0.f, 0.f, 0.f) );
+    SO_NODE_ADD_FIELD( mirrorNormal, (0.f, 0.f, 1.f) );
+
+    SO_NODE_DEFINE_ENUM_VALUE(AimingType, Local);
+    SO_NODE_DEFINE_ENUM_VALUE(AimingType, Global);
+    SO_NODE_SET_SF_ENUM_TYPE(aimingType, AimingType);
+    SO_NODE_ADD_FIELD( aimingType, (Global) );
+
+    SO_NODE_ADD_FIELD( aimingPoint, (0.f, 0.f, 10.f) );
+
+    m_hm = 0;
+    m_sensor = new SoNodeSensor(update, this);
+    m_sensor->attach(this);
+    update(this, 0);
 }
 
-// rotation around a from m to v
-inline double findAngle(Vector3D& a, Vector3D& m, Vector3D& v, double av)
+
+TrackerHeliostat::~TrackerHeliostat()
 {
-    return atan2(dot(a, cross(m, v)), dot(m, v) - av*av);
+    delete m_sensor;
+    delete m_hm;
 }
 
-Vector3D findAngles(
-    Vector3D& a, Vector3D& b,
-    Vector3D& v, Vector3D& m, Vector3D& v0,
-    double av, double bv0
-)
+void TrackerHeliostat::update(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun)
 {
-    double alpha = findAngle(a, m, v, av);
-    double beta = findAngle(b, v0, m, bv0);
-    return Vector3D(alpha, beta, abs(alpha) + abs(beta));
-}
-
-void TrackerHeliostat::Evaluate(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun)
-{
-    // normal
+    QVector<Vector3D> angles;
     Transform toLocal = toGlobal.inversed();
-    Vector3D vS = toLocal.transformVector(vSun);
-    vS.normalize();
+    Vector3D vSunL = toLocal.transformVector(vSun);
+    Vector3D rAim = tgf::makeVector3D(aimingPoint.getValue());
+    if (aimingType.getValue() == Local) {
+        angles = m_hm->solveReflectionLocal(vSunL, rAim);
+    } else {
+        rAim = toLocal.transformPoint(rAim);
+        angles = m_hm->solveReflectionGlobal(vSunL, rAim);
+    }
 
-    Vector3D vT = tgf::makeVector3D(aimingPoint.getValue());
-    if (isAimingAbsolute.getValue())
-        vT = toLocal.transformPoint(vT);
-    if (!vT.normalize()) return;
+    if (angles.empty()) return;
+    std::sort(angles.begin(), angles.end(),
+    [](const Vector3D& a, const Vector3D& b) -> bool {
+        return a.z < b.z;
+    });
+    Vector3D* sol = &angles[0];
 
-    Vector3D v = vS + vT;
-    if (!v.normalize()) return;
+    auto nodePrimary = static_cast<SoBaseKit*>(parent->getPart("childList[0]", false));
+    if (!nodePrimary) return;
+    SoTransform* tPrimary = (SoTransform*) nodePrimary->getPart("transform", true);
+    tPrimary->translation = primaryShift.getValue();
+    tPrimary->rotation.setValue(primaryAxis.getValue(), sol->x);
 
-    // cache
-    Vector3D a = tgf::makeVector3D(primaryAxis.getValue());
-    Vector3D b = tgf::makeVector3D(secondaryAxis.getValue());
-    Vector3D v0 = tgf::makeVector3D(mirrorNormal.getValue());
-    a.normalize();
-    b.normalize();
-    v0.normalize();
+    auto nodeSecondary = static_cast<SoBaseKit*>(nodePrimary->getPart("childList[0]", false));
+    if (!nodeSecondary) return;
+    SoTransform* tSecondary = (SoTransform*) nodeSecondary->getPart("transform", true);
+    tSecondary->translation = secondaryShift.getValue();
+    tSecondary->rotation.setValue(secondaryAxis.getValue(), sol->y);
+}
 
-    Vector3D k = cross(a, b);
-    double k2 = k.norm2();
-    double ab = dot(a, b);
-    double det = 1. - ab*ab;
-    double av = dot(a, v);
-    double bv0 = dot(b, v0);
+void TrackerHeliostat::update(void* data, SoSensor*)
+{
+    TrackerHeliostat* tracker = (TrackerHeliostat*) data;
 
-    // algorithm
-    if (qFuzzyIsNull(det)) return;
-    double ma = (av - ab*bv0)/det;
-    double mb = (bv0 - ab*av)/det;
-    double mk = 1. - ma*ma - mb*mb - 2.*ma*mb*ab;
-    if (mk < 0.) return;
-    mk = sqrt(mk/k2);
-    Vector3D m0 = ma*a + mb*b;
+    if (tracker->m_hm) delete tracker->m_hm;
 
-    Vector3D m1 = m0 - mk*k;
-    Vector3D sol1 = findAngles(a, b, v, m1, v0, av, bv0);
-    Vector3D m2 = m0 + mk*k;
-    Vector3D sol2 = findAngles(a, b, v, m2, v0, av, bv0);
-
-    // select smallest rotation
-    Vector3D* sol = sol1.z < sol2.z ? &sol1 : &sol2;
-
-    SbRotation rotationA(primaryAxis.getValue(), sol->x);
-    SbRotation rotationB(secondaryAxis.getValue(), sol->y);
-    SbRotation rotation = rotationB*rotationA;
-
-    auto node = static_cast<SoBaseKit*>(parent->getPart("childList[0]", false));
-    if (!node) return;
-    SoTransform* tParent = (SoTransform*) node->getPart("transform", true);
-    tParent->rotation = rotation;
+    tracker->m_hm = new HeliostatModel(
+        HeliostatDrive(
+            tgf::makeVector3D(tracker->primaryShift.getValue()),
+            tgf::makeVector3D(tracker->primaryAxis.getValue())
+        ),
+        HeliostatDrive(
+            tgf::makeVector3D(tracker->secondaryShift.getValue()),
+            tgf::makeVector3D(tracker->secondaryAxis.getValue())
+        ),
+        Vertex3D(
+            tgf::makeVector3D(tracker->mirrorPoint.getValue()),
+            tgf::makeVector3D(tracker->mirrorNormal.getValue())
+        )
+    );
 }

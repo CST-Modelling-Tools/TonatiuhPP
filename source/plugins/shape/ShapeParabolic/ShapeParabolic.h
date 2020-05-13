@@ -15,9 +15,10 @@ public:
     BoundingBox getBox() const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
 
-    trt::TONATIUH_REAL focus;
-	trt::TONATIUH_REAL widthX;
-    trt::TONATIUH_REAL widthY;
+    SoSFDouble focusX;
+    SoSFDouble focusY;
+    SoSFDouble sizeX;
+    SoSFDouble sizeY;
 
     NAME_ICON_FUNCTIONS("Parabolic", ":/ShapeParabolic.png")
 

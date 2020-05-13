@@ -3,7 +3,7 @@
 #include "kernel/shape/ShapeAbstract.h"
 #include "kernel/TonatiuhTypes.h"
 
-class SoFieldSensor;
+class SoNodeSensor;
 class SoSensor;
 
 
@@ -20,10 +20,10 @@ public:
     BoundingBox getBox() const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
 
-    trt::TONATIUH_REAL radius;
-    trt::TONATIUH_REAL phiMax;
-    trt::TONATIUH_REAL alphaMin;
-    trt::TONATIUH_REAL alphaMax;
+    SoSFDouble radius;
+    SoSFDouble phiMax;
+    SoSFDouble alphaMin;
+    SoSFDouble alphaMax;
 
     NAME_ICON_FUNCTIONS("Sphere", ":/ShapeSphere.png")
 
@@ -34,15 +34,8 @@ protected:
     Vector3D getNormal(double u, double v) const;
     void generatePrimitives(SoAction* action);
 
-    SoFieldSensor* m_sensor_radius;
-    SoFieldSensor* m_sensor_alphaMin;
-    SoFieldSensor* m_sensor_alphaMax;
-    SoFieldSensor* m_sensor_phiMax;
-
-    static void update_radius(void* data, SoSensor*);
-    static void update_phiMax(void* data, SoSensor*);
-    static void update_alphaMin(void* data, SoSensor*);
-    static void update_alphaMax(void* data, SoSensor*);
+    SoNodeSensor* m_sensor;
+    static void update(void* data, SoSensor*);
 };
 
 

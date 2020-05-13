@@ -4,6 +4,7 @@
 
 #include <Inventor/nodes/SoShape.h>
 #include <Inventor/fields/SoSFEnum.h>
+#include <Inventor/fields/SoSFBool.h>
 
 struct Vector3D;
 struct BoundingBox;
@@ -29,8 +30,8 @@ public:
     virtual bool intersectP(const Ray& ray) const;
 
     enum Side {
-        INSIDE = 0, // FRONT
-        OUTSIDE = 1 // BACK
+        Back = 0, // FRONT, INSIDE
+        Front = 1 // BACK, OUTSIDE
     };
 
     SoSFEnum activeSide;

@@ -88,8 +88,8 @@ void SceneModel::Clear()
 void SceneModel::SetRoot()
 {
     m_instanceRoot = new InstanceNode(m_coinScene);
-    QList< InstanceNode* > instanceRootNodeList;
-    m_mapCoinQt.insert(std::make_pair(m_coinScene, instanceRootNodeList) );
+    QList< InstanceNode* > instanceLayoutList;
+    m_mapCoinQt.insert(std::make_pair(m_coinScene, instanceLayoutList) );
     m_mapCoinQt[m_coinScene].append(m_instanceRoot);
 }
 
@@ -123,7 +123,7 @@ void SceneModel::SetConcentrator()
 
         //Create Concentrator coordinate system node
         TSeparatorKit* nodeRoot = new TSeparatorKit();
-        nodeRoot->setName("RootNode");
+        nodeRoot->setName("Layout");
         nodeSunChild->addChild(nodeRoot);
         nodeRoot->setSearchingChildren(true);
 

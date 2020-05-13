@@ -175,7 +175,7 @@ MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags fl
     if (!tonatiuhFile.isEmpty() )
         StartOver(tonatiuhFile);
 
-    SelectNode("//SunNode/RootNode");
+    SelectNode("//SunNode/Layout");
 
     fileToolBar->hide();
     editToolBar->hide();
@@ -359,6 +359,7 @@ void MainWindow::SetupGraphicView()
         m_graphicView[n]->SetSceneGraph(m_graphicsRoot);
         m_graphicView[n]->setModel(m_sceneModel);
         m_graphicView[n]->setSelectionModel(m_selectionModel);
+        if (n > 0) m_graphicView[n]->ViewDecoration(false);
     }
 
     m_focusView = 1;
@@ -1123,7 +1124,7 @@ void MainWindow::on_actionQuadView_toggled()
         m_focusView = 0;
         QSplitter* splitter = findChild<QSplitter*>("graphicSplitterH2");
         splitter->hide();
-    } else {
+    } else {       
         m_graphicView[1]->show();
         m_graphicView[2]->show();
         m_graphicView[3]->show();
@@ -1445,12 +1446,12 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
 
     //CreateComponent( pComponentFactory );
 
-    TSeparatorKit* componentRootNode = pComponentFactory->CreateTComponent(m_pluginManager, numberofParameters, parametersList);
-    if (!componentRootNode) return;
+    TSeparatorKit* componentLayout = pComponentFactory->CreateTComponent(m_pluginManager, numberofParameters, parametersList);
+    if (!componentLayout) return;
 
 
     QString typeName = pComponentFactory->name();
-    componentRootNode->setName(nodeName.toStdString().c_str() );
+    componentLayout->setName(nodeName.toStdString().c_str() );
 
     TSceneKit* scene = m_document->getSceneKit();
     TLightKit* lightKit = static_cast< TLightKit* >(scene->getPart("lightList[0]", false) );
@@ -1459,7 +1460,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
         SoSearchAction trackersSearch;
         trackersSearch.setType(TrackerAbstract::getClassTypeId() );
         trackersSearch.setInterest(SoSearchAction::ALL);
-        trackersSearch.apply(componentRootNode);
+        trackersSearch.apply(componentLayout);
         SoPathList& trackersPath = trackersSearch.getPaths();
 
         for (int index = 0; index <trackersPath.getLength(); ++index)
@@ -1471,7 +1472,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
         }
     }
 
-    CmdInsertSeparatorKit* cmdInsertSeparatorKit = new CmdInsertSeparatorKit(componentRootNode, QPersistentModelIndex(parentIndex), m_sceneModel);
+    CmdInsertSeparatorKit* cmdInsertSeparatorKit = new CmdInsertSeparatorKit(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
     QString commandText = QString("Create Component: %1").arg(pComponentFactory->name().toLatin1().constData() );
     cmdInsertSeparatorKit->setText(commandText);
     m_commandStack->push(cmdInsertSeparatorKit);
@@ -1802,7 +1803,7 @@ void MainWindow::InsertFileComponent(QString componentFileName)
         return;
     }
 
-    TSeparatorKit* componentRootNode = static_cast< TSeparatorKit* >(componentSeparator->getChild(0) );
+    TSeparatorKit* componentLayout = static_cast< TSeparatorKit* >(componentSeparator->getChild(0) );
     TSceneKit* scene = m_document->getSceneKit();
     TLightKit* lightKit = static_cast< TLightKit* >(scene->getPart("lightList[0]", false) );
     if (lightKit)
@@ -1811,7 +1812,7 @@ void MainWindow::InsertFileComponent(QString componentFileName)
         SoSearchAction trackersSearch;
         trackersSearch.setType(TrackerAbstract::getClassTypeId() );
         trackersSearch.setInterest(SoSearchAction::ALL);
-        trackersSearch.apply(componentRootNode);
+        trackersSearch.apply(componentLayout);
         SoPathList& trackersPath = trackersSearch.getPaths();
 
         for (int index = 0; index <trackersPath.getLength(); ++index)
@@ -1823,7 +1824,7 @@ void MainWindow::InsertFileComponent(QString componentFileName)
         }
     }
 
-    CmdInsertSeparatorKit* cmdInsertSeparatorKit = new CmdInsertSeparatorKit(componentRootNode, QPersistentModelIndex(parentIndex), m_sceneModel);
+    CmdInsertSeparatorKit* cmdInsertSeparatorKit = new CmdInsertSeparatorKit(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
     cmdInsertSeparatorKit->setText("Insert SeparatorKit node");
     m_commandStack->push(cmdInsertSeparatorKit);
 
@@ -2710,11 +2711,11 @@ void MainWindow::CreateComponent(ComponentFactory* pComponentFactory)
     SoNode* parentNode = parentInstance->getNode();
     if (!parentNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) return;
 
-    TSeparatorKit* componentRootNode = pComponentFactory->CreateTComponent(m_pluginManager);
-    if (!componentRootNode) return;
+    TSeparatorKit* componentLayout = pComponentFactory->CreateTComponent(m_pluginManager);
+    if (!componentLayout) return;
 
     QString typeName = pComponentFactory->name();
-    componentRootNode->setName(typeName.toStdString().c_str() );
+    componentLayout->setName(typeName.toStdString().c_str() );
 
 //    TSceneKit* scene = m_document->GetSceneKit();
 //    TLightKit* lightKit = static_cast< TLightKit* >(scene->getPart("lightList[0]", false) );
@@ -2724,7 +2725,7 @@ void MainWindow::CreateComponent(ComponentFactory* pComponentFactory)
 //        SoSearchAction trackersSearch;
 //        trackersSearch.setType(TTracker::getClassTypeId() );
 //        trackersSearch.setInterest(SoSearchAction::ALL);
-//        trackersSearch.apply(componentRootNode);
+//        trackersSearch.apply(componentLayout);
 //        SoPathList& trackersPath = trackersSearch.getPaths();
 
 //        for (int index = 0; index <trackersPath.getLength(); ++index)
@@ -2738,7 +2739,7 @@ void MainWindow::CreateComponent(ComponentFactory* pComponentFactory)
 
 
 
-    CmdInsertSeparatorKit* cmdInsertSeparatorKit = new CmdInsertSeparatorKit(componentRootNode, QPersistentModelIndex(parentIndex), m_sceneModel);
+    CmdInsertSeparatorKit* cmdInsertSeparatorKit = new CmdInsertSeparatorKit(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
     QString commandText = QString("Create Component: %1").arg(pComponentFactory->name().toLatin1().constData() );
     cmdInsertSeparatorKit->setText(commandText);
     m_commandStack->push(cmdInsertSeparatorKit);
@@ -2966,11 +2967,11 @@ void MainWindow::ChangeModelScene()
     m_sceneModel->setSceneKit(*coinScene);
     m_graphicsRoot->AddModel(coinScene);
 
-    QModelIndex viewRootNodeIndex = m_sceneModel->IndexFromNodeUrl(QString("//SunNode") );
-    InstanceNode* viewRootNode = m_sceneModel->NodeFromIndex(viewRootNodeIndex);
-    sceneModelView->setRootIndex(viewRootNodeIndex);
+    QModelIndex viewLayoutIndex = m_sceneModel->IndexFromNodeUrl(QString("//SunNode") );
+    InstanceNode* viewLayout = m_sceneModel->NodeFromIndex(viewLayoutIndex);
+    sceneModelView->setRootIndex(viewLayoutIndex);
 
-    InstanceNode* concentratorRoot = viewRootNode->children[ 0 ];
+    InstanceNode* concentratorRoot = viewLayout->children[ 0 ];
 
     m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 }

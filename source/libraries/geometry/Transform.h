@@ -3,12 +3,13 @@
 #include <iostream>
 #include "Matrix4x4.h"
 #include "Ptr.h"
+#include "Vector3D.h"
 
 struct Point3D;
-struct Vector3D;
 struct NormalVector;
 class Ray;
 struct BoundingBox;
+
 
 class TONATIUH_LIBRARIES Transform
 {
@@ -48,25 +49,23 @@ public:
 
     bool operator==(const Transform& mat) const;
 
-    Ptr<Matrix4x4> GetMatrix() const {
-        return m_mdir;
-    }
+    Ptr<Matrix4x4> GetMatrix() const {return m_mdir;}
+
     Transform transposed() const;
-    Transform inversed() const;
+    Transform inversed() const {return Transform(m_minv, m_mdir);}
     bool SwapsHandedness() const;
+
     Vector3D multVecMatrix(const Vector3D& v) const;
     Vector3D multDirMatrix(const Vector3D& src) const;
 
-
-    //static
-    Transform Translate(const Vector3D& delta);
-    Transform Translate(double x, double y, double z);
-    Transform Scale(double x, double y, double z);
-    Transform RotateX(double angle);
-    Transform RotateY(double angle);
-    Transform RotateZ(double angle);
-    Transform Rotate(double angle, const Vector3D& axis);
-    Transform LookAt(const Point3D& pos, const Point3D& look, const Vector3D& up);
+    static Transform translate(double x, double y, double z);
+    static Transform translate(const Vector3D& v) {return translate(v.x, v.y, v.z);}
+    static Transform scale(double x, double y, double z);
+    static Transform rotateX(double angle);
+    static Transform rotateY(double angle);
+    static Transform rotateZ(double angle);
+    static Transform rotate(double angle, const Vector3D& axis);
+    static Transform LookAt(const Point3D& pos, const Point3D& look, const Vector3D& up);
 
 private:
     Ptr<Matrix4x4> m_mdir;

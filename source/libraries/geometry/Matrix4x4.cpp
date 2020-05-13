@@ -99,7 +99,7 @@ Ptr<Matrix4x4> Matrix4x4::Inverse() const
     return new Matrix4x4(inv00, inv01, inv02, inv03, inv10, inv11, inv12, inv13, inv20, inv21, inv22, inv23, inv30, inv31, inv32, inv33);
 }
 
-Ptr<Matrix4x4> Mul(const Ptr<Matrix4x4>& m1, const Ptr<Matrix4x4>& m2)
+Ptr<Matrix4x4> multiply(const Ptr<Matrix4x4>& m1, const Ptr<Matrix4x4>& m2)
 {
     double r[4][4];
     for (int i = 0; i < 4; ++i)

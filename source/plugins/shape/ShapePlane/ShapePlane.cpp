@@ -16,24 +16,24 @@ void ShapePlane::initClass()
 ShapePlane::ShapePlane()
 {
     SO_NODE_CONSTRUCTOR(ShapePlane);
-    SO_NODE_ADD_FIELD( widthX, (1.) );
-    SO_NODE_ADD_FIELD( widthY, (1.) );
+    SO_NODE_ADD_FIELD( sizeX, (1.) );
+    SO_NODE_ADD_FIELD( sizeY, (1.) );
 
-    SO_NODE_DEFINE_ENUM_VALUE( Side, INSIDE );
-    SO_NODE_DEFINE_ENUM_VALUE( Side, OUTSIDE );
+    SO_NODE_DEFINE_ENUM_VALUE( Side, Back );
+    SO_NODE_DEFINE_ENUM_VALUE( Side, Front );
     SO_NODE_SET_SF_ENUM_TYPE( activeSide, Side );
-    SO_NODE_ADD_FIELD( activeSide, (OUTSIDE) );
+    SO_NODE_ADD_FIELD( activeSide, (Front) );
 }
 
 double ShapePlane::getArea() const
 {
-    return widthX.getValue()*widthY.getValue();
+    return sizeX.getValue()*sizeY.getValue();
 }
 
 BoundingBox ShapePlane::getBox() const
 {
-    double xMax = widthX.getValue()/2.;
-    double yMax = widthY.getValue()/2.;
+    double xMax = sizeX.getValue()/2.;
+    double yMax = sizeY.getValue()/2.;
     double eps = 0.01*std::min(xMax, yMax);
     return BoundingBox(
         Point3D(-xMax, -yMax, -eps),
@@ -53,7 +53,7 @@ bool ShapePlane::intersect(const Ray& ray, double *tHit, DifferentialGeometry* d
 
     // intersection with clipped shape
     Point3D pHit = ray(t);
-    if (2.*abs(pHit.x) > widthX.getValue() || 2.*abs(pHit.y) > widthY.getValue())
+    if (2.*abs(pHit.x) > sizeX.getValue() || 2.*abs(pHit.y) > sizeY.getValue())
         return false;
 
     if (tHit == 0 && dg == 0) return true;
@@ -73,8 +73,8 @@ bool ShapePlane::intersect(const Ray& ray, double *tHit, DifferentialGeometry* d
 
 Vector3D ShapePlane::getPoint(double u, double v) const
 {
-    double x = (u - 0.5)*widthX.getValue();
-    double y = (v - 0.5)*widthY.getValue();
+    double x = (u - 0.5)*sizeX.getValue();
+    double y = (v - 0.5)*sizeY.getValue();
     return Vector3D(x, y, 0.);
 }
 
@@ -85,5 +85,5 @@ Vector3D ShapePlane::getNormal(double /*u*/, double /*v*/) const
 
 void ShapePlane::generatePrimitives(SoAction* action)
 {
-     generateQuads(action, QSize(2, 2), activeSide.getValue() == Side::INSIDE);
+     generateQuads(action, QSize(2, 2), activeSide.getValue() == Side::Back);
 }

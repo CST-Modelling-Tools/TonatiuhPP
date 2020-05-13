@@ -1,6 +1,6 @@
 #include "ShapeSphere.h"
 
-#include <Inventor/sensors/SoFieldSensor.h>
+#include <Inventor/sensors/SoNodeSensor.h>
 
 #include "kernel/shape/DifferentialGeometry.h"
 #include "kernel/TonatiuhFunctions.h"
@@ -27,28 +27,19 @@ ShapeSphere::ShapeSphere()
     SO_NODE_ADD_FIELD( alphaMin, (-gc::Pi/2.) );
     SO_NODE_ADD_FIELD( alphaMax, (gc::Pi/2.) );
 
-	SO_NODE_DEFINE_ENUM_VALUE( Side, INSIDE );
-	SO_NODE_DEFINE_ENUM_VALUE( Side, OUTSIDE );
+    SO_NODE_DEFINE_ENUM_VALUE( Side, Back );
+    SO_NODE_DEFINE_ENUM_VALUE( Side, Front );
 	SO_NODE_SET_SF_ENUM_TYPE( activeSide, Side );
-	SO_NODE_ADD_FIELD( activeSide, (OUTSIDE) );
+    SO_NODE_ADD_FIELD( activeSide, (Front) );
 
-    m_sensor_radius = new SoFieldSensor(update_radius, this);
-//    m_sensor_radius->setPriority(1); // does not work
-    m_sensor_radius->attach(&radius);
-    m_sensor_phiMax = new SoFieldSensor(update_phiMax, this);
-    m_sensor_phiMax->attach(&phiMax);
-    m_sensor_alphaMin = new SoFieldSensor(update_alphaMin, this);
-    m_sensor_alphaMin->attach(&alphaMin);
-    m_sensor_alphaMax = new SoFieldSensor(update_alphaMax, this);
-    m_sensor_alphaMax->attach(&alphaMax);
+    m_sensor = new SoNodeSensor(update, this);
+    m_sensor->setPriority(1); // does not help
+    m_sensor->attach(this);
 }
 
 ShapeSphere::~ShapeSphere()
 {
-    delete m_sensor_radius;
-    delete m_sensor_phiMax;
-    delete m_sensor_alphaMin;
-    delete m_sensor_alphaMax;
+    delete m_sensor;
 }
 
 double ShapeSphere::getArea() const
@@ -179,41 +170,26 @@ Vector3D ShapeSphere::getNormal(double u, double v) const
 
 void ShapeSphere::generatePrimitives(SoAction* action)
 {
-    generateQuads(action, QSize(48, 24), activeSide.getValue() == Side::INSIDE, activeSide.getValue() == Side::INSIDE);
+    generateQuads(action, QSize(48, 24), activeSide.getValue() == Side::Back, activeSide.getValue() == Side::Back);
 }
 
-void ShapeSphere::update_radius(void* data, SoSensor*)
+void ShapeSphere::update(void* data, SoSensor*)
 {
     ShapeSphere* shape = (ShapeSphere*) data;
+
     if (shape->radius.getValue() <= 0.)
         shape->radius.setValue(1.);
-}
 
-void ShapeSphere::update_phiMax(void* data, SoSensor*)
-{
-    ShapeSphere* shape = (ShapeSphere*) data;
     double phi = shape->phiMax.getValue();
     if (phi <= 0. || phi >= gc::TwoPi)
         shape->phiMax.setValue(gc::TwoPi);
-}
 
-void ShapeSphere::update_alphaMin(void* data, SoSensor*)
-{
-    ShapeSphere* shape = (ShapeSphere*) data;
     if (shape->alphaMin.getValue() < -gc::Pi/2.)
         shape->alphaMin.setValue(-gc::Pi/2.);
-    if (shape->alphaMax.getValue() <= shape->alphaMin.getValue())
-    {
-        shape->alphaMin.setValue(-gc::Pi/2.);
-        shape->alphaMax.setValue(gc::Pi/2.);
-    }
-}
 
-void ShapeSphere::update_alphaMax(void* data, SoSensor*)
-{
-    ShapeSphere* shape = (ShapeSphere*) data;
     if (shape->alphaMax.getValue() > gc::Pi/2.)
         shape->alphaMax.setValue(gc::Pi/2.);
+
     if (shape->alphaMax.getValue() <= shape->alphaMin.getValue())
     {
         shape->alphaMin.setValue(-gc::Pi/2.);

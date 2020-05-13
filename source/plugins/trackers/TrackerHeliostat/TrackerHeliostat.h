@@ -2,6 +2,10 @@
 
 #include "kernel/trackers/TrackerAbstract.h"
 
+class HeliostatModel;
+class SoNodeSensor;
+class SoSensor;
+
 
 class TrackerHeliostat: public TrackerAbstract
 {
@@ -11,19 +15,28 @@ public:
     static void initClass();
     TrackerHeliostat();
 
-    void Evaluate(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun);
+    void update(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun);
 
+    SoSFVec3f primaryShift;
     SoSFVec3f primaryAxis;
+
+    SoSFVec3f secondaryShift;
     SoSFVec3f secondaryAxis;
+
+    SoSFVec3f mirrorPoint;
     SoSFVec3f mirrorNormal;
 
-    SoSFBool isAimingAbsolute;
+    SoSFEnum aimingType;
     SoSFVec3f aimingPoint;
 
     NAME_ICON_FUNCTIONS("Heliostat", ":/TrackerHeliostat.png")
 
 protected:
-    ~TrackerHeliostat() {}
+    ~TrackerHeliostat();
+
+    HeliostatModel* m_hm;
+    SoNodeSensor* m_sensor;
+    static void update(void* data, SoSensor*);
 };
 
 

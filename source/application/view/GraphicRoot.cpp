@@ -33,7 +33,7 @@ m_nodeRoot SoSeparator
             childList
                 SunNode
                    TSceneTracker(lightKit)
-                    RootNode
+                    Layout
 
 */
 

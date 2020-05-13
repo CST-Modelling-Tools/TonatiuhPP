@@ -30,12 +30,12 @@ SelectSurfaceDialog::SelectSurfaceDialog(SceneModel& currentSceneModel, bool ena
     m_pNodeFilterModel->setSourceModel(m_pCurrentSceneModel);
     sceneModelView->setModel(m_pNodeFilterModel);
 
-    QModelIndex viewRootNodeIndex = currentSceneModel.IndexFromNodeUrl("//SunNode");
+    QModelIndex viewLayoutIndex = currentSceneModel.IndexFromNodeUrl("//SunNode");
     sceneModelView->setSelectionBehavior(QAbstractItemView::SelectRows);
     sceneModelView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     sceneModelView->setSelectionMode(QAbstractItemView::SingleSelection);
     sceneModelView->setRootIsDecorated(true);
-    sceneModelView->setRootIndex(viewRootNodeIndex);
+    sceneModelView->setRootIndex(viewLayoutIndex);
 }
 
 /*!
