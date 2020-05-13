@@ -1,9 +1,9 @@
 #pragma once
 
-#include "kernel/trackers/TTrackerForAiming.h"
+#include "kernel/trackers/TrackerAbstract.h"
 
 
-class TrackerHeliostat: public TTrackerForAiming
+class TrackerHeliostat: public TrackerAbstract
 {
     SO_NODE_HEADER(TrackerHeliostat);
 
@@ -17,6 +17,7 @@ public:
     SoSFVec3f secondaryAxis;
     SoSFVec3f mirrorNormal;
 
+    SoSFBool isAimingAbsolute;
     SoSFVec3f aimingPoint;
 
     NAME_ICON_FUNCTIONS("Heliostat", ":/TrackerHeliostat.png")

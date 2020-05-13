@@ -1,15 +1,12 @@
 #include "TrackerHeliostat.h"
 
 #include <cmath>
-#include <QString>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoNode.h>
 
-#include "libraries/geometry/NormalVector.h"
 #include "libraries/geometry/Point3D.h"
-#include "libraries/geometry/Transform.h"
 #include "libraries/geometry/Vector3D.h"
-#include "kernel/scene/TSceneKit.h"
+#include "libraries/geometry/Transform.h"
 #include "kernel/trf.h"
 
 
@@ -17,7 +14,7 @@ SO_NODE_SOURCE(TrackerHeliostat)
 
 void TrackerHeliostat::initClass()
 {
-    SO_NODE_INIT_CLASS(TrackerHeliostat, TTrackerForAiming, "TTrackerForAiming");
+    SO_NODE_INIT_CLASS(TrackerHeliostat, TrackerAbstract, "TrackerAbstract");
 }
 
 TrackerHeliostat::TrackerHeliostat()

@@ -1,4 +1,5 @@
 #include "TrackerTrough.h"
+
 #include <cmath>
 #include <iostream>
 #include <QString>
@@ -18,7 +19,7 @@ SO_NODE_SOURCE(TrackerTrough)
 
 void TrackerTrough::initClass()
 {
-    SO_NODE_INIT_CLASS( TrackerTrough, TTrackerForAiming, "TTrackerForAiming" );
+    SO_NODE_INIT_CLASS(TrackerTrough, TrackerAbstract, "TrackerAbstract");
 }
 
 

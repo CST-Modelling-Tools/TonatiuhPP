@@ -1,10 +1,10 @@
 #pragma once
 
 
-#include "kernel/trackers/TTrackerForAiming.h"
+#include "kernel/trackers/TrackerAbstract.h"
 
 
-class TrackerTrough: public TTrackerForAiming
+class TrackerTrough: public TrackerAbstract
 {
     SO_NODE_HEADER(TrackerTrough);
 
@@ -20,6 +20,7 @@ public:
 		Z = 2,
 	};
     SoSFEnum activeAxis;
+    SoSFBool isAimingAbsolute;
 
 	trt::TONATIUH_REALVECTOR2 axisOrigin;
 

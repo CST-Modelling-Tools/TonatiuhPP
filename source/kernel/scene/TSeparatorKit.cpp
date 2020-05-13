@@ -1,10 +1,11 @@
+#include "TSeparatorKit.h"
+
 #include <QString>
 
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTransform.h>
 
-#include "kernel/trackers/TDefaultTracker.h"
-#include "TSeparatorKit.h"
+#include "kernel/trackers/TrackerAbstract.h"
 
 SO_KIT_SOURCE(TSeparatorKit)
 

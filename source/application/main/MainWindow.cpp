@@ -89,7 +89,6 @@
 #include "kernel/sun/TLightKit.h"
 #include "kernel/sun/TLightShape.h"
 #include "kernel/TonatiuhFunctions.h"
-#include "kernel/trackers/TDefaultTracker.h"
 #include "kernel/trackers/TrackerAbstract.h"
 #include "kernel/trackers/TrackerFactory.h"
 #include "main/Document.h"

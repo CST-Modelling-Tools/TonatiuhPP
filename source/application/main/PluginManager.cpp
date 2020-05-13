@@ -11,8 +11,8 @@
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/material/MaterialFactory.h"
 #include "kernel/material/MaterialVirtual.h"
-#include "kernel/photons/PhotonsFactory.h"
 #include "kernel/photons/PhotonsDefault.h"
+#include "kernel/photons/PhotonsFactory.h"
 #include "kernel/photons/PhotonsWidget.h"
 #include "kernel/random/RandomFactory.h"
 #include "kernel/random/RandomSTL.h"
@@ -24,10 +24,7 @@
 #include "kernel/sun/SunPillbox.h"
 #include "kernel/sun/TLightKit.h"
 #include "kernel/sun/TLightShape.h"
-//#include "kernel/trackers/GraphicRootTracker.h"
-#include "kernel/trackers/TDefaultTracker.h"
-//#include "kernel/trackers/TSceneTracker.h"
-#include "kernel/trackers/TTrackerForAiming.h"
+#include "kernel/trackers/TrackerAbstract.h"
 #include "kernel/trackers/TrackerFactory.h"
 #include "libraries/fields/UserMField.h"
 #include "libraries/fields/UserSField.h"
@@ -60,6 +57,8 @@ PluginManager::PluginManager()
     UserMField::initClass();
     UserSField::initClass();
 
+    TrackerAbstract::initClass();
+
     TSceneKit::initClass();
     TSeparatorKit::initClass();
 
@@ -72,11 +71,6 @@ PluginManager::PluginManager()
     ShapeAbstract::initClass();
     MaterialAbstract::initClass();
 
-    TrackerAbstract::initClass();
-    TTrackerForAiming::initClass();
-    TDefaultTracker::initClass();
-//    TSceneTracker::initClass();
-//    GraphicRootTracker::initClass();
     SkyBackground::initClass();
 }
 

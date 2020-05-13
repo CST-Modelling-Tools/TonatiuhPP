@@ -42,7 +42,7 @@
 
 class QString;
 
-class TONATIUH_KERNEL TSeparatorKit : public SoSeparatorKit
+class TONATIUH_KERNEL TSeparatorKit: public SoSeparatorKit
 {
     typedef SoSeparatorKit inherited;
 
@@ -57,7 +57,7 @@ public:
     virtual SbBool setPart(const SbName& partname, SoNode* from);
     virtual SoNode* getPart(const SbName &partname, SbBool makeifneeded);
 
-    void getBoundingBox(SoGetBoundingBoxAction * action);
+    void getBoundingBox(SoGetBoundingBoxAction* action);
 
 protected:
     ~TSeparatorKit() {}

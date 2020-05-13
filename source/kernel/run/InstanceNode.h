@@ -55,7 +55,7 @@ public:
     void setBox(const BoundingBox& box) {m_box = box;}
 
     Transform getTransform() {return m_transformWtO;}
-    void setTransform(Transform nodeTransform);
+    void setTransform(Transform t);
 
     QVector<InstanceNode*> children;
 

@@ -14,7 +14,6 @@
 #include "scene/TShapeKit.h"
 #include "sun/TLightKit.h"
 #include "trackers/TrackerAbstract.h"
-#include "trackers/TTrackerForAiming.h"
 #include "kernel/scene/TSeparatorKit.h"
 
 
@@ -152,10 +151,10 @@ void InstanceNode::extendBoxForLight(SbBox3f* extendedBox)
 /**
  * Set node world to object transform to \a nodeTransform .
  */
-void InstanceNode::setTransform(Transform nodeTransform)
+void InstanceNode::setTransform(Transform t)
 {
-    m_transformOtW = nodeTransform;
-    m_transformWtO = nodeTransform.GetInverse();
+    m_transformOtW = t;
+    m_transformWtO = t.GetInverse();
 }
 
 void InstanceNode::updateTree(Transform parentOtW)
@@ -166,43 +165,38 @@ void InstanceNode::updateTree(Transform parentOtW)
     if (nodeRoot->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
     {
         SoTransform* nodeTransform = (SoTransform*) nodeRoot->getPart("transform", true);
-        Transform objectToWorld = tgf::TransformFromSoTransform(nodeTransform);
+        Transform transform = parentOtW*tgf::TransformFromSoTransform(nodeTransform);
+        setTransform(transform);
 
         BoundingBox box;
-        Transform nodeOtW(parentOtW*objectToWorld);
-        setTransform(nodeOtW);
-
         for (InstanceNode* child : children)
         {
-            child->updateTree(nodeOtW);
-            box = Union(box, child->getBox() );
+            child->updateTree(transform);
+            box.expand(child->getBox());
         }
         setBox(box);
     }
     else if (nodeRoot->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId()))
     {
-        Transform shapeTransform = parentOtW;
-
+        Transform transform = parentOtW;
         SoTransform* nodeTransform = (SoTransform*) nodeRoot->getPart("transform", false);
         if (nodeTransform)
-            shapeTransform = shapeTransform*tgf::TransformFromSoTransform(nodeTransform);
-
-        BoundingBox shapeBox;
+            transform = transform*tgf::TransformFromSoTransform(nodeTransform);
 
         if (children.count() > 0)
         {
-            InstanceNode* shapeInstance = 0;
+            InstanceNode* child = 0;
             if (children[0]->getNode()->getTypeId().isDerivedFrom(ShapeAbstract::getClassTypeId() ) )
-                shapeInstance = children[0];
+                child = children[0];
             else if (children.count() > 1)
-                shapeInstance = children[1];
+                child = children[1];
 
-            if (shapeInstance)
+            if (child)
             {
-                ShapeAbstract* shapeNode = static_cast<ShapeAbstract*>(shapeInstance->getNode() );
-                shapeBox = shapeTransform(shapeNode->getBox());
-                setBox(shapeBox);
-                setTransform(shapeTransform);
+                ShapeAbstract* shape = static_cast<ShapeAbstract*>(child->getNode() );
+                BoundingBox box = transform(shape->getBox());
+                setBox(box);
+                setTransform(transform);
             }
         }
     }
