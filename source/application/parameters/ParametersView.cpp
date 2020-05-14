@@ -1,10 +1,8 @@
 #include "ParametersView.h"
 
-#include <iostream>
 #include <QComboBox>
 #include <QLineEdit>
 #include <QTreeView>
-#include <QVBoxLayout>
 #include <QHeaderView>
 
 #include <Inventor/SbName.h>
@@ -24,50 +22,23 @@
 #include "ParametersItem.h"
 #include "ParametersModel.h"
 
-/*!
- * Creates an empty widget.
- */
-ParametersView::ParametersView(QWidget* parent):
-    QTreeView(parent),
-    m_node(0),
-    m_name(QString("")),
-    m_model(0),
-    m_index(),
-    m_delegate(0)
-{
-//    setAlternatingRowColors(true);
-
-    m_delegate = new ParametersDelegate;
-    setItemDelegate(m_delegate);
-
-    m_model = new ParametersModel();
-    m_model->SetEditable(true);
-    setModel(m_model);
-}
 
 /**
  * Creates a new ParametersView for the parameters in the \a fieldContainer with parent \a parent.
  *
  * The container name is \a containerName.
  */
-ParametersView::ParametersView(SoNode* node, QString name, QWidget* parent):
-    QTreeView(parent),
-    m_node(node),
-    m_name(name),
-    m_model(0),
-    m_index(),
-    m_delegate(0)
+ParametersView::ParametersView(QWidget* parent):
+    QTreeView(parent)
 {
     m_delegate = new ParametersDelegate;
     setItemDelegate(m_delegate);
 
     m_model = new ParametersModel;
     m_model->SetEditable(true);
-    m_model->setHorizontalHeaderLabels({"Parameter", "Value"});
     setModel(m_model);
 
-    if (m_node) ReadFields();
-    resizeColumnToContents(0);
+    m_node = 0;
 }
 
 /**
@@ -82,15 +53,31 @@ ParametersView::~ParametersView()
 /*!
  * Sets \a fieldContainer as widget container and \a containerName as its containerName name.
  */
-void ParametersView::SetContainer(SoNode* node, QString name)
+void ParametersView::SetContainer(SoNode* node)
 {
     m_model->clear();
+    m_model->setHorizontalHeaderLabels({"Parameter", "Value"});
 
     m_node = node;
-    m_name = name;
+    if (!m_node) return;
 
-    if (m_node) ReadFields();
-    resizeColumnToContents(1);
+    SoFieldList fields;
+    int nMax = m_node->getFields(fields);
+    for (int n = 0; n < nMax; ++n)
+    {
+        SoField* field = fields.get(n);
+        if (!field) continue;
+        SbString value;
+        field->get(value);
+        SbName name;
+        if (!m_node->getFieldName(field, name)) continue;
+        ParametersItem* itemName = new ParametersItem(name.getString(), false, field);
+        m_model->setItem(n, 0, itemName);
+        ParametersItem* itemValue = new ParametersItem(value.getString(), true, field);
+        m_model->setItem(n, 1, itemValue);
+    }
+
+//    resizeColumnToContents(1);
 }
 
 /**
@@ -101,18 +88,10 @@ void ParametersView::SetEditable(bool editable)
     m_model->SetEditable(editable);
 }
 
-/*!
- * Sets \a current as the view current element index.
- */
-void ParametersView::currentChanged(const QModelIndex& current, const QModelIndex& /*previous*/)
-{
-    m_index = current;
-}
-
 void ParametersView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint)
 {
+    SoField* field = m_model->getData(currentIndex())->getField();
     QString value;
-    SoField* field = m_model->ModelItem(m_index)->getField();
 
     if (dynamic_cast<SoSFEnum*>(field))
     {
@@ -140,42 +119,12 @@ void ParametersView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEdit
         value = w->text();
     }
 
-    SbName nameField;
-    m_node->getFieldName(field, nameField);
-    QString name = nameField.getString();
-
     if (!value.isEmpty())
-        emit valueModified(m_node, name, value);
+    {
+        SbName name;
+        m_node->getFieldName(field, name);
+        emit valueModified(m_node, name.getString(), value);
+    }
 
     QTreeView::closeEditor(editor, hint);
-}
-
-/**
- * Reads container parameters and for each parameters adds its name and value to the widget.
- */
-void ParametersView::ReadFields()
-{
-    m_model->clear();
-    m_model->setHorizontalHeaderLabels({"Parameter", "Value"});
-
-    SoFieldList fields;
-    int nMax = m_node->getFields(fields);
-
-    SoField* field;
-    SbName name;
-    SbString value;
-
-    for (int n = 0; n < nMax; ++n)
-    {
-        field = fields.get(n);
-        if (!field) continue;
-        field->get(value);
-        if (m_node->getFieldName(field, name) )
-        {
-            ParametersItem* itemName = new ParametersItem(name.getString(), false, field);
-            m_model->setItem(n, 0, itemName);
-            ParametersItem* itemValue = new ParametersItem(value.getString(), true, field);
-            m_model->setItem(n, 1, itemValue);
-        }
-    }
 }

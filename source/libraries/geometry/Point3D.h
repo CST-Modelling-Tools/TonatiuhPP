@@ -7,7 +7,7 @@ struct Vector3D;
 
 struct TONATIUH_LIBRARIES Point3D
 {
-    Point3D(double dx = 0.0, double dy = 0.0, double dz = 0.0);
+    Point3D(double dx = 0., double dy = 0., double dz = 0.);
     explicit Point3D (const Vector3D& vector);
     ~Point3D();
 

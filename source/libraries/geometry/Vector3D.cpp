@@ -11,9 +11,10 @@
 bool Vector3D::operator==(const Vector3D& v) const
 {
     if (this == &v) return true;
-    else return fabs(x - v.x) < DBL_EPSILON &&
-             fabs(y - v.y) < DBL_EPSILON &&
-             fabs(z - v.z) < DBL_EPSILON;
+
+    return fabs(x - v.x) < DBL_EPSILON &&
+           fabs(y - v.y) < DBL_EPSILON &&
+           fabs(z - v.z) < DBL_EPSILON;
 }
 
 bool Vector3D::operator!=(const Vector3D& v) const
@@ -23,14 +24,14 @@ bool Vector3D::operator!=(const Vector3D& v) const
 
 void Vector3D::zero()
 {
-    x = 0.0;
-    y = 0.0;
-    z = 0.0;
+    x = 0.;
+    y = 0.;
+    z = 0.;
 }
 
-std::ostream& operator<<(std::ostream& os, const Vector3D& vector)
+std::ostream& operator<<(std::ostream& os, const Vector3D& v)
 {
-    os << vector.x << ", " << vector.y << ", " << vector.z;
+    os << v.x << ", " << v.y << ", " << v.z;
     return os;
 }
 

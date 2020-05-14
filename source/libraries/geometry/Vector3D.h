@@ -83,6 +83,7 @@ struct TONATIUH_LIBRARIES Vector3D
     }
 
     void zero();
+
     double lengthSquared() const
     {
         return x*x + y*y + z*z;

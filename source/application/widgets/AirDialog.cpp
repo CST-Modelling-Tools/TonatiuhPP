@@ -61,7 +61,7 @@ void AirDialog::changeModel(int index)
         m_air = f->create();
     }
 
-    ui->airParameters->SetContainer(m_air, QString());
+    ui->airParameters->SetContainer(m_air);
 }
 
 void AirDialog::setValue(SoNode* node, QString parameter, QString value)

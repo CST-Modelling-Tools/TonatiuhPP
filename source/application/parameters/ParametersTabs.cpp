@@ -13,9 +13,6 @@ ParametersTabs::ParametersTabs(QWidget* parent):
     m_actualCoinNode(0),
     m_isPart(false)
 {
-    addTab( new ParametersView(0, "" ), tr("Transform") );
-    addTab( new ParametersView(0, "" ), tr("Shape") );
-
     setStyleSheet(R"(
 QTabWidget::pane {
 border:none;
@@ -94,10 +91,9 @@ void ParametersTabs::SelectionChangedToKit( SoBaseKit* coinNode/*, QStringList p
         else
         {
             SoNode* coinPart = coinNode->getPart(partName.toStdString().c_str(), false );
-            if( coinPart != 0 ) AddTab( coinPart, partName );
+            if (coinPart) AddTab(coinPart, partName);
         }
     }
-
 }
 
 /*!
@@ -106,9 +102,9 @@ void ParametersTabs::SelectionChangedToKit( SoBaseKit* coinNode/*, QStringList p
 void ParametersTabs::UpdateView()
 {
     if (m_isPart) //?
-        SelectionChangedToPart (m_actualCoinNode);
+        SelectionChangedToPart(m_actualCoinNode);
     else
-        SelectionChangedToKit(  (SoBaseKit*)m_actualCoinNode );
+        SelectionChangedToKit((SoBaseKit*)m_actualCoinNode);
 }
 
 /*!
@@ -127,7 +123,8 @@ void ParametersTabs::AddTab(SoNode* coinNode, QString partName)
     QString type = coinNode->getName().getString();
     if (type.length() <= 0) type = coinNode->getTypeId().getName().getString();
 
-    ParametersView* nodeContainer = new ParametersView(coinNode, partName, this);
+    ParametersView* nodeContainer = new ParametersView(this);
+    nodeContainer->SetContainer(coinNode);
     addTab(nodeContainer, type);
     connect(
         nodeContainer, SIGNAL(valueModified(SoNode*, QString, QString)),

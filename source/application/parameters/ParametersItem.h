@@ -5,23 +5,25 @@
 #include <QString>
 
 class SoField;
+class SoSensor;
 class SoFieldSensor;
 
 
 class ParametersItem: public QStandardItem
 {
 public:
-    ParametersItem(QString getText, bool editable, SoField* field);
+    ParametersItem(QString text, bool editable, SoField* field);
     ~ParametersItem();
 
-    QString getText() const {return m_text;}
+    QString getText() const {return text();}
     SoField* getField() const {return m_field;}
     
     QVariant data(int role = Qt::UserRole + 1) const;
     void setData(const QVariant& value, int role = Qt::UserRole + 1);
     
+    static void updateItem(void* data, SoSensor*);
+
 private:
-    QString m_text;
     SoField* m_field;
     SoFieldSensor* m_sensor;
 };

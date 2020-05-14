@@ -175,7 +175,7 @@ void SunDialog::ChangeSunshape(int index)
         SunFactory* f = m_sunShapeMap[ui->sunshapeCombo->itemText(index)];
         m_sunNew = f->create();
     }
-    ui->sunshapeParameters->SetContainer(m_sunNew, QString());
+    ui->sunshapeParameters->SetContainer(m_sunNew);
 }
 
 void SunDialog::SetValue(SoNode* node, QString parameter, QString value)

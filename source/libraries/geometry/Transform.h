@@ -6,7 +6,6 @@
 #include "Vector3D.h"
 
 struct Point3D;
-struct NormalVector;
 class Ray;
 struct BoundingBox;
 
@@ -34,9 +33,6 @@ public:
 
     Vector3D operator()(const Vector3D& v) const;
     void operator()(const Vector3D& v, Vector3D& ans) const;
-
-    NormalVector operator()(const NormalVector& n) const;
-    void operator()(const NormalVector& n, NormalVector& ans) const;
 
     Ray operator()(const Ray& r) const;
     void operator()(const Ray& r, Ray& ans) const;

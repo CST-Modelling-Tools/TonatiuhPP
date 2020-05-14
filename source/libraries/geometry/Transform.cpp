@@ -3,7 +3,7 @@
 #include "gc.h"
 #include "Ray.h"
 #include "BoundingBox.h"
-#include "NormalVector.h"
+
 
 Transform::Transform():
     m_mdir(0), m_minv(0)
@@ -70,6 +70,7 @@ Vector3D Transform::transformVector(const Vector3D& v) const
     );
 }
 
+//https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals
 Vector3D Transform::transformNormal(const Vector3D& v) const
 {
     return Vector3D(
@@ -117,23 +118,6 @@ void Transform::operator()(const Vector3D& v, Vector3D& ans) const
     ans.x = m_mdir->m[0][0]*v.x + m_mdir->m[0][1]*v.y + m_mdir->m[0][2]*v.z;
     ans.y = m_mdir->m[1][0]*v.x + m_mdir->m[1][1]*v.y + m_mdir->m[1][2]*v.z;
     ans.z = m_mdir->m[2][0]*v.x + m_mdir->m[2][1]*v.y + m_mdir->m[2][2]*v.z;
-}
-
-NormalVector Transform::operator()(const NormalVector& n) const
-{
-    // https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals
-    return NormalVector(
-        m_minv->m[0][0]*n.x + m_minv->m[1][0]*n.y + m_minv->m[2][0]*n.z,
-        m_minv->m[0][1]*n.x + m_minv->m[1][1]*n.y + m_minv->m[2][1]*n.z,
-        m_minv->m[0][2]*n.x + m_minv->m[1][2]*n.y + m_minv->m[2][2]*n.z
-    );
-}
-
-void Transform::operator()(const NormalVector& n, NormalVector& ans) const
-{
-    ans.x = m_minv->m[0][0]*n.x + m_minv->m[1][0]*n.y + m_minv->m[2][0]*n.z;
-    ans.y = m_minv->m[0][1]*n.x + m_minv->m[1][1]*n.y + m_minv->m[2][1]*n.z;
-    ans.z = m_minv->m[0][2]*n.x + m_minv->m[1][2]*n.y + m_minv->m[2][2]*n.z;
 }
 
 Ray Transform::operator()(const Ray& r) const

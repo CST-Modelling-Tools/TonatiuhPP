@@ -23,7 +23,7 @@ ParametersDelegate::ParametersDelegate(QObject* parent):
 QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     const ParametersModel* model = static_cast<const ParametersModel*>(index.model());
-    SoField* field = model->ModelItem(index)->getField();
+    SoField* field = model->getData(index)->getField();
 
     if (SoSFEnum* f = dynamic_cast<SoSFEnum*>(field))
     {
