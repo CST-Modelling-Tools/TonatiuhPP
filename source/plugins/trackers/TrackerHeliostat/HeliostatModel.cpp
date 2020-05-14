@@ -1,5 +1,7 @@
 #include "HeliostatModel.h"
 
+#include "libraries/geometry/gcf.h"
+
 #include <QVector>
 
 // rotation around a from m to v
@@ -8,19 +10,25 @@ inline double findAngle(const Vector3D& a, const Vector3D& m, const Vector3D& v,
     return atan2(dot(a, cross(m, v)), dot(m, v) - av*av);
 }
 
-Vector3D findAngles(
+Angles findAngles(
     const Vector3D& a, const Vector3D& b,
     const Vector3D& v, const Vector3D& m, const Vector3D& v0,
     double av, double bv0
 )
 {
-    double alpha = findAngle(a, m, v, av);
-    double beta = findAngle(b, v0, m, bv0);
-    return Vector3D(alpha, beta, abs(alpha) + abs(beta));
+    return Angles(
+        findAngle(a, m, v, av),
+        findAngle(b, v0, m, bv0)
+    );
 }
 
 
-HeliostatModel::HeliostatModel(const HeliostatDrive& primary, const HeliostatDrive& secondary, const Vertex3D& tracking, const Vector3D& angles0):
+HeliostatModel::HeliostatModel(
+    const HeliostatDrive& primary,
+    const HeliostatDrive& secondary,
+    const Vertex3D& tracking,
+    const Angles& angles0
+):
     primary(primary),
     secondary(secondary),
     tracking(tracking),
@@ -29,14 +37,14 @@ HeliostatModel::HeliostatModel(const HeliostatDrive& primary, const HeliostatDri
 
 }
 
-Vector3D HeliostatModel::findTrackingPoint(const Vector3D& angles)
+Vector3D HeliostatModel::findTrackingPoint(const Angles& angles)
 {
     Vector3D r = secondary.getTransform(angles.y).transformPoint(tracking.point);
     return primary.getTransform(angles.x).transformPoint(r);
 }
 
 // rotate v0 to v
-QVector<Vector3D> HeliostatModel::solveRotation(const Vector3D& v0, const Vector3D& v)
+QVector<Angles> HeliostatModel::solveRotation(const Vector3D& v0, const Vector3D& v)
 {
     const Vector3D& a = primary.axis;
     const Vector3D& b = secondary.axis;
@@ -56,20 +64,20 @@ QVector<Vector3D> HeliostatModel::solveRotation(const Vector3D& v0, const Vector
 
     mk = sqrt(mk/k2);
     Vector3D m0 = ma*a + mb*b;
-    QVector<Vector3D> ans;
+    QVector<Angles> ans;
     ans << findAngles(a, b, v, m0 - mk*k, v0, av, bv0);
     ans << findAngles(a, b, v, m0 + mk*k, v0, av, bv0);
     return ans;
 }
 
 // rotate tracking.normal to normal
-QVector<Vector3D> HeliostatModel::solveTrackingNormal(const Vector3D& normal)
+QVector<Angles> HeliostatModel::solveTrackingNormal(const Vector3D& normal)
 {
     return solveRotation(tracking.normal, normal);
 }
 
 // vSun and rAim are local
-QVector<Vector3D> HeliostatModel::solveReflectionLocal(const Vector3D& vSun, const Vector3D& rAim)
+QVector<Angles> HeliostatModel::solveReflectionLocal(const Vector3D& vSun, const Vector3D& rAim)
 {
     Vector3D vTarget0 = (rAim - tracking.point).normalized();
     Vector3D vSun0 = -vTarget0.reflected(tracking.normal);
@@ -77,9 +85,9 @@ QVector<Vector3D> HeliostatModel::solveReflectionLocal(const Vector3D& vSun, con
 }
 
 // vSun and rAim are local
-QVector<Vector3D> HeliostatModel::solveReflectionGlobal(const Vector3D& vSun, const Vector3D& rAim)
+QVector<Angles> HeliostatModel::solveReflectionGlobal(const Vector3D& vSun, const Vector3D& rAim)
 {
-    QVector<Vector3D> ans;
+    QVector<Angles> ans;
     int iterationsMax = 5; // max iterations
     double deltaMin = 0.01; // accuracy in meters
 
@@ -90,9 +98,9 @@ QVector<Vector3D> HeliostatModel::solveReflectionGlobal(const Vector3D& vSun, co
         {
             Vector3D vTarget = (rAim - rMirror).normalized();
             Vector3D vNormal = (vSun + vTarget).normalized();
-            QVector<Vector3D> temp = solveTrackingNormal(vNormal);
+            QVector<Angles> temp = solveTrackingNormal(vNormal);
             if (temp.empty()) break;
-            Vector3D& angles = temp[s];
+            Angles& angles = temp[s];
             rMirror = findTrackingPoint(angles);
             double delta = cross(rAim - rMirror, vTarget).norm();
             if (delta > deltaMin) continue;
@@ -102,4 +110,27 @@ QVector<Vector3D> HeliostatModel::solveReflectionGlobal(const Vector3D& vSun, co
     }
 
     return ans;
+}
+
+Angles HeliostatModel::selectSolution(const QVector<Angles>& solutions)
+{
+    Angles ans;
+    double zAns = gcf::infinity;
+
+    for (const Angles& solution : solutions)
+    {
+        Angles temp;
+        temp.x = primary.angles.normalizeAngle(solution.x);
+        if (!primary.angles.isInside(temp.x)) continue;
+        temp.y = secondary.angles.normalizeAngle(solution.y);
+        if (!secondary.angles.isInside(temp.y)) continue;
+        double z = (temp - angles0).norm2();
+        if (z > zAns) continue;
+        ans = temp;
+        zAns = z;
+    }
+
+    if (zAns < gcf::infinity)
+        return ans;
+    return angles0;
 }

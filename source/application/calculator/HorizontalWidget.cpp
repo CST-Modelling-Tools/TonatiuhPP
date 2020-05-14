@@ -16,7 +16,7 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
-#include "libraries/geometry/gc.h"
+#include "libraries/geometry/gcf.h"
 
 #include "HorizontalWidget.h"
 #include "libraries/geometry/Ray.h"
@@ -119,9 +119,9 @@ SoSeparator* HorizontalWidget::AzimuthLine()
     for( int fi = 0; fi < 360; ++fi )
     {
         double grad = ( m_azimuth / 360 ) * fi;
-        azimuthPoints[fi][0] = sin( grad * (gc::Pi / 180) )* sphereRadio ;
+        azimuthPoints[fi][0] = sin( grad * (gcf::pi / 180) )* sphereRadio ;
         azimuthPoints[fi][1] =  0.0;
-        azimuthPoints[fi][2] = -cos( grad * (gc::Pi / 180) ) * sphereRadio ;
+        azimuthPoints[fi][2] = -cos( grad * (gcf::pi / 180) ) * sphereRadio ;
 
     }
 
@@ -156,16 +156,16 @@ SoSeparator* HorizontalWidget::AzimuthLine()
           numPoints++;
 
         double grad1 = ( m_azimuth / 360 ) * 4 * ( index -1 );
-        curvePoints[numPoints][0] = sin( grad1 * (gc::Pi / 180) )* sphereRadio ;
+        curvePoints[numPoints][0] = sin( grad1 * (gcf::pi / 180) )* sphereRadio ;
         curvePoints[numPoints][1] =  0.0;
-        curvePoints[numPoints][2] = -cos( grad1 * (gc::Pi / 180) ) * sphereRadio ;
+        curvePoints[numPoints][2] = -cos( grad1 * (gcf::pi / 180) ) * sphereRadio ;
         indexes[ ( ( index -1 ) * 4  ) +1 ] = numPoints;
           numPoints++;
 
         double grad2 = ( m_azimuth / 360 ) * 4 * index;
-        curvePoints[numPoints][0] = sin( grad2 * (gc::Pi / 180) )* sphereRadio ;
+        curvePoints[numPoints][0] = sin( grad2 * (gcf::pi / 180) )* sphereRadio ;
         curvePoints[numPoints][1] =  0.0;
-        curvePoints[numPoints][2] = -cos( grad2 * (gc::Pi / 180) ) * sphereRadio ;
+        curvePoints[numPoints][2] = -cos( grad2 * (gcf::pi / 180) ) * sphereRadio ;
         indexes[ ( ( index -1 ) * 4  ) +2 ] = numPoints;
         numPoints++;
 
@@ -218,9 +218,9 @@ SoSeparator* HorizontalWidget::Horizon() const
     float p[360][3];
     for( int fi = 0; fi<360; ++fi )
     {
-        p[fi][0] = -sin( fi * (gc::Pi / 180) ) * sphereRadio ;
+        p[fi][0] = -sin( fi * (gcf::pi / 180) ) * sphereRadio ;
         p[fi][1] =  0.0;
-        p[fi][2] = -cos( fi * (gc::Pi / 180) ) * sphereRadio ;
+        p[fi][2] = -cos( fi * (gcf::pi / 180) ) * sphereRadio ;
 
     }
 
@@ -269,9 +269,9 @@ SoSeparator* HorizontalWidget::Star()
       star->addChild(myMaterial);
 
       SoTranslation* starTransform = new SoTranslation;
-      starTransform->translation.setValue( sin( m_zenith * (gc::Pi / 180) )* sin( m_azimuth * (gc::Pi / 180) ) * sphereRadio,
-          cos( m_zenith * (gc::Pi / 180) ) * sphereRadio,
-          -sin( m_zenith * (gc::Pi / 180) )* cos( m_azimuth * (gc::Pi / 180) )  * sphereRadio ) ;
+      starTransform->translation.setValue( sin( m_zenith * (gcf::pi / 180) )* sin( m_azimuth * (gcf::pi / 180) ) * sphereRadio,
+          cos( m_zenith * (gcf::pi / 180) ) * sphereRadio,
+          -sin( m_zenith * (gcf::pi / 180) )* cos( m_azimuth * (gcf::pi / 180) )  * sphereRadio ) ;
       star->addChild( starTransform);
 
       SoSphere* sphere=new SoSphere;
@@ -364,9 +364,9 @@ SoSeparator* HorizontalWidget::ZenithLine()
     for( int theta = 0; theta< 360; ++theta )
     {
         double grad = ( m_zenith / 360 ) * theta;
-        zenithPoints[theta][0] = sin( grad * (gc::Pi / 180) ) * sin( fi * (gc::Pi / 180) )* sphereRadio;
-        zenithPoints[theta][1] = cos( grad  * (gc::Pi / 180) ) * sphereRadio;
-        zenithPoints[theta][2] = -sin( grad * (gc::Pi / 180) ) * cos( fi * (gc::Pi / 180) ) * sphereRadio ;
+        zenithPoints[theta][0] = sin( grad * (gcf::pi / 180) ) * sin( fi * (gcf::pi / 180) )* sphereRadio;
+        zenithPoints[theta][1] = cos( grad  * (gcf::pi / 180) ) * sphereRadio;
+        zenithPoints[theta][2] = -sin( grad * (gcf::pi / 180) ) * cos( fi * (gcf::pi / 180) ) * sphereRadio ;
     }
 
 
@@ -397,16 +397,16 @@ SoSeparator* HorizontalWidget::ZenithLine()
           numPoints++;
 
           double grad1 = ( m_zenith / 360 ) * 4 * (index -1 );
-        curvePoints[numPoints][0] = sin( grad1 * (gc::Pi / 180) ) * sin( m_azimuth * (gc::Pi / 180) )* sphereRadio;
-        curvePoints[numPoints][1] = cos( grad1  * (gc::Pi / 180) ) * sphereRadio;
-        curvePoints[numPoints][2] = -sin( grad1 * (gc::Pi / 180) ) * cos( m_azimuth * (gc::Pi / 180) ) * sphereRadio ;
+        curvePoints[numPoints][0] = sin( grad1 * (gcf::pi / 180) ) * sin( m_azimuth * (gcf::pi / 180) )* sphereRadio;
+        curvePoints[numPoints][1] = cos( grad1  * (gcf::pi / 180) ) * sphereRadio;
+        curvePoints[numPoints][2] = -sin( grad1 * (gcf::pi / 180) ) * cos( m_azimuth * (gcf::pi / 180) ) * sphereRadio ;
         indexes[ ( ( index -1 ) * 4  ) +1 ] = numPoints;
           numPoints++;
 
           double grad2 = ( m_zenith / 360 ) * 4 * index;
-        curvePoints[numPoints][0] = sin( grad2 * (gc::Pi / 180) ) * sin( m_azimuth * (gc::Pi / 180) )* sphereRadio;
-        curvePoints[numPoints][1] = cos( grad2 * (gc::Pi / 180) ) * sphereRadio;
-        curvePoints[numPoints][2] = -sin( grad2 * (gc::Pi / 180) ) * cos( m_azimuth * (gc::Pi / 180) ) * sphereRadio ;
+        curvePoints[numPoints][0] = sin( grad2 * (gcf::pi / 180) ) * sin( m_azimuth * (gcf::pi / 180) )* sphereRadio;
+        curvePoints[numPoints][1] = cos( grad2 * (gcf::pi / 180) ) * sphereRadio;
+        curvePoints[numPoints][2] = -sin( grad2 * (gcf::pi / 180) ) * cos( m_azimuth * (gcf::pi / 180) ) * sphereRadio ;
         indexes[ ( ( index -1 ) * 4  ) +2 ] = numPoints;
         numPoints++;
 

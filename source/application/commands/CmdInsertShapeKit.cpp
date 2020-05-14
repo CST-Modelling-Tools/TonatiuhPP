@@ -1,7 +1,7 @@
 #include <Inventor/nodekits/SoBaseKit.h>
 #include <Inventor/nodekits/SoNodeKitListPart.h>
 
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
 
 #include "CmdInsertShapeKit.h"
 #include "kernel/run/InstanceNode.h"
@@ -16,12 +16,12 @@
 CmdInsertShapeKit::CmdInsertShapeKit( const QModelIndex& parentIndex, TShapeKit* shapeKit, SceneModel* model, QUndoCommand* parent )
 : QUndoCommand("InsertShapeKit", parent), m_coinParent( 0 ), m_shapeKit(shapeKit), m_pModel(model), m_row( -1 )
 {
-    if( m_shapeKit == 0 ) gf::SevereError( "CmdInsertShapeKit called with NULL TShapeKit*" );
+    if( m_shapeKit == 0 ) gcf::SevereError( "CmdInsertShapeKit called with NULL TShapeKit*" );
     m_shapeKit->ref();
 
-    if( !parentIndex.isValid() ) gf::SevereError( "CmdInsertShapeKit called with invalid ModelIndex." );
+    if( !parentIndex.isValid() ) gcf::SevereError( "CmdInsertShapeKit called with invalid ModelIndex." );
     InstanceNode* instanceParent = m_pModel->NodeFromIndex( parentIndex );
-    if( !instanceParent->getNode() ) gf::SevereError( "CmdInsertShapeKit called with NULL parent node." );
+    if( !instanceParent->getNode() ) gcf::SevereError( "CmdInsertShapeKit called with NULL parent node." );
     m_coinParent = static_cast< SoBaseKit* > ( instanceParent->getNode() );
 
 }

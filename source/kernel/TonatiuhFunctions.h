@@ -7,9 +7,12 @@ class RandomAbstract;
 class SbMatrix;
 class SoTransform;
 class Transform;
-struct Point3D;
-struct Vector3D;
+
+class SbVec2f;
+class Vector2D;
+
 class SbVec3f;
+struct Vector3D;
 
 namespace tgf
 {
@@ -18,13 +21,7 @@ namespace tgf
     TONATIUH_KERNEL Transform TransformFromMatrix(SbMatrix const& matrix);
     TONATIUH_KERNEL Transform TransformFromSoTransform(SoTransform* const& soTransform);
     TONATIUH_KERNEL SbMatrix MatrixFromSoTransform(SoTransform* const& soTransform);
-    TONATIUH_KERNEL Vector3D makeVector3D(const SbVec3f& v);
 
-    template<class T>
-    T clamp(T x, T a, T b)
-    {
-        if (x <= a) return a;
-        if (x >= b) return b;
-        return x;
-    }
+    TONATIUH_KERNEL Vector2D makeVector2D(const SbVec2f& v);
+    TONATIUH_KERNEL Vector3D makeVector3D(const SbVec3f& v);
 }

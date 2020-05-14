@@ -12,7 +12,7 @@
 #include "kernel/sun/SunFactory.h"
 #include "kernel/sun/TLightKit.h"
 #include "kernel/scene/TSceneKit.h"
-#include "libraries/geometry/gc.h"
+#include "libraries/geometry/gcf.h"
 #include "parameters/ParametersView.h"
 
 /**
@@ -86,12 +86,12 @@ TLightKit* SunDialog::getLightKit()
 
 double SunDialog::getAzimuth()
 {
-    return ui->azimuthSpin->value()*gc::Degree;
+    return ui->azimuthSpin->value()*gcf::degree;
 }
 
 double SunDialog::getElevation()
 {
-    return ui->elevationSpin->value()*gc::Degree;
+    return ui->elevationSpin->value()*gcf::degree;
 }
 
 /*!
@@ -131,8 +131,8 @@ void SunDialog::makeSunPositionTab()
     if (!m_lightKitOld) return;
 
     TSceneKit* scene = m_sceneModel->getSceneKit();
-    ui->azimuthSpin->setValue(scene->azimuth.getValue()/gc::Degree);
-    ui->elevationSpin->setValue(scene->elevation.getValue()/gc::Degree);
+    ui->azimuthSpin->setValue(scene->azimuth.getValue()/gcf::degree);
+    ui->elevationSpin->setValue(scene->elevation.getValue()/gcf::degree);
 }
 
 /*!

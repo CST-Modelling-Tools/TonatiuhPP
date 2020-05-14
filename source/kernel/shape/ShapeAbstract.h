@@ -30,8 +30,8 @@ public:
     virtual bool intersectP(const Ray& ray) const;
 
     enum Side {
-        Back = 0, // FRONT, INSIDE
-        Front = 1 // BACK, OUTSIDE
+        back = 0, // FRONT, INSIDE
+        front = 1 // BACK, OUTSIDE
     };
 
     SoSFEnum activeSide;

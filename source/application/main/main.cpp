@@ -42,9 +42,13 @@
 #include <QDebug>
 
 
+
+
 int main(int argc, char** argv)
 {
 //    QApplication::setColorSpec(QApplication::CustomColor);
+
+//    QApplication::setAttribute(Qt::AA_DisableHighDpiScaling);
 
     QApplication a(argc, argv);
     a.setApplicationVersion(APP_VERSION);

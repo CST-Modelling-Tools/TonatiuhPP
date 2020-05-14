@@ -37,8 +37,8 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodekits/SoSceneKit.h>
 
-#include "libraries/geometry/gc.h"
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
+#include "libraries/geometry/gcf.h"
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Transform.h"
 
@@ -269,7 +269,7 @@ void MainWindow::SetupGraphicsRoot()
     m_graphicsRoot = new GraphicRoot;
 
     if (!m_graphicsRoot) {
-        gf::SevereError("MainWindow::SetupDocument: Fail to create new document");
+        gcf::SevereError("MainWindow::SetupDocument: Fail to create new document");
         return;
     }
 
@@ -533,10 +533,10 @@ void MainWindow::StartManipulation(SoDragger* dragger)
     coinSearch.apply(m_graphicsRoot->GetNode() );
 
     SoPath* coinScenePath = coinSearch.getPath();
-    if (!coinScenePath) gf::SevereError("PathFromIndex Null coinScenePath.");
+    if (!coinScenePath) gcf::SevereError("PathFromIndex Null coinScenePath.");
 
     SoNodeKitPath* nodePath = static_cast< SoNodeKitPath* > (coinScenePath);
-    if (!nodePath) gf::SevereError("PathFromIndex Null nodePath.");
+    if (!nodePath) gcf::SevereError("PathFromIndex Null nodePath.");
 
 
     nodePath->truncate(nodePath->getLength() - 1);
@@ -1255,7 +1255,7 @@ void MainWindow::ChangeSunPosition(double azimuth, double elevation)
         QMessageBox::warning(this, "Tonatiuh warning", tr("ChangeSunPosition:: Sun not defined in scene") );
         return;
     }
-    CmdLightPositionModified* command = new CmdLightPositionModified(lightKit, azimuth * gc::Degree, (90 - elevation) * gc::Degree);
+    CmdLightPositionModified* command = new CmdLightPositionModified(lightKit, azimuth * gcf::degree, (90 - elevation) * gcf::degree);
     m_commandStack->push(command);
 
     //UpdateLightDimensions();
@@ -3060,7 +3060,7 @@ PhotonsAbstract* MainWindow::CreatePhotonMapExport() const
 QSplitter* MainWindow::GetHorizontalSplitterPointer()
 {
     QSplitter* pSplitter = findChild< QSplitter* >("horizontalSplitter");
-    if (!pSplitter) gf::SevereError("MainWindow::GetSceneModelViewPointer: splitter not found");
+    if (!pSplitter) gcf::SevereError("MainWindow::GetSceneModelViewPointer: splitter not found");
     return pSplitter;
 }
 

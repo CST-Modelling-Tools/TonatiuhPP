@@ -1,6 +1,6 @@
 #include "SunPillbox.h"
 
-#include "libraries/geometry/gc.h"
+#include "libraries/geometry/gcf.h"
 #include <Inventor/sensors/SoFieldSensor.h>
 
 SO_NODE_SOURCE(SunPillbox)
@@ -35,7 +35,7 @@ void SunPillbox::updateTheta(void* data, SoSensor*)
 
 void SunPillbox::generateRay(Vector3D& direction, RandomAbstract& rand) const
 {
-    double phi = gc::TwoPi*rand.RandomDouble();
+    double phi = gcf::TwoPi*rand.RandomDouble();
     double sinTheta = m_sinThetaMax*sqrt(rand.RandomDouble());
     double cosTheta = sqrt(1. - sinTheta*sinTheta);
     double cosPhi = cos(phi);

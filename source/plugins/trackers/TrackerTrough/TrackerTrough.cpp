@@ -23,10 +23,10 @@ TrackerTrough::TrackerTrough()
     SO_NODE_ADD_FIELD( mirrorNormal, (0.f, 0.f, 1.f) );
     SO_NODE_ADD_FIELD( mirrorPoint, (0.f, 0.f, 0.f) );
 
-    SO_NODE_DEFINE_ENUM_VALUE(AimingType, Local);
-    SO_NODE_DEFINE_ENUM_VALUE(AimingType, Global);
+    SO_NODE_DEFINE_ENUM_VALUE(AimingType, local);
+    SO_NODE_DEFINE_ENUM_VALUE(AimingType, global);
     SO_NODE_SET_SF_ENUM_TYPE(aimingType, AimingType);
-    SO_NODE_ADD_FIELD( aimingType, (Local) );
+    SO_NODE_ADD_FIELD( aimingType, (local) );
 
     SO_NODE_ADD_FIELD( aimingPoint, (0.f, 0.f, 1.f) );
 }
@@ -51,14 +51,14 @@ void TrackerTrough::update(SoBaseKit* parent, const Transform& toGlobal, const V
     vS.normalize();
 
     Vector3D vT = tgf::makeVector3D(aimingPoint.getValue());
-    if (aimingType.getValue() == Global)
+    if (aimingType.getValue() == global)
         vT = toLocal.transformPoint(vT);
     vT -= tgf::makeVector3D(mirrorPoint.getValue());
     vT -= dot(vT, a)*a;
     vT.normalize();
 
     double angle;
-    if (aimingType.getValue() == Global) {
+    if (aimingType.getValue() == global) {
         Vector3D v = vS + vT;// check mirroPoint
         if (!v.normalize()) return;
         angle = findAngle(a, v0, v, dot(a, v));

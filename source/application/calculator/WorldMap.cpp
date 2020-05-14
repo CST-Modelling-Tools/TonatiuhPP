@@ -8,7 +8,7 @@
 #include <QToolTip>
 #include <QVBoxLayout>
 
-#include "libraries/geometry/gc.h"
+#include "libraries/geometry/gcf.h"
 
 #include "Image.h"
 #include "WorldMap.h"
@@ -65,8 +65,8 @@ void WorldMap::SunChanged(cSunCoordinates coordinates)
     m_declination = coordinates.dDeclination;
 
     double hourAngle = coordinates.dHourAngle;
-    int division = (int ) ( (hourAngle - m_longitude * gc::Degree) / gc::TwoPi);
-    double remainPart = (hourAngle - m_longitude * gc::Degree) - (division * gc::TwoPi);
+    int division = (int ) ( (hourAngle - m_longitude * gcf::degree) / gcf::TwoPi);
+    double remainPart = (hourAngle - m_longitude * gcf::degree) - (division * gcf::TwoPi);
     m_hourAngle = remainPart;
 
     m_azimuth = coordinates.dAzimuth;
@@ -82,9 +82,9 @@ void WorldMap::SunChanged(cSunCoordinates coordinates)
 
     for (int x = 0; x < width; ++x)
     {
-        double lon = ( ( x* gc::TwoPi ) / width) - gc::Pi;
+        double lon = ( ( x* gcf::TwoPi ) / width) - gcf::pi;
         double lat = atan(-(sx * cos(lon) + sy * sin(lon)  ) / sz);
-        int y = int ( (height / 2) - ( (lat * (height / 2) ) / (gc::Pi / 2) ) );
+        int y = int ( (height / 2) - ( (lat * (height / 2) ) / (gcf::pi / 2) ) );
         m_points.append(QPoint(x, y) );
 
     }
@@ -137,14 +137,14 @@ void WorldMap::paintEvent(QPaintEvent* /*event*/)
         points.append(m_points[m_points.size() - 1]);
         painter.drawLines(points);
 
-        int x = int ( ( (-m_hourAngle + gc::Pi) * m_map.width() ) / gc::TwoPi );
+        int x = int ( ( (-m_hourAngle + gcf::pi) * m_map.width() ) / gcf::TwoPi );
         if (x < 0) x = m_map.width() + x;
-        int y = int ( (m_map.height() / 2) + ( (-m_declination   * (m_map.height() / 2) )  / (gc::Pi / 2) ) );
+        int y = int ( (m_map.height() / 2) + ( (-m_declination   * (m_map.height() / 2) )  / (gcf::pi / 2) ) );
         painter.drawImage(x, y - 10, m_sun);
 
-        x = int ( ( (m_longitude * gc::Degree + gc::Pi) * m_map.width() ) / gc::TwoPi );
+        x = int ( ( (m_longitude * gcf::degree + gcf::pi) * m_map.width() ) / gcf::TwoPi );
         if (x < 0) x = m_map.width() + x;
-        y = int ( (m_map.height() / 2) + ( (-m_latitude * gc::Degree   * (m_map.height() / 2) )  / (gc::Pi / 2) ) );
+        y = int ( (m_map.height() / 2) + ( (-m_latitude * gcf::degree   * (m_map.height() / 2) )  / (gcf::pi / 2) ) );
         painter.drawImage(x, y - 10, m_position);
 
 

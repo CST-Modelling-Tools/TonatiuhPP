@@ -1,6 +1,6 @@
 #include <Inventor/nodekits/SoBaseKit.h>
 
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
 
 #include "CmdPaste.h"
 #include "tree/SceneModel.h"
@@ -14,10 +14,10 @@
 CmdPaste::CmdPaste( tgc::PasteType type, const QModelIndex& parentModelIndex,  SoNode*& coinClipboard, SceneModel& sceneModel, QUndoCommand* parent )
 : QUndoCommand("Paste", parent), m_pasteType( type ), m_parentInstance( 0 ), m_coinChild( coinClipboard ), m_sceneModel( &sceneModel ), m_oldNodeName( "" ),  m_row( -1 )
 {
-    if( !parentModelIndex.isValid() ) gf::SevereError( "CmdPaste called with invalid ModelIndex." );
+    if( !parentModelIndex.isValid() ) gcf::SevereError( "CmdPaste called with invalid ModelIndex." );
 
     m_parentInstance = m_sceneModel->NodeFromIndex( parentModelIndex );
-    if( !m_parentInstance-> getNode() ) gf::SevereError( "CmdPaste NULL m_coinParent." );
+    if( !m_parentInstance-> getNode() ) gcf::SevereError( "CmdPaste NULL m_coinParent." );
 
     m_row = m_parentInstance->children.size();
     m_oldNodeName = QString( coinClipboard->getName().getString() );

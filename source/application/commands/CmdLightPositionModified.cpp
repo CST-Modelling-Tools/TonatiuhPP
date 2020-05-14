@@ -1,7 +1,7 @@
 #include "CmdLightPositionModified.h"
 
 #include "kernel/sun/TLightKit.h"
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
 
 /**
  * Creates a new lightKit position command that represents a \a light move with \a parent parent.
@@ -11,7 +11,7 @@
 CmdLightPositionModified::CmdLightPositionModified(TLightKit* light, double azimuth, double zenith, QUndoCommand* parent):
     QUndoCommand("Sun position changed", parent), lightKit(light), m_newAzimuth(azimuth), m_newZenith(zenith)
 {
-    if (light == 0) gf::SevereError("CmdLinghtPositionModified called with NULL TLightKit");
+    if (light == 0) gcf::SevereError("CmdLinghtPositionModified called with NULL TLightKit");
 
 //    m_oldAzimuth = light->azimuth.getValue(); // remove these cmds
 //    m_oldZenith = light->zenith.getValue();

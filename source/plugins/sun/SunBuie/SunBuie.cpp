@@ -1,7 +1,7 @@
 #include "SunBuie.h"
 
 #include <Inventor/sensors/SoFieldSensor.h>
-#include "libraries/geometry/gc.h"
+#include "libraries/geometry/gcf.h"
 
 
 const double SunBuie::m_minCRSValue = 0.000001;
@@ -60,7 +60,7 @@ SunBuie::~SunBuie()
 
 void SunBuie::generateRay(Vector3D& direction, RandomAbstract& rand) const
 {
-    double phi = gc::TwoPi*rand.RandomDouble();
+    double phi = gcf::TwoPi*rand.RandomDouble();
     double theta = zenithAngle(rand);
     double sinTheta = sin(theta);
     double cosTheta = cos(theta);

@@ -1,4 +1,4 @@
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
 
 #include "CmdInsertMaterial.h"
 #include "tree/SceneModel.h"
@@ -13,8 +13,8 @@
 CmdInsertMaterial::CmdInsertMaterial(TShapeKit* shapeKit, MaterialAbstract* material, SceneModel* model, QUndoCommand* parent):
     QUndoCommand("InsertMaterial", parent), m_shapeKit(shapeKit),m_material(material), m_pModel(model), m_row(-1)
 {
-    if (!m_shapeKit) gf::SevereError("CmdInsertMaterial called with NULL TShapeKit");
-    if (!m_material) gf::SevereError("CmdInsertMaterial called with NULL TMaterial");
+    if (!m_shapeKit) gcf::SevereError("CmdInsertMaterial called with NULL TShapeKit");
+    if (!m_material) gcf::SevereError("CmdInsertMaterial called with NULL TMaterial");
     m_material->ref();
 }
 

@@ -3,7 +3,7 @@
 #include <QSettings>
 #include <QTime>
 
-#include "libraries/geometry/gc.h"
+#include "libraries/geometry/gcf.h"
 
 #include "SunCalculatorDialog.h"
 

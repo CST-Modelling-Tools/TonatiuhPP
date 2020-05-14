@@ -4,8 +4,8 @@
 
 #include "kernel/shape/DifferentialGeometry.h"
 #include "kernel/TonatiuhFunctions.h"
-#include "libraries/geometry/gc.h"
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
+#include "libraries/geometry/gcf.h"
 #include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Ray.h"
 
@@ -23,14 +23,14 @@ ShapeSphere::ShapeSphere()
 	SO_NODE_CONSTRUCTOR(ShapeSphere);
 
     SO_NODE_ADD_FIELD( radius, (1.) );
-    SO_NODE_ADD_FIELD( phiMax, (gc::TwoPi) );
-    SO_NODE_ADD_FIELD( alphaMin, (-gc::Pi/2.) );
-    SO_NODE_ADD_FIELD( alphaMax, (gc::Pi/2.) );
+    SO_NODE_ADD_FIELD( phiMax, (gcf::TwoPi) );
+    SO_NODE_ADD_FIELD( alphaMin, (-gcf::pi/2.) );
+    SO_NODE_ADD_FIELD( alphaMax, (gcf::pi/2.) );
 
-    SO_NODE_DEFINE_ENUM_VALUE( Side, Back );
-    SO_NODE_DEFINE_ENUM_VALUE( Side, Front );
+    SO_NODE_DEFINE_ENUM_VALUE( Side, back );
+    SO_NODE_DEFINE_ENUM_VALUE( Side, front );
 	SO_NODE_SET_SF_ENUM_TYPE( activeSide, Side );
-    SO_NODE_ADD_FIELD( activeSide, (Front) );
+    SO_NODE_ADD_FIELD( activeSide, (front) );
 
     m_sensor = new SoNodeSensor(update, this);
     m_sensor->setPriority(1); // does not help
@@ -45,12 +45,12 @@ ShapeSphere::~ShapeSphere()
 double ShapeSphere::getArea() const
 {
     double r = radius.getValue();
-    return 4.*gc::Pi*r*r;
+    return 4.*gcf::pi*r*r;
 }
 double ShapeSphere::getVolume() const
 {
     double r = radius.getValue();
-    return 4.*gc::Pi*r*r*r/3.;
+    return 4.*gcf::pi*r*r*r/3.;
 }
 
 BoundingBox ShapeSphere::getBox() const
@@ -66,9 +66,9 @@ BoundingBox ShapeSphere::getBox() const
     double rhoMax = aMin*aMax > 0. ? std::max(r*cos(aMin), r*cos(aMax)) : r;
 
     double xMin;
-    if (pM > gc::Pi)
+    if (pM > gcf::pi)
         xMin = -rhoMax;
-    else if (pM > 0.5*gc::Pi)
+    else if (pM > 0.5*gcf::pi)
         xMin = rhoMax*cosPhiMax;
     else
         xMin = rhoMin*cosPhiMax;
@@ -76,15 +76,15 @@ BoundingBox ShapeSphere::getBox() const
     double xMax = rhoMax;
 
     double yMin;
-    if (pM > 1.5*gc::Pi)
+    if (pM > 1.5*gcf::pi)
         yMin = -rhoMax;
-    else if (pM > gc::Pi)
+    else if (pM > gcf::pi)
         yMin = rhoMax*sinPhiMax;
     else
         yMin = 0.;
 
     double yMax;
-    if (pM > 0.5*gc::Pi)
+    if (pM > 0.5*gcf::pi)
         yMax = rhoMax;
     else
         yMax = rhoMax*sinPhiMax;
@@ -110,7 +110,7 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     double B = 2.*dot(ray.direction(), r0);
     double C = r0.norm2() - r*r;
     double ts[2];
-    if (!gf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
+    if (!gcf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
 
     // intersection with clipped shape
     double raytMin = ray.tMin + 1e-5;
@@ -121,8 +121,8 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
 
         Vector3D pHit = ray(t);
         double phi = atan2(pHit.y, pHit.x);
-        if (phi < 0.) phi += gc::TwoPi;
-        double alpha = asin(tgf::clamp(pHit.z/r, -1., 1.));
+        if (phi < 0.) phi += gcf::TwoPi;
+        double alpha = asin(gcf::clamp(pHit.z/r, -1., 1.));
 
         if (phi > phiMax.getValue() || alpha < alphaMin.getValue() || alpha > alphaMax.getValue())
             continue;
@@ -131,7 +131,7 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
         if (tHit == 0 && dg == 0)
             return true;
         else if (tHit == 0 || dg == 0)
-            gf::SevereError("Function ShapeSphere::Intersect(...) called with null pointers");
+            gcf::SevereError("Function ShapeSphere::Intersect(...) called with null pointers");
 
         *tHit = t;
 
@@ -170,7 +170,7 @@ Vector3D ShapeSphere::getNormal(double u, double v) const
 
 void ShapeSphere::generatePrimitives(SoAction* action)
 {
-    generateQuads(action, QSize(48, 24), activeSide.getValue() == Side::Back, activeSide.getValue() == Side::Back);
+    generateQuads(action, QSize(48, 24), activeSide.getValue() == Side::back, activeSide.getValue() == Side::back);
 }
 
 void ShapeSphere::update(void* data, SoSensor*)
@@ -181,18 +181,18 @@ void ShapeSphere::update(void* data, SoSensor*)
         shape->radius.setValue(1.);
 
     double phi = shape->phiMax.getValue();
-    if (phi <= 0. || phi >= gc::TwoPi)
-        shape->phiMax.setValue(gc::TwoPi);
+    if (phi <= 0. || phi >= gcf::TwoPi)
+        shape->phiMax.setValue(gcf::TwoPi);
 
-    if (shape->alphaMin.getValue() < -gc::Pi/2.)
-        shape->alphaMin.setValue(-gc::Pi/2.);
+    if (shape->alphaMin.getValue() < -gcf::pi/2.)
+        shape->alphaMin.setValue(-gcf::pi/2.);
 
-    if (shape->alphaMax.getValue() > gc::Pi/2.)
-        shape->alphaMax.setValue(gc::Pi/2.);
+    if (shape->alphaMax.getValue() > gcf::pi/2.)
+        shape->alphaMax.setValue(gcf::pi/2.);
 
     if (shape->alphaMax.getValue() <= shape->alphaMin.getValue())
     {
-        shape->alphaMin.setValue(-gc::Pi/2.);
-        shape->alphaMax.setValue(gc::Pi/2.);
+        shape->alphaMin.setValue(-gcf::pi/2.);
+        shape->alphaMax.setValue(gcf::pi/2.);
     }
 }

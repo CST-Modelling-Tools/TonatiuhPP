@@ -1,15 +1,24 @@
 #pragma once
 
-#include <iostream>
 #include "libraries/TonatiuhLibraries.h"
-
 #include <cmath>
+#include <iostream>
+
 
 struct TONATIUH_LIBRARIES Vector3D
 {
     Vector3D(double x = 0., double y = 0., double z = 0.):
-        x(x), y(y), z(z)
+        x(x), y(y), z(z) {}
+
+    // constants
+    static const Vector3D Zero;
+    static const Vector3D UnitX;
+    static const Vector3D UnitY;
+    static const Vector3D UnitZ;
+
+    Vector3D operator+(const Vector3D& v) const
     {
+        return Vector3D(x + v.x, y + v.y, z + v.z);
     }
 
     Vector3D& operator+=(const Vector3D& v)
@@ -20,12 +29,27 @@ struct TONATIUH_LIBRARIES Vector3D
         return *this;
     }
 
+    Vector3D operator-() const
+    {
+        return Vector3D(-x, -y, -z);
+    }
+
+    Vector3D operator-(const Vector3D& v) const
+    {
+        return Vector3D(x - v.x, y - v.y, z - v.z);
+    }
+
     Vector3D& operator-=(const Vector3D& v)
     {
         x -= v.x;
         y -= v.y;
         z -= v.z;
         return *this;
+    }
+
+    Vector3D operator*(double s) const
+    {
+        return Vector3D(x*s, y*s, z*s);
     }
 
     Vector3D& operator*=(double s)
@@ -36,33 +60,24 @@ struct TONATIUH_LIBRARIES Vector3D
         return *this;
     }
 
-    Vector3D operator*(double s) const
+    Vector3D operator/(double s) const
     {
+        s = 1./s;
         return Vector3D(x*s, y*s, z*s);
     }
 
     Vector3D& operator/=(double s)
     {
-        double inv = 1./s;
-        x *= inv;
-        y *= inv;
-        z *= inv;
+        s = 1./s;
+        x *= s;
+        y *= s;
+        z *= s;
         return *this;
-    }
-
-    Vector3D operator/(double s) const
-    {
-        double inv = 1./s;
-        return Vector3D(x*inv, y*inv, z*inv);
-    }
-
-    Vector3D operator-() const
-    {
-        return Vector3D(-x, -y, -z);
     }
 
     bool operator==(const Vector3D& vector) const;
     bool operator!=(const Vector3D& vector) const;
+
     double operator[](int i) const
     {
         if (i == 0) return x;
@@ -77,38 +92,31 @@ struct TONATIUH_LIBRARIES Vector3D
         return z;
     }
 
-    void zero();
-
-    double lengthSquared() const
-    {
-        return x*x + y*y + z*z;
-    }
-
-    double length() const {
-        return std::sqrt(x*x + y*y + z*z);
-    }
-
-    double norm() const {
-        return std::sqrt(x*x + y*y + z*z);
-    }
 
     double norm2() const {
         return x*x + y*y + z*z;
     }
 
-    bool normalize()
-    {
-        double s = norm();
-        if (s == 0.) return false;
-        *this /= s;
-        return true;
+    double norm() const {
+        return std::sqrt(norm2());
     }
 
     Vector3D normalized() const
     {
-        double s = norm();
-        if (s > 0.) return *this/s;
+        double s = norm2();
+        if (s > 0.)
+            return *this/sqrt(s);
         return *this;
+    }
+
+    bool normalize()
+    {
+        double s = norm2();
+        if (s > 0.) {
+            *this /= sqrt(s);
+            return true;
+        }
+        return false;
     }
 
     Vector3D reflected(const Vector3D& n) const;
@@ -118,15 +126,6 @@ struct TONATIUH_LIBRARIES Vector3D
     double z;
 };
 
-
-inline Vector3D operator+(Vector3D a, const Vector3D& b)
-{
-    return a += b;
-}
-inline Vector3D operator-(Vector3D a, const Vector3D& b)
-{
-    return a -= b;
-}
 
 inline Vector3D operator*(double s, const Vector3D& v)
 {
@@ -152,19 +151,6 @@ inline Vector3D Vector3D::reflected(const Vector3D& n) const
     return *this - 2.*dot(*this, n)*n;
 }
 
-inline Vector3D Normalize(const Vector3D& vA)
-{
-    if (vA.length() > 0.)
-        return vA / vA.length();
-    return vA;
-}
-
-TONATIUH_LIBRARIES double AbsDotProduct(const Vector3D& vA, const Vector3D& vB);
-
-TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const Vector3D& vector);
-
-TONATIUH_LIBRARIES bool SameHemisphere(const Vector3D& vA, const Vector3D& vB);
-
 inline Vector3D min(const Vector3D& a, const Vector3D& b)
 {
     return Vector3D(
@@ -182,3 +168,5 @@ inline Vector3D max(const Vector3D& a, const Vector3D& b)
         std::max(a.z, b.z)
     );
 }
+
+TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const Vector3D& vector);

@@ -1,17 +1,17 @@
 #pragma once
 
-#include "gc.h"
+#include "gcf.h"
 #include "Vector3D.h"
 
 class TONATIUH_LIBRARIES Ray
 {
 public:
     Ray():
-        tMin(gc::Epsilon), tMax(gc::Infinity)
+        tMin(gcf::Epsilon), tMax(gcf::infinity)
     {
     }
 
-    Ray(const Vector3D& orig, const Vector3D& direc, double start = gc::Epsilon, double end = gc::Infinity):
+    Ray(const Vector3D& orig, const Vector3D& direc, double start = gcf::Epsilon, double end = gcf::infinity):
         origin(orig), tMin(start), tMax(end)
     {
         setDirection(direc);
@@ -44,7 +44,7 @@ public:
     {
         if (this == &ray) return true;
         return origin == ray.origin && m_direction == ray.m_direction &&
-               fabs(tMin - ray.tMin) < gc::Epsilon && fabs(tMax - ray.tMax) < gc::Epsilon;
+               fabs(tMin - ray.tMin) < gcf::Epsilon && fabs(tMax - ray.tMax) < gcf::Epsilon;
     }
 
     Vector3D origin;

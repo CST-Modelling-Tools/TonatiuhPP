@@ -1,8 +1,8 @@
 #include "Matrix4x4.h"
 
 #include <cstring>
-#include "gc.h"
-#include "gf.h"
+#include "gcf.h"
+#include "gcf.h"
 
 
 Matrix4x4::Matrix4x4(): RefCount()
@@ -42,22 +42,22 @@ bool Matrix4x4::operator==(const Matrix4x4& matrix) const
     if (this == &matrix) return true;
 
     return
-        (fabs(m[0][0] - matrix.m[0][0]) < gc::Epsilon) &&
-        (fabs(m[0][1] - matrix.m[0][1]) < gc::Epsilon) &&
-        (fabs(m[0][2] - matrix.m[0][2]) < gc::Epsilon) &&
-        (fabs(m[0][3] - matrix.m[0][3]) < gc::Epsilon) &&
-        (fabs(m[1][0] - matrix.m[1][0]) < gc::Epsilon) &&
-        (fabs(m[1][1] - matrix.m[1][1]) < gc::Epsilon) &&
-        (fabs(m[1][2] - matrix.m[1][2]) < gc::Epsilon) &&
-        (fabs(m[1][3] - matrix.m[1][3]) < gc::Epsilon) &&
-        (fabs(m[2][0] - matrix.m[2][0]) < gc::Epsilon) &&
-        (fabs(m[2][1] - matrix.m[2][1]) < gc::Epsilon) &&
-        (fabs(m[2][2] - matrix.m[2][2]) < gc::Epsilon) &&
-        (fabs(m[2][3] - matrix.m[2][3]) < gc::Epsilon) &&
-        (fabs(m[3][0] - matrix.m[3][0]) < gc::Epsilon) &&
-        (fabs(m[3][1] - matrix.m[3][1]) < gc::Epsilon) &&
-        (fabs(m[3][2] - matrix.m[3][2]) < gc::Epsilon) &&
-        (fabs(m[3][3] - matrix.m[3][3]) < gc::Epsilon);
+        (fabs(m[0][0] - matrix.m[0][0]) < gcf::Epsilon) &&
+        (fabs(m[0][1] - matrix.m[0][1]) < gcf::Epsilon) &&
+        (fabs(m[0][2] - matrix.m[0][2]) < gcf::Epsilon) &&
+        (fabs(m[0][3] - matrix.m[0][3]) < gcf::Epsilon) &&
+        (fabs(m[1][0] - matrix.m[1][0]) < gcf::Epsilon) &&
+        (fabs(m[1][1] - matrix.m[1][1]) < gcf::Epsilon) &&
+        (fabs(m[1][2] - matrix.m[1][2]) < gcf::Epsilon) &&
+        (fabs(m[1][3] - matrix.m[1][3]) < gcf::Epsilon) &&
+        (fabs(m[2][0] - matrix.m[2][0]) < gcf::Epsilon) &&
+        (fabs(m[2][1] - matrix.m[2][1]) < gcf::Epsilon) &&
+        (fabs(m[2][2] - matrix.m[2][2]) < gcf::Epsilon) &&
+        (fabs(m[2][3] - matrix.m[2][3]) < gcf::Epsilon) &&
+        (fabs(m[3][0] - matrix.m[3][0]) < gcf::Epsilon) &&
+        (fabs(m[3][1] - matrix.m[3][1]) < gcf::Epsilon) &&
+        (fabs(m[3][2] - matrix.m[3][2]) < gcf::Epsilon) &&
+        (fabs(m[3][3] - matrix.m[3][3]) < gcf::Epsilon);
 }
 
 Ptr<Matrix4x4> Matrix4x4::Transpose() const
@@ -76,7 +76,7 @@ Ptr<Matrix4x4> Matrix4x4::Inverse() const
                  + m[3][3] * (m[0][1] * m[1][2] * m[2][0] - m[0][0] * m[1][2] * m[2][1] - m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2])
                  + m[0][2] * (-m[1][3] * m[2][1] * m[3][0] + m[1][1] * m[2][3] * m[3][0] + m[1][3] * m[2][0] * m[3][1] - m[1][0] * m[2][3] * m[3][1] - m[1][1] * m[2][0] * m[3][3] + m[1][0] * m[2][1] * m[3][3]);
 
-    if (fabs(det) < gc::Epsilon) gf::SevereError("Singular matrix in Matrix4x4::Inverse()");
+    if (fabs(det) < gcf::Epsilon) gcf::SevereError("Singular matrix in Matrix4x4::Inverse()");
     double alpha = 1./det;
 
     double inv00 = (-m[1][3] * m[2][2] * m[3][1] + m[1][2] * m[2][3] * m[3][1] + m[1][3] * m[2][1] * m[3][2] - m[1][1] * m[2][3] * m[3][2] - m[1][2] * m[2][1] * m[3][3] + m[1][1] * m[2][2] * m[3][3]) * alpha;
@@ -118,7 +118,7 @@ std::ostream& operator<<(std::ostream& os, const Matrix4x4& matrix)
         os << "[ ";
         for (int j = 0; j < 4; ++j)
         {
-            if (fabs(matrix.m[i][j]) < gc::Epsilon) os << "0";
+            if (fabs(matrix.m[i][j]) < gcf::Epsilon) os << "0";
             else os << matrix.m[i][j];
             if (j != 3) os << ", ";
         }

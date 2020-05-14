@@ -8,6 +8,7 @@ class InstanceNode;
 class QModelIndex;
 class SceneModel;
 class SoBaseKit;
+class SoNode;
 
 //!  CmdPaste class is the paste command stored in the command stack.
 /*!
@@ -22,8 +23,8 @@ public:
     CmdPaste(tgc::PasteType type, const QModelIndex& parentModelIndex,  SoNode*& coinClipboard, SceneModel& sceneModel, QUndoCommand* parent = 0 );
     ~CmdPaste();
 
-     virtual void undo();
-     virtual void redo();
+     void undo();
+     void redo();
 
 private:
     tgc::PasteType m_pasteType;

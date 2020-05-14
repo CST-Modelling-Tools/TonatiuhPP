@@ -1,7 +1,7 @@
 #include "ShapePlane.h"
 
 #include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
 #include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Ray.h"
 
@@ -19,10 +19,10 @@ ShapePlane::ShapePlane()
     SO_NODE_ADD_FIELD( sizeX, (1.) );
     SO_NODE_ADD_FIELD( sizeY, (1.) );
 
-    SO_NODE_DEFINE_ENUM_VALUE( Side, Back );
-    SO_NODE_DEFINE_ENUM_VALUE( Side, Front );
+    SO_NODE_DEFINE_ENUM_VALUE( Side, back );
+    SO_NODE_DEFINE_ENUM_VALUE( Side, front );
     SO_NODE_SET_SF_ENUM_TYPE( activeSide, Side );
-    SO_NODE_ADD_FIELD( activeSide, (Front) );
+    SO_NODE_ADD_FIELD( activeSide, (front) );
 }
 
 double ShapePlane::getArea() const
@@ -58,7 +58,7 @@ bool ShapePlane::intersect(const Ray& ray, double *tHit, DifferentialGeometry* d
 
     if (tHit == 0 && dg == 0) return true;
     else if (tHit == 0 || dg == 0)
-        gf::SevereError( "Function Sphere::Intersect(...) called with null pointers" );
+        gcf::SevereError( "Function Sphere::Intersect(...) called with null pointers" );
 
     Vector3D dpdu(1., 0., 0.);
     Vector3D dpdv(0., 1., 0.);
@@ -85,5 +85,5 @@ Vector3D ShapePlane::getNormal(double /*u*/, double /*v*/) const
 
 void ShapePlane::generatePrimitives(SoAction* action)
 {
-     generateQuads(action, QSize(2, 2), activeSide.getValue() == Side::Back);
+     generateQuads(action, QSize(2, 2), activeSide.getValue() == Side::back);
 }

@@ -13,7 +13,7 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodekits/SoNodekitCatalog.h>
 
-#include "libraries/geometry/gc.h"
+#include "libraries/geometry/gcf.h"
 #include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Matrix4x4.h"
 #include "sun/sunpos.h"
@@ -76,7 +76,7 @@ TLightKit::TLightKit()
     setPart("icon", iconShape);
 
     setName("Light");
-    setPosition(0., gc::Pi/2.);
+    setPosition(0., gcf::pi/2.);
 }
 
 /**
@@ -97,7 +97,7 @@ void TLightKit::setPosition(double azimuth, double elevation)
 {
     SoTransform* transform = (SoTransform*) getPart("transform", false);
 
-    SbRotation elRotation(SbVec3f(1., 0., 0.), gc::Pi/2. + elevation);
+    SbRotation elRotation(SbVec3f(1., 0., 0.), gcf::pi/2. + elevation);
     SbRotation azRotation(SbVec3f(0., 0., -1.), azimuth);
 
     transform->rotation = elRotation*azRotation;
@@ -123,7 +123,7 @@ void TLightKit::setBox(BoundingBox box)
     double distMax = box.pMax.z + 10. - box.pMin.z;
     double back = box.pMin.z - 10.;
 
-    if (-gc::Infinity == box.Volume() )
+    if (-gcf::infinity == box.Volume() )
     {
         xMin = 0.;
         xMax = 0.;

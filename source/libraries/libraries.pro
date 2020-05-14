@@ -19,5 +19,5 @@ HEADERS += \
 SOURCES += \
     $$files(auxiliary/*.cpp) \
     $$files(geometry/*.cpp) \
-    $$files(qcustomplot/*.cpp) \	
+    $$files(qcustomplot/*.cpp) \
     $$files(fields/*.cpp)

@@ -25,7 +25,7 @@
 #include "kernel/sun/TLightKit.h"
 #include "kernel/sun/TLightShape.h"
 #include "libraries/geometry/Transform.h"
-#include "libraries/geometry/gc.h"
+#include "libraries/geometry/gcf.h"
 #include "kernel/air/AirVacuum.h"
 
 /******************************************
@@ -419,7 +419,7 @@ void FluxAnalysis::FluxAnalysisCylinder(InstanceNode* node)
             totalPhotons++;
             Vector3D photonLocalCoord = worldToObject.transformPoint(photon.pos);
             double phi = atan2(photonLocalCoord.y, photonLocalCoord.x);
-            if (phi < 0.) phi += 2 * gc::Pi;
+            if (phi < 0.) phi += 2 * gcf::pi;
             double arcLength = phi * radius;
 
             int xbin = floor( (arcLength - m_xmin) / (m_xmax - m_xmin) * m_widthDivisions);

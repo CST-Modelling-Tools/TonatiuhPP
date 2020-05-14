@@ -2,7 +2,7 @@
 
 #include <Inventor/sensors/SoFieldSensor.h>
 
-#include "libraries/geometry/gc.h"
+#include "libraries/geometry/gcf.h"
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Transform.h"
 #include "kernel/shape/DifferentialGeometry.h"
@@ -59,7 +59,7 @@ bool MaterialSpecular::OutputRay(const Ray& rayIn, DifferentialGeometry* dg, Ran
     if (sigma > 0.) {
         if (distribution.getValue() == Distribution::PILLBOX)
         {
-            double phi = gc::TwoPi*rand.RandomDouble();
+            double phi = gcf::TwoPi*rand.RandomDouble();
             double theta = sigma*rand.RandomDouble();
             normal.x = sin(theta)*sin(phi);
             normal.y = sin(theta)*cos(phi);

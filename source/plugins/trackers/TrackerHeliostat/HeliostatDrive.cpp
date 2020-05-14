@@ -1,9 +1,10 @@
 #include "HeliostatDrive.h"
 
 
-HeliostatDrive::HeliostatDrive(const Vector3D& shift, const Vector3D& axis):
+HeliostatDrive::HeliostatDrive(const Vector3D& shift, const Vector3D& axis, const IntervalAngular& angles):
     shift(shift),
-    axis(axis.normalized())
+    axis(axis.normalized()),
+    angles(angles)
 {
 
 }

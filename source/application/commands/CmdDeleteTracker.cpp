@@ -2,7 +2,7 @@
 
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodekits/SoSceneKit.h>
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
 #include "tree/SceneModel.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/sun/TLightKit.h"
@@ -22,15 +22,15 @@ CmdDeleteTracker::CmdDeleteTracker(const QModelIndex& selectedIndex, SoSceneKit*
 {
     //if( !m_scene->getPart("lightList[0]", false) )     gf::SevereError( "CmdDeleteTracker Null lightKit." );
 
-    if (!selectedIndex.isValid() ) gf::SevereError("CmdDeleteTracker called with invalid ModelIndex.");
+    if (!selectedIndex.isValid() ) gcf::SevereError("CmdDeleteTracker called with invalid ModelIndex.");
     InstanceNode* instanceSelection = m_pModel->NodeFromIndex(selectedIndex);
 
-    if (!instanceSelection->getNode() ) gf::SevereError("CmdDeleteTracker called with NULL selection node.");
+    if (!instanceSelection->getNode() ) gcf::SevereError("CmdDeleteTracker called with NULL selection node.");
     m_coinParent = static_cast< TSeparatorKit* > (instanceSelection->getParent()->getNode() );
-    if (!m_coinParent) gf::SevereError("CmdDeleteTracker called with invalid tracker parent.");
+    if (!m_coinParent) gcf::SevereError("CmdDeleteTracker called with invalid tracker parent.");
 
     m_tracker = dynamic_cast<TrackerAbstract*> (m_coinParent->getPart("tracker", false) );
-    if (!m_tracker) gf::SevereError("CmdDeleteTracker Null tracker.");
+    if (!m_tracker) gcf::SevereError("CmdDeleteTracker Null tracker.");
     m_tracker->ref();
 
     m_row = instanceSelection->getParent()->children.indexOf(instanceSelection);
@@ -51,7 +51,7 @@ CmdDeleteTracker::~CmdDeleteTracker()
 void CmdDeleteTracker::undo()
 {
     SoTransform* parentTransform = static_cast< SoTransform* > (m_coinParent->getPart("transform", true) );
-    if (!parentTransform) gf::SevereError("CmdInsertTracker Null node transform.");
+    if (!parentTransform) gcf::SevereError("CmdInsertTracker Null node transform.");
 
 //    TLightKit* lightKit = static_cast< TLightKit* >(m_scene->getPart("lightList[0]", false) );
 //    if (lightKit)

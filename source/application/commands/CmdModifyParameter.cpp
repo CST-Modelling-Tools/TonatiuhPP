@@ -10,7 +10,7 @@
 #include <Inventor/fields/SoField.h>
 #include <Inventor/nodes/SoNode.h>
 
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
 
 #include "CmdModifyParameter.h"
 #include "kernel/run/InstanceNode.h"
@@ -31,11 +31,11 @@ CmdModifyParameter::CmdModifyParameter(SoNode* node, QString name, QString value
     m_pModel(model)
 {
     if (!m_coinNode)
-        gf::SevereError("CmdModifyParameter called with invalid node." );
+        gcf::SevereError("CmdModifyParameter called with invalid node." );
 
     SoField* parameterField = m_coinNode->getField( SbName( m_parameterName.toStdString().c_str() ) );
     if (!parameterField)
-        gf::SevereError( "CmdModifyParameter called with invalid parameterName." );
+        gcf::SevereError( "CmdModifyParameter called with invalid parameterName." );
 
     SbString fieldValue;
     parameterField->get(fieldValue);

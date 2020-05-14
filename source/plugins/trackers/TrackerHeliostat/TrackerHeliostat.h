@@ -17,16 +17,19 @@ public:
 
     void update(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun);
 
+    // all vectors should be for zero rotation
     SoSFVec3f primaryShift;
     SoSFVec3f primaryAxis;
+    SoSFVec2f primaryAngles;
 
     SoSFVec3f secondaryShift;
     SoSFVec3f secondaryAxis;
+    SoSFVec2f secondaryAngles;
 
     SoSFVec3f mirrorPoint;
     SoSFVec3f mirrorNormal;
 
-    SoSFEnum aimingType;
+    SoSFEnum aimingFrame;
     SoSFVec3f aimingPoint;
 
     NAME_ICON_FUNCTIONS("Heliostat", ":/TrackerHeliostat.png")

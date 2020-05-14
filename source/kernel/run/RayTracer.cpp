@@ -73,7 +73,7 @@ void RayTracer::operator()(ulong nRays)
                 if (m_transmissivity->transmission(ray.tMax) < rand.RandomDouble()) {
                     ++rayLength;
                     intersectedSurface = 0;
-                    ray.tMax = gc::Infinity;
+                    ray.tMax = gcf::infinity;
                     break;
                 }
             }
@@ -88,10 +88,10 @@ void RayTracer::operator()(ulong nRays)
 
         // Part 3: last photon point (absorption in air)
         // skip rays without intersections
-        if (rayLength == 0 && ray.tMax == gc::Infinity) continue;
+        if (rayLength == 0 && ray.tMax == gcf::infinity) continue;
         if (!bExportAll && !m_exportSuraceList.contains(intersectedSurface)) continue;
         // limit length of other rays
-        if (ray.tMax == gc::Infinity) {// always true?
+        if (ray.tMax == gcf::infinity) {// always true?
             ray.tMax = 1.;
             isFront = 0; // ? back for air
         }

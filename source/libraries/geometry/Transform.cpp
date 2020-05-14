@@ -1,6 +1,6 @@
 #include "Transform.h"
 
-#include "gc.h"
+#include "gcf.h"
 #include "Ray.h"
 #include "BoundingBox.h"
 
@@ -177,22 +177,22 @@ Transform Transform::operator*(const Transform& rhs) const
 bool Transform::operator==(const Transform& t) const
 {
     if (this == &t) return true;
-    else return( (fabs(m_mdir->m[0][0] - t.m_mdir->m[0][0]) < gc::Epsilon) &&
-             (fabs(m_mdir->m[0][1] - t.m_mdir->m[0][1]) < gc::Epsilon) &&
-             (fabs(m_mdir->m[0][2] - t.m_mdir->m[0][2]) < gc::Epsilon) &&
-             (fabs(m_mdir->m[0][3] - t.m_mdir->m[0][3]) < gc::Epsilon) &&
-             (fabs(m_mdir->m[1][0] - t.m_mdir->m[1][0]) < gc::Epsilon) &&
-             (fabs(m_mdir->m[1][1] - t.m_mdir->m[1][1]) < gc::Epsilon) &&
-             (fabs(m_mdir->m[1][2] - t.m_mdir->m[1][2]) < gc::Epsilon) &&
-             (fabs(m_mdir->m[1][3] - t.m_mdir->m[1][3]) < gc::Epsilon) &&
-             (fabs(m_mdir->m[2][0] - t.m_mdir->m[2][0]) < gc::Epsilon) &&
-             (fabs(m_mdir->m[2][1] - t.m_mdir->m[2][1]) < gc::Epsilon) &&
-             (fabs(m_mdir->m[2][2] - t.m_mdir->m[2][2]) < gc::Epsilon) &&
-             (fabs(m_mdir->m[2][3] - t.m_mdir->m[2][3]) < gc::Epsilon) &&
-             (fabs(m_mdir->m[3][0] - t.m_mdir->m[3][0]) < gc::Epsilon) &&
-             (fabs(m_mdir->m[3][1] - t.m_mdir->m[3][1]) < gc::Epsilon) &&
-             (fabs(m_mdir->m[3][2] - t.m_mdir->m[3][2]) < gc::Epsilon) &&
-             (fabs(m_mdir->m[3][3] - t.m_mdir->m[3][3]) < gc::Epsilon) );
+    else return( (fabs(m_mdir->m[0][0] - t.m_mdir->m[0][0]) < gcf::Epsilon) &&
+             (fabs(m_mdir->m[0][1] - t.m_mdir->m[0][1]) < gcf::Epsilon) &&
+             (fabs(m_mdir->m[0][2] - t.m_mdir->m[0][2]) < gcf::Epsilon) &&
+             (fabs(m_mdir->m[0][3] - t.m_mdir->m[0][3]) < gcf::Epsilon) &&
+             (fabs(m_mdir->m[1][0] - t.m_mdir->m[1][0]) < gcf::Epsilon) &&
+             (fabs(m_mdir->m[1][1] - t.m_mdir->m[1][1]) < gcf::Epsilon) &&
+             (fabs(m_mdir->m[1][2] - t.m_mdir->m[1][2]) < gcf::Epsilon) &&
+             (fabs(m_mdir->m[1][3] - t.m_mdir->m[1][3]) < gcf::Epsilon) &&
+             (fabs(m_mdir->m[2][0] - t.m_mdir->m[2][0]) < gcf::Epsilon) &&
+             (fabs(m_mdir->m[2][1] - t.m_mdir->m[2][1]) < gcf::Epsilon) &&
+             (fabs(m_mdir->m[2][2] - t.m_mdir->m[2][2]) < gcf::Epsilon) &&
+             (fabs(m_mdir->m[2][3] - t.m_mdir->m[2][3]) < gcf::Epsilon) &&
+             (fabs(m_mdir->m[3][0] - t.m_mdir->m[3][0]) < gcf::Epsilon) &&
+             (fabs(m_mdir->m[3][1] - t.m_mdir->m[3][1]) < gcf::Epsilon) &&
+             (fabs(m_mdir->m[3][2] - t.m_mdir->m[3][2]) < gcf::Epsilon) &&
+             (fabs(m_mdir->m[3][3] - t.m_mdir->m[3][3]) < gcf::Epsilon) );
 }
 
 
@@ -377,7 +377,7 @@ Transform Transform::LookAt(const Vector3D& pos, const Vector3D& look, const Vec
     m[2][3] = pos.z;
     m[3][3] = 1.;
 
-    Vector3D dir = Normalize(look - pos);
+    Vector3D dir = (look - pos).normalized();
     Vector3D right = cross(dir, up).normalized();
     Vector3D newUp = cross(right, dir);
 

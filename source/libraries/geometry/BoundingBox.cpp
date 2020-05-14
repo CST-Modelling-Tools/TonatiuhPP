@@ -2,13 +2,13 @@
 
 #include <cmath>
 #include "Ray.h"
-#include "gc.h"
+#include "gcf.h"
 #include "Vector3D.h"
 
 
 BoundingBox::BoundingBox():
-    pMin(gc::Infinity, gc::Infinity, gc::Infinity),
-    pMax(-gc::Infinity, -gc::Infinity, -gc::Infinity)
+    pMin(gcf::infinity, gcf::infinity, gcf::infinity),
+    pMax(-gcf::infinity, -gcf::infinity, -gcf::infinity)
 {
 }
 

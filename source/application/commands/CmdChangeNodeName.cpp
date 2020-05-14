@@ -11,7 +11,7 @@
 #include <Inventor/SbName.h>
 #include <Inventor/nodes/SoNode.h>
 
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
 
 #include "CmdChangeNodeName.h"
 #include "kernel/run/InstanceNode.h"
@@ -23,9 +23,9 @@
 CmdChangeNodeName::CmdChangeNodeName( const QModelIndex& index, QString newName, SceneModel* model, QUndoCommand* parent )
 : QUndoCommand("Change node name", parent), m_newName ( newName ), m_previousName( "" ), m_pNode( 0 ), m_pModel( model )
 {
-    if( !index.isValid() ) gf::SevereError( "CmdChangeNodeName called with invalid ModelIndex." );
+    if( !index.isValid() ) gcf::SevereError( "CmdChangeNodeName called with invalid ModelIndex." );
     InstanceNode* selectedNodeInstance = m_pModel->NodeFromIndex( index );
-    if( !selectedNodeInstance ) gf::SevereError( "CmdChangeNodeName called with invalid node." );
+    if( !selectedNodeInstance ) gcf::SevereError( "CmdChangeNodeName called with invalid node." );
     m_pNode = selectedNodeInstance->getNode();
 
     m_previousName = QString( m_pNode->getName().getString() );

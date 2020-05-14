@@ -1,8 +1,8 @@
 #include "ShapeCylinder.h"
 
 #include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/geometry/gc.h"
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
+#include "libraries/geometry/gcf.h"
 #include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Vector3D.h"
@@ -21,23 +21,23 @@ ShapeCylinder::ShapeCylinder()
     SO_NODE_CONSTRUCTOR(ShapeCylinder);
 
     SO_NODE_ADD_FIELD( radius, (1.) );
-    SO_NODE_ADD_FIELD( phiMax, (gc::TwoPi) );
+    SO_NODE_ADD_FIELD( phiMax, (gcf::TwoPi) );
     SO_NODE_ADD_FIELD( sizeZ, (1.) );
 
-    SO_NODE_DEFINE_ENUM_VALUE(Side, Back);
-    SO_NODE_DEFINE_ENUM_VALUE(Side, Front);
+    SO_NODE_DEFINE_ENUM_VALUE(Side, back);
+    SO_NODE_DEFINE_ENUM_VALUE(Side, front);
     SO_NODE_SET_SF_ENUM_TYPE(activeSide, Side);
-    SO_NODE_ADD_FIELD( activeSide, (Front) );
+    SO_NODE_ADD_FIELD( activeSide, (front) );
 }
 
 double ShapeCylinder::getArea() const
 {
-    return 2.*gc::Pi*radius.getValue()*sizeZ.getValue();
+    return 2.*gcf::pi*radius.getValue()*sizeZ.getValue();
 }
 
 double ShapeCylinder::getVolume() const
 {
-    return gc::Pi*radius.getValue()*radius.getValue()*sizeZ.getValue();
+    return gcf::pi*radius.getValue()*radius.getValue()*sizeZ.getValue();
 }
 
 BoundingBox ShapeCylinder::getBox() const
@@ -48,7 +48,7 @@ BoundingBox ShapeCylinder::getBox() const
     double sinPhiMax = sin(pM);
 
     double xMin;
-    if (pM > gc::Pi)
+    if (pM > gcf::pi)
         xMin = -r;
     else
         xMin = r*cosPhiMax;
@@ -56,15 +56,15 @@ BoundingBox ShapeCylinder::getBox() const
     double xMax = r;
 
     double yMin;
-    if (pM > 1.5*gc::Pi)
+    if (pM > 1.5*gcf::pi)
         yMin = -r;
-    else if (pM > gc::Pi)
+    else if (pM > gcf::pi)
         yMin = r*sinPhiMax;
     else
         yMin = 0.;
 
     double yMax;
-    if (pM > 0.5*gc::Pi)
+    if (pM > 0.5*gcf::pi)
         yMax = r;
     else
         yMax = r*sinPhiMax;
@@ -88,7 +88,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
     double B = 2.*(ray.direction().x*ray.origin.x + ray.direction().y*ray.origin.y);
     double C = ray.origin.x*ray.origin.x + ray.origin.y*ray.origin.y - r*r;
     double ts[2];
-    if (!gf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
+    if (!gcf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
 
     // intersection with clipped shape
     double raytMin = ray.tMin + 1e-5;
@@ -99,7 +99,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
 
         Vector3D pHit = ray(t);
         double phi = atan2(pHit.y, pHit.x);
-        if (phi < 0.) phi += gc::TwoPi;
+        if (phi < 0.) phi += gcf::TwoPi;
 
         if (phi > phiMax.getValue() ||  2.*abs(pHit.z) > sizeZ.getValue())
             continue;
@@ -108,7 +108,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
         if (tHit == 0 && dg == 0)
             return true;
         else if (tHit == 0 || dg == 0)
-            gf::SevereError("Function Cylinder::Intersect(...) called with null pointers");
+            gcf::SevereError("Function Cylinder::Intersect(...) called with null pointers");
 
         Vector3D dpdu(-pHit.y, pHit.x, 0.);
         Vector3D dpdv(0., 0., 1.);
@@ -142,5 +142,5 @@ Vector3D ShapeCylinder::getNormal(double u, double /*v*/) const
 
 void ShapeCylinder::generatePrimitives(SoAction* action)
 {
-    generateQuads(action, QSize(48, 2), activeSide.getValue() == Side::Back, activeSide.getValue() != Side::Back);
+    generateQuads(action, QSize(48, 2), activeSide.getValue() == Side::back, activeSide.getValue() != Side::back);
 }

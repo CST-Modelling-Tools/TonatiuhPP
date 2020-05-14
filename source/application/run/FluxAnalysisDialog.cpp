@@ -27,7 +27,7 @@
 #include "kernel/sun/TLightKit.h"
 #include "kernel/sun/TLightShape.h"
 #include "libraries/geometry/Transform.h"
-#include "libraries/geometry/gc.h"
+#include "libraries/geometry/gcf.h"
 
 
 /******************************************

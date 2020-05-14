@@ -1,7 +1,7 @@
 #include "ShapeParabolic.h"
 
 #include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
 #include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Ray.h"
 
@@ -23,10 +23,10 @@ ShapeParabolic::ShapeParabolic()
     SO_NODE_ADD_FIELD( sizeX, (1.) );
     SO_NODE_ADD_FIELD( sizeY, (1.) );
 
-    SO_NODE_DEFINE_ENUM_VALUE(Side, Back);
-    SO_NODE_DEFINE_ENUM_VALUE(Side, Front);
+    SO_NODE_DEFINE_ENUM_VALUE(Side, back);
+    SO_NODE_DEFINE_ENUM_VALUE(Side, front);
     SO_NODE_SET_SF_ENUM_TYPE(activeSide, Side);
-    SO_NODE_ADD_FIELD( activeSide, (Front) );
+    SO_NODE_ADD_FIELD( activeSide, (front) );
 }
 
 BoundingBox ShapeParabolic::getBox() const
@@ -52,7 +52,7 @@ bool ShapeParabolic::intersect(const Ray& ray, double *tHit, DifferentialGeometr
     double B = 2.*(ray.direction().x*ray.origin.x*gX + ray.direction().y*ray.origin.y*gY) - 4.*ray.direction().z;
     double C = ray.origin.x*ray.origin.x*gX + ray.origin.y*ray.origin.y*gY - 4.*ray.origin.z;
     double ts[2];
-    if (!gf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
+    if (!gcf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
 
 
     // intersection with clipped shape
@@ -70,7 +70,7 @@ bool ShapeParabolic::intersect(const Ray& ray, double *tHit, DifferentialGeometr
         if (tHit == 0 && dg == 0)
             return true;
         else if (tHit == 0 || dg == 0)
-            gf::SevereError("Function Parabolic::Intersect(...) called with null pointers");
+            gcf::SevereError("Function Parabolic::Intersect(...) called with null pointers");
 
         Vector3D dpdu(1., 0., pHit.x*gX/2.);
         Vector3D dpdv(0., 1., pHit.y*gY/2.);
@@ -106,13 +106,13 @@ void ShapeParabolic::generatePrimitives(SoAction* action)
 {
     double s;
 
-    s = sizeX.getValue()/(360*gc::Degree*2.*focusX.getValue());
+    s = sizeX.getValue()/(360*gcf::degree*2.*focusX.getValue());
     if (s > 1.) s = 1.;
     int rows = 1 + ceil(48*s);
 
-    s = sizeY.getValue()/(360*gc::Degree*2.*focusY.getValue());
+    s = sizeY.getValue()/(360*gcf::degree*2.*focusY.getValue());
     if (s > 1.) s = 1.;
     int columns = 1 + ceil(48*s);
 
-    generateQuads(action, QSize(rows, columns), activeSide.getValue() == Side::Back);
+    generateQuads(action, QSize(rows, columns), activeSide.getValue() == Side::back);
 }

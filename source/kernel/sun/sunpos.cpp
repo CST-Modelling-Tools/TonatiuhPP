@@ -1,7 +1,7 @@
 #include <cmath>
 
 #include "sunpos.h"
-#include "libraries/geometry/gc.h"
+#include "libraries/geometry/gcf.h"
 
 using namespace std;
 
@@ -66,7 +66,7 @@ void sunpos(cTime udtTime,cLocation udtLocation, cSunCoordinates *udtSunCoordina
         dY = cos( dEclipticObliquity ) * dSin_EclipticLongitude;
         dX = cos( udtSunCoordinates->dEclipticLongitude );
         udtSunCoordinates->dRightAscension = atan2( dY,dX );
-        if( udtSunCoordinates->dRightAscension < 0.0 ) udtSunCoordinates->dRightAscension = udtSunCoordinates->dRightAscension + gc::TwoPi;
+        if( udtSunCoordinates->dRightAscension < 0.0 ) udtSunCoordinates->dRightAscension = udtSunCoordinates->dRightAscension + gcf::TwoPi;
         udtSunCoordinates->dDeclination = asin( sin( dEclipticObliquity )*dSin_EclipticLongitude );
     }
 
@@ -84,10 +84,10 @@ void sunpos(cTime udtTime,cLocation udtLocation, cSunCoordinates *udtSunCoordina
             - 0.000292222*sin(0.0009242*dElapsedJulianDays+0.9574);
 
         dLocalMeanSiderealTime = (dGreenwichMeanSiderealTime*15
-            + udtLocation.dLongitude) * gc::Degree;
+            + udtLocation.dLongitude) * gcf::degree;
 
         udtSunCoordinates->dHourAngle = dLocalMeanSiderealTime - udtSunCoordinates->dRightAscension;
-        dLatitudeInRadians = udtLocation.dLatitude * gc::Degree;
+        dLatitudeInRadians = udtLocation.dLatitude * gcf::degree;
         dCos_Latitude = cos( dLatitudeInRadians );
         dSin_Latitude = sin( dLatitudeInRadians );
         dCos_HourAngle= cos( udtSunCoordinates->dHourAngle );
@@ -98,12 +98,12 @@ void sunpos(cTime udtTime,cLocation udtLocation, cSunCoordinates *udtSunCoordina
         dX = tan( udtSunCoordinates->dDeclination )*dCos_Latitude - dSin_Latitude*dCos_HourAngle;
         udtSunCoordinates->dAzimuth = atan2( dY, dX );
         if ( udtSunCoordinates->dAzimuth < 0.0 )
-            udtSunCoordinates->dAzimuth = udtSunCoordinates->dAzimuth + gc::TwoPi;
-        udtSunCoordinates->dAzimuth = udtSunCoordinates->dAzimuth/gc::Degree;
+            udtSunCoordinates->dAzimuth = udtSunCoordinates->dAzimuth + gcf::TwoPi;
+        udtSunCoordinates->dAzimuth = udtSunCoordinates->dAzimuth/gcf::degree;
         // Parallax Correction
         dParallax=(dEarthMeanRadius/dAstronomicalUnit)
             *sin(udtSunCoordinates->dZenithAngle);
         udtSunCoordinates->dZenithAngle=(udtSunCoordinates->dZenithAngle
-            + dParallax)/gc::Degree;
+            + dParallax)/gcf::degree;
     }
 }

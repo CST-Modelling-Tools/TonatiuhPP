@@ -3,7 +3,7 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodekits/SoNodeKitListPart.h>
 
-#include "libraries/geometry/gc.h"
+#include "libraries/geometry/gcf.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/Vector3D.h"
 

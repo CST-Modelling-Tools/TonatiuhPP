@@ -1,4 +1,4 @@
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
 
 #include "CmdInsertShape.h"
 #include "tree/SceneModel.h"
@@ -13,8 +13,8 @@
 CmdInsertShape::CmdInsertShape(TShapeKit* shapeKit, ShapeAbstract* shape, SceneModel* model, QUndoCommand* parent):
     QUndoCommand("InsertShape", parent), m_shapeKit(shapeKit), m_shape(shape), m_pModel(model), m_row(-1)
 {
-    if (!m_shapeKit) gf::SevereError("CmdInsertShape called with NULL TShapeKit*");
-    if (!m_shape) gf::SevereError("CmdInsertShape called with NULL TShape*");
+    if (!m_shapeKit) gcf::SevereError("CmdInsertShape called with NULL TShapeKit*");
+    if (!m_shape) gcf::SevereError("CmdInsertShape called with NULL TShape*");
     m_shape->ref();
 }
 

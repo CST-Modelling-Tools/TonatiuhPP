@@ -8,7 +8,7 @@
 #include <Inventor/nodekits/SoSceneKit.h>
 #include <Inventor/nodekits/SoNodeKitListPart.h>
 
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
 
 #include "tree/SoPathVariant.h"
 #include "SceneModel.h"
@@ -575,7 +575,7 @@ bool SceneModel::Cut(SoBaseKit& coinParent, int row)
                 coinPartList->removeChild( row );
             }
 
-            if( !coinChild ) gf::SevereError( "SceneModel::Cut Null coinChild pointer" );
+            if( !coinChild ) gcf::SevereError( "SceneModel::Cut Null coinChild pointer" );
 
         }
     }
@@ -675,19 +675,19 @@ QModelIndex SceneModel::IndexFromNodeUrl(QString url) const
 QModelIndex SceneModel::IndexFromPath( const SoNodeKitPath& coinNodePath ) const
 {
     SoBaseKit* coinNode = static_cast< SoBaseKit* >( coinNodePath.getTail() );
-    if( !coinNode ) gf::SevereError( "IndexFromPath Null coinNode." );
+    if( !coinNode ) gcf::SevereError( "IndexFromPath Null coinNode." );
 
     if( coinNode->getTypeId().getName().getString() == SbName("TLightKit") ) return index( 0, 0 );
 
     if ( coinNodePath.getLength() > 1 )
     {
         SoBaseKit* coinParent = static_cast< SoBaseKit* >( coinNodePath.getNodeFromTail(1) );
-        if( !coinParent ) gf::SevereError( "IndexFromPath Null coinParent." );
+        if( !coinParent ) gcf::SevereError( "IndexFromPath Null coinParent." );
 
         if( coinParent->getTypeId().getName() == SbName( "TLightKit") ) return index( 0, 0 );
 
         SoNodeKitListPart* coinPartList = static_cast< SoNodeKitListPart* >( coinParent->getPart( "childList", true ) );
-        if( !coinPartList ) gf::SevereError( "IndexFromPath Null coinPartList." );
+        if( !coinPartList ) gcf::SevereError( "IndexFromPath Null coinPartList." );
 
         int row = coinPartList->findChild(coinNode);
         if( coinParent->getTypeId().isDerivedFrom( TSeparatorKit::getClassTypeId() ) )
@@ -786,7 +786,7 @@ bool SceneModel::Paste( tgc::PasteType type, SoBaseKit& coinParent, SoNode& coin
     else
     {
         SoNodeKitListPart* coinPartList = static_cast< SoNodeKitListPart* >( coinParent.getPart( "childList", true ) );
-        if( !coinPartList ) gf::SevereError( "SceneModel::Paste Null coinPartList pointer" );
+        if( !coinPartList ) gcf::SevereError( "SceneModel::Paste Null coinPartList pointer" );
         if( coinParent.getPart( "tracker", false ) ) coinPartList->insertChild( coinChild, row -1 );
         else coinPartList->insertChild( coinChild, row );
     }
@@ -877,10 +877,10 @@ SoNodeKitPath* SceneModel::PathFromIndex( const QModelIndex& modelIndex ) const
         coinSearch.apply( m_coinRoot );
 
         SoPath* coinScenePath = coinSearch.getPath( );
-        if( !coinScenePath ) gf::SevereError( "PathFromIndex Null coinScenePath." );
+        if( !coinScenePath ) gcf::SevereError( "PathFromIndex Null coinScenePath." );
 
         SoNodeKitPath* nodePath = static_cast< SoNodeKitPath* > ( coinScenePath );
-        if( !nodePath ) gf::SevereError( "PathFromIndex Null nodePath." );
+        if( !nodePath ) gcf::SevereError( "PathFromIndex Null nodePath." );
 
         nodePath->ref();
 

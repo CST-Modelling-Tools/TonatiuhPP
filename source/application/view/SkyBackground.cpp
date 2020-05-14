@@ -176,7 +176,7 @@ SoSeparator* SkyBackground::makeLabels()
     return ans;
 }
 
-#include "libraries/geometry/gc.h"
+#include "libraries/geometry/gcf.h"
 void SkyBackground::makeLabelAE(SoSeparator* parent, double azimuth, double elevation, const QString& text)
 {
     SoSeparator* ans = new SoSeparator;
@@ -184,14 +184,14 @@ void SkyBackground::makeLabelAE(SoSeparator* parent, double azimuth, double elev
     // Rz(-gamma) Rx(alpha)
     SoTransform* sTransform = new SoTransform;
     sTransform->rotation =
-        SbRotation(SbVec3f(1., 0., 0.), elevation*gc::Degree) *
-        SbRotation(SbVec3f(0., 0., 1.), -azimuth*gc::Degree);
+        SbRotation(SbVec3f(1., 0., 0.), elevation*gcf::degree) *
+        SbRotation(SbVec3f(0., 0., 1.), -azimuth*gcf::degree);
     ans->addChild(sTransform);
 
     // from {0, 1, 0}
     sTransform = new SoTransform;
     sTransform->translation = SbVec3f(0., 0.8, 0.);
-    sTransform->rotation = SbRotation(SbVec3f(1., 0., 0.), 90.*gc::Degree);
+    sTransform->rotation = SbRotation(SbVec3f(1., 0., 0.), 90.*gcf::degree);
     ans->addChild(sTransform);
 
     SoText3* sText = new SoText3;

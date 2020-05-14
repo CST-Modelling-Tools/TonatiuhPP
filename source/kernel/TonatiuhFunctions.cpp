@@ -1,11 +1,13 @@
 #include <cmath>
 
+#include <Inventor/SbVec2f.h>
 #include <Inventor/nodes/SoTransform.h>
 
 #include "kernel/random/RandomAbstract.h"
 #include "TonatiuhFunctions.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/Vector3D.h"
+#include "libraries/geometry/Vector2D.h"
 
 
 double tgf::AlternateBoxMuller(RandomAbstract& rand)
@@ -96,6 +98,11 @@ SbMatrix tgf::MatrixFromSoTransform(SoTransform* const& soTransform)
         soTransform->center.getValue()
     );
     return sbMatrix;
+}
+
+Vector2D tgf::makeVector2D(const SbVec2f& v)
+{
+    return Vector2D(v[0], v[1]);
 }
 
 Vector3D tgf::makeVector3D(const SbVec3f& v)

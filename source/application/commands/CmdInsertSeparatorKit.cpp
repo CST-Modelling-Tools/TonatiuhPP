@@ -1,4 +1,4 @@
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
 
 #include <Inventor/nodekits/SoBaseKit.h>
 #include "CmdInsertSeparatorKit.h"
@@ -14,10 +14,10 @@
 CmdInsertSeparatorKit::CmdInsertSeparatorKit( TSeparatorKit* separatorKit,  const QModelIndex& parentIndex, SceneModel* model, QUndoCommand* parent ):
     QUndoCommand("InsertSeparatorKit", parent), m_separatorKit ( separatorKit ), m_coinParent( 0 ), m_pModel( model ), m_row( -1 )
 {
-    if( !m_separatorKit ) gf::SevereError( "CmdInsertSeparatorKit Null separatorKit." );
+    if( !m_separatorKit ) gcf::SevereError( "CmdInsertSeparatorKit Null separatorKit." );
     m_separatorKit->ref();
 
-    if( !parentIndex.isValid() ) gf::SevereError( "CmdInsertSeparatorKit called with invalid ModelIndex." );
+    if( !parentIndex.isValid() ) gcf::SevereError( "CmdInsertSeparatorKit called with invalid ModelIndex." );
     InstanceNode* instanceParent = m_pModel->NodeFromIndex( parentIndex );
     m_coinParent = static_cast< SoBaseKit* > ( instanceParent->getNode() );
 }

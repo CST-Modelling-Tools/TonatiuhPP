@@ -8,15 +8,14 @@
 #include <Inventor/SbName.h>
 #include <Inventor/SbString.h>
 #include <Inventor/fields/SoField.h>
-#include <Inventor/fields/SoFieldContainer.h>
 #include <Inventor/fields/SoSFEnum.h>
 #include <Inventor/fields/SoSFBool.h>
 #include <Inventor/lists/SoFieldList.h>
 #include <Inventor/nodes/SoNode.h>
 
 #include "libraries/fields/FieldEditor.h"
-#include "libraries/fields/UserMField.h"
 #include "libraries/fields/UserSField.h"
+#include "libraries/fields/UserMField.h"
 
 #include "ParametersDelegate.h"
 #include "ParametersItem.h"
@@ -77,7 +76,8 @@ void ParametersView::SetContainer(SoNode* node)
         m_model->setItem(n, 1, itemValue);
     }
 
-//    resizeColumnToContents(1);
+    double w = 2.5*fontMetrics().horizontalAdvance("Parameter");
+    setColumnWidth(0, w);
 }
 
 /**

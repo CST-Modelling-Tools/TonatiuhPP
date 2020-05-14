@@ -18,7 +18,7 @@
 
 #include "CelestialWidget.h"
 #include "libraries/geometry/Ray.h"
-#include "libraries/geometry/gc.h"
+#include "libraries/geometry/gcf.h"
 #include "libraries/geometry/Vector3D.h"
 
 
@@ -113,9 +113,9 @@ SoSeparator* CelestialWidget::CelestialEquator() const
     float p[360][3];
     for( int fi = 0; fi<360; ++fi )
     {
-        p[fi][0] = -sin( fi * (gc::Pi / 180) ) * sphereRadio ;
+        p[fi][0] = -sin( fi * (gcf::pi / 180) ) * sphereRadio ;
         p[fi][1] = 0.0;
-        p[fi][2] = -cos( fi * (gc::Pi / 180) ) * sphereRadio ;
+        p[fi][2] = -cos( fi * (gcf::pi / 180) ) * sphereRadio ;
 
     }
 
@@ -227,9 +227,9 @@ SoSeparator* CelestialWidget::Ecliptic() const
     float p[360][3];
     for( int fi = 0; fi<360; ++fi )
     {
-        p[fi][0] = cos( gc::Ecliptic ) * sin( fi * (gc::Pi / 180) ) * sphereRadio;
-        p[fi][1] = sin( gc::Ecliptic ) * sin( fi * (gc::Pi / 180) ) * sphereRadio;
-        p[fi][2] = -cos( fi * (gc::Pi / 180) ) * sphereRadio;
+        p[fi][0] = cos( gcf::Ecliptic ) * sin( fi * (gcf::pi / 180) ) * sphereRadio;
+        p[fi][1] = sin( gcf::Ecliptic ) * sin( fi * (gcf::pi / 180) ) * sphereRadio;
+        p[fi][2] = -cos( fi * (gcf::pi / 180) ) * sphereRadio;
     }
 
     int lines[1]={360};

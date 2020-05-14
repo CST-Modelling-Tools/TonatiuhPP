@@ -28,7 +28,7 @@
 #include "kernel/trackers/TrackerFactory.h"
 #include "libraries/fields/UserMField.h"
 #include "libraries/fields/UserSField.h"
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
 #include "view/SkyBackground.h"
 
 

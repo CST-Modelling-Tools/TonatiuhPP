@@ -2,7 +2,7 @@
 
 #include <Inventor/nodekits/SoSceneKit.h>
 #include <Inventor/nodekits/SoNodeKitListPart.h>
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
 #include "tree/SceneModel.h"
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/sun/TLightKit.h"
@@ -30,7 +30,7 @@ CmdLightKitModified::CmdLightKitModified(
     m_sceneModel(&sceneModel)
 {
     if (!lightKitNew)
-        gf::SevereError("CmdLightKitModified called with NULL TLightKit*");
+        gcf::SevereError("CmdLightKitModified called with NULL TLightKit*");
 
     m_lightKitNew = static_cast<TLightKit*>(lightKitNew->copy(true));
     m_lightKitNew->ref();

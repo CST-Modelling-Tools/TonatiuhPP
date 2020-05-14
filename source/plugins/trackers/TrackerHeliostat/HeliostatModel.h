@@ -2,6 +2,7 @@
 
 #include "HeliostatDrive.h"
 
+typedef Vector2D Angles;
 
 struct HeliostatModel
 {
@@ -9,20 +10,21 @@ struct HeliostatModel
         const HeliostatDrive& primary,
         const HeliostatDrive& secondary,
         const Vertex3D& tracking,
-        const Vector3D& angles0 = Vector3D(0., 0., 0.)
+        const Angles& angles0 = Angles(0., 0.)
     );
 
     HeliostatDrive primary;
     HeliostatDrive secondary;
     Vertex3D tracking;
-    Vector3D angles0;
+    Vector2D angles0;
 
-    Vector3D findTrackingPoint(const Vector3D& angles);
+    Vector3D findTrackingPoint(const Angles& angles);
 
-    QVector<Vector3D> solveRotation(const Vector3D& v0, const Vector3D& v);
+    QVector<Angles> solveRotation(const Vector3D& v0, const Vector3D& v);
 
-    QVector<Vector3D> solveTrackingNormal(const Vector3D& normal);
-    QVector<Vector3D> solveReflectionLocal(const Vector3D& vSun, const Vector3D& rAim);
-    QVector<Vector3D> solveReflectionGlobal(const Vector3D& vSun, const Vector3D& rAim);
+    QVector<Angles> solveTrackingNormal(const Vector3D& normal);
+    QVector<Angles> solveReflectionLocal(const Vector3D& vSun, const Vector3D& rAim);
+    QVector<Angles> solveReflectionGlobal(const Vector3D& vSun, const Vector3D& rAim);
+
+    Angles selectSolution(const QVector<Angles>& solutions);
 };
-

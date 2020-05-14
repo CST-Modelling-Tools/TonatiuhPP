@@ -17,7 +17,6 @@ class ParametersView: public QTreeView
 
 public:
     ParametersView(QWidget* parent);
-//    ParametersView(SoNode* fieldContainer, QWidget* parent = 0);
     ~ParametersView();
 
     void SetContainer(SoNode* node);

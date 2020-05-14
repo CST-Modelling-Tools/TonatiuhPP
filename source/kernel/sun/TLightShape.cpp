@@ -13,7 +13,7 @@
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/Vector3D.h"
-#include "libraries/geometry/gf.h"
+#include "libraries/geometry/gcf.h"
 #include "scene/TShapeKit.h"
 #include "shape/DifferentialGeometry.h"
 
@@ -66,7 +66,7 @@ double TLightShape::GetValidArea() const
 Vector3D TLightShape::GetPoint3D(double u, double v, int h, int w) const //? w <> h
 {
     if ( OutOfRange(u, v) )
-        gf::SevereError("Function TLightShape::GetPoint3D called with invalid parameters" );
+        gcf::SevereError("Function TLightShape::GetPoint3D called with invalid parameters" );
 
     // size of cells the sun is divided
     double xWidth = (xMax.getValue() - xMin.getValue())/m_widthElements;
