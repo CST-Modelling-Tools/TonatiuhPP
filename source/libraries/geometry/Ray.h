@@ -1,7 +1,6 @@
 #pragma once
 
 #include "gc.h"
-#include "Point3D.h"
 #include "Vector3D.h"
 
 class TONATIUH_LIBRARIES Ray

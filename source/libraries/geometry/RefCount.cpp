@@ -1,12 +1,13 @@
 #include "RefCount.h"
 
-RefCount::RefCount()
-    : m_refCount(0)
+
+RefCount::RefCount():
+    m_refCount(0)
 {
 }
 
-RefCount::RefCount(const RefCount&)
-    : m_refCount(0)
+RefCount::RefCount(const RefCount&):
+    m_refCount(0)
 {
 }
 

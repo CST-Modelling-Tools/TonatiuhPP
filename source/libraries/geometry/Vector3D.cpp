@@ -1,10 +1,8 @@
+#include "Vector3D.h"
+
 #include <cmath>
 #include <float.h>
 #include <iostream>
-
-#include "Point3D.h"
-#include "Vector3D.h"
-
 
 
 bool Vector3D::operator==(const Vector3D& v) const

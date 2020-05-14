@@ -5,7 +5,6 @@
 #include "kernel/random/RandomAbstract.h"
 #include "TonatiuhFunctions.h"
 #include "libraries/geometry/Transform.h"
-#include "libraries/geometry/Point3D.h"
 #include "libraries/geometry/Vector3D.h"
 
 

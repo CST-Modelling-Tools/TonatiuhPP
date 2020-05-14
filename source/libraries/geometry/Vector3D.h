@@ -1,8 +1,8 @@
 #pragma once
 
 #include <iostream>
+#include "libraries/TonatiuhLibraries.h"
 
-#include "Point3D.h"
 #include <cmath>
 
 struct TONATIUH_LIBRARIES Vector3D

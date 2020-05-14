@@ -16,7 +16,6 @@
 #include "libraries/geometry/gc.h"
 #include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Matrix4x4.h"
-#include "libraries/geometry/Point3D.h"
 #include "sun/sunpos.h"
 #include "sun/SunPillbox.h"
 #include "TLightKit.h"

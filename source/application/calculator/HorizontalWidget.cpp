@@ -19,7 +19,6 @@
 #include "libraries/geometry/gc.h"
 
 #include "HorizontalWidget.h"
-#include "libraries/geometry/Point3D.h"
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Vector3D.h"
 

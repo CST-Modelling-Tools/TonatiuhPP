@@ -9,7 +9,6 @@
 #include <Inventor/misc/SoState.h>
 
 #include "libraries/geometry/BoundingBox.h"
-#include "libraries/geometry/Point3D.h"
 #include "libraries/geometry/Ray.h"
 
 using namespace std;

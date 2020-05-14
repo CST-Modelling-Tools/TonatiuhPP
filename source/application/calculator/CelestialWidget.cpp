@@ -17,17 +17,19 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
 #include "CelestialWidget.h"
-#include "libraries/geometry/Point3D.h"
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/gc.h"
 #include "libraries/geometry/Vector3D.h"
 
 
-CelestialWidget::CelestialWidget( QWidget* parent )
-    :QWidget( parent ), sphereRadio( 120.0 ), m_declination( 0 ), m_rightAscension( 0 )
+CelestialWidget::CelestialWidget(QWidget* parent):
+    QWidget(parent),
+    sphereRadio(120.),
+    m_declination(0),
+    m_rightAscension(0)
 {
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    setLayout( mainLayout );
+    setLayout(mainLayout);
 
     QWidget* examinerWidget = new QWidget;
     examinerWidget->setFixedSize( 490, 300 );
@@ -161,16 +163,15 @@ SoSeparator* CelestialWidget::Declination()
     decliantionLine->numVertices.setValues( 0, 1, declinationLines );
     declination->addChild( decliantionLine );
 
-
     SoSeparator* curve = new SoSeparator;
-    declination->addChild( curve );
+    declination->addChild(curve);
 
     SoMaterial* curveMaterial = new SoMaterial;
     curveMaterial->diffuseColor.setValue( 1.0, 0.50f, 0.0 ); // Orange
-    curve->addChild( curveMaterial );
+    curve->addChild(curveMaterial);
 
     float curvePoints[270][3];
-    Vector3D center( 0, 0, 0 );
+    Vector3D center(0, 0, 0);
 
     int numPoints = 0;
     int indexes[360];
@@ -179,7 +180,7 @@ SoSeparator* CelestialWidget::Declination()
         curvePoints[numPoints][0]= center.x;
         curvePoints[numPoints][1]= center.y;
         curvePoints[numPoints][2]= center.z;
-        indexes[ ( index -1 ) * 4 ] = numPoints;
+        indexes[ ( index - 1 ) * 4 ] = numPoints;
         numPoints++;
 
         double grad1 = ( m_declination / 360 ) * 4 * ( index -1 );
