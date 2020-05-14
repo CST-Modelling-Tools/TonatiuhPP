@@ -99,11 +99,6 @@ SbMatrix tgf::MatrixFromSoTransform(SoTransform* const& soTransform)
     return sbMatrix;
 }
 
-Point3D tgf::makePoint3D(const SbVec3f& v)
-{
-    return Point3D(v[0], v[1], v[2]);
-}
-
 Vector3D tgf::makeVector3D(const SbVec3f& v)
 {
     return Vector3D(v[0], v[1], v[2]);

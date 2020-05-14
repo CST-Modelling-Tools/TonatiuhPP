@@ -4,7 +4,6 @@
 #include "Ray.h"
 #include "gc.h"
 #include "Vector3D.h"
-#include "Point3D.h"
 
 
 BoundingBox::BoundingBox():
@@ -13,18 +12,18 @@ BoundingBox::BoundingBox():
 {
 }
 
-BoundingBox::BoundingBox(const Point3D& point):
-    pMin(point), pMax(point)
+BoundingBox::BoundingBox(const Vector3D& p):
+    pMin(p), pMax(p)
 {
 }
 
-BoundingBox::BoundingBox(const Point3D& a, const Point3D& b)
+BoundingBox::BoundingBox(const Vector3D& a, const Vector3D& b)
 {
     pMin = min(a, b);
     pMax = max(a, b);
 }
 
-bool BoundingBox::isInside(const Point3D& p) const
+bool BoundingBox::isInside(const Vector3D& p) const
 {
     return p.x >= pMin.x && p.x <= pMax.x &&
            p.y >= pMin.y && p.y <= pMax.y &&
@@ -49,7 +48,7 @@ void BoundingBox::expand(double delta)
     pMax.z += delta;
 }
 
-void BoundingBox::expand(const Point3D& p)
+void BoundingBox::expand(const Vector3D& p)
 {
     pMin = min(pMin, p);
     pMax = max(pMax, p);
@@ -77,10 +76,10 @@ int BoundingBox::MaximumExtent() const
     return 2;
 }
 
-void BoundingBox::BoundingSphere(Point3D& center, double& radius) const
+void BoundingBox::BoundingSphere(Vector3D& center, double& radius) const
 {
     center = 0.5*(pMin + pMax);
-    radius = Distance(center, pMax);
+    radius = (pMax - center).norm();
 }
 
 bool BoundingBox::IntersectP(const Ray& ray, double* hitt0, double* hitt1) const
@@ -145,7 +144,7 @@ bool BoundingBox::IntersectP(const Ray& ray, double* hitt0, double* hitt1) const
     else return false;
 }
 
-BoundingBox Union(const BoundingBox& b, const Point3D& p)
+BoundingBox Union(const BoundingBox& b, const Vector3D& p)
 {
     BoundingBox ans;
     ans.pMin = min(b.pMin, p);

@@ -7,7 +7,8 @@ DifferentialGeometry::DifferentialGeometry():
 
 }
 
-DifferentialGeometry::DifferentialGeometry(const Point3D& point,
+DifferentialGeometry::DifferentialGeometry(
+    const Vector3D& point,
     double u, double v,
     const Vector3D& dpdu, const Vector3D& dpdv,
     const Vector3D& normal,

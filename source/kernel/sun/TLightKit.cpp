@@ -201,20 +201,20 @@ void TLightKit::findTexture(int xPixels, int yPixels, QVector< QPair< TShapeKit*
         {
             BoundingBox shapeBox = shapeNode->getBox();
 
-            QVector<Point3D> ps;
-            ps << Point3D(shapeBox.pMin.x, shapeBox.pMin.y, shapeBox.pMin.z);
-            ps << Point3D(shapeBox.pMax.x, shapeBox.pMin.y, shapeBox.pMin.z);
-            ps << Point3D(shapeBox.pMax.x, shapeBox.pMin.y, shapeBox.pMax.z);
-            ps << Point3D(shapeBox.pMin.x, shapeBox.pMin.y, shapeBox.pMax.z);
-            ps << Point3D(shapeBox.pMin.x, shapeBox.pMax.y, shapeBox.pMin.z);
-            ps << Point3D(shapeBox.pMax.x, shapeBox.pMax.y, shapeBox.pMin.z);
-            ps << Point3D(shapeBox.pMax.x, shapeBox.pMax.y, shapeBox.pMax.z);
-            ps << Point3D(shapeBox.pMin.x, shapeBox.pMax.y, shapeBox.pMax.z);
+            QVector<Vector3D> ps;
+            ps << Vector3D(shapeBox.pMin.x, shapeBox.pMin.y, shapeBox.pMin.z);
+            ps << Vector3D(shapeBox.pMax.x, shapeBox.pMin.y, shapeBox.pMin.z);
+            ps << Vector3D(shapeBox.pMax.x, shapeBox.pMin.y, shapeBox.pMax.z);
+            ps << Vector3D(shapeBox.pMin.x, shapeBox.pMin.y, shapeBox.pMax.z);
+            ps << Vector3D(shapeBox.pMin.x, shapeBox.pMax.y, shapeBox.pMin.z);
+            ps << Vector3D(shapeBox.pMax.x, shapeBox.pMax.y, shapeBox.pMin.z);
+            ps << Vector3D(shapeBox.pMax.x, shapeBox.pMax.y, shapeBox.pMax.z);
+            ps << Vector3D(shapeBox.pMin.x, shapeBox.pMax.y, shapeBox.pMax.z);
 
             QVector<QPointF> qps;
-            for (Point3D& p : ps) {
-                p = transformOtW(p);
-                p = tr(p);
+            for (Vector3D& p : ps) {
+                p = transformOtW.transformPoint(p);
+                p = tr.transformPoint(p);
                 qps <<  QPoint((p.x - shape->xMin.getValue())/xWidthPixel, (p.y - shape->yMin.getValue())/yWidthPixel);
             }
 

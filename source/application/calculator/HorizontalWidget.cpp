@@ -144,7 +144,7 @@ SoSeparator* HorizontalWidget::AzimuthLine()
       curve->addChild( curveMaterial );
 
       float curvePoints[270][3];
-      Point3D center( 0, 0, 0 );
+      Vector3D center( 0, 0, 0 );
 
     int numPoints = 0;
     int indexes[360];
@@ -385,7 +385,7 @@ SoSeparator* HorizontalWidget::ZenithLine()
       zenith->addChild( curve );
 
       float curvePoints[270][3];
-      Point3D center( 0, 0, 0 );
+      Vector3D center( 0, 0, 0 );
 
     int numPoints = 0;
     int indexes[360];

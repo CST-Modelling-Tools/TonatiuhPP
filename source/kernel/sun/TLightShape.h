@@ -10,7 +10,7 @@
 
 #include "kernel/shape/ShapeAbstract.h"
 #include "kernel/TonatiuhTypes.h"
-#include "libraries/geometry/Point3D.h"
+#include "libraries/geometry/Vector3D.h"
 
 class Transform;
 
@@ -31,7 +31,7 @@ public:
 
     double GetVolume() const {return 0.;}
 
-    Point3D Sample(double u, double v, int a, int b) const {
+    Vector3D Sample(double u, double v, int a, int b) const {
         return GetPoint3D(u, v, a, b);
     }
 
@@ -44,7 +44,7 @@ public:
     trt::TONATIUH_REAL delta;
 
 protected:
-    Point3D GetPoint3D(double u, double v, int h, int w) const;
+    Vector3D GetPoint3D(double u, double v, int h, int w) const;
     bool OutOfRange(double u, double v) const
     {
         return u < 0. || u > 1. || v < 0. || v > 1.;

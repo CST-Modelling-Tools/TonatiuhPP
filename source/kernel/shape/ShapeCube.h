@@ -18,9 +18,9 @@ public:
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
     bool intersectP(const Ray& ray) const;
 
-    trt::TONATIUH_REAL widthX;
-    trt::TONATIUH_REAL widthY;
-    trt::TONATIUH_REAL widthZ;
+    trt::TONATIUH_REAL sizeX;
+    trt::TONATIUH_REAL sizeY;
+    trt::TONATIUH_REAL sizeZ;
 
 protected:
     ~ShapeCube() {}

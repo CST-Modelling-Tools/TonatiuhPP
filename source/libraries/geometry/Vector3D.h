@@ -12,11 +12,6 @@ struct TONATIUH_LIBRARIES Vector3D
     {
     }
 
-    explicit Vector3D(const Point3D& p):
-        x(p.x), y(p.y), z(p.z)
-    {
-    }
-
     Vector3D& operator+=(const Vector3D& v)
     {
         x += v.x;
@@ -169,3 +164,21 @@ TONATIUH_LIBRARIES double AbsDotProduct(const Vector3D& vA, const Vector3D& vB);
 TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const Vector3D& vector);
 
 TONATIUH_LIBRARIES bool SameHemisphere(const Vector3D& vA, const Vector3D& vB);
+
+inline Vector3D min(const Vector3D& a, const Vector3D& b)
+{
+    return Vector3D(
+        std::min(a.x, b.x),
+        std::min(a.y, b.y),
+        std::min(a.z, b.z)
+    );
+}
+
+inline Vector3D max(const Vector3D& a, const Vector3D& b)
+{
+    return Vector3D(
+        std::max(a.x, b.x),
+        std::max(a.y, b.y),
+        std::max(a.z, b.z)
+    );
+}

@@ -80,29 +80,29 @@ Vector3D Transform::transformNormal(const Vector3D& v) const
     );
 }
 
-Point3D Transform::operator()(const Point3D& p) const
-{
-    Point3D ans(
-        m_mdir->m[0][0]*p.x + m_mdir->m[0][1]*p.y + m_mdir->m[0][2]*p.z + m_mdir->m[0][3],
-        m_mdir->m[1][0]*p.x + m_mdir->m[1][1]*p.y + m_mdir->m[1][2]*p.z + m_mdir->m[1][3],
-        m_mdir->m[2][0]*p.x + m_mdir->m[2][1]*p.y + m_mdir->m[2][2]*p.z + m_mdir->m[2][3]
-    );
+//Point3D Transform::operator()(const Point3D& p) const
+//{
+//    Point3D ans(
+//        m_mdir->m[0][0]*p.x + m_mdir->m[0][1]*p.y + m_mdir->m[0][2]*p.z + m_mdir->m[0][3],
+//        m_mdir->m[1][0]*p.x + m_mdir->m[1][1]*p.y + m_mdir->m[1][2]*p.z + m_mdir->m[1][3],
+//        m_mdir->m[2][0]*p.x + m_mdir->m[2][1]*p.y + m_mdir->m[2][2]*p.z + m_mdir->m[2][3]
+//    );
 
-    double w = m_mdir->m[3][0]*p.x + m_mdir->m[3][1]*p.y + m_mdir->m[3][2]*p.z + m_mdir->m[3][3];
-    if (w != 1.) return ans /= w;
+//    double w = m_mdir->m[3][0]*p.x + m_mdir->m[3][1]*p.y + m_mdir->m[3][2]*p.z + m_mdir->m[3][3];
+//    if (w != 1.) return ans /= w;
 
-    return ans;
-}
+//    return ans;
+//}
 
-void Transform::operator()(const Point3D& p, Point3D& ans) const
-{
-    ans.x = m_mdir->m[0][0]*p.x + m_mdir->m[0][1]*p.y + m_mdir->m[0][2]*p.z + m_mdir->m[0][3];
-    ans.y = m_mdir->m[1][0]*p.x + m_mdir->m[1][1]*p.y + m_mdir->m[1][2]*p.z + m_mdir->m[1][3];
-    ans.z = m_mdir->m[2][0]*p.x + m_mdir->m[2][1]*p.y + m_mdir->m[2][2]*p.z + m_mdir->m[2][3];
+//void Transform::operator()(const Point3D& p, Point3D& ans) const
+//{
+//    ans.x = m_mdir->m[0][0]*p.x + m_mdir->m[0][1]*p.y + m_mdir->m[0][2]*p.z + m_mdir->m[0][3];
+//    ans.y = m_mdir->m[1][0]*p.x + m_mdir->m[1][1]*p.y + m_mdir->m[1][2]*p.z + m_mdir->m[1][3];
+//    ans.z = m_mdir->m[2][0]*p.x + m_mdir->m[2][1]*p.y + m_mdir->m[2][2]*p.z + m_mdir->m[2][3];
 
-    double w = m_mdir->m[3][0]*p.x + m_mdir->m[3][1]*p.y + m_mdir->m[3][2]*p.z + m_mdir->m[3][3];
-    if (w != 1.) ans /= w;
-}
+//    double w = m_mdir->m[3][0]*p.x + m_mdir->m[3][1]*p.y + m_mdir->m[3][2]*p.z + m_mdir->m[3][3];
+//    if (w != 1.) ans /= w;
+//}
 
 Vector3D Transform::operator()(const Vector3D& v) const
 {
@@ -123,8 +123,8 @@ void Transform::operator()(const Vector3D& v, Vector3D& ans) const
 Ray Transform::operator()(const Ray& r) const
 {
     Ray ans;
-    (*this)(r.origin, ans.origin);
-    Vector3D d = (*this)(r.direction());
+    ans.origin = transformPoint(r.origin);
+    Vector3D d = transformVector(r.direction());
     ans.setDirection(d);
     ans.tMin = r.tMin;
     ans.tMax = r.tMax;
@@ -133,8 +133,8 @@ Ray Transform::operator()(const Ray& r) const
 
 void Transform::operator()(const Ray& r, Ray& ans) const
 {
-    (*this)(r.origin, ans.origin);
-    Vector3D d = (*this)(r.direction());
+    ans.origin = transformPoint(r.origin);
+    Vector3D d = transformVector(r.direction());
     ans.setDirection(d);
     ans.tMin = r.tMin;
     ans.tMax = r.tMax;
@@ -143,30 +143,28 @@ void Transform::operator()(const Ray& r, Ray& ans) const
 BoundingBox Transform::operator()(const BoundingBox& b) const
 {
     BoundingBox ans;
-    const Transform& t = *this;
-    ans << t(Point3D(b.pMin.x, b.pMin.y, b.pMin.z));
-    ans << t(Point3D(b.pMin.x, b.pMin.y, b.pMax.z));
-    ans << t(Point3D(b.pMin.x, b.pMax.y, b.pMin.z));
-    ans << t(Point3D(b.pMin.x, b.pMax.y, b.pMax.z));
-    ans << t(Point3D(b.pMax.x, b.pMin.y, b.pMin.z));
-    ans << t(Point3D(b.pMax.x, b.pMin.y, b.pMax.z));
-    ans << t(Point3D(b.pMax.x, b.pMax.y, b.pMin.z));
-    ans << t(Point3D(b.pMax.x, b.pMax.y, b.pMax.z));
+    ans << transformPoint(Vector3D(b.pMin.x, b.pMin.y, b.pMin.z));
+    ans << transformPoint(Vector3D(b.pMin.x, b.pMin.y, b.pMax.z));
+    ans << transformPoint(Vector3D(b.pMin.x, b.pMax.y, b.pMin.z));
+    ans << transformPoint(Vector3D(b.pMin.x, b.pMax.y, b.pMax.z));
+    ans << transformPoint(Vector3D(b.pMax.x, b.pMin.y, b.pMin.z));
+    ans << transformPoint(Vector3D(b.pMax.x, b.pMin.y, b.pMax.z));
+    ans << transformPoint(Vector3D(b.pMax.x, b.pMax.y, b.pMin.z));
+    ans << transformPoint(Vector3D(b.pMax.x, b.pMax.y, b.pMax.z));
     return ans;
 }
 
 void Transform::operator()(const BoundingBox& b, BoundingBox& ans) const
 {
     ans = BoundingBox();
-    const Transform& t = *this;
-    ans << t(Point3D(b.pMin.x, b.pMin.y, b.pMin.z));
-    ans << t(Point3D(b.pMin.x, b.pMin.y, b.pMax.z));
-    ans << t(Point3D(b.pMin.x, b.pMax.y, b.pMin.z));
-    ans << t(Point3D(b.pMin.x, b.pMax.y, b.pMax.z));
-    ans << t(Point3D(b.pMax.x, b.pMin.y, b.pMin.z));
-    ans << t(Point3D(b.pMax.x, b.pMin.y, b.pMax.z));
-    ans << t(Point3D(b.pMax.x, b.pMax.y, b.pMin.z));
-    ans << t(Point3D(b.pMax.x, b.pMax.y, b.pMax.z));
+    ans << transformPoint(Vector3D(b.pMin.x, b.pMin.y, b.pMin.z));
+    ans << transformPoint(Vector3D(b.pMin.x, b.pMin.y, b.pMax.z));
+    ans << transformPoint(Vector3D(b.pMin.x, b.pMax.y, b.pMin.z));
+    ans << transformPoint(Vector3D(b.pMin.x, b.pMax.y, b.pMax.z));
+    ans << transformPoint(Vector3D(b.pMax.x, b.pMin.y, b.pMin.z));
+    ans << transformPoint(Vector3D(b.pMax.x, b.pMin.y, b.pMax.z));
+    ans << transformPoint(Vector3D(b.pMax.x, b.pMax.y, b.pMin.z));
+    ans << transformPoint(Vector3D(b.pMax.x, b.pMax.y, b.pMax.z));
 }
 
 Transform Transform::operator*(const Transform& rhs) const
@@ -371,7 +369,7 @@ Transform Transform::rotate(double angle, const Vector3D& axis)
     return Transform(mdir, mdir->Transpose());
 }
 
-Transform Transform::LookAt(const Point3D& pos, const Point3D& look, const Vector3D& up)
+Transform Transform::LookAt(const Vector3D& pos, const Vector3D& look, const Vector3D& up)
 {
     double m[4][4];
     m[0][3] = pos.x;

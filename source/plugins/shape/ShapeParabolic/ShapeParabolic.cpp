@@ -36,8 +36,8 @@ BoundingBox ShapeParabolic::getBox() const
     double zMax = (xMax*xMax/focusX.getValue() + yMax*yMax/focusY.getValue())/4.;
 
     return BoundingBox(
-        Point3D(-xMax, -yMax, 0.),
-        Point3D(xMax, yMax, zMax)
+        Vector3D(-xMax, -yMax, 0.),
+        Vector3D(xMax, yMax, zMax)
     );
 }
 
@@ -62,7 +62,7 @@ bool ShapeParabolic::intersect(const Ray& ray, double *tHit, DifferentialGeometr
         double t = ts[i];
         if (t < raytMin || t > ray.tMax) continue;
 
-        Point3D pHit = ray(t);
+        Vector3D pHit = ray(t);
         if (2.*abs(pHit.x) > sizeX.getValue() || 2.*abs(pHit.y) > sizeY.getValue())
             continue;
 

@@ -73,8 +73,8 @@ BoundingBox ShapeCylinder::getBox() const
     double zMin = -zMax;
 
     return BoundingBox(
-        Point3D(xMin, yMin, zMin),
-        Point3D(xMax, yMax, zMax)
+        Vector3D(xMin, yMin, zMin),
+        Vector3D(xMax, yMax, zMax)
     );
 }
 
@@ -97,7 +97,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
         double t = ts[i];
         if (t < raytMin || t > ray.tMax) continue;
 
-        Point3D pHit = ray(t);
+        Vector3D pHit = ray(t);
         double phi = atan2(pHit.y, pHit.x);
         if (phi < 0.) phi += gc::TwoPi;
 

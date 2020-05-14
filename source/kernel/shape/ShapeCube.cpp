@@ -9,7 +9,6 @@
 #include <Inventor/misc/SoState.h>
 
 #include "libraries/geometry/BoundingBox.h"
-#include "libraries/geometry/NormalVector.h"
 #include "libraries/geometry/Point3D.h"
 #include "libraries/geometry/Ray.h"
 
@@ -28,34 +27,34 @@ ShapeCube::ShapeCube()
 {
     SO_NODE_CONSTRUCTOR(ShapeCube);
 
-    SO_NODE_ADD_FIELD(widthX, (2.));
-    SO_NODE_ADD_FIELD(widthY, (2.));
-    SO_NODE_ADD_FIELD(widthZ, (2.));
+    SO_NODE_ADD_FIELD(sizeX, (2.));
+    SO_NODE_ADD_FIELD(sizeY, (2.));
+    SO_NODE_ADD_FIELD(sizeZ, (2.));
 }
 
 double ShapeCube::getArea() const
 {
-    double xy = widthX.getValue()*widthY.getValue();
-    double yz = widthY.getValue()*widthZ.getValue();
-    double xz = widthX.getValue()*widthZ.getValue();
+    double xy = sizeX.getValue()*sizeY.getValue();
+    double yz = sizeY.getValue()*sizeZ.getValue();
+    double xz = sizeX.getValue()*sizeZ.getValue();
     return 2.*(xy + yz + xz);
 }
 
 double ShapeCube::getVolume() const
 {
-    return widthX.getValue()*widthY.getValue()*widthZ.getValue();
+    return sizeX.getValue()*sizeY.getValue()*sizeZ.getValue();
 }
 
 BoundingBox ShapeCube::getBox() const
 {
-    double xMax = widthX.getValue()/2.;
-    double yMax = widthY.getValue()/2.;
-    double zMax = widthZ.getValue()/2.;
-
-    return BoundingBox(
-        Point3D(-xMax, -yMax, -zMax),
-        Point3D(xMax, yMax, zMax)
+    Vector3D p(
+        sizeX.getValue(),
+        sizeY.getValue(),
+        sizeZ.getValue()
     );
+    p /= 2.;
+
+    return BoundingBox(-p, p);
 }
 
 bool ShapeCube::intersect(const Ray& /*objectRay*/, double* /*tHit*/, DifferentialGeometry* /*dg*/) const
@@ -69,9 +68,9 @@ bool ShapeCube::intersectP(const Ray& ray) const
     double t0 = ray.tMin;
     double t1 = ray.tMax;
     double tmin, tmax, tymin, tymax, tzmin, tzmax;
-    double halfWidth = widthX.getValue()/2.;
-    double halfHeight = widthY.getValue()/2.;
-    double halfDepth = widthZ.getValue()/2.;
+    double halfWidth = sizeX.getValue()/2.;
+    double halfHeight = sizeY.getValue()/2.;
+    double halfDepth = sizeZ.getValue()/2.;
 
     double invDirection = ray.invDirection().x;
     if (invDirection >= 0.)
@@ -157,9 +156,9 @@ void ShapeCube::generatePrimitives(SoAction* action)
    }
 
    // We need the size to adjust the coordinates.
-   double halfWidth = widthX.getValue()/2.0;
-   double halfHeight = widthY.getValue()/2.0;
-   double halfDepth = widthZ.getValue()/2.0;
+   double halfWidth = sizeX.getValue()/2.0;
+   double halfHeight = sizeY.getValue()/2.0;
+   double halfDepth = sizeZ.getValue()/2.0;
 
    // We'll use this macro to make the code easier. It uses the
    // "point" variable to store the primitive vertex's point.

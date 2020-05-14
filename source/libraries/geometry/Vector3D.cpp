@@ -2,7 +2,6 @@
 #include <float.h>
 #include <iostream>
 
-#include "NormalVector.h"
 #include "Point3D.h"
 #include "Vector3D.h"
 
@@ -42,5 +41,5 @@ double AbsDotProduct(const Vector3D& vA, const Vector3D& vB)
 
 bool SameHemisphere(const Vector3D& vA, const Vector3D& vB)
 {
-    return (vA.z * vB.z > 0.0);
+    return vA.z*vB.z > 0.;
 }

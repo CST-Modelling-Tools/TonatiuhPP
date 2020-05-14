@@ -12,13 +12,13 @@ public:
     {
     }
 
-    Ray(const Point3D& orig, const Vector3D& direc, double start = gc::Epsilon, double end = gc::Infinity):
+    Ray(const Vector3D& orig, const Vector3D& direc, double start = gc::Epsilon, double end = gc::Infinity):
         origin(orig), tMin(start), tMax(end)
     {
         setDirection(direc);
     }
 
-    Point3D operator()(double t) const
+    Vector3D operator()(double t) const
     {
         return origin + m_direction * t;
     }
@@ -48,7 +48,7 @@ public:
                fabs(tMin - ray.tMin) < gc::Epsilon && fabs(tMax - ray.tMax) < gc::Epsilon;
     }
 
-    Point3D origin;
+    Vector3D origin;
     mutable double tMin;
     mutable double tMax;
 

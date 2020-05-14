@@ -235,8 +235,8 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     if (!box.isEmpty() )
     {
         BoundingBox sceneBox;
-        sceneBox.pMin = Point3D(box.getMin()[0], box.getMin()[1], box.getMin()[2]);
-        sceneBox.pMax = Point3D(box.getMax()[0], box.getMax()[1], box.getMax()[2]);
+        sceneBox.pMin = Vector3D(box.getMin()[0], box.getMin()[1], box.getMin()[2]);
+        sceneBox.pMax = Vector3D(box.getMax()[0], box.getMax()[1], box.getMax()[2]);
         if (lightKit) lightKit->setBox(sceneBox);
     }
 
@@ -417,7 +417,7 @@ void FluxAnalysis::FluxAnalysisCylinder(InstanceNode* node)
         if (photon.side == activeSideID)
         {
             totalPhotons++;
-            Point3D photonLocalCoord = worldToObject(photon.pos);
+            Vector3D photonLocalCoord = worldToObject.transformPoint(photon.pos);
             double phi = atan2(photonLocalCoord.y, photonLocalCoord.x);
             if (phi < 0.) phi += 2 * gc::Pi;
             double arcLength = phi * radius;
@@ -500,7 +500,7 @@ void FluxAnalysis::FluxAnalysisFlatDisk(InstanceNode* node)
         if (photon.side == activeSideID)
         {
             totalPhotons++;
-            Point3D photonLocalCoord = worldToObject(photon.pos);
+            Vector3D photonLocalCoord = worldToObject.transformPoint(photon.pos);
             int xbin = floor( (photonLocalCoord.x - m_xmin) / (m_xmax - m_xmin) * m_widthDivisions);
             int ybin = floor( (photonLocalCoord.z - m_ymin) / (m_ymax - m_ymin) * m_heightDivisions);
             m_photonCounts[ybin][xbin] += 1;
@@ -581,7 +581,7 @@ void FluxAnalysis::FluxAnalysisFlatRectangle(InstanceNode* node)
         if (photon.side == activeSideID)
         {
             totalPhotons++;
-            Point3D photonLocalCoord = worldToObject(photon.pos);
+            Vector3D photonLocalCoord = worldToObject.transformPoint(photon.pos);
             int xbin = floor( (photonLocalCoord.x - m_xmin) / (m_xmax - m_xmin) * m_widthDivisions);
             int ybin = floor( (photonLocalCoord.z - m_ymin) / (m_ymax - m_ymin) * m_heightDivisions);
 

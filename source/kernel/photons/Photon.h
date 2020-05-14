@@ -3,19 +3,19 @@
 #include "kernel/TonatiuhKernel.h"
 
 #include "kernel/run/InstanceNode.h"
-#include "libraries/geometry/Point3D.h"
+#include "libraries/geometry/Vector3D.h"
 
 
 struct TONATIUH_KERNEL Photon
 {
     Photon();
-    Photon(const Point3D& pos, int side, double id = 0, InstanceNode* intersectedSurface = 0, int absorbedPhoton = 0);
+    Photon(const Vector3D& pos, int side, double id = 0, InstanceNode* intersectedSurface = 0, int absorbedPhoton = 0);
 
     // number of point along ray path, from 0
     double id;
 
     // point along ray path
-    Point3D pos;
+    Vector3D pos;
 
     // front side of intersected surface
     // front (true) for light source

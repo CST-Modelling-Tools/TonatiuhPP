@@ -32,7 +32,7 @@ SoSeparator* trf::DrawPhotons(const Photons& map)
     uint n = 0;
     for (const Photon& photon : map.getPhotons())
     {
-        const Point3D& pos = photon.pos;
+        const Vector3D& pos = photon.pos;
         coordinates->point.set1Value(n++, pos.x, pos.y, pos.z);
     }
     ans->addChild(coordinates);
@@ -65,7 +65,7 @@ SoSeparator* trf::DrawRays(const Photons& map, unsigned long /*numberOfRays*/)
             rayLengths << s;
             s = 0;
         }
-        const Point3D& pos = photon.pos;
+        const Vector3D& pos = photon.pos;
         points->point.set1Value(n++, pos.x, pos.y, pos.z);
         s++;
     }

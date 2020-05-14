@@ -4,13 +4,8 @@
 
 #include <Inventor/nodes/SoTransform.h>
 
-#include "libraries/geometry/NormalVector.h"
-#include "libraries/geometry/Point3D.h"
 #include "kernel/trf.h"
 #include "libraries/geometry/Transform.h"
-#include "kernel/scene/TSceneKit.h"
-#include "kernel/scene/TSeparatorKit.h"
-#include "libraries/geometry/Vector3D.h"
 
 
 SO_NODE_SOURCE(TrackerTrough)

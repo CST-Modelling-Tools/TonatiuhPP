@@ -108,7 +108,7 @@ bool RayTracer::NewPrimitiveRay(Ray* ray, RandomParallel& rand)
     int area = int(rand.RandomDouble()*m_validAreasVector.size());
     QPair<int, int> areaIndex = m_validAreasVector[area];
 
-    Point3D origin = m_lightShape->Sample(rand.RandomDouble(), rand.RandomDouble(), areaIndex.first, areaIndex.second);
+    Vector3D origin = m_lightShape->Sample(rand.RandomDouble(), rand.RandomDouble(), areaIndex.first, areaIndex.second);
 
     Vector3D direction;
     m_lightSunShape->generateRay(direction, rand);

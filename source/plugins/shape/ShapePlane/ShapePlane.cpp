@@ -36,8 +36,8 @@ BoundingBox ShapePlane::getBox() const
     double yMax = sizeY.getValue()/2.;
     double eps = 0.01*std::min(xMax, yMax);
     return BoundingBox(
-        Point3D(-xMax, -yMax, -eps),
-        Point3D(xMax, yMax, eps)
+        Vector3D(-xMax, -yMax, -eps),
+        Vector3D(xMax, yMax, eps)
     );
 }
 
@@ -52,7 +52,7 @@ bool ShapePlane::intersect(const Ray& ray, double *tHit, DifferentialGeometry* d
     if (t < ray.tMin + tolerance || t > ray.tMax) return false;
 
     // intersection with clipped shape
-    Point3D pHit = ray(t);
+    Vector3D pHit = ray(t);
     if (2.*abs(pHit.x) > sizeX.getValue() || 2.*abs(pHit.y) > sizeY.getValue())
         return false;
 

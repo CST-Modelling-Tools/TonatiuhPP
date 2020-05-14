@@ -63,7 +63,7 @@ double TLightShape::GetValidArea() const
 /*!
  * Returns the indexes of the valid areas to the ray tracer.
  */
-Point3D TLightShape::GetPoint3D(double u, double v, int h, int w) const //? w <> h
+Vector3D TLightShape::GetPoint3D(double u, double v, int h, int w) const //? w <> h
 {
     if ( OutOfRange(u, v) )
         gf::SevereError("Function TLightShape::GetPoint3D called with invalid parameters" );
@@ -76,7 +76,7 @@ Point3D TLightShape::GetPoint3D(double u, double v, int h, int w) const //? w <>
     double x = xMin.getValue() + (u + w)*xWidth;
     double y = yMin.getValue() + (v + h)*zWidth;
 
-    return Point3D(x, y, 0.);
+    return Vector3D(x, y, 0.);
 }
 
 void TLightShape::SetLightSourceArea(int h, int w, int** lightArea)

@@ -5,7 +5,6 @@
 #include "Ptr.h"
 #include "Vector3D.h"
 
-struct Point3D;
 class Ray;
 struct BoundingBox;
 
@@ -28,8 +27,8 @@ public:
     Vector3D transformVector(const Vector3D& v) const;
     Vector3D transformNormal(const Vector3D& v) const;
 
-    Point3D operator()(const Point3D& p) const;
-    void operator()(const Point3D& p, Point3D& ans) const;
+//    Point3D operator()(const Point3D& p) const;
+//    void operator()(const Point3D& p, Point3D& ans) const;
 
     Vector3D operator()(const Vector3D& v) const;
     void operator()(const Vector3D& v, Vector3D& ans) const;
@@ -61,7 +60,7 @@ public:
     static Transform rotateY(double angle);
     static Transform rotateZ(double angle);
     static Transform rotate(double angle, const Vector3D& axis);
-    static Transform LookAt(const Point3D& pos, const Point3D& look, const Vector3D& up);
+    static Transform LookAt(const Vector3D& pos, const Vector3D& look, const Vector3D& up);
 
 private:
     Ptr<Matrix4x4> m_mdir;
