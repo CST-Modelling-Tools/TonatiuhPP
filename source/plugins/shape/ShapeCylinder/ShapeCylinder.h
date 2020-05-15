@@ -17,9 +17,9 @@ public:
     BoundingBox getBox() const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
 
-	trt::TONATIUH_REAL radius;
-    trt::TONATIUH_REAL phiMax;
-    trt::TONATIUH_REAL sizeZ;
+    SoSFDouble radius;
+    SoSFDouble phiMax;
+    SoSFDouble sizeZ;
 
     NAME_ICON_FUNCTIONS("Cylinder", ":/ShapeCylinder.png")
 
