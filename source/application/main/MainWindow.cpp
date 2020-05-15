@@ -722,18 +722,18 @@ void MainWindow::Open()
     {
         // HKEY_CURRENT_USER\Software\CyI\Tonatiuh
         QSettings settings("CyI", "Tonatiuh");
-        QString openDirectory = settings.value("openDirectory", QString("../examples") ).toString();
+        QString openDirectory = settings.value("openDirectory", "../examples").toString();
 
         QString fileName = QFileDialog::getOpenFileName(
-            this,
-            tr("Open"), openDirectory,
-            tr("Tonatiuh files (*.tnh)")
+            this, "Open", openDirectory,
+            "Tonatiuh files (*.tnh)"
         );
 
         if (fileName.isEmpty() ) return;
 
         QFileInfo file(fileName);
         settings.setValue("openDirectory", file.path());
+
         StartOver(fileName);
     }
 }

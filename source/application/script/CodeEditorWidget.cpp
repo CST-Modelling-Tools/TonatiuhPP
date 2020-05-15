@@ -13,9 +13,10 @@
  */
 CodeEditorWidget::CodeEditorWidget(QWidget* parent, Qt::WindowFlags f):
     QWidget(parent, f),
-    m_currentScritFileName( QString( "" ) )
+    m_currentScritFileName("")
 {
     setupUi(this);
+
     SetupToolbar();
     lineNumberWidget->SetCodeEditor( codeEditor );
     connect( codeEditor, SIGNAL( updateRequest( QRect, int ) ), lineNumberWidget, SLOT( UpdateLineNumberArea( QRect, int ) ) );
@@ -40,7 +41,6 @@ QTextDocument* CodeEditorWidget::Document() const
  */
 bool CodeEditorWidget::OkToContinue()
 {
-
     QTextDocument* document = codeEditor->document();
 
     if ( document->isModified () )
@@ -52,8 +52,10 @@ bool CodeEditorWidget::OkToContinue()
                          QMessageBox::No,
                          QMessageBox::Cancel | QMessageBox::Escape );
 
-        if ( answer == QMessageBox::Yes ) return SaveScript();
-        else if ( answer == QMessageBox::Cancel ) return false;
+        if (answer == QMessageBox::Yes)
+            return SaveScript();
+        else if (answer == QMessageBox::Cancel)
+            return false;
     }
     return true;
 }
@@ -61,11 +63,11 @@ bool CodeEditorWidget::OkToContinue()
 /*!
  * Opens the script saved at \a fileName.
  */
-void CodeEditorWidget::OpenScriptFile( QString fileName )
+void CodeEditorWidget::OpenScriptFile(QString fileName)
 {
     if( !OkToContinue() ) return;
 
-    StartDocument( fileName );
+    StartDocument(fileName);
 }
 
 /*!
@@ -81,9 +83,9 @@ void CodeEditorWidget::NewScriptFile()
     document->clear();
 
     m_currentScritFileName = "";
-    emit FileOpened( QString( "" ) );
+    emit FileOpened("");
 
-    document->setModified( false );
+    document->setModified(false);
 }
 
 /*!
@@ -97,20 +99,20 @@ void CodeEditorWidget::OpenScriptFile()
 {
     if( !OkToContinue() ) return;
 
-    QSettings settings( "CyI", "Tonatiuh" );
-    QString dirName = settings.value( "codeeditorwidget.openDirectory", "." ).toString();
+    QSettings settings("CyI", "Tonatiuh");
+    QString dirName = settings.value("script.openDirectory", "../examples").toString();
 
 
-    QString fileName = QFileDialog::getOpenFileName( this,
-                                   tr( "Open File" ),  dirName,
-                                   tr( "Tonatiuh script file (*.tnhs)" ) );
+    QString fileName = QFileDialog::getOpenFileName(
+        this, "Open File", dirName,
+        "Tonatiuh script file (*.tnhs)"
+    );
+    if (fileName.isEmpty()) return;
 
-    if ( fileName.isEmpty() )    return;
+    QFileInfo file(fileName);
+    settings.setValue("script.openDirectory", file.path());
 
-    QFileInfo file( fileName );
-     settings.setValue( "codeeditorwidget.openDirectory", file.absolutePath() );
-
-    StartDocument( fileName );
+    StartDocument(fileName);
 }
 
 /**
@@ -129,19 +131,18 @@ void CodeEditorWidget::Run()
 bool CodeEditorWidget::SaveAsScriptFile()
 {
     QSettings settings("CyI", "Tonatiuh");
+    QString dirName = settings.value("script.saveDirectory", "../examples").toString();
 
-    QString dirName = settings.value( "codeeditorwidget.saveDirectory", "." ).toString();
+    QString fileName = QFileDialog::getSaveFileName(
+        this, "Save File", dirName,
+        "Tonatiuh script file (*.tnhs)"
+    );
+    if( fileName.isEmpty() ) return false;
 
+    QFileInfo file(fileName);
+    settings.setValue("script.saveDirectory", file.path());
 
-    QString fileName = QFileDialog::getSaveFileName( this,
-                               tr( "Save File" ), dirName,
-                               tr( "Tonatiuh script file (*.tnhs)" ) );
-        if( fileName.isEmpty() ) return false;
-
-    QFileInfo file( fileName );
-    settings.setValue( "codeeditorwidget.saveDirectory", file.absolutePath() );
-
-    return SaveScriptFile( fileName );
+    return SaveScriptFile(fileName);
 }
 
 /*!
@@ -165,24 +166,24 @@ bool CodeEditorWidget::SaveScriptFile( const QString& fileName )
 {
     QTextDocument* document = codeEditor->document();
 
-    QFile scriptFile( fileName );
-    if( !scriptFile.open( QIODevice::WriteOnly) )
+    QFile scriptFile(fileName);
+    if (!scriptFile.open(QIODevice::WriteOnly) )
     {
-        QMessageBox::warning( this, tr( "Tonatiuh warning" ),
-                                      tr( "Cannot open file %1." )
-                                    .arg( fileName ) );
+        QMessageBox::warning(this, tr("Tonatiuh warning"),
+                             tr("Cannot open file %1.")
+                             .arg(fileName) );
         return false;
     }
 
-    QTextStream out( &scriptFile );
-    out<<document->toPlainText();
+    QTextStream out(&scriptFile);
+    out << document->toPlainText();
 
     scriptFile.close();
-    document->setModified( false );
+    document->setModified(false);
 
 
     m_currentScritFileName = fileName;
-    emit FileSaved( fileName );
+    emit FileSaved(fileName);
     return true;
 }
 
@@ -200,27 +201,27 @@ void CodeEditorWidget::UpdateCodeEditorWidth( int /* width*/ )
  */
 void CodeEditorWidget::SetupToolbar()
 {
-    connect( newButton, SIGNAL( clicked( bool) ), this, SLOT( NewScriptFile() ) );
-    connect( openButton, SIGNAL( clicked( bool ) ), this, SLOT( OpenScriptFile() ) );
-    connect( saveButton, SIGNAL( clicked( bool ) ), this, SLOT( SaveScript() ) );
-    connect( saveAsButton, SIGNAL( clicked( bool ) ), this, SLOT( SaveAsScriptFile() ) );
+    connect(newButton, SIGNAL(clicked(bool)), this, SLOT(NewScriptFile()) );
+    connect(openButton, SIGNAL(clicked(bool)), this, SLOT(OpenScriptFile()) );
+    connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(SaveScript()) );
+    connect(saveAsButton, SIGNAL(clicked(bool)), this, SLOT(SaveAsScriptFile()) );
 
-    connect( undoButton, SIGNAL( clicked( bool ) ), codeEditor, SLOT( undo() ) );
-    connect( redoButton, SIGNAL( clicked( bool ) ), codeEditor, SLOT( redo() ) );
+    connect(undoButton, SIGNAL(clicked(bool)), codeEditor, SLOT(undo()) );
+    connect(redoButton, SIGNAL(clicked(bool)), codeEditor, SLOT(redo()) );
 
-    connect( cutButton, SIGNAL( clicked( bool ) ), codeEditor, SLOT( cut() ) );
-    connect( copyButton, SIGNAL( clicked( bool ) ), codeEditor, SLOT( copy() ) );
-    connect( pasteButton, SIGNAL( clicked( bool ) ), codeEditor, SLOT( paste() ) );
+    connect(cutButton, SIGNAL(clicked(bool)), codeEditor, SLOT(cut()) );
+    connect(copyButton, SIGNAL(clicked(bool)), codeEditor, SLOT(copy()) );
+    connect(pasteButton, SIGNAL(clicked(bool)), codeEditor, SLOT(paste()) );
 
-    connect( runButton, SIGNAL( clicked( bool) ), this, SLOT( Run() ) );
+    connect(runButton, SIGNAL(clicked(bool)), this, SLOT(Run()) );
 }
 
 /*!
  * Sets the code editor's contents to \a fileName contents and sets the currents file to \a fileName.
  */
-void CodeEditorWidget::StartDocument( QString fileName )
+void CodeEditorWidget::StartDocument(QString fileName)
 {
-    QFile scriptFile( fileName );
+    QFile scriptFile(fileName);
     if( !scriptFile.open( QIODevice::ReadOnly) )
     {
         QMessageBox::warning( this, tr( "Tonatiuh warning" ),
@@ -229,14 +230,14 @@ void CodeEditorWidget::StartDocument( QString fileName )
         return;
     }
 
-    QTextStream in( &scriptFile );
+    QTextStream in(&scriptFile);
 
     QTextDocument* document = codeEditor->document();
     document->clear();
-    document->setPlainText( in.readAll() );
+    document->setPlainText(in.readAll() );
     scriptFile.close();
 
     m_currentScritFileName = fileName;
-    emit FileOpened( fileName );
-    document->setModified( false );
+    emit FileOpened(fileName);
+    document->setModified(false);
 }
