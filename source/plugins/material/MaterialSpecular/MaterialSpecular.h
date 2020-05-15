@@ -13,8 +13,8 @@ class MaterialSpecular: public MaterialAbstract
 
 public:
     enum Distribution {
-        PILLBOX = 0,
-        NORMAL = 1
+        pillbox = 0,
+        Gaussian = 1
     };
 
     static void initClass();

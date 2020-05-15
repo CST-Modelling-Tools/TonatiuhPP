@@ -25,10 +25,10 @@ MaterialSpecular::MaterialSpecular():
     SO_NODE_ADD_FIELD(reflectivity, (0.9) );
     SO_NODE_ADD_FIELD(slope, (2.) );
 
-    //SO_NODE_DEFINE_ENUM_VALUE(Distribution, PILLBOX);
-    SO_NODE_DEFINE_ENUM_VALUE(Distribution, NORMAL);
+    //SO_NODE_DEFINE_ENUM_VALUE(Distribution, pillbox);
+    SO_NODE_DEFINE_ENUM_VALUE(Distribution, Gaussian);
     SO_NODE_SET_SF_ENUM_TYPE(distribution, Distribution);
-    SO_NODE_ADD_FIELD(distribution, (NORMAL) );
+    SO_NODE_ADD_FIELD(distribution, (Gaussian) );
 
     SO_NODE_ADD_FIELD( ambientColor, (0.2f, 0.2f, 0.2f) );
     SO_NODE_ADD_FIELD( diffuseColor, (0.8f, 0.8f, 0.8f) );
@@ -57,7 +57,7 @@ bool MaterialSpecular::OutputRay(const Ray& rayIn, DifferentialGeometry* dg, Ran
     Vector3D normal;
     double sigma = slope.getValue()/1000.; // from mrad to rad
     if (sigma > 0.) {
-        if (distribution.getValue() == Distribution::PILLBOX)
+        if (distribution.getValue() == Distribution::pillbox)
         {
             double phi = gcf::TwoPi*rand.RandomDouble();
             double theta = sigma*rand.RandomDouble();
@@ -65,7 +65,7 @@ bool MaterialSpecular::OutputRay(const Ray& rayIn, DifferentialGeometry* dg, Ran
             normal.y = sin(theta)*cos(phi);
             normal.z = cos(theta);
         }
-        else if (distribution.getValue() == Distribution::NORMAL)
+        else if (distribution.getValue() == Distribution::Gaussian)
         {
             normal.x = sigma*tgf::AlternateBoxMuller(rand);
             normal.y = sigma*tgf::AlternateBoxMuller(rand);
