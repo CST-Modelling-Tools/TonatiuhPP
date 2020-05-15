@@ -36,7 +36,12 @@ ParametersItem::~ParametersItem()
 
 QVariant ParametersItem::data(int role) const
 {
-//    if (role == Qt::DisplayRole)
+    if (role == Qt::DisplayRole)
+    {
+        bool ok;
+        double d = QStandardItem::data(role).toDouble(&ok);
+        if (ok) return QString::number(d);
+    }
 //    {
 //        if (column() == 0) return text();
 

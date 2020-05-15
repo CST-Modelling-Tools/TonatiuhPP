@@ -66,12 +66,13 @@ void ParametersView::SetContainer(SoNode* node)
     {
         SoField* field = fields.get(n);
         if (!field) continue;
-        SbString value;
-        field->get(value);
         SbName name;
         if (!m_node->getFieldName(field, name)) continue;
         ParametersItem* itemName = new ParametersItem(name.getString(), false, field);
         m_model->setItem(n, 0, itemName);
+
+        SbString value;
+        field->get(value);
         ParametersItem* itemValue = new ParametersItem(value.getString(), true, field);
         m_model->setItem(n, 1, itemValue);
     }
