@@ -1,14 +1,12 @@
 #include "TrackerTrough.h"
 
-#include <cmath>
-
-#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/sensors/SoNodeSensor.h>
 
 #include "kernel/trf.h"
-#include "libraries/geometry/Transform.h"
-
+#include "TroughModel.h"
 
 SO_NODE_SOURCE(TrackerTrough)
+
 
 void TrackerTrough::initClass()
 {
@@ -19,56 +17,71 @@ TrackerTrough::TrackerTrough()
 {
     SO_NODE_CONSTRUCTOR(TrackerTrough);
 
-    SO_NODE_ADD_FIELD( trackingAxis, (0.f, 1.f, 0.f) );
-    SO_NODE_ADD_FIELD( mirrorNormal, (0.f, 0.f, 1.f) );
-    SO_NODE_ADD_FIELD( mirrorPoint, (0.f, 0.f, 0.f) );
+    SO_NODE_ADD_FIELD( primaryShift, (0.f, 0.f, 1.f) );
+    SO_NODE_ADD_FIELD( primaryAxis, (0.f, 1.f, 0.f) );
+    SO_NODE_ADD_FIELD( primaryAngles, (-90*gcf::degree, 90*gcf::degree) );
 
-    SO_NODE_DEFINE_ENUM_VALUE(AimingType, local);
-    SO_NODE_DEFINE_ENUM_VALUE(AimingType, global);
-    SO_NODE_SET_SF_ENUM_TYPE(aimingType, AimingType);
-    SO_NODE_ADD_FIELD( aimingType, (local) );
+    SO_NODE_ADD_FIELD( facetShift, (0.f, 0.f, 0.f) );
+    SO_NODE_ADD_FIELD( facetNormal, (0.f, 0.f, 1.f) );
 
+    SO_NODE_DEFINE_ENUM_VALUE(AimingFrame, global);
+    SO_NODE_DEFINE_ENUM_VALUE(AimingFrame, primary);
+    SO_NODE_SET_SF_ENUM_TYPE(aimingFrame, AimingFrame);
+    SO_NODE_ADD_FIELD( aimingFrame, (primary) );
     SO_NODE_ADD_FIELD( aimingPoint, (0.f, 0.f, 1.f) );
+
+    SO_NODE_ADD_FIELD( angleDefault, (0.f) );
+
+    m_trough = 0;
+    m_sensor = new SoNodeSensor(onModified, this);
+    m_sensor->attach(this);
+    onModified(this, 0);
 }
 
-// rotation around a from m to v
-inline double findAngle(Vector3D& a, Vector3D& m, Vector3D& v, double av)
+TrackerTrough::~TrackerTrough()
 {
-    return atan2(dot(a, cross(m, v)), dot(m, v) - av*av);
+    delete m_sensor;
+    delete m_trough;
 }
 
 void TrackerTrough::update(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun)
 {
-    Vector3D a = tgf::makeVector3D(trackingAxis.getValue());
-    a.normalize();
-    Vector3D v0 = tgf::makeVector3D(mirrorNormal.getValue());
-    v0 -= dot(v0, a)*a;
-    v0.normalize();
-
     Transform toLocal = toGlobal.inversed();
-    Vector3D vS = toLocal(vSun);
-    vS -= dot(vS, a)*a;
-    vS.normalize();
-
-    Vector3D vT = tgf::makeVector3D(aimingPoint.getValue());
-    if (aimingType.getValue() == global)
-        vT = toLocal.transformPoint(vT);
-    vT -= tgf::makeVector3D(mirrorPoint.getValue());
-    vT -= dot(vT, a)*a;
-    vT.normalize();
+    Vector3D vSunL = toLocal.transformVector(vSun);
+    Vector3D rAim = tgf::makeVector3D(aimingPoint.getValue());
 
     double angle;
-    if (aimingType.getValue() == global) {
-        Vector3D v = vS + vT;// check mirroPoint
-        if (!v.normalize()) return;
-        angle = findAngle(a, v0, v, dot(a, v));
-    } else {
-        Vector3D vS0 = -(vT - 2.*dot(vT, v0)*v0);
-        angle = findAngle(a, vS0, vS, dot(a, vS));
+    if (aimingFrame.getValue() == global) {
+        rAim = toLocal.transformPoint(rAim);
+        angle = m_trough->solveReflectionGlobal(vSunL, rAim);
+    } else if (aimingFrame.getValue() == primary) {
+        angle = m_trough->solveReflectionPrimary(vSunL, rAim);
     }
 
+    // rotate nodes
     auto node = static_cast<SoBaseKit*>(parent->getPart("childList[0]", false));
     if (!node) return;
-    SoTransform* tParent = (SoTransform*) node->getPart("transform", true);
-    tParent->rotation.setValue(trackingAxis.getValue(), angle);
+    SoTransform* tPrimary = (SoTransform*) node->getPart("transform", true);
+    tPrimary->translation = primaryShift.getValue();
+    tPrimary->rotation.setValue(primaryAxis.getValue(), angle);
+}
+
+void TrackerTrough::onModified(void* data, SoSensor*)
+{
+    TrackerTrough* tracker = (TrackerTrough*) data;
+    if (tracker->m_trough) delete tracker->m_trough;
+
+    Vector2D pa = tgf::makeVector2D(tracker->primaryAngles.getValue());
+
+    tracker->m_trough = new TroughModel(
+        TrackingDrive(
+            tgf::makeVector3D(tracker->primaryShift.getValue()),
+            tgf::makeVector3D(tracker->primaryAxis.getValue()),
+            IntervalAngular(pa.x, pa.y)
+        ),
+        TrackingVertex(
+            tgf::makeVector3D(tracker->facetShift.getValue()),
+            tgf::makeVector3D(tracker->facetNormal.getValue())
+        )
+    );
 }

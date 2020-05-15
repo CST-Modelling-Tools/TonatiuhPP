@@ -2,6 +2,10 @@
 
 #include "kernel/trackers/TrackerAbstract.h"
 
+class TroughModel;
+class SoNodeSensor;
+class SoSensor;
+
 
 class TrackerTrough: public TrackerAbstract
 {
@@ -13,17 +17,31 @@ public:
 
     void update(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun);
 
-    SoSFVec3f trackingAxis;
-    SoSFVec3f mirrorPoint;
-    SoSFVec3f mirrorNormal;
+    // all vectors should be for zero rotation
+    SoSFVec3f primaryShift;
+    SoSFVec3f primaryAxis;
+    SoSFVec2f primaryAngles;
 
-    SoSFEnum aimingType;
+    SoSFVec3f facetShift;
+    SoSFVec3f facetNormal;
+
+    enum AimingFrame {
+        global = 0,
+        primary = 1
+    };
+    SoSFEnum aimingFrame;
     SoSFVec3f aimingPoint;
+
+    SoSFFloat angleDefault;
 
     NAME_ICON_FUNCTIONS("Trough", ":/TrackerTrough.png")
 
 protected:
-    ~TrackerTrough() {}
+    ~TrackerTrough();
+
+    TroughModel* m_trough;
+    SoNodeSensor* m_sensor;
+    static void onModified(void* data, SoSensor*);
 };
 
 

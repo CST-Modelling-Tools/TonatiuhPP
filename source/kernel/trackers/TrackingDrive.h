@@ -1,13 +1,16 @@
 #pragma once
 
+#include "kernel/TonatiuhKernel.h"
+
 #include "libraries/geometry/Vector2D.h"
 #include "libraries/geometry/Vector3D.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/Interval.h"
 
-struct HeliostatDrive
+
+struct TONATIUH_KERNEL TrackingDrive
 {
-    HeliostatDrive(const Vector3D& shift, const Vector3D& axis, const IntervalAngular& angles);
+    TrackingDrive(const Vector3D& shift, const Vector3D& axis, const IntervalAngular& angles);
 
     Vector3D shift;
     Vector3D axis;
@@ -17,12 +20,10 @@ struct HeliostatDrive
 };
 
 
-struct Vertex3D
+struct TONATIUH_KERNEL TrackingVertex
 {
-    Vertex3D(const Vector3D& point, const Vector3D& normal);
+    TrackingVertex(const Vector3D& shift, const Vector3D& normal);
 
-    Vector3D point;
+    Vector3D shift;
     Vector3D normal;
 };
-
-

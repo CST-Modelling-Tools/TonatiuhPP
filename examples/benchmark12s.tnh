@@ -113,33 +113,9 @@ TSceneKit {
                     Transform {
 
                     }
-                    childList 
-                    NodeKitListPart {
-                      containerTypeName "Separator"
-                      childTypeNames [ "ShapeKit",
-                          "SeparatorKit" ]
-                      containerNode 
-                      Separator {
-
-                        DEF Shape TShapeKit {
-                          fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode materialBinding, SFNode normalBinding, SFNode textureCoordinateBinding, SFNode shapeHints, SFNode coordinate3, SFNode coordinate4, SFNode normal, SFNode textureCoordinate2, SFNode textureCoordinateFunction, SFNode profileCoordinate2, SFNode profileCoordinate3, SFNode profileList, SFNode localTransform, SFNode shape, SFNode topSeparator, SFNode shapeSeparator ]
-                          appearance 
-                          AppearanceKit {
-                            material 
-                            DEF Specular MaterialSpecular {
-                              fields [ SFDouble reflectivity, SFDouble slope, SFEnum distribution, MFColor ambientColor, MFColor diffuseColor, MFColor specularColor, MFColor emissiveColor, MFFloat shininess, MFFloat transparency ]
-
-                            }
-
-                          }
-                          shape 
-                          DEF Sphere ShapeSphere {
-                            fields [ SFFloat radius, SFFloat phiMax, SFFloat alphaMin, SFFloat alphaMax, SFEnum activeSide ]
-
-                          }
-
-                        }
-                      }
+                    tracker 
+                    DEF Trough TrackerTrough {
+                      fields [ SFVec3f trackingAxis, SFVec3f mirrorNormal, SFVec3f mirrorPoint, SFEnum aimingType, SFVec3f aimingPoint ]
 
                     }
 

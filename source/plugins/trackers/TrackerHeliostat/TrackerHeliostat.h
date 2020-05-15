@@ -26,20 +26,27 @@ public:
     SoSFVec3f secondaryAxis;
     SoSFVec2f secondaryAngles;
 
-    SoSFVec3f mirrorPoint;
-    SoSFVec3f mirrorNormal;
+    SoSFVec3f facetShift;
+    SoSFVec3f facetNormal;
 
+    enum AimingFrame {
+        global = 0,
+        primary = 1,
+        secondary = 2
+    };
     SoSFEnum aimingFrame;
     SoSFVec3f aimingPoint;
+
+    SoSFVec2f anglesDefault;
 
     NAME_ICON_FUNCTIONS("Heliostat", ":/TrackerHeliostat.png")
 
 protected:
     ~TrackerHeliostat();
 
-    HeliostatModel* m_hm;
+    HeliostatModel* m_heliostat;
     SoNodeSensor* m_sensor;
-    static void update(void* data, SoSensor*);
+    static void onModified(void* data, SoSensor*);
 };
 
 

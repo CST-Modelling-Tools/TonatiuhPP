@@ -17,12 +17,7 @@ class TONATIUH_KERNEL TrackerAbstract: public SoNode
 public:
     static void initClass();
 
-    enum AimingFrame {
-        local = 0,
-        global = 1
-    };
-
-    virtual void update(SoBaseKit* parent, const Transform& transform, const Vector3D& vSun);
+    virtual void update(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun);
 
     NAME_ICON_FUNCTIONS("X", ":/TrackerX.png")
 

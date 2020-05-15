@@ -10,36 +10,23 @@ inline double findAngle(const Vector3D& a, const Vector3D& m, const Vector3D& v,
     return atan2(dot(a, cross(m, v)), dot(m, v) - av*av);
 }
 
-Angles findAngles(
-    const Vector3D& a, const Vector3D& b,
-    const Vector3D& v, const Vector3D& m, const Vector3D& v0,
-    double av, double bv0
-)
-{
-    return Angles(
-        findAngle(a, m, v, av),
-        findAngle(b, v0, m, bv0)
-    );
-}
-
-
 HeliostatModel::HeliostatModel(
-    const HeliostatDrive& primary,
-    const HeliostatDrive& secondary,
-    const Vertex3D& tracking,
+    const TrackingDrive& primary,
+    const TrackingDrive& secondary,
+    const TrackingVertex& facet,
     const Angles& angles0
 ):
     primary(primary),
     secondary(secondary),
-    tracking(tracking),
+    facet(facet),
     angles0(angles0)
 {
 
 }
 
-Vector3D HeliostatModel::findTrackingPoint(const Angles& angles)
+Vector3D HeliostatModel::findFacetPoint(const Angles& angles)
 {
-    Vector3D r = secondary.getTransform(angles.y).transformPoint(tracking.point);
+    Vector3D r = secondary.getTransform(angles.y).transformPoint(facet.shift);
     return primary.getTransform(angles.x).transformPoint(r);
 }
 
@@ -65,44 +52,44 @@ QVector<Angles> HeliostatModel::solveRotation(const Vector3D& v0, const Vector3D
     mk = sqrt(mk/k2);
     Vector3D m0 = ma*a + mb*b;
     QVector<Angles> ans;
-    ans << findAngles(a, b, v, m0 - mk*k, v0, av, bv0);
-    ans << findAngles(a, b, v, m0 + mk*k, v0, av, bv0);
+    Vector3D m = m0 - mk*k;
+    ans << Angles(findAngle(a, m, v, av), findAngle(b, v0, m, bv0));
+    m = m0 + mk*k;
+    ans << Angles(findAngle(a, m, v, av), findAngle(b, v0, m, bv0));
     return ans;
 }
 
-// rotate tracking.normal to normal
-QVector<Angles> HeliostatModel::solveTrackingNormal(const Vector3D& normal)
+// rotate facet.normal to normal
+QVector<Angles> HeliostatModel::solveFacetNormal(const Vector3D& normal)
 {
-    return solveRotation(tracking.normal, normal);
+    return solveRotation(facet.normal, normal);
 }
 
-// vSun and rAim are local
-QVector<Angles> HeliostatModel::solveReflectionLocal(const Vector3D& vSun, const Vector3D& rAim)
+QVector<Angles> HeliostatModel::solveReflectionSecondary(const Vector3D& vSun, const Vector3D& rAim)
 {
-    Vector3D vTarget0 = (rAim - tracking.point).normalized();
-    Vector3D vSun0 = -vTarget0.reflected(tracking.normal);
+    Vector3D vTarget0 = (rAim - facet.shift).normalized();
+    Vector3D vSun0 = -vTarget0.reflected(facet.normal);
     return solveRotation(vSun0, vSun);
 }
 
-// vSun and rAim are local
 QVector<Angles> HeliostatModel::solveReflectionGlobal(const Vector3D& vSun, const Vector3D& rAim)
 {
     QVector<Angles> ans;
-    int iterationsMax = 5; // max iterations
+    int iMax = 5; // max iterations
     double deltaMin = 0.01; // accuracy in meters
 
     for (int s = 0; s < 2; ++s) // solutions
     {
-        Vector3D rMirror = findTrackingPoint(angles0);
-        for (int iteration = 0; iteration < iterationsMax; ++iteration)
+        Vector3D rFacet = findFacetPoint(angles0);
+        for (int i = 0; i < iMax; ++i)
         {
-            Vector3D vTarget = (rAim - rMirror).normalized();
-            Vector3D vNormal = (vSun + vTarget).normalized();
-            QVector<Angles> temp = solveTrackingNormal(vNormal);
+            Vector3D vTarget = (rAim - rFacet).normalized();
+            Vector3D normal = (vSun + vTarget).normalized();
+            QVector<Angles> temp = solveFacetNormal(normal);
             if (temp.empty()) break;
             Angles& angles = temp[s];
-            rMirror = findTrackingPoint(angles);
-            double delta = cross(rAim - rMirror, vTarget).norm();
+            rFacet = findFacetPoint(angles);
+            double delta = cross(rAim - rFacet, vTarget).norm();
             if (delta > deltaMin) continue;
             ans << angles;
             break;

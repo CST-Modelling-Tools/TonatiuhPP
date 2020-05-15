@@ -1,15 +1,9 @@
 #include "TrackerHeliostat.h"
 
-#include <cmath>
-#include <Inventor/nodes/SoTransform.h>
-#include <Inventor/nodes/SoNode.h>
 #include <Inventor/sensors/SoNodeSensor.h>
 
-#include "libraries/geometry/Transform.h"
 #include "kernel/trf.h"
-
 #include "HeliostatModel.h"
-#include <algorithm>
 
 SO_NODE_SOURCE(TrackerHeliostat)
 
@@ -31,27 +25,27 @@ TrackerHeliostat::TrackerHeliostat()
     SO_NODE_ADD_FIELD( secondaryAxis, (1.f, 0.f, 0.f) ); // elevation
     SO_NODE_ADD_FIELD( secondaryAngles, (-90*gcf::degree, 90*gcf::degree) );
 
-    SO_NODE_ADD_FIELD( mirrorPoint, (0.f, 0.f, 0.f) );
-    SO_NODE_ADD_FIELD( mirrorNormal, (0.f, 0.f, 1.f) );
+    SO_NODE_ADD_FIELD( facetShift, (0.f, 0.f, 0.f) );
+    SO_NODE_ADD_FIELD( facetNormal, (0.f, 0.f, 1.f) );
 
-    SO_NODE_DEFINE_ENUM_VALUE(AimingType, local);
-    SO_NODE_DEFINE_ENUM_VALUE(AimingType, global);
-    SO_NODE_SET_SF_ENUM_TYPE(aimingFrame, AimingType);
+    SO_NODE_DEFINE_ENUM_VALUE(AimingFrame, global);
+    SO_NODE_DEFINE_ENUM_VALUE(AimingFrame, secondary);
+    SO_NODE_SET_SF_ENUM_TYPE(aimingFrame, AimingFrame);
     SO_NODE_ADD_FIELD( aimingFrame, (global) );
-
     SO_NODE_ADD_FIELD( aimingPoint, (0.f, 0.f, 10.f) );
 
-    m_hm = 0;
-    m_sensor = new SoNodeSensor(update, this);
-    m_sensor->attach(this);
-    update(this, 0);
-}
+    SO_NODE_ADD_FIELD( anglesDefault, (0., 0.) );
 
+    m_heliostat = 0;
+    m_sensor = new SoNodeSensor(onModified, this);
+    m_sensor->attach(this);
+    onModified(this, 0);
+}
 
 TrackerHeliostat::~TrackerHeliostat()
 {
     delete m_sensor;
-    delete m_hm;
+    delete m_heliostat;
 }
 
 void TrackerHeliostat::update(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun)
@@ -60,15 +54,15 @@ void TrackerHeliostat::update(SoBaseKit* parent, const Transform& toGlobal, cons
     Transform toLocal = toGlobal.inversed();
     Vector3D vSunL = toLocal.transformVector(vSun);
     Vector3D rAim = tgf::makeVector3D(aimingPoint.getValue());
-    if (aimingFrame.getValue() == local) {
-        solutions = m_hm->solveReflectionLocal(vSunL, rAim);
-    } else {
+    if (aimingFrame.getValue() == global) {
         rAim = toLocal.transformPoint(rAim);
-        solutions = m_hm->solveReflectionGlobal(vSunL, rAim);
+        solutions = m_heliostat->solveReflectionGlobal(vSunL, rAim);
+    } else if (aimingFrame.getValue() == secondary) {
+        solutions = m_heliostat->solveReflectionSecondary(vSunL, rAim);
     }
+    Angles solution = m_heliostat->selectSolution(solutions);
 
-    Angles solution = m_hm->selectSolution(solutions);
-
+    // rotate nodes
     auto nodePrimary = static_cast<SoBaseKit*>(parent->getPart("childList[0]", false));
     if (!nodePrimary) return;
     SoTransform* tPrimary = (SoTransform*) nodePrimary->getPart("transform", true);
@@ -82,29 +76,29 @@ void TrackerHeliostat::update(SoBaseKit* parent, const Transform& toGlobal, cons
     tSecondary->rotation.setValue(secondaryAxis.getValue(), solution.y);
 }
 
-void TrackerHeliostat::update(void* data, SoSensor*)
+void TrackerHeliostat::onModified(void* data, SoSensor*)
 {
     TrackerHeliostat* tracker = (TrackerHeliostat*) data;
-
-    if (tracker->m_hm) delete tracker->m_hm;
+    if (tracker->m_heliostat) delete tracker->m_heliostat;
 
     Vector2D pa = tgf::makeVector2D(tracker->primaryAngles.getValue());
     Vector2D pb = tgf::makeVector2D(tracker->secondaryAngles.getValue());
 
-    tracker->m_hm = new HeliostatModel(
-        HeliostatDrive(
+    tracker->m_heliostat = new HeliostatModel(
+        TrackingDrive(
             tgf::makeVector3D(tracker->primaryShift.getValue()),
             tgf::makeVector3D(tracker->primaryAxis.getValue()),
             IntervalAngular(pa.x, pa.y)
         ),
-        HeliostatDrive(
+        TrackingDrive(
             tgf::makeVector3D(tracker->secondaryShift.getValue()),
             tgf::makeVector3D(tracker->secondaryAxis.getValue()),
             IntervalAngular(pb.x, pb.y)
         ),
-        Vertex3D(
-            tgf::makeVector3D(tracker->mirrorPoint.getValue()),
-            tgf::makeVector3D(tracker->mirrorNormal.getValue())
-        )
+        TrackingVertex(
+            tgf::makeVector3D(tracker->facetShift.getValue()),
+            tgf::makeVector3D(tracker->facetNormal.getValue())
+        ),
+        tgf::makeVector2D(tracker->anglesDefault.getValue())
     );
 }
