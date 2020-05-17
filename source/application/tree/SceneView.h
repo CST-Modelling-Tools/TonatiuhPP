@@ -28,7 +28,7 @@ protected:
 protected slots:
     void currentChanged(const QModelIndex& current, const QModelIndex& previous);
     void closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint);
-    void resizeViewToContents(const QModelIndex& index);
+//    void resizeViewToContents(const QModelIndex& index);
 
 protected slots:
 

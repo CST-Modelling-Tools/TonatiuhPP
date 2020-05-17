@@ -33,10 +33,10 @@ SceneView::SceneView(QWidget* parent):
     //setAcceptDrops(true);
 //    setAnimated(false);
 
-    connect( this, SIGNAL( collapsed( const QModelIndex& ) ),
-            this, SLOT ( resizeViewToContents ( const QModelIndex& ) ) );
-    connect( this, SIGNAL( expanded ( const QModelIndex& ) ),
-            this, SLOT ( resizeViewToContents ( const QModelIndex& ) ) );
+//    connect( this, SIGNAL( collapsed( const QModelIndex& ) ),
+//            this, SLOT ( resizeViewToContents ( const QModelIndex& ) ) );
+//    connect( this, SIGNAL( expanded ( const QModelIndex& ) ),
+//            this, SLOT ( resizeViewToContents ( const QModelIndex& ) ) );
 }
 
 /*!
@@ -174,13 +174,13 @@ void SceneView::closeEditor( QWidget* editor, QAbstractItemDelegate::EndEditHint
      QTreeView::closeEditor( editor, hint );
 }
 
-/**
- * Resizes the view to the size of its contents.
- */
-void SceneView::resizeViewToContents(const QModelIndex& index)
-{
-    resizeColumnToContents( index.column() );
-}
+///**
+// * Resizes the view to the size of its contents.
+// */
+//void SceneView::resizeViewToContents(const QModelIndex& index)
+//{
+//    resizeColumnToContents( index.column() );
+//}
 
 /**
  * Not yet docummented

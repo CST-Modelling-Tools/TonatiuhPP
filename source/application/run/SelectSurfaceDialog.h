@@ -14,10 +14,10 @@ class SelectSurfaceDialog: public QDialog, private Ui::SelectSurfaceDialog
     Q_OBJECT
 
 public:
-    SelectSurfaceDialog(SceneModel& sceneModel, bool enableLight = true, QWidget* parent = 0 );
+    SelectSurfaceDialog(SceneModel& model, bool enableLight = true, QWidget* parent = 0 );
     ~SelectSurfaceDialog();
 
-    void SetShapeTypeFilters(QVector<QString> shapeTypeFilters);
+    void SetShapeTypeFilters(QVector<QString> filters);
 
     QString GetSelectedSurfaceURL() const;
 
@@ -26,6 +26,6 @@ public slots:
 
 private:
     bool m_isLightVisible;
-    SceneModel* m_pCurrentSceneModel;
-    SceneFilter* m_pNodeFilterModel;
+    SceneModel* m_model;
+    SceneFilter* m_filter;
 };

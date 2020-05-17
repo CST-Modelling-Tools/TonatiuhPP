@@ -13,17 +13,30 @@
  *
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
-CmdInsertShapeKit::CmdInsertShapeKit( const QModelIndex& parentIndex, TShapeKit* shapeKit, SceneModel* model, QUndoCommand* parent )
-: QUndoCommand("InsertShapeKit", parent), m_coinParent( 0 ), m_shapeKit(shapeKit), m_pModel(model), m_row( -1 )
+CmdInsertShapeKit::CmdInsertShapeKit(
+    const QModelIndex& parentIndex,
+    TShapeKit* shapeKit,
+    SceneModel* model,
+    QUndoCommand* parent
+):
+    QUndoCommand("InsertShapeKit", parent),
+    m_coinParent(0),
+    m_shapeKit(shapeKit),
+    m_pModel(model),
+    m_row(-1)
 {
-    if( m_shapeKit == 0 ) gcf::SevereError( "CmdInsertShapeKit called with NULL TShapeKit*" );
+    if (m_shapeKit == 0)
+        gcf::SevereError("CmdInsertShapeKit called with NULL TShapeKit*");
     m_shapeKit->ref();
 
-    if( !parentIndex.isValid() ) gcf::SevereError( "CmdInsertShapeKit called with invalid ModelIndex." );
-    InstanceNode* instanceParent = m_pModel->NodeFromIndex( parentIndex );
-    if( !instanceParent->getNode() ) gcf::SevereError( "CmdInsertShapeKit called with NULL parent node." );
-    m_coinParent = static_cast< SoBaseKit* > ( instanceParent->getNode() );
+    if (!parentIndex.isValid())
+        gcf::SevereError("CmdInsertShapeKit called with invalid ModelIndex.");
 
+    InstanceNode* instanceParent = m_pModel->NodeFromIndex(parentIndex);
+    if (!instanceParent->getNode())
+        gcf::SevereError("CmdInsertShapeKit called with NULL parent node.");
+
+    m_coinParent = static_cast<SoBaseKit*> ( instanceParent->getNode() );
 }
 
 /*!
@@ -40,14 +53,14 @@ CmdInsertShapeKit::~CmdInsertShapeKit()
  */
 void CmdInsertShapeKit::undo()
 {
-    m_pModel->RemoveCoinNode( m_row, *m_coinParent );
+    m_pModel->RemoveCoinNode(m_row, *m_coinParent);
 }
 
 /*!
  * Applies a change to the model. After redo() the model will contain new \a shapekit node.
  * \sa undo().
  */
-void CmdInsertShapeKit::redo( )
+void CmdInsertShapeKit::redo()
 {
-    m_row = m_pModel->InsertCoinNode( *m_shapeKit, *m_coinParent );
+    m_row = m_pModel->InsertCoinNode(*m_shapeKit, *m_coinParent);
 }

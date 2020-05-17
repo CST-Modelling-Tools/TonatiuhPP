@@ -1,8 +1,9 @@
 #pragma once
+
 #include <QPlainTextEdit>
 
 
-class CodeEditArea : public QPlainTextEdit
+class CodeEditArea: public QPlainTextEdit
 {
     Q_OBJECT
 

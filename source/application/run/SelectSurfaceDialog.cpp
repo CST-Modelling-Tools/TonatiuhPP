@@ -12,11 +12,10 @@
 /*!
  * Creates a dialog object to select a surface from the \a currentSceneModel.
  */
-SelectSurfaceDialog::SelectSurfaceDialog(SceneModel& currentSceneModel, bool enableLight, QWidget* parent):
+SelectSurfaceDialog::SelectSurfaceDialog(SceneModel& model, bool enableLight, QWidget* parent):
     QDialog(parent),
     m_isLightVisible(enableLight),
-    m_pCurrentSceneModel(&currentSceneModel),
-    m_pNodeFilterModel(0)
+    m_model(&model)
 {
     setupUi(this);
 
@@ -26,11 +25,11 @@ SelectSurfaceDialog::SelectSurfaceDialog(SceneModel& currentSceneModel, bool ena
         sceneRadio->setVisible(false);
     }
 
-    m_pNodeFilterModel = new SceneFilter(this);
-    m_pNodeFilterModel->setSourceModel(m_pCurrentSceneModel);
-    sceneModelView->setModel(m_pNodeFilterModel);
+    m_filter = new SceneFilter(this);
+    m_filter->setSourceModel(m_model);
+    sceneModelView->setModel(m_filter);
 
-    QModelIndex viewLayoutIndex = currentSceneModel.IndexFromNodeUrl("//SunNode");
+    QModelIndex viewLayoutIndex = model.IndexFromNodeUrl("//SunNode");
     sceneModelView->setSelectionBehavior(QAbstractItemView::SelectRows);
     sceneModelView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     sceneModelView->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -43,13 +42,13 @@ SelectSurfaceDialog::SelectSurfaceDialog(SceneModel& currentSceneModel, bool ena
  */
 SelectSurfaceDialog::~SelectSurfaceDialog()
 {
-    delete m_pNodeFilterModel;
+    delete m_filter;
 }
 
 
-void SelectSurfaceDialog::SetShapeTypeFilters(QVector<QString>  shapeTypeFilters)
+void SelectSurfaceDialog::SetShapeTypeFilters(QVector<QString> filters)
 {
-    m_pNodeFilterModel->SetShapeTypeFilters(shapeTypeFilters);
+    m_filter->SetShapeTypeFilters(filters);
 }
 
 /*!
@@ -61,9 +60,9 @@ void SelectSurfaceDialog::accept()
     if (sceneRadio->isChecked() && selectionModel->hasSelection() )
     {
         QModelIndex selectedIndex = selectionModel->currentIndex();
-        QModelIndex currentIndex = m_pNodeFilterModel->mapToSource(selectedIndex);
+        QModelIndex currentIndex = m_filter->mapToSource(selectedIndex);
 
-        InstanceNode* selectedNode = m_pCurrentSceneModel->NodeFromIndex(currentIndex);
+        InstanceNode* selectedNode = m_model->NodeFromIndex(currentIndex);
         if (!selectedNode->getNode()->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) )
         {
             QMessageBox::information(this, "Tonatiuh", tr("Selected node is not surface node"), 1);
@@ -80,17 +79,17 @@ void SelectSurfaceDialog::accept()
  */
 QString SelectSurfaceDialog::GetSelectedSurfaceURL() const
 {
-    if (m_isLightVisible  && lightRadio->isChecked() )
+    if (m_isLightVisible && lightRadio->isChecked())
         return "//Light";
 
     QItemSelectionModel* selectionModel = sceneModelView->selectionModel();
 
     QModelIndex selectedIndex = selectionModel->currentIndex();
-    QModelIndex currentIndex = m_pNodeFilterModel->mapToSource(selectedIndex);
-    if (!currentIndex.isValid() ) return QString();
+    QModelIndex currentIndex = m_filter->mapToSource(selectedIndex);
+    if (!currentIndex.isValid()) return QString();
 
-    InstanceNode* currentNode = m_pCurrentSceneModel->NodeFromIndex(currentIndex);
+    InstanceNode* currentNode = m_model->NodeFromIndex(currentIndex);
     if (!currentNode) return QString();
 
-    return (currentNode->GetNodeURL() );
+    return currentNode->GetNodeURL();
 }

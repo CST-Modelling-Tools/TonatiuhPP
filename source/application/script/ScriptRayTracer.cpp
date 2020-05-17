@@ -166,7 +166,6 @@ void ScriptRayTracer::SetSunAzimtuh(double azimuth)
 {
     m_sunAzimuth = azimuth * gcf::degree;
     m_sunPosistionChanged = true;
-
 }
 
 /*!

@@ -104,7 +104,6 @@
 #include "widgets/GridDialog.h"
 #include "widgets/NetworkConnectionsDialog.h"
 #include "widgets/SunDialog.h"
-//#include "ProgressUpdater.h"
 
 /*!
  * Returns the \a fullFileName file�s name, without path.
@@ -116,14 +115,14 @@ QString StrippedName(const QString& fullFileName)
 
 void startManipulator(void* data, SoDragger* dragger)
 {
-    MainWindow* mainwindow = static_cast<MainWindow*>(data);
-    mainwindow->StartManipulation(dragger);
+    MainWindow* w = static_cast<MainWindow*>(data);
+    w->StartManipulation(dragger);
 }
 
 void finishManipulator(void* data, SoDragger* /*dragger*/)
 {
-    MainWindow* mainwindow = static_cast<MainWindow*>(data);
-    mainwindow->FinishManipulation();
+    MainWindow* w = static_cast<MainWindow*>(data);
+    w->FinishManipulation();
 }
 
 /*!
@@ -317,9 +316,11 @@ void MainWindow::SetupViews()
 void MainWindow::SetupCommandView()
 {
     m_commandStack = new QUndoStack(this);
+
     m_commandView = new QUndoView(m_commandStack);
-    m_commandView->setWindowTitle(tr("Command List"));
+    m_commandView->setWindowTitle("Command List");
     m_commandView->setAttribute(Qt::WA_QuitOnClose, false);
+
     connect(m_commandStack, SIGNAL(canRedoChanged(bool)),
             actionRedo, SLOT(setEnabled(bool)) );
     connect(m_commandStack, SIGNAL(canUndoChanged(bool)),
@@ -504,14 +505,10 @@ void MainWindow::FinishManipulation()
 
 void MainWindow::ExecuteScriptFile(QString tonatiuhScriptFile)
 {
-    //New();
-
-    QVector< RandomFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
+    QVector<RandomFactory*> randomDeviateFactoryList = m_pluginManager->getRandomFactories();
     ScriptEditorDialog editor(randomDeviateFactoryList, this);
     editor.show();
-
     editor.ExecuteScript(tonatiuhScriptFile);
-
     editor.done(0);
 }
 
@@ -992,10 +989,9 @@ void MainWindow::SelectionFinish(SoSelection* selection)
  */
 void MainWindow::SetParameterValue(SoNode* node, QString name, QString value)
 {
-    CmdModifyParameter* command = new CmdModifyParameter(node, name, value, m_sceneModel);
-    if (m_commandStack) m_commandStack->push(command);
-
-    UpdateLightSize();
+    CmdModifyParameter* cmd = new CmdModifyParameter(node, name, value, m_sceneModel);
+    if (m_commandStack) m_commandStack->push(cmd);
+//    UpdateLightSize();
     m_document->setModified(true);
 }
 
@@ -1067,7 +1063,7 @@ void MainWindow::ShowMenu(const QModelIndex& index)
     }
 
     //Mostramos el menu contextual
-    popupmenu.exec(QCursor::pos() );
+    popupmenu.exec(QCursor::pos());
 }
 
 /*!
@@ -1084,7 +1080,7 @@ void MainWindow::ShowRayTracerOptionsDialog()
         m_bufferPhotons, m_increasePhotonMap, this);
     options->exec();
 
-    SetRaysPerIteration(options->GetNumRays() );
+    SetRaysPerIteration(options->GetNumRays());
     SetRandomDeviateType(randomDeviateFactoryList[options->GetRandomFactoryIndex()]->name() );
     SetRayCastingGrid(options->GetWidthDivisions(), options->GetHeightDivisions() );
     SetRaysDrawingOptions(options->DrawRays(), options->DrawPhotons() );
@@ -1144,20 +1140,11 @@ SbVec3f MainWindow::getTarget(SoCamera* camera)
 
 void MainWindow::on_actionOpenScriptEditor_triggered()
 {
-    QVector< RandomFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
+    QVector<RandomFactory*> randomDeviateFactoryList = m_pluginManager->getRandomFactories();
     ScriptEditorDialog editor(randomDeviateFactoryList, this);
     editor.exec();
 }
 
-/*
- * Checks for Stephanie's updates and installs them.
-
-   void MainWindow::on_actionCheckForUpdates_triggered()
-   {
-    m_updateManager->CheckForUpdates( );
-   }
-
- */
 void MainWindow::on_actionAbout_triggered()
 {
     AboutDialog dialog;
@@ -1213,10 +1200,7 @@ void MainWindow::ChangeGridSettings()
 //    m_graphicsRoot->ShowGrid(true);
 }
 
-/*!
- *
- */
-void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& newName)
+void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& name)
 {
     if (!index.isValid() ) return;
 
@@ -1224,13 +1208,12 @@ void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& newName
     if (!nodeInstance) return;
     if (!nodeInstance->getNode() ) return;
 
-    CmdChangeNodeName* command = new CmdChangeNodeName(index, newName, m_sceneModel);
-    QString commandText = QString("Node name changed to: %1").arg(newName);
-    command->setText(commandText);
-    m_commandStack->push(command);
+    CmdChangeNodeName* cmd = new CmdChangeNodeName(index, name, m_sceneModel);
+    QString text = QString("Node name changed to: %1").arg(name);
+    cmd->setText(text);
+    m_commandStack->push(cmd);
 
     m_document->setModified(true);
-
 }
 
 /*!
@@ -1262,10 +1245,8 @@ void MainWindow::ChangeSunPosition(double azimuth, double elevation)
     UpdateLightSize();
     m_document->setModified(true);
 
-
     actionViewRays->setEnabled(false);
     actionViewRays->setChecked(false);
-
 }
 
 /*!
@@ -1293,11 +1274,8 @@ void MainWindow::ChangeSunPosition(int year, int month, int day, double hours, d
     sunpos(myTime, myLocation, &results);
     ChangeSunPosition(results.dAzimuth, (90 - results.dZenithAngle) );
 
-
     actionViewRays->setEnabled(false);
     actionViewRays->setChecked(false);
-
-
 }
 
 /*!
@@ -1360,8 +1338,6 @@ void MainWindow::Copy(QString nodeURL)
     m_commandStack->push(command);
 
     m_document->setModified(true);
-    return;
-
 }
 
 /*!
@@ -1371,7 +1347,7 @@ void MainWindow::CreateGroupNode()
 {
     QModelIndex parentIndex;
     if ((!sceneModelView->currentIndex().isValid() ) || (sceneModelView->currentIndex() == sceneModelView->rootIndex()))
-        parentIndex = m_sceneModel->index (0,0,sceneModelView->rootIndex());
+        parentIndex = m_sceneModel->index(0, 0, sceneModelView->rootIndex());
     else
         parentIndex = sceneModelView->currentIndex();
 
@@ -1395,16 +1371,16 @@ void MainWindow::CreateGroupNode()
     {
         TSeparatorKit* separatorKit = new TSeparatorKit();
 
-        CmdInsertSeparatorKit* cmdInsertSeparatorKit = new CmdInsertSeparatorKit(separatorKit, QPersistentModelIndex(parentIndex), m_sceneModel);
-        cmdInsertSeparatorKit->setText("Insert node");
-        m_commandStack->push(cmdInsertSeparatorKit);
+        CmdInsertSeparatorKit* cmd = new CmdInsertSeparatorKit(separatorKit, QPersistentModelIndex(parentIndex), m_sceneModel);
+        cmd->setText("Insert node");
+        m_commandStack->push(cmd);
 
         QString name("Node");
         int count = 0;
         while (!m_sceneModel->SetNodeName(separatorKit, name))
             name = QString("Node_%1").arg(++count);
 
-        UpdateLightSize();
+//        UpdateLightSize();
         m_document->setModified(true);
     }
 }
@@ -1472,10 +1448,10 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
         }
     }
 
-    CmdInsertSeparatorKit* cmdInsertSeparatorKit = new CmdInsertSeparatorKit(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
+    CmdInsertSeparatorKit* cmd = new CmdInsertSeparatorKit(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
     QString commandText = QString("Create Component: %1").arg(pComponentFactory->name().toLatin1().constData() );
-    cmdInsertSeparatorKit->setText(commandText);
-    m_commandStack->push(cmdInsertSeparatorKit);
+    cmd->setText(commandText);
+    m_commandStack->push(cmd);
 
     UpdateLightSize();
     m_document->setModified(true);
@@ -1486,23 +1462,13 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
  *
  * If the current node is not a surface type node or \a materialType is not a valid type, the material node will not be created.
  */
-void MainWindow::CreateMaterial(QString materialType)
+void MainWindow::CreateMaterial(QString name)
 {
-    QVector< MaterialFactory* > factoryList = m_pluginManager->getMaterialFactories();
-    if (factoryList.size() == 0) return;
-
-    QVector< QString > materialNames;
-    for (int i = 0; i < factoryList.size(); i++)
-        materialNames << factoryList[i]->name();
-
-    int selectedMaterial = materialNames.indexOf(materialType);
-    if (selectedMaterial < 0)
-    {
-        emit Abort(tr("CreateMaterial: Selected material type is not valid.") );
-        return;
-    }
-
-    CreateMaterial(factoryList[selectedMaterial]);
+    MaterialFactory* f = m_pluginManager->getMaterialMap().value(name, 0);
+    if (f)
+        CreateMaterial(f);
+    else
+        emit Abort("CreateMaterial: Selected material type is not valid.");
 }
 
 /*!
@@ -1517,7 +1483,7 @@ void MainWindow::CreateShape(QString name)
     if (f)
         CreateShape(f);
     else
-        emit Abort(tr("CreateShape: Selected shape type is not valid."));
+        emit Abort("CreateShape: Selected shape type is not valid.");
 }
 
 
@@ -1528,7 +1494,7 @@ void MainWindow::CreateShape(QString name)
  * If the current node is not a valid parent node or \a shapeType is not a valid type, the shape node will not be created.
  *
  */
-void MainWindow::CreateShape(QString shapeType, int numberOfParameters, QVector< QVariant > parametersList)
+void MainWindow::CreateShape(QString shapeType, int numberOfParameters, QVector<QVariant> parametersList)
 {
     QVector<ShapeFactory*> factoryList = m_pluginManager->getShapeFactories();
     if (factoryList.size() == 0) return;
@@ -1578,11 +1544,10 @@ void MainWindow::CreateSurfaceNode()
         while (!m_sceneModel->SetNodeName(shapeKit, name))
             name = QString("Shape_%1").arg(++count);
 
-        UpdateLightSize();
+//        UpdateLightSize();
         m_document->setModified(true);
     }
 }
-
 
 /*!
  * Creates a \a trackerType shape node from the as current selected node child.
@@ -1590,23 +1555,13 @@ void MainWindow::CreateSurfaceNode()
  * If the current node is not a valid parent node or \a trackerType is not a valid type, the shape node will not be created.
  *
  */
-void MainWindow::CreateTracker(QString trackerType)
+void MainWindow::CreateTracker(QString name)
 {
-    QVector< TrackerFactory* > factoryList = m_pluginManager->getTrackerFactories();
-    if (factoryList.size() == 0) return;
-
-    QVector< QString > trackerNames;
-    for (int i = 0; i < factoryList.size(); i++)
-        trackerNames << factoryList[i]->name();
-
-    int selectedTracker = trackerNames.indexOf(trackerType);
-    if (selectedTracker < 0)
-    {
-        emit Abort(tr("CreateTracker: Selected tracker type is not valid.") );
-        return;
-    }
-
-    CreateTracker(factoryList[selectedTracker]);
+    TrackerFactory* f = m_pluginManager->getTrackerMap().value(name, 0);
+    if (f)
+        CreateTracker(f);
+    else
+        emit Abort("CreateTracker: Selected tracker type is not valid.");
 }
 
 /*!
@@ -1732,7 +1687,6 @@ bool MainWindow::Delete(QModelIndex index)
         m_commandStack->push(commandDelete);
     }
 
-
     UpdateLightSize();
     m_document->setModified(true);
 
@@ -1742,7 +1696,8 @@ bool MainWindow::Delete(QModelIndex index)
 /*!
  * Save all photon map data into \a fileName file.
  */
-double MainWindow::GetwPhoton(){
+double MainWindow::GetwPhoton()
+{
     //Compute photon power
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return 0;
@@ -1877,7 +1832,6 @@ void MainWindow::Open(QString fileName)
  */
 void MainWindow::Paste(QString nodeURL, QString pasteType)
 {
-
     if (!m_coinNode_Buffer)
     {
         emit Abort(tr("Paste: There is not node copied.") );
@@ -1891,7 +1845,7 @@ void MainWindow::Paste(QString nodeURL, QString pasteType)
         return;
     }
 
-    if (pasteType == QString("Shared") )
+    if (pasteType == "Shared")
         Paste(nodeIndex, tgc::Shared);
     else
         Paste(nodeIndex, tgc::Copied);
@@ -1983,7 +1937,7 @@ void MainWindow::Run()
             raysPerThread << t1;
 
         if (t1*progressMax < m_raysTraced)
-            raysPerThread << m_raysTraced - (t1*progressMax);
+            raysPerThread << m_raysTraced - t1*progressMax;
 
 
         Transform lightToWorld = tgf::TransformFromSoTransform(transformSun);
@@ -2102,7 +2056,6 @@ void MainWindow::SaveAs(QString fileName)
         return;
     }
     SaveFile(fileName);
-
 }
 
 /*!
@@ -2196,7 +2149,6 @@ void MainWindow::SetExportTypeParameterValue(QString parameterName, QString para
 {
     if (!m_photonsSettings) return;
     m_photonsSettings->AddParameter(parameterName, parameterValue);
-
 }
 
 /*!
@@ -2210,7 +2162,7 @@ void MainWindow::SetIncreasePhotonMap(bool increase)
 /*!
  * Sets \a nodeName as the current node name.
  */
-void MainWindow::SetNodeName(QString nodeName)
+void MainWindow::SetNodeName(QString name)
 {
     if (!m_selectionModel->hasSelection() )
     {
@@ -2224,13 +2176,13 @@ void MainWindow::SetNodeName(QString nodeName)
         return;
     }
 
-    ChangeNodeName(m_selectionModel->currentIndex(), nodeName);
+    ChangeNodeName(m_selectionModel->currentIndex(), name);
 }
 
 /*!
  * Sets the number of photons that the photon map can store to \a nPhotons.
  */
-void MainWindow::SetPhotonMapBufferSize(unsigned int nPhotons)
+void MainWindow::SetPhotonMapBufferSize(uint nPhotons)
 {
     m_bufferPhotons = nPhotons;
 }
@@ -2285,7 +2237,7 @@ void MainWindow::SetRaysDrawingOptions(bool drawRays, bool drawPhotons)
 /*!
  *    Sets \a rays as the number of rays to trace for each run action.
  */
-void MainWindow::SetRaysPerIteration(unsigned int rays)
+void MainWindow::SetRaysPerIteration(uint rays)
 {
     m_raysTraced = rays;
 }
@@ -2357,8 +2309,8 @@ void MainWindow::SetSunshapeParameter(QString parameter, QString value)
         return;
     }
 
-    CmdModifyParameter* command = new CmdModifyParameter(sunshape, parameter, value, m_sceneModel);
-    if (m_commandStack) m_commandStack->push(command);
+    CmdModifyParameter* cmd = new CmdModifyParameter(sunshape, parameter, value, m_sceneModel);
+    if (m_commandStack) m_commandStack->push(cmd);
     m_document->setModified(true);
 }
 
@@ -2402,8 +2354,8 @@ void MainWindow::SetTransmissivity(QString transmissivityType)
         return;
     }
 
-    CmdAirModified* command = new CmdAirModified(transmissivity, coinScene);
-    if (m_commandStack) m_commandStack->push(command);
+    CmdAirModified* cmd = new CmdAirModified(transmissivity, coinScene);
+    if (m_commandStack) m_commandStack->push(cmd);
     m_document->setModified(true);
 }
 
@@ -2413,15 +2365,15 @@ void MainWindow::SetTransmissivity(QString transmissivityType)
 void MainWindow::SetTransmissivityParameter(QString parameter, QString value)
 {
     SoSceneKit* coinScene = m_document->getSceneKit();
-    AirAbstract* transmissivity = static_cast< AirAbstract* >(coinScene->getPart("transmissivity", false) );
+    AirAbstract* transmissivity = static_cast<AirAbstract*>(coinScene->getPart("transmissivity", false) );
     if (!transmissivity)
     {
-        emit Abort(tr("SetTransmissivity: No transmissivity type defined.") );
+        emit Abort("SetTransmissivity: No transmissivity type defined.");
         return;
     }
 
-    CmdModifyParameter* command = new CmdModifyParameter(transmissivity, parameter, value, m_sceneModel);
-    if (m_commandStack) m_commandStack->push(command);
+    CmdModifyParameter* cmd = new CmdModifyParameter(transmissivity, parameter, value, m_sceneModel);
+    if (m_commandStack) m_commandStack->push(cmd);
     m_document->setModified(true);
 }
 
@@ -2459,14 +2411,14 @@ void MainWindow::SetValue(QString nodeUrl, QString parameter, QString value)
         node = nodeTransform;
     }
 
-
     SoField* parameterField = node->getField(parameter.toStdString().c_str() );
     if (!parameterField)
     {
         QMessageBox::information(this, "Tonatiuh",
-                                 QString("Defined node has not contains the parameter %1.").arg(parameter), 1);
+            QString("Defined node has not contains the parameter %1.").arg(parameter), 1);
         return;
     }
+
     SetParameterValue(node, parameter, value);
 }
 
@@ -2737,12 +2689,10 @@ void MainWindow::CreateComponent(ComponentFactory* pComponentFactory)
 //        }
 //    }
 
-
-
-    CmdInsertSeparatorKit* cmdInsertSeparatorKit = new CmdInsertSeparatorKit(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
-    QString commandText = QString("Create Component: %1").arg(pComponentFactory->name().toLatin1().constData() );
-    cmdInsertSeparatorKit->setText(commandText);
-    m_commandStack->push(cmdInsertSeparatorKit);
+    CmdInsertSeparatorKit* cmd = new CmdInsertSeparatorKit(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
+    QString text = QString("Create Component: %1").arg(pComponentFactory->name().toLatin1().constData() );
+    cmd->setText(text);
+    m_commandStack->push(cmd);
 
     UpdateLightSize();
     m_document->setModified(true);
@@ -2754,7 +2704,7 @@ void MainWindow::CreateComponent(ComponentFactory* pComponentFactory)
  *
  * If the current node is not a surface type node, the material node will not be created.
  */
-void MainWindow::CreateMaterial(MaterialFactory* pMaterialFactory)
+void MainWindow::CreateMaterial(MaterialFactory* factory)
 {
     QModelIndex parentIndex = ( (!sceneModelView->currentIndex().isValid() ) || (sceneModelView->currentIndex() == sceneModelView->rootIndex() ) ) ?
                 m_sceneModel->index(0, 0, sceneModelView->rootIndex()) :
@@ -2764,28 +2714,26 @@ void MainWindow::CreateMaterial(MaterialFactory* pMaterialFactory)
 
     InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
-    if (!parentNode->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId() ) ) return;
+    if (!parentNode->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId())) return;
 
-    TShapeKit* shapeKit = static_cast< TShapeKit* >(parentNode);
-    MaterialAbstract* material = static_cast< MaterialAbstract* >(shapeKit->getPart("material", false) );
-
+    TShapeKit* shapeKit = static_cast<TShapeKit*>(parentNode);
+    MaterialAbstract* material = static_cast<MaterialAbstract*>(shapeKit->getPart("material", false) );
     if (material)
     {
         QMessageBox::information(this, "Tonatiuh Action",
-                                 "This TShapeKit already contains a material node", 1);
+            "This TShapeKit already contains a material node", 1);
         return;
     }
 
-    material = pMaterialFactory->create();
-    QString typeName = pMaterialFactory->name();
-    material->setName(typeName.toStdString().c_str() );
+    material = factory->create();
+    material->setName(factory->name().toStdString().c_str() );
 
-    CmdInsertMaterial* createMaterial = new CmdInsertMaterial(shapeKit, material, m_sceneModel);
-    QString commandText = QString("Create Material: %1").arg(pMaterialFactory->name().toLatin1().constData() );
-    createMaterial->setText(commandText);
-    m_commandStack->push(createMaterial);
+    CmdInsertMaterial* cmd = new CmdInsertMaterial(shapeKit, material, m_sceneModel);
+    QString text = QString("Create Material: %1").arg(factory->name());
+    cmd->setText(text);
+    m_commandStack->push(cmd);
 
-    UpdateLightSize();
+//    UpdateLightSize();
     m_document->setModified(true);
 }
 
@@ -2808,7 +2756,6 @@ void MainWindow::CreateShape(ShapeFactory* factory)
     SoNode* parentNode = parentInstance->getNode();
     if (!parentNode->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId() ) ) return;
     TShapeKit* shapeKit = static_cast<TShapeKit*>(parentNode);
-
     ShapeAbstract* shape = static_cast<ShapeAbstract*>(shapeKit->getPart("shape", false) );
     if (shape) {
         QMessageBox::information(this, "Tonatiuh Action",
@@ -2824,7 +2771,7 @@ void MainWindow::CreateShape(ShapeFactory* factory)
     cmd->setText(text);
     m_commandStack->push(cmd);
 
-    UpdateLightSize();
+//    UpdateLightSize();
     m_document->setModified(true);
 }
 
@@ -2840,7 +2787,7 @@ void MainWindow::CreateShape(ShapeFactory* factory)
 void MainWindow::CreateShape(ShapeFactory* pShapeFactory, int /*numberofParameters*/, QVector< QVariant > parametersList)
 {
     QModelIndex parentIndex = ((!sceneModelView->currentIndex().isValid() ) || (sceneModelView->currentIndex() == sceneModelView->rootIndex())) ?
-                m_sceneModel->index (0,0,sceneModelView->rootIndex()) : sceneModelView->currentIndex();
+                m_sceneModel->index(0,0,sceneModelView->rootIndex()) : sceneModelView->currentIndex();
 
     InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
@@ -2865,7 +2812,7 @@ void MainWindow::CreateShape(ShapeFactory* pShapeFactory, int /*numberofParamete
             createShape->setText(commandText);
             m_commandStack->push(createShape);
 
-            UpdateLightSize();
+//            UpdateLightSize();
             m_document->setModified(true);
         }
     }
@@ -2902,7 +2849,7 @@ void MainWindow::CreateTracker(TrackerFactory* pTrackerFactory)
         CmdInsertTracker* command = new CmdInsertTracker(tracker, parentIndex, scene, m_sceneModel);
         m_commandStack->push(command);
 
-        UpdateLightSize();
+//        UpdateLightSize();
         m_document->setModified(true);
     }
     /*En caso de que el valor del nodo padre no sea del tipo TSeparatorKit,
@@ -2918,7 +2865,8 @@ void MainWindow::closeEvent(QCloseEvent* event)
         WriteSettings();
         event->accept();
     }
-    else event->ignore();
+    else
+        event->ignore();
 }
 
 /*!
@@ -2991,9 +2939,7 @@ void MainWindow::CalculateSunPosition()
 
     sunposDialog.exec();
 
-
 #endif /* NO_MARBLE*/
-
 }
 
 /*!
@@ -3013,7 +2959,7 @@ SoSeparator* MainWindow::CreateGrid()
  */
 PhotonsAbstract* MainWindow::CreatePhotonMapExport() const
 {
-    QVector< PhotonsFactory* > factoryList = m_pluginManager->getExportFactories();
+    QVector<PhotonsFactory*> factoryList = m_pluginManager->getExportFactories();
     if (factoryList.size() == 0) return 0;
 
     QVector< QString > exportPMModeNames;
@@ -3116,7 +3062,6 @@ bool MainWindow::Paste(QModelIndex nodeIndex, tgc::PasteType type)
     UpdateLightSize();
     m_document->setModified(true);
     return true;
-
 }
 
 /*!
@@ -3128,7 +3073,7 @@ QDir MainWindow::PluginDirectory()
     // It is assumed that this is a subdirectory named "plugins" of the directory in
     // which the running version of Tonatiuh is located.
 
-    QDir directory(qApp->applicationDirPath() );
+    QDir directory(qApp->applicationDirPath());
     directory.cd("plugins");
     return directory;
 }
@@ -3282,8 +3227,6 @@ bool MainWindow::SetPhotonMapExportSettings()
     *m_photonsSettings = dialog.GetExportPhotonMapSettings();
     return true;
 }
-
-
 
 void MainWindow::SetupActionsInsertComponent()
 {
@@ -3518,12 +3461,11 @@ bool MainWindow::StartOver(const QString& fileName)
     {
         m_document->New();
         statusBar()->showMessage(tr("New file"), 2000);
-
         SetCurrentFile("");
     }
 
     ChangeModelScene();
-    sceneModelView->expandToDepth(1);
+    sceneModelView->expandToDepth(0);
     on_actionViewAll_triggered();
     return true;
 }
@@ -3603,7 +3545,6 @@ void MainWindow::WriteSettings()
     else settings.setValue("windowActive", false);
 
     settings.setValue("recentFiles", m_recentFiles);
-
 }
 
 void MainWindow::on_actionViewAll_triggered()

@@ -4,57 +4,43 @@ template <class T>
 class Ptr
 {
 public:
-    Ptr(T* realPointer = 0);
-    Ptr(const Ptr& rhs);
-    ~Ptr();
+    Ptr(T* realPointer = 0): m_pointer(realPointer)
+    {Init();}
+
+    Ptr(const Ptr& rhs): m_pointer(rhs.m_pointer)
+    {Init();}
+
+    ~Ptr() {
+        if (m_pointer) m_pointer->Downcount();
+    }
+
     Ptr& operator=(const Ptr<T>& rhs);
     Ptr& operator=(const T*& realPointer);
-    T* operator->() const;
-    T& operator*() const;
-    operator bool() const { return m_realPointer != NULL; }
-    void ShowCount() const;
+
+    T* operator->() const {return m_pointer;}
+    T& operator*() const {return *m_pointer;}
+
+    operator bool() const {return m_pointer;}
+//    void ShowCount() const {m_realPointer->PrintCount();}
 
 private:
-    void Init();
-    T* m_realPointer;
+    void Init() {
+        if (m_pointer) m_pointer->Upcount();
+    }
+
+    T* m_pointer;
 };
 
-template <class T>
-Ptr<T>::Ptr(T* realPointer)
-    : m_realPointer(realPointer)
-{
-    Init();
-}
-
-template <class T>
-Ptr<T>::Ptr(const Ptr& rhs)
-    : m_realPointer(rhs.m_realPointer)
-{
-    Init();
-}
-
-template <class T>
-void Ptr<T>::Init()
-{
-    if (m_realPointer) m_realPointer->Upcount();
-    return;
-}
-
-template <class T>
-Ptr<T>::~Ptr()
-{
-    if (m_realPointer) m_realPointer->Downcount();
-}
 
 template <class T>
 Ptr<T>& Ptr<T>::operator=(const Ptr<T>& rhs)
 {
-    if (m_realPointer != rhs.m_realPointer)
+    if (m_pointer != rhs.m_pointer)
     {
-        T* oldRealPointer = m_realPointer;
-        m_realPointer = rhs.m_realPointer;
+        T* old = m_pointer;
+        m_pointer = rhs.m_pointer;
         Init();
-        if (oldRealPointer) oldRealPointer->Downcount();
+        if (old) old->Downcount();
     }
     return *this;
 }
@@ -62,31 +48,12 @@ Ptr<T>& Ptr<T>::operator=(const Ptr<T>& rhs)
 template <class T>
 Ptr<T>& Ptr<T>::operator=(const T*& realPointer)
 {
-    if (m_realPointer != realPointer)
+    if (m_pointer != realPointer)
     {
-        T* oldRealPointer = m_realPointer;
-        m_realPointer = realPointer;
+        T* old = m_pointer;
+        m_pointer = realPointer;
         Init();
-        if (oldRealPointer) oldRealPointer->Downcount();
+        if (old) old->Downcount();
     }
     return *this;
 }
-
-template <class T>
-T* Ptr<T>::operator->() const
-{
-    return m_realPointer;
-}
-
-template <class T>
-T& Ptr<T>::operator*() const
-{
-    return *m_realPointer;
-}
-
-template <class T>
-void Ptr<T>::ShowCount() const
-{
-    m_realPointer->PrintCount();
-}
-

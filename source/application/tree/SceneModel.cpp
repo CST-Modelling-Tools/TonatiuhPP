@@ -88,14 +88,14 @@ void SceneModel::Clear()
 void SceneModel::SetRoot()
 {
     m_instanceRoot = new InstanceNode(m_coinScene);
-    QList< InstanceNode* > instanceLayoutList;
+    QList<InstanceNode*> instanceLayoutList;
     m_mapCoinQt.insert(std::make_pair(m_coinScene, instanceLayoutList) );
     m_mapCoinQt[m_coinScene].append(m_instanceRoot);
 }
 
 void SceneModel::SetLight()
 {
-    if ( m_coinScene->getPart("lightList[0]", false ) )
+    if (m_coinScene->getPart("lightList[0]", false))
     {
         TLightKit* tlightKit = static_cast< TLightKit* >( m_coinScene->getPart("lightList[0]", false ) );
         InsertLightNode( *tlightKit );
@@ -402,7 +402,7 @@ int SceneModel::InsertCoinNode( SoNode& coinChild, SoBaseKit& coinParent )
     {
         InstanceNode* instanceParent = instanceListParent[index];
         InstanceNode* instanceChild = new InstanceNode( &coinChild );
-        instanceParent->InsertChild( row, instanceChild );
+        instanceParent->insertChild( row, instanceChild );
 
         //Inserting InstanceNode in the map
         QList< InstanceNode* > instanceNodeList;
@@ -445,7 +445,7 @@ void SceneModel::InsertLightNode(TLightKit& lightKit)
 //    }
 
     InstanceNode* instanceLight = new InstanceNode(&lightKit);
-    m_instanceRoot->InsertChild(0, instanceLight);
+    m_instanceRoot->insertChild(0, instanceLight);
 
     emit LightNodeStateChanged(1);
     emit layoutChanged();
@@ -796,7 +796,7 @@ bool SceneModel::Paste( tgc::PasteType type, SoBaseKit& coinParent, SoNode& coin
     {
         InstanceNode* instanceParent = instanceListParent[index];
         InstanceNode* instanceChild = new InstanceNode( coinChild );
-        instanceParent->InsertChild( row, instanceChild );
+        instanceParent->insertChild( row, instanceChild );
 
         //Inserting InstanceNode in the map
         QList< InstanceNode* > instanceNodeList;
@@ -841,9 +841,9 @@ void SceneModel::UpdateSceneModel()
 
 void SceneModel::DeleteInstanceTree(InstanceNode& instanceNode)
 {
-    while (instanceNode.children.count()>0)
+    while (instanceNode.children.count() > 0)
     {
-        InstanceNode* childInstance = instanceNode.children[instanceNode.children.count()-1];
+        InstanceNode* childInstance = instanceNode.children[instanceNode.children.count() - 1];
         DeleteInstanceTree( *childInstance );
         delete childInstance;
         childInstance = 0;

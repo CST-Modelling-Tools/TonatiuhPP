@@ -65,8 +65,7 @@ bool CodeEditorWidget::OkToContinue()
  */
 void CodeEditorWidget::OpenScriptFile(QString fileName)
 {
-    if( !OkToContinue() ) return;
-
+    if (!OkToContinue()) return;
     StartDocument(fileName);
 }
 
@@ -97,11 +96,10 @@ void CodeEditorWidget::NewScriptFile()
  */
 void CodeEditorWidget::OpenScriptFile()
 {
-    if( !OkToContinue() ) return;
+    if (!OkToContinue()) return;
 
     QSettings settings("CyI", "Tonatiuh");
     QString dirName = settings.value("script.openDirectory", "../examples").toString();
-
 
     QString fileName = QFileDialog::getOpenFileName(
         this, "Open File", dirName,

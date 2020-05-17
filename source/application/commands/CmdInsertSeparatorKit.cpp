@@ -1,7 +1,8 @@
-#include "libraries/geometry/gcf.h"
+#include "CmdInsertSeparatorKit.h"
 
 #include <Inventor/nodekits/SoBaseKit.h>
-#include "CmdInsertSeparatorKit.h"
+
+#include "libraries/geometry/gcf.h"
 #include "kernel/run/InstanceNode.h"
 #include "tree/SceneModel.h"
 #include "kernel/scene/TSeparatorKit.h"
@@ -11,15 +12,27 @@
  *
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
-CmdInsertSeparatorKit::CmdInsertSeparatorKit( TSeparatorKit* separatorKit,  const QModelIndex& parentIndex, SceneModel* model, QUndoCommand* parent ):
-    QUndoCommand("InsertSeparatorKit", parent), m_separatorKit ( separatorKit ), m_coinParent( 0 ), m_pModel( model ), m_row( -1 )
+CmdInsertSeparatorKit::CmdInsertSeparatorKit(
+    TSeparatorKit* separatorKit,
+    const QModelIndex& parentIndex,
+    SceneModel* model,
+    QUndoCommand* parent
+):
+    QUndoCommand("InsertSeparatorKit", parent),
+    m_separatorKit(separatorKit),
+    m_coinParent(0),
+    m_model(model),
+    m_row(-1)
 {
-    if( !m_separatorKit ) gcf::SevereError( "CmdInsertSeparatorKit Null separatorKit." );
+    if (!m_separatorKit)
+        gcf::SevereError("CmdInsertSeparatorKit Null separatorKit.");
     m_separatorKit->ref();
 
-    if( !parentIndex.isValid() ) gcf::SevereError( "CmdInsertSeparatorKit called with invalid ModelIndex." );
-    InstanceNode* instanceParent = m_pModel->NodeFromIndex( parentIndex );
-    m_coinParent = static_cast< SoBaseKit* > ( instanceParent->getNode() );
+    if (!parentIndex.isValid() )
+        gcf::SevereError("CmdInsertSeparatorKit called with invalid ModelIndex.");
+
+    InstanceNode* instanceParent = m_model->NodeFromIndex(parentIndex);
+    m_coinParent = static_cast<SoBaseKit*> (instanceParent->getNode() );
 }
 
 /*!
@@ -36,7 +49,7 @@ CmdInsertSeparatorKit::~CmdInsertSeparatorKit()
  */
 void CmdInsertSeparatorKit::undo()
 {
-    m_pModel->RemoveCoinNode(m_row, *m_coinParent);
+    m_model->RemoveCoinNode(m_row, *m_coinParent);
 }
 
 /*!
@@ -45,5 +58,5 @@ void CmdInsertSeparatorKit::undo()
  */
 void CmdInsertSeparatorKit::redo()
 {
-    m_row = m_pModel->InsertCoinNode(*m_separatorKit, *m_coinParent);
+    m_row = m_model->InsertCoinNode(*m_separatorKit, *m_coinParent);
 }

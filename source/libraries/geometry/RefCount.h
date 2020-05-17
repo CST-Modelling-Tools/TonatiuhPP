@@ -6,18 +6,15 @@
 class TONATIUH_LIBRARIES RefCount
 {
 public:
-    RefCount();
-    RefCount(const RefCount& rhs);
-    RefCount& operator=(const RefCount& rhs);
-    virtual ~RefCount() = 0;
-    void Upcount();
-    void Downcount();
-    unsigned long int GetCount() const;
+    RefCount(): m_count(0) {}
+    RefCount(const RefCount&): m_count(0) {}
+    RefCount& operator=(const RefCount&) {return *this;}
+    virtual ~RefCount() {}
+
+    void Upcount() {++m_count;}
+    void Downcount() {if (--m_count == 0) delete this;}
+    ulong GetCount() const {return m_count;}
 
 private:
-    unsigned long int m_refCount;
+    ulong m_count;
 };
-
-
-
-

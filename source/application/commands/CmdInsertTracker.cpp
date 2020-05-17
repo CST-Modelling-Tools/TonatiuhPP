@@ -15,16 +15,31 @@
  *
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
-CmdInsertTracker::CmdInsertTracker(TrackerAbstract* tracker,  const QModelIndex& parentIndex, SoSceneKit* scene, SceneModel* model, QUndoCommand* parent):
-    QUndoCommand("Insert Tracker", parent), m_tracker (tracker), m_coinParent(0), m_scene(scene), m_pModel(model), m_row(0)
+CmdInsertTracker::CmdInsertTracker(
+    TrackerAbstract* tracker,
+    const QModelIndex& parentIndex,
+    SoSceneKit* scene,
+    SceneModel* model,
+    QUndoCommand* parent
+):
+    QUndoCommand("Insert Tracker", parent),
+    m_tracker(tracker),
+    m_coinParent(0),
+    m_scene(scene),
+    m_model(model),
+    m_row(0)
 {
     if (!m_tracker) gcf::SevereError("CmdInsertTracker Null tracker.");
     m_tracker->ref();
 
-    if (!parentIndex.isValid() ) gcf::SevereError("CmdInsertTracker called with invalid ModelIndex.");
-    InstanceNode* instanceParent = m_pModel->NodeFromIndex(parentIndex);
-    if (!instanceParent->getNode() ) gcf::SevereError("CmdInsertTracker called with NULL parent node.");
-    m_coinParent = static_cast< SoBaseKit* > (instanceParent->getNode() );
+    if (!parentIndex.isValid() )
+        gcf::SevereError("CmdInsertTracker called with invalid ModelIndex.");
+
+    InstanceNode* instanceParent = m_model->NodeFromIndex(parentIndex);
+    if (!instanceParent->getNode())
+        gcf::SevereError("CmdInsertTracker called with NULL parent node.");
+
+    m_coinParent = static_cast<SoBaseKit*>(instanceParent->getNode());
 }
 
 /*!
@@ -41,8 +56,7 @@ CmdInsertTracker::~CmdInsertTracker()
  */
 void CmdInsertTracker::undo()
 {
-//    m_tracker->Disconnect();
-    m_pModel->RemoveCoinNode(m_row, *m_coinParent);
+    m_model->RemoveCoinNode(m_row, *m_coinParent);
 }
 
 /**
@@ -50,12 +64,5 @@ void CmdInsertTracker::undo()
  */
 void CmdInsertTracker::redo()
 {
-//    TLightKit* lightKit = static_cast< TLightKit* >(m_scene->getPart("lightList[0]", false) );
-//    if (lightKit)
-//    {
-//        m_tracker->SetAzimuthAngle(&lightKit->azimuth);
-//        m_tracker->SetZenithAngle(&lightKit->zenith);
-//    }
-    m_row = m_pModel->InsertCoinNode(*m_tracker, *m_coinParent);
-
+    m_row = m_model->InsertCoinNode(*m_tracker, *m_coinParent);
 }

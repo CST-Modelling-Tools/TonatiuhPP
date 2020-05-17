@@ -27,6 +27,6 @@ private:
     SoNode* m_previousNode;
     SoNode* m_coinNode;
     SoBaseKit* m_coinParent;
-    SceneModel* m_pModel;
+    SceneModel* m_model;
     int m_row;
 };

@@ -23,9 +23,9 @@ public:
     Transform(const Ptr<Matrix4x4>& mdir);
     Transform(const Ptr<Matrix4x4>& mdir, const Ptr<Matrix4x4>& minv);
 
-    Vector3D transformPoint(const Vector3D& v) const;
+    Vector3D transformPoint(const Vector3D& p) const;
     Vector3D transformVector(const Vector3D& v) const;
-    Vector3D transformNormal(const Vector3D& v) const;
+    Vector3D transformNormal(const Vector3D& n) const;
 
 //    Point3D operator()(const Point3D& p) const;
 //    void operator()(const Point3D& p, Point3D& ans) const;

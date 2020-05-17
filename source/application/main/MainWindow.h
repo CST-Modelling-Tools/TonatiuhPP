@@ -64,11 +64,11 @@ public slots:
     void Copy(QString nodeURL);
     void CreateGroupNode();
     void CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector< QVariant > parametersList);
-    void CreateMaterial(QString materialType);
+    void CreateMaterial(QString name);
     void CreateShape(QString name);
     void CreateShape(QString shapeType, int numberOfParameters, QVector< QVariant > parametersList);
     void CreateSurfaceNode();
-    void CreateTracker(QString trackerType);
+    void CreateTracker(QString name);
     void Cut();
     void Cut(QString nodeURL);
     void Delete();
@@ -93,8 +93,8 @@ public slots:
     void SetExportPreviousNextPhotonID(bool enabled);
     void SetExportTypeParameterValue(QString parameterName, QString parameterValue);
     void SetIncreasePhotonMap(bool increase);
-    void SetNodeName(QString nodeName);
-    void SetPhotonMapBufferSize(unsigned int nPhotons);
+    void SetNodeName(QString name);
+    void SetPhotonMapBufferSize(uint nPhotons);
     void SetRandomDeviateType(QString typeName);
     void SetRayCastingGrid(int widthDivisions, int heightDivisions);
     void SetRaysDrawingOptions(bool drawRays, bool drawPhotons);
@@ -105,17 +105,17 @@ public slots:
     void SetTransmissivityParameter(QString parameter, QString value);
     void SetValue(QString nodeUrl, QString parameter, QString value);
 
-    protected:
+protected:
     void closeEvent(QCloseEvent* event);
     void mousePressEvent (QMouseEvent* e);
 
-    private slots:
+private slots:
     void CalculateSunPosition();
     void ChangeGridSettings();
-    void ChangeNodeName(const QModelIndex& index, const QString& newName);
+    void ChangeNodeName(const QModelIndex& index, const QString& name);
     void ChangeSelection(const QModelIndex& current);
     void CreateComponent(ComponentFactory* pComponentFactory);
-    void CreateMaterial(MaterialFactory* pMaterialFactory);
+    void CreateMaterial(MaterialFactory* factory);
     void CreateShape(ShapeFactory* pShapeFactory);
     void CreateShape(ShapeFactory* pShapeFactory, int numberOfParameters, QVector<QVariant> parametersList);
     void CreateTracker(TrackerFactory* pTrackerFactory);

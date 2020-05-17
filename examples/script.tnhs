@@ -1,10 +1,10 @@
 function makeNode(path, name)
 {
 	tonatiuh.SelectNode(path);
-    tonatiuh.CreateGroupNode();
-    tonatiuh.SelectNode(path +"/Node");  
-    tonatiuh.SetNodeName(name); 
-    return path + "/" + name;
+	tonatiuh.CreateGroupNode();
+	tonatiuh.SelectNode(path +"/Node");  
+	tonatiuh.SetNodeName(name); 
+	return path + "/" + name;
 }
 
 function makeShape(path)

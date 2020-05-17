@@ -253,14 +253,14 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     lightKit->findTexture(m_sunWidthDivisions, m_sunHeightDivisions, surfacesList);
     if (surfacesList.count() < 1) return;
 
-    QVector< long > raysPerThread;
+    QVector<long> raysPerThread;
     int maximumValueProgressScale = 100;
 
     unsigned long t1 = nOfRays / maximumValueProgressScale;
     for (int progressCount = 0; progressCount < maximumValueProgressScale; ++progressCount)
         raysPerThread << t1;
 
-    if ( (t1 * maximumValueProgressScale) < nOfRays) raysPerThread << (nOfRays - (t1 * maximumValueProgressScale) );
+    if (t1*maximumValueProgressScale < nOfRays) raysPerThread << nOfRays - t1*maximumValueProgressScale;
 
     Transform lightToWorld = tgf::TransformFromSoTransform(lightTransform);
     lightInstance->setTransform(lightToWorld );

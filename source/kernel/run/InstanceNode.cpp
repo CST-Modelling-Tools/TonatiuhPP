@@ -29,29 +29,6 @@ InstanceNode::~InstanceNode()
 }
 
 /**
- * Returns node URL.
- */
-QString InstanceNode::GetNodeURL() const
-{
-    QString url;
-    if (getParent()) url = getParent()->GetNodeURL();
-    url.append(QLatin1String("/") );
-    const char* nodeName = m_node->getName().getString();
-    url.append(QLatin1String(nodeName) );
-    return url;
-}
-
-void InstanceNode::Print(int level) const
-{
-    for (int i = 0; i < level; ++i) std::cout << " ";
-    std::cout << m_node->getTypeId().getName().getString()
-              << " has " << children.size()
-              << " children " << std::endl;
-    for (int index = 0; index < children.count(); ++index)
-        children[index]->Print(level++);
-}
-
-/**
  * Appends new \a child node to the end of the child list.
  **/
 void InstanceNode::addChild(InstanceNode* child)
@@ -62,36 +39,61 @@ void InstanceNode::addChild(InstanceNode* child)
 /**
  * Inserts the \a instanceChild node as child number \a row.
  **/
-void InstanceNode::InsertChild(int row, InstanceNode* instanceChild)
+void InstanceNode::insertChild(int row, InstanceNode* child)
 {
-    if (row > children.size() ) row = children.size();
-    children.insert(row, instanceChild);
-    instanceChild->setParent(this);
+    if (row > children.size())
+        row = children.size();
+    children.insert(row, child);
+    child->setParent(this);
 }
 
-//bool InstanceNode::Intersect( const Ray& ray, RandomDeviate& rand, InstanceNode** modelNode, Ray* outputRay )
-bool InstanceNode::Intersect(const Ray& ray, RandomAbstract& rand, bool* isShapeFront, InstanceNode** modelNode, Ray* outputRay)
+/**
+ * Returns node URL.
+ */
+QString InstanceNode::GetNodeURL() const
 {
-    //Check if the ray intersects with the BoundingBox
-    if (!m_box.IntersectP(ray) ) return false;
+    QString url;
+    if (m_parent) url = m_parent->GetNodeURL();
+    url += "/";
+    url += m_node->getName().getString();
+    return url;
+}
+
+void InstanceNode::Print(int level) const
+{
+    for (int i = 0; i < level; ++i)
+        std::cout << " ";
+
+    std::cout << m_node->getTypeId().getName().getString()
+              << " has " << children.size()
+              << " children " << std::endl;
+
+    for (InstanceNode* child : children)
+        child->Print(level++);
+}
+
+bool InstanceNode::intersect(const Ray& rayIn, RandomAbstract& rand, bool* isShapeFront, InstanceNode** modelNode, Ray* rayOut)
+{
+    if (!m_box.intersect(rayIn)) return false;
+
     if (!getNode()->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) ) // nodekit
     {
         bool isOutputRay = false;
-        double t = ray.tMax;
+        double t = rayIn.tMax;
         for (int n = 0; n < children.size(); ++n)
         {
-            InstanceNode* intersectedChild = 0;
+            InstanceNode* child = 0;
             Ray childOutputRay;
             bool childShapeFront = true;
-            bool isChildOutputRay = children[n]->Intersect(ray, rand, &childShapeFront, &intersectedChild, &childOutputRay);
+            bool isChildOutputRay = children[n]->intersect(rayIn, rand, &childShapeFront, &child, &childOutputRay);
 
-            if (ray.tMax < t) // tMax mutable
+            if (rayIn.tMax < t) // tMax mutable
             {
-                t = ray.tMax;
-                *modelNode = intersectedChild;
+                t = rayIn.tMax;
+                *modelNode = child;
                 *isShapeFront = childShapeFront;
 
-                *outputRay = childOutputRay;
+                *rayOut = childOutputRay;
                 isOutputRay = isChildOutputRay;
             }
         }
@@ -99,37 +101,37 @@ bool InstanceNode::Intersect(const Ray& ray, RandomAbstract& rand, bool* isShape
     }
     else // shapekit
     {
-        Ray rayLocal(m_transformWtO(ray));
+        Ray rayLocal(m_transformWtO(rayIn));
 
-        ShapeAbstract* tshape = 0;
-        MaterialAbstract* tmaterial = 0;
+        ShapeAbstract* shape = 0;
+        MaterialAbstract* material = 0;
         if (children[0]->getNode()->getTypeId().isDerivedFrom(ShapeAbstract::getClassTypeId() ) )
         {
-            tshape = static_cast<ShapeAbstract*>(children[0]->getNode() );
-            if (children.size() > 1) tmaterial = static_cast<MaterialAbstract*> (children[1]->getNode() );
+            shape = static_cast<ShapeAbstract*>(children[0]->getNode());
+            if (children.size() > 1)
+                material = static_cast<MaterialAbstract*>(children[1]->getNode());
         }
         else if (children.count() > 1)
         {
-            tmaterial = static_cast<MaterialAbstract*>(children[0]->getNode() );
-            tshape = static_cast<ShapeAbstract*>(children[1]->getNode() );
+            material = static_cast<MaterialAbstract*>(children[0]->getNode() );
+            shape = static_cast<ShapeAbstract*>(children[1]->getNode() );
         }
 
-        if (tshape)
+        if (shape)
         {
             double thit = 0.;
             DifferentialGeometry dg;
-            if (!tshape->intersect(rayLocal, &thit, &dg) ) return false;
-            ray.tMax = thit;
+            if (!shape->intersect(rayLocal, &thit, &dg) ) return false;
+            rayIn.tMax = thit;
             *modelNode = this;
-
             *isShapeFront = dg.isFront;
 
-            if (tmaterial)
+            if (material)
             {
-                Ray surfaceOutputRay;
-                if (tmaterial->OutputRay(rayLocal, &dg, rand, &surfaceOutputRay) )
+                Ray ray;
+                if (material->OutputRay(rayLocal, &dg, rand, &ray) )
                 {
-                    *outputRay = m_transformOtW(surfaceOutputRay);
+                    *rayOut = m_transformOtW(ray);
                     return true;
                 }
             }
@@ -140,11 +142,11 @@ bool InstanceNode::Intersect(const Ray& ray, RandomAbstract& rand, bool* isShape
 
 void InstanceNode::extendBoxForLight(SbBox3f* extendedBox)
 {
-    SoGetBoundingBoxAction* bbAction = new SoGetBoundingBoxAction(SbViewportRegion() );
-    getNode()->getBoundingBox(bbAction);
+    SoGetBoundingBoxAction* action = new SoGetBoundingBoxAction(SbViewportRegion() );
+    getNode()->getBoundingBox(action);
 
-    SbBox3f box = bbAction->getXfBoundingBox().project();
-    delete bbAction;
+    SbBox3f box = action->getXfBoundingBox().project();
+    delete action;
     extendedBox->extendBy(box);
 }
 

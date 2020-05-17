@@ -13,14 +13,14 @@
  */
 CmdCut::CmdCut(const QModelIndex& selectedIndex, SoNode*& clipboard, SceneModel* model, QUndoCommand* parent):
     QUndoCommand("Cut", parent),
-    m_pClipboard (clipboard),
+    m_pClipboard(clipboard),
     m_previousNode(0),
     m_coinNode(0),
     m_coinParent(0),
-    m_pModel(model),
+    m_model(model),
     m_row(-1)
 {
-    InstanceNode* instanceNode = m_pModel->NodeFromIndex(selectedIndex);
+    InstanceNode* instanceNode = m_model->NodeFromIndex(selectedIndex);
     m_coinNode = instanceNode->getNode();
     m_coinNode->ref();
     m_coinParent = static_cast< SoBaseKit* > (instanceNode->getParent()->getNode() );
@@ -45,7 +45,7 @@ CmdCut::~CmdCut()
 void CmdCut::undo()
 {
     m_pClipboard = m_previousNode;
-    m_pModel->Paste(tgc::Shared, *m_coinParent, *m_coinNode, m_row);
+    m_model->Paste(tgc::Shared, *m_coinParent, *m_coinNode, m_row);
 }
 
 /*!
@@ -56,5 +56,5 @@ void CmdCut::undo()
 void CmdCut::redo()
 {
     m_pClipboard = m_coinNode;
-    m_pModel->Cut(*m_coinParent, m_row);
+    m_model->Cut(*m_coinParent, m_row);
 }

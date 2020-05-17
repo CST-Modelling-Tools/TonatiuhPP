@@ -23,6 +23,22 @@ BoundingBox::BoundingBox(const Vector3D& a, const Vector3D& b)
     pMax = max(a, b);
 }
 
+double BoundingBox::volume() const
+{
+    Vector3D d = pMax - pMin;
+    return d.x*d.y*d.z;
+}
+
+int BoundingBox::maximumExtent() const
+{
+    Vector3D d = pMax - pMin;
+    if (d.x > d.y && d.x > d.z)
+        return 0;
+    else if (d.y > d.z)
+        return 1;
+    return 2;
+}
+
 bool BoundingBox::isInside(const Vector3D& p) const
 {
     return p.x >= pMin.x && p.x <= pMax.x &&
@@ -32,9 +48,9 @@ bool BoundingBox::isInside(const Vector3D& p) const
 
 bool BoundingBox::Overlaps(const BoundingBox& b) const
 {
-    return (pMax.x >= b.pMin.x) && (pMin.x <= b.pMax.x) &&
-           (pMax.y >= b.pMin.y) && (pMin.y <= b.pMax.y) &&
-           (pMax.z >= b.pMin.z) && (pMin.z <= b.pMax.z);
+    return pMax.x >= b.pMin.x && pMin.x <= b.pMax.x &&
+           pMax.y >= b.pMin.y && pMin.y <= b.pMax.y &&
+           pMax.z >= b.pMin.z && pMin.z <= b.pMax.z;
 }
 
 void BoundingBox::expand(double delta)
@@ -60,29 +76,7 @@ void BoundingBox::expand(const BoundingBox& b)
     pMax = max(pMax, b.pMax);
 }
 
-double BoundingBox::Volume() const
-{
-    Vector3D d = pMax - pMin;
-    return d.x*d.y*d.z;
-}
-
-int BoundingBox::MaximumExtent() const
-{
-    Vector3D d = pMax - pMin;
-    if (d.x > d.y && d.x > d.z)
-        return 0;
-    else if (d.y > d.z)
-        return 1;
-    return 2;
-}
-
-void BoundingBox::BoundingSphere(Vector3D& center, double& radius) const
-{
-    center = 0.5*(pMin + pMax);
-    radius = (pMax - center).norm();
-}
-
-bool BoundingBox::IntersectP(const Ray& ray, double* hitt0, double* hitt1) const
+bool BoundingBox::intersect(const Ray& ray, double* hitt0, double* hitt1) const
 {
     double t0 = ray.tMin;
     double t1 = ray.tMax;

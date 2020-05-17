@@ -10,25 +10,16 @@
     <height>520</height>
    </rect>
   </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
   <property name="windowTitle">
    <string>Script Editor</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QSplitter" name="dialogVSplitter">
+    <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QSplitter" name="mainSplitter">
-      <widget class="QTreeView" name="fileTree"/>
-      <widget class="CodeEditorWidget" name="codeEditorWidget" native="true"/>
-     </widget>
+     <widget class="CodeEditorWidget" name="codeEditorWidget" native="true"/>
      <widget class="QPlainTextEdit" name="logWidget"/>
     </widget>
    </item>

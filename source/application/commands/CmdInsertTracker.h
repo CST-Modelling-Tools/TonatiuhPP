@@ -14,19 +14,25 @@ class SoBaseKit;
   CmdInsertTracker represents a single shape insertion action on a scene, insert a new trackers node to the scene.
 */
 
-class CmdInsertTracker : public QUndoCommand
+class CmdInsertTracker: public QUndoCommand
 {
 public:
-    CmdInsertTracker(TrackerAbstract* tracker, const QModelIndex& parentIndex, SoSceneKit* scene, SceneModel* model, QUndoCommand* parent = 0 );
+    CmdInsertTracker(
+        TrackerAbstract* tracker,
+        const QModelIndex& parentIndex,
+        SoSceneKit* scene,
+        SceneModel* model,
+        QUndoCommand* parent = 0
+    );
     ~CmdInsertTracker();
 
-    virtual void undo();
-    virtual void redo();
+    void undo();
+    void redo();
 
 private:
     TrackerAbstract* m_tracker;
     SoBaseKit* m_coinParent;
     SoSceneKit* m_scene;
-    SceneModel* m_pModel;
+    SceneModel* m_model;
     int m_row;
 };

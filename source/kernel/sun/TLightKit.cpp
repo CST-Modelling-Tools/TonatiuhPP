@@ -114,16 +114,15 @@ void TLightKit::setBox(BoundingBox box)
 
 
     //box is global
-
-    double xMax = box.pMax.x;
     double xMin = box.pMin.x;
+    double xMax = box.pMax.x;
     double yMin = box.pMin.y;
     double yMax = box.pMax.y;
 
     double distMax = box.pMax.z + 10. - box.pMin.z;
     double back = box.pMin.z - 10.;
 
-    if (-gcf::infinity == box.Volume() )
+    if (-gcf::infinity == box.volume() )
     {
         xMin = 0.;
         xMax = 0.;
@@ -153,7 +152,7 @@ void TLightKit::setBox(BoundingBox box)
     transform->translation = res;
 }
 
-void TLightKit::findTexture(int xPixels, int yPixels, QVector< QPair< TShapeKit*, Transform > > surfacesList)
+void TLightKit::findTexture(int xPixels, int yPixels, QVector< QPair<TShapeKit*, Transform> > surfacesList)
 {
     SoTransform* transform = (SoTransform*) getPart("transform", false);
     SbMatrix mr;

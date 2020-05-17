@@ -66,7 +66,7 @@ void RayTracer::operator()(ulong nRays)
             Ray rayReflected;
             isFront = false;
             intersectedSurface = 0;
-            isReflected = m_rootNode->Intersect(ray, rand, &isFront, &intersectedSurface, &rayReflected);
+            isReflected = m_rootNode->intersect(ray, rand, &isFront, &intersectedSurface, &rayReflected);
 
             // check absorption after the first reflection
             if (m_transmissivity && rayLength > 0) {

@@ -1,10 +1,11 @@
+#include "CodeEditArea.h"
+
 #include <QPainter>
 #include <QTextBlock>
 
-#include "CodeEditArea.h"
 
-CodeEditArea::CodeEditArea( QWidget* parent )
-:QPlainTextEdit( parent )
+CodeEditArea::CodeEditArea(QWidget* parent):
+    QPlainTextEdit(parent)
 {
     connect(this, SIGNAL( cursorPositionChanged() ), this, SLOT( UpdateCurrentLine() ) );
     /*connect(this, SIGNAL( blockCountChanged( int ) ), this, SLOT( UpdateCodeEditAreaWidth( int ) ) );

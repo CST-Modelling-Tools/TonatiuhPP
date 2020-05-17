@@ -52,12 +52,12 @@ Transform::Transform(const Ptr<Matrix4x4>& mdir, const Ptr<Matrix4x4>& minv):
 
 }
 
-Vector3D Transform::transformPoint(const Vector3D& v) const
+Vector3D Transform::transformPoint(const Vector3D& p) const
 {
     return Vector3D(
-        m_mdir->m[0][0]*v.x + m_mdir->m[0][1]*v.y + m_mdir->m[0][2]*v.z + m_mdir->m[0][3],
-        m_mdir->m[1][0]*v.x + m_mdir->m[1][1]*v.y + m_mdir->m[1][2]*v.z + m_mdir->m[1][3],
-        m_mdir->m[2][0]*v.x + m_mdir->m[2][1]*v.y + m_mdir->m[2][2]*v.z + m_mdir->m[2][3]
+        m_mdir->m[0][0]*p.x + m_mdir->m[0][1]*p.y + m_mdir->m[0][2]*p.z + m_mdir->m[0][3],
+        m_mdir->m[1][0]*p.x + m_mdir->m[1][1]*p.y + m_mdir->m[1][2]*p.z + m_mdir->m[1][3],
+        m_mdir->m[2][0]*p.x + m_mdir->m[2][1]*p.y + m_mdir->m[2][2]*p.z + m_mdir->m[2][3]
     );
 }
 
@@ -71,12 +71,12 @@ Vector3D Transform::transformVector(const Vector3D& v) const
 }
 
 //https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals
-Vector3D Transform::transformNormal(const Vector3D& v) const
+Vector3D Transform::transformNormal(const Vector3D& n) const
 {
     return Vector3D(
-        m_minv->m[0][0]*v.x + m_minv->m[1][0]*v.y + m_minv->m[2][0]*v.z,
-        m_minv->m[0][1]*v.x + m_minv->m[1][1]*v.y + m_minv->m[2][1]*v.z,
-        m_minv->m[0][2]*v.x + m_minv->m[1][2]*v.y + m_minv->m[2][2]*v.z
+        m_minv->m[0][0]*n.x + m_minv->m[1][0]*n.y + m_minv->m[2][0]*n.z,
+        m_minv->m[0][1]*n.x + m_minv->m[1][1]*n.y + m_minv->m[2][1]*n.z,
+        m_minv->m[0][2]*n.x + m_minv->m[1][2]*n.y + m_minv->m[2][2]*n.z
     );
 }
 
