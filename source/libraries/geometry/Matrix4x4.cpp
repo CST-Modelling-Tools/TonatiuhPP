@@ -4,14 +4,14 @@
 #include "gcf.h"
 
 
-Matrix4x4::Matrix4x4(): RefCount()
+Matrix4x4::Matrix4x4()
 {
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j)
             m[i][j] = i == j ? 1. : 0.;
 }
 
-Matrix4x4::Matrix4x4(double array[4][4]): RefCount()
+Matrix4x4::Matrix4x4(double array[4][4])
 {
     memcpy(m, array, 16*sizeof(double));
 }
@@ -21,7 +21,7 @@ Matrix4x4::Matrix4x4(
     double t10, double t11, double t12, double t13,
     double t20, double t21, double t22, double t23,
     double t30, double t31, double t32, double t33
-): RefCount()
+)
 {
     m[0][0] = t00; m[0][1] = t01; m[0][2] = t02; m[0][3] = t03;
     m[1][0] = t10; m[1][1] = t11; m[1][2] = t12; m[1][3] = t13;
@@ -29,7 +29,7 @@ Matrix4x4::Matrix4x4(
     m[3][0] = t30; m[3][1] = t31; m[3][2] = t32; m[3][3] = t33;
 }
 
-Matrix4x4::Matrix4x4(const Matrix4x4& rhs) : RefCount()
+Matrix4x4::Matrix4x4(const Matrix4x4& rhs)
 {
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j)
@@ -48,9 +48,9 @@ bool Matrix4x4::operator==(const Matrix4x4& matrix) const
     return true;
 }
 
-Ptr<Matrix4x4> Matrix4x4::Transpose() const
+std::shared_ptr<Matrix4x4> Matrix4x4::Transpose() const
 {
-    return new Matrix4x4(
+    return std::make_shared<Matrix4x4>(
         m[0][0], m[1][0], m[2][0], m[3][0],
         m[0][1], m[1][1], m[2][1], m[3][1],
         m[0][2], m[1][2], m[2][2], m[3][2],
@@ -58,7 +58,7 @@ Ptr<Matrix4x4> Matrix4x4::Transpose() const
     );
 }
 
-Ptr<Matrix4x4> Matrix4x4::Inverse() const
+std::shared_ptr<Matrix4x4> Matrix4x4::Inverse() const
 {
     double det = m[0][1] * m[1][3] * m[2][2] * m[3][0] - m[0][1] * m[1][2] * m[2][3] * m[3][0] - m[0][0] * m[1][3] * m[2][2] * m[3][1] + m[0][0] * m[1][2] * m[2][3] * m[3][1]
                  - m[0][1] * m[1][3] * m[2][0] * m[3][2] + m[0][0] * m[1][3] * m[2][1] * m[3][2] + m[0][1] * m[1][0] * m[2][3] * m[3][2] - m[0][0] * m[1][1] * m[2][3] * m[3][2]
@@ -86,19 +86,19 @@ Ptr<Matrix4x4> Matrix4x4::Inverse() const
     double inv32 = (m[0][2] * m[1][1] * m[3][0] - m[0][1] * m[1][2] * m[3][0] - m[0][2] * m[1][0] * m[3][1] + m[0][0] * m[1][2] * m[3][1] + m[0][1] * m[1][0] * m[3][2] - m[0][0] * m[1][1] * m[3][2]) * alpha;
     double inv33 = (-m[0][2] * m[1][1] * m[2][0] + m[0][1] * m[1][2] * m[2][0] + m[0][2] * m[1][0] * m[2][1] - m[0][0] * m[1][2] * m[2][1] - m[0][1] * m[1][0] * m[2][2] + m[0][0] * m[1][1] * m[2][2]) * alpha;
 
-    return new Matrix4x4(inv00, inv01, inv02, inv03, inv10, inv11, inv12, inv13, inv20, inv21, inv22, inv23, inv30, inv31, inv32, inv33);
+    return std::make_shared<Matrix4x4>(inv00, inv01, inv02, inv03, inv10, inv11, inv12, inv13, inv20, inv21, inv22, inv23, inv30, inv31, inv32, inv33);
 }
 
-Ptr<Matrix4x4> multiply(const Ptr<Matrix4x4>& m1, const Ptr<Matrix4x4>& m2)
+std::shared_ptr<Matrix4x4> multiply(const Matrix4x4& m1, const Matrix4x4& m2)
 {
     double r[4][4];
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j)
-            r[i][j] = m1->m[i][0] * m2->m[0][j] +
-                      m1->m[i][1] * m2->m[1][j] +
-                      m1->m[i][2] * m2->m[2][j] +
-                      m1->m[i][3] * m2->m[3][j];
-    return new Matrix4x4(r);
+            r[i][j] = m1.m[i][0] * m2.m[0][j] +
+                      m1.m[i][1] * m2.m[1][j] +
+                      m1.m[i][2] * m2.m[2][j] +
+                      m1.m[i][3] * m2.m[3][j];
+    return std::make_shared<Matrix4x4>(r);
 }
 
 std::ostream& operator<<(std::ostream& os, const Matrix4x4& matrix)

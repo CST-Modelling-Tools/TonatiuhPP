@@ -1,10 +1,11 @@
 #pragma once
 
+#include <memory>
 #include <iostream>
-#include "RefCount.h"
-#include "Ptr.h"
+#include "libraries/TonatiuhLibraries.h"
 
-class TONATIUH_LIBRARIES Matrix4x4: public RefCount
+
+class TONATIUH_LIBRARIES Matrix4x4
 {
 public:
     Matrix4x4();
@@ -15,13 +16,13 @@ public:
               double t30, double t31, double t32, double t33);
     Matrix4x4(const Matrix4x4& rhs);
 
-    Ptr<Matrix4x4> Transpose() const;
-    Ptr<Matrix4x4> Inverse() const;
+    std::shared_ptr<Matrix4x4> Transpose() const;
+    std::shared_ptr<Matrix4x4> Inverse() const;
 
     bool operator==(const Matrix4x4& matrix) const;
 
     double m[4][4];
 };
 
-TONATIUH_LIBRARIES Ptr<Matrix4x4> multiply(const Ptr<Matrix4x4>& m1, const Ptr<Matrix4x4>& m2);
+TONATIUH_LIBRARIES std::shared_ptr<Matrix4x4> multiply(const Matrix4x4& m1, const Matrix4x4& m2);
 TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const Matrix4x4& matrix);

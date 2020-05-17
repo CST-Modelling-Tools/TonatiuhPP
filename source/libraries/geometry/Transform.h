@@ -1,9 +1,11 @@
 #pragma once
 
 #include <iostream>
+
 #include "Matrix4x4.h"
-#include "Ptr.h"
+//#include "Ptr.h"
 #include "Vector3D.h"
+
 
 class Ray;
 struct BoundingBox;
@@ -20,8 +22,9 @@ public:
         double t20, double t21, double t22, double t23,
         double t30, double t31, double t32, double t33
     );
-    Transform(const Ptr<Matrix4x4>& mdir);
-    Transform(const Ptr<Matrix4x4>& mdir, const Ptr<Matrix4x4>& minv);
+    Transform(Matrix4x4* m);
+    Transform(const std::shared_ptr<Matrix4x4>& mdir);
+    Transform(const std::shared_ptr<Matrix4x4>& mdir, const std::shared_ptr<Matrix4x4>& minv);
 
     Vector3D transformPoint(const Vector3D& p) const;
     Vector3D transformVector(const Vector3D& v) const;
@@ -44,7 +47,7 @@ public:
 
     bool operator==(const Transform& mat) const;
 
-    Ptr<Matrix4x4> GetMatrix() const {return m_mdir;}
+    std::shared_ptr<Matrix4x4> GetMatrix() const {return m_mdir;}
 
     Transform transposed() const;
     Transform inversed() const {return Transform(m_minv, m_mdir);}
@@ -63,8 +66,8 @@ public:
     static Transform LookAt(const Vector3D& pos, const Vector3D& look, const Vector3D& up);
 
 private:
-    Ptr<Matrix4x4> m_mdir;
-    Ptr<Matrix4x4> m_minv;
+    std::shared_ptr<Matrix4x4> m_mdir;
+    std::shared_ptr<Matrix4x4> m_minv;
 };
 
 

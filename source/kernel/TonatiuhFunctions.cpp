@@ -40,7 +40,7 @@ double tgf::AlternateBoxMuller(RandomAbstract& rand)
 
 SbMatrix tgf::MatrixFromTransform(const Transform& transform)
 {
-    Ptr<Matrix4x4> transformMatrix = transform.GetMatrix()->Transpose();
+    std::shared_ptr<Matrix4x4> transformMatrix = transform.GetMatrix()->Transpose();
     float m00 = float(transformMatrix->m[0][0]);
     float m01 = float(transformMatrix->m[0][1]);
     float m02 = float(transformMatrix->m[0][2]);

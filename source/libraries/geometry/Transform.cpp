@@ -13,7 +13,8 @@ Transform::Transform():
 
 Transform::Transform(double m[4][4])
 {
-    m_mdir = new Matrix4x4(
+
+    m_mdir = std::make_shared<Matrix4x4>(
         m[0][0], m[0][1], m[0][2], m[0][3],
         m[1][0], m[1][1], m[1][2], m[1][3],
         m[2][0], m[2][1], m[2][2], m[2][3],
@@ -29,7 +30,7 @@ Transform::Transform(
     double t30, double t31, double t32, double t33
 )
 {
-    m_mdir = new Matrix4x4(
+    m_mdir = std::make_shared<Matrix4x4>(
         t00, t01, t02, t03,
         t10, t11, t12, t13,
         t20, t21, t22, t23,
@@ -38,14 +39,21 @@ Transform::Transform(
     m_minv = m_mdir->Inverse();
 }
 
-Transform::Transform(const Ptr<Matrix4x4>& mdir):
+Transform::Transform(Matrix4x4* m):
+    m_mdir(m),
+    m_minv(m->Inverse())
+{
+
+}
+
+Transform::Transform(const std::shared_ptr<Matrix4x4>& mdir):
     m_mdir(mdir),
     m_minv(mdir->Inverse())
 {
 
 }
 
-Transform::Transform(const Ptr<Matrix4x4>& mdir, const Ptr<Matrix4x4>& minv):
+Transform::Transform(const std::shared_ptr<Matrix4x4>& mdir, const std::shared_ptr<Matrix4x4>& minv):
     m_mdir(mdir),
     m_minv(minv)
 {
@@ -169,8 +177,8 @@ void Transform::operator()(const BoundingBox& b, BoundingBox& ans) const
 
 Transform Transform::operator*(const Transform& rhs) const
 {
-    Ptr<Matrix4x4> mdir = multiply(m_mdir, rhs.m_mdir);
-    Ptr<Matrix4x4> minv = multiply(rhs.m_minv, m_minv);
+    std::shared_ptr<Matrix4x4> mdir = multiply(*m_mdir, *rhs.m_mdir);
+    std::shared_ptr<Matrix4x4> minv = multiply(*rhs.m_minv, *m_minv);
     return Transform(mdir, minv);
 }
 
@@ -255,14 +263,14 @@ bool Transform::SwapsHandedness() const
 
 Transform Transform::translate(double x, double y, double z)
 {
-    Ptr<Matrix4x4> mdir = new Matrix4x4(
+    auto mdir = std::make_shared<Matrix4x4>(
         1., 0., 0., x,
         0., 1., 0., y,
         0., 0., 1., z,
         0., 0., 0., 1.
     );
 
-    Ptr<Matrix4x4> minv = new Matrix4x4(
+    auto minv = std::make_shared<Matrix4x4>(
         1., 0., 0., -x,
         0., 1., 0., -y,
         0., 0., 1., -z,
@@ -274,14 +282,14 @@ Transform Transform::translate(double x, double y, double z)
 
 Transform Transform::scale(double sx, double sy, double sz)
 {
-    Ptr<Matrix4x4> mdir = new Matrix4x4(
+    auto mdir = std::make_shared<Matrix4x4>(
         sx, 0., 0., 0.,
         0., sy, 0., 0.,
         0., 0., sz, 0.,
         0., 0., 0., 1.
     );
 
-    Ptr<Matrix4x4> minv = new Matrix4x4(
+    auto minv = std::make_shared<Matrix4x4>(
         1./sx, 0., 0., 0.,
         0., 1./sy, 0., 0.,
         0., 0., 1./sz, 0.,
@@ -297,7 +305,7 @@ Transform Transform::rotateX(double angle)
     double c = cos(angle);
     double s = sin(angle);
 
-    Ptr<Matrix4x4> mdir = new Matrix4x4(
+    auto mdir = std::make_shared<Matrix4x4>(
         1., 0., 0., 0.,
         0., c, -s, 0.,
         0., s, c, 0.,
@@ -312,7 +320,7 @@ Transform Transform::rotateY(double angle)
     double c = cos(angle);
     double s = sin(angle);
 
-    Ptr<Matrix4x4> mdir = new Matrix4x4(
+    auto mdir = std::make_shared<Matrix4x4>(
         c, 0., s, 0.,
         0., 1., 0., 0.,
         -s, 0., c, 0.,
@@ -327,7 +335,7 @@ Transform Transform::rotateZ(double angle)
     double c = cos(angle);
     double s = sin(angle);
 
-    Ptr<Matrix4x4> mdir = new Matrix4x4(
+    auto mdir = std::make_shared<Matrix4x4>(
         c, -s, 0., 0.,
         s,  c, 0., 0.,
         0., 0., 1., 0.,
@@ -365,7 +373,7 @@ Transform Transform::rotate(double angle, const Vector3D& axis)
     m[3][2] = 0.;
     m[3][3] = 1.;
 
-    Ptr<Matrix4x4> mdir = new Matrix4x4(m);
+    auto mdir = std::make_shared<Matrix4x4>(m);
     return Transform(mdir, mdir->Transpose());
 }
 
@@ -396,7 +404,7 @@ Transform Transform::LookAt(const Vector3D& pos, const Vector3D& look, const Vec
     m[2][2] = newUp.z;
     m[3][2] = 0.;
 
-    Ptr<Matrix4x4> camToWorld = new Matrix4x4(m);
+    auto camToWorld = std::make_shared<Matrix4x4>(m);
     return Transform(camToWorld->Inverse(), camToWorld);
 }
 
