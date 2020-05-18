@@ -64,6 +64,7 @@ private:
     Transform m_transformOtW;
 };
 
+TONATIUH_KERNEL bool operator==(const InstanceNode& thisNode,const InstanceNode& otherNode);
+
 TONATIUH_KERNEL QDataStream& operator<<(QDataStream& s, const InstanceNode& node);
 TONATIUH_KERNEL QDataStream& operator>>(QDataStream& s, const InstanceNode& node);
-TONATIUH_KERNEL bool operator==(const InstanceNode& thisNode,const InstanceNode& otherNode);

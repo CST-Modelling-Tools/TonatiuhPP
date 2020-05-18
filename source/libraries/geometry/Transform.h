@@ -1,11 +1,7 @@
 #pragma once
 
-#include <iostream>
-
 #include "Matrix4x4.h"
-//#include "Ptr.h"
 #include "Vector3D.h"
-
 
 class Ray;
 struct BoundingBox;
@@ -15,13 +11,13 @@ class TONATIUH_LIBRARIES Transform
 {
 public:
     Transform();
-    Transform(double m[4][4]);
     Transform(
         double t00, double t01, double t02, double t03,
         double t10, double t11, double t12, double t13,
         double t20, double t21, double t22, double t23,
         double t30, double t31, double t32, double t33
     );
+    Transform(double m[4][4]);
     Transform(Matrix4x4* m);
     Transform(const std::shared_ptr<Matrix4x4>& mdir);
     Transform(const std::shared_ptr<Matrix4x4>& mdir, const std::shared_ptr<Matrix4x4>& minv);
@@ -72,5 +68,3 @@ private:
 
 
 TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const Transform& tran);
-
-

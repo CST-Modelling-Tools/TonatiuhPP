@@ -142,9 +142,8 @@ bool InstanceNode::intersect(const Ray& rayIn, RandomAbstract& rand, bool* isSha
 
 void InstanceNode::extendBoxForLight(SbBox3f* extendedBox)
 {
-    SoGetBoundingBoxAction* action = new SoGetBoundingBoxAction(SbViewportRegion() );
+    SoGetBoundingBoxAction* action = new SoGetBoundingBoxAction(SbViewportRegion());
     getNode()->getBoundingBox(action);
-
     SbBox3f box = action->getXfBoundingBox().project();
     delete action;
     extendedBox->extendBy(box);
@@ -204,6 +203,12 @@ void InstanceNode::updateTree(Transform parentOtW)
     }
 }
 
+bool operator==(const InstanceNode& a, const InstanceNode& b)
+{
+    return a.getNode() == b.getNode() &&
+        a.getParent()->getNode() == b.getParent()->getNode();
+}
+
 QDataStream& operator<<(QDataStream& s, const InstanceNode& node)
 {
     s << node.getNode();
@@ -214,10 +219,4 @@ QDataStream& operator>>(QDataStream& s, const InstanceNode& node)
 {
     s >> node;
     return s;
-}
-
-bool operator==(const InstanceNode& a, const InstanceNode& b)
-{
-    return a.getNode() == b.getNode() &&
-        a.getParent()->getNode() == b.getParent()->getNode();
 }

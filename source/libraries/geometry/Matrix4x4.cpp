@@ -1,6 +1,5 @@
 #include "Matrix4x4.h"
 
-#include <cstring>
 #include "gcf.h"
 
 
@@ -9,11 +8,6 @@ Matrix4x4::Matrix4x4()
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j)
             m[i][j] = i == j ? 1. : 0.;
-}
-
-Matrix4x4::Matrix4x4(double array[4][4])
-{
-    memcpy(m, array, 16*sizeof(double));
 }
 
 Matrix4x4::Matrix4x4(
@@ -29,6 +23,11 @@ Matrix4x4::Matrix4x4(
     m[3][0] = t30; m[3][1] = t31; m[3][2] = t32; m[3][3] = t33;
 }
 
+Matrix4x4::Matrix4x4(double array[4][4])
+{
+    memcpy(m, array, 16*sizeof(double));
+}
+
 Matrix4x4::Matrix4x4(const Matrix4x4& rhs)
 {
     for (int i = 0; i < 4; ++i)
@@ -42,7 +41,7 @@ bool Matrix4x4::operator==(const Matrix4x4& matrix) const
 
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j)
-            if (fabs(m[i][j] - matrix.m[i][j]) > gcf::Epsilon)
+            if (!gcf::equals(m[i][j], matrix.m[i][j]))
                 return false;
 
     return true;

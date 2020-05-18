@@ -51,11 +51,8 @@ class TONATIUH_KERNEL TSeparatorKit: public SoSeparatorKit
     SO_KIT_CATALOG_ENTRY_HEADER(tracker);
 
 public:
-    TSeparatorKit();
     static void initClass();
-
-    virtual SbBool setPart(const SbName& partname, SoNode* from);
-    virtual SoNode* getPart(const SbName &partname, SbBool makeifneeded);
+    TSeparatorKit();
 
     void getBoundingBox(SoGetBoundingBoxAction* action);
 

@@ -11,18 +11,6 @@ Transform::Transform():
 
 }
 
-Transform::Transform(double m[4][4])
-{
-
-    m_mdir = std::make_shared<Matrix4x4>(
-        m[0][0], m[0][1], m[0][2], m[0][3],
-        m[1][0], m[1][1], m[1][2], m[1][3],
-        m[2][0], m[2][1], m[2][2], m[2][3],
-        m[3][0], m[3][1], m[3][2], m[3][3]
-    );
-    m_minv = m_mdir->Inverse();
-}
-
 Transform::Transform(
     double t00, double t01, double t02, double t03,
     double t10, double t11, double t12, double t13,
@@ -35,6 +23,17 @@ Transform::Transform(
         t10, t11, t12, t13,
         t20, t21, t22, t23,
         t30, t31, t32, t33
+    );
+    m_minv = m_mdir->Inverse();
+}
+
+Transform::Transform(double m[4][4])
+{
+    m_mdir = std::make_shared<Matrix4x4>(
+        m[0][0], m[0][1], m[0][2], m[0][3],
+        m[1][0], m[1][1], m[1][2], m[1][3],
+        m[2][0], m[2][1], m[2][2], m[2][3],
+        m[3][0], m[3][1], m[3][2], m[3][3]
     );
     m_minv = m_mdir->Inverse();
 }
@@ -177,36 +176,28 @@ void Transform::operator()(const BoundingBox& b, BoundingBox& ans) const
 
 Transform Transform::operator*(const Transform& rhs) const
 {
-    std::shared_ptr<Matrix4x4> mdir = multiply(*m_mdir, *rhs.m_mdir);
-    std::shared_ptr<Matrix4x4> minv = multiply(*rhs.m_minv, *m_minv);
-    return Transform(mdir, minv);
+    return Transform(
+        multiply(*m_mdir, *rhs.m_mdir),
+        multiply(*rhs.m_minv, *m_minv)
+    );
 }
 
 bool Transform::operator==(const Transform& t) const
 {
     if (this == &t) return true;
-    else return( (fabs(m_mdir->m[0][0] - t.m_mdir->m[0][0]) < gcf::Epsilon) &&
-             (fabs(m_mdir->m[0][1] - t.m_mdir->m[0][1]) < gcf::Epsilon) &&
-             (fabs(m_mdir->m[0][2] - t.m_mdir->m[0][2]) < gcf::Epsilon) &&
-             (fabs(m_mdir->m[0][3] - t.m_mdir->m[0][3]) < gcf::Epsilon) &&
-             (fabs(m_mdir->m[1][0] - t.m_mdir->m[1][0]) < gcf::Epsilon) &&
-             (fabs(m_mdir->m[1][1] - t.m_mdir->m[1][1]) < gcf::Epsilon) &&
-             (fabs(m_mdir->m[1][2] - t.m_mdir->m[1][2]) < gcf::Epsilon) &&
-             (fabs(m_mdir->m[1][3] - t.m_mdir->m[1][3]) < gcf::Epsilon) &&
-             (fabs(m_mdir->m[2][0] - t.m_mdir->m[2][0]) < gcf::Epsilon) &&
-             (fabs(m_mdir->m[2][1] - t.m_mdir->m[2][1]) < gcf::Epsilon) &&
-             (fabs(m_mdir->m[2][2] - t.m_mdir->m[2][2]) < gcf::Epsilon) &&
-             (fabs(m_mdir->m[2][3] - t.m_mdir->m[2][3]) < gcf::Epsilon) &&
-             (fabs(m_mdir->m[3][0] - t.m_mdir->m[3][0]) < gcf::Epsilon) &&
-             (fabs(m_mdir->m[3][1] - t.m_mdir->m[3][1]) < gcf::Epsilon) &&
-             (fabs(m_mdir->m[3][2] - t.m_mdir->m[3][2]) < gcf::Epsilon) &&
-             (fabs(m_mdir->m[3][3] - t.m_mdir->m[3][3]) < gcf::Epsilon) );
+
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
+            if (!gcf::equals(m_mdir->m[i][j], t.m_mdir->m[i][j]))
+                return false;
+
+    return true;
 }
 
 
 Transform Transform::transposed() const
 {
-    return Transform(m_mdir->Transpose(), m_mdir->Transpose()->Inverse() ); //?
+    return Transform(m_mdir->Transpose(), m_minv->Transpose());
 }
 
 Vector3D Transform::multVecMatrix(const Vector3D& v) const
