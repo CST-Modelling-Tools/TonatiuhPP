@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "ui_MainWindow.h"
 
 #include <iostream>
 
@@ -130,6 +131,7 @@ void finishManipulator(void* data, SoDragger* /*dragger*/)
  */
 MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags flags):
     QMainWindow(parent, flags),
+    ui(new Ui::MainWindow),
     m_commandStack(0),
     m_commandView(0),
     m_currentFile(""),
@@ -159,7 +161,7 @@ MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags fl
     m_graphicView(0),
     m_focusView(0)
 {
-    setupUi(this);
+    ui->setupUi(this);
 
     SetupActions();
     SetupDocument();
@@ -176,8 +178,8 @@ MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags fl
 
     SelectNode("//SunNode/Layout");
 
-    fileToolBar->hide();
-    editToolBar->hide();
+    ui->fileToolBar->hide();
+    ui->editToolBar->hide();
 
     setStyleSheet(R"(
 QAbstractItemView {
@@ -219,6 +221,8 @@ border-width: 0 0 1 0;
  */
 MainWindow::~MainWindow()
 {
+    delete ui;
+
     //delete m_pPluginManager; //?
     delete m_sceneModel;
     delete m_document;
@@ -244,7 +248,7 @@ void MainWindow::SetupActions()
     }
 
     for (QAction* a : m_recentFileActions)
-        menuRecent->addAction(a);
+        ui->menuRecent->addAction(a);
 }
 
 /*!
@@ -322,9 +326,9 @@ void MainWindow::SetupCommandView()
     m_commandView->setAttribute(Qt::WA_QuitOnClose, false);
 
     connect(m_commandStack, SIGNAL(canRedoChanged(bool)),
-            actionRedo, SLOT(setEnabled(bool)) );
+            ui->actionRedo, SLOT(setEnabled(bool)) );
     connect(m_commandStack, SIGNAL(canUndoChanged(bool)),
-            actionUndo, SLOT(setEnabled(bool)) );
+            ui->actionUndo, SLOT(setEnabled(bool)) );
 }
 
 /*!
@@ -383,22 +387,22 @@ void MainWindow::SetupGraphicView()
  */
 void MainWindow::SetupTreeView()
 {
-    sceneModelView->setModel(m_sceneModel);
-    sceneModelView->setSelectionModel(m_selectionModel);
-    sceneModelView->setRootIndex(m_sceneModel->IndexFromNodeUrl("//SunNode"));
+    ui->sceneModelView->setModel(m_sceneModel);
+    ui->sceneModelView->setSelectionModel(m_selectionModel);
+    ui->sceneModelView->setRootIndex(m_sceneModel->IndexFromNodeUrl("//SunNode"));
 
-//    sceneModelView->header()->setStretchLastSection(false);
-//    sceneModelView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-//    sceneModelView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-//    sceneModelView->header()->resizeSection(1, 80);
+//    ui->sceneModelView->header()->setStretchLastSection(false);
+//    ui->sceneModelView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+//    ui->sceneModelView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+//    ui->sceneModelView->header()->resizeSection(1, 80);
 
-    connect(sceneModelView, SIGNAL(dragAndDrop(const QModelIndex&,const QModelIndex&)),
+    connect(ui->sceneModelView, SIGNAL(dragAndDrop(const QModelIndex&,const QModelIndex&)),
             this, SLOT(ItemDragAndDrop(const QModelIndex&,const QModelIndex&)) );
-    connect(sceneModelView, SIGNAL(dragAndDropCopy(const QModelIndex&,const QModelIndex&)),
+    connect(ui->sceneModelView, SIGNAL(dragAndDropCopy(const QModelIndex&,const QModelIndex&)),
             this, SLOT(ItemDragAndDropCopy(const QModelIndex&,const QModelIndex&)) );
-    connect(sceneModelView, SIGNAL(showMenu(const QModelIndex&)),
+    connect(ui->sceneModelView, SIGNAL(showMenu(const QModelIndex&)),
             this, SLOT(ShowMenu(const QModelIndex&)) );
-    connect(sceneModelView, SIGNAL(nodeNameModificated(const QModelIndex&,const QString&)),
+    connect(ui->sceneModelView, SIGNAL(nodeNameModificated(const QModelIndex&,const QString&)),
             this, SLOT(ChangeNodeName(const QModelIndex&,const QString&)) );
 }
 
@@ -408,7 +412,7 @@ void MainWindow::SetupTreeView()
 void MainWindow::SetupParametersView()
 {
     connect(
-        parametersTabs, SIGNAL(valueModified(SoNode*, QString, QString)),
+        ui->parametersTabs, SIGNAL(valueModified(SoNode*, QString, QString)),
         this, SLOT(SetParameterValue(SoNode*, QString, QString))
     );
 
@@ -441,43 +445,43 @@ void MainWindow::SetupPluginsManager()
 void MainWindow::SetupTriggers()
 {
     // file
-    connect(actionNew, SIGNAL(triggered()), this, SLOT(New()) );
-    connect(actionOpen, SIGNAL(triggered()), this, SLOT(Open()) );
-    connect(actionSave, SIGNAL(triggered()), this, SLOT(Save()) );
-    connect(actionSaveAs, SIGNAL(triggered()), this, SLOT(SaveAs()) );
-    connect(actionSaveComponent, SIGNAL(triggered()), this, SLOT(SaveComponent()) );
-    connect(actionClose, SIGNAL(triggered()), this, SLOT(close()) );
+    connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(New()) );
+    connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(Open()) );
+    connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(Save()) );
+    connect(ui->actionSaveAs, SIGNAL(triggered()), this, SLOT(SaveAs()) );
+    connect(ui->actionSaveComponent, SIGNAL(triggered()), this, SLOT(SaveComponent()) );
+    connect(ui->actionClose, SIGNAL(triggered()), this, SLOT(close()) );
 
     // edit
-    connect(actionUndo, SIGNAL(triggered()), this, SLOT(Undo()) );
-    connect(actionRedo, SIGNAL(triggered()), this, SLOT(Redo()) );
-    connect(actionUndoView, SIGNAL(triggered()), this, SLOT(ShowCommandView()) );
-    connect(actionCut, SIGNAL(triggered()), this, SLOT(Cut()) );
-    connect(actionCopy, SIGNAL(triggered()), this, SLOT(Copy()) );
-    connect(actionPasteCopy, SIGNAL(triggered()), this, SLOT(PasteCopy()) );
-    connect(actionPasteLink, SIGNAL(triggered()), this, SLOT(PasteLink()) );
-    connect(actionDelete, SIGNAL(triggered()), this, SLOT(Delete()) );
+    connect(ui->actionUndo, SIGNAL(triggered()), this, SLOT(Undo()) );
+    connect(ui->actionRedo, SIGNAL(triggered()), this, SLOT(Redo()) );
+    connect(ui->actionUndoView, SIGNAL(triggered()), this, SLOT(ShowCommandView()) );
+    connect(ui->actionCut, SIGNAL(triggered()), this, SLOT(Cut()) );
+    connect(ui->actionCopy, SIGNAL(triggered()), this, SLOT(Copy()) );
+    connect(ui->actionPasteCopy, SIGNAL(triggered()), this, SLOT(PasteCopy()) );
+    connect(ui->actionPasteLink, SIGNAL(triggered()), this, SLOT(PasteLink()) );
+    connect(ui->actionDelete, SIGNAL(triggered()), this, SLOT(Delete()) );
 
     // insert
-    connect(actionNode, SIGNAL(triggered()), this, SLOT(CreateGroupNode()) );
-    connect(actionSurfaceNode, SIGNAL(triggered()), this, SLOT(CreateSurfaceNode()) );
-    connect(actionUserComponent, SIGNAL(triggered()), this, SLOT(InsertUserDefinedComponent()) );
+    connect(ui->actionNode, SIGNAL(triggered()), this, SLOT(CreateGroupNode()) );
+    connect(ui->actionSurfaceNode, SIGNAL(triggered()), this, SLOT(CreateSurfaceNode()) );
+    connect(ui->actionUserComponent, SIGNAL(triggered()), this, SLOT(InsertUserDefinedComponent()) );
 
     // scene
-    connect(actionDefineSunLight, SIGNAL(triggered()), this, SLOT(DefineSunLight()) );
-    connect(actionCalculateSunPosition, SIGNAL(triggered()), this, SLOT(CalculateSunPosition()) );
-    connect(actionDefineTransmissivity, SIGNAL(triggered()), this, SLOT(DefineTransmissivity()) );
+    connect(ui->actionDefineSunLight, SIGNAL(triggered()), this, SLOT(DefineSunLight()) );
+    connect(ui->actionCalculateSunPosition, SIGNAL(triggered()), this, SLOT(CalculateSunPosition()) );
+    connect(ui->actionDefineTransmissivity, SIGNAL(triggered()), this, SLOT(DefineTransmissivity()) );
 
     // run
-    connect(actionRun, SIGNAL(triggered()), this, SLOT(RunCompleteRayTracer()) );
-    connect(actionRunFluxAnalysis, SIGNAL(triggered()), this, SLOT(RunFluxAnalysisRayTracer()) );
-    connect(actionRayTraceOptions, SIGNAL(triggered()), this, SLOT(ShowRayTracerOptionsDialog())  );
+    connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(RunCompleteRayTracer()) );
+    connect(ui->actionRunFluxAnalysis, SIGNAL(triggered()), this, SLOT(RunFluxAnalysisRayTracer()) );
+    connect(ui->actionRayTraceOptions, SIGNAL(triggered()), this, SLOT(ShowRayTracerOptionsDialog())  );
 
     // view
-    connect(actionViewRays, SIGNAL(toggled(bool)), this, SLOT(DisplayRays(bool)) );
-    connect(actionViewGrid, SIGNAL(triggered()), this, SLOT(ShowGrid())  );
-    connect(actionGridSettings, SIGNAL(triggered()), this, SLOT(ChangeGridSettings())  );
-    connect(actionViewBackground, SIGNAL(triggered()), this, SLOT(ShowBackground())  );
+    connect(ui->actionViewRays, SIGNAL(toggled(bool)), this, SLOT(DisplayRays(bool)) );
+    connect(ui->actionViewGrid, SIGNAL(triggered()), this, SLOT(ShowGrid())  );
+    connect(ui->actionGridSettings, SIGNAL(triggered()), this, SLOT(ChangeGridSettings())  );
+    connect(ui->actionViewBackground, SIGNAL(triggered()), this, SLOT(ShowBackground())  );
 }
 
 /*!
@@ -485,7 +489,7 @@ void MainWindow::SetupTriggers()
  */
 void MainWindow::FinishManipulation()
 {
-    QModelIndex currentIndex = sceneModelView->currentIndex();
+    QModelIndex currentIndex = ui->sceneModelView->currentIndex();
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(m_sceneModel->getInstance(currentIndex)->getNode() );
 
     SoTransform* nodeTransform = static_cast< SoTransform* >(coinNode->getPart("transform", true) );
@@ -499,7 +503,7 @@ void MainWindow::FinishManipulation()
     m_commandStack->push(command);
 
     UpdateLightSize();
-    m_document->setModified(true);
+    setModified(true);
 
 }
 
@@ -573,7 +577,7 @@ void MainWindow::DefineSunLight()
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
 
-    InstanceNode* sceneInstance = m_sceneModel->getInstance(sceneModelView->rootIndex() );
+    InstanceNode* sceneInstance = m_sceneModel->getInstance(ui->sceneModelView->rootIndex() );
     InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
     m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 
@@ -592,12 +596,12 @@ void MainWindow::DefineSunLight()
     m_commandStack->push(cmd);
     UpdateLightSize();
 
-    parametersTabs->UpdateView();
-    m_document->setModified(true);
+    ui->parametersTabs->UpdateView();
+    setModified(true);
 
-//    actionCalculateSunPosition->setEnabled(true);
-    actionViewRays->setEnabled(false);
-    actionViewRays->setChecked(false);
+//    ui->actionCalculateSunPosition->setEnabled(true);
+    ui->actionViewRays->setEnabled(false);
+    ui->actionViewRays->setChecked(false);
 }
 
 /*!
@@ -617,7 +621,7 @@ void MainWindow::DefineTransmissivity()
     AirAbstract* airNew = dialog.getModel();
     CmdAirModified* cmd = new CmdAirModified(airNew, sceneKit);
     if (m_commandStack) m_commandStack->push(cmd);
-    m_document->setModified(true);
+    setModified(true);
 }
 
 /*!
@@ -640,10 +644,10 @@ void MainWindow::DisplayRays(bool display)
 void MainWindow::InsertUserDefinedComponent()
 {
     QModelIndex parentIndex;
-    if ((!sceneModelView->currentIndex().isValid() ) || (sceneModelView->currentIndex() == sceneModelView->rootIndex() ) )
-        parentIndex = m_sceneModel->index (0,0,sceneModelView->rootIndex());
+    if ((!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex() ) )
+        parentIndex = m_sceneModel->index (0,0,ui->sceneModelView->rootIndex());
     else
-        parentIndex = sceneModelView->currentIndex();
+        parentIndex = ui->sceneModelView->currentIndex();
 
     SoNode* coinNode = m_sceneModel->getInstance(parentIndex)->getNode();
 
@@ -669,7 +673,7 @@ void MainWindow::InsertUserDefinedComponent()
  */
 void MainWindow::ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex& node)
 {
-    if (node == sceneModelView->rootIndex() ) return;
+    if (node == ui->sceneModelView->rootIndex() ) return;
 
 
     InstanceNode* nodeInstnace = m_sceneModel->getInstance(node);
@@ -686,7 +690,7 @@ void MainWindow::ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex
         m_commandStack->push(dragAndDrop);
 
         UpdateLightSize();
-        m_document->setModified(true);
+        setModified(true);
     }
 
 }
@@ -707,7 +711,7 @@ void MainWindow::ItemDragAndDropCopy(const QModelIndex& newParent, const QModelI
     m_commandStack->push(dragAndDropCopy);
 
     UpdateLightSize();
-    m_document->setModified(true);
+    setModified(true);
 }
 
 /*!
@@ -799,7 +803,7 @@ void MainWindow::RunFluxAnalysisRayTracer()
     TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
     if (!lightKit) return;
 
-    InstanceNode*  rootSeparatorInstance = m_sceneModel->getInstance(sceneModelView->rootIndex() );
+    InstanceNode*  rootSeparatorInstance = m_sceneModel->getInstance(ui->sceneModelView->rootIndex() );
     if (!rootSeparatorInstance) return;
 
     QVector< RandomFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
@@ -838,9 +842,9 @@ bool MainWindow::Save()
 void MainWindow::SaveComponent(QString componentFileName)
 {
     if (!m_selectionModel->hasSelection() ) return;
-    if (m_selectionModel->currentIndex() == sceneModelView->rootIndex() ) return;
+    if (m_selectionModel->currentIndex() == ui->sceneModelView->rootIndex() ) return;
 
-    QModelIndex componentIndex = sceneModelView->currentIndex();
+    QModelIndex componentIndex = ui->sceneModelView->currentIndex();
     SoNode* coinNode = m_sceneModel->getInstance(componentIndex)->getNode();
 
     if (!coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
@@ -909,9 +913,9 @@ bool MainWindow::SaveAs()
 bool MainWindow::SaveComponent()
 {
     if (!m_selectionModel->hasSelection() ) return false;
-    if (m_selectionModel->currentIndex() == sceneModelView->rootIndex() ) return false;
+    if (m_selectionModel->currentIndex() == ui->sceneModelView->rootIndex() ) return false;
 
-    QModelIndex componentIndex = sceneModelView->currentIndex();
+    QModelIndex componentIndex = ui->sceneModelView->currentIndex();
 
     SoNode* coinNode = m_sceneModel->getInstance(componentIndex)->getNode();
 
@@ -992,7 +996,7 @@ void MainWindow::SetParameterValue(SoNode* node, QString name, QString value)
     CmdModifyParameter* cmd = new CmdModifyParameter(node, name, value, m_sceneModel);
     if (m_commandStack) m_commandStack->push(cmd);
 //    UpdateLightSize();
-    m_document->setModified(true);
+    setModified(true);
 }
 
 /*!
@@ -1002,7 +1006,7 @@ void MainWindow::SetParameterValue(SoNode* node, QString name, QString value)
  */
 void MainWindow::SetSunPositionCalculatorEnabled(int enabled)
 {
-    actionCalculateSunPosition->setEnabled(enabled);
+    ui->actionCalculateSunPosition->setEnabled(enabled);
 }
 
 /*!
@@ -1031,11 +1035,11 @@ void MainWindow::ShowMenu(const QModelIndex& index)
 
     if (instanceNode->getParent()&&instanceNode->getParent()->getNode()->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) )
     {
-        popupmenu.addAction(actionCut);
-        popupmenu.addAction(actionCopy);
-        popupmenu.addAction(actionPasteCopy);
-        popupmenu.addAction(actionPasteLink);
-        popupmenu.addAction(actionDelete);
+        popupmenu.addAction(ui->actionCut);
+        popupmenu.addAction(ui->actionCopy);
+        popupmenu.addAction(ui->actionPasteCopy);
+        popupmenu.addAction(ui->actionPasteLink);
+        popupmenu.addAction(ui->actionDelete);
     }
 
     if (type.isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
@@ -1105,15 +1109,15 @@ void MainWindow::Undo()
 //View menu actions
 void MainWindow::on_actionViewAxes_toggled()
 {
-    m_graphicView[0]->ViewCoordinateSystem(actionViewAxes->isChecked() );
-    m_graphicView[1]->ViewCoordinateSystem(actionViewAxes->isChecked() );
-    m_graphicView[2]->ViewCoordinateSystem(actionViewAxes->isChecked() );
-    m_graphicView[3]->ViewCoordinateSystem(actionViewAxes->isChecked() );
+    m_graphicView[0]->ViewCoordinateSystem(ui->actionViewAxes->isChecked() );
+    m_graphicView[1]->ViewCoordinateSystem(ui->actionViewAxes->isChecked() );
+    m_graphicView[2]->ViewCoordinateSystem(ui->actionViewAxes->isChecked() );
+    m_graphicView[3]->ViewCoordinateSystem(ui->actionViewAxes->isChecked() );
 }
 
 void MainWindow::on_actionQuadView_toggled()
 {
-    if (!actionQuadView->isChecked()) {
+    if (!ui->actionQuadView->isChecked()) {
         m_graphicView[1]->hide();
         m_graphicView[2]->hide();
         m_graphicView[3]->hide();
@@ -1171,7 +1175,7 @@ void MainWindow::ChangeGridSettings()
 //    }
 //    else
 //    {
-//        InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
+//        InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex(ui->sceneModelView->rootIndex() );
 //        if (!sceneInstance) return;
 //        InstanceNode* rootInstance = sceneInstance->children[sceneInstance->children.size() - 1 ];
 //        if (!rootInstance) return;
@@ -1213,7 +1217,7 @@ void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& name)
     cmd->setText(text);
     m_commandStack->push(cmd);
 
-    m_document->setModified(true);
+    setModified(true);
 }
 
 /*!
@@ -1243,10 +1247,10 @@ void MainWindow::ChangeSunPosition(double azimuth, double elevation)
 
     //UpdateLightDimensions();
     UpdateLightSize();
-    m_document->setModified(true);
+    setModified(true);
 
-    actionViewRays->setEnabled(false);
-    actionViewRays->setChecked(false);
+    ui->actionViewRays->setEnabled(false);
+    ui->actionViewRays->setChecked(false);
 }
 
 /*!
@@ -1274,8 +1278,8 @@ void MainWindow::ChangeSunPosition(int year, int month, int day, double hours, d
     sunpos(myTime, myLocation, &results);
     ChangeSunPosition(results.dAzimuth, (90 - results.dZenithAngle) );
 
-    actionViewRays->setEnabled(false);
-    actionViewRays->setChecked(false);
+    ui->actionViewRays->setEnabled(false);
+    ui->actionViewRays->setChecked(false);
 }
 
 /*!
@@ -1297,12 +1301,12 @@ void MainWindow::Copy()
         emit Abort(tr("Copy: No node seleted to copy.") );
         return;
     }
-    if (m_selectionModel->currentIndex() == sceneModelView->rootIndex() )
+    if (m_selectionModel->currentIndex() == ui->sceneModelView->rootIndex() )
     {
         emit Abort(tr("Copy: The root node can not bee copied.") );
         return;
     }
-    if (m_selectionModel->currentIndex().parent() == sceneModelView->rootIndex() )
+    if (m_selectionModel->currentIndex().parent() == ui->sceneModelView->rootIndex() )
     {
         emit Abort(tr("Copy: The root node can not bee copied.") );
         return;
@@ -1311,7 +1315,7 @@ void MainWindow::Copy()
     CmdCopy* command = new CmdCopy(m_selectionModel->currentIndex(), m_coinNode_Buffer, m_sceneModel);
     m_commandStack->push(command);
 
-    m_document->setModified(true);
+    setModified(true);
 }
 
 /*!
@@ -1328,7 +1332,7 @@ void MainWindow::Copy(QString nodeURL)
         emit Abort(tr("Copy: There is no node with defined url.") );
         return;
     }
-    if (nodeIndex == sceneModelView->rootIndex() || nodeIndex.parent() == sceneModelView->rootIndex() )
+    if (nodeIndex == ui->sceneModelView->rootIndex() || nodeIndex.parent() == ui->sceneModelView->rootIndex() )
     {
         emit Abort(tr("Copy: The root node can not bee copied.") );
         return;
@@ -1337,7 +1341,7 @@ void MainWindow::Copy(QString nodeURL)
     CmdCopy* command = new CmdCopy(nodeIndex, m_coinNode_Buffer, m_sceneModel);
     m_commandStack->push(command);
 
-    m_document->setModified(true);
+    setModified(true);
 }
 
 /*!
@@ -1346,12 +1350,12 @@ void MainWindow::Copy(QString nodeURL)
 void MainWindow::CreateGroupNode()
 {
     QModelIndex parentIndex;
-    if ((!sceneModelView->currentIndex().isValid() ) || (sceneModelView->currentIndex() == sceneModelView->rootIndex()))
-        parentIndex = m_sceneModel->index(0, 0, sceneModelView->rootIndex());
+    if ((!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex()))
+        parentIndex = m_sceneModel->index(0, 0, ui->sceneModelView->rootIndex());
     else
-        parentIndex = sceneModelView->currentIndex();
+        parentIndex = ui->sceneModelView->currentIndex();
 
-    sceneModelView->expand(parentIndex);
+    ui->sceneModelView->expand(parentIndex);
 
     InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     if (!parentInstance)
@@ -1381,7 +1385,7 @@ void MainWindow::CreateGroupNode()
             name = QString("Node_%1").arg(++count);
 
 //        UpdateLightSize();
-        m_document->setModified(true);
+        setModified(true);
     }
 }
 
@@ -1392,11 +1396,11 @@ void MainWindow::CreateGroupNode()
 /*!
  * Creates a \a componentType component node with the name \a nodeName.
  */
-void MainWindow::CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector< QVariant > parametersList)
+void MainWindow::CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector<QVariant> parametersList)
 {
-    QModelIndex parentIndex = ( (!sceneModelView->currentIndex().isValid() ) || (sceneModelView->currentIndex() == sceneModelView->rootIndex() ) ) ?
-                m_sceneModel->index(0, 0, sceneModelView->rootIndex()) :
-                sceneModelView->currentIndex();
+    QModelIndex parentIndex = ( (!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex() ) ) ?
+                m_sceneModel->index(0, 0, ui->sceneModelView->rootIndex()) :
+                ui->sceneModelView->currentIndex();
 
     InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
@@ -1415,7 +1419,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
         emit Abort(tr("CreateComponentNode: Selected component type is not valid.") );
         return;
     }
-    m_document->setModified(true);
+    setModified(true);
 
     ComponentFactory* pComponentFactory = factoryList[selectedCompoent];
     if (!pComponentFactory) return;
@@ -1426,27 +1430,27 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
     if (!componentLayout) return;
 
 
-    QString typeName = pComponentFactory->name();
+//    QString typeName = pComponentFactory->name();
     componentLayout->setName(nodeName.toStdString().c_str() );
 
-    TSceneKit* scene = m_document->getSceneKit();
-    TLightKit* lightKit = static_cast< TLightKit* >(scene->getPart("lightList[0]", false) );
-    if (lightKit)
-    {
-        SoSearchAction trackersSearch;
-        trackersSearch.setType(TrackerAbstract::getClassTypeId() );
-        trackersSearch.setInterest(SoSearchAction::ALL);
-        trackersSearch.apply(componentLayout);
-        SoPathList& trackersPath = trackersSearch.getPaths();
+//    TSceneKit* scene = m_document->getSceneKit();
+//    TLightKit* lightKit = static_cast< TLightKit* >(scene->getPart("lightList[0]", false) );
+//    if (lightKit)
+//    {
+//        SoSearchAction trackersSearch;
+//        trackersSearch.setType(TrackerAbstract::getClassTypeId() );
+//        trackersSearch.setInterest(SoSearchAction::ALL);
+//        trackersSearch.apply(componentLayout);
+//        SoPathList& trackersPath = trackersSearch.getPaths();
 
-        for (int index = 0; index <trackersPath.getLength(); ++index)
-        {
-            SoFullPath* trackerPath = static_cast< SoFullPath* > (trackersPath[index]);
-            TrackerAbstract* tracker = static_cast< TrackerAbstract* >(trackerPath->getTail() );
+//        for (int index = 0; index <trackersPath.getLength(); ++index)
+//        {
+//            SoFullPath* trackerPath = static_cast< SoFullPath* > (trackersPath[index]);
+//            TrackerAbstract* tracker = static_cast< TrackerAbstract* >(trackerPath->getTail() );
 //            tracker->SetAzimuthAngle(&lightKit->azimuth);
 //            tracker->SetZenithAngle(&lightKit->zenith);
-        }
-    }
+//        }
+//    }
 
     CmdInsertSeparatorKit* cmd = new CmdInsertSeparatorKit(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
     QString commandText = QString("Create Component: %1").arg(pComponentFactory->name().toLatin1().constData() );
@@ -1454,7 +1458,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
     m_commandStack->push(cmd);
 
     UpdateLightSize();
-    m_document->setModified(true);
+    setModified(true);
 }
 
 /*!
@@ -1519,12 +1523,12 @@ void MainWindow::CreateShape(QString shapeType, int numberOfParameters, QVector<
 void MainWindow::CreateSurfaceNode()
 {
     QModelIndex parentIndex;
-    if ((!sceneModelView->currentIndex().isValid() ) || (sceneModelView->currentIndex() == sceneModelView->rootIndex()))
-        parentIndex = m_sceneModel->index(0, 0, sceneModelView->rootIndex());
+    if ((!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex()))
+        parentIndex = m_sceneModel->index(0, 0, ui->sceneModelView->rootIndex());
     else
-        parentIndex = sceneModelView->currentIndex();
+        parentIndex = ui->sceneModelView->currentIndex();
 
-    sceneModelView->expand(parentIndex);
+    ui->sceneModelView->expand(parentIndex);
 
     InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     if (!parentInstance) return;
@@ -1545,7 +1549,7 @@ void MainWindow::CreateSurfaceNode()
             name = QString("Shape_%1").arg(++count);
 
 //        UpdateLightSize();
-        m_document->setModified(true);
+        setModified(true);
     }
 }
 
@@ -1571,8 +1575,8 @@ void MainWindow::Cut()
 {
     int validNode = 1;
     if (!m_selectionModel->hasSelection() ) validNode = 0;
-    if (m_selectionModel->currentIndex() == sceneModelView->rootIndex() ) validNode = 0;
-    if (m_selectionModel->currentIndex().parent() == sceneModelView->rootIndex() ) validNode = 0;
+    if (m_selectionModel->currentIndex() == ui->sceneModelView->rootIndex() ) validNode = 0;
+    if (m_selectionModel->currentIndex().parent() == ui->sceneModelView->rootIndex() ) validNode = 0;
     if (!validNode)
     {
         emit Abort(tr("Cut: No valid node selected to cut.") );
@@ -1582,7 +1586,7 @@ void MainWindow::Cut()
     m_commandStack->push(cmd);
 
     UpdateLightSize();
-    m_document->setModified(true);
+    setModified(true);
 }
 
 /*!
@@ -1604,12 +1608,12 @@ void MainWindow::Cut(QString nodeURL)
         return;
     }
 
-    if (nodeIndex == sceneModelView->rootIndex() )
+    if (nodeIndex == ui->sceneModelView->rootIndex() )
     {
         emit Abort(tr("Cut: Selected node is not valid node to cut.") );
         return;
     }
-    if (nodeIndex.parent() == sceneModelView->rootIndex() )
+    if (nodeIndex.parent() == ui->sceneModelView->rootIndex() )
     {
         emit Abort(tr("Cut: Selected node is not valid node to cut.") );
         return;
@@ -1619,7 +1623,7 @@ void MainWindow::Cut(QString nodeURL)
     m_commandStack->push(command);
 
     UpdateLightSize();
-    m_document->setModified(true);
+    setModified(true);
 }
 
 /*!
@@ -1668,8 +1672,8 @@ void MainWindow::Delete(QString nodeURL)
 bool MainWindow::Delete(QModelIndex index)
 {
     if (!index.isValid()) return false;
-    if (index == sceneModelView->rootIndex() ) return false;
-    if (index.parent() == sceneModelView->rootIndex() ) return false;
+    if (index == ui->sceneModelView->rootIndex() ) return false;
+    if (index.parent() == ui->sceneModelView->rootIndex() ) return false;
 
     InstanceNode* instanceNode = m_sceneModel->getInstance(index);
     SoNode* coinNode = instanceNode->getNode();
@@ -1688,7 +1692,7 @@ bool MainWindow::Delete(QModelIndex index)
     }
 
     UpdateLightSize();
-    m_document->setModified(true);
+    setModified(true);
 
     return true;
 }
@@ -1724,10 +1728,10 @@ double MainWindow::GetwPhoton()
 void MainWindow::InsertFileComponent(QString componentFileName)
 {
     QModelIndex parentIndex;
-    if ((!sceneModelView->currentIndex().isValid() ) || (sceneModelView->currentIndex() == sceneModelView->rootIndex() ) )
-        parentIndex = m_sceneModel->index (0,0,sceneModelView->rootIndex());
+    if ((!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex() ) )
+        parentIndex = m_sceneModel->index (0,0,ui->sceneModelView->rootIndex());
     else
-        parentIndex = sceneModelView->currentIndex();
+        parentIndex = ui->sceneModelView->currentIndex();
 
     SoNode* coinNode = m_sceneModel->getInstance(parentIndex)->getNode();
     if (!coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
@@ -1759,32 +1763,32 @@ void MainWindow::InsertFileComponent(QString componentFileName)
     }
 
     TSeparatorKit* componentLayout = static_cast< TSeparatorKit* >(componentSeparator->getChild(0) );
-    TSceneKit* scene = m_document->getSceneKit();
-    TLightKit* lightKit = static_cast< TLightKit* >(scene->getPart("lightList[0]", false) );
-    if (lightKit)
-    {
+//    TSceneKit* scene = m_document->getSceneKit();
+//    TLightKit* lightKit = static_cast< TLightKit* >(scene->getPart("lightList[0]", false) );
+//    if (lightKit)
+//    {
 
-        SoSearchAction trackersSearch;
-        trackersSearch.setType(TrackerAbstract::getClassTypeId() );
-        trackersSearch.setInterest(SoSearchAction::ALL);
-        trackersSearch.apply(componentLayout);
-        SoPathList& trackersPath = trackersSearch.getPaths();
+//        SoSearchAction trackersSearch;
+//        trackersSearch.setType(TrackerAbstract::getClassTypeId() );
+//        trackersSearch.setInterest(SoSearchAction::ALL);
+//        trackersSearch.apply(componentLayout);
+//        SoPathList& trackersPath = trackersSearch.getPaths();
 
-        for (int index = 0; index <trackersPath.getLength(); ++index)
-        {
-            SoFullPath* trackerPath = static_cast< SoFullPath* > (trackersPath[index]);
-            TrackerAbstract* tracker = static_cast< TrackerAbstract* >(trackerPath->getTail() );
+//        for (int index = 0; index <trackersPath.getLength(); ++index)
+//        {
+//            SoFullPath* trackerPath = static_cast< SoFullPath* > (trackersPath[index]);
+//            TrackerAbstract* tracker = static_cast< TrackerAbstract* >(trackerPath->getTail() );
 //            tracker->SetAzimuthAngle(&lightKit->azimuth);
 //            tracker->SetZenithAngle(&lightKit->zenith);
-        }
-    }
+//        }
+//    }
 
     CmdInsertSeparatorKit* cmdInsertSeparatorKit = new CmdInsertSeparatorKit(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
     cmdInsertSeparatorKit->setText("Insert SeparatorKit node");
     m_commandStack->push(cmdInsertSeparatorKit);
 
     UpdateLightSize();
-    m_document->setModified(true);
+    setModified(true);
 }
 
 /*!
@@ -1984,8 +1988,8 @@ void MainWindow::Run()
         if (exportSuraceList.count() < 1)
             ShowRaysIn3DView();
         else {
-            actionViewRays->setEnabled(false);
-            actionViewRays->setChecked(false);
+            ui->actionViewRays->setEnabled(false);
+            ui->actionViewRays->setChecked(false);
         }
 
         double irradiance = sunShape->getIrradiance();
@@ -2011,7 +2015,7 @@ void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned 
     TLightKit* lightKit = static_cast<TLightKit*>(coinScene->getPart("lightList[0]", false) );
     if (!lightKit) return;
 
-    InstanceNode*  rootSeparatorInstance = m_sceneModel->getInstance(sceneModelView->rootIndex() );
+    InstanceNode*  rootSeparatorInstance = m_sceneModel->getInstance(ui->sceneModelView->rootIndex() );
     if (!rootSeparatorInstance) return;
 
     QVector< RandomFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
@@ -2170,7 +2174,7 @@ void MainWindow::SetNodeName(QString name)
         return;
     }
 
-    if (m_selectionModel->currentIndex() == sceneModelView->rootIndex() )
+    if (m_selectionModel->currentIndex() == ui->sceneModelView->rootIndex() )
     {
         emit Abort(tr("SetNodeName: Cannot change the name of the current selected node cannot.") );
         return;
@@ -2283,10 +2287,10 @@ void MainWindow::SetSunshape(QString sunshapeType)
     //UpdateLightDimensions();
     UpdateLightSize();
 
-    parametersTabs->UpdateView();
-    m_document->setModified(true);
+    ui->parametersTabs->UpdateView();
+    setModified(true);
 
-    actionCalculateSunPosition->setEnabled(true);
+    ui->actionCalculateSunPosition->setEnabled(true);
 }
 
 /*!
@@ -2311,7 +2315,7 @@ void MainWindow::SetSunshapeParameter(QString parameter, QString value)
 
     CmdModifyParameter* cmd = new CmdModifyParameter(sunshape, parameter, value, m_sceneModel);
     if (m_commandStack) m_commandStack->push(cmd);
-    m_document->setModified(true);
+    setModified(true);
 }
 
 /*!
@@ -2356,7 +2360,7 @@ void MainWindow::SetTransmissivity(QString transmissivityType)
 
     CmdAirModified* cmd = new CmdAirModified(transmissivity, coinScene);
     if (m_commandStack) m_commandStack->push(cmd);
-    m_document->setModified(true);
+    setModified(true);
 }
 
 /*!
@@ -2374,7 +2378,7 @@ void MainWindow::SetTransmissivityParameter(QString parameter, QString value)
 
     CmdModifyParameter* cmd = new CmdModifyParameter(transmissivity, parameter, value, m_sceneModel);
     if (m_commandStack) m_commandStack->push(cmd);
-    m_document->setModified(true);
+    setModified(true);
 }
 
 /*!
@@ -2427,7 +2431,7 @@ void MainWindow::SetValue(QString nodeUrl, QString parameter, QString value)
 void MainWindow::SoTransform_to_SoCenterballManip()
 {
     //Transform to a SoCenterballManip manipulator
-    QModelIndex currentIndex = sceneModelView->currentIndex();
+    QModelIndex currentIndex = ui->sceneModelView->currentIndex();
 
     InstanceNode* instanceNode = m_sceneModel->getInstance(currentIndex);
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
@@ -2447,13 +2451,13 @@ void MainWindow::SoTransform_to_SoCenterballManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    m_document->setModified(true);
+    setModified(true);
 }
 
 void MainWindow::SoTransform_to_SoJackManip()
 {
     //Transform to a SoJackManip manipulator
-    QModelIndex currentIndex = sceneModelView->currentIndex();
+    QModelIndex currentIndex = ui->sceneModelView->currentIndex();
 
     InstanceNode* instanceNode = m_sceneModel->getInstance(currentIndex);
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
@@ -2473,13 +2477,13 @@ void MainWindow::SoTransform_to_SoJackManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    m_document->setModified(true);
+    setModified(true);
 }
 
 void MainWindow::SoTransform_to_SoHandleBoxManip()
 {
     //Transform to a SoHandleBoxManip manipulator
-    QModelIndex currentIndex = sceneModelView->currentIndex();
+    QModelIndex currentIndex = ui->sceneModelView->currentIndex();
 
     InstanceNode* instanceNode = m_sceneModel->getInstance(currentIndex);
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
@@ -2499,13 +2503,13 @@ void MainWindow::SoTransform_to_SoHandleBoxManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    m_document->setModified(true);
+    setModified(true);
 }
 
 void MainWindow::SoTransform_to_SoTabBoxManip()
 {
     //Transform to a SoTabBoxManip manipulator
-    QModelIndex currentIndex = sceneModelView->currentIndex();
+    QModelIndex currentIndex = ui->sceneModelView->currentIndex();
 
     InstanceNode* instanceNode = m_sceneModel->getInstance(currentIndex);
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
@@ -2525,13 +2529,13 @@ void MainWindow::SoTransform_to_SoTabBoxManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    m_document->setModified(true);
+    setModified(true);
 }
 
 void MainWindow::SoTransform_to_SoTrackballManip()
 {
     //Transform to a SoTrackballManip manipulator
-    QModelIndex currentIndex = sceneModelView->currentIndex();
+    QModelIndex currentIndex = ui->sceneModelView->currentIndex();
 
     InstanceNode* instanceNode = m_sceneModel->getInstance(currentIndex);
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
@@ -2551,13 +2555,13 @@ void MainWindow::SoTransform_to_SoTrackballManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    m_document->setModified(true);
+    setModified(true);
 }
 
 void MainWindow::SoTransform_to_SoTransformBoxManip()
 {
     //Transform to a SoTransformBoxManip manipulator
-    QModelIndex currentIndex = sceneModelView->currentIndex();
+    QModelIndex currentIndex = ui->sceneModelView->currentIndex();
 
     InstanceNode* instanceNode = m_sceneModel->getInstance(currentIndex);
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
@@ -2578,13 +2582,13 @@ void MainWindow::SoTransform_to_SoTransformBoxManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    m_document->setModified(true);
+    setModified(true);
 }
 
 void MainWindow::SoTransform_to_SoTransformerManip()
 {
     //Transform to a SoTransformerManip manipulator
-    QModelIndex currentIndex = sceneModelView->currentIndex();
+    QModelIndex currentIndex = ui->sceneModelView->currentIndex();
 
     InstanceNode* instanceNode = m_sceneModel->getInstance(currentIndex);
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
@@ -2605,14 +2609,14 @@ void MainWindow::SoTransform_to_SoTransformerManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    m_document->setModified(true);
+    setModified(true);
 
 }
 
 void MainWindow::SoManip_to_SoTransform()
 {
     //Transform manipulator to a SoTransform
-    QModelIndex currentIndex = sceneModelView->currentIndex();
+    QModelIndex currentIndex = ui->sceneModelView->currentIndex();
 
     InstanceNode* instanceNode = m_sceneModel->getInstance(currentIndex);
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
@@ -2629,7 +2633,7 @@ void MainWindow::SoManip_to_SoTransform()
     coinNode->setPart("transform", transform);
     ChangeSelection(currentIndex);
 
-    m_document->setModified(true);
+    setModified(true);
 }
 
 void MainWindow::ChangeSelection(const QModelIndex& current)
@@ -2640,11 +2644,11 @@ void MainWindow::ChangeSelection(const QModelIndex& current)
     if (selectedCoinNode->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) )
     {
         SoBaseKit* selectedCoinNodeKit = static_cast< SoBaseKit* >(selectedCoinNode);
-        parametersTabs->SelectionChangedToKit(selectedCoinNodeKit);
+        ui->parametersTabs->SelectionChangedToKit(selectedCoinNodeKit);
     }
     else
     {
-        parametersTabs->SelectionChangedToPart(selectedCoinNode);
+        ui->parametersTabs->SelectionChangedToPart(selectedCoinNode);
     }
 }
 
@@ -2655,9 +2659,9 @@ void MainWindow::ChangeSelection(const QModelIndex& current)
  */
 void MainWindow::CreateComponent(ComponentFactory* pComponentFactory)
 {
-    QModelIndex parentIndex = ( (!sceneModelView->currentIndex().isValid() ) || (sceneModelView->currentIndex() == sceneModelView->rootIndex() ) ) ?
-                m_sceneModel->index(0, 0, sceneModelView->rootIndex()) :
-                sceneModelView->currentIndex();
+    QModelIndex parentIndex = ( (!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex() ) ) ?
+                m_sceneModel->index(0, 0, ui->sceneModelView->rootIndex()) :
+                ui->sceneModelView->currentIndex();
 
     InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
@@ -2695,7 +2699,7 @@ void MainWindow::CreateComponent(ComponentFactory* pComponentFactory)
     m_commandStack->push(cmd);
 
     UpdateLightSize();
-    m_document->setModified(true);
+    setModified(true);
 }
 
 
@@ -2706,11 +2710,11 @@ void MainWindow::CreateComponent(ComponentFactory* pComponentFactory)
  */
 void MainWindow::CreateMaterial(MaterialFactory* factory)
 {
-    QModelIndex parentIndex = ( (!sceneModelView->currentIndex().isValid() ) || (sceneModelView->currentIndex() == sceneModelView->rootIndex() ) ) ?
-                m_sceneModel->index(0, 0, sceneModelView->rootIndex()) :
-                sceneModelView->currentIndex();
+    QModelIndex parentIndex = ( (!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex() ) ) ?
+                m_sceneModel->index(0, 0, ui->sceneModelView->rootIndex()) :
+                ui->sceneModelView->currentIndex();
 
-    sceneModelView->expand(parentIndex);
+    ui->sceneModelView->expand(parentIndex);
 
     InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
@@ -2734,7 +2738,7 @@ void MainWindow::CreateMaterial(MaterialFactory* factory)
     m_commandStack->push(cmd);
 
 //    UpdateLightSize();
-    m_document->setModified(true);
+    setModified(true);
 }
 
 /*!
@@ -2748,9 +2752,9 @@ void MainWindow::CreateMaterial(MaterialFactory* factory)
  */
 void MainWindow::CreateShape(ShapeFactory* factory)
 {
-    QModelIndex parentIndex = sceneModelView->currentIndex();
+    QModelIndex parentIndex = ui->sceneModelView->currentIndex();
     if (!parentIndex.isValid()) return;
-    sceneModelView->expand(parentIndex);
+    ui->sceneModelView->expand(parentIndex);
 
     InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
@@ -2772,7 +2776,7 @@ void MainWindow::CreateShape(ShapeFactory* factory)
     m_commandStack->push(cmd);
 
 //    UpdateLightSize();
-    m_document->setModified(true);
+    setModified(true);
 }
 
 /*!
@@ -2786,8 +2790,8 @@ void MainWindow::CreateShape(ShapeFactory* factory)
  */
 void MainWindow::CreateShape(ShapeFactory* pShapeFactory, int /*numberofParameters*/, QVector< QVariant > parametersList)
 {
-    QModelIndex parentIndex = ((!sceneModelView->currentIndex().isValid() ) || (sceneModelView->currentIndex() == sceneModelView->rootIndex())) ?
-                m_sceneModel->index(0,0,sceneModelView->rootIndex()) : sceneModelView->currentIndex();
+    QModelIndex parentIndex = ((!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex())) ?
+                m_sceneModel->index(0,0,ui->sceneModelView->rootIndex()) : ui->sceneModelView->currentIndex();
 
     InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
@@ -2813,7 +2817,7 @@ void MainWindow::CreateShape(ShapeFactory* pShapeFactory, int /*numberofParamete
             m_commandStack->push(createShape);
 
 //            UpdateLightSize();
-            m_document->setModified(true);
+            setModified(true);
         }
     }
 }
@@ -2821,9 +2825,9 @@ void MainWindow::CreateShape(ShapeFactory* pShapeFactory, int /*numberofParamete
 
 void MainWindow::CreateTracker(TrackerFactory* pTrackerFactory)
 {
-    QModelIndex parentIndex = ((!sceneModelView->currentIndex().isValid() ) || (sceneModelView->currentIndex() == sceneModelView->rootIndex())) ?
-                m_sceneModel->index (0,0,sceneModelView->rootIndex()) :
-                sceneModelView->currentIndex();
+    QModelIndex parentIndex = ((!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex())) ?
+                m_sceneModel->index (0,0,ui->sceneModelView->rootIndex()) :
+                ui->sceneModelView->currentIndex();
 
     TSceneKit* scene = m_document->getSceneKit();
 
@@ -2850,7 +2854,7 @@ void MainWindow::CreateTracker(TrackerFactory* pTrackerFactory)
         m_commandStack->push(command);
 
 //        UpdateLightSize();
-        m_document->setModified(true);
+        setModified(true);
     }
     /*En caso de que el valor del nodo padre no sea del tipo TSeparatorKit,
          * no realizamos ninguna modicacion en SceneModel*/
@@ -2917,7 +2921,7 @@ void MainWindow::ChangeModelScene()
 
     QModelIndex viewLayoutIndex = m_sceneModel->IndexFromNodeUrl(QString("//SunNode") );
     InstanceNode* viewLayout = m_sceneModel->getInstance(viewLayoutIndex);
-    sceneModelView->setRootIndex(viewLayoutIndex);
+    ui->sceneModelView->setRootIndex(viewLayoutIndex);
 
     InstanceNode* concentratorRoot = viewLayout->children[ 0 ];
 
@@ -3060,7 +3064,7 @@ bool MainWindow::Paste(QModelIndex nodeIndex, tgc::PasteType type)
     m_commandStack->push(commandPaste);
 
     UpdateLightSize();
-    m_document->setModified(true);
+    setModified(true);
     return true;
 }
 
@@ -3120,7 +3124,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
         transmissivity = static_cast< AirAbstract* > (coinScene->getPart("transmissivity", false) );
 
     //Check if there is a rootSeparator InstanceNode
-    rootSeparatorInstance = m_sceneModel->getInstance(sceneModelView->rootIndex() );
+    rootSeparatorInstance = m_sceneModel->getInstance(ui->sceneModelView->rootIndex() );
     if (!rootSeparatorInstance) return false;
 
     InstanceNode* sceneInstance = rootSeparatorInstance->getParent();
@@ -3198,18 +3202,18 @@ bool MainWindow::SaveFile(const QString& fileName)
 void MainWindow::SetCurrentFile(const QString& fileName)
 {
     m_currentFile = fileName;
-    m_document->setModified(false);
+    setModified(false);
 
-    QString shownName = "Untitled";
+    QString nameTitle = "Untitled";
     if (!m_currentFile.isEmpty() )
     {
-        shownName = StrippedName(m_currentFile);
+        nameTitle = StrippedName(m_currentFile);
         m_recentFiles.removeAll(m_currentFile);
         m_recentFiles.prepend(m_currentFile);
         UpdateRecentFileActions();
     }
 
-    setWindowTitle(tr("%1[*] - %2").arg(shownName).arg(tr("Tonatiuh") ) );
+    setWindowTitle(tr("%1[*] - Tonatiuh").arg(nameTitle));
 }
 
 /*!
@@ -3230,12 +3234,12 @@ bool MainWindow::SetPhotonMapExportSettings()
 
 void MainWindow::SetupActionsInsertComponent()
 {
-    QMenu* pComponentMenu = menuInsert->findChild<QMenu*>("menuComponent");
-    if (!pComponentMenu) return;
-    if (pComponentMenu->isEmpty() )
+    QMenu* menu = ui->menuInsert->findChild<QMenu*>("menuComponent");
+    if (!menu) return;
+    if (menu->isEmpty() )
     {
         //Enable material menu
-        pComponentMenu->setEnabled(true);
+        menu->setEnabled(true);
     }
 
     if (!m_pluginManager) return;
@@ -3249,7 +3253,7 @@ void MainWindow::SetupActionsInsertComponent()
         ActionInsertComponent* actionInsertComponent = new ActionInsertComponent(pComponentFactory->name(), this, pComponentFactory);
         actionInsertComponent->setIcon(pComponentFactory->icon() );
 
-        pComponentMenu->addAction(actionInsertComponent);
+        menu->addAction(actionInsertComponent);
         //m_materialsToolBar->addAction( actionInsertComponent );
         //m_materialsToolBar->addSeparator();
         connect(actionInsertComponent, SIGNAL(triggered()),
@@ -3261,7 +3265,7 @@ void MainWindow::SetupActionsInsertComponent()
 
 void MainWindow::SetupActionsInsertMaterial()
 {
-    QMenu* menu = menuInsert->findChild<QMenu*>("menuMaterial");
+    QMenu* menu = ui->menuInsert->findChild<QMenu*>("menuMaterial");
 
     for (MaterialFactory* f : m_pluginManager->getMaterialFactories()) {
         ActionInsertMaterial* a = new ActionInsertMaterial(f, this);
@@ -3284,7 +3288,7 @@ void MainWindow::SetupActionsInsertMaterial()
  */
 void MainWindow::SetupActionsInsertShape()
 {
-    QMenu* menu = menuInsert->findChild<QMenu*>("menuShape");
+    QMenu* menu = ui->menuInsert->findChild<QMenu*>("menuShape");
 
 //    QToolBar* toolbar = findChild<QToolBar*>("shapeToolBar");
 //    if (!toolbar) {
@@ -3325,7 +3329,7 @@ void MainWindow::SetupActionsInsertShape()
 
 void MainWindow::SetupActionsInsertTracker()
 {
-    QMenu* menu = menuInsert->findChild<QMenu*>("menuTracker");
+    QMenu* menu = ui->menuInsert->findChild<QMenu*>("menuTracker");
 
     for (TrackerFactory* f : m_pluginManager->getTrackerFactories())
     {
@@ -3349,8 +3353,8 @@ void MainWindow::SetupActionsInsertTracker()
  */
 void MainWindow::ShowBackground()
 {
-    if (actionViewBackground->isChecked() ) m_graphicsRoot->ShowBackground(true);
-    else m_graphicsRoot->ShowBackground(false);
+    bool v = ui->actionViewBackground->isChecked();
+    m_graphicsRoot->ShowBackground(v);
 }
 
 /**
@@ -3358,11 +3362,11 @@ void MainWindow::ShowBackground()
  */
 void MainWindow::ShowGrid()
 {
-    m_graphicsRoot->ShowGrid(actionViewGrid->isChecked());
+    m_graphicsRoot->ShowGrid(ui->actionViewGrid->isChecked());
 
-    /*if( actionViewGrid->isChecked() )
+    /*if( ui->actionViewGrid->isChecked() )
            {
-            InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex( sceneModelView->rootIndex() );
+            InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex( ui->sceneModelView->rootIndex() );
             if ( !sceneInstance )  return;
             SoNode* rootNode = sceneInstance->GetNode();
             SoPath* nodePath = new SoPath( rootNode );
@@ -3404,8 +3408,8 @@ void MainWindow::ShowGrid()
  */
 void MainWindow::ShowRaysIn3DView()
 {
-    actionViewRays->setEnabled(false);
-    actionViewRays->setChecked(false);
+    ui->actionViewRays->setEnabled(false);
+    ui->actionViewRays->setChecked(false);
 
     if (m_drawRays || m_drawPhotons)
     {
@@ -3425,8 +3429,8 @@ void MainWindow::ShowRaysIn3DView()
         }
         m_graphicsRoot->AddRays(rays);
 
-        actionViewRays->setEnabled(true);
-        actionViewRays->setChecked(true);
+        ui->actionViewRays->setEnabled(true);
+        ui->actionViewRays->setChecked(true);
     }
 }
 
@@ -3436,13 +3440,13 @@ void MainWindow::ShowRaysIn3DView()
  */
 bool MainWindow::StartOver(const QString& fileName)
 {
-    InstanceNode* sceneInstance = m_sceneModel->getInstance(sceneModelView->rootIndex() );
+    InstanceNode* sceneInstance = m_sceneModel->getInstance(ui->sceneModelView->rootIndex() );
 
     InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
     m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 
-    actionViewRays->setEnabled(false);
-    actionViewRays->setChecked(false);
+    ui->actionViewRays->setEnabled(false);
+    ui->actionViewRays->setChecked(false);
 
     m_graphicsRoot->RemoveRays();
     m_graphicsRoot->RemoveModel();
@@ -3465,9 +3469,15 @@ bool MainWindow::StartOver(const QString& fileName)
     }
 
     ChangeModelScene();
-    sceneModelView->expandToDepth(0);
+    ui->sceneModelView->expandToDepth(0);
     on_actionViewAll_triggered();
     return true;
+}
+
+void MainWindow::setModified(bool value)
+{
+    m_document->setModified(value);
+    setWindowModified(value);
 }
 
 /*!

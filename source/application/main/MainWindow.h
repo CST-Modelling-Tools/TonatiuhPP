@@ -1,10 +1,16 @@
 #pragma once
 
+#include <QMainWindow>
+
+#include <QVariant>
+
+class QItemSelectionModel;
+class QSplitter;
+
 #include <Inventor/SbVec3f.h>
 
 #include "commands/tgc.h"
 
-#include "ui_MainWindow.h"
 
 class Document;
 class GraphicRoot;
@@ -31,6 +37,7 @@ class TrackerFactory;
 class AirAbstract;
 class SoCamera;
 
+class SceneModel;
 struct PhotonsSettings;
 
 //!  Main window class.
@@ -39,7 +46,12 @@ struct PhotonsSettings;
   and slots to provide user interaction with the program.
 */
 
-class MainWindow: public QMainWindow, private Ui::MainWindow
+namespace Ui {
+class MainWindow;
+}
+
+
+class MainWindow: public QMainWindow
 {
     Q_OBJECT
 
@@ -107,7 +119,7 @@ public slots:
 
 protected:
     void closeEvent(QCloseEvent* event);
-    void mousePressEvent (QMouseEvent* e);
+    void mousePressEvent(QMouseEvent* e);
 
 private slots:
     void CalculateSunPosition();
@@ -145,7 +157,7 @@ private slots:
 
     SbVec3f getTarget(SoCamera* camera);
 
-    //Manipulators actions
+    // manipulators actions
     void SoTransform_to_SoCenterballManip();
     void SoTransform_to_SoJackManip();
     void SoTransform_to_SoHandleBoxManip();
@@ -155,7 +167,7 @@ private slots:
     void SoTransform_to_SoTransformerManip();
     void SoManip_to_SoTransform();
 
-    //View menu actions
+    // view actions
     void on_actionViewAxes_toggled();
 
     void on_actionViewAll_triggered();
@@ -223,10 +235,14 @@ private:
     void WriteSettings();
 
     bool StartOver(const QString& fileName);
+    void setModified(bool value);
 
     void ShowRaysIn3DView();
     void UpdateLightSize();
     double GetwPhoton();
+
+private:
+    Ui::MainWindow* ui;
 
     enum {m_maxRecentFiles = 7};
     QUndoStack* m_commandStack;

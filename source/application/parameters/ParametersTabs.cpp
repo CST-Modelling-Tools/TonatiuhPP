@@ -118,7 +118,7 @@ void ParametersTabs::SetValue(SoNode* node, QString parameterName, QString newVa
 /*!
  * Adds a new tab to the view with \a coinNode \a partName parameters.
  */
-void ParametersTabs::AddTab(SoNode* coinNode, QString partName)
+void ParametersTabs::AddTab(SoNode* coinNode, QString /*partName*/)
 {
     QString type = coinNode->getName().getString();
     if (type.length() <= 0) type = coinNode->getTypeId().getName().getString();
