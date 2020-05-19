@@ -103,7 +103,7 @@ void trf::ComputeFistStageSurfaceList(InstanceNode* instanceNode, QStringList di
     else if (coinNode->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) )
     {
         TShapeKit* surface = static_cast< TShapeKit* > (coinNode);
-        Transform shapeTransform = instanceNode->getTransform();
+        Transform shapeTransform = instanceNode->getTransform().inversed();
 
         surfacesList->push_back(QPair< TShapeKit*, Transform >(surface, shapeTransform) );
     }
@@ -120,7 +120,7 @@ Transform trf::GetObjectToWorld(SoPath* nodePath)
     SoGetMatrixAction* getmatrixAction = new SoGetMatrixAction(SbViewportRegion () );
     getmatrixAction->apply(nodePath);
 
-    Transform transform = tgf::TransformFromMatrix(getmatrixAction->getMatrix() );
+    Transform transform = tgf::makeTransform(getmatrixAction->getMatrix() );
     delete getmatrixAction;
 
     return transform;

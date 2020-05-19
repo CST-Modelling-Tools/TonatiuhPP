@@ -35,7 +35,7 @@ CmdInsertTracker::CmdInsertTracker(
     if (!parentIndex.isValid() )
         gcf::SevereError("CmdInsertTracker called with invalid ModelIndex.");
 
-    InstanceNode* instanceParent = m_model->NodeFromIndex(parentIndex);
+    InstanceNode* instanceParent = m_model->getInstance(parentIndex);
     if (!instanceParent->getNode())
         gcf::SevereError("CmdInsertTracker called with NULL parent node.");
 

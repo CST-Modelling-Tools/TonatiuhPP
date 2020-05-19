@@ -39,7 +39,7 @@ QWidget* SceneDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem
 void SceneDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
     const SceneModel* model = static_cast<const SceneModel*>(index.model());
-    SoNode* node = model->NodeFromIndex(index)->getNode();
+    SoNode* node = model->getInstance(index)->getNode();
 
     QString name;
     if (node->getName() == SbName())

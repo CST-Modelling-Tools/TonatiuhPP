@@ -97,7 +97,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
         double t = ts[i];
         if (t < raytMin || t > ray.tMax) continue;
 
-        Vector3D pHit = ray(t);
+        Vector3D pHit = ray.point(t);
         double phi = atan2(pHit.y, pHit.x);
         if (phi < 0.) phi += gcf::TwoPi;
 

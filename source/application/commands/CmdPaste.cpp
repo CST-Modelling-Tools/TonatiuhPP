@@ -16,7 +16,7 @@ CmdPaste::CmdPaste( tgc::PasteType type, const QModelIndex& parentModelIndex,  S
 {
     if( !parentModelIndex.isValid() ) gcf::SevereError( "CmdPaste called with invalid ModelIndex." );
 
-    m_parentInstance = m_sceneModel->NodeFromIndex( parentModelIndex );
+    m_parentInstance = m_sceneModel->getInstance( parentModelIndex );
     if( !m_parentInstance-> getNode() ) gcf::SevereError( "CmdPaste NULL m_coinParent." );
 
     m_row = m_parentInstance->children.size();

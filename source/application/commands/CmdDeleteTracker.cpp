@@ -23,7 +23,7 @@ CmdDeleteTracker::CmdDeleteTracker(const QModelIndex& selectedIndex, SoSceneKit*
     //if( !m_scene->getPart("lightList[0]", false) )     gf::SevereError( "CmdDeleteTracker Null lightKit." );
 
     if (!selectedIndex.isValid() ) gcf::SevereError("CmdDeleteTracker called with invalid ModelIndex.");
-    InstanceNode* instanceSelection = m_pModel->NodeFromIndex(selectedIndex);
+    InstanceNode* instanceSelection = m_pModel->getInstance(selectedIndex);
 
     if (!instanceSelection->getNode() ) gcf::SevereError("CmdDeleteTracker called with NULL selection node.");
     m_coinParent = static_cast< TSeparatorKit* > (instanceSelection->getParent()->getNode() );

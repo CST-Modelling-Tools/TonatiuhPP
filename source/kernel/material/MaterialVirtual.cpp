@@ -26,9 +26,9 @@ MaterialVirtual::MaterialVirtual()
     SO_NODE_ADD_FIELD( transparency, (0.f) );
 }
 
-bool MaterialVirtual::OutputRay(const Ray& rayIn, DifferentialGeometry* dg, RandomAbstract& /*rand*/, Ray* rayOut) const
+bool MaterialVirtual::OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, RandomAbstract& /*rand*/, Ray& rayOut) const
 {
-    rayOut->origin = dg->point;
-    rayOut->setDirection(rayIn.direction());
+    rayOut.origin = dg.point;
+    rayOut.setDirection(rayIn.direction());
 	return true;
 }

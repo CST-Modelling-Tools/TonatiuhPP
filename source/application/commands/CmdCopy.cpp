@@ -12,7 +12,7 @@
 CmdCopy::CmdCopy( const QModelIndex& index, SoNode*& clipboard, SceneModel* model, QUndoCommand* parent)
 : QUndoCommand("Copy", parent), m_pClipboard ( clipboard ), m_pNode( 0 ),m_previousNode ( 0 ), m_pModel( model )
 {
-    InstanceNode* instanceNode = m_pModel->NodeFromIndex( index );
+    InstanceNode* instanceNode = m_pModel->getInstance( index );
     m_pNode = instanceNode->getNode();
 
     m_previousNode = clipboard ;

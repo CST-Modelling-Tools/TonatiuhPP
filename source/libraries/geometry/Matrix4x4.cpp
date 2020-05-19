@@ -47,7 +47,7 @@ bool Matrix4x4::operator==(const Matrix4x4& matrix) const
     return true;
 }
 
-std::shared_ptr<Matrix4x4> Matrix4x4::Transpose() const
+std::shared_ptr<Matrix4x4> Matrix4x4::transposed() const
 {
     return std::make_shared<Matrix4x4>(
         m[0][0], m[1][0], m[2][0], m[3][0],
@@ -57,7 +57,7 @@ std::shared_ptr<Matrix4x4> Matrix4x4::Transpose() const
     );
 }
 
-std::shared_ptr<Matrix4x4> Matrix4x4::Inverse() const
+std::shared_ptr<Matrix4x4> Matrix4x4::inversed() const
 {
     double det = m[0][1] * m[1][3] * m[2][2] * m[3][0] - m[0][1] * m[1][2] * m[2][3] * m[3][0] - m[0][0] * m[1][3] * m[2][2] * m[3][1] + m[0][0] * m[1][2] * m[2][3] * m[3][1]
                  - m[0][1] * m[1][3] * m[2][0] * m[3][2] + m[0][0] * m[1][3] * m[2][1] * m[3][2] + m[0][1] * m[1][0] * m[2][3] * m[3][2] - m[0][0] * m[1][1] * m[2][3] * m[3][2]

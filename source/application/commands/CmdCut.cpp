@@ -20,7 +20,7 @@ CmdCut::CmdCut(const QModelIndex& selectedIndex, SoNode*& clipboard, SceneModel*
     m_model(model),
     m_row(-1)
 {
-    InstanceNode* instanceNode = m_model->NodeFromIndex(selectedIndex);
+    InstanceNode* instanceNode = m_model->getInstance(selectedIndex);
     m_coinNode = instanceNode->getNode();
     m_coinNode->ref();
     m_coinParent = static_cast< SoBaseKit* > (instanceNode->getParent()->getNode() );

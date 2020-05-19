@@ -17,20 +17,11 @@ public:
         setDirection(direc);
     }
 
-    Vector3D operator()(double t) const
-    {
-        return origin + m_direction * t;
-    }
+    Vector3D point(double t) const {return origin + m_direction*t;}
 
-    const Vector3D& direction() const
-    {
-        return m_direction;
-    }
+    const Vector3D& direction() const {return m_direction;}
 
-    const Vector3D& invDirection() const
-    {
-        return m_directionInv;
-    }
+    const Vector3D& invDirection() const {return m_directionInv;}
 
     void setDirection(const Vector3D& direction)
     {

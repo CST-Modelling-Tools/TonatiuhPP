@@ -46,13 +46,13 @@ MaterialSpecular::~MaterialSpecular()
     delete m_reflectivitySensor;
 }
 
-bool MaterialSpecular::OutputRay(const Ray& rayIn, DifferentialGeometry* dg, RandomAbstract& rand, Ray* rayOut) const
+bool MaterialSpecular::OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, RandomAbstract& rand, Ray& rayOut) const
 {
     double randomNumber = rand.RandomDouble();
     if (randomNumber >= reflectivity.getValue()) return false;
 
     // Compute reflected ray (local coordinates)
-    rayOut->origin = dg->point;
+    rayOut.origin = dg.point;
 
     Vector3D normal;
     double sigma = slope.getValue()/1000.; // from mrad to rad
@@ -71,15 +71,15 @@ bool MaterialSpecular::OutputRay(const Ray& rayIn, DifferentialGeometry* dg, Ran
             normal.y = sigma*tgf::AlternateBoxMuller(rand);
             normal.z = 1.;
         }
-        Vector3D vx = dg->dpdu.normalized();
-        Vector3D vy = dg->dpdv.normalized();
-        Vector3D vz = dg->normal;
+        Vector3D vx = dg.dpdu.normalized();
+        Vector3D vy = dg.dpdv.normalized();
+        Vector3D vz = dg.normal;
         normal = (vx*normal.x + vy*normal.y + vz*normal.z).normalized();
     } else
-        normal = dg->normal;
+        normal = dg.normal;
 
     Vector3D d = rayIn.direction() - 2.*normal*dot(normal, rayIn.direction());
-    rayOut->setDirection(d.normalized()); // double sided
+    rayOut.setDirection(d.normalized()); // double sided
     return true;
 }
 

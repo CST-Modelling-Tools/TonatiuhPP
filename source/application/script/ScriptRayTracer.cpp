@@ -97,7 +97,7 @@ bool ScriptRayTracer::IsValidSurface(QString surfaceName)
     if (!m_sceneModel) return false;
 
     QModelIndex surfaceIndex = m_sceneModel->IndexFromNodeUrl(surfaceName);
-    InstanceNode* selectedSurface = m_sceneModel->NodeFromIndex(surfaceIndex);
+    InstanceNode* selectedSurface = m_sceneModel->getInstance(surfaceIndex);
     if (!selectedSurface) return false;
 
     return true;
@@ -182,7 +182,7 @@ int ScriptRayTracer::SetSunPositionToScene()
     if (m_sceneModel)
     {
         QModelIndex sceneIndex;
-        InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex(sceneIndex);
+        InstanceNode* sceneInstance = m_sceneModel->getInstance(sceneIndex);
         SoSceneKit* coinScene =  static_cast< SoSceneKit* >(sceneInstance->getNode() );
 
         if ((coinScene)&& (coinScene->getPart("lightList[0]", false) ))

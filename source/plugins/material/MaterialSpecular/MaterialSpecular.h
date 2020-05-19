@@ -20,7 +20,7 @@ public:
     static void initClass();
     MaterialSpecular();
 
-    bool OutputRay(const Ray& rayIn, DifferentialGeometry* dg, RandomAbstract& rand, Ray* rayOut) const;
+    bool OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, RandomAbstract& rand, Ray& rayOut) const;
 
     SoSFDouble reflectivity;
     SoSFDouble slope;

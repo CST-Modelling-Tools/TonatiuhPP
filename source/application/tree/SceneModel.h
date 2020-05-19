@@ -29,34 +29,30 @@ public:
     void setSceneKit(TSceneKit& coinScene);
     TSceneKit* getSceneKit() const {return m_coinScene;}
 
-    QModelIndex index(int row, int column, const QModelIndex& parentModelIndex = QModelIndex()) const;
-    int rowCount(const QModelIndex& parentModelIndex) const;
-    int columnCount(const QModelIndex&parent) const;
+    QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const;
+    int rowCount(const QModelIndex& index) const;
+    int columnCount(const QModelIndex&index) const;
     QModelIndex parent(const QModelIndex& index) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     QVariant data(const QModelIndex& modelIndex, int role = Qt::DisplayRole) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
     Qt::ItemFlags flags(const QModelIndex& index) const;
     Qt::DropActions supportedDropActions() const;
     Qt::DropActions supportedDragActions() const;
 
-    bool Cut(SoBaseKit& coinParent, int row);
-
+    InstanceNode* getInstance(const QModelIndex& index) const;
+    bool SetNodeName(SoNode* node, QString name);
     QModelIndex IndexFromNodeUrl(QString url) const;
     QModelIndex IndexFromPath(const SoNodeKitPath& coinNodePath) const;
-
-    int InsertCoinNode(SoNode& coinChild, SoBaseKit& coinParent);
-    void InsertLightNode(TLightKit& lightKit);
-
-    InstanceNode* NodeFromIndex(const QModelIndex& modelIndex) const;
-
     SoNodeKitPath* PathFromIndex(const QModelIndex& modelIndex) const;
 
-    bool Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinChild, int row);
+    void InsertLightNode(TLightKit& lightKit);
+    void RemoveLightNode(TLightKit& lightKit);
 
+    int InsertCoinNode(SoNode& coinChild, SoBaseKit& coinParent);
     void RemoveCoinNode(int row, SoBaseKit& coinParent);
-    void RemoveLightNode(TLightKit& coinLight);
 
-    bool SetNodeName(SoNode* coinChild, QString newName);
+    bool Cut(SoBaseKit& coinParent, int row);
+    bool Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinChild, int row);
 
     void UpdateSceneModel();
 
@@ -64,21 +60,18 @@ signals:
     void LightNodeStateChanged(int newState);
 
 private:
-    void DeleteInstanceTree(InstanceNode& instanceNode);
     void SetRoot();
-    void SetLight();
-    void SetConcentrator();
-    InstanceNode* AddInstanceNode(InstanceNode& instanceNodeParent, SoNode* separatorKit);
-    void GenerateInstanceTree(InstanceNode& instanceParent);
-    void GenerateTShapeKitSubTree(InstanceNode& instanceNodeParent, SoNode* parentNode);
-//    void GenerateTAnalyzerKitSubTree( InstanceNode& instanceNodeParent, SoNode* parentNode );
-//    void GenerateSoNodeKitListPartSubTree( InstanceNode& instanceNodeParent, SoNode* parentNode );
-    void GenerateTSeparatorKitSubTree(InstanceNode& instanceNodeParent, SoNode* parentNode);
+    InstanceNode* AddInstanceNode(InstanceNode& parent, SoNode* node);
+    void GenerateInstanceTree(InstanceNode& instance);
+    void DeleteInstanceTree(InstanceNode& instance);
 
 private:
     SoSeparator* m_coinRoot;
     TSceneKit* m_coinScene;
     InstanceNode* m_instanceRoot;
-    InstanceNode* m_instanceConcentrator;
+    InstanceNode* m_instanceLayout;
+
+    // the same SoNode can be attached to multiple parents
+    // InstanceNode have a single parent
     std::map< SoNode*, QList<InstanceNode*> > m_mapCoinQt;
 };

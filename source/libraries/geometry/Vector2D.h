@@ -82,7 +82,7 @@ struct TONATIUH_LIBRARIES Vector2D
     double& operator[](int i)
     {
         if (i == 0) return x;
-        if (i == 1) return y;
+        return y;
     }
 
     double norm2() const {

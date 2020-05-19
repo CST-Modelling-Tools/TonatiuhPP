@@ -108,15 +108,13 @@ void TSceneKit::updateTrackers(SoBaseKit* parent, Transform toGlobal, const Vect
         return;
 
     SoTransform* nodeTransform = static_cast<SoTransform*>(parent->getPart("transform", true));
-    Transform nodeOTW = toGlobal*tgf::TransformFromSoTransform(nodeTransform);
+    Transform nodeOTW = toGlobal*tgf::makeTransform(nodeTransform);
 
     if (TrackerAbstract* tracker = (TrackerAbstract*) parent->getPart("tracker", false))
     {
         tracker->update(parent, nodeOTW, vSun);
-        return;
     }
-
-    if (SoNodeKitListPart* nodes = (SoNodeKitListPart*) parent->getPart("childList", false))
+    else if (SoNodeKitListPart* nodes = (SoNodeKitListPart*) parent->getPart("childList", false))
     {
         for (int n = 0; n < nodes->getNumChildren(); ++n)
         {

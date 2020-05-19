@@ -42,7 +42,7 @@ bool SceneFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParen
     SceneModel* sceneModel = dynamic_cast<SceneModel*> (sourceModel() );
     QModelIndex index = sceneModel->index(sourceRow, 0, sourceParent);
 
-    InstanceNode* nodeInstance = sceneModel->NodeFromIndex(index);
+    InstanceNode* nodeInstance = sceneModel->getInstance(index);
     if (!nodeInstance) return false;
 
     SoNode* node = nodeInstance->getNode();

@@ -486,7 +486,7 @@ void MainWindow::SetupTriggers()
 void MainWindow::FinishManipulation()
 {
     QModelIndex currentIndex = sceneModelView->currentIndex();
-    SoBaseKit* coinNode = static_cast< SoBaseKit* >(m_sceneModel->NodeFromIndex(currentIndex)->getNode() );
+    SoBaseKit* coinNode = static_cast< SoBaseKit* >(m_sceneModel->getInstance(currentIndex)->getNode() );
 
     SoTransform* nodeTransform = static_cast< SoTransform* >(coinNode->getPart("transform", true) );
 
@@ -573,7 +573,7 @@ void MainWindow::DefineSunLight()
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
 
-    InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
+    InstanceNode* sceneInstance = m_sceneModel->getInstance(sceneModelView->rootIndex() );
     InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
     m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 
@@ -645,7 +645,7 @@ void MainWindow::InsertUserDefinedComponent()
     else
         parentIndex = sceneModelView->currentIndex();
 
-    SoNode* coinNode = m_sceneModel->NodeFromIndex(parentIndex)->getNode();
+    SoNode* coinNode = m_sceneModel->getInstance(parentIndex)->getNode();
 
     if (!coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) return;
 
@@ -672,7 +672,7 @@ void MainWindow::ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex
     if (node == sceneModelView->rootIndex() ) return;
 
 
-    InstanceNode* nodeInstnace = m_sceneModel->NodeFromIndex(node);
+    InstanceNode* nodeInstnace = m_sceneModel->getInstance(node);
     if (nodeInstnace->getParent()&&nodeInstnace->getParent()->getNode()->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) )
     {
         SoNode* coinNode = nodeInstnace->getNode();
@@ -696,7 +696,7 @@ void MainWindow::ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex
  */
 void MainWindow::ItemDragAndDropCopy(const QModelIndex& newParent, const QModelIndex& node)
 {
-    InstanceNode* nodeInstnace = m_sceneModel->NodeFromIndex(node);
+    InstanceNode* nodeInstnace = m_sceneModel->getInstance(node);
     SoNode* coinNode = nodeInstnace->getNode();
     //if( coinNode->getTypeId().isDerivedFrom( TTracker::getClassTypeId() ) ) return;
 
@@ -799,7 +799,7 @@ void MainWindow::RunFluxAnalysisRayTracer()
     TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
     if (!lightKit) return;
 
-    InstanceNode*  rootSeparatorInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
+    InstanceNode*  rootSeparatorInstance = m_sceneModel->getInstance(sceneModelView->rootIndex() );
     if (!rootSeparatorInstance) return;
 
     QVector< RandomFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
@@ -841,7 +841,7 @@ void MainWindow::SaveComponent(QString componentFileName)
     if (m_selectionModel->currentIndex() == sceneModelView->rootIndex() ) return;
 
     QModelIndex componentIndex = sceneModelView->currentIndex();
-    SoNode* coinNode = m_sceneModel->NodeFromIndex(componentIndex)->getNode();
+    SoNode* coinNode = m_sceneModel->getInstance(componentIndex)->getNode();
 
     if (!coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
     {
@@ -913,7 +913,7 @@ bool MainWindow::SaveComponent()
 
     QModelIndex componentIndex = sceneModelView->currentIndex();
 
-    SoNode* coinNode = m_sceneModel->NodeFromIndex(componentIndex)->getNode();
+    SoNode* coinNode = m_sceneModel->getInstance(componentIndex)->getNode();
 
     if (!coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
     {
@@ -1023,7 +1023,7 @@ void MainWindow::ShowMenu(const QModelIndex& index)
     if (!index.isValid() ) return;
     m_selectionModel->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
 
-    InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(index);
+    InstanceNode* instanceNode = m_sceneModel->getInstance(index);
     SoNode* coinNode = instanceNode->getNode();
     SoType type = coinNode->getTypeId();
 
@@ -1204,7 +1204,7 @@ void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& name)
 {
     if (!index.isValid() ) return;
 
-    InstanceNode* nodeInstance = m_sceneModel->NodeFromIndex(index);
+    InstanceNode* nodeInstance = m_sceneModel->getInstance(index);
     if (!nodeInstance) return;
     if (!nodeInstance->getNode() ) return;
 
@@ -1353,7 +1353,7 @@ void MainWindow::CreateGroupNode()
 
     sceneModelView->expand(parentIndex);
 
-    InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
+    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     if (!parentInstance)
     {
         emit Abort(tr("CreateGroupNode: Error creating new group node.") );
@@ -1398,7 +1398,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
                 m_sceneModel->index(0, 0, sceneModelView->rootIndex()) :
                 sceneModelView->currentIndex();
 
-    InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
+    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
     if (!parentNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) return;
 
@@ -1526,7 +1526,7 @@ void MainWindow::CreateSurfaceNode()
 
     sceneModelView->expand(parentIndex);
 
-    InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
+    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     if (!parentInstance) return;
 
     SoNode* selectedCoinNode = parentInstance->getNode();
@@ -1636,7 +1636,7 @@ void MainWindow::Delete()
     QModelIndex selection = m_selectionModel->currentIndex();
     m_selectionModel->clearSelection();
 
-    InstanceNode* selectionNode = m_sceneModel->NodeFromIndex(selection);
+    InstanceNode* selectionNode = m_sceneModel->getInstance(selection);
     m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(selectionNode->getParent()->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 
     Delete(selection);
@@ -1671,7 +1671,7 @@ bool MainWindow::Delete(QModelIndex index)
     if (index == sceneModelView->rootIndex() ) return false;
     if (index.parent() == sceneModelView->rootIndex() ) return false;
 
-    InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(index);
+    InstanceNode* instanceNode = m_sceneModel->getInstance(index);
     SoNode* coinNode = instanceNode->getNode();
 
     if (coinNode->getTypeId().isDerivedFrom(TrackerAbstract::getClassTypeId() ) )
@@ -1729,7 +1729,7 @@ void MainWindow::InsertFileComponent(QString componentFileName)
     else
         parentIndex = sceneModelView->currentIndex();
 
-    SoNode* coinNode = m_sceneModel->NodeFromIndex(parentIndex)->getNode();
+    SoNode* coinNode = m_sceneModel->getInstance(parentIndex)->getNode();
     if (!coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
     {
         emit Abort(tr("InsertFileComponent: Parent node is not valid node type.") );
@@ -1907,7 +1907,7 @@ void MainWindow::Run()
         for (QString s : m_photonsSettings->exportSurfaceNodeList)
         {
             m_sceneModel->IndexFromNodeUrl(s);
-            InstanceNode* node = m_sceneModel->NodeFromIndex(m_sceneModel->IndexFromNodeUrl(s));
+            InstanceNode* node = m_sceneModel->getInstance(m_sceneModel->IndexFromNodeUrl(s));
             exportSuraceList << node;
         }
 
@@ -1916,7 +1916,7 @@ void MainWindow::Run()
         //Compute bounding boxes and world to object transforms
         instanceRoot->updateTree(Transform(new Matrix4x4));
 
-        m_photons->setTransform(instanceRoot->getTransform() );
+        m_photons->setTransform(instanceRoot->getTransform().inversed() ); //?
 
         TLightKit* light = static_cast< TLightKit* > (instanceSun->getNode() );
         QStringList disabledNodes = QString(light->disabledNodes.getValue().getString() ).split(";", QString::SkipEmptyParts);
@@ -1940,7 +1940,7 @@ void MainWindow::Run()
             raysPerThread << m_raysTraced - t1*progressMax;
 
 
-        Transform lightToWorld = tgf::TransformFromSoTransform(transformSun);
+        Transform lightToWorld = tgf::makeTransform(transformSun);
         instanceSun->setTransform(lightToWorld);
 
         // single thread for gprof
@@ -2011,7 +2011,7 @@ void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned 
     TLightKit* lightKit = static_cast<TLightKit*>(coinScene->getPart("lightList[0]", false) );
     if (!lightKit) return;
 
-    InstanceNode*  rootSeparatorInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
+    InstanceNode*  rootSeparatorInstance = m_sceneModel->getInstance(sceneModelView->rootIndex() );
     if (!rootSeparatorInstance) return;
 
     QVector< RandomFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
@@ -2395,7 +2395,7 @@ void MainWindow::SetValue(QString nodeUrl, QString parameter, QString value)
         return;
     }
 
-    InstanceNode* nodeInstance = m_sceneModel->NodeFromIndex(nodeIndex);
+    InstanceNode* nodeInstance = m_sceneModel->getInstance(nodeIndex);
     if (!nodeInstance)
     {
         emit Abort(tr("SetValue: Defined node url is not a valid url.") );
@@ -2429,7 +2429,7 @@ void MainWindow::SoTransform_to_SoCenterballManip()
     //Transform to a SoCenterballManip manipulator
     QModelIndex currentIndex = sceneModelView->currentIndex();
 
-    InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(currentIndex);
+    InstanceNode* instanceNode = m_sceneModel->getInstance(currentIndex);
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
     SoTransform* transform = static_cast< SoTransform* >(coinNode->getPart("transform", false) );
 
@@ -2455,7 +2455,7 @@ void MainWindow::SoTransform_to_SoJackManip()
     //Transform to a SoJackManip manipulator
     QModelIndex currentIndex = sceneModelView->currentIndex();
 
-    InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(currentIndex);
+    InstanceNode* instanceNode = m_sceneModel->getInstance(currentIndex);
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
     SoTransform* transform = static_cast< SoTransform* >(coinNode->getPart("transform", false) );
 
@@ -2481,7 +2481,7 @@ void MainWindow::SoTransform_to_SoHandleBoxManip()
     //Transform to a SoHandleBoxManip manipulator
     QModelIndex currentIndex = sceneModelView->currentIndex();
 
-    InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(currentIndex);
+    InstanceNode* instanceNode = m_sceneModel->getInstance(currentIndex);
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
     SoTransform* transform = static_cast< SoTransform* >(coinNode->getPart("transform", false) );
 
@@ -2507,7 +2507,7 @@ void MainWindow::SoTransform_to_SoTabBoxManip()
     //Transform to a SoTabBoxManip manipulator
     QModelIndex currentIndex = sceneModelView->currentIndex();
 
-    InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(currentIndex);
+    InstanceNode* instanceNode = m_sceneModel->getInstance(currentIndex);
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
     SoTransform* transform = static_cast< SoTransform* >(coinNode->getPart("transform", false) );
 
@@ -2533,7 +2533,7 @@ void MainWindow::SoTransform_to_SoTrackballManip()
     //Transform to a SoTrackballManip manipulator
     QModelIndex currentIndex = sceneModelView->currentIndex();
 
-    InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(currentIndex);
+    InstanceNode* instanceNode = m_sceneModel->getInstance(currentIndex);
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
     SoTransform* transform = static_cast< SoTransform* >(coinNode->getPart("transform", false) );
 
@@ -2559,7 +2559,7 @@ void MainWindow::SoTransform_to_SoTransformBoxManip()
     //Transform to a SoTransformBoxManip manipulator
     QModelIndex currentIndex = sceneModelView->currentIndex();
 
-    InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(currentIndex);
+    InstanceNode* instanceNode = m_sceneModel->getInstance(currentIndex);
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
     SoTransform* transform = static_cast< SoTransform* >(coinNode->getPart("transform", false) );
 
@@ -2586,7 +2586,7 @@ void MainWindow::SoTransform_to_SoTransformerManip()
     //Transform to a SoTransformerManip manipulator
     QModelIndex currentIndex = sceneModelView->currentIndex();
 
-    InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(currentIndex);
+    InstanceNode* instanceNode = m_sceneModel->getInstance(currentIndex);
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
     SoTransform* transform = static_cast< SoTransform* >(coinNode->getPart("transform", false) );
 
@@ -2614,7 +2614,7 @@ void MainWindow::SoManip_to_SoTransform()
     //Transform manipulator to a SoTransform
     QModelIndex currentIndex = sceneModelView->currentIndex();
 
-    InstanceNode* instanceNode = m_sceneModel->NodeFromIndex(currentIndex);
+    InstanceNode* instanceNode = m_sceneModel->getInstance(currentIndex);
     SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
     SoTransformManip* manipulator = static_cast< SoTransformManip* >(coinNode->getPart("transform", false) );
     if (!manipulator) return;
@@ -2634,7 +2634,7 @@ void MainWindow::SoManip_to_SoTransform()
 
 void MainWindow::ChangeSelection(const QModelIndex& current)
 {
-    InstanceNode* instanceSelected = m_sceneModel->NodeFromIndex(current);
+    InstanceNode* instanceSelected = m_sceneModel->getInstance(current);
     SoNode* selectedCoinNode = instanceSelected->getNode();
 
     if (selectedCoinNode->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) )
@@ -2659,7 +2659,7 @@ void MainWindow::CreateComponent(ComponentFactory* pComponentFactory)
                 m_sceneModel->index(0, 0, sceneModelView->rootIndex()) :
                 sceneModelView->currentIndex();
 
-    InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
+    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
     if (!parentNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) return;
 
@@ -2712,7 +2712,7 @@ void MainWindow::CreateMaterial(MaterialFactory* factory)
 
     sceneModelView->expand(parentIndex);
 
-    InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
+    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
     if (!parentNode->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId())) return;
 
@@ -2752,7 +2752,7 @@ void MainWindow::CreateShape(ShapeFactory* factory)
     if (!parentIndex.isValid()) return;
     sceneModelView->expand(parentIndex);
 
-    InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
+    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
     if (!parentNode->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId() ) ) return;
     TShapeKit* shapeKit = static_cast<TShapeKit*>(parentNode);
@@ -2789,7 +2789,7 @@ void MainWindow::CreateShape(ShapeFactory* pShapeFactory, int /*numberofParamete
     QModelIndex parentIndex = ((!sceneModelView->currentIndex().isValid() ) || (sceneModelView->currentIndex() == sceneModelView->rootIndex())) ?
                 m_sceneModel->index(0,0,sceneModelView->rootIndex()) : sceneModelView->currentIndex();
 
-    InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
+    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
     if (!parentNode->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId() ) ) return;
 
@@ -2828,7 +2828,7 @@ void MainWindow::CreateTracker(TrackerFactory* pTrackerFactory)
     TSceneKit* scene = m_document->getSceneKit();
 
     /*Las 2 lineas siguientes son para obtener el valor del nodo padre*/
-    InstanceNode* parentInstance = m_sceneModel->NodeFromIndex(parentIndex);
+    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
     /*Si el valor del nodo padre es del tipo TseparatorKit, permitimos la creacion del Traker**/
     if (parentNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) {
@@ -2916,7 +2916,7 @@ void MainWindow::ChangeModelScene()
     m_graphicsRoot->AddModel(coinScene);
 
     QModelIndex viewLayoutIndex = m_sceneModel->IndexFromNodeUrl(QString("//SunNode") );
-    InstanceNode* viewLayout = m_sceneModel->NodeFromIndex(viewLayoutIndex);
+    InstanceNode* viewLayout = m_sceneModel->getInstance(viewLayoutIndex);
     sceneModelView->setRootIndex(viewLayoutIndex);
 
     InstanceNode* concentratorRoot = viewLayout->children[ 0 ];
@@ -3042,7 +3042,7 @@ bool MainWindow::Paste(QModelIndex nodeIndex, tgc::PasteType type)
     if (!nodeIndex.isValid() ) return false;
     if (!m_coinNode_Buffer) return false;
 
-    InstanceNode* ancestor = m_sceneModel->NodeFromIndex(nodeIndex);
+    InstanceNode* ancestor = m_sceneModel->getInstance(nodeIndex);
     SoNode* selectedCoinNode = ancestor->getNode();
 
     if (!selectedCoinNode->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) ) return false;
@@ -3120,7 +3120,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
         transmissivity = static_cast< AirAbstract* > (coinScene->getPart("transmissivity", false) );
 
     //Check if there is a rootSeparator InstanceNode
-    rootSeparatorInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
+    rootSeparatorInstance = m_sceneModel->getInstance(sceneModelView->rootIndex() );
     if (!rootSeparatorInstance) return false;
 
     InstanceNode* sceneInstance = rootSeparatorInstance->getParent();
@@ -3436,7 +3436,7 @@ void MainWindow::ShowRaysIn3DView()
  */
 bool MainWindow::StartOver(const QString& fileName)
 {
-    InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex(sceneModelView->rootIndex() );
+    InstanceNode* sceneInstance = m_sceneModel->getInstance(sceneModelView->rootIndex() );
 
     InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
     m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
@@ -3557,7 +3557,7 @@ void MainWindow::on_actionViewAll_triggered()
 void MainWindow::on_actionViewSelected_triggered()
 {
     QModelIndex index = m_selectionModel->currentIndex();
-    InstanceNode* node = m_sceneModel->NodeFromIndex(index);
+    InstanceNode* node = m_sceneModel->getInstance(index);
 
     SoGetBoundingBoxAction* action = new SoGetBoundingBoxAction( SbViewportRegion() ) ;
     node->getNode()->getBoundingBox(action);

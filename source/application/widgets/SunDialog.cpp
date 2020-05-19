@@ -199,7 +199,7 @@ void SunDialog::AddNodeToDisabledNodeList()
     QModelIndex index = m_selectionModel->currentIndex();
     if (!index.isValid()) return;
 
-    InstanceNode* node = m_sceneModel->NodeFromIndex(index);
+    InstanceNode* node = m_sceneModel->getInstance(index);
     if (!node) return;
 
     ui->disabledNodeList->addItem(node->GetNodeURL());

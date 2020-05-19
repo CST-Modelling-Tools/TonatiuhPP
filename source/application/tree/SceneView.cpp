@@ -102,9 +102,9 @@ void SceneView::dropEvent(QDropEvent *event)
     if ( newParent.isValid() )
     {
         SceneModel* modelScene = static_cast< SceneModel* >(model());
-        QString type = modelScene->NodeFromIndex( newParent )->getNode()->getTypeId().getName().getString();
+        QString type = modelScene->getInstance( newParent )->getNode()->getTypeId().getName().getString();
         
-        SoNode* parentNode = modelScene->NodeFromIndex( newParent )->getNode();
+        SoNode* parentNode = modelScene->getInstance( newParent )->getNode();
         if (! parentNode->getTypeId().isDerivedFrom( SoBaseKit::getClassTypeId() ) ) return;
     
         QByteArray data = event->mimeData()->data("text/objetID");
@@ -116,7 +116,7 @@ void SceneView::dropEvent(QDropEvent *event)
         
         if ( modelScene->parent( nodeIndex ) == newParent ) return;
         
-        SoNode* childNode = modelScene->NodeFromIndex( nodeIndex )->getNode();
+        SoNode* childNode = modelScene->getInstance( nodeIndex )->getNode();
         
             
         if ( ( parentNode->getTypeId().isDerivedFrom( TSeparatorKit::getClassTypeId() ) ) && 

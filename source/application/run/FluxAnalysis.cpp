@@ -92,7 +92,7 @@ QString FluxAnalysis::GetSurfaceType(QString nodeURL)
     QModelIndex nodeIndex = m_pCurrentSceneModel->IndexFromNodeUrl(nodeURL);
     if (!nodeIndex.isValid()  ) return "";
 
-    InstanceNode* instanceNode = m_pCurrentSceneModel->NodeFromIndex(nodeIndex);
+    InstanceNode* instanceNode = m_pCurrentSceneModel->getInstance(nodeIndex);
     if (!instanceNode || instanceNode == 0) return "";
 
     TShapeKit* shapeKit = static_cast<TShapeKit* > (instanceNode->getNode() );
@@ -217,7 +217,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     QModelIndex nodeIndex = m_pCurrentSceneModel->IndexFromNodeUrl(m_surfaceURL);
     if (!nodeIndex.isValid()) return;
 
-    InstanceNode* surfaceNode = m_pCurrentSceneModel->NodeFromIndex(nodeIndex);
+    InstanceNode* surfaceNode = m_pCurrentSceneModel->getInstance(nodeIndex);
     if (!surfaceNode || surfaceNode == 0) return;
     exportSuraceList.push_back(surfaceNode);
 
@@ -245,7 +245,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     //Compute bounding boxes and world to object transforms
     m_pRootSeparatorInstance->updateTree(Transform(new Matrix4x4));
 
-    m_pPhotonMap->setTransform(m_pRootSeparatorInstance->getTransform() );
+    m_pPhotonMap->setTransform(m_pRootSeparatorInstance->getTransform().inversed() );
 
     QStringList disabledNodes = QString(lightKit->disabledNodes.getValue().getString() ).split(";", QString::SkipEmptyParts);
     QVector< QPair<TShapeKit*, Transform> > surfacesList;
@@ -256,13 +256,14 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     QVector<long> raysPerThread;
     int maximumValueProgressScale = 100;
 
-    unsigned long t1 = nOfRays / maximumValueProgressScale;
+    ulong t1 = nOfRays / maximumValueProgressScale;
     for (int progressCount = 0; progressCount < maximumValueProgressScale; ++progressCount)
         raysPerThread << t1;
 
-    if (t1*maximumValueProgressScale < nOfRays) raysPerThread << nOfRays - t1*maximumValueProgressScale;
+    if (t1*maximumValueProgressScale < nOfRays)
+        raysPerThread << nOfRays - t1*maximumValueProgressScale;
 
-    Transform lightToWorld = tgf::TransformFromSoTransform(lightTransform);
+    Transform lightToWorld = tgf::makeTransform(lightTransform);
     lightInstance->setTransform(lightToWorld );
 
     // Create a progress dialog.
@@ -350,7 +351,7 @@ void FluxAnalysis::UpdatePhotonCounts()
 
     QString surfaceType = GetSurfaceType(m_surfaceURL);
     QModelIndex nodeIndex = m_pCurrentSceneModel->IndexFromNodeUrl(m_surfaceURL);
-    InstanceNode* instanceNode = m_pCurrentSceneModel->NodeFromIndex(nodeIndex);
+    InstanceNode* instanceNode = m_pCurrentSceneModel->getInstance(nodeIndex);
 
     if (surfaceType == "ShapeFlatRectangle")
     {
@@ -402,7 +403,7 @@ void FluxAnalysis::FluxAnalysisCylinder(InstanceNode* node)
     if (m_surfaceSide == "INSIDE")
         activeSideID = 0;
 
-    Transform worldToObject = node->getTransform();
+    Transform worldToObject = node->getTransform().inversed();
 
     m_xmin = 0.;
     m_xmax = phiMax*radius;
@@ -485,7 +486,7 @@ void FluxAnalysis::FluxAnalysisFlatDisk(InstanceNode* node)
     if (m_surfaceSide == "BACK")
         activeSideID = 0;
 
-    Transform worldToObject = node->getTransform();
+    Transform worldToObject = node->getTransform().inversed();
 
     m_xmin = -radius;
     m_ymin = -radius;
@@ -566,7 +567,7 @@ void FluxAnalysis::FluxAnalysisFlatRectangle(InstanceNode* node)
     if (m_surfaceSide == "BACK")
         activeSideID = 0;
 
-    Transform worldToObject = node->getTransform();
+    Transform worldToObject = node->getTransform().inversed();
 
     m_xmin = -0.5 * surfaceHeight;
     m_ymin = -0.5 * surfaceWidth;

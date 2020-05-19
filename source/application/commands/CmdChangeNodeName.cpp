@@ -24,7 +24,7 @@ CmdChangeNodeName::CmdChangeNodeName( const QModelIndex& index, QString newName,
 : QUndoCommand("Change node name", parent), m_newName ( newName ), m_previousName( "" ), m_pNode( 0 ), m_pModel( model )
 {
     if( !index.isValid() ) gcf::SevereError( "CmdChangeNodeName called with invalid ModelIndex." );
-    InstanceNode* selectedNodeInstance = m_pModel->NodeFromIndex( index );
+    InstanceNode* selectedNodeInstance = m_pModel->getInstance( index );
     if( !selectedNodeInstance ) gcf::SevereError( "CmdChangeNodeName called with invalid node." );
     m_pNode = selectedNodeInstance->getNode();
 

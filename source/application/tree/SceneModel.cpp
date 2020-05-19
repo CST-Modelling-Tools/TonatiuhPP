@@ -1,26 +1,25 @@
+#include "SceneModel.h"
+
 #include <QIcon>
 #include <QMessageBox>
 
-#include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
-#include <Inventor/nodes/SoSelection.h>
+#include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/nodekits/SoBaseKit.h>
-#include <Inventor/nodekits/SoSceneKit.h>
 #include <Inventor/nodekits/SoNodeKitListPart.h>
+#include <Inventor/nodekits/SoSceneKit.h>
+#include <Inventor/nodes/SoSelection.h>
 
-#include "libraries/geometry/gcf.h"
-
-#include "tree/SoPathVariant.h"
-#include "SceneModel.h"
-#include "kernel/run/InstanceNode.h"
 #include "kernel/material/MaterialAbstract.h"
+#include "kernel/run/InstanceNode.h"
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeAbstract.h"
 #include "kernel/sun/TLightKit.h"
-//#include "kernel/trackers/TSceneTracker.h"
 #include "kernel/trackers/TrackerAbstract.h"
+#include "libraries/geometry/gcf.h"
+#include "tree/SoPathVariant.h"
 
 /*!
  * Creates an empty model.
@@ -40,6 +39,19 @@ SceneModel::~SceneModel()
 }
 
 /*!
+ * Clears the model scene
+ *
+ * Clears nodes from the model.
+ */
+void SceneModel::Clear()
+{
+    DeleteInstanceTree(*m_instanceRoot);
+
+    delete m_instanceRoot;
+    m_instanceRoot = 0;
+}
+
+/*!
  * Sets \a coinRoot as the model root.
  */
 void SceneModel::setSceneRoot(SoSeparator& coinRoot)
@@ -56,213 +68,155 @@ void SceneModel::setSceneRoot(SoSeparator& coinRoot)
 void SceneModel::setSceneKit(TSceneKit& coinScene)
 {
     beginResetModel();
+
     if (m_instanceRoot) Clear();
     m_mapCoinQt.clear();
     m_coinScene = 0;
     m_coinScene = &coinScene;
-
     SetRoot();
-    SetLight();
-    SetConcentrator();
+
     endResetModel();
 }
 
-/*!
- * Clears the model scene
- *
- * Clears nodes from the model.
- */
-void SceneModel::Clear()
-{
-    DeleteInstanceTree(*m_instanceRoot);
-
-    delete m_instanceRoot;
-    m_instanceRoot = 0;
-}
-
-/*!
- * Sets model root
- *
- * Sets \a m_coinScene as model.
- */
 void SceneModel::SetRoot()
 {
     m_instanceRoot = new InstanceNode(m_coinScene);
-    QList<InstanceNode*> instanceLayoutList;
-    m_mapCoinQt.insert(std::make_pair(m_coinScene, instanceLayoutList) );
+
     m_mapCoinQt[m_coinScene].append(m_instanceRoot);
-}
 
-void SceneModel::SetLight()
-{
-    if (m_coinScene->getPart("lightList[0]", false))
-    {
-        TLightKit* tlightKit = static_cast< TLightKit* >( m_coinScene->getPart("lightList[0]", false ) );
-        InsertLightNode( *tlightKit );
-    }
-}
+    if (TLightKit* lightKit = static_cast<TLightKit*>(m_coinScene->getPart("lightList[0]", false)))
+        InsertLightNode(*lightKit);
 
-void SceneModel::SetConcentrator()
-{
-    SoNodeKitListPart* coinPartList = static_cast<SoNodeKitListPart*>( m_coinScene->getPart( "childList", true ) );
+    SoNodeKitListPart* coinPartList = static_cast<SoNodeKitListPart*>(m_coinScene->getPart("childList", true));
 
     //TSeparatorKit* separatorKit;
-    if (coinPartList && coinPartList->getNumChildren() == 0)
+    if (coinPartList->getNumChildren() == 0)
     {
-        //Create Sun coordinate system node
+        // Sun node
         TSeparatorKit* nodeSun = new TSeparatorKit();
         nodeSun->setName("SunNode");
-        coinPartList->addChild(nodeSun);
         nodeSun->setSearchingChildren(true);
-        InstanceNode* instanceNode = AddInstanceNode( *m_instanceRoot, nodeSun );
-        SoNodeKitListPart* nodeSunChild = static_cast< SoNodeKitListPart* >( nodeSun->getPart( "childList", true ) );
+        coinPartList->addChild(nodeSun);
+        InstanceNode* instanceSun = AddInstanceNode(*m_instanceRoot, nodeSun);
+        SoNodeKitListPart* childrenSun = static_cast<SoNodeKitListPart*>(nodeSun->getPart("childList", true));
 
-//        TSceneTracker* sceneTracker = new TSceneTracker;
-//        nodeSun->setPart("tracker", sceneTracker);
-//        sceneTracker->SetSceneKit(m_coinScene);
-
-        //Create Concentrator coordinate system node
-        TSeparatorKit* nodeRoot = new TSeparatorKit();
-        nodeRoot->setName("Layout");
-        nodeSunChild->addChild(nodeRoot);
-        nodeRoot->setSearchingChildren(true);
-
-        m_instanceConcentrator = AddInstanceNode( *instanceNode, nodeRoot );
-
-        //
-//        TLightKit* lightKit = dynamic_cast<TLightKit*>(m_coinScene->getPart("lightList[0]", false));
-//        if (lightKit) {
-//            sceneTracker->SetAzimuthAngle(&lightKit->azimuth);
-//            sceneTracker->SetZenithAngle(&lightKit->zenith);
-//        }
+        // Layout node
+        TSeparatorKit* nodeLayout = new TSeparatorKit();
+        nodeLayout->setName("Layout");
+        childrenSun->addChild(nodeLayout);
+        nodeLayout->setSearchingChildren(true);
+        m_instanceLayout = AddInstanceNode(*instanceSun, nodeLayout);
     }
     else
     {
-        TSeparatorKit* sunSeparatorKit = static_cast< TSeparatorKit* >( coinPartList->getChild( 0 ) );
-        if (!sunSeparatorKit) return;
+        TSeparatorKit* nodeSun = static_cast<TSeparatorKit*>(coinPartList->getChild(0));
+        if (!nodeSun) return;
+        InstanceNode* instanceSun = AddInstanceNode(*m_instanceRoot, nodeSun);
+        SoNodeKitListPart* childrenSun = static_cast<SoNodeKitListPart*>(nodeSun->getPart("childList", true));
+        if (!childrenSun) return;
 
-        InstanceNode* sunInstanceNode = AddInstanceNode( *m_instanceRoot, sunSeparatorKit );
-        SoNodeKitListPart* sunSeparatorChildList = static_cast< SoNodeKitListPart* >( sunSeparatorKit->getPart( "childList", true ) );
-        if (!sunSeparatorChildList) return;
+        TSeparatorKit* nodeLayout = static_cast<TSeparatorKit*>(childrenSun->getChild(0));
+        if (!nodeLayout) return;
+        m_instanceLayout = AddInstanceNode(*instanceSun, nodeLayout);
+        GenerateInstanceTree(*m_instanceLayout);
+    }
+}
 
-//        SoNode* tracker = sunSeparatorKit->getPart( "tracker", false );
-//        if (tracker)
-//        {
-//            TrackerAbstract* trackerNode = static_cast< TrackerAbstract* >( tracker );
-//            trackerNode->SetSceneKit(m_coinScene);
-//        }
+InstanceNode* SceneModel::AddInstanceNode(InstanceNode& parent, SoNode* node)
+{
+    InstanceNode* instance = new InstanceNode(node);
+    parent.addChild(instance);
+    m_mapCoinQt[node].append(instance);
+    return instance;
+}
 
-        TSeparatorKit* separatorKit = static_cast< TSeparatorKit* >( sunSeparatorChildList->getChild( 0 ) );
+void SceneModel::GenerateInstanceTree(InstanceNode& instance)
+{
+    SoNode* node = instance.getNode();
+    if (!node->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) ) return;
+
+    if (TShapeKit* shapeKit = dynamic_cast<TShapeKit*>(node))
+    {
+        SoNode* shape = shapeKit->getPart("shape", false);
+        if (shape)
+            AddInstanceNode(instance, shape);
+
+        SoNode* material = shapeKit->getPart("appearance.material", false);
+        if (material)
+            AddInstanceNode(instance, material);
+    }
+    else
+    {
+        SoBaseKit* separatorKit = static_cast<SoBaseKit*>(node);
         if (!separatorKit) return;
 
-        m_instanceConcentrator = AddInstanceNode( *sunInstanceNode, separatorKit );
-        GenerateInstanceTree( *m_instanceConcentrator );
-    }
-}
+        SoNode* tracker = separatorKit->getPart("tracker", false);
+        if (tracker)
+            AddInstanceNode(instance, tracker);
 
-InstanceNode* SceneModel::AddInstanceNode( InstanceNode& instanceNodeParent, SoNode* soNode )
-{
-    InstanceNode* instanceNode = new InstanceNode( soNode );
-    if( instanceNode )
-    {
-        instanceNodeParent.addChild( instanceNode );
-        QList< InstanceNode* > instanceNodeList;
-        m_mapCoinQt.insert( std::make_pair( soNode, instanceNodeList ) );
-        m_mapCoinQt[soNode].append( instanceNode );
-    }
-    return instanceNode;
-}
+        SoNodeKitListPart* coinPartList = static_cast<SoNodeKitListPart*>(separatorKit->getPart("childList", false));
+        if (!coinPartList) return;
 
-void SceneModel::GenerateInstanceTree( InstanceNode& instanceNodeParent )
-{
-    SoNode* parentNode = instanceNodeParent.getNode();
-
-    if( parentNode )
-    {
-        if( parentNode->getTypeId().isDerivedFrom( SoBaseKit::getClassTypeId() ) )
+        for (int n = 0; n < coinPartList->getNumChildren(); ++n)
         {
-            if( parentNode->getTypeId().isDerivedFrom( TShapeKit::getClassTypeId() ) )
-            {
-                GenerateTShapeKitSubTree( instanceNodeParent, parentNode  );
-            }
-            else
-            {
-                GenerateTSeparatorKitSubTree( instanceNodeParent, parentNode  );
-            }
+            SoBaseKit* coinChild = static_cast<SoBaseKit*>(coinPartList->getChild(n));
+            InstanceNode* instanceChild = AddInstanceNode(instance, coinChild);
+            GenerateInstanceTree(*instanceChild);
         }
     }
 }
 
-void SceneModel::GenerateTShapeKitSubTree( InstanceNode& instanceNodeParent, SoNode* parentNode )
+void SceneModel::DeleteInstanceTree(InstanceNode& instance)
 {
-    TShapeKit* parentKit = static_cast< TShapeKit* >( parentNode );
-    if( parentKit )
+    while (instance.children.count() > 0)
     {
-        SoNode* shape = parentKit->getPart("shape", false);
-        if( shape )    AddInstanceNode( instanceNodeParent, shape );
-        SoNode* material = parentKit->getPart("appearance.material", false);
-        if( material ) AddInstanceNode( instanceNodeParent, material );
+        InstanceNode* child = instance.children[instance.children.count() - 1];
+        DeleteInstanceTree(*child);
+        delete child;
+    }
+
+//    for (InstanceNode* child : instance.children)
+//    {
+//        DeleteInstanceTree(*child);
+//        delete child;
+//    }
+
+    QList<InstanceNode*>& instanceList = m_mapCoinQt[instance.getNode()];
+    int q = instanceList.indexOf(&instance);
+    instanceList.removeAt(q);
+
+    InstanceNode* instanceParent = instance.getParent();
+    if (instanceParent)
+    {
+        int row = instanceParent->children.indexOf(&instance);
+        instanceParent->children.remove(row);
     }
 }
 
-void SceneModel::GenerateTSeparatorKitSubTree( InstanceNode& instanceNodeParent, SoNode* parentNode )
-{
-    //Is TSeparatorKit node
-    SoBaseKit* parentKit = static_cast< SoBaseKit* >( parentNode );
-    if( parentKit )
-    {
-        SoNode* tracker = parentKit->getPart( "tracker", false );
-        if( tracker )
-        {
-//            TrackerAbstract* trackerNode = static_cast< TrackerAbstract* >( tracker );
-//            trackerNode->SetSceneKit( m_coinScene );
-            AddInstanceNode( instanceNodeParent, tracker );
-        }
-
-        SoNodeKitListPart* coinPartList = static_cast< SoNodeKitListPart* >( parentKit->getPart( "childList", false ) );
-        if (coinPartList)
-        {
-            for( int index = 0; index < coinPartList->getNumChildren(); ++index )
-            {
-                SoBaseKit* coinChild = static_cast< SoBaseKit* >( coinPartList->getChild( index ) );
-                InstanceNode* instanceChild = AddInstanceNode( instanceNodeParent, coinChild );
-                if( instanceChild) GenerateInstanceTree( *instanceChild );
-            }
-        }
-    }
-}
-
-QModelIndex SceneModel::index(int row, int column, const QModelIndex& parentModelIndex) const
+QModelIndex SceneModel::index(int row, int column, const QModelIndex& parent) const
 {
     if (!m_instanceRoot) return QModelIndex();
-    InstanceNode* instanceParent = NodeFromIndex(parentModelIndex);
-    return createIndex(row, column, instanceParent->children[row]);
+    InstanceNode* instance = getInstance(parent);
+    return createIndex(row, column, instance->children[row]);
 }
 
-InstanceNode* SceneModel::NodeFromIndex(const QModelIndex& modelIndex) const
+int SceneModel::rowCount(const QModelIndex& index) const
 {
-    if ( modelIndex.isValid() ) return static_cast< InstanceNode* >( modelIndex.internalPointer() );
-    else return m_instanceRoot;
+    InstanceNode* instance = getInstance(index);
+    return instance ? instance->children.count() : 0;
 }
 
-int SceneModel::rowCount(const QModelIndex& parentModelIndex) const
+int SceneModel::columnCount(const QModelIndex& /*index*/) const
 {
-    InstanceNode* instanceParent = NodeFromIndex(parentModelIndex);
-    return instanceParent ? instanceParent->children.count() : 0;
-}
-
-int SceneModel::columnCount(const QModelIndex& parent) const
-{
-    Q_UNUSED(parent)
     return 1;
 }
 
 QModelIndex SceneModel::parent(const QModelIndex& index) const
 {
-    InstanceNode* instanceChild = NodeFromIndex(index);
-    if (!instanceChild) return QModelIndex();
+    InstanceNode* instance = getInstance(index);
+    if (!instance) return QModelIndex();
 
-    InstanceNode* instanceParent = instanceChild->getParent();
+    InstanceNode* instanceParent = instance->getParent();
     if (!instanceParent) return QModelIndex();
 
     InstanceNode* instanceGrandparent = instanceParent->getParent();
@@ -270,10 +224,84 @@ QModelIndex SceneModel::parent(const QModelIndex& index) const
 
     int row = instanceGrandparent->children.indexOf(instanceParent);
     return createIndex(row, 0, instanceParent);
-//    return createIndex(row, childModelIndex.column(), instanceParent);
 }
 
-QVariant SceneModel::headerData(int section, Qt::Orientation orientation, int role ) const
+QVariant SceneModel::data(const QModelIndex& index, int role) const
+{
+    if (role != Qt::DisplayRole && role != Qt::UserRole && role != Qt::DecorationRole) return QVariant();
+
+    InstanceNode* instance = getInstance(index);
+    if (!instance) return QVariant();
+
+    SoNode* node = instance->getNode();
+    if (!node) return QVariant();
+
+    if (index.column() != 0) return QVariant();
+
+    if (role == Qt::DisplayRole)
+    {
+        QString name;
+        if (node->getName() == SbName())
+            name = node->getTypeId().getName().getString();
+        else
+            name = node->getName().getString();
+
+        SoSearchAction action;
+        action.setNode(node);
+        action.setInterest(SoSearchAction::ALL);
+        action.apply(m_coinRoot);
+
+        int count = action.getPaths().getLength();
+        if (count > 1)
+            name = QString("%1 [%2]").arg(name).arg(count);
+
+        return name;
+    }
+    if (role == Qt::UserRole)
+    {
+        SoNodeKitPath* coinKitPath = PathFromIndex(index);
+        if (coinKitPath)
+        {
+            SoPathVariant pathWrapper(coinKitPath);
+            return QVariant::fromValue(pathWrapper);
+        }
+        coinKitPath->unref();
+    }
+    if (role == Qt::DecorationRole)
+    {
+        if (node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
+        {
+            return QIcon(":/images/scene/nodeGroup.png");
+        }
+        else if (node->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId()))
+        {
+            return QIcon(":/images/scene/nodeShape.png");
+        }
+        else if (node->getTypeId().isDerivedFrom(SoShape::getClassTypeId()))
+        {
+            ShapeAbstract* shape = static_cast<ShapeAbstract*>(node);
+            return QIcon(shape->getTypeIcon());
+        }
+        else if (node->getTypeId().isDerivedFrom(MaterialAbstract::getClassTypeId()))
+        {
+            MaterialAbstract* material = static_cast<MaterialAbstract*>(node);
+            return QIcon(material->getTypeIcon());
+        }
+        else if (node->getTypeId().isDerivedFrom(TrackerAbstract::getClassTypeId()))
+        {
+            TrackerAbstract* tracker = static_cast<TrackerAbstract*>(node);
+            return QIcon(tracker->getTypeIcon());
+        }
+        else if (node->getTypeId().isDerivedFrom(TLightKit::getClassTypeId()))
+        {
+            return QIcon(":/images/scene/environmentSun.png");
+        }
+    }
+
+    return QVariant();
+}
+
+QVariant SceneModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal) {
         if (role == Qt::DisplayRole) {
@@ -283,94 +311,233 @@ QVariant SceneModel::headerData(int section, Qt::Orientation orientation, int ro
     return QVariant();
 }
 
-QVariant SceneModel::data(const QModelIndex& index, int role) const
+Qt::ItemFlags SceneModel::flags(const QModelIndex& index) const
 {
-    if (role != Qt::DisplayRole && role != Qt::UserRole && role != Qt::DecorationRole) return QVariant();
-
-    InstanceNode* instanceNode = NodeFromIndex(index);
-    if (!instanceNode) return QVariant();
-
-    SoNode* nodeCoin = instanceNode->getNode();
-    if (!nodeCoin) return QVariant();
-
-    if (index.column() == 0)
-    {
-        if (role == Qt::DisplayRole)
-        {
-            QString name;
-            if ( nodeCoin->getName() == SbName() )
-                name = nodeCoin->getTypeId().getName().getString();
-            else
-                name = nodeCoin->getName().getString();
-
-            SoSearchAction action;
-            action.setNode(nodeCoin);
-            action.setInterest(SoSearchAction::ALL);
-            action.apply(m_coinRoot);
-
-            int count = action.getPaths().getLength();
-            if (count > 1)
-                name = QString("%1 [%2]").arg(name).arg(count);
-
-            return name;
-        }
-        if (role == Qt::UserRole)
-        {
-            SoNodeKitPath* coinKitPath = PathFromIndex(index);
-            if (coinKitPath)
-            {
-                SoPathVariant pathWrapper(coinKitPath);
-                return QVariant::fromValue(pathWrapper);
-            }
-            coinKitPath->unref();
-            return  QVariant();
-        }
-        if (role == Qt::DecorationRole)
-        {
-            if (nodeCoin->getTypeId().isDerivedFrom( TLightKit::getClassTypeId() ) )
-            {
-                return QIcon(":/images/scene/environmentSun.png");
-            }
-            else if (nodeCoin->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
-            {
-                return QIcon(":/images/scene/nodeGroup.png");
-            }
-            else if (nodeCoin->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) )
-            {
-//                SoBaseKit* nodeKit = static_cast< SoBaseKit* >( coinNode );
-//                TShape* kit = static_cast<TShape*>( nodeKit->getPart( "shape", false ) );
-//                if( kit ) return QIcon( kit->GetIcon() );
-                return QIcon(":/images/scene/nodeShape.png");
-            }
-            else if (nodeCoin->getTypeId().isDerivedFrom(SoShape::getClassTypeId() ) )
-            {
-                ShapeAbstract* shape = static_cast<ShapeAbstract*>(nodeCoin);
-                return QIcon(shape->getTypeIcon());
-            }
-            else if (nodeCoin->getTypeId().isDerivedFrom(MaterialAbstract::getClassTypeId() ) )
-            {
-                MaterialAbstract* material = static_cast<MaterialAbstract*>( nodeCoin );
-                return QIcon(material->getTypeIcon());
-            }
-            else if (nodeCoin->getTypeId().isDerivedFrom(TrackerAbstract::getClassTypeId() ) )
-            {
-                TrackerAbstract* tracker = static_cast<TrackerAbstract*>(nodeCoin);
-                return QIcon(tracker->getTypeIcon());
-            }
-         }
-    }
-
-    return QVariant();
+    Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
+    if (!index.isValid()) return defaultFlags;
+    if (index.column() > 0) return defaultFlags;
+    return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsEditable | defaultFlags;
 }
 
-int SceneModel::InsertCoinNode( SoNode& coinChild, SoBaseKit& coinParent )
+Qt::DropActions SceneModel::supportedDropActions() const
+{
+    return Qt::CopyAction | Qt::MoveAction;
+}
+
+Qt::DropActions SceneModel::supportedDragActions() const
+{
+    return Qt::CopyAction | Qt::MoveAction;
+}
+
+InstanceNode* SceneModel::getInstance(const QModelIndex& index) const
+{
+    if (index.isValid())
+        return (InstanceNode*) index.internalPointer();
+    else
+        return m_instanceRoot;
+}
+
+bool SceneModel::SetNodeName(SoNode* node, QString name)
+{
+    SbName sbname(name.toStdString().c_str());
+
+    for (InstanceNode* instance : m_mapCoinQt[node])
+    {
+        for (InstanceNode* sibling : instance->getParent()->children)
+        {
+            if (sibling == instance) continue;
+            if (sibling->getNode()->getName() == sbname)
+                return false;
+        }
+    }
+
+    node->setName(sbname);
+    emit layoutChanged();
+    return true;
+}
+
+/**
+ * Returns the index of item with the \a nodeUrl.
+ *
+ * If \a nodeUrl is not a valid node url, the function returns root node index.
+ *
+ *
+ * \sa IndexFromNodeUrl, NodeFromIndex, PathFromIndex.
+**/
+QModelIndex SceneModel::IndexFromNodeUrl(QString url) const
+{
+    QStringList path = url.split("/", QString::SkipEmptyParts);
+
+    if (path.size() == 1 && path[0] == "Light")
+        return index(0, 0);
+
+    if (path.size() > 0)
+    {
+        QString nodeName = path.last();
+        path.removeLast();
+        QString parentURL = QString("//") + path.join("/");
+
+        QModelIndex parentIndex = IndexFromNodeUrl(parentURL);
+        InstanceNode* parentNode = getInstance(parentIndex);
+
+        int child = 0;
+        int row = -1;
+        while (child < parentNode->children.count())
+        {
+            if (parentNode->children[child]->getNode()->getName() == SbName( nodeName.toStdString().c_str() ) )
+            {
+                row = child;
+                break;
+            }
+            child++;
+        }
+        if (row < 0) return QModelIndex();
+        //if(nodeName == ".") return index(row+1, 0, parentIndex );
+        return index(row, 0, parentIndex);
+    }
+    else
+        return QModelIndex();
+}
+
+/**
+ * Returns the index of item with the \a coinNodePath.
+ *
+ * If \a coinNodePath is not a valid node path, the function returns root node index.
+ *
+ *
+ * \sa IndexFromNodeUrl, NodeFromIndex, PathFromIndex.
+**/
+QModelIndex SceneModel::IndexFromPath( const SoNodeKitPath& coinNodePath ) const
+{
+    SoBaseKit* coinNode = static_cast< SoBaseKit* >( coinNodePath.getTail() );
+    if( !coinNode ) gcf::SevereError( "IndexFromPath Null coinNode." );
+
+    if( coinNode->getTypeId().getName().getString() == SbName("TLightKit") ) return index( 0, 0 );
+
+    if ( coinNodePath.getLength() > 1 )
+    {
+        SoBaseKit* coinParent = static_cast< SoBaseKit* >( coinNodePath.getNodeFromTail(1) );
+        if( !coinParent ) gcf::SevereError( "IndexFromPath Null coinParent." );
+
+        if( coinParent->getTypeId().getName() == SbName( "TLightKit") ) return index( 0, 0 );
+
+        SoNodeKitListPart* coinPartList = static_cast< SoNodeKitListPart* >( coinParent->getPart( "childList", true ) );
+        if( !coinPartList ) gcf::SevereError( "IndexFromPath Null coinPartList." );
+
+        int row = coinPartList->findChild(coinNode);
+        if( coinParent->getTypeId().isDerivedFrom( TSeparatorKit::getClassTypeId() ) )
+        {
+            if (coinParent->getPart("tracker", false)) row++;
+        }
+        if( coinNodePath.getNodeFromTail(1)->getTypeId().isDerivedFrom( SoSceneKit::getClassTypeId() ) )
+        {
+            int child = 0;
+            while( child < m_instanceRoot->children.count() )
+            {
+                if ( m_instanceRoot->children[child]->getNode() == coinNode )
+                    break;
+                child++;
+            }
+            return index( child, 0 );
+        }
+        else
+        {
+            SoNodeKitPath* parentPath = static_cast< SoNodeKitPath* > ( coinNodePath.copy( 0, 0 ) );
+            parentPath->truncate( parentPath->getLength() - 1 );
+                        QModelIndex parentIndex = IndexFromPath( *parentPath );
+            QModelIndex childIndex =  index (row, 0, parentIndex );
+            return childIndex;
+        }
+
+    }
+    else
+        return QModelIndex();
+}
+
+SoNodeKitPath* SceneModel::PathFromIndex( const QModelIndex& modelIndex ) const
+{
+    SoNode* coinNode = getInstance( modelIndex )->getNode();
+    if (!coinNode->getTypeId().isDerivedFrom( SoBaseKit::getClassTypeId() ) )
+    {
+        QModelIndex parentIndex = parent( modelIndex );
+        SoNodeKitPath* parentPath = PathFromIndex( parentIndex );
+        return parentPath;
+    }
+    else
+    {
+        SoSearchAction coinSearch;
+        coinSearch.setNode( m_coinScene );
+        coinSearch.setInterest( SoSearchAction::FIRST);
+        coinSearch.apply( m_coinRoot );
+
+        SoPath* coinScenePath = coinSearch.getPath( );
+        if( !coinScenePath ) gcf::SevereError( "PathFromIndex Null coinScenePath." );
+
+        SoNodeKitPath* nodePath = static_cast< SoNodeKitPath* > ( coinScenePath );
+        if( !nodePath ) gcf::SevereError( "PathFromIndex Null nodePath." );
+
+        nodePath->ref();
+
+        InstanceNode* instanceNode = getInstance( modelIndex );
+
+        SoNodeList nodeList;
+        while(instanceNode->getParent() )
+        {
+            nodeList.append( instanceNode->getNode() );
+            instanceNode = instanceNode->getParent();
+        }
+
+        for( int i = nodeList.getLength(); i > 0; --i )
+        {
+            SoBaseKit* coinNode = static_cast< SoBaseKit* >( nodeList[i-1] );
+            if ( coinNode )    nodePath->append( coinNode );
+
+        }
+        return nodePath;
+    }
+}
+
+/*!
+ * Insert a light node to the model. If the model has an other light node, the previous node
+ * will be deleted.
+ */
+void SceneModel::InsertLightNode(TLightKit& lightKit)
+{
+    SoNodeKitListPart* lightList =
+        static_cast<SoNodeKitListPart*>(m_coinScene->getPart("lightList", true));
+
+    if (lightList->getNumChildren() > 0)
+        if (m_instanceRoot->children.size() > 0)
+            m_instanceRoot->children.remove(0);
+
+    m_coinScene->setPart("lightList[0]", &lightKit);
+
+    InstanceNode* instance = new InstanceNode(&lightKit);
+    m_instanceRoot->insertChild(0, instance);
+
+    emit LightNodeStateChanged(1);
+    emit layoutChanged();
+}
+
+void SceneModel::RemoveLightNode(TLightKit& lightKit)
+{
+    SoNodeKitListPart* lightList =
+        static_cast<SoNodeKitListPart*>(m_coinScene->getPart("lightList", true));
+    if (lightList) lightList->removeChild(&lightKit);
+    m_instanceRoot->children.remove(0);
+
+    emit LightNodeStateChanged(0);
+    emit layoutChanged();
+}
+
+int SceneModel::InsertCoinNode(SoNode& coinChild, SoBaseKit& coinParent)
 {
     int row = -1;
     if (coinParent.getTypeId().isDerivedFrom( TSeparatorKit::getClassTypeId() ) )
     {
         if( coinChild.getTypeId().isDerivedFrom( TrackerAbstract::getClassTypeId() ) )
         {
-            coinParent.setPart( "tracker", &coinChild );
+            coinParent.setPart("tracker", &coinChild);
             row = 0;
         }
         else
@@ -416,42 +583,6 @@ int SceneModel::InsertCoinNode( SoNode& coinChild, SoBaseKit& coinParent )
     return row;
 }
 
-/*!
- * Insert a light node to the model. If the model has an other light node, the previous node
- * will be deleted.
- */
-void SceneModel::InsertLightNode(TLightKit& lightKit)
-{
-    SoNodeKitListPart* lightList =
-            static_cast<SoNodeKitListPart*>(m_coinScene->getPart("lightList", true) ) ;
-    if (lightList->getNumChildren() > 0)
-        if (m_instanceRoot->children.size() > 0)
-            m_instanceRoot->children.remove(0);
-
-    m_coinScene->setPart("lightList[0]", &lightKit);
-
-//    SoSearchAction trackersSearch;
-//    trackersSearch.setType( TrackerAbstract::getClassTypeId() );
-//    trackersSearch.setInterest( SoSearchAction::ALL);
-//    trackersSearch.apply( m_coinRoot );
-//    SoPathList& trackersPath = trackersSearch.getPaths();
-
-//    for( int index = 0; index < trackersPath.getLength(); ++index )
-//    {
-//        SoFullPath* trackerPath = static_cast< SoFullPath* > ( trackersPath[index] );
-//        TrackerAbstract* tracker = static_cast< TrackerAbstract* >( trackerPath->getTail() );
-////        tracker->SetAzimuthAngle(&lightKit.azimuth);
-////        tracker->SetZenithAngle(&lightKit.zenith);
-//    }
-
-    InstanceNode* instanceLight = new InstanceNode(&lightKit);
-    m_instanceRoot->insertChild(0, instanceLight);
-
-    emit LightNodeStateChanged(1);
-    emit layoutChanged();
-}
-
-
 void SceneModel::RemoveCoinNode( int row, SoBaseKit& coinParent )
 {
     if (coinParent.getTypeId().isDerivedFrom( TSeparatorKit::getClassTypeId() ) )
@@ -468,9 +599,7 @@ void SceneModel::RemoveCoinNode( int row, SoBaseKit& coinParent )
                 if( coinParent.getPart( "tracker", false ) )    coinPartList->removeChild( row - 1 );
                 else coinPartList->removeChild( row );
             }
-
         }
-
     }
 
     QList<InstanceNode*> instanceListParent = m_mapCoinQt[ &coinParent ];
@@ -487,50 +616,6 @@ void SceneModel::RemoveCoinNode( int row, SoBaseKit& coinParent )
     emit layoutChanged();
 }
 
-void SceneModel::RemoveLightNode(TLightKit& coinLight)
-{
-    SoNodeKitListPart* lightList = static_cast< SoNodeKitListPart* >( m_coinScene->getPart( "lightList", true ) );
-    if ( lightList ) lightList->removeChild( &coinLight );
-    m_instanceRoot->children.remove( 0 );
-
-//    SoSearchAction trackersSearch;
-//    trackersSearch.setType( TrackerAbstract::getClassTypeId() );
-//    trackersSearch.setInterest( SoSearchAction::ALL);
-//    trackersSearch.apply( m_coinRoot );
-//    SoPathList& trackersPath = trackersSearch.getPaths();
-
-//    for( int index = 0; index <trackersPath.getLength(); ++index )
-//    {
-////        SoFullPath* trackerPath = static_cast< SoFullPath* > ( trackersPath[index] );
-////        TrackerAbstract* tracker = dynamic_cast< TrackerAbstract* >( trackerPath->getTail() );
-////        tracker->Disconnect();
-//    }
-
-    emit LightNodeStateChanged( 0 );
-    emit layoutChanged();
-}
-
-Qt::ItemFlags SceneModel::flags( const QModelIndex& modelIndex ) const
-{
-    Qt::ItemFlags defaultFlags = QAbstractItemModel::flags( modelIndex );
-
-    if ( modelIndex.isValid() )
-    {
-        if (modelIndex.column() > 0) return defaultFlags;
-        else return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsEditable | defaultFlags;
-    }
-    else return defaultFlags;
-}
-
-Qt::DropActions SceneModel::supportedDropActions() const
-{
-    return Qt::CopyAction | Qt::MoveAction;
-}
-
-Qt::DropActions SceneModel::supportedDragActions() const
-{
-    return Qt::CopyAction | Qt::MoveAction;
-}
 /**
  * Cuts the \a row child from \a coinParent node.
  *
@@ -618,105 +703,6 @@ bool SceneModel::Cut(SoBaseKit& coinParent, int row)
     emit layoutChanged();
 
     return true;
-}
-
-
-/**
- * Returns the index of item with the \a nodeUrl.
- *
- * If \a nodeUrl is not a valid node url, the function returns root node index.
- *
- *
- * \sa IndexFromNodeUrl, NodeFromIndex, PathFromIndex.
-**/
-QModelIndex SceneModel::IndexFromNodeUrl(QString url) const
-{
-    QStringList path = url.split("/", QString::SkipEmptyParts);
-
-    if (path.size() == 1 && path[0] == "Light")
-        return index(0, 0);
-
-    if (path.size() > 0)
-    {
-        QString nodeName = path.last();
-        path.removeLast();
-        QString parentURL = QString("//") + path.join("/");
-
-        QModelIndex parentIndex = IndexFromNodeUrl(parentURL);
-        InstanceNode* parentNode = NodeFromIndex(parentIndex);
-
-        int child = 0;
-        int row = -1;
-        while (child < parentNode->children.count())
-        {
-            if (parentNode->children[child]->getNode()->getName() == SbName( nodeName.toStdString().c_str() ) )
-            {
-                row = child;
-                break;
-            }
-            child++;
-        }
-        if (row < 0) return QModelIndex();
-        //if(nodeName == ".") return index(row+1, 0, parentIndex );
-        return index(row, 0, parentIndex);
-    }
-    else
-        return QModelIndex();
-}
-
-/**
- * Returns the index of item with the \a coinNodePath.
- *
- * If \a coinNodePath is not a valid node path, the function returns root node index.
- *
- *
- * \sa IndexFromNodeUrl, NodeFromIndex, PathFromIndex.
-**/
-QModelIndex SceneModel::IndexFromPath( const SoNodeKitPath& coinNodePath ) const
-{
-    SoBaseKit* coinNode = static_cast< SoBaseKit* >( coinNodePath.getTail() );
-    if( !coinNode ) gcf::SevereError( "IndexFromPath Null coinNode." );
-
-    if( coinNode->getTypeId().getName().getString() == SbName("TLightKit") ) return index( 0, 0 );
-
-    if ( coinNodePath.getLength() > 1 )
-    {
-        SoBaseKit* coinParent = static_cast< SoBaseKit* >( coinNodePath.getNodeFromTail(1) );
-        if( !coinParent ) gcf::SevereError( "IndexFromPath Null coinParent." );
-
-        if( coinParent->getTypeId().getName() == SbName( "TLightKit") ) return index( 0, 0 );
-
-        SoNodeKitListPart* coinPartList = static_cast< SoNodeKitListPart* >( coinParent->getPart( "childList", true ) );
-        if( !coinPartList ) gcf::SevereError( "IndexFromPath Null coinPartList." );
-
-        int row = coinPartList->findChild(coinNode);
-        if( coinParent->getTypeId().isDerivedFrom( TSeparatorKit::getClassTypeId() ) )
-        {
-            if (coinParent->getPart("tracker", false)) row++;
-        }
-        if( coinNodePath.getNodeFromTail(1)->getTypeId().isDerivedFrom( SoSceneKit::getClassTypeId() ) )
-        {
-            int child = 0;
-            while( child < m_instanceRoot->children.count() )
-            {
-                if ( m_instanceRoot->children[child]->getNode() == coinNode )
-                    break;
-                child++;
-            }
-            return index( child, 0 );
-        }
-        else
-        {
-            SoNodeKitPath* parentPath = static_cast< SoNodeKitPath* > ( coinNodePath.copy( 0, 0 ) );
-            parentPath->truncate( parentPath->getLength() - 1 );
-                        QModelIndex parentIndex = IndexFromPath( *parentPath );
-            QModelIndex childIndex =  index (row, 0, parentIndex );
-            return childIndex;
-        }
-
-    }
-    else
-        return QModelIndex();
 }
 
 /**
@@ -809,96 +795,7 @@ bool SceneModel::Paste( tgc::PasteType type, SoBaseKit& coinParent, SoNode& coin
     return true;
 }
 
-
-bool SceneModel::SetNodeName( SoNode* coinChild, QString newName )
-{
-    QList< InstanceNode* > nodeInstances = m_mapCoinQt[ coinChild ];
-    if( nodeInstances.size() == 0 ) return false;
-
-    QList< InstanceNode* > instancesParent;
-    for (int index = 0; index < nodeInstances.size(); ++index )
-    {
-        InstanceNode* instance = nodeInstances[index];
-        QVector< InstanceNode* > parentChildren = instance->getParent()->children;
-        int childIndex = parentChildren.indexOf( instance );
-        for( int child = 0; child < parentChildren.size(); ++child )
-        {
-
-            SbName idChildName = parentChildren[child]->getNode()->getName();
-            if( child!= childIndex && idChildName == newName.toStdString().c_str() )    return false;
-        }
-    }
-    coinChild->setName( newName.toStdString().c_str() );
-
-    emit layoutChanged();
-    return true;
-}
-
 void SceneModel::UpdateSceneModel()
 {
     emit layoutChanged();
-}
-
-void SceneModel::DeleteInstanceTree(InstanceNode& instanceNode)
-{
-    while (instanceNode.children.count() > 0)
-    {
-        InstanceNode* childInstance = instanceNode.children[instanceNode.children.count() - 1];
-        DeleteInstanceTree( *childInstance );
-        delete childInstance;
-        childInstance = 0;
-    }
-
-    QList<InstanceNode*>& instanceList = m_mapCoinQt[ instanceNode.getNode()];
-    instanceList.removeAt( instanceList.indexOf( &instanceNode ) );
-
-    InstanceNode* instanceParent = instanceNode.getParent();
-    if( instanceParent )
-    {
-        int row = instanceParent->children.indexOf( &instanceNode );
-        instanceParent->children.remove(row);
-    }
-}
-
-SoNodeKitPath* SceneModel::PathFromIndex( const QModelIndex& modelIndex ) const
-{
-    SoNode* coinNode = NodeFromIndex( modelIndex )->getNode();
-    if (!coinNode->getTypeId().isDerivedFrom( SoBaseKit::getClassTypeId() ) )
-    {
-        QModelIndex parentIndex = parent( modelIndex );
-        SoNodeKitPath* parentPath = PathFromIndex( parentIndex );
-        return parentPath;
-    }
-    else
-    {
-        SoSearchAction coinSearch;
-        coinSearch.setNode( m_coinScene );
-        coinSearch.setInterest( SoSearchAction::FIRST);
-        coinSearch.apply( m_coinRoot );
-
-        SoPath* coinScenePath = coinSearch.getPath( );
-        if( !coinScenePath ) gcf::SevereError( "PathFromIndex Null coinScenePath." );
-
-        SoNodeKitPath* nodePath = static_cast< SoNodeKitPath* > ( coinScenePath );
-        if( !nodePath ) gcf::SevereError( "PathFromIndex Null nodePath." );
-
-        nodePath->ref();
-
-        InstanceNode* instanceNode = NodeFromIndex( modelIndex );
-
-        SoNodeList nodeList;
-        while(instanceNode->getParent() )
-        {
-            nodeList.append( instanceNode->getNode() );
-            instanceNode = instanceNode->getParent();
-        }
-
-        for( int i = nodeList.getLength(); i > 0; --i )
-        {
-            SoBaseKit* coinNode = static_cast< SoBaseKit* >( nodeList[i-1] );
-            if ( coinNode )    nodePath->append( coinNode );
-
-        }
-        return nodePath;
-    }
 }

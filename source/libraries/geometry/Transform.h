@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Matrix4x4.h"
-#include "Vector3D.h"
+#include "libraries/geometry/Vector3D.h"
+#include "libraries/geometry/Matrix4x4.h"
 
 class Ray;
 struct BoundingBox;
@@ -22,12 +22,18 @@ public:
     Transform(const std::shared_ptr<Matrix4x4>& mdir);
     Transform(const std::shared_ptr<Matrix4x4>& mdir, const std::shared_ptr<Matrix4x4>& minv);
 
+    std::shared_ptr<Matrix4x4> getMatrix() const {return m_mdir;}
+    Transform transposed() const {return Transform(m_mdir->transposed(), m_minv->transposed());}
+    Transform inversed() const {return Transform(m_minv, m_mdir);}
+    bool SwapsHandedness() const;
+
+    Transform operator*(const Transform& rhs) const;
+
     Vector3D transformPoint(const Vector3D& p) const;
     Vector3D transformVector(const Vector3D& v) const;
     Vector3D transformNormal(const Vector3D& n) const;
-
-//    Point3D operator()(const Point3D& p) const;
-//    void operator()(const Point3D& p, Point3D& ans) const;
+    Ray transformDirect(const Ray& r) const;
+    Ray transformInverse(const Ray& r) const;
 
     Vector3D operator()(const Vector3D& v) const;
     void operator()(const Vector3D& v, Vector3D& ans) const;
@@ -38,19 +44,10 @@ public:
     BoundingBox operator()(const BoundingBox& b) const;
     void operator()(const BoundingBox& b, BoundingBox& ans) const;
 
-
-    Transform operator*(const Transform& rhs) const;
-
-    bool operator==(const Transform& mat) const;
-
-    std::shared_ptr<Matrix4x4> GetMatrix() const {return m_mdir;}
-
-    Transform transposed() const;
-    Transform inversed() const {return Transform(m_minv, m_mdir);}
-    bool SwapsHandedness() const;
-
     Vector3D multVecMatrix(const Vector3D& v) const;
     Vector3D multDirMatrix(const Vector3D& src) const;
+
+    bool operator==(const Transform& mat) const;
 
     static Transform translate(double x, double y, double z);
     static Transform translate(const Vector3D& v) {return translate(v.x, v.y, v.z);}

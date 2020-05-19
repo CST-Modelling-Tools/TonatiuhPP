@@ -13,7 +13,7 @@
 CmdDelete::CmdDelete(const QModelIndex& selectedIndex, SceneModel& model, QUndoCommand* parent)
     : QUndoCommand("Delete", parent),  m_coinNode(0), m_coinParent(0), m_pModel(&model), m_row(-1)
 {
-    InstanceNode* instanceNode = m_pModel->NodeFromIndex(selectedIndex);
+    InstanceNode* instanceNode = m_pModel->getInstance(selectedIndex);
     m_coinNode = instanceNode->getNode();
     m_coinNode->ref();
     m_coinParent = static_cast< SoBaseKit* > (instanceNode->getParent()->getNode() );

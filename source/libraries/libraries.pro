@@ -7,7 +7,9 @@ include(../config.pri)
 
 QT += printsupport # for customplot
 
+gcc {
 QMAKE_CXXFLAGS += -Wno-deprecated-declarations # for customplot
+}
 
 HEADERS += \
     $$files(*.h) \

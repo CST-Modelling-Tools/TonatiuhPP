@@ -100,7 +100,7 @@ BoundingBox ShapeSphere::getBox() const
 
 bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const
 {
-    Vector3D r0 = Vector3D(ray.origin);
+    const Vector3D& r0 = ray.origin;
     double r = radius.getValue();
 
     // intersection with full shape
@@ -119,7 +119,7 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
         double t = ts[i];
         if (t < raytMin || t > ray.tMax) continue;
 
-        Vector3D pHit = ray(t);
+        Vector3D pHit = ray.point(t);
         double phi = atan2(pHit.y, pHit.x);
         if (phi < 0.) phi += gcf::TwoPi;
         double alpha = asin(gcf::clamp(pHit.z/r, -1., 1.));
@@ -151,8 +151,7 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
 
 Vector3D ShapeSphere::getPoint(double u, double v) const
 {
-    Vector3D p = getNormal(u, v);
-    return radius.getValue()*p;
+    return radius.getValue()*getNormal(u, v);
 }
 
 Vector3D ShapeSphere::getNormal(double u, double v) const
@@ -160,12 +159,11 @@ Vector3D ShapeSphere::getNormal(double u, double v) const
     double phi = u*phiMax.getValue();
     double alpha = (1. - v)*alphaMin.getValue() + v*alphaMax.getValue();
 
-    Vector3D p(
+    return Vector3D(
         cos(phi)*cos(alpha),
         sin(phi)*cos(alpha),
         sin(alpha)
     );
-    return p;
 }
 
 void ShapeSphere::generatePrimitives(SoAction* action)

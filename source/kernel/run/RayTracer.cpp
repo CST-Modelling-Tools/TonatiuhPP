@@ -66,7 +66,7 @@ void RayTracer::operator()(ulong nRays)
             Ray rayReflected;
             isFront = false;
             intersectedSurface = 0;
-            isReflected = m_rootNode->intersect(ray, rand, &isFront, &intersectedSurface, &rayReflected);
+            isReflected = m_rootNode->intersect(ray, rand, isFront, intersectedSurface, rayReflected);
 
             // check absorption after the first reflection
             if (m_transmissivity && rayLength > 0) {
@@ -82,7 +82,7 @@ void RayTracer::operator()(ulong nRays)
             if (!isReflected) break;
             ++rayLength;
             if (bExportAll || m_exportSuraceList.contains(intersectedSurface))
-                photons.push_back(Photon( (ray)(ray.tMax), isFront, rayLength, intersectedSurface, 1) );
+                photons.push_back(Photon(ray.point(ray.tMax), isFront, rayLength, intersectedSurface, 1) );
             ray = rayReflected;
         }
 
@@ -95,7 +95,7 @@ void RayTracer::operator()(ulong nRays)
             ray.tMax = 1.;
             isFront = 0; // ? back for air
         }
-        photons.push_back(Photon( (ray)(ray.tMax), isFront, ++rayLength, intersectedSurface) );
+        photons.push_back(Photon(ray.point(ray.tMax), isFront, ++rayLength, intersectedSurface) );
     }
 
     m_pPhotonMapMutex->lock();

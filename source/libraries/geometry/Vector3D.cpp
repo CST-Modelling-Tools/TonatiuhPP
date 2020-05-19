@@ -10,8 +10,6 @@ const Vector3D Vector3D::UnitZ(0., 0., 1.);
 
 bool Vector3D::operator==(const Vector3D& v) const
 {
-    if (this == &v) return true;
-
     return gcf::equals(x, v.x) &&
            gcf::equals(y, v.y) &&
            gcf::equals(z, v.z);

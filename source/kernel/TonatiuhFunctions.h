@@ -17,11 +17,11 @@ struct Vector3D;
 namespace tgf
 {
     TONATIUH_KERNEL double AlternateBoxMuller(RandomAbstract& rand);
-    TONATIUH_KERNEL SbMatrix MatrixFromTransform(const Transform& transform);
-    TONATIUH_KERNEL Transform TransformFromMatrix(SbMatrix const& matrix);
-    TONATIUH_KERNEL Transform TransformFromSoTransform(SoTransform* const& soTransform);
-    TONATIUH_KERNEL SbMatrix MatrixFromSoTransform(SoTransform* const& soTransform);
+    TONATIUH_KERNEL SbMatrix makeSbMatrix(const Transform& transform);
+    TONATIUH_KERNEL SbMatrix makeSbMatrix(SoTransform* soTransform);
 
     TONATIUH_KERNEL Vector2D makeVector2D(const SbVec2f& v);
     TONATIUH_KERNEL Vector3D makeVector3D(const SbVec3f& v);
+    TONATIUH_KERNEL Transform makeTransform(const SbMatrix& matrix);
+    TONATIUH_KERNEL Transform makeTransform(SoTransform* soTransform);
 }

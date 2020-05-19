@@ -12,7 +12,7 @@ public:
     static void initClass();
     MaterialVirtual();
 
-    bool OutputRay(const Ray& rayIn, DifferentialGeometry* dg, RandomAbstract& rand, Ray* rayOut) const;
+    bool OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, RandomAbstract& rand, Ray& rayOut) const;
 
     NAME_ICON_FUNCTIONS("Virtual", ":/images/MaterialVirtual.png")
 

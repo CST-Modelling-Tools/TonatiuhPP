@@ -62,7 +62,7 @@ bool ShapeParabolic::intersect(const Ray& ray, double *tHit, DifferentialGeometr
         double t = ts[i];
         if (t < raytMin || t > ray.tMax) continue;
 
-        Vector3D pHit = ray(t);
+        Vector3D pHit = ray.point(t);
         if (2.*abs(pHit.x) > sizeX.getValue() || 2.*abs(pHit.y) > sizeY.getValue())
             continue;
 

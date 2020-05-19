@@ -24,7 +24,7 @@ Transform::Transform(
         t20, t21, t22, t23,
         t30, t31, t32, t33
     );
-    m_minv = m_mdir->Inverse();
+    m_minv = m_mdir->inversed();
 }
 
 Transform::Transform(double m[4][4])
@@ -35,19 +35,19 @@ Transform::Transform(double m[4][4])
         m[2][0], m[2][1], m[2][2], m[2][3],
         m[3][0], m[3][1], m[3][2], m[3][3]
     );
-    m_minv = m_mdir->Inverse();
+    m_minv = m_mdir->inversed();
 }
 
 Transform::Transform(Matrix4x4* m):
     m_mdir(m),
-    m_minv(m->Inverse())
+    m_minv(m->inversed())
 {
 
 }
 
 Transform::Transform(const std::shared_ptr<Matrix4x4>& mdir):
     m_mdir(mdir),
-    m_minv(mdir->Inverse())
+    m_minv(mdir->inversed())
 {
 
 }
@@ -59,21 +59,44 @@ Transform::Transform(const std::shared_ptr<Matrix4x4>& mdir, const std::shared_p
 
 }
 
+bool Transform::SwapsHandedness() const //?
+{
+    double det =
+        m_mdir->m[0][0]*(m_mdir->m[1][1]*m_mdir->m[2][2] - m_mdir->m[1][2]*m_mdir->m[2][1]) -
+        m_mdir->m[0][1]*(m_mdir->m[1][0]*m_mdir->m[2][2] - m_mdir->m[1][2]*m_mdir->m[2][0]) +
+        m_mdir->m[0][2]*(m_mdir->m[1][0]*m_mdir->m[2][1] - m_mdir->m[1][1]*m_mdir->m[2][0]);
+    return det < 0.;
+}
+
+Transform Transform::operator*(const Transform& t) const
+{
+    return Transform(
+        multiply(*m_mdir, *t.m_mdir),
+        multiply(*t.m_minv, *m_minv)
+    );
+}
+
 Vector3D Transform::transformPoint(const Vector3D& p) const
 {
+    const double* t0 = m_mdir->m[0];
+    const double* t1 = m_mdir->m[1];
+    const double* t2 = m_mdir->m[2];
     return Vector3D(
-        m_mdir->m[0][0]*p.x + m_mdir->m[0][1]*p.y + m_mdir->m[0][2]*p.z + m_mdir->m[0][3],
-        m_mdir->m[1][0]*p.x + m_mdir->m[1][1]*p.y + m_mdir->m[1][2]*p.z + m_mdir->m[1][3],
-        m_mdir->m[2][0]*p.x + m_mdir->m[2][1]*p.y + m_mdir->m[2][2]*p.z + m_mdir->m[2][3]
+        t0[0]*p.x + t0[1]*p.y + t0[2]*p.z + t0[3],
+        t1[0]*p.x + t1[1]*p.y + t1[2]*p.z + t1[3],
+        t2[0]*p.x + t2[1]*p.y + t2[2]*p.z + t2[3]
     );
 }
 
 Vector3D Transform::transformVector(const Vector3D& v) const
 {
+    const double* t0 = m_mdir->m[0];
+    const double* t1 = m_mdir->m[1];
+    const double* t2 = m_mdir->m[2];
     return Vector3D(
-        m_mdir->m[0][0]*v.x + m_mdir->m[0][1]*v.y + m_mdir->m[0][2]*v.z,
-        m_mdir->m[1][0]*v.x + m_mdir->m[1][1]*v.y + m_mdir->m[1][2]*v.z,
-        m_mdir->m[2][0]*v.x + m_mdir->m[2][1]*v.y + m_mdir->m[2][2]*v.z
+        t0[0]*v.x + t0[1]*v.y + t0[2]*v.z,
+        t1[0]*v.x + t1[1]*v.y + t1[2]*v.z,
+        t2[0]*v.x + t2[1]*v.y + t2[2]*v.z
     );
 }
 
@@ -85,6 +108,59 @@ Vector3D Transform::transformNormal(const Vector3D& n) const
         m_minv->m[0][1]*n.x + m_minv->m[1][1]*n.y + m_minv->m[2][1]*n.z,
         m_minv->m[0][2]*n.x + m_minv->m[1][2]*n.y + m_minv->m[2][2]*n.z
     );
+}
+
+Ray Transform::transformDirect(const Ray& r) const
+{
+//    Ray ans;
+//    ans.origin = transformPoint(r.origin);
+//    Vector3D d = transformVector(r.direction());
+//    ans.setDirection(d);
+//    ans.tMin = r.tMin;
+//    ans.tMax = r.tMax;
+//    return ans;
+    const double* t0 = m_mdir->m[0];
+    const double* t1 = m_mdir->m[1];
+    const double* t2 = m_mdir->m[2];
+
+    const Vector3D& p = r.origin;
+    Vector3D o(
+        t0[0]*p.x + t0[1]*p.y + t0[2]*p.z + t0[3],
+        t1[0]*p.x + t1[1]*p.y + t1[2]*p.z + t1[3],
+        t2[0]*p.x + t2[1]*p.y + t2[2]*p.z + t2[3]
+    );
+
+    const Vector3D& v = r.direction();
+    Vector3D d(
+        t0[0]*v.x + t0[1]*v.y + t0[2]*v.z,
+        t1[0]*v.x + t1[1]*v.y + t1[2]*v.z,
+        t2[0]*v.x + t2[1]*v.y + t2[2]*v.z
+    );
+
+    return Ray(o, d, r.tMin, r.tMax);
+}
+
+Ray Transform::transformInverse(const Ray& r) const
+{
+    const double* t0 = m_minv->m[0];
+    const double* t1 = m_minv->m[1];
+    const double* t2 = m_minv->m[2];
+
+    const Vector3D& p = r.origin;
+    Vector3D o(
+        t0[0]*p.x + t0[1]*p.y + t0[2]*p.z + t0[3],
+        t1[0]*p.x + t1[1]*p.y + t1[2]*p.z + t1[3],
+        t2[0]*p.x + t2[1]*p.y + t2[2]*p.z + t2[3]
+    );
+
+    const Vector3D& v = r.direction();
+    Vector3D d(
+        t0[0]*v.x + t0[1]*v.y + t0[2]*v.z,
+        t1[0]*v.x + t1[1]*v.y + t1[2]*v.z,
+        t2[0]*v.x + t2[1]*v.y + t2[2]*v.z
+    );
+
+    return Ray(o, d, r.tMin, r.tMax);
 }
 
 //Point3D Transform::operator()(const Point3D& p) const
@@ -99,16 +175,6 @@ Vector3D Transform::transformNormal(const Vector3D& n) const
 //    if (w != 1.) return ans /= w;
 
 //    return ans;
-//}
-
-//void Transform::operator()(const Point3D& p, Point3D& ans) const
-//{
-//    ans.x = m_mdir->m[0][0]*p.x + m_mdir->m[0][1]*p.y + m_mdir->m[0][2]*p.z + m_mdir->m[0][3];
-//    ans.y = m_mdir->m[1][0]*p.x + m_mdir->m[1][1]*p.y + m_mdir->m[1][2]*p.z + m_mdir->m[1][3];
-//    ans.z = m_mdir->m[2][0]*p.x + m_mdir->m[2][1]*p.y + m_mdir->m[2][2]*p.z + m_mdir->m[2][3];
-
-//    double w = m_mdir->m[3][0]*p.x + m_mdir->m[3][1]*p.y + m_mdir->m[3][2]*p.z + m_mdir->m[3][3];
-//    if (w != 1.) ans /= w;
 //}
 
 Vector3D Transform::operator()(const Vector3D& v) const
@@ -174,14 +240,6 @@ void Transform::operator()(const BoundingBox& b, BoundingBox& ans) const
     ans << transformPoint(Vector3D(b.pMax.x, b.pMax.y, b.pMax.z));
 }
 
-Transform Transform::operator*(const Transform& rhs) const
-{
-    return Transform(
-        multiply(*m_mdir, *rhs.m_mdir),
-        multiply(*rhs.m_minv, *m_minv)
-    );
-}
-
 bool Transform::operator==(const Transform& t) const
 {
     if (this == &t) return true;
@@ -192,12 +250,6 @@ bool Transform::operator==(const Transform& t) const
                 return false;
 
     return true;
-}
-
-
-Transform Transform::transposed() const
-{
-    return Transform(m_mdir->Transpose(), m_minv->Transpose());
 }
 
 Vector3D Transform::multVecMatrix(const Vector3D& v) const
@@ -237,19 +289,6 @@ Vector3D Transform::multDirMatrix(const Vector3D& src) const
     dst[2] = src[0]*t2[0] + src[1]*t2[1] + src[2]*t2[2];
 
     return dst;
-}
-bool Transform::SwapsHandedness() const
-{
-    double det = ( (m_mdir->m[0][0] *
-                    (m_mdir->m[1][1]*m_mdir->m[2][2] -
-                     m_mdir->m[1][2]*m_mdir->m[2][1]) ) -
-                   (m_mdir->m[0][1] *
-                    (m_mdir->m[1][0]*m_mdir->m[2][2] -
-                     m_mdir->m[1][2]*m_mdir->m[2][0]) ) +
-                   (m_mdir->m[0][2] *
-                    (m_mdir->m[1][0]*m_mdir->m[2][1] -
-                     m_mdir->m[1][1]*m_mdir->m[2][0]) ) );
-    return det < 0.;
 }
 
 Transform Transform::translate(double x, double y, double z)
@@ -303,7 +342,7 @@ Transform Transform::rotateX(double angle)
         0., 0., 0., 1.
     );
 
-    return Transform(mdir, mdir->Transpose());
+    return Transform(mdir, mdir->transposed());
 }
 
 Transform Transform::rotateY(double angle)
@@ -318,7 +357,7 @@ Transform Transform::rotateY(double angle)
         0., 0., 0., 1.
     );
 
-    return Transform(mdir, mdir->Transpose());
+    return Transform(mdir, mdir->transposed());
 }
 
 Transform Transform::rotateZ(double angle)
@@ -333,7 +372,7 @@ Transform Transform::rotateZ(double angle)
         0., 0., 0., 1.
     );
 
-    return Transform(mdir, mdir->Transpose());
+    return Transform(mdir, mdir->transposed());
 }
 
 Transform Transform::rotate(double angle, const Vector3D& axis)
@@ -365,7 +404,7 @@ Transform Transform::rotate(double angle, const Vector3D& axis)
     m[3][3] = 1.;
 
     auto mdir = std::make_shared<Matrix4x4>(m);
-    return Transform(mdir, mdir->Transpose());
+    return Transform(mdir, mdir->transposed());
 }
 
 Transform Transform::LookAt(const Vector3D& pos, const Vector3D& look, const Vector3D& up)
@@ -396,11 +435,11 @@ Transform Transform::LookAt(const Vector3D& pos, const Vector3D& look, const Vec
     m[3][2] = 0.;
 
     auto camToWorld = std::make_shared<Matrix4x4>(m);
-    return Transform(camToWorld->Inverse(), camToWorld);
+    return Transform(camToWorld->inversed(), camToWorld);
 }
 
-std::ostream& operator<<(std::ostream& os, const Transform& tran)
+std::ostream& operator<<(std::ostream& os, const Transform& t)
 {
-    os << *tran.GetMatrix();
+    os << *t.getMatrix();
     return os;
 }

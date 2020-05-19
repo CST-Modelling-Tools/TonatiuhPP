@@ -109,7 +109,7 @@ void TLightKit::setBox(BoundingBox box)
     SbMatrix mr;
     mr.setRotate(transform->rotation.getValue());
 
-    Transform tr = tgf::TransformFromMatrix(mr).inversed();
+    Transform tr = tgf::makeTransform(mr).inversed();
     box = tr(box);
 
 
@@ -157,7 +157,7 @@ void TLightKit::findTexture(int xPixels, int yPixels, QVector< QPair<TShapeKit*,
     SoTransform* transform = (SoTransform*) getPart("transform", false);
     SbMatrix mr;
     mr.setRotate(transform->rotation.getValue());
-    Transform tr = tgf::TransformFromMatrix(mr).inversed();
+    Transform tr = tgf::makeTransform(mr).inversed();
 
     TLightShape* shape = static_cast<TLightShape*>(getPart("icon", false));
     if (!shape) return;

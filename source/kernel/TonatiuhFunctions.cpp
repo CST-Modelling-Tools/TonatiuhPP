@@ -38,9 +38,9 @@ double tgf::AlternateBoxMuller(RandomAbstract& rand)
     }
 }
 
-SbMatrix tgf::MatrixFromTransform(const Transform& transform)
+SbMatrix tgf::makeSbMatrix(const Transform& transform)
 {
-    std::shared_ptr<Matrix4x4> transformMatrix = transform.GetMatrix()->Transpose();
+    std::shared_ptr<Matrix4x4> transformMatrix = transform.getMatrix()->transposed();
     float m00 = float(transformMatrix->m[0][0]);
     float m01 = float(transformMatrix->m[0][1]);
     float m02 = float(transformMatrix->m[0][2]);
@@ -72,32 +72,17 @@ SbMatrix tgf::MatrixFromTransform(const Transform& transform)
     );
 }
 
-Transform tgf::TransformFromMatrix(SbMatrix const& m)
+SbMatrix tgf::makeSbMatrix(SoTransform* t)
 {
-    return Transform(
-        m[0][0], m[1][0], m[2][0], m[3][0],
-        m[0][1], m[1][1], m[2][1], m[3][1],
-        m[0][2], m[1][2], m[2][2], m[3][2],
-        m[0][3], m[1][3], m[2][3], m[3][3]
+    SbMatrix ans;
+    ans.setTransform(
+        t->translation.getValue(),
+        t->rotation.getValue(),
+        t->scaleFactor.getValue(),
+        t->scaleOrientation.getValue(),
+        t->center.getValue()
     );
-}
-
-Transform tgf::TransformFromSoTransform(SoTransform* const& soTransform)
-{
-    return TransformFromMatrix( MatrixFromSoTransform( soTransform ) );
-}
-
-SbMatrix tgf::MatrixFromSoTransform(SoTransform* const& soTransform)
-{
-    SbMatrix sbMatrix;
-    sbMatrix.setTransform(
-        soTransform->translation.getValue(),
-        soTransform->rotation.getValue(),
-        soTransform->scaleFactor.getValue(),
-        soTransform->scaleOrientation.getValue(),
-        soTransform->center.getValue()
-    );
-    return sbMatrix;
+    return ans;
 }
 
 Vector2D tgf::makeVector2D(const SbVec2f& v)
@@ -108,4 +93,19 @@ Vector2D tgf::makeVector2D(const SbVec2f& v)
 Vector3D tgf::makeVector3D(const SbVec3f& v)
 {
     return Vector3D(v[0], v[1], v[2]);
+}
+
+Transform tgf::makeTransform(const SbMatrix& m)
+{
+    return Transform(
+        m[0][0], m[1][0], m[2][0], m[3][0],
+        m[0][1], m[1][1], m[2][1], m[3][1],
+        m[0][2], m[1][2], m[2][2], m[3][2],
+        m[0][3], m[1][3], m[2][3], m[3][3]
+    );
+}
+
+Transform tgf::makeTransform(SoTransform* soTransform)
+{
+    return makeTransform(makeSbMatrix(soTransform));
 }

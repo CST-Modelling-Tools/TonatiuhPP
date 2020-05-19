@@ -56,7 +56,10 @@ void TrackerTrough::update(SoBaseKit* parent, const Transform& toGlobal, const V
         angle = m_trough->solveReflectionGlobal(vSunL, rAim);
     } else if (aimingFrame.getValue() == primary) {
         angle = m_trough->solveReflectionPrimary(vSunL, rAim);
+    } else {
+        angle = 0;
     }
+    angle = m_trough->selectSolution(angle);
 
     // rotate nodes
     auto node = static_cast<SoBaseKit*>(parent->getPart("childList[0]", false));

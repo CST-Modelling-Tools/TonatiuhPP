@@ -62,7 +62,7 @@ void SelectSurfaceDialog::accept()
         QModelIndex selectedIndex = selectionModel->currentIndex();
         QModelIndex currentIndex = m_filter->mapToSource(selectedIndex);
 
-        InstanceNode* selectedNode = m_model->NodeFromIndex(currentIndex);
+        InstanceNode* selectedNode = m_model->getInstance(currentIndex);
         if (!selectedNode->getNode()->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) )
         {
             QMessageBox::information(this, "Tonatiuh", tr("Selected node is not surface node"), 1);
@@ -88,7 +88,7 @@ QString SelectSurfaceDialog::GetSelectedSurfaceURL() const
     QModelIndex currentIndex = m_filter->mapToSource(selectedIndex);
     if (!currentIndex.isValid()) return QString();
 
-    InstanceNode* currentNode = m_model->NodeFromIndex(currentIndex);
+    InstanceNode* currentNode = m_model->getInstance(currentIndex);
     if (!currentNode) return QString();
 
     return currentNode->GetNodeURL();

@@ -32,7 +32,7 @@ CmdInsertShapeKit::CmdInsertShapeKit(
     if (!parentIndex.isValid())
         gcf::SevereError("CmdInsertShapeKit called with invalid ModelIndex.");
 
-    InstanceNode* instanceParent = m_pModel->NodeFromIndex(parentIndex);
+    InstanceNode* instanceParent = m_pModel->getInstance(parentIndex);
     if (!instanceParent->getNode())
         gcf::SevereError("CmdInsertShapeKit called with NULL parent node.");
 

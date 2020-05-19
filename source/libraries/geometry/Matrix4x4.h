@@ -16,10 +16,10 @@ public:
     Matrix4x4(double array[4][4]);
     Matrix4x4(const Matrix4x4& rhs);
 
-    std::shared_ptr<Matrix4x4> Transpose() const;
-    std::shared_ptr<Matrix4x4> Inverse() const;
-
     bool operator==(const Matrix4x4& matrix) const;
+
+    std::shared_ptr<Matrix4x4> transposed() const;
+    std::shared_ptr<Matrix4x4> inversed() const;
 
     double m[4][4];
 };
