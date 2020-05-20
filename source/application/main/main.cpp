@@ -1,20 +1,16 @@
 #include <QApplication>
-#include <QDir>
 #include <QFileInfo>
-#include <QMessageBox>
 #include <QSplashScreen>
-
-#include <iostream>
+#include <QScriptEngine>
+#include <QTextStream>
+#include <QStyleFactory>
+#include <QDebug>
 
 #include <Inventor/Qt/SoQt.h>
 
 #include "MainWindow.h"
 
-#include <QScriptEngine>
-#include <QTextStream>
-#include "PluginManager.h"
-#include "script/ScriptRayTracer.h"
-#include "script/tonatiuh_script.h"
+QTextStream cerr(stderr);
 
 /*!
    \mainpage
@@ -36,18 +32,9 @@
    application specific Coin3D extension subclasses, and the application loop.
  */
 
-//Q_DECLARE_METATYPE(QVector<QVariant>)
-
-#include <QStyleFactory>
-#include <QDebug>
-
-
-
-
 int main(int argc, char** argv)
 {
 //    QApplication::setColorSpec(QApplication::CustomColor);
-
 //    QApplication::setAttribute(Qt::AA_DisableHighDpiScaling);
 
     QApplication a(argc, argv);
@@ -56,102 +43,73 @@ int main(int argc, char** argv)
 //    qDebug() << QStyleFactory::keys();
 //    a.setStyle(QStyleFactory::create("Fusion"));
 
-    QSplashScreen* splash = new QSplashScreen;
-    splash->setPixmap(QPixmap(":/images/about/SplashScreen.png") );
-    splash->show();
-    int splashAlignment = Qt::AlignLeft | Qt::AlignBottom;
+    QString fileName = argc > 1 ? argv[1] : "";
+    QFileInfo fileInfo(fileName);
 
-    splash->showMessage("Loading Coin3D...", splashAlignment);
-    SoQt::init( (QWidget*) NULL);
-
-
-    splash->showMessage("Loading plugins...", splashAlignment);
-
-    QDir pluginsDirectory(qApp->applicationDirPath() );
-    pluginsDirectory.cd("plugins");
-    PluginManager pluginManager;
-    pluginManager.load(pluginsDirectory);
-
-    splash->showMessage("Opening scene...", splashAlignment);
-    int exit;
-    if (argc > 1)
+    if (fileInfo.completeSuffix() != "tnhs")
     {
-        QString tonatiuhFile = argv[1];
+        QPixmap pixmap(":/images/about/SplashScreen.png");
+        QSplashScreen splash(pixmap);
+        int splashAlignment = Qt::AlignLeft | Qt::AlignBottom;
+        splash.show();
 
-        QFileInfo fileInfo(tonatiuhFile);
-        if (fileInfo.completeSuffix() == "tnhs")
-        {
-            QString fileName(argv[1]);
-            QFileInfo fileInfo(fileName);
+        splash.showMessage("Launching Coin3D", splashAlignment);
+        SoQt::init((QWidget*) NULL);
 
-            QDir testDirectory(fileInfo.absolutePath() );
-            testDirectory.cd(".");
+        splash.showMessage("Creating window", splashAlignment);
+        MainWindow mw(fileName, &splash);
+        mw.show();
+        splash.finish(&mw);
 
-            QScriptEngine* interpreter = new QScriptEngine;
-            qScriptRegisterSequenceMetaType<QVector<QVariant> >(interpreter);
-
-            MainWindow* mw = new MainWindow(QLatin1String("") );
-            mw->SetPluginManager(&pluginManager);
-            QScriptValue tonatiuh = interpreter->newQObject(mw);
-            interpreter->globalObject().setProperty("tonatiuh", tonatiuh);
-
-            QFile scriptFile(fileName);
-            if (!scriptFile.open(QIODevice::ReadOnly) )
-            {
-                QString errorMessage = QString("Cannot open file %1.").arg(fileName);
-                std::cerr << errorMessage.toStdString() << std::endl;
-            }
-
-            QTextStream in(&scriptFile);
-            QString program = in.readAll();
-            scriptFile.close();
-
-
-            QScriptSyntaxCheckResult checkResult = interpreter->checkSyntax(program);
-            if (checkResult.state() != QScriptSyntaxCheckResult::Valid)
-            {
-                QString errorMessage = QString("Script Syntaxis Error.\n"
-                                               "Line: %1. %2").arg(QString::number(checkResult.errorLineNumber() ), checkResult.errorMessage () );
-                std::cerr << errorMessage.toStdString() << std::endl;
-                return -1;
-            }
-
-            QScriptValue result = interpreter->evaluate(program);
-            if (result.isError () )
-            {
-                QScriptValue lineNumber = result.property("lineNumber");
-
-                QString errorMessage = QString("Script Execution Error.\nLine %1. %2").arg(QString::number(lineNumber.toNumber() ), result.toString() );
-                std::cerr << errorMessage.toStdString() << std::endl;
-                return -1;
-            }
-
-            delete mw;
-            delete interpreter;
-            exit = 0;
-        }
-        else
-        {
-            MainWindow* mw = new MainWindow(tonatiuhFile);
-            mw->SetPluginManager(&pluginManager);
-
-            mw->show();
-            splash->finish(mw);
-            delete splash;
-            exit = a.exec();
-            delete mw;
-        }
+        return a.exec();
     }
     else
     {
-        MainWindow* mw = new MainWindow("");
-        mw->SetPluginManager(&pluginManager);
-        mw->show();
-        splash->finish(mw);
-        delete splash;
-        exit = a.exec();
-        delete mw;
-    }
+        SoQt::init((QWidget*) NULL);
 
-    return exit;
+        QScriptEngine* interpreter = new QScriptEngine;
+        qScriptRegisterSequenceMetaType<QVector<QVariant> >(interpreter);
+
+        MainWindow* mw = new MainWindow("");
+//        mw->SetPluginManager(&pluginManager);
+        QScriptValue tonatiuh = interpreter->newQObject(mw);
+        interpreter->globalObject().setProperty("tonatiuh", tonatiuh);
+
+        QFile scriptFile(fileName);
+        if (!scriptFile.open(QIODevice::ReadOnly))
+        {
+            QString text = QString("Cannot open file %1.").arg(fileName);
+            cerr << text << endl;
+        }
+        QTextStream in(&scriptFile);
+        QString program = in.readAll();
+        scriptFile.close();
+
+        QScriptSyntaxCheckResult check = interpreter->checkSyntax(program);
+        if (check.state() != QScriptSyntaxCheckResult::Valid)
+        {
+            QString text = QString("Script Syntaxis Error.\nLine: %1. %2").arg(
+                QString::number(check.errorLineNumber()),
+                check.errorMessage()
+            );
+            cerr << text << endl;
+            return -1;
+        }
+
+        QScriptValue result = interpreter->evaluate(program);
+        if (result.isError())
+        {
+            QScriptValue lineNumber = result.property("lineNumber");
+            QString text = QString("Script Execution Error.\nLine %1. %2").arg(
+                QString::number(lineNumber.toNumber()),
+                result.toString()
+            );
+            cerr << text << endl;
+            return -1;
+        }
+
+        delete mw;
+        delete interpreter;
+        return 0;
+    }
 }

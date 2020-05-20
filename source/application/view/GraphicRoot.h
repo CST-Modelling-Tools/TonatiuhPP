@@ -19,7 +19,7 @@ public:
 
     void AddGrid(SoSeparator* grid);
     void AddRays(SoSeparator* rays);
-    void AddModel(TSceneKit* sceneModel);
+    void AddModel(TSceneKit* sceneKit);
 
     void DeselectAll();
 
@@ -48,5 +48,4 @@ private:
     SoTransform* m_pRootTransform;
     SoSeparator* m_pSceneSeparator;
     SoSelection* m_pSelectionNode;
-//    GraphicRootTracker* m_pTracker;
 };

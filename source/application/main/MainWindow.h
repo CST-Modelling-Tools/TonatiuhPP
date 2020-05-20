@@ -6,6 +6,7 @@
 
 class QItemSelectionModel;
 class QSplitter;
+class QSplashScreen;
 
 #include <Inventor/SbVec3f.h>
 
@@ -56,7 +57,7 @@ class MainWindow: public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QString tonatiuhFile = 0, QWidget* parent = 0, Qt::WindowFlags flags = 0);
+    MainWindow(QString tonatiuhFile = 0, QSplashScreen* splash = 0, QWidget* parent = 0, Qt::WindowFlags flags = 0);
     ~MainWindow();
 
     void FinishManipulation();
@@ -126,11 +127,11 @@ private slots:
     void ChangeGridSettings();
     void ChangeNodeName(const QModelIndex& index, const QString& name);
     void ChangeSelection(const QModelIndex& current);
-    void CreateComponent(ComponentFactory* pComponentFactory);
+    void CreateComponent(ComponentFactory* factory);
     void CreateMaterial(MaterialFactory* factory);
-    void CreateShape(ShapeFactory* pShapeFactory);
-    void CreateShape(ShapeFactory* pShapeFactory, int numberOfParameters, QVector<QVariant> parametersList);
-    void CreateTracker(TrackerFactory* pTrackerFactory);
+    void CreateShape(ShapeFactory* factory);
+    void CreateShape(ShapeFactory* factory, int numberOfParameters, QVector<QVariant> parametersList);
+    void CreateTracker(TrackerFactory* factory);
     void DefineSunLight();
     void DefineTransmissivity();
     void DisplayRays(bool display);
@@ -194,9 +195,7 @@ private:
     void ChangeModelScene();
     SoSeparator* CreateGrid();
     PhotonsAbstract* CreatePhotonMapExport() const;
-    QToolBar* CreateTrackerTooBar(QMenu* pMaterialsMenu);
     bool Delete(QModelIndex index);
-    QSplitter* GetHorizontalSplitterPointer();
     bool OkToContinue();
     bool Paste(QModelIndex nodeIndex, tgc::PasteType type);
     QDir PluginDirectory();
@@ -243,16 +242,17 @@ private:
 
 private:
     Ui::MainWindow* ui;
+    PluginManager* m_pluginManager;
 
-    enum {m_maxRecentFiles = 7};
+    static const int m_maxRecentFiles = 7;
+    QStringList m_recentFiles;
+    QVector<QAction*> m_recentFileActions;
+
     QUndoStack* m_commandStack;
     QUndoView* m_commandView;
+
     QString m_currentFile;
     Document* m_document;
-    QStringList m_recentFiles;
-    QVector<QAction*> m_recentFileActions; //[m_maxRecentFiles];
-
-    PluginManager* m_pluginManager;
 
     SceneModel* m_sceneModel;
     QItemSelectionModel* m_selectionModel;

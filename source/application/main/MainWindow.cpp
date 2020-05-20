@@ -129,20 +129,19 @@ void finishManipulator(void* data, SoDragger* /*dragger*/)
 /*!
  * Creates a new MainWindow object.
  */
-MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags flags):
+MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* parent, Qt::WindowFlags flags):
     QMainWindow(parent, flags),
     ui(new Ui::MainWindow),
+    m_recentFiles(""),
     m_commandStack(0),
     m_commandView(0),
     m_currentFile(""),
     m_document(0),
-    m_recentFiles(""),
-    m_pluginManager(0),
     m_sceneModel(0),
     m_selectionModel(0),
     m_rand(0),
     m_selectedRandomDeviate(-1),
-    m_bufferPhotons(1000000),
+    m_bufferPhotons(1'000'000),
     m_increasePhotonMap(false),
     m_photonsSettings(0),
     m_photons(0),
@@ -163,6 +162,15 @@ MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags fl
 {
     ui->setupUi(this);
 
+    int splashAlignment = Qt::AlignLeft | Qt::AlignBottom;
+
+    if (splash) splash->showMessage("Loading plugins", splashAlignment);
+    m_pluginManager = new PluginManager;
+    QDir dir(qApp->applicationDirPath());
+    dir.cd("plugins");
+    m_pluginManager->load(dir);
+
+    if (splash) splash->showMessage("Creating views", splashAlignment);
     SetupActions();
     SetupDocument();
     SetupGraphicsRoot();
@@ -173,8 +181,11 @@ MainWindow::MainWindow(QString tonatiuhFile, QWidget* parent, Qt::WindowFlags fl
 
     ReadSettings();
 
+    if (splash) splash->showMessage("Opening file", splashAlignment);
     if (!tonatiuhFile.isEmpty() )
         StartOver(tonatiuhFile);
+    else
+        SetCurrentFile("");
 
     SelectNode("//SunNode/Layout");
 
@@ -222,8 +233,7 @@ border-width: 0 0 1 0;
 MainWindow::~MainWindow()
 {
     delete ui;
-
-    //delete m_pPluginManager; //?
+    delete m_pluginManager;
     delete m_sceneModel;
     delete m_document;
     delete m_commandStack;
@@ -238,17 +248,15 @@ MainWindow::~MainWindow()
 void MainWindow::SetupActions()
 {
     for (int i = 0; i < m_maxRecentFiles; ++i) {
-        QAction* a = new QAction(this);
+        QAction* a = new QAction;
         a->setVisible(false);
         connect(
             a, SIGNAL(triggered()),
             this, SLOT(OpenRecentFile())
         );
         m_recentFileActions << a;
-    }
-
-    for (QAction* a : m_recentFileActions)
         ui->menuRecent->addAction(a);
+    }
 }
 
 /*!
@@ -256,8 +264,7 @@ void MainWindow::SetupActions()
  */
 void MainWindow::SetupDocument()
 {
-    m_document = new Document();
-    if (!m_document) return;
+    m_document = new Document;
     connect(
         m_document, SIGNAL(Warning(QString)),
         this, SLOT(ShowWarning(QString))
@@ -270,12 +277,6 @@ void MainWindow::SetupDocument()
 void MainWindow::SetupGraphicsRoot()
 {
     m_graphicsRoot = new GraphicRoot;
-
-    if (!m_graphicsRoot) {
-        gcf::SevereError("MainWindow::SetupDocument: Fail to create new document");
-        return;
-    }
-
     m_graphicsRoot->AddModel(m_document->getSceneKit());
 
     connect(
@@ -283,7 +284,7 @@ void MainWindow::SetupGraphicsRoot()
         this, SLOT(SelectionFinish(SoSelection*))
     );
 
-    m_graphicsRoot->AddGrid(CreateGrid() );
+    m_graphicsRoot->AddGrid(CreateGrid());
 }
 
 /*!
@@ -391,11 +392,6 @@ void MainWindow::SetupTreeView()
     ui->sceneModelView->setSelectionModel(m_selectionModel);
     ui->sceneModelView->setRootIndex(m_sceneModel->IndexFromNodeUrl("//SunNode"));
 
-//    ui->sceneModelView->header()->setStretchLastSection(false);
-//    ui->sceneModelView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-//    ui->sceneModelView->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-//    ui->sceneModelView->header()->resizeSection(1, 80);
-
     connect(ui->sceneModelView, SIGNAL(dragAndDrop(const QModelIndex&,const QModelIndex&)),
             this, SLOT(ItemDragAndDrop(const QModelIndex&,const QModelIndex&)) );
     connect(ui->sceneModelView, SIGNAL(dragAndDropCopy(const QModelIndex&,const QModelIndex&)),
@@ -427,11 +423,7 @@ void MainWindow::SetupParametersView()
  */
 void MainWindow::SetupPluginsManager()
 {
-    //m_pPluginManager = new PluginManager;
-    //m_pPluginManager->LoadAvailablePlugins( PluginDirectory() );
-
-    if (!m_pluginManager) return; // ! runs twice with 0 first?
-
+    if (!m_pluginManager) return;
     SetupActionsInsertComponent();
 //    addToolBarBreak();
     SetupActionsInsertShape();
@@ -504,7 +496,6 @@ void MainWindow::FinishManipulation()
 
     UpdateLightSize();
     setModified(true);
-
 }
 
 void MainWindow::ExecuteScriptFile(QString tonatiuhScriptFile)
@@ -1797,7 +1788,7 @@ void MainWindow::InsertFileComponent(QString componentFileName)
 
 void MainWindow::New()
 {
-    if (!OkToContinue() )
+    if (!OkToContinue())
     {
         emit Abort(tr("Current Tonatiuh model cannot be closed.") );
         return;
@@ -2657,7 +2648,7 @@ void MainWindow::ChangeSelection(const QModelIndex& current)
  *
  * If the current node is not a group type node, the component subtree will not be created.
  */
-void MainWindow::CreateComponent(ComponentFactory* pComponentFactory)
+void MainWindow::CreateComponent(ComponentFactory* factory)
 {
     QModelIndex parentIndex = ( (!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex() ) ) ?
                 m_sceneModel->index(0, 0, ui->sceneModelView->rootIndex()) :
@@ -2667,10 +2658,10 @@ void MainWindow::CreateComponent(ComponentFactory* pComponentFactory)
     SoNode* parentNode = parentInstance->getNode();
     if (!parentNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) return;
 
-    TSeparatorKit* componentLayout = pComponentFactory->CreateTComponent(m_pluginManager);
+    TSeparatorKit* componentLayout = factory->CreateTComponent(m_pluginManager);
     if (!componentLayout) return;
 
-    QString typeName = pComponentFactory->name();
+    QString typeName = factory->name();
     componentLayout->setName(typeName.toStdString().c_str() );
 
 //    TSceneKit* scene = m_document->GetSceneKit();
@@ -2694,7 +2685,7 @@ void MainWindow::CreateComponent(ComponentFactory* pComponentFactory)
 //    }
 
     CmdInsertSeparatorKit* cmd = new CmdInsertSeparatorKit(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
-    QString text = QString("Create Component: %1").arg(pComponentFactory->name().toLatin1().constData() );
+    QString text = QString("Create Component: %1").arg(factory->name().toLatin1().constData() );
     cmd->setText(text);
     m_commandStack->push(cmd);
 
@@ -2710,34 +2701,29 @@ void MainWindow::CreateComponent(ComponentFactory* pComponentFactory)
  */
 void MainWindow::CreateMaterial(MaterialFactory* factory)
 {
-    QModelIndex parentIndex = ( (!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex() ) ) ?
-                m_sceneModel->index(0, 0, ui->sceneModelView->rootIndex()) :
-                ui->sceneModelView->currentIndex();
-
+    QModelIndex parentIndex = ui->sceneModelView->currentIndex();
+    if (!parentIndex.isValid()) return;
     ui->sceneModelView->expand(parentIndex);
 
     InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
-    if (!parentNode->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId())) return;
+    TShapeKit* shapeKit = dynamic_cast<TShapeKit*>(parentNode);
+    if (!shapeKit) return;
 
-    TShapeKit* shapeKit = static_cast<TShapeKit*>(parentNode);
-    MaterialAbstract* material = static_cast<MaterialAbstract*>(shapeKit->getPart("material", false) );
+    MaterialAbstract* material = (MaterialAbstract*) shapeKit->getPart("material", false);
     if (material)
     {
-        QMessageBox::information(this, "Tonatiuh Action",
-            "This TShapeKit already contains a material node", 1);
+        ShowWarning("This TShapeKit already contains a material node");
         return;
     }
-
     material = factory->create();
-    material->setName(factory->name().toStdString().c_str() );
+    material->setName(factory->name().toStdString().c_str());
 
     CmdInsertMaterial* cmd = new CmdInsertMaterial(shapeKit, material, m_sceneModel);
     QString text = QString("Create Material: %1").arg(factory->name());
     cmd->setText(text);
     m_commandStack->push(cmd);
 
-//    UpdateLightSize();
     setModified(true);
 }
 
@@ -2823,7 +2809,7 @@ void MainWindow::CreateShape(ShapeFactory* pShapeFactory, int /*numberofParamete
 }
 
 
-void MainWindow::CreateTracker(TrackerFactory* pTrackerFactory)
+void MainWindow::CreateTracker(TrackerFactory* factory)
 {
     QModelIndex parentIndex = ((!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex())) ?
                 m_sceneModel->index (0,0,ui->sceneModelView->rootIndex()) :
@@ -2846,10 +2832,10 @@ void MainWindow::CreateTracker(TrackerFactory* pTrackerFactory)
                                      "This TSeparatorKit already contains a tracker node", 1);
             return;
         }
-        TrackerAbstract* tracker = pTrackerFactory->create();
+        TrackerAbstract* tracker = factory->create();
 
 //        tracker->SetSceneKit(scene);
-        tracker->setName(pTrackerFactory->name().toStdString().c_str() );
+        tracker->setName(factory->name().toStdString().c_str() );
         CmdInsertTracker* command = new CmdInsertTracker(tracker, parentIndex, scene, m_sceneModel);
         m_commandStack->push(command);
 
@@ -3002,16 +2988,6 @@ PhotonsAbstract* MainWindow::CreatePhotonMapExport() const
     pExportMode->SetSceneModel(*m_sceneModel);
 
     return pExportMode;
-}
-
-/*!
- * Return horizontalSplitter splitter object.
- */
-QSplitter* MainWindow::GetHorizontalSplitterPointer()
-{
-    QSplitter* pSplitter = findChild< QSplitter* >("horizontalSplitter");
-    if (!pSplitter) gcf::SevereError("MainWindow::GetSceneModelViewPointer: splitter not found");
-    return pSplitter;
 }
 
 /*!
@@ -3517,8 +3493,10 @@ void MainWindow::UpdateLightSize()
 void MainWindow::UpdateRecentFileActions()
 {
     QMutableStringListIterator iterator(m_recentFiles);
-    while (iterator.hasNext() ) {
-        if (!QFile::exists(iterator.next() ) ) iterator.remove();
+    while (iterator.hasNext())
+    {
+        if (!QFile::exists(iterator.next()))
+            iterator.remove();
     }
 
     for (int n = 0; n < m_maxRecentFiles; ++n) {
