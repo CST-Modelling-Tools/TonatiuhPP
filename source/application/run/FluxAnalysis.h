@@ -52,7 +52,7 @@ private:
     QString m_surfaceURL;
     QString m_surfaceSide;
     unsigned long m_tracedRays;
-    double m_wPhoton;
+    double m_photonPower;
 
     int** m_photonCounts;
     int m_heightDivisions;

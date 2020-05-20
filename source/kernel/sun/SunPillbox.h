@@ -17,10 +17,8 @@ public:
     SoNode* copy(SbBool copyConnections) const;
 
     void generateRay(Vector3D& direction, RandomAbstract& rand) const;
-	double getIrradiance() const;
     double getThetaMax() const;
 
-    SoSFDouble irradiance;
     SoSFDouble thetaMax;
 
     NAME_ICON_FUNCTIONS("Pillbox", ":/images/SunPillbox.png")
@@ -30,6 +28,6 @@ protected:
     static void updateTheta(void* data, SoSensor*);
 
 private:
-    SoFieldSensor* m_sensorTheta;
+    SoFieldSensor* m_sensor_thetaMax;
     double m_sinThetaMax;
 };

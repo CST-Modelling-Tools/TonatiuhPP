@@ -16,6 +16,9 @@ CmdInsertShape::CmdInsertShape(TShapeKit* shapeKit, ShapeAbstract* shape, SceneM
     if (!m_shapeKit) gcf::SevereError("CmdInsertShape called with NULL TShapeKit*");
     if (!m_shape) gcf::SevereError("CmdInsertShape called with NULL TShape*");
     m_shape->ref();
+
+    QString text = QString("Create Shape: %1").arg(shape->getTypeName());
+    setText(text);
 }
 
 /*!

@@ -2,9 +2,7 @@
 
 
 TSceneKit {
-  fields [ SFDouble azimuth, SFDouble elevation, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode transmissivity, SFNode topSeparator ]
-  azimuth 0
-  elevation 1.570796326794897
+  fields [ SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode transmissivity, SFNode topSeparator ]
   lightList 
   NodeKitListPart {
     childTypeNames "LightKit"
@@ -12,11 +10,9 @@ TSceneKit {
     Group {
 
       DEF Light TLightKit {
-        fields [ SFString disabledNodes, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
-        disabledNodes ""
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFString disabledNodes, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
         transform 
         Transform {
-          translation 0 -9.6165058e-007 11
           rotation 1 0 0  3.1415927
 
         }
@@ -26,13 +22,8 @@ TSceneKit {
 
         }
         icon 
-        TLightShape {
+        SunAperture {
           fields [ SFFloat xMin, SFFloat xMax, SFFloat yMin, SFFloat yMax, SFFloat delta ]
-          xMin -1.0558004
-          xMax 1.0558004
-          yMin -1.0558004
-          yMax 1.0558004
-          delta 0.055800404
 
         }
         iconMaterial 
@@ -62,9 +53,7 @@ TSceneKit {
         }
         tsunshape 
         SunPillbox {
-          fields [ SFDouble irradiance, SFDouble thetaMax ]
-          irradiance 1000
-          thetaMax 0.00465
+          fields [ SFDouble thetaMax ]
 
         }
 
@@ -128,8 +117,6 @@ TSceneKit {
                             material 
                             DEF Specular MaterialSpecular {
                               fields [ SFDouble reflectivity, SFDouble slope, SFEnum distribution, MFColor ambientColor, MFColor diffuseColor, MFColor specularColor, MFColor emissiveColor, MFFloat shininess, MFFloat transparency ]
-                              reflectivity 0.9
-                              diffuseColor 0.80000001 0.80000001 0.80000001
 
                             }
 

@@ -2,11 +2,10 @@
 
 #include <QUndoCommand>
 
-class InstanceNode;
-class QModelIndex;
 class TSeparatorKit;
-class SceneModel;
+class QModelIndex;
 class SoBaseKit;
+class SceneModel;
 
 //! CmdInsertSeparatorKit class is the insert command for TSeparatorKit nodes stored in the command stack.
 /*!
@@ -27,8 +26,8 @@ public:
     void redo();
 
 private:
-    TSeparatorKit* m_separatorKit;
-    SoBaseKit* m_coinParent;
+    TSeparatorKit* m_node;
+    SoBaseKit* m_nodeParent;
     SceneModel* m_model;
     int m_row;
 };

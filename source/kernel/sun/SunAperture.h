@@ -15,25 +15,18 @@
 class Transform;
 
 
-class TONATIUH_KERNEL TLightShape: public SoShape
+class TONATIUH_KERNEL SunAperture: public SoShape
 {
-    SO_NODE_HEADER(TLightShape);
+    SO_NODE_HEADER(SunAperture);
 
 public:
     static void initClass();
-    TLightShape();
+    SunAperture();
 
-    double GetValidArea() const;
-    const std::vector< QPair<int, int> >& GetValidAreasCoord() const
-    {
-        return m_validAreasVector;
-    }
+    double getArea() const;
+    const std::vector< QPair<int, int> >& getCells() const {return m_cells;}
 
-    double GetVolume() const {return 0.;}
-
-    Vector3D Sample(double u, double v, int a, int b) const {
-        return GetPoint3D(u, v, a, b);
-    }
+    Vector3D Sample(double u, double v, int h, int w) const;
 
     void SetLightSourceArea(int h, int w, int** lightArea);
 
@@ -44,19 +37,18 @@ public:
     trt::TONATIUH_REAL delta;
 
 protected:
-    Vector3D GetPoint3D(double u, double v, int h, int w) const;
     bool OutOfRange(double u, double v) const
     {
         return u < 0. || u > 1. || v < 0. || v > 1.;
     }
 
-    void generatePrimitives(SoAction *action);
-    void computeBBox(SoAction *action, SbBox3f &box, SbVec3f &center);
-    ~TLightShape();
+    void generatePrimitives(SoAction* action);
+    void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
+    ~SunAperture();
 
 private:
     int m_heightElements;
     int** m_lightAreaMatrix;
     int m_widthElements;
-    std::vector< QPair<int, int> > m_validAreasVector;
+    std::vector< QPair<int, int> > m_cells;
 };

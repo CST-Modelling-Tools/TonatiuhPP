@@ -38,6 +38,6 @@ void TSeparatorKit::getBoundingBox(SoGetBoundingBoxAction* action)
 {
     SoSeparatorKit::getBoundingBox(action);
     SbXfBox3f& box = action->getXfBoundingBox();
-    box = box.project();
+    box = box.project(); // not optimal
 //    box.setTransform(SbMatrix::identity());
 }

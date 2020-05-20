@@ -191,6 +191,21 @@ void InstanceNode::updateTree(const Transform& tParent)
     }
 }
 
+void InstanceNode::collectShapeTransforms(QStringList disabledNodes, QVector<QPair<TShapeKit*, Transform> >& shapes)
+{
+    if (disabledNodes.contains(GetNodeURL())) return;
+
+    if (dynamic_cast<TSeparatorKit*>(m_node))
+    {
+        for (InstanceNode* child : children)
+            child->collectShapeTransforms(disabledNodes, shapes);
+    }
+    else if (TShapeKit* shape = dynamic_cast<TShapeKit*>(m_node))
+    {
+        shapes << QPair<TShapeKit*, Transform>(shape, getTransform().inversed());
+    }
+}
+
 QDataStream& operator<<(QDataStream& s, const InstanceNode& node)
 {
     s << node.getNode();

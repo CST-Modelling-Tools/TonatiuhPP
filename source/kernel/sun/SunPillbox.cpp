@@ -14,17 +14,16 @@ void SunPillbox::initClass()
 SunPillbox::SunPillbox()
 {
     SO_NODE_CONSTRUCTOR(SunPillbox);
-    SO_NODE_ADD_FIELD( irradiance, (1000.) );
     SO_NODE_ADD_FIELD( thetaMax, (4.65e-3) );
     updateTheta(this, 0);
 
-    m_sensorTheta = new SoFieldSensor(updateTheta, this);
-    m_sensorTheta->attach(&thetaMax);
+    m_sensor_thetaMax = new SoFieldSensor(updateTheta, this);
+    m_sensor_thetaMax->attach(&thetaMax);
 }
 
 SunPillbox::~SunPillbox()
 {
-    delete m_sensorTheta;
+    delete m_sensor_thetaMax;
 }
 
 void SunPillbox::updateTheta(void* data, SoSensor*)
@@ -46,11 +45,6 @@ void SunPillbox::generateRay(Vector3D& direction, RandomAbstract& rand) const
     direction.z = cosTheta;
 }
 
-double SunPillbox::getIrradiance(void) const
-{
-	return irradiance.getValue();
-}
-
 double SunPillbox::getThetaMax() const
 {
 	return thetaMax.getValue();
@@ -62,7 +56,6 @@ SoNode* SunPillbox::copy(SbBool copyConnections) const
 	// a copy of this instance, including its field data
     SunPillbox* sun = dynamic_cast<SunPillbox*>(SoNode::copy(copyConnections) );
 
-    sun->irradiance = irradiance;
     sun->thetaMax = thetaMax;
 
     return sun;

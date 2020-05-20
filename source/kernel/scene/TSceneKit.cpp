@@ -36,9 +36,6 @@ TSceneKit::TSceneKit()
 
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(transmissivity, AirAbstract, AirVacuum, TRUE, topSeparator, "", TRUE);
 
-    SO_NODE_ADD_FIELD( azimuth, (0.) );
-    SO_NODE_ADD_FIELD( elevation, (90.) );
-
     SO_KIT_INIT_INSTANCE();
 
     TLightKit* lightKit = new TLightKit;
@@ -65,10 +62,12 @@ SoPath* TSceneKit::GetSoPath(SoSearchAction* action)
     return nodePath;
 }
 
-void TSceneKit::updateTrackers(double az, double el)
+void TSceneKit::updateTrackers()
 {
-    azimuth = az;
-    elevation = el;
+    TLightKit* lightKit = static_cast<TLightKit*>(getPart("lightList[0]", false) );
+
+    double az = lightKit->azimuth.getValue();
+    double el = lightKit->elevation.getValue();
 
     Vector3D vSun(
         sin(az)*cos(el),

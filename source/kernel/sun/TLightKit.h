@@ -58,10 +58,13 @@ public:
     TLightKit();
     static void initClass();
 
-    void setPosition(double azimuth, double elevation);
+    void updatePosition();
     void setBox(BoundingBox box);
     void findTexture(int widthDivisions, int heightDivisions, QVector< QPair<TShapeKit*, Transform> > surfacesList);
 
+    SoSFDouble azimuth;  // in radians
+    SoSFDouble elevation;
+    SoSFDouble irradiance;
     SoSFString disabledNodes;
 
 private:

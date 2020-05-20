@@ -64,14 +64,16 @@ SunDialog::~SunDialog()
  */
 TLightKit* SunDialog::getLightKit()
 {
-    TLightKit* lightKit = new TLightKit;
+    TLightKit* ans = new TLightKit;
 
-
-    if (m_sunNew) lightKit->setPart("tsunshape", m_sunNew);
+    ans->azimuth = ui->spinAzimuth->value()*gcf::degree;
+    ans->elevation = ui->spinElevation->value()*gcf::degree;
+    ans->irradiance.setValue(ui->spinIrradiance->value());
+    if (m_sunNew) ans->setPart("tsunshape", m_sunNew);
 
 //    lightKit->ChangePosition(
-//        ui->azimuthSpin->value()*gc::Degree,
-//        (90. - ui->elevationSpin->value())*gc::Degree
+//        ui->spinAzimuth->value()*gc::Degree,
+//        (90. - ui->spinElevation->value())*gc::Degree
 //    );
 
     QString nodes("");
@@ -79,19 +81,9 @@ TLightKit* SunDialog::getLightKit()
         QString node = ui->disabledNodeList->item(n)->text();
         nodes += QString("%1;").arg(node);
     }
-    lightKit->disabledNodes.setValue( nodes.toStdString().c_str() );
+    ans->disabledNodes.setValue(nodes.toStdString().c_str());
 
-    return lightKit;
-}
-
-double SunDialog::getAzimuth()
-{
-    return ui->azimuthSpin->value()*gcf::degree;
-}
-
-double SunDialog::getElevation()
-{
-    return ui->elevationSpin->value()*gcf::degree;
+    return ans;
 }
 
 /*!
@@ -129,10 +121,9 @@ void SunDialog::makeSunShapeTab()
 void SunDialog::makeSunPositionTab()
 {
     if (!m_lightKitOld) return;
-
-    TSceneKit* scene = m_sceneModel->getSceneKit();
-    ui->azimuthSpin->setValue(scene->azimuth.getValue()/gcf::degree);
-    ui->elevationSpin->setValue(scene->elevation.getValue()/gcf::degree);
+    ui->spinAzimuth->setValue(m_lightKitOld->azimuth.getValue()/gcf::degree);
+    ui->spinElevation->setValue(m_lightKitOld->elevation.getValue()/gcf::degree);
+    ui->spinIrradiance->setValue(m_lightKitOld->irradiance.getValue());
 }
 
 /*!

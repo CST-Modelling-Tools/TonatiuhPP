@@ -18,14 +18,12 @@
 CmdInsertTracker::CmdInsertTracker(
     TrackerAbstract* tracker,
     const QModelIndex& parentIndex,
-    SoSceneKit* scene,
     SceneModel* model,
     QUndoCommand* parent
 ):
     QUndoCommand("Insert Tracker", parent),
     m_tracker(tracker),
     m_coinParent(0),
-    m_scene(scene),
     m_model(model),
     m_row(0)
 {

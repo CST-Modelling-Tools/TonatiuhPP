@@ -515,7 +515,6 @@ void SceneModel::InsertLightNode(TLightKit& lightKit)
     InstanceNode* instance = new InstanceNode(&lightKit);
     m_instanceRoot->insertChild(0, instance);
 
-    emit LightNodeStateChanged(1);
     emit layoutChanged();
 }
 
@@ -526,7 +525,6 @@ void SceneModel::RemoveLightNode(TLightKit& lightKit)
     if (lightList) lightList->removeChild(&lightKit);
     m_instanceRoot->children.remove(0);
 
-    emit LightNodeStateChanged(0);
     emit layoutChanged();
 }
 

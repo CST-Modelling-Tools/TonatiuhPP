@@ -1,4 +1,4 @@
-#include "TLightShape.h"
+#include "SunAperture.h"
 
 #include <QString>
 #include <QVector>
@@ -18,19 +18,19 @@
 #include "shape/DifferentialGeometry.h"
 
 
-SO_NODE_SOURCE(TLightShape)
+SO_NODE_SOURCE(SunAperture)
 
-void TLightShape::initClass()
+void SunAperture::initClass()
 {
-    SO_NODE_INIT_CLASS(TLightShape, SoShape, "Shape");
+    SO_NODE_INIT_CLASS(SunAperture, SoShape, "Shape");
 }
 
-TLightShape::TLightShape():
+SunAperture::SunAperture():
     m_heightElements(0),
     m_lightAreaMatrix(0),
     m_widthElements(0)
 {
-    SO_NODE_CONSTRUCTOR(TLightShape);
+    SO_NODE_CONSTRUCTOR(SunAperture);
     SO_NODE_ADD_FIELD( xMin, (-0.5) );
     SO_NODE_ADD_FIELD( xMax, (0.5) );
     SO_NODE_ADD_FIELD( yMin, (-0.5) );
@@ -38,48 +38,40 @@ TLightShape::TLightShape():
     SO_NODE_ADD_FIELD( delta, (100.) );
 }
 
-TLightShape::~TLightShape()
+SunAperture::~SunAperture()
 {
-    for( int i = 0; i < m_heightElements; i++ )
+    for (int i = 0; i < m_heightElements; i++)
         delete[] m_lightAreaMatrix[i];
     delete[] m_lightAreaMatrix;
 }
 
-double TLightShape::GetValidArea() const
+double SunAperture::getArea() const
 {
-    int numberOfValidAreas = m_validAreasVector.size();
-
-    double xWidth =  xMax.getValue() - xMin.getValue();
-    double pixelWidth = xWidth / m_widthElements;
-
-    double yWidth = yMax.getValue() - yMin.getValue();
-    double pixelHeight = yWidth / m_heightElements;
-
-    double validArea = (pixelWidth*pixelHeight) * numberOfValidAreas;
-
-    return validArea;
+    double cellWidth = (xMax.getValue() - xMin.getValue())/m_widthElements;
+    double cellHeight = (yMax.getValue() - yMin.getValue())/m_heightElements;
+    return cellWidth*cellHeight*m_cells.size();
 }
 
 /*!
  * Returns the indexes of the valid areas to the ray tracer.
  */
-Vector3D TLightShape::GetPoint3D(double u, double v, int h, int w) const //? w <> h
+Vector3D SunAperture::Sample(double u, double v, int h, int w) const //? w <> h
 {
     if ( OutOfRange(u, v) )
-        gcf::SevereError("Function TLightShape::GetPoint3D called with invalid parameters" );
+        gcf::SevereError("Function SunAperture::GetPoint3D called with invalid parameters" );
 
     // size of cells the sun is divided
     double xWidth = (xMax.getValue() - xMin.getValue())/m_widthElements;
-    double zWidth = (yMax.getValue() - yMin.getValue())/m_heightElements;
+    double yWidth = (yMax.getValue() - yMin.getValue())/m_heightElements;
 
     // calculate the photon coordinate
     double x = xMin.getValue() + (u + w)*xWidth;
-    double y = yMin.getValue() + (v + h)*zWidth;
+    double y = yMin.getValue() + (v + h)*yWidth;
 
     return Vector3D(x, y, 0.);
 }
 
-void TLightShape::SetLightSourceArea(int h, int w, int** lightArea)
+void SunAperture::SetLightSourceArea(int h, int w, int** lightArea)
 {
     if (m_lightAreaMatrix)
     {
@@ -92,26 +84,26 @@ void TLightShape::SetLightSourceArea(int h, int w, int** lightArea)
     m_widthElements = w;
     m_lightAreaMatrix = lightArea;
 
-    m_validAreasVector.clear();
+    m_cells.clear();
 
     for( int i = 0; i < m_heightElements; i++ )
         for( int j = 0; j < m_widthElements; j++ )
             if( m_lightAreaMatrix[i][j] == 1 )
-                m_validAreasVector.push_back( QPair< int, int >( i, j ) );
+                m_cells.push_back( QPair< int, int >( i, j ) );
 
 }
 
-void TLightShape::computeBBox(SoAction*, SbBox3f& box, SbVec3f& /*center*/ )
+void SunAperture::computeBBox(SoAction*, SbBox3f& box, SbVec3f& /*center*/ )
 {
     SbVec3f min(xMin.getValue(), yMin.getValue(), 0.);
     SbVec3f max(xMax.getValue(), yMax.getValue(), 0.);
     box.setBounds(min, max);
 }
 
-void TLightShape::generatePrimitives(SoAction* action)
+void SunAperture::generatePrimitives(SoAction* action)
 {
-    SoPrimitiveVertex   pv;
-    SoState  *state = action->getState();
+    SoPrimitiveVertex pv;
+    SoState* state = action->getState();
 
     // See if we have to use a texture coordinate function,
     // rather than generating explicit texture coordinates.

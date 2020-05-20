@@ -64,7 +64,7 @@ void CmdLightKitModified::undo()
     if (m_hasOld) {
         TLightKit* lightKit = static_cast<TLightKit*> (m_sceneKit->getPart("lightList[0]", false) );
         lightKit->setPart("tsunshape", m_sunShapeOld);
-        lightKit->setPosition(m_azimuthOld, m_zenithOld);
+        lightKit->updatePosition();
         lightKit->disabledNodes.setValue(m_nodesOld.toStdString().c_str() );
     } else
         m_sceneModel->RemoveLightNode(*m_lightKitNew);
@@ -78,11 +78,9 @@ void CmdLightKitModified::redo()
 {
     if (m_hasOld) {
         TLightKit* lightKit = static_cast<TLightKit*>(m_sceneKit->getPart("lightList[0]", false));
-
         SunAbstract* shape = static_cast<SunAbstract*>(m_lightKitNew->getPart("tsunshape", false));
         lightKit->setPart("tsunshape", shape);
-        TSceneKit* sceneKit = m_sceneModel->getSceneKit();
-        lightKit->setPosition(sceneKit->azimuth.getValue(), sceneKit->elevation.getValue());
+        lightKit->updatePosition();
         lightKit->disabledNodes.setValue(m_lightKitNew->disabledNodes.getValue() );
     } else
         m_sceneModel->InsertLightNode(*m_lightKitNew);

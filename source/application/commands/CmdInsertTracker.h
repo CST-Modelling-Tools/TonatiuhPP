@@ -20,7 +20,6 @@ public:
     CmdInsertTracker(
         TrackerAbstract* tracker,
         const QModelIndex& parentIndex,
-        SoSceneKit* scene,
         SceneModel* model,
         QUndoCommand* parent = 0
     );
@@ -32,7 +31,6 @@ public:
 private:
     TrackerAbstract* m_tracker;
     SoBaseKit* m_coinParent;
-    SoSceneKit* m_scene;
     SceneModel* m_model;
     int m_row;
 };

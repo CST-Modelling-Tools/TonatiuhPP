@@ -2,9 +2,7 @@
 
 
 TSceneKit {
-  fields [ SFDouble azimuth, SFDouble elevation, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode transmissivity, SFNode topSeparator ]
-  azimuth 1.396263401595464
-  elevation 0.5235987755982988
+  fields [ SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode transmissivity, SFNode topSeparator ]
   lightList 
   NodeKitListPart {
     childTypeNames "LightKit"
@@ -12,7 +10,10 @@ TSceneKit {
     Group {
 
       DEF Light TLightKit {
-        fields [ SFString disabledNodes, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFString disabledNodes, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
+        azimuth 1.396263401595464
+        elevation 0.5235987755982988
+        irradiance 1000
         disabledNodes "//SunNode/Layout/Target;//SunNode/Layout/T1/primary/axis;//SunNode/Layout/T1/primary/target;"
         transform 
         Transform {
@@ -26,11 +27,11 @@ TSceneKit {
 
         }
         icon 
-        TLightShape {
+        SunAperture {
           fields [ SFFloat xMin, SFFloat xMax, SFFloat yMin, SFFloat yMax, SFFloat delta ]
-          xMin -2.6220419
-          xMax 2.9924643
-          yMin -0.98706353
+          xMin -2.6220422
+          xMax 2.9924645
+          yMin -0.98706359
           yMax 5.4880719
           delta 0.074072301
 
@@ -62,8 +63,7 @@ TSceneKit {
         }
         tsunshape 
         SunPillbox {
-          fields [ SFDouble irradiance, SFDouble thetaMax ]
-          irradiance 1000
+          fields [ SFDouble thetaMax ]
           thetaMax 0.00465
 
         }
@@ -198,7 +198,7 @@ TSceneKit {
                                       fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode materialBinding, SFNode normalBinding, SFNode textureCoordinateBinding, SFNode shapeHints, SFNode coordinate3, SFNode coordinate4, SFNode normal, SFNode textureCoordinate2, SFNode textureCoordinateFunction, SFNode profileCoordinate2, SFNode profileCoordinate3, SFNode profileList, SFNode localTransform, SFNode shape, SFNode topSeparator, SFNode shapeSeparator ]
                                       shape 
                                       DEF Plane ShapePlane {
-                                        fields [ SFFloat sizeX, SFFloat sizeY, SFEnum activeSide ]
+                                        fields [ SFDouble sizeX, SFDouble sizeY, SFEnum activeSide ]
                                         sizeX 0.2
                                         sizeY 5
 
@@ -214,7 +214,7 @@ TSceneKit {
                                 fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode tracker, SFNode topSeparator ]
                                 transform 
                                 Transform {
-                                  rotation 0.99999994 0 0  1.5700002
+                                  rotation 1 0 0  1.5700002
 
                                 }
                                 childList 
@@ -229,7 +229,7 @@ TSceneKit {
                                       fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode materialBinding, SFNode normalBinding, SFNode textureCoordinateBinding, SFNode shapeHints, SFNode coordinate3, SFNode coordinate4, SFNode normal, SFNode textureCoordinate2, SFNode textureCoordinateFunction, SFNode profileCoordinate2, SFNode profileCoordinate3, SFNode profileList, SFNode localTransform, SFNode shape, SFNode topSeparator, SFNode shapeSeparator ]
                                       shape 
                                       DEF Cylinder ShapeCylinder {
-                                        fields [ SFFloat radius, SFFloat phiMax, SFFloat sizeZ, SFEnum activeSide ]
+                                        fields [ SFDouble radius, SFDouble phiMax, SFDouble sizeZ, SFEnum activeSide ]
                                         radius 0.1
                                         sizeZ 5
 
@@ -279,7 +279,7 @@ TSceneKit {
                           fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode materialBinding, SFNode normalBinding, SFNode textureCoordinateBinding, SFNode shapeHints, SFNode coordinate3, SFNode coordinate4, SFNode normal, SFNode textureCoordinate2, SFNode textureCoordinateFunction, SFNode profileCoordinate2, SFNode profileCoordinate3, SFNode profileList, SFNode localTransform, SFNode shape, SFNode topSeparator, SFNode shapeSeparator ]
                           shape 
                           DEF Plane ShapePlane {
-                            fields [ SFFloat sizeX, SFFloat sizeY, SFEnum activeSide ]
+                            fields [ SFDouble sizeX, SFDouble sizeY, SFEnum activeSide ]
                             sizeX 0.5
                             sizeY 5
 

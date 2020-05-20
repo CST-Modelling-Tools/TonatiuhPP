@@ -12,8 +12,8 @@ public:
     CmdLightPositionModified(TLightKit* light, double azimuth, double zenith, QUndoCommand* parent = 0 );
     ~CmdLightPositionModified();
 
-    virtual void undo();
-    virtual void redo();
+    void undo();
+    void redo();
 
 private:
     TLightKit* lightKit;

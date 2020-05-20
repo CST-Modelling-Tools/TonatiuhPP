@@ -1,3 +1,5 @@
+#include "CmdChangeNodeName.h"
+
 /*!
  * \class CmdChangeNodeName
  * \brief CmdChangeNodeName is the command that represents a node name change.
@@ -8,28 +10,37 @@
 #include <QModelIndex>
 #include <QString>
 
-#include <Inventor/SbName.h>
 #include <Inventor/nodes/SoNode.h>
 
 #include "libraries/geometry/gcf.h"
-
-#include "CmdChangeNodeName.h"
 #include "kernel/run/InstanceNode.h"
 #include "tree/SceneModel.h"
 
 /*!
  * Creates a new CmdChangeNodeName command.
  */
-CmdChangeNodeName::CmdChangeNodeName( const QModelIndex& index, QString newName, SceneModel* model, QUndoCommand* parent )
-: QUndoCommand("Change node name", parent), m_newName ( newName ), m_previousName( "" ), m_pNode( 0 ), m_pModel( model )
+CmdChangeNodeName::CmdChangeNodeName(
+    const QModelIndex& index,
+    QString name,
+    SceneModel* model,
+    QUndoCommand* parent
+):
+    QUndoCommand(parent),
+    m_name(name),
+    m_model(model)
 {
-    if( !index.isValid() ) gcf::SevereError( "CmdChangeNodeName called with invalid ModelIndex." );
-    InstanceNode* selectedNodeInstance = m_pModel->getInstance( index );
-    if( !selectedNodeInstance ) gcf::SevereError( "CmdChangeNodeName called with invalid node." );
-    m_pNode = selectedNodeInstance->getNode();
+    if( !index.isValid() )
+        gcf::SevereError("CmdChangeNodeName called with invalid ModelIndex.");
 
-    m_previousName = QString( m_pNode->getName().getString() );
+    InstanceNode* instance = m_model->getInstance(index);
+    if (!instance)
+        gcf::SevereError("CmdChangeNodeName called with invalid node." );
 
+    m_node = instance->getNode();
+    m_nameOld = m_node->getName().getString();
+
+    QString text = QString("Node name changed to: %1").arg(name);
+    setText(text);
 }
 
 /*!
@@ -37,7 +48,7 @@ CmdChangeNodeName::CmdChangeNodeName( const QModelIndex& index, QString newName,
  */
 void CmdChangeNodeName::undo()
 {
-    m_pModel->SetNodeName( m_pNode, m_previousName );
+    m_model->SetNodeName(m_node, m_nameOld);
 }
 
 /*!
@@ -45,5 +56,5 @@ void CmdChangeNodeName::undo()
  */
 void CmdChangeNodeName::redo()
 {
-    m_pModel->SetNodeName( m_pNode, m_newName );
+    m_model->SetNodeName(m_node, m_name);
 }

@@ -18,7 +18,7 @@ struct RayTracerPhoton;
 class QMutex;
 class QPoint;
 class Photons;
-class TLightShape;
+class SunAperture;
 class SunAbstract;
 class AirAbstract;
 
@@ -29,7 +29,7 @@ class TONATIUH_KERNEL RayTracer
 public:
     RayTracer(InstanceNode* rootNode,
               InstanceNode* sunNode,
-              TLightShape* lightShape,
+              SunAperture* lightShape,
               SunAbstract* const lightSunShape,
               Transform lightToWorld,
               AirAbstract* transmissivity,
@@ -48,7 +48,7 @@ private:
 
     InstanceNode* m_rootNode;
     InstanceNode* m_sunNode;
-    TLightShape* m_lightShape;
+    SunAperture* m_lightShape;
     const SunAbstract* m_lightSunShape;
     Transform m_lightToWorld;
     AirAbstract* m_transmissivity;

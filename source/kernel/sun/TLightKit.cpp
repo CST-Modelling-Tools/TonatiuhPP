@@ -19,7 +19,7 @@
 #include "sun/sunpos.h"
 #include "sun/SunPillbox.h"
 #include "TLightKit.h"
-#include "TLightShape.h"
+#include "SunAperture.h"
 #include "libraries/geometry/Transform.h"
 #include "scene/TShapeKit.h"
 #include "kernel/TonatiuhFunctions.h"
@@ -47,7 +47,10 @@ TLightKit::TLightKit()
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(iconTexture, SoNode, SoTexture2, TRUE, iconSeparator, iconMaterial, TRUE);
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tsunshape, SunAbstract, SunPillbox, TRUE, transformGroup, "", TRUE);
 
-    SO_NODE_ADD_FIELD(disabledNodes, ("") );
+    SO_NODE_ADD_FIELD( azimuth, (0.) );
+    SO_NODE_ADD_FIELD( elevation, (90.*gcf::degree) );
+    SO_NODE_ADD_FIELD( irradiance, (1000.) );
+    SO_NODE_ADD_FIELD( disabledNodes, ("") );
 
     SO_KIT_INIT_INSTANCE();
 
@@ -63,7 +66,7 @@ TLightKit::TLightKit()
 
     int widthPixeles = 10;
     int heightPixeles = 10;
-    QVector<uchar> bitmap(widthPixeles * heightPixeles);
+    QVector<uchar> bitmap(widthPixeles*heightPixeles);
     bitmap.fill(255);
 
     SoTexture2* texture = new SoTexture2;
@@ -72,11 +75,11 @@ TLightKit::TLightKit()
     texture->blendColor.setValue(1.f, 1.f, 1.f);
     setPart("iconTexture", texture);
 
-    TLightShape* iconShape = new TLightShape;
+    SunAperture* iconShape = new SunAperture;
     setPart("icon", iconShape);
 
     setName("Light");
-    setPosition(0., gcf::pi/2.);
+    updatePosition();
 }
 
 /**
@@ -93,12 +96,12 @@ TLightKit::~TLightKit()
  * Azimuth and Zenith are in radians.
  * \sa redo().
  */
-void TLightKit::setPosition(double azimuth, double elevation)
+void TLightKit::updatePosition()
 {
     SoTransform* transform = (SoTransform*) getPart("transform", false);
 
-    SbRotation elRotation(SbVec3f(1., 0., 0.), gcf::pi/2. + elevation);
-    SbRotation azRotation(SbVec3f(0., 0., -1.), azimuth);
+    SbRotation elRotation(SbVec3f(1., 0., 0.), gcf::pi/2. + elevation.getValue());
+    SbRotation azRotation(SbVec3f(0., 0., -1.), azimuth.getValue());
 
     transform->rotation = elRotation*azRotation;
 }
@@ -138,7 +141,7 @@ void TLightKit::setBox(BoundingBox box)
     if (thetaMax > 0.)
         delta = distMax*tan(thetaMax);
 
-    TLightShape* shape = static_cast<TLightShape*>(getPart("icon", false));
+    SunAperture* shape = static_cast<SunAperture*>(getPart("icon", false));
     if (!shape) return;
     shape->xMin.setValue(xMin - delta);
     shape->xMax.setValue(xMax + delta);
@@ -159,7 +162,7 @@ void TLightKit::findTexture(int xPixels, int yPixels, QVector< QPair<TShapeKit*,
     mr.setRotate(transform->rotation.getValue());
     Transform tr = tgf::makeTransform(mr).inversed();
 
-    TLightShape* shape = static_cast<TLightShape*>(getPart("icon", false));
+    SunAperture* shape = static_cast<SunAperture*>(getPart("icon", false));
     if (!shape) return;
 
     double xWidth = shape->xMax.getValue() - shape->xMin.getValue();

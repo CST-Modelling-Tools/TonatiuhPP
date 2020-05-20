@@ -25,7 +25,7 @@
 #include "kernel/trf.h"
 #include "kernel/shape/ShapeAbstract.h"
 #include "kernel/sun/TLightKit.h"
-#include "kernel/sun/TLightShape.h"
+#include "kernel/sun/SunAperture.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/gcf.h"
 

@@ -2,9 +2,7 @@
 
 
 TSceneKit {
-  fields [ SFDouble azimuth, SFDouble elevation, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode transmissivity, SFNode topSeparator ]
-  azimuth 1.570796326794897
-  elevation 0.5235987755982988
+  fields [ SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode transmissivity, SFNode topSeparator ]
   lightList 
   NodeKitListPart {
     childTypeNames "LightKit"
@@ -12,7 +10,7 @@ TSceneKit {
     Group {
 
       DEF Light TLightKit {
-        fields [ SFString disabledNodes, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
+        fields [ SFDouble azimuth, SFDouble elevation,  SFDouble irradiance, SFString disabledNodes, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
         disabledNodes "//SunNode/Layout/Target;//SunNode/Layout/H1/primary/secondary/target;"
         transform 
         Transform {
@@ -26,7 +24,7 @@ TSceneKit {
 
         }
         icon 
-        TLightShape {
+        SunAperture {
           fields [ SFFloat xMin, SFFloat xMax, SFFloat yMin, SFFloat yMax, SFFloat delta ]
           xMin -14.017127
           xMax 0.56001067
@@ -62,8 +60,7 @@ TSceneKit {
         }
         tsunshape 
         SunPillbox {
-          fields [ SFDouble irradiance, SFDouble thetaMax ]
-          irradiance 1000
+          fields [ SFDouble thetaMax ]
           thetaMax 0.00465
 
         }

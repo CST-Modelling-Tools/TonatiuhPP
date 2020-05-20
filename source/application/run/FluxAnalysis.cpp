@@ -23,7 +23,7 @@
 #include "kernel/trf.h"
 #include "kernel/shape/ShapeAbstract.h"
 #include "kernel/sun/TLightKit.h"
-#include "kernel/sun/TLightShape.h"
+#include "kernel/sun/SunAperture.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/gcf.h"
 #include "kernel/air/AirVacuum.h"
@@ -52,7 +52,7 @@ FluxAnalysis::FluxAnalysis(
     m_pPhotonMap(0),
     m_surfaceURL(""),
     m_tracedRays(0),
-    m_wPhoton(0),
+    m_photonPower(0),
     m_photonCounts(0),
     m_heightDivisions(0),
     m_widthDivisions(0),
@@ -190,7 +190,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     SunAbstract* sunShape = static_cast< SunAbstract* >(lightKit->getPart("tsunshape", false) );
 
     if (!lightKit->getPart("icon", false) ) return;
-    TLightShape* raycastingSurface = static_cast< TLightShape* >(lightKit->getPart("icon", false) );
+    SunAperture* aperture = static_cast< SunAperture* >(lightKit->getPart("icon", false) );
 
     if (!lightKit->getPart("transform",false) ) return;
     SoTransform* lightTransform = static_cast< SoTransform* >(lightKit->getPart("transform",false) );
@@ -209,7 +209,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
         m_pPhotonMap = new Photons();
         m_pPhotonMap->setBufferSize(HUGE_VAL);
         m_tracedRays = 0;
-        m_wPhoton = 0;
+        m_photonPower = 0;
         m_totalPower = 0;
     }
 
@@ -249,7 +249,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
 
     QStringList disabledNodes = QString(lightKit->disabledNodes.getValue().getString() ).split(";", QString::SkipEmptyParts);
     QVector< QPair<TShapeKit*, Transform> > surfacesList;
-    trf::ComputeFistStageSurfaceList(m_pRootSeparatorInstance, disabledNodes, &surfacesList);
+    m_pRootSeparatorInstance->collectShapeTransforms(disabledNodes, surfacesList);
     lightKit->findTexture(m_sunWidthDivisions, m_sunHeightDivisions, surfacesList);
     if (surfacesList.count() < 1) return;
 
@@ -264,7 +264,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
         raysPerThread << nOfRays - t1*maximumValueProgressScale;
 
     Transform lightToWorld = tgf::makeTransform(lightTransform);
-    lightInstance->setTransform(lightToWorld );
+    lightInstance->setTransform(lightToWorld);
 
     // Create a progress dialog.
     QProgressDialog dialog;
@@ -286,7 +286,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
 
     photonMap = QtConcurrent::map(raysPerThread, RayTracer(
         m_pRootSeparatorInstance,
-        lightInstance, raycastingSurface, sunShape, lightToWorld,
+        lightInstance, aperture, sunShape, lightToWorld,
         airTemp,
         *m_pRandomDeviate, &mutex, m_pPhotonMap, &mutexPhotonMap, exportSuraceList
     ));
@@ -299,9 +299,9 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
 
     m_tracedRays += nOfRays;
 
-    double irradiance = sunShape->getIrradiance();
-    double inputAperture = raycastingSurface->GetValidArea();
-    m_wPhoton = double(inputAperture*irradiance) / m_tracedRays;
+    double irradiance = lightKit->irradiance.getValue();
+    double area = aperture->getArea();
+    m_photonPower = area*irradiance/m_tracedRays;
 
     UpdatePhotonCounts();
 }
@@ -443,7 +443,7 @@ void FluxAnalysis::FluxAnalysisCylinder(InstanceNode* node)
         }
     }
 
-    m_totalPower = totalPhotons * m_wPhoton;
+    m_totalPower = totalPhotons * m_photonPower;
 
     if (photonCountsError)
     {
@@ -522,7 +522,7 @@ void FluxAnalysis::FluxAnalysisFlatDisk(InstanceNode* node)
         }
     }
 
-    m_totalPower = totalPhotons * m_wPhoton;
+    m_totalPower = totalPhotons * m_photonPower;
 
     if (photonCountsError)
     {
@@ -604,7 +604,7 @@ void FluxAnalysis::FluxAnalysisFlatRectangle(InstanceNode* node)
         }
     }
 
-    m_totalPower = totalPhotons * m_wPhoton;
+    m_totalPower = totalPhotons * m_photonPower;
 
     if (photonCountsError)
     {
@@ -645,7 +645,7 @@ void FluxAnalysis::ExportAnalysis(QString directory, QString fileName, bool save
         {
             for (int j = 0; j < m_widthDivisions; j++)
             {
-                out << m_xmin + widthCell / 2 + j * widthCell  << "\t" << m_ymin + heightCell / 2 + i * heightCell <<  "\t" << m_photonCounts[i][j] * m_wPhoton / areaCell << "\n";
+                out << m_xmin + widthCell / 2 + j * widthCell  << "\t" << m_ymin + heightCell / 2 + i * heightCell <<  "\t" << m_photonCounts[i][j] * m_photonPower / areaCell << "\n";
             }
         }
     }
@@ -655,7 +655,7 @@ void FluxAnalysis::ExportAnalysis(QString directory, QString fileName, bool save
         {
             for (int j = 0; j < m_widthDivisions; j++)
             {
-                out << m_photonCounts[m_heightDivisions - 1 - i][j] * m_wPhoton / areaCell << "\t";
+                out << m_photonCounts[m_heightDivisions - 1 - i][j] * m_photonPower / areaCell << "\t";
             }
             out << "\n";
         }
@@ -740,7 +740,7 @@ int FluxAnalysis::maximumPhotonsErrorValue()
  */
 double FluxAnalysis::wPhotonValue()
 {
-    return m_wPhoton;
+    return m_photonPower;
 }
 
 /*
@@ -760,6 +760,6 @@ void FluxAnalysis::clearPhotonMap()
     delete m_pPhotonMap;
     m_pPhotonMap = 0;
     m_tracedRays = 0;
-    m_wPhoton = 0;
+    m_photonPower = 0;
     m_totalPower = 0;
 }

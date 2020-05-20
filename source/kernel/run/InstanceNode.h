@@ -16,6 +16,7 @@ class RandomAbstract;
 class Ray;
 class SoNode;
 class TLightKit;
+class TShapeKit;
 class SceneModel;
 
 
@@ -54,6 +55,7 @@ public:
     void extendBoxForLight(SbBox3f* extendedBox);
 
     void updateTree(const Transform& tParent);
+    void collectShapeTransforms(QStringList disabledNodes, QVector<QPair<TShapeKit*, Transform> >& shapes);
 
     QVector<InstanceNode*> children;
 

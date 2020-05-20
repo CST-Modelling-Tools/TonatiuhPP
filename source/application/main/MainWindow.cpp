@@ -88,7 +88,7 @@
 #include "kernel/shape/ShapeFactory.h"
 #include "kernel/sun/SunFactory.h"
 #include "kernel/sun/TLightKit.h"
-#include "kernel/sun/TLightShape.h"
+#include "kernel/sun/SunAperture.h"
 #include "kernel/TonatiuhFunctions.h"
 #include "kernel/trackers/TrackerAbstract.h"
 #include "kernel/trackers/TrackerFactory.h"
@@ -107,7 +107,7 @@
 #include "widgets/SunDialog.h"
 
 /*!
- * Returns the \a fullFileName file�s name, without path.
+ * Returns the \a fullFileName files name, without path.
  */
 QString StrippedName(const QString& fullFileName)
 {
@@ -297,11 +297,6 @@ void MainWindow::SetupModels()
     m_sceneModel->setSceneKit(*m_document->getSceneKit() );
 
     m_selectionModel = new QItemSelectionModel(m_sceneModel);
-
-    connect(
-        m_sceneModel, SIGNAL(LightNodeStateChanged(int)),
-        this, SLOT(SetSunPositionCalculatorEnabled(int))
-    );
 }
 
 /*!
@@ -460,14 +455,14 @@ void MainWindow::SetupTriggers()
     connect(ui->actionUserComponent, SIGNAL(triggered()), this, SLOT(InsertUserDefinedComponent()) );
 
     // scene
-    connect(ui->actionDefineSunLight, SIGNAL(triggered()), this, SLOT(DefineSunLight()) );
+    connect(ui->actionDefineSunLight, SIGNAL(triggered()), this, SLOT(onSunDialog()) );
     connect(ui->actionCalculateSunPosition, SIGNAL(triggered()), this, SLOT(CalculateSunPosition()) );
-    connect(ui->actionDefineTransmissivity, SIGNAL(triggered()), this, SLOT(DefineTransmissivity()) );
+    connect(ui->actionDefineTransmissivity, SIGNAL(triggered()), this, SLOT(onAirDialog()) );
 
     // run
     connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(RunCompleteRayTracer()) );
     connect(ui->actionRunFluxAnalysis, SIGNAL(triggered()), this, SLOT(RunFluxAnalysisRayTracer()) );
-    connect(ui->actionRayTraceOptions, SIGNAL(triggered()), this, SLOT(ShowRayTracerOptionsDialog())  );
+    connect(ui->actionRayTraceOptions, SIGNAL(triggered()), this, SLOT(onRayOptionsDialog())  );
 
     // view
     connect(ui->actionViewRays, SIGNAL(toggled(bool)), this, SLOT(DisplayRays(bool)) );
@@ -505,12 +500,6 @@ void MainWindow::ExecuteScriptFile(QString tonatiuhScriptFile)
     editor.show();
     editor.ExecuteScript(tonatiuhScriptFile);
     editor.done(0);
-}
-
-void MainWindow::SetPluginManager(PluginManager* pluginManager)
-{
-    m_pluginManager = pluginManager;
-    if (m_pluginManager) SetupPluginsManager();
 }
 
 /*!
@@ -553,7 +542,6 @@ void MainWindow::StartManipulation(SoDragger* dragger)
         pField = fieldList.get(index);
         if (pField)
         {
-
             pField->get(fieldValue);
             m_manipulators_Buffer->push_back(QString(fieldValue.getString() ) );
         }
@@ -563,7 +551,7 @@ void MainWindow::StartManipulation(SoDragger* dragger)
 /*!
  * Defines Tonatiuh model light paramenters with a dilog window.
  */
-void MainWindow::DefineSunLight()
+void MainWindow::onSunDialog()
 {
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
@@ -572,25 +560,31 @@ void MainWindow::DefineSunLight()
     InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
     m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 
-    TLightKit* lightKitOld = 0;
+    TLightKit* lightKit = 0;
     if (sceneKit->getPart("lightList[0]", false) )
-        lightKitOld = static_cast<TLightKit*>(sceneKit->getPart("lightList[0]", false) );
+        lightKit = static_cast<TLightKit*>(sceneKit->getPart("lightList[0]", false) );
 
-    SunDialog dialog(*m_sceneModel, lightKitOld, m_pluginManager->getSunMap(), this);
+    SunDialog dialog(*m_sceneModel, lightKit, m_pluginManager->getSunMap(), this);
     if (!dialog.exec()) return;
 
-    TLightKit* lightKit = dialog.getLightKit();
-    if (!lightKit) return;
-    sceneKit->updateTrackers(dialog.getAzimuth(), dialog.getElevation());
+    TLightKit* lightKitNew = dialog.getLightKit();
+    if (!lightKitNew) return;
 
-    CmdLightKitModified* cmd = new CmdLightKitModified(lightKit, sceneKit, *m_sceneModel);
-    m_commandStack->push(cmd);
+//    CmdLightKitModified* cmd = new CmdLightKitModified(lightKit, sceneKit, *m_sceneModel);
+//    m_commandStack->push(cmd);
+    lightKit->setPart("tsunshape", lightKitNew->getPart("tsunshape", false));
+    lightKit->azimuth = lightKitNew->azimuth.getValue();
+    lightKit->elevation = lightKitNew->elevation.getValue();
+    lightKit->irradiance = lightKitNew->irradiance.getValue();
+    lightKit->disabledNodes.setValue(lightKitNew->disabledNodes.getValue() );
+    lightKit->updatePosition();
+    sceneKit->updateTrackers();
+
     UpdateLightSize();
 
     ui->parametersTabs->UpdateView();
     setModified(true);
 
-//    ui->actionCalculateSunPosition->setEnabled(true);
     ui->actionViewRays->setEnabled(false);
     ui->actionViewRays->setChecked(false);
 }
@@ -598,7 +592,7 @@ void MainWindow::DefineSunLight()
 /*!
  * Opens a dialog to define the scene transmissivity.
  */
-void MainWindow::DefineTransmissivity()
+void MainWindow::onAirDialog()
 {
     AirDialog dialog(m_pluginManager->getAirMap(), this);
 
@@ -666,7 +660,6 @@ void MainWindow::ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex
 {
     if (node == ui->sceneModelView->rootIndex() ) return;
 
-
     InstanceNode* nodeInstnace = m_sceneModel->getInstance(node);
     if (nodeInstnace->getParent()&&nodeInstnace->getParent()->getNode()->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) )
     {
@@ -683,7 +676,6 @@ void MainWindow::ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex
         UpdateLightSize();
         setModified(true);
     }
-
 }
 
 /*!
@@ -735,15 +727,12 @@ void MainWindow::Open()
  */
 void MainWindow::OpenRecentFile()
 {
-    if (OkToContinue() )
+    if (!OkToContinue()) return;
+    QAction* action = qobject_cast<QAction*>(sender());
+    if (action)
     {
-        QAction* action = qobject_cast<QAction*>(sender() );
-
-        if (action)
-        {
-            QString fileName = action->data().toString();
-            StartOver(fileName);
-        }
+        QString fileName = action->data().toString();
+        StartOver(fileName);
     }
 }
 
@@ -757,6 +746,15 @@ void MainWindow::Redo()
 }
 
 /*!
+ * Reverts a change to Tonatiuh model. The model is returne to the previous state before the command is applied.
+ */
+void MainWindow::Undo()
+{
+    m_commandStack->undo();
+    UpdateLightSize();
+}
+
+/*!
  * Runs complete ray tracer. First defines export settings if they are not defined and then runs ray tracer.
  */
 void MainWindow::RunCompleteRayTracer()
@@ -765,7 +763,7 @@ void MainWindow::RunCompleteRayTracer()
     InstanceNode* lightInstance = 0;
     SoTransform* lightTransform = 0;
     SunAbstract* sunShape = 0;
-    TLightShape* raycastingSurface = 0;
+    SunAperture* raycastingSurface = 0;
     AirAbstract* transmissivity = 0;
 
 //    QElapsedTimer timer;
@@ -780,8 +778,6 @@ void MainWindow::RunCompleteRayTracer()
 
     Run();
 }
-
-
 
 /*!
  * Runs the ray tracer for the analysis of the surface. A dialog will be opened to set the surface and flux calculation parameters.
@@ -812,7 +808,6 @@ void MainWindow::RunFluxAnalysisRayTracer()
     dialog.exec();
 }
 
-
 /*!
  * Returns \a true if the tonatiuh model is correctly saved in the current file. Otherwise, returns \a false.
  *
@@ -825,7 +820,6 @@ bool MainWindow::Save()
     if (m_currentFile.isEmpty() ) return SaveAs();
     else return SaveFile(m_currentFile);
 }
-
 
 /*!
  * Saves current selected node as a component in the files named \a componentFileName.
@@ -976,7 +970,6 @@ void MainWindow::SelectionFinish(SoSelection* selection)
     if (!nodeIndex.isValid() ) return;
     m_selectionModel->setCurrentIndex(nodeIndex, QItemSelectionModel::ClearAndSelect);
     m_selectionModel->select(nodeIndex, QItemSelectionModel::ClearAndSelect);
-
 }
 
 /*!
@@ -1024,7 +1017,7 @@ void MainWindow::ShowMenu(const QModelIndex& index)
 
     QMenu popupmenu(this);
 
-    if (instanceNode->getParent()&&instanceNode->getParent()->getNode()->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) )
+    if (instanceNode->getParent() && instanceNode->getParent()->getNode()->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) )
     {
         popupmenu.addAction(ui->actionCut);
         popupmenu.addAction(ui->actionCopy);
@@ -1035,10 +1028,6 @@ void MainWindow::ShowMenu(const QModelIndex& index)
 
     if (type.isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
     {
-//        QMenu* trackersMenu = popupmenu.addMenu("Trackers");
-//        trackersMenu->addAction(actionSetAimingPointRelative);
-//        trackersMenu->addAction(actionSetAimingPointAbsolute);
-
         QMenu* transformMenu = popupmenu.addMenu("Convert to");
         //QMenu transformMenu( "Convert to", &popupmenu );
         //popupmenu.addAction( transformMenu.menuAction() );
@@ -1064,7 +1053,7 @@ void MainWindow::ShowMenu(const QModelIndex& index)
 /*!
  * Shows a dialog with ray tracer options and modifies the ray tracer parameters if changes are done.
  */
-void MainWindow::ShowRayTracerOptionsDialog()
+void MainWindow::onRayOptionsDialog()
 {
     QVector<RandomFactory*> randomDeviateFactoryList = m_pluginManager->getRandomFactories();
     RayOptionsDialog* options = new RayOptionsDialog(
@@ -1085,16 +1074,7 @@ void MainWindow::ShowRayTracerOptionsDialog()
 
 void MainWindow::ShowWarning(QString message)
 {
-    QMessageBox::warning(this, tr("Tonatiuh"), message);
-}
-
-/*!
- * Reverts a change to Tonatiuh model. The model is returne to the previous state before the command is applied.
- */
-void MainWindow::Undo()
-{
-    m_commandStack->undo();
-    UpdateLightSize();
+    QMessageBox::warning(this, "Tonatiuh", message);
 }
 
 //View menu actions
@@ -1197,15 +1177,13 @@ void MainWindow::ChangeGridSettings()
 
 void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& name)
 {
-    if (!index.isValid() ) return;
+    if (!index.isValid()) return;
 
-    InstanceNode* nodeInstance = m_sceneModel->getInstance(index);
-    if (!nodeInstance) return;
-    if (!nodeInstance->getNode() ) return;
+    InstanceNode* instance = m_sceneModel->getInstance(index);
+    if (!instance) return;
+    if (!instance->getNode()) return;
 
     CmdChangeNodeName* cmd = new CmdChangeNodeName(index, name, m_sceneModel);
-    QString text = QString("Node name changed to: %1").arg(name);
-    cmd->setText(text);
     m_commandStack->push(cmd);
 
     setModified(true);
@@ -1227,7 +1205,7 @@ void MainWindow::AddExportSurfaceURL(QString nodeURL)
 void MainWindow::ChangeSunPosition(double azimuth, double elevation)
 {
     SoSceneKit* coinScene = m_document->getSceneKit();
-    TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
+    TLightKit* lightKit = static_cast<TLightKit*>(coinScene->getPart("lightList[0]", false) );
     if (!lightKit)
     {
         QMessageBox::warning(this, "Tonatiuh warning", tr("ChangeSunPosition:: Sun not defined in scene") );
@@ -1340,12 +1318,8 @@ void MainWindow::Copy(QString nodeURL)
  */
 void MainWindow::CreateGroupNode()
 {
-    QModelIndex parentIndex;
-    if ((!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex()))
-        parentIndex = m_sceneModel->index(0, 0, ui->sceneModelView->rootIndex());
-    else
-        parentIndex = ui->sceneModelView->currentIndex();
-
+    QModelIndex parentIndex = ui->sceneModelView->currentIndex();
+    if (!parentIndex.isValid()) return;
     ui->sceneModelView->expand(parentIndex);
 
     InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
@@ -1354,44 +1328,62 @@ void MainWindow::CreateGroupNode()
         emit Abort(tr("CreateGroupNode: Error creating new group node.") );
         return;
     }
-
-    SoNode* coinNode = parentInstance->getNode();
-    if (!coinNode)
+    SoNode* parentNode = parentInstance->getNode();
+    if (!parentNode)
     {
         emit Abort(tr("CreateGroupNode: Error creating new group node.") );
         return;
     }
+    if (!parentNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
+        return;
 
-    if (coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
-    {
-        TSeparatorKit* separatorKit = new TSeparatorKit();
+    TSeparatorKit* kit = new TSeparatorKit();
+    CmdInsertSeparatorKit* cmd = new CmdInsertSeparatorKit(kit, QPersistentModelIndex(parentIndex), m_sceneModel);
+    m_commandStack->push(cmd);
 
-        CmdInsertSeparatorKit* cmd = new CmdInsertSeparatorKit(separatorKit, QPersistentModelIndex(parentIndex), m_sceneModel);
-        cmd->setText("Insert node");
-        m_commandStack->push(cmd);
+    QString name("Node");
+    int count = 0;
+    while (!m_sceneModel->SetNodeName(kit, name))
+        name = QString("Node_%1").arg(++count);
 
-        QString name("Node");
-        int count = 0;
-        while (!m_sceneModel->SetNodeName(separatorKit, name))
-            name = QString("Node_%1").arg(++count);
-
-//        UpdateLightSize();
-        setModified(true);
-    }
+    setModified(true);
 }
 
 /*!
- * Creates a new analyzer node as a selected node child.
+ * Creates a surface node as selected node child.
  */
+void MainWindow::CreateSurfaceNode()
+{
+    QModelIndex parentIndex = ui->sceneModelView->currentIndex();
+    if (!parentIndex.isValid()) return;
+    ui->sceneModelView->expand(parentIndex);
+
+    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
+    if (!parentInstance) return;
+    SoNode* parentNode = parentInstance->getNode();
+    if (!parentNode) return;
+    if (!parentNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
+        return;
+
+    TShapeKit* kit = new TShapeKit;
+    CmdInsertShapeKit* cmd = new CmdInsertShapeKit(kit, parentIndex, m_sceneModel);
+    m_commandStack->push(cmd);
+
+    QString name("Shape");
+    int count = 0;
+    while (!m_sceneModel->SetNodeName(kit, name))
+        name = QString("Shape_%1").arg(++count);
+
+    setModified(true);
+}
 
 /*!
  * Creates a \a componentType component node with the name \a nodeName.
  */
 void MainWindow::CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector<QVariant> parametersList)
 {
-    QModelIndex parentIndex = ( (!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex() ) ) ?
-                m_sceneModel->index(0, 0, ui->sceneModelView->rootIndex()) :
-                ui->sceneModelView->currentIndex();
+    QModelIndex parentIndex = ui->sceneModelView->currentIndex();
+    if (!parentIndex.isValid()) return;
 
     InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
@@ -1420,28 +1412,8 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
     TSeparatorKit* componentLayout = pComponentFactory->CreateTComponent(m_pluginManager, numberofParameters, parametersList);
     if (!componentLayout) return;
 
-
 //    QString typeName = pComponentFactory->name();
     componentLayout->setName(nodeName.toStdString().c_str() );
-
-//    TSceneKit* scene = m_document->getSceneKit();
-//    TLightKit* lightKit = static_cast< TLightKit* >(scene->getPart("lightList[0]", false) );
-//    if (lightKit)
-//    {
-//        SoSearchAction trackersSearch;
-//        trackersSearch.setType(TrackerAbstract::getClassTypeId() );
-//        trackersSearch.setInterest(SoSearchAction::ALL);
-//        trackersSearch.apply(componentLayout);
-//        SoPathList& trackersPath = trackersSearch.getPaths();
-
-//        for (int index = 0; index <trackersPath.getLength(); ++index)
-//        {
-//            SoFullPath* trackerPath = static_cast< SoFullPath* > (trackersPath[index]);
-//            TrackerAbstract* tracker = static_cast< TrackerAbstract* >(trackerPath->getTail() );
-//            tracker->SetAzimuthAngle(&lightKit->azimuth);
-//            tracker->SetZenithAngle(&lightKit->zenith);
-//        }
-//    }
 
     CmdInsertSeparatorKit* cmd = new CmdInsertSeparatorKit(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
     QString commandText = QString("Create Component: %1").arg(pComponentFactory->name().toLatin1().constData() );
@@ -1481,7 +1453,6 @@ void MainWindow::CreateShape(QString name)
         emit Abort("CreateShape: Selected shape type is not valid.");
 }
 
-
 /*!
  * Creates a \a shapeType shape node from the as current selected node child with the parameters defined in \a parametersList. \a numberOfParameters is the
  * number of parametners in the vector \a numberOfParameters
@@ -1489,59 +1460,13 @@ void MainWindow::CreateShape(QString name)
  * If the current node is not a valid parent node or \a shapeType is not a valid type, the shape node will not be created.
  *
  */
-void MainWindow::CreateShape(QString shapeType, int numberOfParameters, QVector<QVariant> parametersList)
+void MainWindow::CreateShape(QString name, int numberOfParameters, QVector<QVariant> parametersList)
 {
-    QVector<ShapeFactory*> factoryList = m_pluginManager->getShapeFactories();
-    if (factoryList.size() == 0) return;
-
-    QVector< QString > shapeNames;
-    for (int i = 0; i < factoryList.size(); i++)
-        shapeNames << factoryList[i]->name();
-
-    int selectedShape = shapeNames.indexOf(shapeType);
-    if (selectedShape < 0)
-    {
-        emit Abort(tr("CreateShape: Selected shape type is not valid.") );
-        return;
-    }
-
-    CreateShape(factoryList[selectedShape], numberOfParameters, parametersList);
-}
-
-/*!
- * Creates a surface node as selected node child.
- */
-void MainWindow::CreateSurfaceNode()
-{
-    QModelIndex parentIndex;
-    if ((!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex()))
-        parentIndex = m_sceneModel->index(0, 0, ui->sceneModelView->rootIndex());
+    ShapeFactory* f = m_pluginManager->getShapeMap().value(name, 0);
+    if (f)
+        CreateShape(f, numberOfParameters, parametersList);
     else
-        parentIndex = ui->sceneModelView->currentIndex();
-
-    ui->sceneModelView->expand(parentIndex);
-
-    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
-    if (!parentInstance) return;
-
-    SoNode* selectedCoinNode = parentInstance->getNode();
-    if (!selectedCoinNode) return;
-
-    if (selectedCoinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
-    {
-        TShapeKit* shapeKit = new TShapeKit;
-
-        CmdInsertShapeKit* insertShapeKit = new CmdInsertShapeKit(parentIndex, shapeKit, m_sceneModel);
-        m_commandStack->push(insertShapeKit);
-
-        QString name("Shape");
-        int count = 0;
-        while (!m_sceneModel->SetNodeName(shapeKit, name))
-            name = QString("Shape_%1").arg(++count);
-
-//        UpdateLightSize();
-        setModified(true);
-    }
+        emit Abort("CreateShape: Selected shape type is not valid.");
 }
 
 /*!
@@ -1689,28 +1614,6 @@ bool MainWindow::Delete(QModelIndex index)
 }
 
 /*!
- * Save all photon map data into \a fileName file.
- */
-double MainWindow::GetwPhoton()
-{
-    //Compute photon power
-    TSceneKit* sceneKit = m_document->getSceneKit();
-    if (!sceneKit) return 0;
-    if (!sceneKit->getPart("lightList[0]", false)) return 0;
-    TLightKit* lightKit = static_cast< TLightKit* >(sceneKit->getPart("lightList[0]", false) );
-
-    if (!lightKit->getPart("tsunshape", false) ) return 0;
-    SunAbstract* sunShape = static_cast< SunAbstract* >(lightKit->getPart("tsunshape", false) );
-    double irradiance = sunShape->getIrradiance();
-
-    if (!lightKit->getPart("icon", false) ) return 0;
-    TLightShape* raycastingShape = static_cast< TLightShape* >(lightKit->getPart("icon", false) );
-    double inputAperture = raycastingShape->GetValidArea();
-
-    return double(inputAperture*irradiance)/m_raysTraced;
-}
-
-/*!
  *
  * Inserts an existing tonatiuh component into the tonatiuh model as a selected node child.
  *
@@ -1754,25 +1657,6 @@ void MainWindow::InsertFileComponent(QString componentFileName)
     }
 
     TSeparatorKit* componentLayout = static_cast< TSeparatorKit* >(componentSeparator->getChild(0) );
-//    TSceneKit* scene = m_document->getSceneKit();
-//    TLightKit* lightKit = static_cast< TLightKit* >(scene->getPart("lightList[0]", false) );
-//    if (lightKit)
-//    {
-
-//        SoSearchAction trackersSearch;
-//        trackersSearch.setType(TrackerAbstract::getClassTypeId() );
-//        trackersSearch.setInterest(SoSearchAction::ALL);
-//        trackersSearch.apply(componentLayout);
-//        SoPathList& trackersPath = trackersSearch.getPaths();
-
-//        for (int index = 0; index <trackersPath.getLength(); ++index)
-//        {
-//            SoFullPath* trackerPath = static_cast< SoFullPath* > (trackersPath[index]);
-//            TrackerAbstract* tracker = static_cast< TrackerAbstract* >(trackerPath->getTail() );
-//            tracker->SetAzimuthAngle(&lightKit->azimuth);
-//            tracker->SetZenithAngle(&lightKit->zenith);
-//        }
-//    }
 
     CmdInsertSeparatorKit* cmdInsertSeparatorKit = new CmdInsertSeparatorKit(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
     cmdInsertSeparatorKit->setText("Insert SeparatorKit node");
@@ -1785,7 +1669,6 @@ void MainWindow::InsertFileComponent(QString componentFileName)
 /*!
  * Starts new tonatiuh empty model.
  */
-
 void MainWindow::New()
 {
     if (!OkToContinue())
@@ -1882,7 +1765,7 @@ void MainWindow::Run()
     InstanceNode* instanceSun = 0;
     SoTransform* transformSun = 0;
     SunAbstract* sunShape = 0;
-    TLightShape* raycastingSurface = 0;
+    SunAperture* raycastingSurface = 0;
     AirAbstract* transmissivity = 0;
 
     QElapsedTimer timer;
@@ -1913,11 +1796,11 @@ void MainWindow::Run()
 
         m_photons->setTransform(instanceRoot->getTransform().inversed() ); //?
 
-        TLightKit* light = static_cast< TLightKit* > (instanceSun->getNode() );
-        QStringList disabledNodes = QString(light->disabledNodes.getValue().getString() ).split(";", QString::SkipEmptyParts);
-        QVector< QPair< TShapeKit*, Transform > > surfacesList;
-        trf::ComputeFistStageSurfaceList(instanceRoot, disabledNodes, &surfacesList);
-        light->findTexture(m_widthDivisions, m_heightDivisions, surfacesList);
+        TLightKit* lightKit = static_cast<TLightKit*> (instanceSun->getNode() );
+        QStringList disabledNodes = QString(lightKit->disabledNodes.getValue().getString() ).split(";", QString::SkipEmptyParts);
+        QVector< QPair<TShapeKit*, Transform> > surfacesList;
+        instanceRoot->collectShapeTransforms(disabledNodes, surfacesList);
+        lightKit->findTexture(m_widthDivisions, m_heightDivisions, surfacesList);
         if (surfacesList.count() < 1)
         {
             emit Abort(tr("There are no surfaces defined for ray tracing") );
@@ -1983,11 +1866,10 @@ void MainWindow::Run()
             ui->actionViewRays->setChecked(false);
         }
 
-        double irradiance = sunShape->getIrradiance();
-        double inputAperture = raycastingSurface->GetValidArea();
-        double wPhoton = (inputAperture*irradiance) / m_raysTracedTotal;
-
-        m_photons->endExport(wPhoton);
+        double area = raycastingSurface->getArea();
+        double irradiance = lightKit->irradiance.getValue();
+        double power = area*irradiance/m_raysTracedTotal;
+        m_photons->endExport(power);
     }
 
     std::cout << "Elapsed time (Run): " << timer.elapsed() << std::endl;
@@ -2111,13 +1993,13 @@ void MainWindow::SetExportPhotonMapType(QString exportModeType)
     QVector<PhotonsFactory*> factoryList = m_pluginManager->getExportFactories();
     if (factoryList.size() == 0) return;
 
-    QVector< QString > exportPMModeNames;
+    QVector<QString> exportPMModeNames;
     for (int i = 0; i < factoryList.size(); i++)
         exportPMModeNames << factoryList[i]->name();
 
     if (exportPMModeNames.indexOf(exportModeType) < 0)
     {
-        emit Abort(tr("exportModeType: Defined export mode is not valid type.") );
+        emit Abort(tr("exportModeType: Defined export mode is not valid type."));
         return;
     }
 
@@ -2244,7 +2126,7 @@ void MainWindow::SetSunshape(QString sunshapeType)
 {
     SoSceneKit* coinScene = m_document->getSceneKit();
     TLightKit* lightKit = 0;
-    if (coinScene->getPart("lightList[0]", false) )
+    if (coinScene->getPart("lightList[0]", false))
     {
         lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
     }
@@ -2252,11 +2134,11 @@ void MainWindow::SetSunshape(QString sunshapeType)
         lightKit = new TLightKit;
 
 
-    QVector< SunFactory* > factoryList = m_pluginManager->getSunFactories();
+    QVector<SunFactory*> factoryList = m_pluginManager->getSunFactories();
 
     if (factoryList.size() == 0) return;
 
-    QVector< QString > factoryNames;
+    QVector<QString> factoryNames;
     for (int i = 0; i < factoryList.size(); i++)
     {
         QString name = factoryList[i]->name();
@@ -2333,7 +2215,6 @@ void MainWindow::SetTransmissivity(QString transmissivityType)
         QString name = transmissivityFactoryList[i]->name();
         factoryNames << name;
     }
-
 
     int transmissivityIndex = factoryNames.indexOf(transmissivityType);
     if (transmissivityIndex < 0)
@@ -2601,7 +2482,6 @@ void MainWindow::SoTransform_to_SoTransformerManip()
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
     setModified(true);
-
 }
 
 void MainWindow::SoManip_to_SoTransform()
@@ -2664,26 +2544,6 @@ void MainWindow::CreateComponent(ComponentFactory* factory)
     QString typeName = factory->name();
     componentLayout->setName(typeName.toStdString().c_str() );
 
-//    TSceneKit* scene = m_document->GetSceneKit();
-//    TLightKit* lightKit = static_cast< TLightKit* >(scene->getPart("lightList[0]", false) );
-//    if (lightKit)
-//    {
-
-//        SoSearchAction trackersSearch;
-//        trackersSearch.setType(TTracker::getClassTypeId() );
-//        trackersSearch.setInterest(SoSearchAction::ALL);
-//        trackersSearch.apply(componentLayout);
-//        SoPathList& trackersPath = trackersSearch.getPaths();
-
-//        for (int index = 0; index <trackersPath.getLength(); ++index)
-//        {
-//            SoFullPath* trackerPath = static_cast< SoFullPath* > (trackersPath[index]);
-//            TTracker* tracker = static_cast< TTracker* >(trackerPath->getTail() );
-//            //tracker->SetAzimuthAngle( &lightKit->azimuth );
-//            //tracker->SetZenithAngle( &lightKit->zenith );
-//        }
-//    }
-
     CmdInsertSeparatorKit* cmd = new CmdInsertSeparatorKit(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
     QString text = QString("Create Component: %1").arg(factory->name().toLatin1().constData() );
     cmd->setText(text);
@@ -2692,7 +2552,6 @@ void MainWindow::CreateComponent(ComponentFactory* factory)
     UpdateLightSize();
     setModified(true);
 }
-
 
 /*!
  * Creates a material node from the \a pMaterialFactory as current selected node child.
@@ -2707,10 +2566,10 @@ void MainWindow::CreateMaterial(MaterialFactory* factory)
 
     InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
-    TShapeKit* shapeKit = dynamic_cast<TShapeKit*>(parentNode);
-    if (!shapeKit) return;
+    TShapeKit* kit = dynamic_cast<TShapeKit*>(parentNode);
+    if (!kit) return;
 
-    MaterialAbstract* material = (MaterialAbstract*) shapeKit->getPart("material", false);
+    MaterialAbstract* material = (MaterialAbstract*) kit->getPart("material", false);
     if (material)
     {
         ShowWarning("This TShapeKit already contains a material node");
@@ -2719,9 +2578,7 @@ void MainWindow::CreateMaterial(MaterialFactory* factory)
     material = factory->create();
     material->setName(factory->name().toStdString().c_str());
 
-    CmdInsertMaterial* cmd = new CmdInsertMaterial(shapeKit, material, m_sceneModel);
-    QString text = QString("Create Material: %1").arg(factory->name());
-    cmd->setText(text);
+    CmdInsertMaterial* cmd = new CmdInsertMaterial(kit, material, m_sceneModel);
     m_commandStack->push(cmd);
 
     setModified(true);
@@ -2732,10 +2589,6 @@ void MainWindow::CreateMaterial(MaterialFactory* factory)
  *
  * If the current node is not a surface type node, the shape node will not be created.
  */
-/*!
- * Creates a shape node from the \a pTrackerFactory as current selected node child.
- *
- */
 void MainWindow::CreateShape(ShapeFactory* factory)
 {
     QModelIndex parentIndex = ui->sceneModelView->currentIndex();
@@ -2744,21 +2597,18 @@ void MainWindow::CreateShape(ShapeFactory* factory)
 
     InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
-    if (!parentNode->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId() ) ) return;
-    TShapeKit* shapeKit = static_cast<TShapeKit*>(parentNode);
-    ShapeAbstract* shape = static_cast<ShapeAbstract*>(shapeKit->getPart("shape", false) );
+    TShapeKit* kit = dynamic_cast<TShapeKit*>(parentNode);
+    if (!kit) return;
+
+    ShapeAbstract* shape = (ShapeAbstract*) kit->getPart("shape", false);
     if (shape) {
-        QMessageBox::information(this, "Tonatiuh Action",
-                                 "This TShapeKit already contains a shape", 1);
+        ShowWarning("This TShapeKit already contains a shape");
         return;
     }
-
     shape = factory->create();
     shape->setName(factory->name().toStdString().c_str());
 
-    CmdInsertShape* cmd = new CmdInsertShape(shapeKit, shape, m_sceneModel);
-    QString text = QString("Create Shape: %1").arg(factory->name());
-    cmd->setText(text);
+    CmdInsertShape* cmd = new CmdInsertShape(kit, shape, m_sceneModel);
     m_commandStack->push(cmd);
 
 //    UpdateLightSize();
@@ -2770,87 +2620,64 @@ void MainWindow::CreateShape(ShapeFactory* factory)
  *
  * If the current node is not a surface type node, the shape node will not be created.
  */
+void MainWindow::CreateShape(ShapeFactory* factory, int /*numberofParameters*/, QVector<QVariant> parametersList)
+{
+    QModelIndex parentIndex = ui->sceneModelView->currentIndex();
+    if (!parentIndex.isValid()) return;
+
+    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
+    SoNode* parentNode = parentInstance->getNode();
+    TShapeKit* kit = dynamic_cast<TShapeKit*>(parentNode);
+    if (!kit) return;
+
+    ShapeAbstract* shape = (ShapeAbstract*) kit->getPart("shape", false);
+    if (shape)
+    {
+        ShowWarning("This TShapeKit already contains a shape");
+        return;
+    }
+    shape = factory->create(parametersList);
+    shape->setName(factory->name().toStdString().c_str() );
+
+    CmdInsertShape* cmd = new CmdInsertShape(kit, shape, m_sceneModel);
+    m_commandStack->push(cmd);
+
+//    UpdateLightSize();
+    setModified(true);
+}
+
 /*!
  * Creates a shape node from the \a pTrackerFactory as current selected node child.
  *
  */
-void MainWindow::CreateShape(ShapeFactory* pShapeFactory, int /*numberofParameters*/, QVector< QVariant > parametersList)
-{
-    QModelIndex parentIndex = ((!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex())) ?
-                m_sceneModel->index(0,0,ui->sceneModelView->rootIndex()) : ui->sceneModelView->currentIndex();
-
-    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
-    SoNode* parentNode = parentInstance->getNode();
-    if (!parentNode->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId() ) ) return;
-
-    TShapeKit* shapeKit = static_cast< TShapeKit* >(parentNode);
-    ShapeAbstract* shape = static_cast< ShapeAbstract* >(shapeKit->getPart("shape", false) );
-
-    if (shape)
-    {
-        QMessageBox::information(this, "Tonatiuh Action",
-                                 "This TShapeKit already contains a shape", 1);
-    }
-    else
-    {
-        shape = pShapeFactory->create(parametersList);
-        /*Hay que comprobar si shape es nulo para no crear una superficie a partir de nulo que probacara el cierre de la aplicacion.*/
-        if (shape!=0) {
-            shape->setName(pShapeFactory->name().toStdString().c_str() );
-            CmdInsertShape* createShape = new CmdInsertShape(shapeKit, shape, m_sceneModel);
-            QString commandText = QString("Create Shape: %1").arg(pShapeFactory->name().toLatin1().constData());
-            createShape->setText(commandText);
-            m_commandStack->push(createShape);
-
-//            UpdateLightSize();
-            setModified(true);
-        }
-    }
-}
-
-
 void MainWindow::CreateTracker(TrackerFactory* factory)
 {
-    QModelIndex parentIndex = ((!ui->sceneModelView->currentIndex().isValid() ) || (ui->sceneModelView->currentIndex() == ui->sceneModelView->rootIndex())) ?
-                m_sceneModel->index (0,0,ui->sceneModelView->rootIndex()) :
-                ui->sceneModelView->currentIndex();
+    QModelIndex parentIndex = ui->sceneModelView->currentIndex();
+    if (!parentIndex.isValid()) return;
 
-    TSceneKit* scene = m_document->getSceneKit();
-
-    /*Las 2 lineas siguientes son para obtener el valor del nodo padre*/
     InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
     SoNode* parentNode = parentInstance->getNode();
-    /*Si el valor del nodo padre es del tipo TseparatorKit, permitimos la creacion del Traker**/
-    if (parentNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) {
-        /**/
-        TSeparatorKit* separatorKit = static_cast< TSeparatorKit* >(parentNode);
-        TrackerAbstract* trak = static_cast< TrackerAbstract* >(separatorKit->getPart("tracker", false) );
+    TSeparatorKit* kit = dynamic_cast<TSeparatorKit*>(parentNode);
+    if (!kit) return;
 
-        if (trak)
-        {
-            QMessageBox::information(this, "Tonatiuh Action",
-                                     "This TSeparatorKit already contains a tracker node", 1);
-            return;
-        }
-        TrackerAbstract* tracker = factory->create();
-
-//        tracker->SetSceneKit(scene);
-        tracker->setName(factory->name().toStdString().c_str() );
-        CmdInsertTracker* command = new CmdInsertTracker(tracker, parentIndex, scene, m_sceneModel);
-        m_commandStack->push(command);
-
-//        UpdateLightSize();
-        setModified(true);
+    TrackerAbstract* tracker = (TrackerAbstract*) kit->getPart("tracker", false);
+    if (tracker)
+    {
+        ShowWarning("This TSeparatorKit already contains a tracker node");
+        return;
     }
-    /*En caso de que el valor del nodo padre no sea del tipo TSeparatorKit,
-         * no realizamos ninguna modicacion en SceneModel*/
-    else return;
-    /**/
+    tracker = factory->create();
+    tracker->setName(factory->name().toStdString().c_str());
+
+    CmdInsertTracker* cmd = new CmdInsertTracker(tracker, parentIndex, m_sceneModel);
+    m_commandStack->push(cmd);
+
+    setModified(true);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-    if (OkToContinue() )
+    if (OkToContinue())
     {
         WriteSettings();
         event->accept();
@@ -2871,7 +2698,7 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
     QSplitter* pSplitter = findChild<QSplitter*>("graphicSplitterV");
     QRect mainViewRect = pSplitter->geometry();
 
-    if (mainViewRect.contains(x, y) )
+    if (mainViewRect.contains(x, y))
     {
         QSplitter* pvSplitter1 = findChild<QSplitter*>("graphicSplitterH1");
         QSplitter* pvSplitter2 = findChild<QSplitter*>("graphicSplitterH1");
@@ -2909,7 +2736,7 @@ void MainWindow::ChangeModelScene()
     InstanceNode* viewLayout = m_sceneModel->getInstance(viewLayoutIndex);
     ui->sceneModelView->setRootIndex(viewLayoutIndex);
 
-    InstanceNode* concentratorRoot = viewLayout->children[ 0 ];
+    InstanceNode* concentratorRoot = viewLayout->children[0];
 
     m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 }
@@ -3044,20 +2871,6 @@ bool MainWindow::Paste(QModelIndex nodeIndex, tgc::PasteType type)
     return true;
 }
 
-/*!
- * Returns the directory of where the plugins are saved.
- */
-QDir MainWindow::PluginDirectory()
-{
-    // Returns the path to the top level plug-in directory.
-    // It is assumed that this is a subdirectory named "plugins" of the directory in
-    // which the running version of Tonatiuh is located.
-
-    QDir directory(qApp->applicationDirPath());
-    directory.cd("plugins");
-    return directory;
-}
-
 /**
  * Restores application settings.
  **/
@@ -3087,7 +2900,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
                                     InstanceNode*& lightInstance,
                                     SoTransform*& lightTransform,
                                     SunAbstract*& sunShape,
-                                    TLightShape*& raycastingShape,
+                                    SunAperture*& raycastingShape,
                                     AirAbstract*& transmissivity)
 {
     //Check if there is a scene
@@ -3117,9 +2930,9 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
     sunShape = static_cast< SunAbstract* >(lightKit->getPart("tsunshape", false) );
 
     if (!lightKit->getPart("icon", false) ) return false;
-    raycastingShape = static_cast< TLightShape* >(lightKit->getPart("icon", false) );
+    raycastingShape = static_cast< SunAperture* >(lightKit->getPart("icon", false) );
 
-    if (!lightKit->getPart("transform",false) ) return false;
+    if (!lightKit->getPart("transform", false) ) return false;
     lightTransform = static_cast< SoTransform* >(lightKit->getPart("transform",false) );
 
 
@@ -3180,16 +2993,16 @@ void MainWindow::SetCurrentFile(const QString& fileName)
     m_currentFile = fileName;
     setModified(false);
 
-    QString nameTitle = "Untitled";
+    QString title = "Untitled";
     if (!m_currentFile.isEmpty() )
     {
-        nameTitle = StrippedName(m_currentFile);
+        title = StrippedName(m_currentFile);
         m_recentFiles.removeAll(m_currentFile);
         m_recentFiles.prepend(m_currentFile);
         UpdateRecentFileActions();
     }
 
-    setWindowTitle(tr("%1[*] - Tonatiuh").arg(nameTitle));
+    setWindowTitle(tr("%1[*] - Tonatiuh").arg(title));
 }
 
 /*!
@@ -3213,10 +3026,7 @@ void MainWindow::SetupActionsInsertComponent()
     QMenu* menu = ui->menuInsert->findChild<QMenu*>("menuComponent");
     if (!menu) return;
     if (menu->isEmpty() )
-    {
-        //Enable material menu
         menu->setEnabled(true);
-    }
 
     if (!m_pluginManager) return;
     QVector<ComponentFactory*> componentFactoryList = m_pluginManager->getComponentFactories();

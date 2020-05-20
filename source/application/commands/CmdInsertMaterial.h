@@ -17,12 +17,12 @@ public:
     CmdInsertMaterial(TShapeKit* shapeKit, MaterialAbstract* material, SceneModel* model, QUndoCommand* parent = 0);
     ~CmdInsertMaterial();
 
-    virtual void undo();
-    virtual void redo();
+    void undo();
+    void redo();
 
 private:
     TShapeKit* m_shapeKit;
     MaterialAbstract* m_material;
-    SceneModel* m_pModel;
+    SceneModel* m_model;
     int m_row;
 };

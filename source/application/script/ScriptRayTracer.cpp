@@ -18,7 +18,7 @@
 #include "kernel/run/RayTracer.h"
 #include "kernel/TonatiuhFunctions.h"
 #include "kernel/sun/TLightKit.h"
-#include "kernel/sun/TLightShape.h"
+#include "kernel/sun/SunAperture.h"
 #include "kernel/photons/Photons.h"
 #include "kernel/trf.h"
 #include "kernel/scene/TSeparatorKit.h"
@@ -164,7 +164,7 @@ int ScriptRayTracer::SetRandomDeviateType(QString typeName)
  */
 void ScriptRayTracer::SetSunAzimtuh(double azimuth)
 {
-    m_sunAzimuth = azimuth * gcf::degree;
+    m_sunAzimuth = azimuth*gcf::degree;
     m_sunPosistionChanged = true;
 }
 
@@ -173,7 +173,7 @@ void ScriptRayTracer::SetSunAzimtuh(double azimuth)
  */
 void ScriptRayTracer::SetSunElevation(double elevation)
 {
-    m_sunElevation = elevation * gcf::degree;
+    m_sunElevation = elevation*gcf::degree;
     m_sunPosistionChanged = true;
 }
 
@@ -183,12 +183,16 @@ int ScriptRayTracer::SetSunPositionToScene()
     {
         QModelIndex sceneIndex;
         InstanceNode* sceneInstance = m_sceneModel->getInstance(sceneIndex);
-        SoSceneKit* coinScene =  static_cast< SoSceneKit* >(sceneInstance->getNode() );
+        SoSceneKit* coinScene = static_cast<SoSceneKit*>(sceneInstance->getNode() );
 
         if ((coinScene)&& (coinScene->getPart("lightList[0]", false) ))
         {
             TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
-            if (m_sunPosistionChanged) lightKit->setPosition(m_sunAzimuth, gcf::pi / 2 - m_sunElevation);
+            if (m_sunPosistionChanged) {
+                lightKit->azimuth.setValue(m_sunAzimuth);
+                lightKit->elevation.setValue(m_sunElevation);
+                lightKit->updatePosition();
+            }
             return 1;
         }
         std::cerr << "ScriptRayTracer::SetSunPositionToScene() light not found in scene" << std::endl;
@@ -292,7 +296,7 @@ int ScriptRayTracer::Trace()
 
 
            if( !lightKit->getPart( "icon", false ) ) return 0;
-           TLightShape* raycastingSurface = static_cast< TLightShape * >( lightKit->getPart( "icon", false ) );
+           SunAperture* raycastingSurface = static_cast< SunAperture * >( lightKit->getPart( "icon", false ) );
 
            if( !lightKit->getPart( "transform" ,false ) ) return 0;
            SoTransform* lightTransform = static_cast< SoTransform* >( lightKit->getPart( "transform" ,false ) );

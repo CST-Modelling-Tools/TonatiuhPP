@@ -83,32 +83,6 @@ SoSeparator* trf::DrawRays(const Photons& map, unsigned long /*numberOfRays*/)
     return ans;
 }
 
-void trf::ComputeFistStageSurfaceList(InstanceNode* instanceNode, QStringList disabledNodesURL, QVector<QPair<TShapeKit*, Transform> >* surfacesList)
-{
-    if (!instanceNode) return;
-    if (disabledNodesURL.contains(instanceNode->GetNodeURL() ) ) return;
-
-    SoBaseKit* coinNode = static_cast< SoBaseKit* > (instanceNode->getNode() );
-    if (!coinNode) return;
-
-    if (coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
-    {
-        for (int index = 0; index < instanceNode->children.count(); ++index)
-        {
-            InstanceNode* childInstance = instanceNode->children[index];
-            ComputeFistStageSurfaceList(childInstance, disabledNodesURL, surfacesList);
-        }
-
-    }
-    else if (coinNode->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) )
-    {
-        TShapeKit* surface = static_cast< TShapeKit* > (coinNode);
-        Transform shapeTransform = instanceNode->getTransform().inversed();
-
-        surfacesList->push_back(QPair< TShapeKit*, Transform >(surface, shapeTransform) );
-    }
-}
-
 void trf::CreatePhotonMap(Photons*& photonMap, QPair<Photons*, std::vector<Photon> > photonsList)
 {
     if (!photonMap) photonMap = photonsList.first;

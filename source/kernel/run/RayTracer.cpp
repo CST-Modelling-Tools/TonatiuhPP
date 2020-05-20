@@ -5,7 +5,7 @@
 #include "libraries/geometry/Ray.h"
 #include "RayTracer.h"
 #include "kernel/photons/Photons.h"
-#include "sun/TLightShape.h"
+#include "sun/SunAperture.h"
 #include "sun/SunAbstract.h"
 #include "air/AirAbstract.h"
 
@@ -13,7 +13,7 @@
 RayTracer::RayTracer(
     InstanceNode* rootNode,
     InstanceNode* sunNode,
-    TLightShape* lightShape,
+    SunAperture* lightShape,
     SunAbstract* const lightSunShape,
     Transform lightToWorld,
     AirAbstract* transmissivity,
@@ -34,7 +34,7 @@ RayTracer::RayTracer(
     m_photonMap(photonMap),
     m_pPhotonMapMutex(mutexPhotonMap),
     m_exportSuraceList(exportSuraceList),
-    m_validAreasVector(lightShape->GetValidAreasCoord())
+    m_validAreasVector(lightShape->getCells())
 {   
 
 }

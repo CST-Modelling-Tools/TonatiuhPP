@@ -3,21 +3,22 @@
 #include <QUndoCommand>
 
 class QString;
-class SceneModel;
 class SoNode;
+class SceneModel;
+
 
 class CmdChangeNodeName: public QUndoCommand
 {
 public:
-    CmdChangeNodeName(const QModelIndex& index, QString newName, SceneModel* model, QUndoCommand* parent = 0);
+    CmdChangeNodeName(const QModelIndex& index, QString name, SceneModel* model, QUndoCommand* parent = 0);
     ~CmdChangeNodeName() {}
 
-    virtual void undo();
-    virtual void redo();
+    void undo();
+    void redo();
 
 private:
-    QString m_newName;/*!< New node name*/
-    QString m_previousName;/*!< Previous node name*/
-    SoNode* m_pNode; /*!< Changed node*/
-    SceneModel* m_pModel; /*!< The scene */
+    QString m_name;
+    QString m_nameOld;
+    SoNode* m_node;
+    SceneModel* m_model;
 };

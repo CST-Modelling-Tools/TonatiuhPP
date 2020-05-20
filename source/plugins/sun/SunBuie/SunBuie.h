@@ -17,17 +17,15 @@ public:
     SoNode* copy(SbBool copyConnections) const;
 
     void generateRay(Vector3D& direction, RandomAbstract& rand) const;
-	double getIrradiance() const;
     double getThetaMax() const;
 
-    SoSFDouble irradiance;
     SoSFDouble csr;
 
     NAME_ICON_FUNCTIONS("Buie", ":/SunBuie.png")
 
 protected:
-    static void updateCSR(void* data, SoSensor*);
      ~SunBuie();
+     static void updateCSR(void* data, SoSensor*);
 
 private:
      double chiValue(double csr) const;
@@ -36,7 +34,7 @@ private:
      double zenithAngle(RandomAbstract& rand) const;
      void updateState(double csrValue);
 
-     SoFieldSensor* m_sensorCSR;
+     SoFieldSensor* m_sensor_csr;
 
 	 double m_chi;
 	 double m_k;

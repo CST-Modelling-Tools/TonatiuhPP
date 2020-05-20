@@ -25,10 +25,7 @@ public:
 
     SoPath* GetSoPath(SoSearchAction* action);
 
-    void updateTrackers(double az, double el); // in rads
-
-    SoSFDouble azimuth;
-    SoSFDouble elevation;
+    void updateTrackers();
 
     SoSeparator* m_root; // graphicRoot
 

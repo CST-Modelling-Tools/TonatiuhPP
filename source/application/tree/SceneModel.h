@@ -56,9 +56,6 @@ public:
 
     void UpdateSceneModel();
 
-signals:
-    void LightNodeStateChanged(int newState);
-
 private:
     void SetRoot();
     InstanceNode* AddInstanceNode(InstanceNode& parent, SoNode* node);

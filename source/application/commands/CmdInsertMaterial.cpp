@@ -1,6 +1,6 @@
-#include "libraries/geometry/gcf.h"
-
 #include "CmdInsertMaterial.h"
+
+#include "libraries/geometry/gcf.h"
 #include "tree/SceneModel.h"
 #include "kernel/material/MaterialAbstract.h"
 #include "kernel/scene/TShapeKit.h"
@@ -11,11 +11,18 @@
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
 CmdInsertMaterial::CmdInsertMaterial(TShapeKit* shapeKit, MaterialAbstract* material, SceneModel* model, QUndoCommand* parent):
-    QUndoCommand("InsertMaterial", parent), m_shapeKit(shapeKit),m_material(material), m_pModel(model), m_row(-1)
+    QUndoCommand(parent),
+    m_shapeKit(shapeKit),
+    m_material(material),
+    m_model(model),
+    m_row(-1)
 {
     if (!m_shapeKit) gcf::SevereError("CmdInsertMaterial called with NULL TShapeKit");
     if (!m_material) gcf::SevereError("CmdInsertMaterial called with NULL TMaterial");
     m_material->ref();
+
+    QString text = QString("Create Material: %1").arg(material->getTypeName());
+    setText(text);
 }
 
 /*!
@@ -33,7 +40,7 @@ CmdInsertMaterial::~CmdInsertMaterial()
 void CmdInsertMaterial::undo()
 {
     m_shapeKit->setPart("material", NULL);
-    m_pModel->RemoveCoinNode(m_row, *m_shapeKit);
+    m_model->RemoveCoinNode(m_row, *m_shapeKit);
 }
 
 /*!
@@ -43,5 +50,5 @@ void CmdInsertMaterial::undo()
 void CmdInsertMaterial::redo()
 {
     m_shapeKit->setPart("material", m_material);
-    m_row = m_pModel->InsertCoinNode(*m_material, *m_shapeKit);
+    m_row = m_model->InsertCoinNode(*m_material, *m_shapeKit);
 }

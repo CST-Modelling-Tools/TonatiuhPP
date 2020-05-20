@@ -23,7 +23,7 @@
 #include "kernel/sun/SunFactory.h"
 #include "kernel/sun/SunPillbox.h"
 #include "kernel/sun/TLightKit.h"
-#include "kernel/sun/TLightShape.h"
+#include "kernel/sun/SunAperture.h"
 #include "kernel/trackers/TrackerAbstract.h"
 #include "kernel/trackers/TrackerFactory.h"
 #include "libraries/fields/UserMField.h"
@@ -62,7 +62,7 @@ PluginManager::PluginManager()
     TSceneKit::initClass();
     TSeparatorKit::initClass();
 
-    TLightShape::initClass();
+    SunAperture::initClass();
     TLightKit::initClass();
     AirAbstract::initClass();
     SunAbstract::initClass();

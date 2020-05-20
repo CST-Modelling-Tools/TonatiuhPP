@@ -1,8 +1,9 @@
 #pragma once
 #include <QUndoCommand>
 
-class QModelIndex;
 class TShapeKit;
+class QModelIndex;
+class SoBaseKit;
 class SceneModel;
 
 //!  CmdInsertShapeKit class is the insert command for tshapekit nodes  stored in the command stack.
@@ -13,15 +14,20 @@ class SceneModel;
 class CmdInsertShapeKit: public QUndoCommand
 {
 public:
-    CmdInsertShapeKit(const QModelIndex& parentIndex, TShapeKit* shapeKit, SceneModel* model, QUndoCommand* parent = 0 );
+    CmdInsertShapeKit(
+        TShapeKit* node,
+        const QModelIndex& parentIndex,
+        SceneModel* model,
+        QUndoCommand* parent = 0
+     );
     ~CmdInsertShapeKit();
 
-     void undo();
-     void redo();
+    void undo();
+    void redo();
 
- private:
-     SoBaseKit* m_coinParent;
-     TShapeKit* m_shapeKit;
-     SceneModel* m_pModel;
-     int m_row;
+private:
+    TShapeKit* m_node;
+    SoBaseKit* m_nodeParent;
+    SceneModel* m_model;
+    int m_row;
 };

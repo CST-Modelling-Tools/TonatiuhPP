@@ -18,11 +18,10 @@ void SunBuie::initClass()
 SunBuie::SunBuie()
 {
     SO_NODE_CONSTRUCTOR(SunBuie);
-    SO_NODE_ADD_FIELD( irradiance, (1000.) );
     SO_NODE_ADD_FIELD( csr, (0.02) );
 
-    m_sensorCSR = new SoFieldSensor(updateCSR, this);
-    m_sensorCSR->attach(&csr);
+    m_sensor_csr = new SoFieldSensor(updateCSR, this);
+    m_sensor_csr->attach(&csr);
 
 	double csrValue = csr.getValue();
     if (csrValue >= m_minCRSValue && csrValue <= m_maxCRSValue)
@@ -55,7 +54,7 @@ void SunBuie::updateState(double csrValue)
 
 SunBuie::~SunBuie()
 {
-    delete m_sensorCSR;
+    delete m_sensor_csr;
 }
 
 void SunBuie::generateRay(Vector3D& direction, RandomAbstract& rand) const
@@ -72,11 +71,6 @@ void SunBuie::generateRay(Vector3D& direction, RandomAbstract& rand) const
     direction.z = cosTheta;
 }
 
-double SunBuie::getIrradiance() const
-{
-	return irradiance.getValue();
-}
-
 double SunBuie::getThetaMax() const
 {
     return m_thetaCS;
@@ -84,26 +78,23 @@ double SunBuie::getThetaMax() const
 
 SoNode* SunBuie::copy(SbBool copyConnections) const
 {
-	// Use the standard version of the copy method to create
-	// a copy of this instance, including its field data
-    SunBuie* newSunShape = dynamic_cast<SunBuie*>( SoNode::copy(copyConnections) );
+    SunBuie* sun = dynamic_cast<SunBuie*>(SoNode::copy(copyConnections));
 
-	newSunShape->irradiance = irradiance;
-	newSunShape->csr = csr;
+    sun->csr = csr;
 
-	newSunShape->m_chi = m_chi;
-	newSunShape->m_k = m_k;
-	newSunShape->m_gamma = m_gamma;
-    newSunShape->m_exp = m_exp;
-	newSunShape->m_thetaSD = m_thetaSD;
-	newSunShape->m_thetaCS = m_thetaCS;
-	newSunShape->m_deltaThetaCSSD = m_deltaThetaCSSD;
-	newSunShape->m_alpha = m_alpha;
-    newSunShape->m_heightSD = m_heightSD;
-    newSunShape->m_heightCS = m_heightCS;
-    newSunShape->m_probabilitySD = m_probabilitySD;
+    sun->m_chi = m_chi;
+    sun->m_k = m_k;
+    sun->m_gamma = m_gamma;
+    sun->m_exp = m_exp;
+    sun->m_thetaSD = m_thetaSD;
+    sun->m_thetaCS = m_thetaCS;
+    sun->m_deltaThetaCSSD = m_deltaThetaCSSD;
+    sun->m_alpha = m_alpha;
+    sun->m_heightSD = m_heightSD;
+    sun->m_heightCS = m_heightCS;
+    sun->m_probabilitySD = m_probabilitySD;
 
-	return newSunShape;
+    return sun;
 }
 
 void SunBuie::updateCSR(void* data, SoSensor*)

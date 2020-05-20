@@ -33,8 +33,6 @@ public:
     ~SunDialog();
 
     TLightKit* getLightKit();
-    double getAzimuth(); //temp
-    double getElevation();
 
 public slots:
     void SetValue(SoNode* node, QString parameter, QString value);
@@ -47,8 +45,8 @@ protected slots:
 private:
     Ui::SunDialog* ui;
 
-    void makeSunShapeTab();
     void makeSunPositionTab();
+    void makeSunShapeTab();
     void makeSunApertureTab();
 
     SceneModel* m_sceneModel;

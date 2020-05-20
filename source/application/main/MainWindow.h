@@ -28,7 +28,7 @@ class SoSelection;
 class SoSeparator;
 class SoTransform;
 class ComponentFactory;
-class TLightShape;
+class SunAperture;
 class MaterialFactory;
 class Photons;
 class PhotonToMemory;
@@ -63,7 +63,6 @@ public:
     void FinishManipulation();
     void StartManipulation(SoDragger* dragger);
     void ExecuteScriptFile(QString tonatiuhScriptFile);
-    void SetPluginManager(PluginManager* pluginManager);
 
 signals:
     void Abort(QString error);
@@ -132,8 +131,8 @@ private slots:
     void CreateShape(ShapeFactory* factory);
     void CreateShape(ShapeFactory* factory, int numberOfParameters, QVector<QVariant> parametersList);
     void CreateTracker(TrackerFactory* factory);
-    void DefineSunLight();
-    void DefineTransmissivity();
+    void onSunDialog();
+    void onAirDialog();
     void DisplayRays(bool display);
     void InsertUserDefinedComponent();
     void ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex& node);
@@ -152,7 +151,7 @@ private slots:
     void ShowCommandView();
     void ShowGrid();
     void ShowMenu(const QModelIndex& index);
-    void ShowRayTracerOptionsDialog();
+    void onRayOptionsDialog();
     void ShowWarning(QString message);
     void Undo();
 
@@ -198,13 +197,12 @@ private:
     bool Delete(QModelIndex index);
     bool OkToContinue();
     bool Paste(QModelIndex nodeIndex, tgc::PasteType type);
-    QDir PluginDirectory();
 
     bool ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
                             InstanceNode*& lightInstance,
                             SoTransform*& lightTransform,
                             SunAbstract*& sunShape,
-                            TLightShape*& shape,
+                            SunAperture*& shape,
                             AirAbstract*& transmissivity);
     bool SaveFile(const QString& fileName);
     void SetCurrentFile(const QString& fileName);
@@ -238,7 +236,6 @@ private:
 
     void ShowRaysIn3DView();
     void UpdateLightSize();
-    double GetwPhoton();
 
 private:
     Ui::MainWindow* ui;
