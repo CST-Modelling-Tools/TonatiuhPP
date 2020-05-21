@@ -16,7 +16,7 @@ public:
     SunBuie();
     SoNode* copy(SbBool copyConnections) const;
 
-    void generateRay(Vector3D& direction, RandomAbstract& rand) const;
+    Vector3D generateRay(RandomAbstract& rand) const;
     double getThetaMax() const;
 
     SoSFDouble csr;

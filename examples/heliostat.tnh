@@ -14,7 +14,7 @@ TSceneKit {
         azimuth 0
         elevation 1.570796326794897
         irradiance 1000
-        disabledNodes "//SunNode/Layout/Target;//SunNode/Layout/H1/primary/secondary/target;"
+        disabledNodes "//Layout/Target;//Layout/H1/primary/secondary/target;"
         transform 
         Transform {
           translation 0 -1.8047799e-006 20.644276

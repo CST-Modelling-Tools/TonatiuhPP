@@ -32,7 +32,7 @@ void SunPillbox::updateTheta(void* data, SoSensor*)
     sun->m_sinThetaMax = sin(sun->thetaMax.getValue());
 }
 
-void SunPillbox::generateRay(Vector3D& direction, RandomAbstract& rand) const
+Vector3D SunPillbox::generateRay(RandomAbstract& rand) const
 {
     double phi = gcf::TwoPi*rand.RandomDouble();
     double sinTheta = m_sinThetaMax*sqrt(rand.RandomDouble());
@@ -40,9 +40,11 @@ void SunPillbox::generateRay(Vector3D& direction, RandomAbstract& rand) const
     double cosPhi = cos(phi);
     double sinPhi = sin(phi);
 
-    direction.x = sinTheta*cosPhi;
-    direction.y = sinTheta*sinPhi;
-    direction.z = cosTheta;
+    return Vector3D(
+        sinTheta*cosPhi,
+        sinTheta*sinPhi,
+        cosTheta
+    );
 }
 
 double SunPillbox::getThetaMax() const

@@ -16,7 +16,7 @@ class TONATIUH_KERNEL SunAbstract: public SoNode
 public:
     static void initClass();
 
-    virtual void generateRay(Vector3D& direction, RandomAbstract& rand) const = 0;
+    virtual Vector3D generateRay(RandomAbstract& rand) const = 0;
     virtual double getThetaMax() const = 0;
 
     NAME_ICON_FUNCTIONS("X", ":/SunX.png")

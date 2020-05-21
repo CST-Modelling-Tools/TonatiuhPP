@@ -198,12 +198,11 @@ private:
     bool OkToContinue();
     bool Paste(QModelIndex nodeIndex, tgc::PasteType type);
 
-    bool ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
-                            InstanceNode*& lightInstance,
-                            SoTransform*& lightTransform,
+    bool ReadyForRaytracing(InstanceNode*& instanceLayout,
+                            InstanceNode*& instanceSun,
                             SunAbstract*& sunShape,
                             SunAperture*& shape,
-                            AirAbstract*& transmissivity);
+                            AirAbstract*& air);
     bool SaveFile(const QString& fileName);
     void SetCurrentFile(const QString& fileName);
     bool SetPhotonMapExportSettings();

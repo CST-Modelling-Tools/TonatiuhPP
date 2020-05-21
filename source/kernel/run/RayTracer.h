@@ -27,12 +27,11 @@ class TONATIUH_KERNEL RayTracer
 {
 
 public:
-    RayTracer(InstanceNode* rootNode,
-              InstanceNode* sunNode,
-              SunAperture* lightShape,
-              SunAbstract* const lightSunShape,
-              Transform lightToWorld,
-              AirAbstract* transmissivity,
+    RayTracer(InstanceNode* instanceRoot,
+              InstanceNode* instanceSun,
+              SunAperture* sunAperture,
+              SunAbstract* const sunShape,
+              AirAbstract* air,
               RandomAbstract& rand,
               QMutex* mutex,
               Photons* photonMap,
@@ -46,17 +45,17 @@ public:
 private:
     bool NewPrimitiveRay(Ray* ray, RandomParallel& rand);
 
-    InstanceNode* m_rootNode;
-    InstanceNode* m_sunNode;
-    SunAperture* m_lightShape;
-    const SunAbstract* m_lightSunShape;
-    Transform m_lightToWorld;
-    AirAbstract* m_transmissivity;
-    RandomAbstract* m_pRand;
+    InstanceNode* m_instanceLayout;
+    InstanceNode* m_instanceSun;
+    SunAperture* m_sunAperture;
+    const SunAbstract* m_sunShape;
+    Transform m_sunTransform;
+    AirAbstract* m_air;
+    RandomAbstract* m_rand;
     QMutex* m_mutex;
     Photons* m_photonMap;
     QMutex* m_pPhotonMapMutex;
     QVector<InstanceNode*> m_exportSuraceList;
 
-    const std::vector< QPair<int, int> >&  m_validAreasVector;
+    const std::vector< QPair<int, int> >&  m_sunCells;
 };

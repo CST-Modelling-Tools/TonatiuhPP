@@ -10,44 +10,42 @@
 #include "air/AirAbstract.h"
 
 
-RayTracer::RayTracer(
-    InstanceNode* rootNode,
-    InstanceNode* sunNode,
-    SunAperture* lightShape,
-    SunAbstract* const lightSunShape,
-    Transform lightToWorld,
-    AirAbstract* transmissivity,
+RayTracer::RayTracer(InstanceNode* instanceRoot,
+    InstanceNode* instanceSun,
+    SunAperture* sunAperture,
+    SunAbstract* const sunShape,
+    AirAbstract* air,
     RandomAbstract& rand,
     QMutex* mutex,
     Photons* photonMap,
     QMutex* mutexPhotonMap,
     QVector<InstanceNode*> exportSuraceList
 ):
-    m_rootNode(rootNode),
-    m_sunNode(sunNode),
-    m_lightShape(lightShape),
-    m_lightSunShape(lightSunShape),
-    m_lightToWorld(lightToWorld),
-    m_transmissivity(transmissivity),
-    m_pRand(&rand),
+    m_instanceLayout(instanceRoot),
+    m_instanceSun(instanceSun),
+    m_sunAperture(sunAperture),
+    m_sunShape(sunShape),
+    m_sunTransform(instanceSun->getTransform()),
+    m_air(air),
+    m_rand(&rand),
     m_mutex(mutex),
     m_photonMap(photonMap),
     m_pPhotonMapMutex(mutexPhotonMap),
     m_exportSuraceList(exportSuraceList),
-    m_validAreasVector(lightShape->getCells())
+    m_sunCells(sunAperture->getCells())
 {   
 
 }
 
 void RayTracer::operator()(ulong nRays)
 {
-    if (m_validAreasVector.empty()) return;
+    if (m_sunCells.empty()) return;
     bool bExportAll = m_exportSuraceList.empty();
-    bool bExportLight = bExportAll ? true : m_exportSuraceList.contains(m_sunNode);
+    bool bExportLight = bExportAll ? true : m_exportSuraceList.contains(m_instanceSun);
 
     std::vector<Photon> photons;
     // Photon(Point3D pos, int side, double id = 0, InstanceNode* intersectedSurface = 0, int absorbedPhoton = 0);
-    RandomParallel rand(m_pRand, m_mutex);
+    RandomParallel rand(m_rand, m_mutex);
 
     for (ulong n = 0; n < nRays; ++n)
     {
@@ -56,9 +54,9 @@ void RayTracer::operator()(ulong nRays)
         NewPrimitiveRay(&ray, rand);
         bool isFront = true;
         int rayLength = 0;
-        InstanceNode* intersectedSurface = m_sunNode;
+        InstanceNode* intersectedSurface = m_instanceSun;
         if (bExportLight)
-            photons.push_back(Photon(ray.origin, isFront, rayLength, m_sunNode) );
+            photons.push_back(Photon(ray.origin, isFront, rayLength, m_instanceSun) );
 
         // Part 2: middle photon points (intersection with shapes)
         bool isReflected = true;
@@ -66,11 +64,11 @@ void RayTracer::operator()(ulong nRays)
             Ray rayReflected;
             isFront = false;
             intersectedSurface = 0;
-            isReflected = m_rootNode->intersect(ray, rand, isFront, intersectedSurface, rayReflected);
+            isReflected = m_instanceLayout->intersect(ray, rand, isFront, intersectedSurface, rayReflected);
 
             // check absorption after the first reflection
-            if (m_transmissivity && rayLength > 0) {
-                if (m_transmissivity->transmission(ray.tMax) < rand.RandomDouble()) {
+            if (m_air && rayLength > 0) {
+                if (m_air->transmission(ray.tMax) < rand.RandomDouble()) {
                     ++rayLength;
                     intersectedSurface = 0;
                     ray.tMax = gcf::infinity;
@@ -105,15 +103,12 @@ void RayTracer::operator()(ulong nRays)
 
 bool RayTracer::NewPrimitiveRay(Ray* ray, RandomParallel& rand)
 {
-    int area = int(rand.RandomDouble()*m_validAreasVector.size());
-    QPair<int, int> areaIndex = m_validAreasVector[area];
+    int index = int(rand.RandomDouble()*m_sunCells.size());
+    QPair<int, int> cell = m_sunCells[index];
 
-    Vector3D origin = m_lightShape->Sample(rand.RandomDouble(), rand.RandomDouble(), areaIndex.first, areaIndex.second);
-
-    Vector3D direction;
-    m_lightSunShape->generateRay(direction, rand);
-
-    *ray =  m_lightToWorld(Ray(origin, direction) );
+    Vector3D origin = m_sunAperture->Sample(rand.RandomDouble(), rand.RandomDouble(), cell.first, cell.second);
+    Vector3D direction = m_sunShape->generateRay(rand);
+    *ray = m_sunTransform(Ray(origin, direction));
     return true;
 }
 

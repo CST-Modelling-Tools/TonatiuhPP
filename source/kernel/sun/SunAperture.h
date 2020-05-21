@@ -7,6 +7,7 @@
 #include <Inventor/fields/SoSFDouble.h>
 #include <Inventor/fields/SoSFEnum.h>
 #include <Inventor/fields/SoSFFloat.h>
+#include <Inventor/fields/SoSFString.h>
 
 #include "kernel/shape/ShapeAbstract.h"
 #include "kernel/TonatiuhTypes.h"
@@ -26,21 +27,18 @@ public:
     double getArea() const;
     const std::vector< QPair<int, int> >& getCells() const {return m_cells;}
 
-    Vector3D Sample(double u, double v, int h, int w) const;
+    Vector3D Sample(double u, double v, int w, int h) const;
 
     void setSize(double xMin, double xMax, double yMin, double yMax, double delta);
-    void SetLightSourceArea(int h, int w, int** lightArea);
     void findTexture(int widthDivisions, int heightDivisions, QVector< QPair<TShapeKit*, Transform> > surfacesList);
 
-protected:
-    bool OutOfRange(double u, double v) const
-    {
-        return u < 0. || u > 1. || v < 0. || v > 1.;
-    }
+    SoSFString disabledNodes;
 
-    void generatePrimitives(SoAction* action);
-    void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
+protected:
     ~SunAperture();
+    void SetLightSourceArea(int w, int h, QVector<uchar> bmp);
+    void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
+    void generatePrimitives(SoAction* action);
 
 private:
     double m_xMin;
@@ -49,8 +47,7 @@ private:
     double m_yMax;
     double m_delta;
 
-    int m_heightElements;
-    int** m_lightAreaMatrix;
-    int m_widthElements;
+    int m_xCells;
+    int m_yCells;
     std::vector< QPair<int, int> > m_cells;
 };

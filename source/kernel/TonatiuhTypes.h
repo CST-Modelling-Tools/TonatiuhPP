@@ -17,6 +17,7 @@
 #include <Inventor/fields/SoSFEnum.h>
 #include <Inventor/fields/SoSubField.h>
 
+#include <Inventor/fields/SoSFString.h>
 
 namespace trt
 {

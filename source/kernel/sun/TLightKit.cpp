@@ -17,7 +17,7 @@
 #include "libraries/geometry/gcf.h"
 #include "scene/TShapeKit.h"
 #include "sun/SunPillbox.h"
-
+#include "kernel/run/InstanceNode.h"
 
 SO_KIT_SOURCE(TLightKit)
 
@@ -143,9 +143,22 @@ void TLightKit::setBox(BoundingBox box)
     transform->translation = res;
 }
 
-void TLightKit::findTexture(int xPixels, int yPixels, QVector< QPair<TShapeKit*, Transform> > surfacesList)
+bool TLightKit::findTexture(int xPixels, int yPixels, InstanceNode* instanceRoot)
 {
+    QStringList disabledList = QString(disabledNodes.getValue().getString()).split(";", QString::SkipEmptyParts);
+    QVector< QPair<TShapeKit*, Transform> > surfacesList;
+    instanceRoot->collectShapeTransforms(disabledList, surfacesList);
+    if (surfacesList.isEmpty()) return false;
+
+    SoTransform* sunTransform = static_cast<SoTransform*>(getPart("transform", false));
+    SbMatrix mr;
+    mr.setRotate(sunTransform->rotation.getValue());
+    Transform tSun = tgf::makeTransform(mr).inversed();
+    for (auto& s : surfacesList)
+        s.second = tSun*s.second;
+
     SunAperture* shape = static_cast<SunAperture*>(getPart("icon", false));
-    if (!shape) return;
+    if (!shape) return false;
     shape->findTexture(xPixels, yPixels, surfacesList);
+    return true;
 }

@@ -4,15 +4,12 @@
 #include <QDateTime>
 #include <QPair>
 #include <QVector>
-#include <Inventor/fields/SoSFBool.h>
-#include <Inventor/fields/SoSFString.h>
 #include <Inventor/nodekits/SoLightKit.h>
 #include "kernel/TonatiuhTypes.h"
 #include "kernel/sun/SunAbstract.h"
 
 struct BoundingBox;
-class Transform;
-class TShapeKit;
+class InstanceNode;
 
 /*!
   \class TLightKit TLightKit.h TLightKit.h
@@ -60,7 +57,7 @@ public:
 
     void updatePosition();
     void setBox(BoundingBox box);
-    void findTexture(int widthDivisions, int heightDivisions, QVector< QPair<TShapeKit*, Transform> > surfacesList);
+    bool findTexture(int widthDivisions, int heightDivisions, InstanceNode* instanceRoot);
 
     SoSFDouble azimuth;  // in radians
     SoSFDouble elevation;

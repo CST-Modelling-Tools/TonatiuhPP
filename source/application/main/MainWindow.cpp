@@ -761,15 +761,14 @@ void MainWindow::RunCompleteRayTracer()
 {
     InstanceNode* rootSeparatorInstance = 0;
     InstanceNode* lightInstance = 0;
-    SoTransform* lightTransform = 0;
     SunAbstract* sunShape = 0;
-    SunAperture* raycastingSurface = 0;
+    SunAperture* sunAperture = 0;
     AirAbstract* transmissivity = 0;
 
 //    QElapsedTimer timer;
 //    timer.start();
 
-    if (!ReadyForRaytracing(rootSeparatorInstance, lightInstance, lightTransform, sunShape, raycastingSurface, transmissivity) )
+    if (!ReadyForRaytracing(rootSeparatorInstance, lightInstance, sunShape, sunAperture, transmissivity) )
         return;
 
 //    std::cout << "Elapsed time (ReadyForRaytracing): " << timer.elapsed() << std::endl;
@@ -1768,15 +1767,14 @@ void MainWindow::Run()
 {
     InstanceNode* instanceRoot = 0;
     InstanceNode* instanceSun = 0;
-    SoTransform* transformSun = 0;
     SunAbstract* sunShape = 0;
-    SunAperture* raycastingSurface = 0;
+    SunAperture* sunAperture = 0;
     AirAbstract* transmissivity = 0;
 
     QElapsedTimer timer;
     timer.start();
 
-    if (ReadyForRaytracing(instanceRoot, instanceSun, transformSun, sunShape, raycastingSurface, transmissivity) )
+    if (ReadyForRaytracing(instanceRoot, instanceSun, sunShape, sunAperture, transmissivity) )
     {
         if (!m_photons->getExporter() )
         {
@@ -1796,26 +1794,13 @@ void MainWindow::Run()
 
         UpdateLightSize();
 
-        //Compute bounding boxes and world to object transforms
+        // compute bounding boxes and world to object transforms
         instanceRoot->updateTree(Transform(new Matrix4x4));
 
         m_photons->setTransform(instanceRoot->getTransform().inversed() ); //?
 
-        TLightKit* lightKit = static_cast<TLightKit*> (instanceSun->getNode() );
-        QStringList disabledNodes = QString(lightKit->disabledNodes.getValue().getString() ).split(";", QString::SkipEmptyParts);
-        QVector< QPair<TShapeKit*, Transform> > surfacesList;
-        instanceRoot->collectShapeTransforms(disabledNodes, surfacesList);
-
-        // temp
-        SoTransform* transform = (SoTransform*) lightKit->getPart("transform", false);
-        SbMatrix mr;
-        mr.setRotate(transform->rotation.getValue());
-        Transform tSun = tgf::makeTransform(mr).inversed();
-        for (auto& s : surfacesList)
-            s.second = tSun*s.second;
-
-        lightKit->findTexture(m_widthDivisions, m_heightDivisions, surfacesList);
-        if (surfacesList.count() < 1)
+        TLightKit* sunKit = static_cast<TLightKit*> (instanceSun->getNode() );
+        if (!sunKit->findTexture(m_widthDivisions, m_heightDivisions, instanceRoot))
         {
             emit Abort(tr("There are no surfaces defined for ray tracing") );
             ShowRaysIn3DView();
@@ -1824,7 +1809,7 @@ void MainWindow::Run()
 
         QVector<long> raysPerThread;
         int progressMax = 100;
-        ulong t1 = m_raysTraced / progressMax;
+        ulong t1 = m_raysTraced/progressMax;
         for (int progress = 0; progress < progressMax; ++progress)
             raysPerThread << t1;
 
@@ -1832,8 +1817,6 @@ void MainWindow::Run()
             raysPerThread << m_raysTraced - t1*progressMax;
 
 
-        Transform lightToWorld = tgf::makeTransform(transformSun);
-        instanceSun->setTransform(lightToWorld);
 
         // single thread for gprof
 //        QThreadPool::globalInstance()->setMaxThreadCount(1);
@@ -1844,7 +1827,6 @@ void MainWindow::Run()
         progressDialog.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
         progressDialog.setLabelText(QString("Progressing using %1 thread(s)...").arg(QThread::idealThreadCount() ) );
 
-        // Create a QFutureWatcher and conncect signals and slots.
         QFutureWatcher<void> futureWatcher;
         QObject::connect(&futureWatcher, SIGNAL(finished()), &progressDialog, SLOT(reset()));
         QObject::connect(&progressDialog, SIGNAL(canceled()), &futureWatcher, SLOT(cancel()));
@@ -1860,8 +1842,7 @@ void MainWindow::Run()
             airTemp = transmissivity;
 
         photonMap = QtConcurrent::map(raysPerThread, RayTracer(instanceRoot,
-            instanceSun, raycastingSurface, sunShape, lightToWorld,
-            airTemp,
+            instanceSun, sunAperture, sunShape, airTemp,
             *m_rand,
             &mutex, m_photons, &mutexPhotonMap,
             exportSuraceList) );
@@ -1881,8 +1862,8 @@ void MainWindow::Run()
             ui->actionViewRays->setChecked(false);
         }
 
-        double area = raycastingSurface->getArea();
-        double irradiance = lightKit->irradiance.getValue();
+        double area = sunAperture->getArea();
+        double irradiance = sunKit->irradiance.getValue();
         double power = area*irradiance/m_raysTracedTotal;
         m_photons->endExport(power);
     }
@@ -2911,46 +2892,43 @@ void MainWindow::ReadSettings()
 /*!
  * Checks whether a ray tracing can be started with the current light and model.
  */
-bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
-                                    InstanceNode*& lightInstance,
-                                    SoTransform*& lightTransform,
+bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
+                                    InstanceNode*& instanceSun,
                                     SunAbstract*& sunShape,
-                                    SunAperture*& raycastingShape,
-                                    AirAbstract*& transmissivity)
+                                    SunAperture*& sunAperture,
+                                    AirAbstract*& air)
 {
-    //Check if there is a scene
-    TSceneKit* coinScene = m_document->getSceneKit();
-    if (!coinScene) return false;
+    TSceneKit* sceneKit = m_document->getSceneKit();
+    if (!sceneKit) return false;
 
-    //Check if there is a transmissivity defined
-    if (!coinScene->getPart("transmissivity", false) ) transmissivity = 0;
+    if (!sceneKit->getPart("transmissivity", false))
+        air = 0;
     else
-        transmissivity = static_cast< AirAbstract* > (coinScene->getPart("transmissivity", false) );
+        air = static_cast<AirAbstract*>(sceneKit->getPart("transmissivity", false));
 
     InstanceNode* sceneInstance = m_sceneModel->getInstance(QModelIndex());
     if (!sceneInstance) return false;
 
-    //Check if there is a rootSeparator InstanceNode
-    rootSeparatorInstance = sceneInstance->children[1];
-    if (!rootSeparatorInstance) return false;
+    instanceSun = sceneInstance->children[0];
+    if (!instanceSun) return false;
 
+    instanceLayout = sceneInstance->children[1];
+    if (!instanceLayout) return false;
 
     //Check if there is a light and is properly configured
-    if (!coinScene->getPart("lightList[0]", false) ) return false;
-    TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
+    if (!sceneKit->getPart("lightList[0]", false) ) return false;
+    TLightKit* lightKit = static_cast< TLightKit* >(sceneKit->getPart("lightList[0]", false) );
 
-    lightInstance = sceneInstance->children[0];
-    if (!lightInstance) return false;
 
-    if (!lightKit->getPart("tsunshape", false) ) return false;
-    sunShape = static_cast< SunAbstract* >(lightKit->getPart("tsunshape", false) );
+    if (!lightKit->getPart("tsunshape", false)) return false;
+    sunShape = static_cast<SunAbstract*>(lightKit->getPart("tsunshape", false));
 
-    if (!lightKit->getPart("icon", false) ) return false;
-    raycastingShape = static_cast< SunAperture* >(lightKit->getPart("icon", false) );
+    if (!lightKit->getPart("icon", false)) return false;
+    sunAperture = static_cast<SunAperture*>(lightKit->getPart("icon", false));
 
-    if (!lightKit->getPart("transform", false) ) return false;
-    lightTransform = static_cast< SoTransform* >(lightKit->getPart("transform",false) );
-
+    if (!lightKit->getPart("transform", false)) return false;
+    SoTransform* sunTransform = static_cast<SoTransform*>(lightKit->getPart("transform", false));
+    instanceSun->setTransform(tgf::makeTransform(sunTransform));
 
     QVector<RandomFactory*> randomDeviateFactoryList = m_pluginManager->getRandomFactories();
     //Check if there is a random generator selected;
