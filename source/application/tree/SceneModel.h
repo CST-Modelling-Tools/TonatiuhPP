@@ -27,7 +27,7 @@ public:
 
     void setSceneRoot(SoSeparator& coinRoot);
     void setSceneKit(TSceneKit& coinScene);
-    TSceneKit* getSceneKit() const {return m_coinScene;}
+    TSceneKit* getSceneKit() const {return m_nodeScene;}
 
     QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const;
     int rowCount(const QModelIndex& index) const;
@@ -41,32 +41,32 @@ public:
 
     InstanceNode* getInstance(const QModelIndex& index) const;
     bool SetNodeName(SoNode* node, QString name);
-    QModelIndex IndexFromNodeUrl(QString url) const;
-    QModelIndex IndexFromPath(const SoNodeKitPath& coinNodePath) const;
-    SoNodeKitPath* PathFromIndex(const QModelIndex& modelIndex) const;
+    QModelIndex IndexFromUrl(QString url) const;
+    QModelIndex IndexFromPath(const SoNodeKitPath& path) const;
+    SoNodeKitPath* PathFromIndex(const QModelIndex& index) const;
 
     void InsertLightNode(TLightKit& lightKit);
     void RemoveLightNode(TLightKit& lightKit);
 
     int InsertCoinNode(SoNode& coinChild, SoBaseKit& coinParent);
-    void RemoveCoinNode(int row, SoBaseKit& coinParent);
+    void RemoveCoinNode(int row, SoBaseKit& parent);
 
-    bool Cut(SoBaseKit& coinParent, int row);
+    bool Cut(SoBaseKit& parent, int row);
     bool Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinChild, int row);
 
     void UpdateSceneModel();
 
 private:
-    void SetRoot();
+    void initScene();
     InstanceNode* AddInstanceNode(InstanceNode& parent, SoNode* node);
     void GenerateInstanceTree(InstanceNode& instance);
     void DeleteInstanceTree(InstanceNode& instance);
 
 private:
-    SoSeparator* m_coinRoot;
-    TSceneKit* m_coinScene;
-    InstanceNode* m_instanceRoot;
-    InstanceNode* m_instanceLayout;
+    SoSeparator* m_nodeRoot;
+    TSceneKit* m_nodeScene; // child of root
+    InstanceNode* m_instanceScene;
+    InstanceNode* m_instanceLayout; // child of scene
 
     // the same SoNode can be attached to multiple parents
     // InstanceNode have a single parent

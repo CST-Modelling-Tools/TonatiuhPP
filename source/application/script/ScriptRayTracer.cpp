@@ -1,3 +1,5 @@
+#include "ScriptRayTracer.h"
+
 #include <QFutureWatcher>
 #include <QMutex>
 #include <QPoint>
@@ -12,7 +14,6 @@
 #include "main/Document.h"
 #include "view/GraphicRoot.h"
 #include "tree/SceneModel.h"
-#include "ScriptRayTracer.h"
 #include "kernel/random/RandomAbstract.h"
 #include "kernel/random/RandomFactory.h"
 #include "kernel/run/RayTracer.h"
@@ -96,7 +97,7 @@ bool ScriptRayTracer::IsValidSurface(QString surfaceName)
 {
     if (!m_sceneModel) return false;
 
-    QModelIndex surfaceIndex = m_sceneModel->IndexFromNodeUrl(surfaceName);
+    QModelIndex surfaceIndex = m_sceneModel->IndexFromUrl(surfaceName);
     InstanceNode* selectedSurface = m_sceneModel->getInstance(surfaceIndex);
     if (!selectedSurface) return false;
 
@@ -214,19 +215,15 @@ int ScriptRayTracer::Save(const QString& fileName)
     return 1;
 }
 
-int ScriptRayTracer::SetTonatiuhModelFile (QString filename)
+int ScriptRayTracer::SetTonatiuhModelFile(QString filename)
 {
     delete m_document;
-    m_document = 0;
-
     m_document = new Document;
     if (!m_document->ReadFile(filename) ) return 0;
 
     delete m_sceneModel;
-    m_sceneModel = 0;
     m_sceneModel = new SceneModel;
-
-    m_sceneModel->setSceneKit(*m_document->getSceneKit() );
+    m_sceneModel->setSceneKit(*m_document->getSceneKit());
 
     return 1;
 }
@@ -362,12 +359,4 @@ int ScriptRayTracer::Trace()
 
          */
     return 1;
-}
-
-double ScriptRayTracer::GetArea() {
-    return m_area;
-}
-
-double ScriptRayTracer::GetNumrays() {
-    return m_numberOfRays;
 }

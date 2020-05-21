@@ -89,7 +89,7 @@ FluxAnalysis::~FluxAnalysis()
  */
 QString FluxAnalysis::GetSurfaceType(QString nodeURL)
 {
-    QModelIndex nodeIndex = m_pCurrentSceneModel->IndexFromNodeUrl(nodeURL);
+    QModelIndex nodeIndex = m_pCurrentSceneModel->IndexFromUrl(nodeURL);
     if (!nodeIndex.isValid()  ) return "";
 
     InstanceNode* instanceNode = m_pCurrentSceneModel->getInstance(nodeIndex);
@@ -214,7 +214,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     }
 
     QVector< InstanceNode* > exportSuraceList;
-    QModelIndex nodeIndex = m_pCurrentSceneModel->IndexFromNodeUrl(m_surfaceURL);
+    QModelIndex nodeIndex = m_pCurrentSceneModel->IndexFromUrl(m_surfaceURL);
     if (!nodeIndex.isValid()) return;
 
     InstanceNode* surfaceNode = m_pCurrentSceneModel->getInstance(nodeIndex);
@@ -350,7 +350,7 @@ void FluxAnalysis::UpdatePhotonCounts()
     m_maximumPhotonsError = 0;
 
     QString surfaceType = GetSurfaceType(m_surfaceURL);
-    QModelIndex nodeIndex = m_pCurrentSceneModel->IndexFromNodeUrl(m_surfaceURL);
+    QModelIndex nodeIndex = m_pCurrentSceneModel->IndexFromUrl(m_surfaceURL);
     InstanceNode* instanceNode = m_pCurrentSceneModel->getInstance(nodeIndex);
 
     if (surfaceType == "ShapeFlatRectangle")

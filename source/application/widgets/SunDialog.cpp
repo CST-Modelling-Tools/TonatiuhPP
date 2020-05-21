@@ -134,7 +134,7 @@ void SunDialog::makeSunApertureTab()
     ui->modelTreeView->setModel(m_sceneModel);
     m_selectionModel = new QItemSelectionModel(m_sceneModel);
     ui->modelTreeView->setSelectionModel(m_selectionModel);
-    ui->modelTreeView->setRootIndex(m_sceneModel->IndexFromNodeUrl("//SunNode"));
+    ui->modelTreeView->setRootIndex(m_sceneModel->IndexFromUrl("//SunNode"));
 
     if (!m_lightKitOld) return;
 

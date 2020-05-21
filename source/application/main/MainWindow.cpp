@@ -385,7 +385,7 @@ void MainWindow::SetupTreeView()
 {
     ui->sceneModelView->setModel(m_sceneModel);
     ui->sceneModelView->setSelectionModel(m_selectionModel);
-    ui->sceneModelView->setRootIndex(m_sceneModel->IndexFromNodeUrl("//SunNode"));
+    ui->sceneModelView->setRootIndex(m_sceneModel->IndexFromUrl("//SunNode"));
 
     connect(ui->sceneModelView, SIGNAL(dragAndDrop(const QModelIndex&,const QModelIndex&)),
             this, SLOT(ItemDragAndDrop(const QModelIndex&,const QModelIndex&)) );
@@ -558,7 +558,7 @@ void MainWindow::onSunDialog()
 
     InstanceNode* sceneInstance = m_sceneModel->getInstance(ui->sceneModelView->rootIndex() );
     InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
-    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
+    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 
     TLightKit* lightKit = 0;
     if (sceneKit->getPart("lightList[0]", false) )
@@ -1294,7 +1294,7 @@ void MainWindow::Copy()
  */
 void MainWindow::Copy(QString nodeURL)
 {
-    QModelIndex nodeIndex = m_sceneModel->IndexFromNodeUrl(nodeURL);
+    QModelIndex nodeIndex = m_sceneModel->IndexFromUrl(nodeURL);
 
     if (!nodeIndex.isValid() )
     {
@@ -1516,7 +1516,7 @@ void MainWindow::Cut(QString nodeURL)
         return;
     }
 
-    QModelIndex nodeIndex = m_sceneModel->IndexFromNodeUrl(nodeURL);
+    QModelIndex nodeIndex = m_sceneModel->IndexFromUrl(nodeURL);
 
     if (!nodeIndex.isValid() )
     {
@@ -1557,7 +1557,7 @@ void MainWindow::Delete()
     m_selectionModel->clearSelection();
 
     InstanceNode* selectionNode = m_sceneModel->getInstance(selection);
-    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(selectionNode->getParent()->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
+    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromUrl(selectionNode->getParent()->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 
     Delete(selection);
 }
@@ -1569,7 +1569,7 @@ void MainWindow::Delete()
  */
 void MainWindow::Delete(QString nodeURL)
 {
-    QModelIndex nodeIndex = m_sceneModel->IndexFromNodeUrl(nodeURL);
+    QModelIndex nodeIndex = m_sceneModel->IndexFromUrl(nodeURL);
     if (!nodeIndex.isValid() )
     {
         emit Abort(tr("Delete: There is no node with defined url.") );
@@ -1716,7 +1716,7 @@ void MainWindow::Paste(QString nodeURL, QString pasteType)
         return;
     }
 
-    QModelIndex nodeIndex = m_sceneModel->IndexFromNodeUrl(nodeURL);
+    QModelIndex nodeIndex = m_sceneModel->IndexFromUrl(nodeURL);
     if (!nodeIndex.isValid() )
     {
         emit Abort(tr("Paste: The node url is not valid.") );
@@ -1784,8 +1784,8 @@ void MainWindow::Run()
         QVector<InstanceNode*> exportSuraceList;
         for (QString s : m_photonsSettings->exportSurfaceNodeList)
         {
-            m_sceneModel->IndexFromNodeUrl(s);
-            InstanceNode* node = m_sceneModel->getInstance(m_sceneModel->IndexFromNodeUrl(s));
+            m_sceneModel->IndexFromUrl(s);
+            InstanceNode* node = m_sceneModel->getInstance(m_sceneModel->IndexFromUrl(s));
             exportSuraceList << node;
         }
 
@@ -1941,7 +1941,7 @@ void MainWindow::SaveAs(QString fileName)
  */
 void MainWindow::SelectNode(QString nodeUrl)
 {
-    QModelIndex nodeIndex = m_sceneModel->IndexFromNodeUrl(nodeUrl);
+    QModelIndex nodeIndex = m_sceneModel->IndexFromUrl(nodeUrl);
     m_selectionModel->setCurrentIndex(nodeIndex, QItemSelectionModel::ClearAndSelect);
 }
 
@@ -2264,7 +2264,7 @@ void MainWindow::SetValue(QString nodeUrl, QString parameter, QString value)
         return;
     }
 
-    QModelIndex nodeIndex = m_sceneModel->IndexFromNodeUrl(nodeUrl);
+    QModelIndex nodeIndex = m_sceneModel->IndexFromUrl(nodeUrl);
     if (!nodeIndex.isValid() )
     {
         emit Abort(tr("SetValue: Defined node url is not a valid url.") );
@@ -2732,13 +2732,13 @@ void MainWindow::ChangeModelScene()
     m_sceneModel->setSceneKit(*coinScene);
     m_graphicsRoot->AddModel(coinScene);
 
-    QModelIndex viewLayoutIndex = m_sceneModel->IndexFromNodeUrl(QString("//SunNode") );
+    QModelIndex viewLayoutIndex = m_sceneModel->IndexFromUrl(QString("//SunNode") );
     InstanceNode* viewLayout = m_sceneModel->getInstance(viewLayoutIndex);
     ui->sceneModelView->setRootIndex(viewLayoutIndex);
 
     InstanceNode* concentratorRoot = viewLayout->children[0];
 
-    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
+    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 }
 
 /*!
@@ -3229,7 +3229,7 @@ bool MainWindow::StartOver(const QString& fileName)
     InstanceNode* sceneInstance = m_sceneModel->getInstance(ui->sceneModelView->rootIndex() );
 
     InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
-    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromNodeUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
+    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 
     ui->actionViewRays->setEnabled(false);
     ui->actionViewRays->setChecked(false);

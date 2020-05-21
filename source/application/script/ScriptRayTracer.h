@@ -32,8 +32,12 @@ public:
     bool IsValidRandomGeneratorType(QString type);
     bool IsValidSurface(QString surfaceName);
 
-    double GetArea();
-    double GetNumrays();
+    double GetArea() {
+        return m_area;
+    }
+    double GetNumrays() {
+        return m_numberOfRays;
+    }
 
     int SetDir(QString dir);
 
