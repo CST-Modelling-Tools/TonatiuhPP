@@ -11,7 +11,7 @@ AboutDialog::AboutDialog(QWidget* parent):
 
     QString textVersion = qApp->applicationVersion();
 
-    QString textDate = QString(__DATE__).simplified(); // "Dec  5 2018"
+    QString textDate = QString(__DATE__).simplified(); // "Jan  1 2020"
     QDate date = QDate::fromString(textDate, "MMM d yyyy");
     textDate = date.toString("d MMM yyyy");
 
@@ -19,10 +19,8 @@ AboutDialog::AboutDialog(QWidget* parent):
 
     ui->label_version->setText(text);
 
-    Qt::WindowFlags flags = windowFlags();
-    flags ^= Qt::WindowContextHelpButtonHint;
-    flags |= Qt::MSWindowsFixedSizeDialogHint;
-    setWindowFlags(flags);
+    setWindowFlag(Qt::WindowContextHelpButtonHint);
+    setWindowFlag(Qt::MSWindowsFixedSizeDialogHint, true);
 }
 
 AboutDialog::~AboutDialog()

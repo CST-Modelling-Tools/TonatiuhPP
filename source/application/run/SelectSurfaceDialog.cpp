@@ -29,7 +29,7 @@ SelectSurfaceDialog::SelectSurfaceDialog(SceneModel& model, bool enableLight, QW
     m_filter->setSourceModel(m_model);
     sceneModelView->setModel(m_filter);
 
-    QModelIndex viewLayoutIndex = model.IndexFromUrl("//SunNode");
+    QModelIndex viewLayoutIndex = model.IndexFromUrl("//");
     sceneModelView->setSelectionBehavior(QAbstractItemView::SelectRows);
     sceneModelView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     sceneModelView->setSelectionMode(QAbstractItemView::SingleSelection);

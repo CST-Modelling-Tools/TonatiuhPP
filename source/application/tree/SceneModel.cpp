@@ -93,30 +93,30 @@ void SceneModel::initScene()
     {
         // Sun node
         TSeparatorKit* nodeSun = new TSeparatorKit();
-        nodeSun->setName("SunNode");
+        nodeSun->setName("Layout");
         nodeSun->setSearchingChildren(true);
         coinPartList->addChild(nodeSun);
-        InstanceNode* instanceSun = AddInstanceNode(*m_instanceScene, nodeSun);
-        SoNodeKitListPart* childrenSun = static_cast<SoNodeKitListPart*>(nodeSun->getPart("childList", true));
+        m_instanceLayout = AddInstanceNode(*m_instanceScene, nodeSun);
+//        SoNodeKitListPart* childrenSun = static_cast<SoNodeKitListPart*>(nodeSun->getPart("childList", true));
 
-        // Layout node
-        TSeparatorKit* nodeLayout = new TSeparatorKit();
-        nodeLayout->setName("Layout");
-        childrenSun->addChild(nodeLayout);
-        nodeLayout->setSearchingChildren(true);
-        m_instanceLayout = AddInstanceNode(*instanceSun, nodeLayout);
+//        // Layout node
+//        TSeparatorKit* nodeLayout = new TSeparatorKit();
+//        nodeLayout->setName("Layout");
+//        nodeLayout->setSearchingChildren(true);
+//        childrenSun->addChild(nodeLayout);
+//        m_instanceLayout = AddInstanceNode(*instanceSun, nodeLayout);
     }
     else
     {
         TSeparatorKit* nodeSun = static_cast<TSeparatorKit*>(coinPartList->getChild(0));
         if (!nodeSun) return;
-        InstanceNode* instanceSun = AddInstanceNode(*m_instanceScene, nodeSun);
-        SoNodeKitListPart* childrenSun = static_cast<SoNodeKitListPart*>(nodeSun->getPart("childList", true));
-        if (!childrenSun) return;
+        m_instanceLayout = AddInstanceNode(*m_instanceScene, nodeSun);
+//        SoNodeKitListPart* childrenSun = static_cast<SoNodeKitListPart*>(nodeSun->getPart("childList", true));
+//        if (!childrenSun) return;
 
-        TSeparatorKit* nodeLayout = static_cast<TSeparatorKit*>(childrenSun->getChild(0));
-        if (!nodeLayout) return;
-        m_instanceLayout = AddInstanceNode(*instanceSun, nodeLayout);
+//        TSeparatorKit* nodeLayout = static_cast<TSeparatorKit*>(childrenSun->getChild(0));
+//        if (!nodeLayout) return;
+//        m_instanceLayout = AddInstanceNode(*instanceSun, nodeLayout);
         GenerateInstanceTree(*m_instanceLayout);
     }
 }

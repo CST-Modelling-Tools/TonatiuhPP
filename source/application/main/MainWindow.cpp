@@ -187,7 +187,7 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
     else
         SetCurrentFile("");
 
-    SelectNode("//SunNode/Layout");
+    SelectNode("//Layout");
 
     ui->fileToolBar->hide();
     ui->editToolBar->hide();
@@ -385,7 +385,7 @@ void MainWindow::SetupTreeView()
 {
     ui->sceneModelView->setModel(m_sceneModel);
     ui->sceneModelView->setSelectionModel(m_selectionModel);
-    ui->sceneModelView->setRootIndex(m_sceneModel->IndexFromUrl("//SunNode"));
+    ui->sceneModelView->setRootIndex(m_sceneModel->IndexFromUrl(""));
 
     connect(ui->sceneModelView, SIGNAL(dragAndDrop(const QModelIndex&,const QModelIndex&)),
             this, SLOT(ItemDragAndDrop(const QModelIndex&,const QModelIndex&)) );
@@ -1008,7 +1008,7 @@ void MainWindow::ShowCommandView()
  */
 void MainWindow::ShowMenu(const QModelIndex& index)
 {
-    if (!index.isValid() ) return;
+    if (!index.isValid()) return;
     m_selectionModel->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
 
     InstanceNode* instanceNode = m_sceneModel->getInstance(index);
@@ -1024,29 +1024,34 @@ void MainWindow::ShowMenu(const QModelIndex& index)
         popupmenu.addAction(ui->actionPasteCopy);
         popupmenu.addAction(ui->actionPasteLink);
         popupmenu.addAction(ui->actionDelete);
+        popupmenu.addAction("Collapse all", ui->sceneModelView, SLOT(collapseAll()));
     }
 
     if (type.isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
     {
         QMenu* transformMenu = popupmenu.addMenu("Convert to");
-        //QMenu transformMenu( "Convert to", &popupmenu );
-        //popupmenu.addAction( transformMenu.menuAction() );
-        TSeparatorKit* coinKit = dynamic_cast< TSeparatorKit* > (coinNode);
-        SoTransform* transform = static_cast< SoTransform* >(coinKit->getPart("transform", true) );
+        TSeparatorKit* coinKit = dynamic_cast<TSeparatorKit*> (coinNode);
+        SoTransform* transform = static_cast<SoTransform*>(coinKit->getPart("transform", true));
         SoType transformType = transform->getTypeId();
 
-        if (!transformType.isDerivedFrom(SoCenterballManip::getClassTypeId()) ) transformMenu->addAction(tr("SoCenterballManip"),  this, SLOT(SoTransform_to_SoCenterballManip()));
-        if (!transformType.isDerivedFrom(SoHandleBoxManip::getClassTypeId()) ) transformMenu->addAction(tr("SoHandleBoxManip"), this, SLOT(SoTransform_to_SoHandleBoxManip()));
-        if (!transformType.isDerivedFrom(SoJackManip::getClassTypeId()) ) transformMenu->addAction(tr("SoJackManip"), this, SLOT(SoTransform_to_SoJackManip()));
-        if (!transformType.isDerivedFrom(SoTabBoxManip::getClassTypeId()) ) transformMenu->addAction(tr("SoTabBoxManip"), this, SLOT(SoTransform_to_SoTabBoxManip()));
-        if (!transformType.isDerivedFrom(SoTrackballManip::getClassTypeId()) ) transformMenu->addAction(tr("SoTrackballManip"),  this, SLOT(SoTransform_to_SoTrackballManip()));
-        if (!transformType.isDerivedFrom(SoTransformBoxManip::getClassTypeId()) ) transformMenu->addAction(tr("SoTransformBoxManip"), this, SLOT(SoTransform_to_SoTransformBoxManip()));
-        if (!transformType.isDerivedFrom(SoTransformerManip::getClassTypeId()) ) transformMenu->addAction(tr("SoTransformerManip"), this, SLOT(SoTransform_to_SoTransformerManip()));
-
-        if (transformType.isDerivedFrom(SoTransformManip::getClassTypeId()) ) transformMenu->addAction(tr("SoTransform"), this, SLOT(SoManip_to_SoTransform()) );
+        if (!transformType.isDerivedFrom(SoCenterballManip::getClassTypeId()) )
+            transformMenu->addAction("SoCenterballManip", this, SLOT(SoTransform_to_SoCenterballManip()));
+        if (!transformType.isDerivedFrom(SoHandleBoxManip::getClassTypeId()) )
+            transformMenu->addAction("SoHandleBoxManip", this, SLOT(SoTransform_to_SoHandleBoxManip()));
+        if (!transformType.isDerivedFrom(SoJackManip::getClassTypeId()) )
+            transformMenu->addAction("SoJackManip", this, SLOT(SoTransform_to_SoJackManip()));
+        if (!transformType.isDerivedFrom(SoTabBoxManip::getClassTypeId()) )
+            transformMenu->addAction("SoTabBoxManip", this, SLOT(SoTransform_to_SoTabBoxManip()));
+        if (!transformType.isDerivedFrom(SoTrackballManip::getClassTypeId()) )
+            transformMenu->addAction("SoTrackballManip", this, SLOT(SoTransform_to_SoTrackballManip()));
+        if (!transformType.isDerivedFrom(SoTransformBoxManip::getClassTypeId()) )
+            transformMenu->addAction("SoTransformBoxManip", this, SLOT(SoTransform_to_SoTransformBoxManip()));
+        if (!transformType.isDerivedFrom(SoTransformerManip::getClassTypeId()) )
+            transformMenu->addAction("SoTransformerManip", this, SLOT(SoTransform_to_SoTransformerManip()));
+        if (transformType.isDerivedFrom(SoTransformManip::getClassTypeId()) )
+            transformMenu->addAction("SoTransform", this, SLOT(SoManip_to_SoTransform()) );
     }
 
-    //Mostramos el menu contextual
     popupmenu.exec(QCursor::pos());
 }
 
@@ -1827,6 +1832,7 @@ void MainWindow::Run()
 
         // Create a progress dialog.
         QProgressDialog progressDialog;
+        progressDialog.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
         progressDialog.setLabelText(QString("Progressing using %1 thread(s)...").arg(QThread::idealThreadCount() ) );
 
         // Create a QFutureWatcher and conncect signals and slots.
@@ -2708,7 +2714,7 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
             QList<int> size(pvSplitter2->sizes());
             if (x < size[0])
                 m_focusView = 0;
-            if (x > size[0])
+            else
                 m_focusView = 1;
         }
         else
@@ -2716,7 +2722,7 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
             QList<int> size(pvSplitter1->sizes());
             if (x < size[0])
                 m_focusView = 2;
-            if (x > size[0])
+            else
                 m_focusView = 3;
         }
     }
@@ -2732,7 +2738,7 @@ void MainWindow::ChangeModelScene()
     m_sceneModel->setSceneKit(*coinScene);
     m_graphicsRoot->AddModel(coinScene);
 
-    QModelIndex viewLayoutIndex = m_sceneModel->IndexFromUrl(QString("//SunNode") );
+    QModelIndex viewLayoutIndex = m_sceneModel->IndexFromUrl("");
     InstanceNode* viewLayout = m_sceneModel->getInstance(viewLayoutIndex);
     ui->sceneModelView->setRootIndex(viewLayoutIndex);
 
@@ -2912,12 +2918,13 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
     else
         transmissivity = static_cast< AirAbstract* > (coinScene->getPart("transmissivity", false) );
 
+    InstanceNode* sceneInstance = m_sceneModel->getInstance(QModelIndex());
+    if (!sceneInstance) return false;
+
     //Check if there is a rootSeparator InstanceNode
-    rootSeparatorInstance = m_sceneModel->getInstance(ui->sceneModelView->rootIndex() );
+    rootSeparatorInstance = sceneInstance->children[1];
     if (!rootSeparatorInstance) return false;
 
-    InstanceNode* sceneInstance = rootSeparatorInstance->getParent();
-    if (!sceneInstance) return false;
 
     //Check if there is a light and is properly configured
     if (!coinScene->getPart("lightList[0]", false) ) return false;
@@ -2936,7 +2943,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& rootSeparatorInstance,
     lightTransform = static_cast< SoTransform* >(lightKit->getPart("transform",false) );
 
 
-    QVector< RandomFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
+    QVector<RandomFactory*> randomDeviateFactoryList = m_pluginManager->getRandomFactories();
     //Check if there is a random generator selected;
     if (m_selectedRandomDeviate == -1)
     {

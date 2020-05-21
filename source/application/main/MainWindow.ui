@@ -85,8 +85,6 @@
     <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
-    <addaction name="actionPrint"/>
-    <addaction name="separator"/>
     <addaction name="separator"/>
     <addaction name="actionClose"/>
    </widget>
@@ -210,7 +208,6 @@
    <addaction name="actionSave"/>
    <addaction name="actionSaveAs"/>
    <addaction name="separator"/>
-   <addaction name="actionPrint"/>
    <addaction name="separator"/>
    <addaction name="actionClose"/>
   </widget>
@@ -337,18 +334,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
-   </property>
-  </action>
-  <action name="actionPrint">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/images/file/print.png</normaloff>:/images/file/print.png</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Print</string>
    </property>
   </action>
   <action name="actionClose">

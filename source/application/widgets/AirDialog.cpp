@@ -28,9 +28,7 @@ AirDialog::AirDialog(QMap<QString, AirFactory*> airMap, QWidget* parent, Qt::Win
         this, SLOT(setValue(SoNode*, QString, QString))
     );
 
-    Qt::WindowFlags flags = windowFlags();
-    flags ^= Qt::WindowContextHelpButtonHint;
-    setWindowFlags(flags);
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 }
 
 AirDialog::~AirDialog()

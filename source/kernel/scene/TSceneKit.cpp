@@ -83,18 +83,11 @@ void TSceneKit::updateTrackers()
     );
 
     auto nodes = static_cast<SoNodeKitListPart*>(getPart("childList", true));
-    if (nodes->getNumChildren() < 1) return;
+    if (nodes->getNumChildren() == 0) return;
 
-    auto node = static_cast<SoBaseKit*>(nodes->getChild(0));     //SunNode
+    auto node = static_cast<SoBaseKit*>(nodes->getChild(0));     //Layout
     if (!node) return;
-
-    nodes = static_cast<SoNodeKitListPart*>(node->getPart("childList", true));
-
-    for (int n = 0; n < nodes->getNumChildren(); ++n)
-    {
-        node = static_cast<SoBaseKit*>(nodes->getChild(n));
-        updateTrackers(node, toGlobal, vSun);
-    }
+    updateTrackers(node, toGlobal, vSun);
 }
 
 /*!

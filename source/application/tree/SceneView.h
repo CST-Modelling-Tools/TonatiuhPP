@@ -28,14 +28,10 @@ protected:
 protected slots:
     void currentChanged(const QModelIndex& current, const QModelIndex& previous);
     void closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint);
-//    void resizeViewToContents(const QModelIndex& index);
-
-protected slots:
 
 private:
     void startDrag(QMouseEvent* event);
 
     QModelIndex m_currentIndex;
-    SceneDelegate* m_itemsDelegate;
-    QPoint startPos;
+    QPoint m_startPos;
 };

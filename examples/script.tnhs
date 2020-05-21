@@ -47,7 +47,7 @@ function makeHeliostat(path, name, position)
 
 var path;
 
-path = "//SunNode/Layout";
+path = "//Layout";
 path = makeNode(path, "Receiver");
 tonatiuh.SetValue(path, "translation", "0 0 8");
 path = makeShape(path);
@@ -59,13 +59,15 @@ tonatiuh.SetValue(shape, "sizeY", 3);
 
 path = "//SunNode/Layout";
 path = makeNode(path, "Heliostats");
+count = 1;
 for (i = -1; i <= 1; i++)
 {
 	for (j = -1; j <= 1; j++)
 	{
-		name = "H_" + i + "_" + j;
+		name = "H_" + count;
 		position = "" + 5*i + " " + 5*j + " 0";
 		focus = 10;
 		makeHeliostat(path, name, position, focus);
+		count++;
 	}
 }

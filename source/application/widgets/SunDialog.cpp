@@ -49,9 +49,7 @@ SunDialog::SunDialog(
     makeSunShapeTab();
     makeSunApertureTab();
 
-    Qt::WindowFlags flags = windowFlags();
-    flags ^= Qt::WindowContextHelpButtonHint;
-    setWindowFlags(flags);
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 }
 
 SunDialog::~SunDialog()
@@ -134,7 +132,7 @@ void SunDialog::makeSunApertureTab()
     ui->modelTreeView->setModel(m_sceneModel);
     m_selectionModel = new QItemSelectionModel(m_sceneModel);
     ui->modelTreeView->setSelectionModel(m_selectionModel);
-    ui->modelTreeView->setRootIndex(m_sceneModel->IndexFromUrl("//SunNode"));
+    ui->modelTreeView->setRootIndex(m_sceneModel->IndexFromUrl("//"));
 
     if (!m_lightKitOld) return;
 

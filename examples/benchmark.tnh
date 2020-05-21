@@ -1,0 +1,128 @@
+#Inventor V2.1 ascii
+
+
+TSceneKit {
+  fields [ SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode transmissivity, SFNode topSeparator ]
+  lightList 
+  NodeKitListPart {
+    childTypeNames "LightKit"
+    containerNode 
+    Group {
+
+      DEF Light TLightKit {
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFString disabledNodes, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
+        azimuth 0
+        elevation 1.570796326794897
+        irradiance 1000
+        disabledNodes ""
+        transform 
+        Transform {
+          translation 0 -9.6165058e-007 11
+          rotation 1 0 0  3.1415927
+
+        }
+        light 
+        DirectionalLight {
+          direction 0 0 1
+
+        }
+        icon 
+        SunAperture {
+          fields [ SFFloat xMin, SFFloat xMax, SFFloat yMin, SFFloat yMax, SFFloat delta ]
+          xMin -1.0558004
+          xMax 1.0558004
+          yMin -1.0558004
+          yMax 1.0558004
+          delta 0.055800404
+
+        }
+        iconMaterial 
+        Material {
+          transparency 0.75
+
+        }
+        iconTexture 
+        Texture2 {
+          image 10 10 1
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 
+          model BLEND
+          blendColor 1 1 1
+
+        }
+        tsunshape 
+        SunPillbox {
+          fields [ SFDouble thetaMax ]
+          thetaMax 0.00465
+
+        }
+
+      }
+    }
+
+  }
+  childList 
+  NodeKitListPart {
+    childTypeNames [ "ShapeKit",
+        "SeparatorKit" ]
+    containerNode 
+    Group {
+
+      DEF Layout TSeparatorKit {
+        fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode tracker, SFNode topSeparator ]
+        transform 
+        Transform {
+
+        }
+        childList 
+        NodeKitListPart {
+          containerTypeName "Separator"
+          childTypeNames [ "ShapeKit",
+              "SeparatorKit" ]
+          containerNode 
+          Separator {
+
+            DEF Shape TShapeKit {
+              fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode materialBinding, SFNode normalBinding, SFNode textureCoordinateBinding, SFNode shapeHints, SFNode coordinate3, SFNode coordinate4, SFNode normal, SFNode textureCoordinate2, SFNode textureCoordinateFunction, SFNode profileCoordinate2, SFNode profileCoordinate3, SFNode profileList, SFNode localTransform, SFNode shape, SFNode topSeparator, SFNode shapeSeparator ]
+              appearance 
+              AppearanceKit {
+                material 
+                DEF Specular MaterialSpecular {
+                  fields [ SFDouble reflectivity, SFDouble slope, SFEnum distribution, MFColor ambientColor, MFColor diffuseColor, MFColor specularColor, MFColor emissiveColor, MFFloat shininess, MFFloat transparency ]
+
+                }
+
+              }
+              shape 
+              DEF Sphere ShapeSphere {
+                fields [ SFDouble radius, SFDouble phiMax, SFDouble alphaMin, SFDouble alphaMax, SFEnum activeSide ]
+
+              }
+
+            }
+          }
+
+        }
+
+      }
+    }
+
+  }
+  transmissivity 
+  AirVacuum {
+    fields [  ]
+
+  }
+
+}

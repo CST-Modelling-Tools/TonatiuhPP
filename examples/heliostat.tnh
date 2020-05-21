@@ -76,19 +76,7 @@ TSceneKit {
     containerNode 
     Group {
 
-      DEF SunNode TSeparatorKit {
-        fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode tracker, SFNode topSeparator ]
-        transform 
-        Transform {
 
-        }
-        childList 
-        NodeKitListPart {
-          containerTypeName "Separator"
-          childTypeNames [ "ShapeKit",
-              "SeparatorKit" ]
-          containerNode 
-          Separator {
 
             DEF Layout TSeparatorKit {
               fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode tracker, SFNode topSeparator ]
@@ -348,11 +336,7 @@ TSceneKit {
               }
 
             }
-          }
-
-        }
-
-      }
+ 
     }
 
   }
