@@ -250,6 +250,14 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     QStringList disabledNodes = QString(lightKit->disabledNodes.getValue().getString() ).split(";", QString::SkipEmptyParts);
     QVector< QPair<TShapeKit*, Transform> > surfacesList;
     m_pRootSeparatorInstance->collectShapeTransforms(disabledNodes, surfacesList);
+
+    SoTransform* transform = (SoTransform*) lightKit->getPart("transform", false);
+    SbMatrix mr;
+    mr.setRotate(transform->rotation.getValue());
+    Transform tSun = tgf::makeTransform(mr).inversed();
+    for (auto& s : surfacesList)
+        s.second = tSun*s.second;
+
     lightKit->findTexture(m_sunWidthDivisions, m_sunHeightDivisions, surfacesList);
     if (surfacesList.count() < 1) return;
 

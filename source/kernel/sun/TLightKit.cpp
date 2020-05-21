@@ -1,8 +1,4 @@
-#include <QImage>
-#include <QBrush>
-#include <QColor>
-#include <QImage>
-#include <QPaintEngine>
+#include "TLightKit.h"
 
 #include <Inventor/nodes/SoDirectionalLight.h>
 #include <Inventor/nodes/SoLabel.h>
@@ -13,17 +9,14 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodekits/SoNodekitCatalog.h>
 
-#include "libraries/geometry/gcf.h"
+#include "SunAperture.h"
+#include "kernel/TonatiuhFunctions.h"
 #include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Matrix4x4.h"
-#include "sun/sunpos.h"
-#include "sun/SunPillbox.h"
-#include "TLightKit.h"
-#include "SunAperture.h"
 #include "libraries/geometry/Transform.h"
+#include "libraries/geometry/gcf.h"
 #include "scene/TShapeKit.h"
-#include "kernel/TonatiuhFunctions.h"
-
+#include "sun/SunPillbox.h"
 
 
 SO_KIT_SOURCE(TLightKit)
@@ -115,7 +108,6 @@ void TLightKit::setBox(BoundingBox box)
     Transform tr = tgf::makeTransform(mr).inversed();
     box = tr(box);
 
-
     //box is global
     double xMin = box.pMin.x;
     double xMax = box.pMax.x;
@@ -143,11 +135,7 @@ void TLightKit::setBox(BoundingBox box)
 
     SunAperture* shape = static_cast<SunAperture*>(getPart("icon", false));
     if (!shape) return;
-    shape->xMin.setValue(xMin - delta);
-    shape->xMax.setValue(xMax + delta);
-    shape->yMin.setValue(yMin - delta);
-    shape->yMax.setValue(yMax + delta);
-    shape->delta.setValue(delta);
+    shape->setSize(xMin, xMax, yMin, yMax, delta);
 
     if (!transform) return;
     SbVec3f res;
@@ -157,124 +145,7 @@ void TLightKit::setBox(BoundingBox box)
 
 void TLightKit::findTexture(int xPixels, int yPixels, QVector< QPair<TShapeKit*, Transform> > surfacesList)
 {
-    SoTransform* transform = (SoTransform*) getPart("transform", false);
-    SbMatrix mr;
-    mr.setRotate(transform->rotation.getValue());
-    Transform tr = tgf::makeTransform(mr).inversed();
-
     SunAperture* shape = static_cast<SunAperture*>(getPart("icon", false));
     if (!shape) return;
-
-    double xWidth = shape->xMax.getValue() - shape->xMin.getValue();
-    double yWidth = shape->yMax.getValue() - shape->yMin.getValue();
-
-    while ( xWidth / xPixels < shape->delta.getValue() ) xPixels--;
-    double xWidthPixel = xWidth/xPixels;
-
-    while ( yWidth / yPixels < shape->delta.getValue() ) yPixels--;
-    double yWidthPixel = yWidth/yPixels;
-
-    QImage* sourceImage = new QImage(xPixels, yPixels, QImage::Format_RGB32);
-    sourceImage->setOffset(QPoint(0.5, 0.5));
-    sourceImage->fill(Qt::white);
-
-    QPainter painter(sourceImage);
-
-    QBrush brush(Qt::black);
-    painter.setBrush(brush);
-
-    QPen pen(Qt::black);
-    painter.setPen(pen);
-
-    //painter.setRenderHint(   QPainter::Antialiasing);
-
-    //QPen pen( Qt::black, Qt::NoPen );
-    //painter.setPen( pen );
-
-    for (int s = 0; s < surfacesList.size(); s++)
-    {
-        TShapeKit* surfaceKit = surfacesList[s].first;
-        Transform surfaceTransform = surfacesList[s].second;
-        Transform transformOtW = surfaceTransform.inversed();
-
-        ShapeAbstract* shapeNode = static_cast<ShapeAbstract*>(surfaceKit->getPart("shape", false));
-        if (shapeNode)
-        {
-            BoundingBox shapeBox = shapeNode->getBox();
-
-            QVector<Vector3D> ps;
-            ps << Vector3D(shapeBox.pMin.x, shapeBox.pMin.y, shapeBox.pMin.z);
-            ps << Vector3D(shapeBox.pMax.x, shapeBox.pMin.y, shapeBox.pMin.z);
-            ps << Vector3D(shapeBox.pMax.x, shapeBox.pMin.y, shapeBox.pMax.z);
-            ps << Vector3D(shapeBox.pMin.x, shapeBox.pMin.y, shapeBox.pMax.z);
-            ps << Vector3D(shapeBox.pMin.x, shapeBox.pMax.y, shapeBox.pMin.z);
-            ps << Vector3D(shapeBox.pMax.x, shapeBox.pMax.y, shapeBox.pMin.z);
-            ps << Vector3D(shapeBox.pMax.x, shapeBox.pMax.y, shapeBox.pMax.z);
-            ps << Vector3D(shapeBox.pMin.x, shapeBox.pMax.y, shapeBox.pMax.z);
-
-            QVector<QPointF> qps;
-            for (Vector3D& p : ps) {
-                p = transformOtW.transformPoint(p);
-                p = tr.transformPoint(p);
-                qps <<  QPoint((p.x - shape->xMin.getValue())/xWidthPixel, (p.y - shape->yMin.getValue())/yWidthPixel);
-            }
-
-            QPolygonF polygon1({qps[0], qps[1], qps[2], qps[3]});
-            QPolygonF polygon2({qps[0], qps[1], qps[5], qps[4]});
-            QPolygonF polygon3({qps[0], qps[3], qps[7], qps[4]});
-            QPolygonF polygon4({qps[1], qps[2], qps[6], qps[5]});
-            QPolygonF polygon5({qps[2], qps[3], qps[7], qps[6]});
-            QPolygonF polygon6({qps[4], qps[5], qps[6], qps[7]});
-
-            painter.drawPolygon(polygon1);
-            painter.drawPolygon(polygon2);
-            painter.drawPolygon(polygon3);
-            painter.drawPolygon(polygon4);
-            painter.drawPolygon(polygon5);
-            painter.drawPolygon(polygon6);
-        }
-    }
-
-    int** areaMatrix = new int*[yPixels];
-    for (int i = 0; i < yPixels; i++)
-        areaMatrix[i] = new int[xPixels];
-
-    unsigned char* bitmap = new unsigned char[xPixels*yPixels];
-
-    QRgb black = qRgb(0, 0, 0);
-
-    for (int i = 0; i < xPixels; i++)
-    {
-        for (int j = 0; j < yPixels; j++)
-        {
-            int pixelIntensity = 0;
-            for (int qi = i - 1; qi <= i + 1; ++qi)
-            for (int qj = j - 1; qj <= j + 1; ++qj)
-            {
-                if (qi < 0 || qi >= xPixels) continue;
-                if (qj < 0 || qj >= yPixels) continue;
-                pixelIntensity += sourceImage->pixel(qi, qj) == black ? 1 : 0;
-            }
-
-            if (pixelIntensity > 0)
-            {
-                areaMatrix[j][i] = 1;
-                bitmap[i*yPixels + j] = 0;
-            }
-            else
-            {
-                areaMatrix[j][i] = 0;
-                bitmap[i*yPixels + j] = 255;
-            }
-        }
-    }
-
-//    SoTexture2* texture = static_cast< SoTexture2* >(getPart("iconTexture", true) );
-//    texture->image.setValue(SbVec2s(heightPixeles, widthPixeles), 1, bitmap);
-//    texture->wrapS = SoTexture2::CLAMP;
-//    texture->wrapT = SoTexture2::CLAMP;
-
-    delete[] bitmap;
-
-    shape->SetLightSourceArea(yPixels, xPixels, areaMatrix);
+    shape->findTexture(xPixels, yPixels, surfacesList);
 }

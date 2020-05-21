@@ -55,8 +55,8 @@ class TONATIUH_KERNEL TLightKit: public SoLightKit
     SO_KIT_CATALOG_ENTRY_HEADER(tsunshape);
 
 public:
-    TLightKit();
     static void initClass();
+    TLightKit();
 
     void updatePosition();
     void setBox(BoundingBox box);

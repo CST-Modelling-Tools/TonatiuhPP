@@ -28,12 +28,7 @@ TSceneKit {
         }
         icon 
         SunAperture {
-          fields [ SFFloat xMin, SFFloat xMax, SFFloat yMin, SFFloat yMax, SFFloat delta ]
-          xMin -1.0558004
-          xMax 1.0558004
-          yMin -1.0558004
-          yMax 1.0558004
-          delta 0.055800404
+          fields [  ]
 
         }
         iconMaterial 

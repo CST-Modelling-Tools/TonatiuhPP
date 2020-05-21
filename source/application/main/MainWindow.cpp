@@ -1805,6 +1805,15 @@ void MainWindow::Run()
         QStringList disabledNodes = QString(lightKit->disabledNodes.getValue().getString() ).split(";", QString::SkipEmptyParts);
         QVector< QPair<TShapeKit*, Transform> > surfacesList;
         instanceRoot->collectShapeTransforms(disabledNodes, surfacesList);
+
+        // temp
+        SoTransform* transform = (SoTransform*) lightKit->getPart("transform", false);
+        SbMatrix mr;
+        mr.setRotate(transform->rotation.getValue());
+        Transform tSun = tgf::makeTransform(mr).inversed();
+        for (auto& s : surfacesList)
+            s.second = tSun*s.second;
+
         lightKit->findTexture(m_widthDivisions, m_heightDivisions, surfacesList);
         if (surfacesList.count() < 1)
         {

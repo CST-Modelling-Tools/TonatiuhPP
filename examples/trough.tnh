@@ -28,12 +28,7 @@ TSceneKit {
         }
         icon 
         SunAperture {
-          fields [ SFFloat xMin, SFFloat xMax, SFFloat yMin, SFFloat yMax, SFFloat delta ]
-          xMin -2.6220422
-          xMax 2.9924645
-          yMin -0.98706359
-          yMax 5.4880719
-          delta 0.074072301
+          fields [  ]
 
         }
         iconMaterial 
@@ -112,7 +107,7 @@ TSceneKit {
                     transform 
                     Transform {
                       translation 0 0 1
-                      rotation 0 1 0  0.45051602
+                      rotation 0 1.0000005 0  0.45051602
 
                     }
                     childList 

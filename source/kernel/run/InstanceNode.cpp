@@ -202,7 +202,7 @@ void InstanceNode::collectShapeTransforms(QStringList disabledNodes, QVector<QPa
     }
     else if (TShapeKit* shape = dynamic_cast<TShapeKit*>(m_node))
     {
-        shapes << QPair<TShapeKit*, Transform>(shape, getTransform().inversed());
+        shapes << QPair<TShapeKit*, Transform>(shape, getTransform());
     }
 }
 

@@ -13,7 +13,7 @@
 #include "libraries/geometry/Vector3D.h"
 
 class Transform;
-
+class TShapeKit;
 
 class TONATIUH_KERNEL SunAperture: public SoShape
 {
@@ -28,13 +28,9 @@ public:
 
     Vector3D Sample(double u, double v, int h, int w) const;
 
+    void setSize(double xMin, double xMax, double yMin, double yMax, double delta);
     void SetLightSourceArea(int h, int w, int** lightArea);
-
-    trt::TONATIUH_REAL xMin;
-    trt::TONATIUH_REAL xMax;
-    trt::TONATIUH_REAL yMin;
-    trt::TONATIUH_REAL yMax;
-    trt::TONATIUH_REAL delta;
+    void findTexture(int widthDivisions, int heightDivisions, QVector< QPair<TShapeKit*, Transform> > surfacesList);
 
 protected:
     bool OutOfRange(double u, double v) const
@@ -47,6 +43,12 @@ protected:
     ~SunAperture();
 
 private:
+    double m_xMin;
+    double m_xMax;
+    double m_yMin;
+    double m_yMax;
+    double m_delta;
+
     int m_heightElements;
     int** m_lightAreaMatrix;
     int m_widthElements;

@@ -163,5 +163,5 @@ void SceneView::startDrag(QMouseEvent* event)
       
     QDrag* drag = new QDrag(this);
     drag->setMimeData(mimeData);
-    drag->start(Qt::MoveAction);
+    drag->exec(Qt::MoveAction);
 }
