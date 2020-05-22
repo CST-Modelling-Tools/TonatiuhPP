@@ -14,18 +14,18 @@
 #include "main/Document.h"
 #include "view/GraphicRoot.h"
 #include "tree/SceneModel.h"
-#include "kernel/random/RandomAbstract.h"
+#include "kernel/random/Random.h"
 #include "kernel/random/RandomFactory.h"
 #include "kernel/run/RayTracer.h"
 #include "kernel/TonatiuhFunctions.h"
-#include "kernel/sun/TLightKit.h"
+#include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunAperture.h"
 #include "kernel/photons/Photons.h"
 #include "kernel/trf.h"
 #include "kernel/scene/TSeparatorKit.h"
-#include "kernel/shape/ShapeAbstract.h"
-#include "kernel/sun/SunAbstract.h"
-#include "kernel/air/AirAbstract.h"
+#include "kernel/shape/ShapeRT.h"
+#include "kernel/sun/SunShape.h"
+#include "kernel/air/Air.h"
 
 
 ScriptRayTracer::ScriptRayTracer(QVector<RandomFactory*> listRandomFactory):
@@ -188,7 +188,7 @@ int ScriptRayTracer::SetSunPositionToScene()
 
         if ((coinScene)&& (coinScene->getPart("lightList[0]", false) ))
         {
-            TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
+            SunKit* lightKit = static_cast< SunKit* >(coinScene->getPart("lightList[0]", false) );
             if (m_sunPosistionChanged) {
                 lightKit->azimuth.setValue(m_sunAzimuth);
                 lightKit->elevation.setValue(m_sunElevation);
@@ -284,7 +284,7 @@ int ScriptRayTracer::Trace()
            SoSceneKit* coinScene =  static_cast< SoSceneKit* >( sceneInstance->GetNode() );
 
            if ( !coinScene->getPart( "lightList[0]", false ) )    return 0;
-           TLightKit* lightKit = static_cast< TLightKit* >( coinScene->getPart( "lightList[0]", false ) );
+           SunKit* lightKit = static_cast< SunKit* >( coinScene->getPart( "lightList[0]", false ) );
            if( m_sunPosistionChanged )    lightKit->ChangePosition( m_sunAzimuth, gc::Pi/2 - m_sunElevation );
            m_sceneModel->UpdateSceneModel();
 
@@ -306,7 +306,7 @@ int ScriptRayTracer::Trace()
            //Compute bounding boxes and world to object transforms
            trf::ComputeSceneTreeMap( rootSeparatorInstance, Transform( new Matrix4x4 ), true );
 
-           TLightKit* light = static_cast< TLightKit* > ( lightInstance->GetNode() );
+           SunKit* light = static_cast< SunKit* > ( lightInstance->GetNode() );
            QStringList disabledNodes = QString( light->disabledNodes.getValue().getString() ).split( ";", QString::SkipEmptyParts );
            QVector< QPair< TShapeKit*, Transform > > surfacesList;
            trf::ComputeFistStageSurfaceList( rootSeparatorInstance, disabledNodes, &surfacesList );

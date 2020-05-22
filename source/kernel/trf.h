@@ -13,14 +13,14 @@
 #include "kernel/photons/Photons.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
-#include "kernel/shape/ShapeAbstract.h"
-#include "kernel/sun/SunAbstract.h"
+#include "kernel/shape/ShapeRT.h"
+#include "kernel/sun/SunShape.h"
 #include "kernel/TonatiuhFunctions.h"
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Transform.h"
 
 class InstanceNode;
-class RandomAbstract;
+class Random;
 class Photons;
 
 namespace trf

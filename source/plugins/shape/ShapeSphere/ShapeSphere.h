@@ -1,13 +1,13 @@
 #pragma once
 
-#include "kernel/shape/ShapeAbstract.h"
+#include "kernel/shape/ShapeRT.h"
 #include "kernel/TonatiuhTypes.h"
 
 class SoNodeSensor;
 class SoSensor;
 
 
-class ShapeSphere: public ShapeAbstract
+class ShapeSphere: public ShapeRT
 {
     SO_NODE_HEADER(ShapeSphere);
 
@@ -39,8 +39,6 @@ protected:
 };
 
 
-
-#include "kernel/shape/ShapeFactory.h"
 
 class ShapeSphereFactory:
     public QObject, public ShapeFactoryT<ShapeSphere>

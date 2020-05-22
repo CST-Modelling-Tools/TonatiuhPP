@@ -6,7 +6,7 @@
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Transform.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "kernel/random/RandomAbstract.h"
+#include "kernel/random/Random.h"
 #include "kernel/TonatiuhFunctions.h"
 
 
@@ -14,7 +14,7 @@ SO_NODE_SOURCE(MaterialSpecular)
 
 void MaterialSpecular::initClass()
 {
-    SO_NODE_INIT_CLASS(MaterialSpecular, MaterialAbstract, "MaterialAbstract");
+    SO_NODE_INIT_CLASS(MaterialSpecular, MaterialRT, "MaterialAbstract");
 }
 
 MaterialSpecular::MaterialSpecular():
@@ -46,7 +46,7 @@ MaterialSpecular::~MaterialSpecular()
     delete m_reflectivitySensor;
 }
 
-bool MaterialSpecular::OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, RandomAbstract& rand, Ray& rayOut) const
+bool MaterialSpecular::OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& rand, Ray& rayOut) const
 {
     double randomNumber = rand.RandomDouble();
     if (randomNumber >= reflectivity.getValue()) return false;

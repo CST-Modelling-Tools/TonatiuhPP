@@ -4,7 +4,7 @@
 #include <QVector>
 #include <QWidget>
 
-#include "kernel/sun/sunpos.h"
+#include "libraries/sun/sunpos.h"
 
 class Image;
 class QLabel;

@@ -9,12 +9,12 @@
 #include <QUndoCommand>
 
 class TSceneKit;
-class AirAbstract;
+class Air;
 
 class CmdAirModified: public QUndoCommand
 {
 public:
-    CmdAirModified(AirAbstract* airNew, TSceneKit* scene, QUndoCommand* parent = 0);
+    CmdAirModified(Air* airNew, TSceneKit* scene, QUndoCommand* parent = 0);
     ~CmdAirModified();
 
      void undo();
@@ -22,7 +22,7 @@ public:
 
 private:
      bool m_hasOld;
-     AirAbstract* m_airOld;
-     AirAbstract* m_airNew;
+     Air* m_airOld;
+     Air* m_airNew;
      TSceneKit* m_scene;
 };

@@ -4,19 +4,19 @@
 #include <QObject>
 #include <QMutex>
 
-#include "RandomAbstract.h"
+#include "Random.h"
 
 
-class TONATIUH_KERNEL RandomParallel: public QObject, public RandomAbstract
+class TONATIUH_KERNEL RandomParallel: public QObject, public Random
 {
     Q_OBJECT
 
 public:
-    RandomParallel(RandomAbstract* rand, QMutex* mutex, ulong arraySize = 100000, QObject* parent = 0);
+    RandomParallel(Random* rand, QMutex* mutex, ulong arraySize = 100000, QObject* parent = 0);
     virtual ~RandomParallel() {}
     void FillArray(double* array, const ulong arraySize);
 
 private:
-    RandomAbstract* m_pRand;
+    Random* m_pRand;
     QMutex* m_mutex;
 };

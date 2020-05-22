@@ -13,7 +13,7 @@ SO_NODE_SOURCE(ShapeCylinder)
 
 void ShapeCylinder::initClass()
 {
-    SO_NODE_INIT_CLASS(ShapeCylinder, ShapeAbstract, "ShapeAbstract");
+    SO_NODE_INIT_CLASS(ShapeCylinder, ShapeRT, "ShapeRT");
 }
 
 ShapeCylinder::ShapeCylinder()

@@ -6,16 +6,16 @@
 #include "RayTracer.h"
 #include "kernel/photons/Photons.h"
 #include "sun/SunAperture.h"
-#include "sun/SunAbstract.h"
-#include "air/AirAbstract.h"
+#include "sun/SunShape.h"
+#include "air/Air.h"
 
 
 RayTracer::RayTracer(InstanceNode* instanceRoot,
     InstanceNode* instanceSun,
     SunAperture* sunAperture,
-    SunAbstract* const sunShape,
-    AirAbstract* air,
-    RandomAbstract& rand,
+    SunShape* const sunShape,
+    Air* air,
+    Random& rand,
     QMutex* mutex,
     Photons* photonMap,
     QMutex* mutexPhotonMap,

@@ -13,9 +13,9 @@ struct DifferentialGeometry;
 class QSize;
 
 
-class TONATIUH_KERNEL ShapeAbstract: public SoShape
+class TONATIUH_KERNEL ShapeRT: public SoShape
 {
-    SO_NODE_ABSTRACT_HEADER(ShapeAbstract);
+    SO_NODE_ABSTRACT_HEADER(ShapeRT);
 
 public:
     static void initClass();
@@ -48,6 +48,37 @@ protected:
     virtual void generatePrimitives(SoAction* action) = 0;
     void generateQuads(SoAction* action, const QSize& dims, bool reverseNormals = false, bool reverseClock = false);
 
-    ShapeAbstract() {}
-    ~ShapeAbstract() {}
+    ShapeRT() {}
+    ~ShapeRT() {}
+};
+
+
+
+#include "kernel/scene/TFactory.h"
+
+#include <QVector>
+#include <QVariant>
+
+class ShapeFactory: public TFactory
+{
+public:
+    virtual ShapeRT* create() const = 0;
+    virtual ShapeRT* create(QVector<QVariant> /*parameters*/) const {return create();}
+    virtual bool isFlat() = 0; // better without const?
+};
+
+Q_DECLARE_INTERFACE(ShapeFactory, "tonatiuh.ShapeFactory")
+
+
+template<class T>
+class ShapeFactoryT: public ShapeFactory
+{
+public:
+    typedef T ShapeClass;
+
+    QString name() const {return T::getClassName();}
+    QIcon icon() const {return QIcon(T::getClassIcon());}
+    void init() const {T::initClass();}
+    T* create() const {return new T;}
+    bool isFlat() {return T::isFlat();}
 };

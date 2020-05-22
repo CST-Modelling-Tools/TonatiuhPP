@@ -2,7 +2,7 @@
 
 #include <QWidget>
 
-#include "kernel/sun/sunpos.h"
+#include "libraries/sun/sunpos.h"
 
 class QLabel;
 class SoSeparator;

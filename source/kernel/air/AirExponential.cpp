@@ -6,7 +6,7 @@ SO_NODE_SOURCE(AirExponential)
 
 void AirExponential::initClass()
 {
-    SO_NODE_INIT_CLASS(AirExponential, AirAbstract, "AirAbstract");
+    SO_NODE_INIT_CLASS(AirExponential, Air, "AirAbstract");
 }
 
 AirExponential::AirExponential()

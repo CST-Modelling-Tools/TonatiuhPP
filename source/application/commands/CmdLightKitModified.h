@@ -4,9 +4,9 @@
 
 class SceneModel;
 class SoSceneKit;
-class TLightKit;
-class ShapeAbstract;
-class SunAbstract;
+class SunKit;
+class ShapeRT;
+class SunShape;
 
 //!  CmdLightKitModified class is the light definition command stored in the command stack.
 /*!
@@ -19,7 +19,7 @@ class CmdLightKitModified: public QUndoCommand
 {
 public:
     CmdLightKitModified(
-        TLightKit* lightKit,
+        SunKit* lightKit,
         SoSceneKit* sceneKit,
         SceneModel& sceneModel,
         QUndoCommand* parent = 0
@@ -31,8 +31,8 @@ public:
 
 private:
     bool m_hasOld;
-    TLightKit* m_lightKitNew;
-    SunAbstract* m_sunShapeOld;
+    SunKit* m_lightKitNew;
+    SunShape* m_sunShapeOld;
     double m_azimuthOld;
     double m_zenithOld;
     QString m_nodesOld;

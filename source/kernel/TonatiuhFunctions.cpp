@@ -3,14 +3,14 @@
 #include <Inventor/SbVec2f.h>
 #include <Inventor/nodes/SoTransform.h>
 
-#include "kernel/random/RandomAbstract.h"
+#include "kernel/random/Random.h"
 #include "TonatiuhFunctions.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/Vector3D.h"
 #include "libraries/geometry/Vector2D.h"
 
 
-double tgf::AlternateBoxMuller(RandomAbstract& rand)
+double tgf::AlternateBoxMuller(Random& rand)
 {
     static bool firsttime = true;
     static double x1;

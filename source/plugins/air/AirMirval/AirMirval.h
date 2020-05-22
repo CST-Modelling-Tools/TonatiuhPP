@@ -1,9 +1,9 @@
 #pragma once
 
-#include "kernel/air/AirAbstract.h"
+#include "kernel/air/Air.h"
 
 
-class AirMirval: public AirAbstract
+class AirMirval: public Air
 {
     SO_NODE_HEADER(AirMirval);
 
@@ -16,8 +16,6 @@ public:
     NAME_ICON_FUNCTIONS("Mirval", ":/AirMirval.png")
 };
 
-
-#include "kernel/air/AirFactory.h"
 
 class AirMirvalFactory:
     public QObject, public AirFactoryT<AirMirval>

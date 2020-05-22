@@ -22,7 +22,7 @@ class PluginManager;
 class QDir;
 class QUndoStack;
 class QUndoView;
-class RandomAbstract;
+class Random;
 class SoDragger;
 class SoSelection;
 class SoSeparator;
@@ -33,9 +33,9 @@ class MaterialFactory;
 class Photons;
 class PhotonToMemory;
 class ShapeFactory;
-class SunAbstract;
+class SunShape;
 class TrackerFactory;
-class AirAbstract;
+class Air;
 class SoCamera;
 
 class SceneModel;
@@ -200,9 +200,9 @@ private:
 
     bool ReadyForRaytracing(InstanceNode*& instanceLayout,
                             InstanceNode*& instanceSun,
-                            SunAbstract*& sunShape,
+                            SunShape*& sunShape,
                             SunAperture*& shape,
-                            AirAbstract*& air);
+                            Air*& air);
     bool SaveFile(const QString& fileName);
     void SetCurrentFile(const QString& fileName);
     bool SetPhotonMapExportSettings();
@@ -253,7 +253,7 @@ private:
     SceneModel* m_sceneModel;
     QItemSelectionModel* m_selectionModel;
 
-    RandomAbstract* m_rand;
+    Random* m_rand;
     int m_selectedRandomDeviate;
 
     ulong m_bufferPhotons;

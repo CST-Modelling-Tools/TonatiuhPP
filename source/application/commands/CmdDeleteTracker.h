@@ -6,7 +6,7 @@ class QModelIndex;
 class SoSceneKit;
 class SceneModel;
 class TSeparatorKit;
-class TrackerAbstract;
+class Tracker;
 
 //!  CmdDeleteTracker class is the delete command for trackers nodes stored in the command stack.
 /*!
@@ -24,7 +24,7 @@ public:
     void redo();
 
 private:
-    TrackerAbstract* m_tracker;
+    Tracker* m_tracker;
     TSeparatorKit* m_coinParent;
     SoSceneKit* m_scene;
     SceneModel* m_pModel;

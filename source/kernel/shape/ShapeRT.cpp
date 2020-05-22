@@ -1,4 +1,4 @@
-#include "ShapeAbstract.h"
+#include "ShapeRT.h"
 
 #include "libraries/geometry/Vector3D.h"
 #include "libraries/geometry/BoundingBox.h"
@@ -9,25 +9,25 @@
 #include <QVector>
 
 
-SO_NODE_ABSTRACT_SOURCE(ShapeAbstract)
+SO_NODE_ABSTRACT_SOURCE(ShapeRT)
 
 
-void ShapeAbstract::initClass()
+void ShapeRT::initClass()
 {
-    SO_NODE_INIT_ABSTRACT_CLASS(ShapeAbstract, SoShape, "Shape");
+    SO_NODE_INIT_ABSTRACT_CLASS(ShapeRT, SoShape, "Shape");
 }
 
-bool ShapeAbstract::intersectP(const Ray& ray) const
+bool ShapeRT::intersectP(const Ray& ray) const
 {
      return intersect(ray, 0, 0);
 }
 
-bool ShapeAbstract::isInside(double u, double v) const
+bool ShapeRT::isInside(double u, double v) const
 {
     return u < 0. || u > 1. || v < 0. || v > 1.;
 }
 
-void ShapeAbstract::computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center)
+void ShapeRT::computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center)
 {
     Q_UNUSED(action)
     Q_UNUSED(center)
@@ -40,7 +40,7 @@ void ShapeAbstract::computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center)
 //    center.setValue(0., 0., 0.);
 }
 
-void ShapeAbstract::generateQuads(SoAction* action, const QSize& dims, bool reverseNormals, bool reverseClock)
+void ShapeRT::generateQuads(SoAction* action, const QSize& dims, bool reverseNormals, bool reverseClock)
 {
     const int iMax = dims.width(); // u
     const int jMax = dims.height(); // v

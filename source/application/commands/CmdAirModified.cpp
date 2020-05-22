@@ -2,26 +2,26 @@
 
 #include "CmdAirModified.h"
 #include "kernel/scene/TSceneKit.h"
-#include "kernel/air/AirAbstract.h"
+#include "kernel/air/Air.h"
 
 /*!
  * Creates a new transmissivity definition command. The
  */
-CmdAirModified::CmdAirModified(AirAbstract* airNew, TSceneKit* scene, QUndoCommand* parent):
+CmdAirModified::CmdAirModified(Air* airNew, TSceneKit* scene, QUndoCommand* parent):
     QUndoCommand("Transmissivity changed", parent),
     m_hasOld(false),
     m_airNew(0),
     m_scene(scene)
 {
     if (airNew) {
-        m_airNew = static_cast<AirAbstract*>(airNew->copy(true) );
+        m_airNew = static_cast<Air*>(airNew->copy(true) );
         m_airNew->ref();
     }
 
     SoNode* node = m_scene->getPart("transmissivity", false);
     if (node) {
         m_hasOld = true;
-        m_airOld = dynamic_cast<AirAbstract*>(node);
+        m_airOld = dynamic_cast<Air*>(node);
         if (m_airOld) m_airOld->ref();
     }
 }

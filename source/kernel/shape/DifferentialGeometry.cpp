@@ -12,7 +12,7 @@ DifferentialGeometry::DifferentialGeometry(
     double u, double v,
     const Vector3D& dpdu, const Vector3D& dpdv,
     const Vector3D& normal,
-    const ShapeAbstract* sh, bool isFront):
+    const ShapeRT* sh, bool isFront):
     point(point),
     u(u), v(v),
     dpdu(dpdu), dpdv(dpdv),

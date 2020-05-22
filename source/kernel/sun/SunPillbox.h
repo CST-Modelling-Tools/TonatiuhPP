@@ -1,13 +1,9 @@
 #pragma once
 
-#include <Inventor/fields/SoSFDouble.h>
-#include "kernel/sun/SunAbstract.h"
-
-class SoSensor;
-class SoFieldSensor;
+#include "kernel/sun/SunShape.h"
 
 
-class TONATIUH_KERNEL SunPillbox: public SunAbstract
+class TONATIUH_KERNEL SunPillbox: public SunShape
 {
     SO_NODE_HEADER(SunPillbox);
 
@@ -16,7 +12,7 @@ public:
     static void initClass();
     SoNode* copy(SbBool copyConnections) const;
 
-    Vector3D generateRay(RandomAbstract& rand) const;
+    Vector3D generateRay(Random& rand) const;
     double getThetaMax() const;
 
     SoSFDouble thetaMax;

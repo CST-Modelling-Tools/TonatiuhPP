@@ -9,7 +9,7 @@ TSceneKit {
     containerNode 
     Group {
 
-      DEF Light TLightKit {
+      DEF Light SunKit {
         fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFString disabledNodes, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
         azimuth 1.396263401595464
         elevation 0.5235987755982988

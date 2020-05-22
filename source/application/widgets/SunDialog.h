@@ -10,10 +10,10 @@ class QGroupBox;
 class QItemSelectionModel;
 class QTabWidget;
 class SceneModel;
-class TLightKit;
-class ShapeAbstract;
+class SunKit;
+class ShapeRT;
 class ShapeFactory;
-class SunAbstract;
+class SunShape;
 class SunFactory;
 
 namespace Ui {
@@ -29,10 +29,10 @@ class SunDialog: public QDialog
     Q_OBJECT
 
 public:
-    SunDialog(SceneModel& sceneModel, TLightKit* currentLightKit, QMap<QString, SunFactory*> sunShapeMap, QWidget* parent = 0);
+    SunDialog(SceneModel& sceneModel, SunKit* currentLightKit, QMap<QString, SunFactory*> sunShapeMap, QWidget* parent = 0);
     ~SunDialog();
 
-    TLightKit* getLightKit();
+    SunKit* getLightKit();
 
 public slots:
     void SetValue(SoNode* node, QString parameter, QString value);
@@ -51,8 +51,8 @@ private:
 
     SceneModel* m_sceneModel;
     QItemSelectionModel* m_selectionModel;
-    TLightKit* m_lightKitOld;
-    SunAbstract* m_sunNew;
+    SunKit* m_lightKitOld;
+    SunShape* m_sunNew;
     QMap<QString, SunFactory*> m_sunShapeMap;
     int m_currentSunShapeIndex;
 };

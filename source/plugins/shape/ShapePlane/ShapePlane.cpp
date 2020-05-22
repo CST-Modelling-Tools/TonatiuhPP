@@ -10,7 +10,7 @@ SO_NODE_SOURCE(ShapePlane)
 
 void ShapePlane::initClass()
 {
-    SO_NODE_INIT_CLASS(ShapePlane, ShapeAbstract, "ShapeAbstract");
+    SO_NODE_INIT_CLASS(ShapePlane, ShapeRT, "ShapeRT");
 }
 
 ShapePlane::ShapePlane()

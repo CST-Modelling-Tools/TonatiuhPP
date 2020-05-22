@@ -1,4 +1,4 @@
-#include "TLightKit.h"
+#include "SunKit.h"
 
 #include <Inventor/nodes/SoDirectionalLight.h>
 #include <Inventor/nodes/SoLabel.h>
@@ -19,26 +19,26 @@
 #include "sun/SunPillbox.h"
 #include "kernel/run/InstanceNode.h"
 
-SO_KIT_SOURCE(TLightKit)
+SO_KIT_SOURCE(SunKit)
 
 /**
- * Initializates TLightKit componets
+ * Initializates SunKit componets
  */
-void TLightKit::initClass()
+void SunKit::initClass()
 {
-    SO_KIT_INIT_CLASS(TLightKit, SoLightKit, "LightKit");
+    SO_KIT_INIT_CLASS(SunKit, SoLightKit, "LightKit");
 }
 
 /**
- * Creates a new TLightKit.
+ * Creates a new SunKit.
  */
-TLightKit::TLightKit()
+SunKit::SunKit()
 {
-    SO_KIT_CONSTRUCTOR(TLightKit);
+    SO_KIT_CONSTRUCTOR(SunKit);
 
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(iconMaterial, SoNode, SoMaterial, TRUE, iconSeparator, icon, TRUE);
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(iconTexture, SoNode, SoTexture2, TRUE, iconSeparator, iconMaterial, TRUE);
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tsunshape, SunAbstract, SunPillbox, TRUE, transformGroup, "", TRUE);
+    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tsunshape, SunShape, SunPillbox, TRUE, transformGroup, "", TRUE);
 
     SO_NODE_ADD_FIELD( azimuth, (0.) );
     SO_NODE_ADD_FIELD( elevation, (90.*gcf::degree) );
@@ -78,7 +78,7 @@ TLightKit::TLightKit()
 /**
  * Destructor.
  */
-TLightKit::~TLightKit()
+SunKit::~SunKit()
 {
     //void ChangePosition( QDateTime time, double longitude, double latitude );
     //void SetDateTime( QDateTime time );
@@ -89,7 +89,7 @@ TLightKit::~TLightKit()
  * Azimuth and Zenith are in radians.
  * \sa redo().
  */
-void TLightKit::updatePosition()
+void SunKit::updatePosition()
 {
     SoTransform* transform = (SoTransform*) getPart("transform", false);
 
@@ -99,7 +99,7 @@ void TLightKit::updatePosition()
     transform->rotation = elRotation*azRotation;
 }
 
-void TLightKit::setBox(BoundingBox box)
+void SunKit::setBox(BoundingBox box)
 {
     SoTransform* transform = (SoTransform*) getPart("transform", false);
     SbMatrix mr;
@@ -127,7 +127,7 @@ void TLightKit::setBox(BoundingBox box)
     }
 
     double delta = 0.01;
-    SunAbstract* sunshape = static_cast<SunAbstract*>(getPart("tsunshape", false));
+    SunShape* sunshape = static_cast<SunShape*>(getPart("tsunshape", false));
     if (!sunshape) return;
     double thetaMax = sunshape->getThetaMax();
     if (thetaMax > 0.)
@@ -143,7 +143,7 @@ void TLightKit::setBox(BoundingBox box)
     transform->translation = res;
 }
 
-bool TLightKit::findTexture(int xPixels, int yPixels, InstanceNode* instanceRoot)
+bool SunKit::findTexture(int xPixels, int yPixels, InstanceNode* instanceRoot)
 {
     QStringList disabledList = QString(disabledNodes.getValue().getString()).split(";", QString::SkipEmptyParts);
     QVector< QPair<TShapeKit*, Transform> > surfacesList;

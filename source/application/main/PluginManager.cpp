@@ -5,11 +5,9 @@
 #include <QStringList>
 
 #include "kernel/air/AirExponential.h"
-#include "kernel/air/AirFactory.h"
 #include "kernel/air/AirPolynomial.h"
 #include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
-#include "kernel/material/MaterialFactory.h"
 #include "kernel/material/MaterialVirtual.h"
 #include "kernel/photons/PhotonsDefault.h"
 #include "kernel/photons/PhotonsFactory.h"
@@ -19,13 +17,10 @@
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeCube.h"
-#include "kernel/shape/ShapeFactory.h"
-#include "kernel/sun/SunFactory.h"
 #include "kernel/sun/SunPillbox.h"
-#include "kernel/sun/TLightKit.h"
+#include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunAperture.h"
-#include "kernel/trackers/TrackerAbstract.h"
-#include "kernel/trackers/TrackerFactory.h"
+#include "kernel/trackers/Tracker.h"
 #include "libraries/fields/UserMField.h"
 #include "libraries/fields/UserSField.h"
 #include "libraries/geometry/gcf.h"
@@ -57,19 +52,19 @@ PluginManager::PluginManager()
     UserMField::initClass();
     UserSField::initClass();
 
-    TrackerAbstract::initClass();
+    Tracker::initClass();
 
     TSceneKit::initClass();
     TSeparatorKit::initClass();
 
+    SunShape::initClass();
     SunAperture::initClass();
-    TLightKit::initClass();
-    AirAbstract::initClass();
-    SunAbstract::initClass();
+    SunKit::initClass();
+    Air::initClass();
 
     TShapeKit::initClass();
-    ShapeAbstract::initClass();
-    MaterialAbstract::initClass();
+    ShapeRT::initClass();
+    MaterialRT::initClass();
 
     SkyBackground::initClass();
 }

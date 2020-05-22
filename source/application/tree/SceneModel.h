@@ -10,7 +10,7 @@ class SoBaseKit;
 class SoNode;
 class SoNodeKitPath;
 class SoSeparator;
-class TLightKit;
+class SunKit;
 class TSeparatorKit;
 class TSceneKit;
 
@@ -45,8 +45,8 @@ public:
     QModelIndex IndexFromPath(const SoNodeKitPath& path) const;
     SoNodeKitPath* PathFromIndex(const QModelIndex& index) const;
 
-    void InsertLightNode(TLightKit& lightKit);
-    void RemoveLightNode(TLightKit& lightKit);
+    void InsertLightNode(SunKit& lightKit);
+    void RemoveLightNode(SunKit& lightKit);
 
     int InsertCoinNode(SoNode& coinChild, SoBaseKit& coinParent);
     void RemoveCoinNode(int row, SoBaseKit& parent);

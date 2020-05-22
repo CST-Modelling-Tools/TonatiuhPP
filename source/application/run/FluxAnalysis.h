@@ -5,7 +5,7 @@
 class TSceneKit;
 class SceneModel;
 class InstanceNode;
-class RandomAbstract;
+class Random;
 class Photons;
 
 class FluxAnalysis
@@ -13,7 +13,7 @@ class FluxAnalysis
 
 public:
     FluxAnalysis(TSceneKit* currentScene, SceneModel& currentSceneModel, InstanceNode* rootSeparatorInstance,
-                 int sunWidthDivisions, int sunHeightDivisions, RandomAbstract* randomDeviate);
+                 int sunWidthDivisions, int sunHeightDivisions, Random* randomDeviate);
     ~FluxAnalysis();
     QString GetSurfaceType(QString nodeURL);
     void RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned long nOfRays, bool increasePhotonMap, int heightDivisions, int widthDivisions);
@@ -45,7 +45,7 @@ private:
     InstanceNode* m_pRootSeparatorInstance;
     int m_sunWidthDivisions;
     int m_sunHeightDivisions;
-    RandomAbstract* m_pRandomDeviate;
+    Random* m_pRandomDeviate;
 
     Photons* m_pPhotonMap;
 

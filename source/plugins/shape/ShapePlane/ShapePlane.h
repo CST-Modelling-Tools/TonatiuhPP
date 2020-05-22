@@ -1,10 +1,10 @@
 #pragma once
 
-#include "kernel/shape/ShapeAbstract.h"
+#include "kernel/shape/ShapeRT.h"
 #include "kernel/TonatiuhTypes.h"
 
 
-class ShapePlane: public ShapeAbstract
+class ShapePlane: public ShapeRT
 {
     SO_NODE_HEADER(ShapePlane);
 
@@ -30,7 +30,6 @@ protected:
 };
 
 
-#include "kernel/shape/ShapeFactory.h"
 
 class ShapePlaneFactory:
     public QObject, public ShapeFactoryT<ShapePlane>

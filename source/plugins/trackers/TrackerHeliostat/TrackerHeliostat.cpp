@@ -10,7 +10,7 @@ SO_NODE_SOURCE(TrackerHeliostat)
 
 void TrackerHeliostat::initClass()
 {
-    SO_NODE_INIT_CLASS(TrackerHeliostat, TrackerAbstract, "TrackerAbstract");
+    SO_NODE_INIT_CLASS(TrackerHeliostat, Tracker, "TrackerAbstract");
 }
 
 TrackerHeliostat::TrackerHeliostat()

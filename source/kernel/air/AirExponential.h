@@ -1,10 +1,10 @@
 #pragma once
 
-#include "kernel/air/AirAbstract.h"
+#include "kernel/air/Air.h"
 #include <Inventor/fields/SoSFDouble.h>
 
 
-class TONATIUH_KERNEL AirExponential: public AirAbstract
+class TONATIUH_KERNEL AirExponential: public Air
 {
     SO_NODE_HEADER(AirExponential);
 

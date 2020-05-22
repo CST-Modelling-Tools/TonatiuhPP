@@ -1,6 +1,6 @@
 #include "ActionInsertShape.h"
 
-#include "kernel/shape/ShapeFactory.h"
+#include "kernel/shape/ShapeRT.h"
 
 
 ActionInsertShape::ActionInsertShape(ShapeFactory* factory, QObject* parent):

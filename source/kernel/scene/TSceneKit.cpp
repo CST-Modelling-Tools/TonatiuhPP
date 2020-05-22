@@ -9,8 +9,8 @@
 
 #include "kernel/air/AirVacuum.h"
 #include "TSeparatorKit.h"
-#include "kernel/trackers/TrackerAbstract.h"
-#include "kernel/air/AirAbstract.h"
+#include "kernel/trackers/Tracker.h"
+#include "kernel/air/Air.h"
 
 SO_KIT_SOURCE(TSceneKit)
 
@@ -28,17 +28,17 @@ void TSceneKit::initClass()
  */
 
 #include "sun/SunPillbox.h"
-#include "sun/TLightKit.h"
+#include "sun/SunKit.h"
 
 TSceneKit::TSceneKit()
 {
     SO_KIT_CONSTRUCTOR(TSceneKit);
 
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(transmissivity, AirAbstract, AirVacuum, TRUE, topSeparator, "", TRUE);
+    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(transmissivity, Air, AirVacuum, TRUE, topSeparator, "", TRUE);
 
     SO_KIT_INIT_INSTANCE();
 
-    TLightKit* lightKit = new TLightKit;
+    SunKit* lightKit = new SunKit;
     lightKit->setPart("tsunshape", new SunPillbox);
     setPart("lightList[0]", lightKit);
 
@@ -64,7 +64,7 @@ SoPath* TSceneKit::GetSoPath(SoSearchAction* action)
 
 void TSceneKit::updateTrackers()
 {
-    TLightKit* lightKit = static_cast<TLightKit*>(getPart("lightList[0]", false) );
+    SunKit* lightKit = static_cast<SunKit*>(getPart("lightList[0]", false) );
 
     double az = lightKit->azimuth.getValue();
     double el = lightKit->elevation.getValue();
@@ -102,7 +102,7 @@ void TSceneKit::updateTrackers(SoBaseKit* parent, Transform toGlobal, const Vect
     SoTransform* nodeTransform = static_cast<SoTransform*>(parent->getPart("transform", true));
     Transform nodeOTW = toGlobal*tgf::makeTransform(nodeTransform);
 
-    if (TrackerAbstract* tracker = (TrackerAbstract*) parent->getPart("tracker", false))
+    if (Tracker* tracker = (Tracker*) parent->getPart("tracker", false))
     {
         tracker->update(parent, nodeOTW, vSun);
     }

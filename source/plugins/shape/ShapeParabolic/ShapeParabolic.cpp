@@ -11,7 +11,7 @@ SO_NODE_SOURCE(ShapeParabolic)
 
 void ShapeParabolic::initClass()
 {
-    SO_NODE_INIT_CLASS(ShapeParabolic, ShapeAbstract, "ShapeAbstract");
+    SO_NODE_INIT_CLASS(ShapeParabolic, ShapeRT, "ShapeRT");
 }
 
 ShapeParabolic::ShapeParabolic()

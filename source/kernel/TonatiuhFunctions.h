@@ -2,7 +2,7 @@
 
 #include "kernel/TonatiuhKernel.h"
 
-class RandomAbstract;
+class Random;
 
 class SbMatrix;
 class SoTransform;
@@ -16,7 +16,7 @@ struct Vector3D;
 
 namespace tgf
 {
-    TONATIUH_KERNEL double AlternateBoxMuller(RandomAbstract& rand);
+    TONATIUH_KERNEL double AlternateBoxMuller(Random& rand);
     TONATIUH_KERNEL SbMatrix makeSbMatrix(const Transform& transform);
     TONATIUH_KERNEL SbMatrix makeSbMatrix(SoTransform* soTransform);
 

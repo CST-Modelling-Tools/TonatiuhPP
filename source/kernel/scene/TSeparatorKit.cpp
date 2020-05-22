@@ -4,7 +4,7 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
 
-#include "kernel/trackers/TrackerAbstract.h"
+#include "kernel/trackers/Tracker.h"
 
 SO_KIT_SOURCE(TSeparatorKit)
 
@@ -18,7 +18,7 @@ TSeparatorKit::TSeparatorKit()
 {
     SO_KIT_CONSTRUCTOR(TSeparatorKit);
 
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tracker, SoNode, TrackerAbstract, TRUE, this, "", TRUE);
+    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tracker, SoNode, Tracker, TRUE, this, "", TRUE);
     SO_KIT_INIT_INSTANCE();
 
     SoTransform* transform = new SoTransform;

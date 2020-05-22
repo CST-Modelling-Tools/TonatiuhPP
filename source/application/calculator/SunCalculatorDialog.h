@@ -3,7 +3,7 @@
 #include <QDialog>
 
 #include "ui_suncalculatordialog.h"
-#include "kernel/sun/sunpos.h"
+#include "libraries/sun/sunpos.h"
 
 class QDateTime;
 class QTime;

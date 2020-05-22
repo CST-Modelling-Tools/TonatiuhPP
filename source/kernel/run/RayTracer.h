@@ -13,14 +13,14 @@
 class InstanceNode;
 class RandomParallel;
 struct Photon;
-class RandomAbstract;
+class Random;
 struct RayTracerPhoton;
 class QMutex;
 class QPoint;
 class Photons;
 class SunAperture;
-class SunAbstract;
-class AirAbstract;
+class SunShape;
+class Air;
 
 
 class TONATIUH_KERNEL RayTracer
@@ -30,9 +30,9 @@ public:
     RayTracer(InstanceNode* instanceRoot,
               InstanceNode* instanceSun,
               SunAperture* sunAperture,
-              SunAbstract* const sunShape,
-              AirAbstract* air,
-              RandomAbstract& rand,
+              SunShape* const sunShape,
+              Air* air,
+              Random& rand,
               QMutex* mutex,
               Photons* photonMap,
               QMutex* mutexPhotonMap,
@@ -48,10 +48,10 @@ private:
     InstanceNode* m_instanceLayout;
     InstanceNode* m_instanceSun;
     SunAperture* m_sunAperture;
-    const SunAbstract* m_sunShape;
+    const SunShape* m_sunShape;
     Transform m_sunTransform;
-    AirAbstract* m_air;
-    RandomAbstract* m_rand;
+    Air* m_air;
+    Random* m_rand;
     QMutex* m_mutex;
     Photons* m_photonMap;
     QMutex* m_pPhotonMapMutex;

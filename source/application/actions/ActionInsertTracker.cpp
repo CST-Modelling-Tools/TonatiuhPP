@@ -1,6 +1,6 @@
 #include "ActionInsertTracker.h"
 
-#include "kernel/trackers/TrackerFactory.h"
+#include "kernel/trackers/Tracker.h"
 
 
 ActionInsertTracker::ActionInsertTracker(TrackerFactory* factory, QObject* parent):

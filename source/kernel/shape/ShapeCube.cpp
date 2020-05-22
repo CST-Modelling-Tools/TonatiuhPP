@@ -19,7 +19,7 @@ SO_NODE_SOURCE(ShapeCube)
 
 void ShapeCube::initClass()
 {
-    SO_NODE_INIT_CLASS(ShapeCube, ShapeAbstract, "ShapeAbstract");
+    SO_NODE_INIT_CLASS(ShapeCube, ShapeRT, "ShapeRT");
 }
 
 ShapeCube::ShapeCube()

@@ -5,7 +5,7 @@
 #include "libraries/geometry/gcf.h"
 #include "tree/SceneModel.h"
 #include "kernel/scene/TSceneKit.h"
-#include "kernel/sun/TLightKit.h"
+#include "kernel/sun/SunKit.h"
 
 /**
  * Creates a new lightKit modification command that represents a new light defined as \a newLightKit to the \a scene.
@@ -14,7 +14,7 @@
  */
 
 CmdLightKitModified::CmdLightKitModified(
-    TLightKit* lightKitNew,
+    SunKit* lightKitNew,
     SoSceneKit* sceneKit,
     SceneModel& sceneModel,
     QUndoCommand* parent
@@ -30,15 +30,15 @@ CmdLightKitModified::CmdLightKitModified(
     m_sceneModel(&sceneModel)
 {
     if (!lightKitNew)
-        gcf::SevereError("CmdLightKitModified called with NULL TLightKit*");
+        gcf::SevereError("CmdLightKitModified called with NULL SunKit*");
 
-    m_lightKitNew = static_cast<TLightKit*>(lightKitNew->copy(true));
+    m_lightKitNew = static_cast<SunKit*>(lightKitNew->copy(true));
     m_lightKitNew->ref();
 
-    TLightKit* lightKit = dynamic_cast<TLightKit*>(m_sceneKit->getPart("lightList[0]", false));
+    SunKit* lightKit = dynamic_cast<SunKit*>(m_sceneKit->getPart("lightList[0]", false));
     if (lightKit) {
         m_hasOld = true;
-        m_sunShapeOld = dynamic_cast<SunAbstract*>(lightKit->getPart("tsunshape", false)->copy(true) );
+        m_sunShapeOld = dynamic_cast<SunShape*>(lightKit->getPart("tsunshape", false)->copy(true) );
         if (m_sunShapeOld) m_sunShapeOld->ref();
 //        m_azimuthOld = lightKit->azimuth.getValue();
 //        m_zenithOld = lightKit->zenith.getValue();
@@ -62,7 +62,7 @@ CmdLightKitModified::~CmdLightKitModified()
 void CmdLightKitModified::undo()
 {
     if (m_hasOld) {
-        TLightKit* lightKit = static_cast<TLightKit*> (m_sceneKit->getPart("lightList[0]", false) );
+        SunKit* lightKit = static_cast<SunKit*> (m_sceneKit->getPart("lightList[0]", false) );
         lightKit->setPart("tsunshape", m_sunShapeOld);
         lightKit->updatePosition();
         lightKit->disabledNodes.setValue(m_nodesOld.toStdString().c_str() );
@@ -77,8 +77,8 @@ void CmdLightKitModified::undo()
 void CmdLightKitModified::redo()
 {
     if (m_hasOld) {
-        TLightKit* lightKit = static_cast<TLightKit*>(m_sceneKit->getPart("lightList[0]", false));
-        SunAbstract* shape = static_cast<SunAbstract*>(m_lightKitNew->getPart("tsunshape", false));
+        SunKit* lightKit = static_cast<SunKit*>(m_sceneKit->getPart("lightList[0]", false));
+        SunShape* shape = static_cast<SunShape*>(m_lightKitNew->getPart("tsunshape", false));
         lightKit->setPart("tsunshape", shape);
         lightKit->updatePosition();
         lightKit->disabledNodes.setValue(m_lightKitNew->disabledNodes.getValue() );

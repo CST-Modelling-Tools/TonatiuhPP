@@ -12,10 +12,10 @@
 #include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Transform.h"
 
-class RandomAbstract;
+class Random;
 class Ray;
 class SoNode;
-class TLightKit;
+class SunKit;
 class TShapeKit;
 class SceneModel;
 
@@ -50,7 +50,7 @@ public:
     QString GetNodeURL() const;
     void Print(int level) const;
 
-    bool intersect(const Ray& rayIn, RandomAbstract& rand, bool& isShapeFront, InstanceNode*& modelNode, Ray& rayOut);
+    bool intersect(const Ray& rayIn, Random& rand, bool& isShapeFront, InstanceNode*& modelNode, Ray& rayOut);
 
     void extendBoxForLight(SbBox3f* extendedBox);
 

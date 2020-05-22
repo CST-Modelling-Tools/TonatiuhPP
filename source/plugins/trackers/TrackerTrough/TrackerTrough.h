@@ -1,13 +1,13 @@
 #pragma once
 
-#include "kernel/trackers/TrackerAbstract.h"
+#include "kernel/trackers/Tracker.h"
 
 class TroughModel;
 class SoNodeSensor;
 class SoSensor;
 
 
-class TrackerTrough: public TrackerAbstract
+class TrackerTrough: public Tracker
 {
     SO_NODE_HEADER(TrackerTrough);
 
@@ -44,9 +44,6 @@ protected:
     static void onModified(void* data, SoSensor*);
 };
 
-
-
-#include "kernel/trackers/TrackerFactory.h"
 
 class TrackerTroughFactory:
     public QObject, public TrackerFactoryT<TrackerTrough>

@@ -9,13 +9,13 @@
 #include "ScriptRayTracer.h"
 #include "kernel/random/RandomFactory.h"
 #include "tonatiuh_script.h"
-#include "kernel/sun/sunpos.h"
+#include "libraries/sun/sunpos.h"
 
 
 int tonatiuh_script::init(QScriptEngine* engine)
 {
     QScriptValue rayTracerValue = engine->globalObject().property("rayTracer");
-    ScriptRayTracer* rayTracer = ( ScriptRayTracer* ) rayTracerValue.toQObject();
+    ScriptRayTracer* rayTracer = (ScriptRayTracer*) rayTracerValue.toQObject();
         if (!rayTracer) return 0;
 
     rayTracer->Clear();

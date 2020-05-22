@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kernel/air/AirAbstract.h"
+#include "kernel/air/Air.h"
 #include <Inventor/fields/SoSFEnum.h>
 #include <Inventor/fields/SoSFDouble.h>
 
@@ -8,7 +8,7 @@ class SoFieldSensor;
 class SoSensor;
 
 
-class TONATIUH_KERNEL AirPolynomial: public AirAbstract
+class TONATIUH_KERNEL AirPolynomial: public Air
 {
     SO_NODE_HEADER(AirPolynomial);
 

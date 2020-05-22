@@ -7,8 +7,8 @@
 #include "tree/SceneModel.h"
 #include "libraries/geometry/gcf.h"
 #include "kernel/run/InstanceNode.h"
-#include "kernel/sun/TLightKit.h"
-#include "kernel/trackers/TrackerAbstract.h"
+#include "kernel/sun/SunKit.h"
+#include "kernel/trackers/Tracker.h"
 
 /**
  * Creates a new tracker insert command that adds a \a tracker to a parent node with \a parentIndex in the \a model.
@@ -16,7 +16,7 @@
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
 CmdInsertTracker::CmdInsertTracker(
-    TrackerAbstract* tracker,
+    Tracker* tracker,
     const QModelIndex& parentIndex,
     SceneModel* model,
     QUndoCommand* parent

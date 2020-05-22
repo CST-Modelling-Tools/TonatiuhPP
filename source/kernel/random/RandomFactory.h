@@ -3,14 +3,14 @@
 #include "kernel/scene/TFactory.h"
 #include <QTime>
 
-class RandomAbstract;
+class Random;
 
 
 
 class RandomFactory: public TFactory
 {
 public:
-    virtual RandomAbstract* create() const = 0;
+    virtual Random* create() const = 0;
 };
 
 Q_DECLARE_INTERFACE(RandomFactory, "tonatiuh.RandomFactory")

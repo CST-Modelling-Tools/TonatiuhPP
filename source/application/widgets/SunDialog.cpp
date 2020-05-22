@@ -7,10 +7,9 @@
 #include "tree/SceneModel.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/scene/TShapeKit.h"
-#include "kernel/shape/ShapeAbstract.h"
-#include "kernel/shape/ShapeFactory.h"
-#include "kernel/sun/SunFactory.h"
-#include "kernel/sun/TLightKit.h"
+#include "kernel/shape/ShapeRT.h"
+#include "kernel/sun/SunShape.h"
+#include "kernel/sun/SunKit.h"
 #include "kernel/scene/TSceneKit.h"
 #include "libraries/geometry/gcf.h"
 #include "parameters/ParametersView.h"
@@ -24,7 +23,7 @@
 
 SunDialog::SunDialog(
     SceneModel& sceneModel,
-    TLightKit* lightKitOld,
+    SunKit* lightKitOld,
     QMap<QString, SunFactory*> sunShapeMap,
     QWidget* parent
 ):
@@ -42,7 +41,7 @@ SunDialog::SunDialog(
     if (lightKitOld) {
         SoNode* node = lightKitOld->getPart("tsunshape", false);
         if (node)
-            m_sunNew = static_cast<SunAbstract*>(node->copy(true));
+            m_sunNew = static_cast<SunShape*>(node->copy(true));
     }
 
     makeSunPositionTab();
@@ -60,9 +59,9 @@ SunDialog::~SunDialog()
 /*!
  * Returns a lightkit with the parameters defined in the dialog.
  */
-TLightKit* SunDialog::getLightKit()
+SunKit* SunDialog::getLightKit()
 {
-    TLightKit* ans = new TLightKit;
+    SunKit* ans = new SunKit;
 
     ans->azimuth = ui->spinAzimuth->value()*gcf::degree;
     ans->elevation = ui->spinElevation->value()*gcf::degree;
@@ -159,7 +158,7 @@ void SunDialog::ChangeSunshape(int index)
         m_sunNew->unref();
 
     if (index == m_currentSunShapeIndex)
-        m_sunNew = static_cast<SunAbstract*>(m_lightKitOld->getPart("tsunshape", false)->copy(true));
+        m_sunNew = static_cast<SunShape*>(m_lightKitOld->getPart("tsunshape", false)->copy(true));
     else {
         SunFactory* f = m_sunShapeMap[ui->sunshapeCombo->itemText(index)];
         m_sunNew = f->create();

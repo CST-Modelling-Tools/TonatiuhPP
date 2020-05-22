@@ -10,14 +10,14 @@
 #include <Inventor/nodekits/SoSceneKit.h>
 #include <Inventor/nodes/SoSelection.h>
 
-#include "kernel/material/MaterialAbstract.h"
+#include "kernel/material/MaterialRT.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
-#include "kernel/shape/ShapeAbstract.h"
-#include "kernel/sun/TLightKit.h"
-#include "kernel/trackers/TrackerAbstract.h"
+#include "kernel/shape/ShapeRT.h"
+#include "kernel/sun/SunKit.h"
+#include "kernel/trackers/Tracker.h"
 #include "libraries/geometry/gcf.h"
 #include "tree/SoPathVariant.h"
 
@@ -85,7 +85,7 @@ void SceneModel::initScene()
 
     m_mapCoinQt[m_nodeScene].append(m_instanceScene);
 
-    if (TLightKit* lightKit = static_cast<TLightKit*>(m_nodeScene->getPart("lightList[0]", false)))
+    if (SunKit* lightKit = static_cast<SunKit*>(m_nodeScene->getPart("lightList[0]", false)))
         InsertLightNode(*lightKit);
 
     SoNodeKitListPart* coinPartList = static_cast<SoNodeKitListPart*>(m_nodeScene->getPart("childList", true));
@@ -278,20 +278,20 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
         }
         else if (node->getTypeId().isDerivedFrom(SoShape::getClassTypeId()))
         {
-            ShapeAbstract* shape = static_cast<ShapeAbstract*>(node);
+            ShapeRT* shape = static_cast<ShapeRT*>(node);
             return QIcon(shape->getTypeIcon());
         }
-        else if (node->getTypeId().isDerivedFrom(MaterialAbstract::getClassTypeId()))
+        else if (node->getTypeId().isDerivedFrom(MaterialRT::getClassTypeId()))
         {
-            MaterialAbstract* material = static_cast<MaterialAbstract*>(node);
+            MaterialRT* material = static_cast<MaterialRT*>(node);
             return QIcon(material->getTypeIcon());
         }
-        else if (node->getTypeId().isDerivedFrom(TrackerAbstract::getClassTypeId()))
+        else if (node->getTypeId().isDerivedFrom(Tracker::getClassTypeId()))
         {
-            TrackerAbstract* tracker = static_cast<TrackerAbstract*>(node);
+            Tracker* tracker = static_cast<Tracker*>(node);
             return QIcon(tracker->getTypeIcon());
         }
-        else if (node->getTypeId().isDerivedFrom(TLightKit::getClassTypeId()))
+        else if (node->getTypeId().isDerivedFrom(SunKit::getClassTypeId()))
         {
             return QIcon(":/images/scene/environmentSun.png");
         }
@@ -397,12 +397,12 @@ QModelIndex SceneModel::IndexFromPath(const SoNodeKitPath& path) const
 {
     SoBaseKit* coinNode = static_cast<SoBaseKit*>(path.getTail());
     if (!coinNode) gcf::SevereError("IndexFromPath Null coinNode.");
-    if (coinNode->getTypeId().getName() == "TLightKit") return index(0, 0);
+    if (coinNode->getTypeId().getName() == "SunKit") return index(0, 0);
 
     if (path.getLength() <= 1) return QModelIndex();
     SoBaseKit* coinParent = static_cast<SoBaseKit*>(path.getNodeFromTail(1));
     if (!coinParent) gcf::SevereError("IndexFromPath Null coinParent.");
-    if (coinParent->getTypeId().getName() == "TLightKit") return index(0, 0);
+    if (coinParent->getTypeId().getName() == "SunKit") return index(0, 0);
     if (coinParent->getTypeId().isDerivedFrom(SoSceneKit::getClassTypeId()))
     {
         int row = 0;
@@ -469,7 +469,7 @@ SoNodeKitPath* SceneModel::PathFromIndex(const QModelIndex& index) const
  * Insert a light node to the model. If the model has an other light node, the previous node
  * will be deleted.
  */
-void SceneModel::InsertLightNode(TLightKit& lightKit)
+void SceneModel::InsertLightNode(SunKit& lightKit)
 {
     SoNodeKitListPart* lightList =
         static_cast<SoNodeKitListPart*>(m_nodeScene->getPart("lightList", true));
@@ -486,7 +486,7 @@ void SceneModel::InsertLightNode(TLightKit& lightKit)
     emit layoutChanged();
 }
 
-void SceneModel::RemoveLightNode(TLightKit& lightKit)
+void SceneModel::RemoveLightNode(SunKit& lightKit)
 {
     SoNodeKitListPart* lightList =
         static_cast<SoNodeKitListPart*>(m_nodeScene->getPart("lightList", true));
@@ -501,7 +501,7 @@ int SceneModel::InsertCoinNode(SoNode& node, SoBaseKit& parent)
     int row = -1;
     if (parent.getTypeId().isDerivedFrom( TSeparatorKit::getClassTypeId() ) )
     {
-        if (node.getTypeId().isDerivedFrom( TrackerAbstract::getClassTypeId() ) )
+        if (node.getTypeId().isDerivedFrom( Tracker::getClassTypeId() ) )
         {
             parent.setPart("tracker", &node);
             row = 0;
@@ -654,10 +654,10 @@ bool SceneModel::Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinN
 
     if (!child->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId()))
     { // material, tracker, shape
-        if (child->getTypeId().isDerivedFrom(TrackerAbstract::getClassTypeId()))
+        if (child->getTypeId().isDerivedFrom(Tracker::getClassTypeId()))
         {
             TSeparatorKit* separatorKit = static_cast<TSeparatorKit*>(pCoinParent);
-            TrackerAbstract* tracker = static_cast<TrackerAbstract*>(separatorKit->getPart("tracker", false));
+            Tracker* tracker = static_cast<Tracker*>(separatorKit->getPart("tracker", false));
             if (tracker)
             {
                 QMessageBox::warning(0, "Tonatiuh warning", "This TSeparatorKit already contains a tracker");
@@ -669,7 +669,7 @@ bool SceneModel::Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinN
         {
             TShapeKit* shapeKit = static_cast<TShapeKit*>(pCoinParent);
             if (!shapeKit) return false;
-            ShapeAbstract* shape = static_cast<ShapeAbstract*>(shapeKit->getPart("shape", false));
+            ShapeRT* shape = static_cast<ShapeRT*>(shapeKit->getPart("shape", false));
             if (shape)
             {
                 QMessageBox::warning(0, "Tonatiuh warning", "This TShapeKit already contains a shape");
@@ -681,7 +681,7 @@ bool SceneModel::Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinN
         {
             TShapeKit* shapeKit = static_cast<TShapeKit*>(pCoinParent);
             if (!shapeKit) return false;
-            MaterialAbstract* material = static_cast<MaterialAbstract*>(shapeKit->getPart("material", false));
+            MaterialRT* material = static_cast<MaterialRT*>(shapeKit->getPart("material", false));
             if (material)
             {
                 QMessageBox::warning(0, "Tonatiuh warning", "This TShapeKit already contains a material");

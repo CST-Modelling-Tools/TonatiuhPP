@@ -13,16 +13,16 @@
 #include <Inventor/nodes/SoTransform.h>
 
 #include "tree/SceneModel.h"
-#include "kernel/air/AirAbstract.h"
+#include "kernel/air/Air.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/photons/Photons.h"
-#include "kernel/random//RandomAbstract.h"
+#include "kernel/random//Random.h"
 #include "kernel/run/RayTracer.h"
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/trf.h"
-#include "kernel/shape/ShapeAbstract.h"
-#include "kernel/sun/TLightKit.h"
+#include "kernel/shape/ShapeRT.h"
+#include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunAperture.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/gcf.h"
@@ -41,7 +41,7 @@ FluxAnalysis::FluxAnalysis(
     InstanceNode* rootSeparatorInstance,
     int sunWidthDivisions,
     int sunHeightDivisions,
-    RandomAbstract* randomDeviate
+    Random* randomDeviate
 ):
     m_pCurrentScene(currentScene),
     m_pCurrentSceneModel(&currentSceneModel),
@@ -98,7 +98,7 @@ QString FluxAnalysis::GetSurfaceType(QString nodeURL)
     TShapeKit* shapeKit = static_cast<TShapeKit* > (instanceNode->getNode() );
     if (!shapeKit || shapeKit == 0) return "";
 
-    ShapeAbstract* shape = static_cast< ShapeAbstract* >(shapeKit->getPart("shape", false) );
+    ShapeRT* shape = static_cast< ShapeRT* >(shapeKit->getPart("shape", false) );
     if (!shape || shape == 0) return "";
 
     return shape->getTypeId().getName().getString();
@@ -168,10 +168,10 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     if (!m_pCurrentScene) return;
 
     //Check if there is a transmissivity defined
-    AirAbstract* transmissivity = 0;
+    Air* transmissivity = 0;
     if (!m_pCurrentScene->getPart("transmissivity", false) ) transmissivity = 0;
     else
-        transmissivity = static_cast< AirAbstract* > (m_pCurrentScene->getPart("transmissivity", false) );
+        transmissivity = static_cast< Air* > (m_pCurrentScene->getPart("transmissivity", false) );
 
     //Check if there is a rootSeparator InstanceNode
     if (!m_pRootSeparatorInstance) return;
@@ -181,13 +181,13 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
 
     //Check if there is a light and is properly configured
     if (!m_pCurrentScene->getPart("lightList[0]", false) ) return;
-    TLightKit* lightKit = static_cast< TLightKit* >(m_pCurrentScene->getPart("lightList[0]", false) );
+    SunKit* lightKit = static_cast< SunKit* >(m_pCurrentScene->getPart("lightList[0]", false) );
 
     InstanceNode* lightInstance = sceneInstance->children[0];
     if (!lightInstance) return;
 
     if (!lightKit->getPart("tsunshape", false) ) return;
-    SunAbstract* sunShape = static_cast< SunAbstract* >(lightKit->getPart("tsunshape", false) );
+    SunShape* sunShape = static_cast< SunShape* >(lightKit->getPart("tsunshape", false) );
 
     if (!lightKit->getPart("icon", false) ) return;
     SunAperture* aperture = static_cast< SunAperture* >(lightKit->getPart("icon", false) );
@@ -277,7 +277,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
     QMutex mutex;
     QMutex mutexPhotonMap;
     QFuture<void> photonMap;
-    AirAbstract* airTemp = 0;
+    Air* airTemp = 0;
     if (!dynamic_cast<AirVacuum*>(transmissivity))
         airTemp = transmissivity;
 
@@ -372,7 +372,7 @@ void FluxAnalysis::FluxAnalysisCylinder(InstanceNode* node)
     TShapeKit* surfaceNode = static_cast< TShapeKit* > (node->getNode() );
     if (!surfaceNode) return;
 
-    ShapeAbstract* shape = static_cast< ShapeAbstract* >(surfaceNode->getPart("shape", false) );
+    ShapeRT* shape = static_cast< ShapeRT* >(surfaceNode->getPart("shape", false) );
     if (!shape || shape == 0) return;
 
     trt::TONATIUH_REAL* radiusField = static_cast< trt::TONATIUH_REAL* > (shape->getField("radius") );
@@ -461,7 +461,7 @@ void FluxAnalysis::FluxAnalysisFlatDisk(InstanceNode* node)
     TShapeKit* surfaceNode = static_cast< TShapeKit* > (node->getNode() );
     if (!surfaceNode) return;
 
-    ShapeAbstract* shape = static_cast< ShapeAbstract* >(surfaceNode->getPart("shape", false) );
+    ShapeRT* shape = static_cast< ShapeRT* >(surfaceNode->getPart("shape", false) );
     if (!shape || shape == 0) return;
 
     trt::TONATIUH_REAL* radiusField = static_cast< trt::TONATIUH_REAL* > (shape->getField("radius") );
@@ -539,7 +539,7 @@ void FluxAnalysis::FluxAnalysisFlatRectangle(InstanceNode* node)
     TShapeKit* surfaceNode = static_cast< TShapeKit* > (node->getNode() );
     if (!surfaceNode) return;
 
-    ShapeAbstract* shape = static_cast< ShapeAbstract* >(surfaceNode->getPart("shape", false) );
+    ShapeRT* shape = static_cast< ShapeRT* >(surfaceNode->getPart("shape", false) );
     if (!shape || shape == 0) return;
 
     trt::TONATIUH_REAL* widthField = static_cast< trt::TONATIUH_REAL* > (shape->getField("width") );

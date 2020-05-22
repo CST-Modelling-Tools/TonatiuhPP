@@ -1,13 +1,13 @@
 #pragma once
 
-#include "kernel/material/MaterialAbstract.h"
+#include "kernel/material/MaterialRT.h"
 #include "kernel/TonatiuhTypes.h"
 
 class SoSensor;
 class SoFieldSensor;
 
 
-class MaterialSpecular: public MaterialAbstract
+class MaterialSpecular: public MaterialRT
 {
     SO_NODE_HEADER(MaterialSpecular);
 
@@ -20,7 +20,7 @@ public:
     static void initClass();
     MaterialSpecular();
 
-    bool OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, RandomAbstract& rand, Ray& rayOut) const;
+    bool OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& rand, Ray& rayOut) const;
 
     SoSFDouble reflectivity;
     SoSFDouble slope;
@@ -39,9 +39,6 @@ private:
     SoFieldSensor* m_reflectivitySensor;
 };
 
-
-
-#include "kernel/material/MaterialFactory.h"
 
 class MaterialSpecularFactory:
     public QObject, public MaterialFactoryT<MaterialSpecular>

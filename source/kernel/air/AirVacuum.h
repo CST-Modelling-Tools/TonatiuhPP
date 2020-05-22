@@ -1,9 +1,9 @@
 #pragma once
 
-#include "AirAbstract.h"
+#include "Air.h"
 
 
-class TONATIUH_KERNEL AirVacuum: public AirAbstract
+class TONATIUH_KERNEL AirVacuum: public Air
 {
     SO_NODE_HEADER(AirVacuum);
 

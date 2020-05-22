@@ -15,7 +15,7 @@ SO_NODE_SOURCE(ShapeSphere)
 
 void ShapeSphere::initClass()
 {
-    SO_NODE_INIT_CLASS(ShapeSphere, ShapeAbstract, "ShapeAbstract");
+    SO_NODE_INIT_CLASS(ShapeSphere, ShapeRT, "ShapeRT");
 }
 
 ShapeSphere::ShapeSphere()

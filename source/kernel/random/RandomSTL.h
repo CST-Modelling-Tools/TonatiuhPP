@@ -1,10 +1,10 @@
 #pragma once
 
-#include "kernel/random/RandomAbstract.h"
+#include "kernel/random/Random.h"
 #include <random>
 
 
-class TONATIUH_KERNEL RandomSTL: public RandomAbstract
+class TONATIUH_KERNEL RandomSTL: public Random
 {
 public:
     RandomSTL(ulong seed, long size = 10'000'000);

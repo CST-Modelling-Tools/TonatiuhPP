@@ -6,16 +6,16 @@
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
 
 #include "TonatiuhFunctions.h"
-#include "kernel/material/MaterialAbstract.h"
+#include "kernel/material/MaterialRT.h"
 #include "kernel/scene/TSeparatorKit.h"
-#include "kernel/shape/ShapeAbstract.h"
+#include "kernel/shape/ShapeRT.h"
 #include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Transform.h"
 #include "scene/TShapeKit.h"
 #include "shape//DifferentialGeometry.h"
-#include "sun/TLightKit.h"
-#include "trackers/TrackerAbstract.h"
+#include "sun/SunKit.h"
+#include "trackers/Tracker.h"
 
 
 InstanceNode::InstanceNode(SoNode* node):
@@ -80,7 +80,7 @@ void InstanceNode::Print(int level) const
         child->Print(level++);
 }
 
-bool InstanceNode::intersect(const Ray& rayIn, RandomAbstract& rand, bool& isShapeFront, InstanceNode*& shapeNode, Ray& rayOut)
+bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isShapeFront, InstanceNode*& shapeNode, Ray& rayOut)
 {
     if (!m_box.intersect(rayIn)) return false;
 
@@ -108,18 +108,18 @@ bool InstanceNode::intersect(const Ray& rayIn, RandomAbstract& rand, bool& isSha
     }
     else // shapekit
     {
-        ShapeAbstract* shape = 0;
-        MaterialAbstract* material = 0;
-        if (children[0]->getNode()->getTypeId().isDerivedFrom(ShapeAbstract::getClassTypeId() ) )
+        ShapeRT* shape = 0;
+        MaterialRT* material = 0;
+        if (children[0]->getNode()->getTypeId().isDerivedFrom(ShapeRT::getClassTypeId() ) )
         {
-            shape = (ShapeAbstract*) children[0]->m_node;
+            shape = (ShapeRT*) children[0]->m_node;
             if (children.size() > 1)
-                material = (MaterialAbstract*) children[1]->m_node;
+                material = (MaterialRT*) children[1]->m_node;
         }
         else if (children.count() > 1)
         {
-            shape = (ShapeAbstract*) children[1]->m_node;
-            material = (MaterialAbstract*) children[0]->m_node;
+            shape = (ShapeRT*) children[1]->m_node;
+            material = (MaterialRT*) children[0]->m_node;
         }
 
         if (!shape) return false;
@@ -177,14 +177,14 @@ void InstanceNode::updateTree(const Transform& tParent)
     {
         for (InstanceNode* child : children)
         {
-            if (!dynamic_cast<ShapeAbstract*>(child->m_node)) continue;
+            if (!dynamic_cast<ShapeRT*>(child->m_node)) continue;
 
             if (SoTransform* t = (SoTransform*) node->getPart("transform", false))
                 m_transform = tParent*tgf::makeTransform(t);
             else
                 m_transform = tParent;
 
-            ShapeAbstract* shape = (ShapeAbstract*) child->m_node;
+            ShapeRT* shape = (ShapeRT*) child->m_node;
             m_box = m_transform(shape->getBox());
             break;
         }

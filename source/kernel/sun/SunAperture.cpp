@@ -110,7 +110,7 @@ void SunAperture::findTexture(int xPixels, int yPixels, QVector<QPair<TShapeKit*
 
     for (const auto& s : surfacesList)
     {
-        ShapeAbstract* shapeNode = static_cast<ShapeAbstract*>(s.first->getPart("shape", false));
+        ShapeRT* shapeNode = static_cast<ShapeRT*>(s.first->getPart("shape", false));
         if (!shapeNode) continue;
         BoundingBox box = shapeNode->getBox();
 

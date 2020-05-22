@@ -5,7 +5,7 @@ SO_NODE_SOURCE(AirMirval)
 
 void AirMirval::initClass()
 {
-    SO_NODE_INIT_CLASS(AirMirval, AirAbstract, "AirAbstract");
+    SO_NODE_INIT_CLASS(AirMirval, Air, "AirAbstract");
 }
 
 AirMirval::AirMirval()

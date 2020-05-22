@@ -6,19 +6,19 @@
 #include <QVector>
 #include <Inventor/nodekits/SoLightKit.h>
 #include "kernel/TonatiuhTypes.h"
-#include "kernel/sun/SunAbstract.h"
+#include "kernel/sun/SunShape.h"
 
 struct BoundingBox;
 class InstanceNode;
 
 /*!
-  \class TLightKit TLightKit.h TLightKit.h
-  \brief The TLightKit class provides a kit with a transform, a light, a shape and a sunshape to represents the sun light.
+  \class SunKit SunKit.h SunKit.h
+  \brief The SunKit class provides a kit with a transform, a light, a shape and a sunshape to represents the sun light.
 
 
-  The TLightKit structure:
+  The SunKit structure:
   \verbatim
-  CLASS TLightKit
+  CLASS SunKit
   -->"this"
         "callbackList"
   -->   "transformGroup"
@@ -31,8 +31,8 @@ class InstanceNode;
 
   Detailed information on catalog parts:
   \verbatim
-  CLASS TLightKit
-  PVT   "this",  TLightKit  ---
+  CLASS SunKit
+  PVT   "this",  SunKit  ---
         "callbackList",  SoNodeKitListPart [ SoCallback, SoEventCallback ]
   PVT   "transformGroup",  SoTransformSeparator  ---
         "transform",  SoTransform  ---
@@ -44,16 +44,16 @@ class InstanceNode;
 
 */
 
-class TONATIUH_KERNEL TLightKit: public SoLightKit
+class TONATIUH_KERNEL SunKit: public SoLightKit
 {
-    SO_KIT_HEADER(TLightKit);
+    SO_KIT_HEADER(SunKit);
     SO_KIT_CATALOG_ENTRY_HEADER(iconMaterial);
     SO_KIT_CATALOG_ENTRY_HEADER(iconTexture);
     SO_KIT_CATALOG_ENTRY_HEADER(tsunshape);
 
 public:
     static void initClass();
-    TLightKit();
+    SunKit();
 
     void updatePosition();
     void setBox(BoundingBox box);
@@ -65,6 +65,6 @@ public:
     SoSFString disabledNodes;
 
 private:
-    ~TLightKit();
+    ~SunKit();
 //    void UpdateSunPosition();
 };

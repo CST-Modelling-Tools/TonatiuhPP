@@ -1,8 +1,8 @@
 #include "RandomParallel.h"
 
 
-RandomParallel::RandomParallel(RandomAbstract* rand, QMutex* mutex, ulong arraySize, QObject* parent)
-    : QObject(parent), RandomAbstract(arraySize),
+RandomParallel::RandomParallel(Random* rand, QMutex* mutex, ulong arraySize, QObject* parent)
+    : QObject(parent), Random(arraySize),
     m_pRand(rand),
     m_mutex(mutex)
 {

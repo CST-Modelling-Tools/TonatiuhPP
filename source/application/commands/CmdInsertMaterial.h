@@ -4,7 +4,7 @@
 
 class SceneModel;
 class TShapeKit;
-class MaterialAbstract;
+class MaterialRT;
 
 //! CmdInsertMaterial class is the insert command for materials stored in the command stack.
 /*!
@@ -14,7 +14,7 @@ class MaterialAbstract;
 class CmdInsertMaterial: public QUndoCommand
 {
 public:
-    CmdInsertMaterial(TShapeKit* shapeKit, MaterialAbstract* material, SceneModel* model, QUndoCommand* parent = 0);
+    CmdInsertMaterial(TShapeKit* shapeKit, MaterialRT* material, SceneModel* model, QUndoCommand* parent = 0);
     ~CmdInsertMaterial();
 
     void undo();
@@ -22,7 +22,7 @@ public:
 
 private:
     TShapeKit* m_shapeKit;
-    MaterialAbstract* m_material;
+    MaterialRT* m_material;
     SceneModel* m_model;
     int m_row;
 };

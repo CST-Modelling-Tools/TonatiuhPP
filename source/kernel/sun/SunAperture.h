@@ -9,7 +9,7 @@
 #include <Inventor/fields/SoSFFloat.h>
 #include <Inventor/fields/SoSFString.h>
 
-#include "kernel/shape/ShapeAbstract.h"
+#include "kernel/shape/ShapeRT.h"
 #include "kernel/TonatiuhTypes.h"
 #include "libraries/geometry/Vector3D.h"
 

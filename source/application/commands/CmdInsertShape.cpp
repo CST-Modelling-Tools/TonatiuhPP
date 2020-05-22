@@ -2,7 +2,7 @@
 
 #include "CmdInsertShape.h"
 #include "tree/SceneModel.h"
-#include "kernel/shape/ShapeAbstract.h"
+#include "kernel/shape/ShapeRT.h"
 #include "kernel/scene/TShapeKit.h"
 
 /**
@@ -10,7 +10,7 @@
  *
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
-CmdInsertShape::CmdInsertShape(TShapeKit* shapeKit, ShapeAbstract* shape, SceneModel* model, QUndoCommand* parent):
+CmdInsertShape::CmdInsertShape(TShapeKit* shapeKit, ShapeRT* shape, SceneModel* model, QUndoCommand* parent):
     QUndoCommand("InsertShape", parent), m_shapeKit(shapeKit), m_shape(shape), m_pModel(model), m_row(-1)
 {
     if (!m_shapeKit) gcf::SevereError("CmdInsertShape called with NULL TShapeKit*");

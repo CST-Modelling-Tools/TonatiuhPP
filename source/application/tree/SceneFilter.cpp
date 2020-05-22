@@ -4,7 +4,7 @@
 #include "tree/SceneModel.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
-#include "kernel/shape/ShapeAbstract.h"
+#include "kernel/shape/ShapeRT.h"
 
 
 /*!
@@ -55,7 +55,7 @@ bool SceneFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParen
 
         TShapeKit* shapeKit = static_cast<TShapeKit*>(node);
         if (!shapeKit) return false;
-        ShapeAbstract* shape = static_cast<ShapeAbstract*>(shapeKit->getPart("shape", false) );
+        ShapeRT* shape = static_cast<ShapeRT*>(shapeKit->getPart("shape", false) );
 
         if (shape && m_shapeTypeList.contains(shape->getTypeId().getName().getString() ) )
             return true;

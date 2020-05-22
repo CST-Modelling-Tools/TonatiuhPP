@@ -10,7 +10,7 @@ SO_NODE_SOURCE(TrackerTrough)
 
 void TrackerTrough::initClass()
 {
-    SO_NODE_INIT_CLASS(TrackerTrough, TrackerAbstract, "TrackerAbstract");
+    SO_NODE_INIT_CLASS(TrackerTrough, Tracker, "TrackerAbstract");
 }
 
 TrackerTrough::TrackerTrough()

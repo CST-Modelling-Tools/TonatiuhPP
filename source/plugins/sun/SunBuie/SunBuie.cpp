@@ -12,7 +12,7 @@ SO_NODE_SOURCE(SunBuie)
 
 void SunBuie::initClass()
 {
-    SO_NODE_INIT_CLASS(SunBuie, SunAbstract, "SunAbstract");
+    SO_NODE_INIT_CLASS(SunBuie, SunShape, "SunAbstract");
 }
 
 SunBuie::SunBuie()
@@ -57,7 +57,7 @@ SunBuie::~SunBuie()
     delete m_sensor_csr;
 }
 
-Vector3D SunBuie::generateRay(RandomAbstract& rand) const
+Vector3D SunBuie::generateRay(Random& rand) const
 {
     double phi = gcf::TwoPi*rand.RandomDouble();
     double theta = zenithAngle(rand);
@@ -107,7 +107,7 @@ void SunBuie::updateCSR(void* data, SoSensor*)
         sunshape->updateState(csrValue);
 }
 
-double SunBuie::zenithAngle(RandomAbstract& rand) const
+double SunBuie::zenithAngle(Random& rand) const
 {
 	double theta;
 	double value;

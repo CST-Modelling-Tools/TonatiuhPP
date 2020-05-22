@@ -2,8 +2,7 @@
 #include "ui_airdialog.h"
 
 #include <Inventor/fields/SoField.h>
-#include "kernel/air/AirAbstract.h"
-#include "kernel/air/AirFactory.h"
+#include "kernel/air/Air.h"
 
 
 AirDialog::AirDialog(QMap<QString, AirFactory*> airMap, QWidget* parent, Qt::WindowFlags f):
@@ -36,10 +35,10 @@ AirDialog::~AirDialog()
     delete ui;
 }
 
-void AirDialog::setModel(AirAbstract* air)
+void AirDialog::setModel(Air* air)
 {    
     if (!air) return;
-    m_airOld = static_cast<AirAbstract*>(air->copy(true));
+    m_airOld = static_cast<Air*>(air->copy(true));
     m_index = 0;
     if (m_airOld) {
         m_index = ui->comboBox->findText(m_airOld->getTypeName());
@@ -53,7 +52,7 @@ void AirDialog::changeModel(int index)
         m_air->unref();
 
     if (index == m_index)
-        m_air = static_cast<AirAbstract*>(m_airOld->copy(true));
+        m_air = static_cast<Air*>(m_airOld->copy(true));
     else {
         AirFactory* f = m_airMap[ui->comboBox->itemText(index)];
         m_air = f->create();

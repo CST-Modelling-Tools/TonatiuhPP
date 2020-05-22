@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ShapeAbstract.h"
+#include "ShapeRT.h"
 #include "kernel/TonatiuhTypes.h"
 
 
-class TONATIUH_KERNEL ShapeCube: public ShapeAbstract
+class TONATIUH_KERNEL ShapeCube: public ShapeRT
 {
     SO_NODE_HEADER(ShapeCube);
 

@@ -16,15 +16,15 @@
 #include "FluxAnalysisDialog.h"
 #include "SelectSurfaceDialog.h"
 #include "tree/SceneModel.h"
-#include "kernel/air/AirAbstract.h"
+#include "kernel/air/Air.h"
 #include "kernel/run/InstanceNode.h"
-#include "kernel/random/RandomAbstract.h"
+#include "kernel/random/Random.h"
 #include "kernel/run/RayTracer.h"
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/trf.h"
-#include "kernel/shape/ShapeAbstract.h"
-#include "kernel/sun/TLightKit.h"
+#include "kernel/shape/ShapeRT.h"
+#include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunAperture.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/gcf.h"
@@ -39,7 +39,7 @@
 FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* currentScene, SceneModel& currentSceneModel,
                                        InstanceNode* rootSeparatorInstance,
                                        int sunWidthDivisions, int sunHeightDivisions,
-                                       RandomAbstract* randomDeviate,  QWidget* parent):
+                                       Random* randomDeviate,  QWidget* parent):
     QDialog(parent),
     m_currentSurfaceURL(""),
     m_pCurrentSceneModel(&currentSceneModel),

@@ -3,7 +3,7 @@
 #include <QDialog>
 #include <QMap>
 
-class AirAbstract;
+class Air;
 class AirFactory;
 class SoNode;
 
@@ -20,8 +20,8 @@ public:
     AirDialog(QMap<QString, AirFactory*> airMap, QWidget* parent = 0, Qt::WindowFlags f = 0);
     ~AirDialog();
 
-    void setModel(AirAbstract* air);
-    AirAbstract* getModel() const {return m_air;}
+    void setModel(Air* air);
+    Air* getModel() const {return m_air;}
 
 public slots:
     void setValue(SoNode* node, QString parameter, QString value);
@@ -33,6 +33,6 @@ private:
     Ui::AirDialog* ui;
     QMap<QString, AirFactory*> m_airMap;
     int m_index;
-    AirAbstract* m_airOld;
-    AirAbstract* m_air;
+    Air* m_airOld;
+    Air* m_air;
 };

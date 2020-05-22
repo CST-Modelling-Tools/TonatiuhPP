@@ -1,13 +1,13 @@
 #pragma once
 
-#include "kernel/TonatiuhKernel.h"
+#include "libraries/TonatiuhLibraries.h"
 
 // Declaration of some constants 
 #define rad   (pi/180)
 #define dEarthMeanRadius     6371.01    // In km
 #define dAstronomicalUnit    149597890    // In km
 
-struct TONATIUH_KERNEL cTime
+struct TONATIUH_LIBRARIES cTime
 {
     int iYear;
     int iMonth;
@@ -17,13 +17,13 @@ struct TONATIUH_KERNEL cTime
     double dSeconds;
 };
 
-struct TONATIUH_KERNEL cLocation
+struct TONATIUH_LIBRARIES cLocation
 {
     double dLongitude;
     double dLatitude;
 };
 
-struct TONATIUH_KERNEL cSunCoordinates
+struct TONATIUH_LIBRARIES cSunCoordinates
 {
     double dEclipticLongitude;
     double dRightAscension;
@@ -34,4 +34,4 @@ struct TONATIUH_KERNEL cSunCoordinates
 };
 
 
-TONATIUH_KERNEL void sunpos(cTime udtTime, cLocation udtLocation, cSunCoordinates *udtSunCoordinates);
+TONATIUH_LIBRARIES void sunpos(cTime udtTime, cLocation udtLocation, cSunCoordinates *udtSunCoordinates);

@@ -65,39 +65,36 @@
 #include "commands/CmdAirModified.h"
 
 #include "PluginManager.h"
-#include "tree/SceneModel.h"
 #include "calculator/SunCalculatorDialog.h"
-#include "kernel/air/AirAbstract.h"
-#include "kernel/air/AirFactory.h"
+#include "kernel/TonatiuhFunctions.h"
+#include "kernel/air/Air.h"
 #include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
-#include "kernel/run/InstanceNode.h"
-#include "kernel/material/MaterialAbstract.h"
-#include "kernel/material/MaterialFactory.h"
+#include "kernel/material/MaterialRT.h"
+#include "kernel/photons/Photons.h"
 #include "kernel/photons/PhotonsAbstract.h"
 #include "kernel/photons/PhotonsFactory.h"
 #include "kernel/photons/PhotonsSettings.h"
-#include "kernel/photons/Photons.h"
-#include "kernel/random/RandomAbstract.h"
+#include "kernel/random/Random.h"
 #include "kernel/random/RandomFactory.h"
+#include "kernel/run/InstanceNode.h"
 #include "kernel/run/RayTracer.h"
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
-#include "kernel/trf.h"
-#include "kernel/shape/ShapeFactory.h"
-#include "kernel/sun/SunFactory.h"
-#include "kernel/sun/TLightKit.h"
+#include "kernel/shape/ShapeRT.h"
 #include "kernel/sun/SunAperture.h"
-#include "kernel/TonatiuhFunctions.h"
-#include "kernel/trackers/TrackerAbstract.h"
-#include "kernel/trackers/TrackerFactory.h"
+#include "kernel/sun/SunShape.h"
+#include "kernel/sun/SunKit.h"
+#include "kernel/trackers/Tracker.h"
+#include "kernel/trf.h"
 #include "main/Document.h"
-#include "run/RayExportDialog.h"
 #include "run/FluxAnalysis.h"
 #include "run/FluxAnalysisDialog.h"
+#include "run/RayExportDialog.h"
 #include "run/RayOptionsDialog.h"
 #include "script/ScriptEditorDialog.h"
+#include "tree/SceneModel.h"
 #include "view/GraphicRoot.h"
 #include "view/GraphicView.h"
 #include "widgets/AboutDialog.h"
@@ -560,14 +557,14 @@ void MainWindow::onSunDialog()
     InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
     m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
 
-    TLightKit* lightKit = 0;
+    SunKit* lightKit = 0;
     if (sceneKit->getPart("lightList[0]", false) )
-        lightKit = static_cast<TLightKit*>(sceneKit->getPart("lightList[0]", false) );
+        lightKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
 
     SunDialog dialog(*m_sceneModel, lightKit, m_pluginManager->getSunMap(), this);
     if (!dialog.exec()) return;
 
-    TLightKit* lightKitNew = dialog.getLightKit();
+    SunKit* lightKitNew = dialog.getLightKit();
     if (!lightKitNew) return;
 
 //    CmdLightKitModified* cmd = new CmdLightKitModified(lightKit, sceneKit, *m_sceneModel);
@@ -598,12 +595,12 @@ void MainWindow::onAirDialog()
 
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
-    AirAbstract* airOld = static_cast<AirAbstract*>(sceneKit->getPart("transmissivity", false));
+    Air* airOld = static_cast<Air*>(sceneKit->getPart("transmissivity", false));
     if (airOld) dialog.setModel(airOld);
 
     if (!dialog.exec()) return;
 
-    AirAbstract* airNew = dialog.getModel();
+    Air* airNew = dialog.getModel();
     CmdAirModified* cmd = new CmdAirModified(airNew, sceneKit);
     if (m_commandStack) m_commandStack->push(cmd);
     setModified(true);
@@ -761,9 +758,9 @@ void MainWindow::RunCompleteRayTracer()
 {
     InstanceNode* rootSeparatorInstance = 0;
     InstanceNode* lightInstance = 0;
-    SunAbstract* sunShape = 0;
+    SunShape* sunShape = 0;
     SunAperture* sunAperture = 0;
-    AirAbstract* transmissivity = 0;
+    Air* transmissivity = 0;
 
 //    QElapsedTimer timer;
 //    timer.start();
@@ -786,7 +783,7 @@ void MainWindow::RunFluxAnalysisRayTracer()
     TSceneKit* coinScene = m_document->getSceneKit();
     if (!coinScene) return;
 
-    TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
+    SunKit* lightKit = static_cast< SunKit* >(coinScene->getPart("lightList[0]", false) );
     if (!lightKit) return;
 
     InstanceNode*  rootSeparatorInstance = m_sceneModel->getInstance(ui->sceneModelView->rootIndex() );
@@ -801,7 +798,7 @@ void MainWindow::RunFluxAnalysisRayTracer()
     }
 
     //Create the random generator
-    RandomAbstract* pRandomDeviate =  randomDeviateFactoryList[m_selectedRandomDeviate]->create();
+    Random* pRandomDeviate =  randomDeviateFactoryList[m_selectedRandomDeviate]->create();
 
     FluxAnalysisDialog dialog(coinScene, *m_sceneModel, rootSeparatorInstance, m_widthDivisions, m_heightDivisions, pRandomDeviate);
     dialog.exec();
@@ -953,7 +950,7 @@ void MainWindow::SelectionFinish(SoSelection* selection)
     if (!selectionPath->containsNode (m_document->getSceneKit() ) ) return;
 
     SoNodeKitPath* nodeKitPath = static_cast< SoNodeKitPath* >(selectionPath);
-    if (nodeKitPath->getTail()->getTypeId().isDerivedFrom(TLightKit::getClassTypeId() ) )
+    if (nodeKitPath->getTail()->getTypeId().isDerivedFrom(SunKit::getClassTypeId() ) )
     {
         selection->deselectAll();
         QModelIndex currentIndex = m_selectionModel->currentIndex();
@@ -1209,7 +1206,7 @@ void MainWindow::AddExportSurfaceURL(QString nodeURL)
 void MainWindow::ChangeSunPosition(double azimuth, double elevation)
 {
     SoSceneKit* coinScene = m_document->getSceneKit();
-    TLightKit* lightKit = static_cast<TLightKit*>(coinScene->getPart("lightList[0]", false) );
+    SunKit* lightKit = static_cast<SunKit*>(coinScene->getPart("lightList[0]", false) );
     if (!lightKit)
     {
         QMessageBox::warning(this, "Tonatiuh warning", tr("ChangeSunPosition:: Sun not defined in scene") );
@@ -1598,12 +1595,12 @@ bool MainWindow::Delete(QModelIndex index)
     InstanceNode* instanceNode = m_sceneModel->getInstance(index);
     SoNode* coinNode = instanceNode->getNode();
 
-    if (coinNode->getTypeId().isDerivedFrom(TrackerAbstract::getClassTypeId() ) )
+    if (coinNode->getTypeId().isDerivedFrom(Tracker::getClassTypeId() ) )
     {
         CmdDeleteTracker* commandDelete = new CmdDeleteTracker(index, m_document->getSceneKit(), *m_sceneModel);
         m_commandStack->push(commandDelete);
     }
-    else if (coinNode->getTypeId().isDerivedFrom(TLightKit::getClassTypeId() ) ) return false;
+    else if (coinNode->getTypeId().isDerivedFrom(SunKit::getClassTypeId() ) ) return false;
     else
     {
         CmdDelete* commandDelete = new CmdDelete(index, *m_sceneModel);
@@ -1767,9 +1764,9 @@ void MainWindow::Run()
 {
     InstanceNode* instanceRoot = 0;
     InstanceNode* instanceSun = 0;
-    SunAbstract* sunShape = 0;
+    SunShape* sunShape = 0;
     SunAperture* sunAperture = 0;
-    AirAbstract* transmissivity = 0;
+    Air* transmissivity = 0;
 
     QElapsedTimer timer;
     timer.start();
@@ -1799,7 +1796,7 @@ void MainWindow::Run()
 
         m_photons->setTransform(instanceRoot->getTransform().inversed() ); //?
 
-        TLightKit* sunKit = static_cast<TLightKit*> (instanceSun->getNode() );
+        SunKit* sunKit = static_cast<SunKit*> (instanceSun->getNode() );
         if (!sunKit->findTexture(m_widthDivisions, m_heightDivisions, instanceRoot))
         {
             emit Abort(tr("There are no surfaces defined for ray tracing") );
@@ -1837,7 +1834,7 @@ void MainWindow::Run()
         QMutex mutex;
         QMutex mutexPhotonMap;
         QFuture<void> photonMap;
-        AirAbstract* airTemp = 0;
+        Air* airTemp = 0;
         if (!dynamic_cast<AirVacuum*>(transmissivity))
             airTemp = transmissivity;
 
@@ -1881,7 +1878,7 @@ void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned 
     TSceneKit* coinScene = m_document->getSceneKit();
     if (!coinScene) return;
 
-    TLightKit* lightKit = static_cast<TLightKit*>(coinScene->getPart("lightList[0]", false) );
+    SunKit* lightKit = static_cast<SunKit*>(coinScene->getPart("lightList[0]", false) );
     if (!lightKit) return;
 
     InstanceNode*  rootSeparatorInstance = m_sceneModel->getInstance(ui->sceneModelView->rootIndex() );
@@ -2121,13 +2118,13 @@ void MainWindow::SetRaysPerIteration(uint rays)
 void MainWindow::SetSunshape(QString sunshapeType)
 {
     SoSceneKit* coinScene = m_document->getSceneKit();
-    TLightKit* lightKit = 0;
+    SunKit* lightKit = 0;
     if (coinScene->getPart("lightList[0]", false))
     {
-        lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
+        lightKit = static_cast< SunKit* >(coinScene->getPart("lightList[0]", false) );
     }
     else
-        lightKit = new TLightKit;
+        lightKit = new SunKit;
 
 
     QVector<SunFactory*> factoryList = m_pluginManager->getSunFactories();
@@ -2168,14 +2165,14 @@ void MainWindow::SetSunshape(QString sunshapeType)
 void MainWindow::SetSunshapeParameter(QString parameter, QString value)
 {
     SoSceneKit* coinScene = m_document->getSceneKit();
-    TLightKit* lightKit = static_cast< TLightKit* >(coinScene->getPart("lightList[0]", false) );
+    SunKit* lightKit = static_cast< SunKit* >(coinScene->getPart("lightList[0]", false) );
     if (!lightKit)
     {
         emit Abort(tr("SetSunshapeParameter: There is not light defined.") );
         return;
     }
 
-    SunAbstract* sunshape = static_cast< SunAbstract* > (lightKit->getPart("tsunshape", false) );
+    SunShape* sunshape = static_cast< SunShape* > (lightKit->getPart("tsunshape", false) );
     if (!sunshape)
     {
         emit Abort(tr("SetSunshapeParameter: There is not sunshape defined.") );
@@ -2219,7 +2216,7 @@ void MainWindow::SetTransmissivity(QString transmissivityType)
         return;
     }
 
-    AirAbstract* transmissivity = transmissivityFactoryList[ transmissivityIndex ]->create();
+    Air* transmissivity = transmissivityFactoryList[ transmissivityIndex ]->create();
     if (!transmissivity)
     {
         emit Abort(tr("SetTransmissivity: Error defining transmissivity.") );
@@ -2237,7 +2234,7 @@ void MainWindow::SetTransmissivity(QString transmissivityType)
 void MainWindow::SetTransmissivityParameter(QString parameter, QString value)
 {
     SoSceneKit* coinScene = m_document->getSceneKit();
-    AirAbstract* transmissivity = static_cast<AirAbstract*>(coinScene->getPart("transmissivity", false) );
+    Air* transmissivity = static_cast<Air*>(coinScene->getPart("transmissivity", false) );
     if (!transmissivity)
     {
         emit Abort("SetTransmissivity: No transmissivity type defined.");
@@ -2565,7 +2562,7 @@ void MainWindow::CreateMaterial(MaterialFactory* factory)
     TShapeKit* kit = dynamic_cast<TShapeKit*>(parentNode);
     if (!kit) return;
 
-    MaterialAbstract* material = (MaterialAbstract*) kit->getPart("material", false);
+    MaterialRT* material = (MaterialRT*) kit->getPart("material", false);
     if (material)
     {
         ShowWarning("This TShapeKit already contains a material node");
@@ -2596,7 +2593,7 @@ void MainWindow::CreateShape(ShapeFactory* factory)
     TShapeKit* kit = dynamic_cast<TShapeKit*>(parentNode);
     if (!kit) return;
 
-    ShapeAbstract* shape = (ShapeAbstract*) kit->getPart("shape", false);
+    ShapeRT* shape = (ShapeRT*) kit->getPart("shape", false);
     if (shape) {
         ShowWarning("This TShapeKit already contains a shape");
         return;
@@ -2626,7 +2623,7 @@ void MainWindow::CreateShape(ShapeFactory* factory, int /*numberofParameters*/, 
     TShapeKit* kit = dynamic_cast<TShapeKit*>(parentNode);
     if (!kit) return;
 
-    ShapeAbstract* shape = (ShapeAbstract*) kit->getPart("shape", false);
+    ShapeRT* shape = (ShapeRT*) kit->getPart("shape", false);
     if (shape)
     {
         ShowWarning("This TShapeKit already contains a shape");
@@ -2656,7 +2653,7 @@ void MainWindow::CreateTracker(TrackerFactory* factory)
     TSeparatorKit* kit = dynamic_cast<TSeparatorKit*>(parentNode);
     if (!kit) return;
 
-    TrackerAbstract* tracker = (TrackerAbstract*) kit->getPart("tracker", false);
+    Tracker* tracker = (Tracker*) kit->getPart("tracker", false);
     if (tracker)
     {
         ShowWarning("This TSeparatorKit already contains a tracker node");
@@ -2894,9 +2891,9 @@ void MainWindow::ReadSettings()
  */
 bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
                                     InstanceNode*& instanceSun,
-                                    SunAbstract*& sunShape,
+                                    SunShape*& sunShape,
                                     SunAperture*& sunAperture,
-                                    AirAbstract*& air)
+                                    Air*& air)
 {
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return false;
@@ -2904,7 +2901,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
     if (!sceneKit->getPart("transmissivity", false))
         air = 0;
     else
-        air = static_cast<AirAbstract*>(sceneKit->getPart("transmissivity", false));
+        air = static_cast<Air*>(sceneKit->getPart("transmissivity", false));
 
     InstanceNode* sceneInstance = m_sceneModel->getInstance(QModelIndex());
     if (!sceneInstance) return false;
@@ -2917,11 +2914,11 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
 
     //Check if there is a light and is properly configured
     if (!sceneKit->getPart("lightList[0]", false) ) return false;
-    TLightKit* lightKit = static_cast< TLightKit* >(sceneKit->getPart("lightList[0]", false) );
+    SunKit* lightKit = static_cast< SunKit* >(sceneKit->getPart("lightList[0]", false) );
 
 
     if (!lightKit->getPart("tsunshape", false)) return false;
-    sunShape = static_cast<SunAbstract*>(lightKit->getPart("tsunshape", false));
+    sunShape = static_cast<SunShape*>(lightKit->getPart("tsunshape", false));
 
     if (!lightKit->getPart("icon", false)) return false;
     sunAperture = static_cast<SunAperture*>(lightKit->getPart("icon", false));
@@ -3267,7 +3264,7 @@ void MainWindow::UpdateLightSize()
 {
     SoSceneKit* sceneKit = m_document->getSceneKit();
 
-    TLightKit* lightKit = static_cast<TLightKit*>(sceneKit->getPart("lightList[0]", false) );
+    SunKit* lightKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
     if (!lightKit) return;
 
     TSeparatorKit* separatorKit = static_cast<TSeparatorKit*>(sceneKit->getPart("childList[0]", false) );
@@ -3410,7 +3407,7 @@ void MainWindow::on_actionViewSun_triggered()
 {
     SoSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
-    TLightKit* lightKit = static_cast<TLightKit*>(sceneKit->getPart("lightList[0]", false));
+    SunKit* lightKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false));
     if (!lightKit) return;
     SoTransform* transform = (SoTransform*)lightKit->getPart("transform", false);
 

@@ -2,7 +2,7 @@
 
 #include "libraries/geometry/gcf.h"
 #include "tree/SceneModel.h"
-#include "kernel/material/MaterialAbstract.h"
+#include "kernel/material/MaterialRT.h"
 #include "kernel/scene/TShapeKit.h"
 
 /**
@@ -10,7 +10,7 @@
  *
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
-CmdInsertMaterial::CmdInsertMaterial(TShapeKit* shapeKit, MaterialAbstract* material, SceneModel* model, QUndoCommand* parent):
+CmdInsertMaterial::CmdInsertMaterial(TShapeKit* shapeKit, MaterialRT* material, SceneModel* model, QUndoCommand* parent):
     QUndoCommand(parent),
     m_shapeKit(shapeKit),
     m_material(material),

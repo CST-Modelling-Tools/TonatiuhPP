@@ -1,6 +1,6 @@
 #include "CmdLightPositionModified.h"
 
-#include "kernel/sun/TLightKit.h"
+#include "kernel/sun/SunKit.h"
 #include "libraries/geometry/gcf.h"
 
 /**
@@ -8,10 +8,10 @@
  *
  * The new position is defined by \a azimuth and \a zenith in radians.
  */
-CmdLightPositionModified::CmdLightPositionModified(TLightKit* light, double azimuth, double zenith, QUndoCommand* parent):
+CmdLightPositionModified::CmdLightPositionModified(SunKit* light, double azimuth, double zenith, QUndoCommand* parent):
     QUndoCommand("Sun position changed", parent), lightKit(light), m_newAzimuth(azimuth), m_newZenith(zenith)
 {
-    if (light == 0) gcf::SevereError("CmdLinghtPositionModified called with NULL TLightKit");
+    if (light == 0) gcf::SevereError("CmdLinghtPositionModified called with NULL SunKit");
 
 //    m_oldAzimuth = light->azimuth.getValue(); // remove these cmds
 //    m_oldZenith = light->zenith.getValue();

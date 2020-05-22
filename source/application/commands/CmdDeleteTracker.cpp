@@ -5,9 +5,9 @@
 #include "libraries/geometry/gcf.h"
 #include "tree/SceneModel.h"
 #include "kernel/run/InstanceNode.h"
-#include "kernel/sun/TLightKit.h"
+#include "kernel/sun/SunKit.h"
 #include "kernel/scene/TSeparatorKit.h"
-#include "kernel/trackers/TrackerAbstract.h"
+#include "kernel/trackers/Tracker.h"
 
 /*!
  * Contructor.
@@ -29,7 +29,7 @@ CmdDeleteTracker::CmdDeleteTracker(const QModelIndex& selectedIndex, SoSceneKit*
     m_coinParent = static_cast< TSeparatorKit* > (instanceSelection->getParent()->getNode() );
     if (!m_coinParent) gcf::SevereError("CmdDeleteTracker called with invalid tracker parent.");
 
-    m_tracker = dynamic_cast<TrackerAbstract*> (m_coinParent->getPart("tracker", false) );
+    m_tracker = dynamic_cast<Tracker*> (m_coinParent->getPart("tracker", false) );
     if (!m_tracker) gcf::SevereError("CmdDeleteTracker Null tracker.");
     m_tracker->ref();
 
@@ -53,7 +53,7 @@ void CmdDeleteTracker::undo()
     SoTransform* parentTransform = static_cast< SoTransform* > (m_coinParent->getPart("transform", true) );
     if (!parentTransform) gcf::SevereError("CmdInsertTracker Null node transform.");
 
-//    TLightKit* lightKit = static_cast< TLightKit* >(m_scene->getPart("lightList[0]", false) );
+//    SunKit* lightKit = static_cast< SunKit* >(m_scene->getPart("lightList[0]", false) );
 //    if (lightKit)
 //    {
 //        m_tracker->SetAzimuthAngle(&lightKit->azimuth);

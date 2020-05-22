@@ -1,6 +1,6 @@
 #include "ActionInsertMaterial.h"
 
-#include "kernel/material/MaterialFactory.h"
+#include "kernel/material/MaterialRT.h"
 
 
 ActionInsertMaterial::ActionInsertMaterial(MaterialFactory* factory, QObject* parent):

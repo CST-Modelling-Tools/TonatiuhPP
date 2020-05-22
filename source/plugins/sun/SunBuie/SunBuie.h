@@ -1,13 +1,9 @@
 #pragma once
 
-#include <Inventor/fields/SoSFDouble.h>
-#include "kernel/sun/SunAbstract.h"
-
-class SoSensor;
-class SoFieldSensor;
+#include "kernel/sun/SunShape.h"
 
 
-class SunBuie: public SunAbstract
+class SunBuie: public SunShape
 {
     SO_NODE_HEADER(SunBuie);
 
@@ -16,7 +12,7 @@ public:
     SunBuie();
     SoNode* copy(SbBool copyConnections) const;
 
-    Vector3D generateRay(RandomAbstract& rand) const;
+    Vector3D generateRay(Random& rand) const;
     double getThetaMax() const;
 
     SoSFDouble csr;
@@ -31,7 +27,7 @@ private:
      double chiValue(double csr) const;
      double phi(double theta) const;
      double pdfTheta(double theta) const;
-     double zenithAngle(RandomAbstract& rand) const;
+     double zenithAngle(Random& rand) const;
      void updateState(double csrValue);
 
      SoFieldSensor* m_sensor_csr;
@@ -54,8 +50,6 @@ private:
      static const double m_maxCRSValue;
 };
 
-
-#include "kernel/sun/SunFactory.h"
 
 class SunBuieFactory:
     public QObject, public SunFactoryT<SunBuie>

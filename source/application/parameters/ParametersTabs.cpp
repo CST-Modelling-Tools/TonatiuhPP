@@ -144,7 +144,7 @@ QStringList ParametersTabs::ContainerNodeParts(SoBaseKit* kit)
 
     QString type = kit->getTypeId().getName().getString();
 
-    if (type == "TLightKit")
+    if (type == "SunKit")
         return {"transform", "icon", "tsunshape"};
     else if (type == "TShapeKit")
         return {"shape", "appearance.material"};
