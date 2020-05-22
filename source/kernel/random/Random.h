@@ -26,14 +26,14 @@ public:
     {
         if (m_index >= m_array.size())
         {
-            FillArray();
+            FillArray(m_array);
             m_index = 0;
             m_total += m_array.size();
         }
         return m_array[m_index++];
     }
 
-    virtual void FillArray() = 0;
+    virtual void FillArray(std::vector<double>& array) = 0;
 
     ulong NumbersGenerated() const {return m_total;}
     ulong NumbersProvided() const {return m_total - m_array.size() + m_index;}

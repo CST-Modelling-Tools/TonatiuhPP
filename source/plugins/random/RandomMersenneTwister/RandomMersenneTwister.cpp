@@ -18,7 +18,7 @@ void RandomMersenneTwister::Seed(ulong seedValue)
     m_state[0] = seedValue & 0xFFFFFFFFUL; // for > 32 bit machines
     for (int i = 1; i < N; ++i)
     {
-        m_state[i] = 1812433253UL * (m_state[i - 1] ^ (m_state[i - 1] >> 30) ) + i;
+        m_state[i] = 1812433253UL * (m_state[i - 1] ^ (m_state[i - 1] >> 30)) + i;
         m_state[i] &= 0xFFFFFFFFUL; // for > 32 bit machines
     }
     m_p = N; // force GenerateNewState() to be called for next random number
@@ -29,7 +29,7 @@ void RandomMersenneTwister::Seed(const ulong* seedArray, int arraySize)
     Seed(19650218UL);
     int i = 1;
     int j = 0;
-    for (int k = (N > m_array.size() ? N : m_array.size()); k; --k)
+    for (int k = (N > arraySize ? N : arraySize); k; --k)
     {
         m_state[i] = (m_state[i] ^ ( (m_state[i - 1] ^ (m_state[i - 1] >> 30) ) * 1664525UL) )
                      + seedArray[j] + j; // non linear
@@ -54,5 +54,3 @@ void RandomMersenneTwister::Seed(const ulong* seedArray, int arraySize)
     m_state[0] = 0x80000000UL; // MSB is 1; assuring non-zero initial array
     m_p = N; // force GenerateNewState() to be called for next random number
 }
-
-

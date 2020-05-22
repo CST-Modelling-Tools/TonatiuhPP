@@ -10,9 +10,9 @@ RandomParallel::RandomParallel(Random* rand, QMutex* mutex, ulong size, QObject*
 
 }
 
-void RandomParallel::FillArray()
+void RandomParallel::FillArray(std::vector<double>& array)
 {
     m_mutex->lock();
-    m_rand->FillArray();
+    m_rand->FillArray(array);
     m_mutex->unlock();
 }

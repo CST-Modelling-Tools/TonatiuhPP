@@ -9,8 +9,8 @@ RandomSTL::RandomSTL(ulong seed, ulong size):
 
 }
 
-void RandomSTL::FillArray()
+void RandomSTL::FillArray(std::vector<double>& array)
 {
-    for (ulong n = 0; n < m_array.size(); ++n)
-        m_array[n] = m_distribution(m_generator);
+    for (ulong n = 0; n < array.size(); ++n)
+        array[n] = m_distribution(m_generator);
 }
