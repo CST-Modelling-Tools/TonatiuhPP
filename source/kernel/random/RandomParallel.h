@@ -1,6 +1,7 @@
 #pragma once
 
 #include "kernel/TonatiuhKernel.h"
+
 #include <QObject>
 #include <QMutex>
 
@@ -12,11 +13,11 @@ class TONATIUH_KERNEL RandomParallel: public QObject, public Random
     Q_OBJECT
 
 public:
-    RandomParallel(Random* rand, QMutex* mutex, ulong arraySize = 100000, QObject* parent = 0);
+    RandomParallel(Random* rand, QMutex* mutex, ulong size = 100'000, QObject* parent = 0);
     virtual ~RandomParallel() {}
-    void FillArray(double* array, const ulong arraySize);
+    void FillArray();
 
 private:
-    Random* m_pRand;
+    Random* m_rand;
     QMutex* m_mutex;
 };

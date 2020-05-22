@@ -7,9 +7,9 @@
 class TONATIUH_KERNEL RandomSTL: public Random
 {
 public:
-    RandomSTL(ulong seed, long size = 10'000'000);
+    RandomSTL(ulong seed, ulong size = 10'000'000);
 
-    void FillArray(double* array, ulong size);
+    void FillArray();
 
     NAME_ICON_FUNCTIONS("Mersenne-Twister(STL)", ":/RandomX.png")
 

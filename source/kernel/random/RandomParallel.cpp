@@ -1,17 +1,18 @@
 #include "RandomParallel.h"
 
 
-RandomParallel::RandomParallel(Random* rand, QMutex* mutex, ulong arraySize, QObject* parent)
-    : QObject(parent), Random(arraySize),
-    m_pRand(rand),
+RandomParallel::RandomParallel(Random* rand, QMutex* mutex, ulong size, QObject* parent):
+    QObject(parent),
+    Random(size),
+    m_rand(rand),
     m_mutex(mutex)
 {
 
 }
 
-void RandomParallel::FillArray(double* array, const ulong arraySize)
+void RandomParallel::FillArray()
 {
     m_mutex->lock();
-    m_pRand->FillArray(array, arraySize);
+    m_rand->FillArray();
     m_mutex->unlock();
 }

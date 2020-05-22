@@ -2,7 +2,9 @@
 
 #include "kernel/TonatiuhKernel.h"
 #include "kernel/scene/TAbstract.h"
+
 #include <qglobal.h>
+#include <vector>
 
 //!  RandomDeviate is the base class for random generators.
 /*!
@@ -11,42 +13,35 @@
 class TONATIUH_KERNEL Random
 {
 public:
-    explicit Random(const ulong arraySize = 100'000);
-    virtual ~Random();
+    explicit Random(ulong size)
+    {
+        m_array.resize(size);
+        m_index = size;
+        m_total = 0;
+    }
 
-    double RandomDouble();
-    virtual void FillArray(double* array, const ulong arraySize) = 0;
+    virtual ~Random() {}
+
+    double RandomDouble()
+    {
+        if (m_index >= m_array.size())
+        {
+            FillArray();
+            m_index = 0;
+            m_total += m_array.size();
+        }
+        return m_array[m_index++];
+    }
+
+    virtual void FillArray() = 0;
 
     ulong NumbersGenerated() const {return m_total;}
-    ulong NumbersProvided() const { return m_total - m_size + m_index;}
+    ulong NumbersProvided() const {return m_total - m_array.size() + m_index;}
 
     NAME_ICON_FUNCTIONS("X", ":/RandomX.png")
 
-private:
-    double* m_numbers;
-    const ulong m_size;
+protected:
+    std::vector<double> m_array;
     ulong m_index;
     ulong m_total;
 };
-
-
-inline Random::Random(const ulong arraySize):
-    m_size(arraySize), m_index(arraySize), m_total(0)
-{
-    m_numbers = new double[arraySize];
-}
-
-inline Random::~Random()
-{
-    if (m_numbers) delete[] m_numbers;
-}
-
-inline double Random::RandomDouble()
-{
-    if (m_index >= m_size) {
-        FillArray(m_numbers, m_size);
-        m_index = 0;
-        m_total += m_size;
-    }
-    return m_numbers[m_index++];
-}

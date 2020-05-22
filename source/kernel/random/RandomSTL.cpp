@@ -1,7 +1,7 @@
 #include "RandomSTL.h"
 
 
-RandomSTL::RandomSTL(ulong seed, long size):
+RandomSTL::RandomSTL(ulong seed, ulong size):
     Random(size),
     m_generator(static_cast<std::mt19937_64::result_type>(seed)),
     m_distribution(0., 1.)
@@ -9,8 +9,8 @@ RandomSTL::RandomSTL(ulong seed, long size):
 
 }
 
-void RandomSTL::FillArray(double* array, ulong size)
+void RandomSTL::FillArray()
 {
-    for (ulong i = 0; i < size; i++)
-        array[i] = m_distribution(m_generator);
+    for (ulong n = 0; n < m_array.size(); ++n)
+        m_array[n] = m_distribution(m_generator);
 }

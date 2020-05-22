@@ -12,13 +12,13 @@ public:
     RandomMersenneTwister(const ulong* seedArray, int seedArraySize, long randomNumberArraySize = 10'000'000);
     virtual ~RandomMersenneTwister() {}
 
-    void FillArray(double* array, const ulong arraySize);
+    void FillArray();
     ulong RandomUInt();
 
     NAME_ICON_FUNCTIONS("Mersenne-Twister", ":/RandomX.png")
 
 private:
-    enum { N = 624, M = 397 };
+    enum {N = 624, M = 397};
 
     ulong m_state[N];
     int m_p;
@@ -35,23 +35,24 @@ private:
     void operator=(const RandomMersenneTwister&);
 };
 
-inline RandomMersenneTwister::RandomMersenneTwister(unsigned long seedValue, long int randomNumberArraySize)
-    : Random(randomNumberArraySize), m_p(0)
+inline RandomMersenneTwister::RandomMersenneTwister(unsigned long seedValue, long int randomNumberArraySize):
+    Random(randomNumberArraySize), m_p(0)
 {
     Seed(seedValue);
     m_init = true;
 }
 
-inline RandomMersenneTwister::RandomMersenneTwister(const ulong* seedArray, int seedArraySize, long int randomNumberArraySize)
-    : Random(randomNumberArraySize), m_p(0)
+inline RandomMersenneTwister::RandomMersenneTwister(const ulong* seedArray, int seedArraySize, long int randomNumberArraySize):
+    Random(randomNumberArraySize), m_p(0)
 {
     Seed(seedArray, seedArraySize);
     m_init = true;
 }
 
-inline void RandomMersenneTwister::FillArray(double* array, const ulong arraySize)
+inline void RandomMersenneTwister::FillArray()
 {
-    for (uint i = 0; i < arraySize; i++) array[i] = Random01();
+    for (ulong n = 0; n < m_array.size(); ++n)
+        m_array[n] = Random01();
 }
 
 inline ulong RandomMersenneTwister::Twiddle(ulong u, ulong v)
@@ -72,7 +73,7 @@ inline ulong RandomMersenneTwister::RandomInteger()
 
 inline double RandomMersenneTwister::Random01()
 {
-    return (static_cast<double>(RandomInteger() ) + 0.5) * LongIntegerToDouble;   // divided by 2^32
+    return (double(RandomInteger()) + 0.5)*LongIntegerToDouble;   // divided by 2^32
 }
 
 
