@@ -4,7 +4,7 @@
 #include <QFileDialog>
 #include <QDir>
 
-#include "kernel/random/RandomFactory.h"
+#include "kernel/random/Random.h"
 
 /**
  * Creates a dialog to ray tracer options with the given \a parent and \a f flags.
@@ -70,7 +70,7 @@ RayOptionsDialog::RayOptionsDialog(
     else
         newMapRadio->setChecked(true);
 
-    connect(this, SIGNAL(accepted()), this, SLOT(saveChanges()) );
+    connect(this, SIGNAL(accepted()), this, SLOT(saveChanges()));
 }
 
 /**
@@ -89,4 +89,3 @@ void RayOptionsDialog::saveChanges()
     m_photonMapBufferSize = bufferSizeSpin->value();
     m_increasePhotonMap = !newMapRadio->isChecked();
 }
-

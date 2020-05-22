@@ -101,20 +101,20 @@ public slots:
     void SetExportCoordinates(bool enabled, bool global);
     void SetExportIntersectionSurface(bool enabled);
     void SetExportIntersectionSurfaceSide(bool enabled);
-    void SetExportPhotonMapType(QString exportModeType);
+    void SetExportPhotonMapType(QString name);
     void SetExportPreviousNextPhotonID(bool enabled);
     void SetExportTypeParameterValue(QString parameterName, QString parameterValue);
     void SetIncreasePhotonMap(bool increase);
     void SetNodeName(QString name);
     void SetPhotonMapBufferSize(uint nPhotons);
-    void SetRandomDeviateType(QString typeName);
+    void SetRandomDeviateType(QString name);
     void SetRayCastingGrid(int widthDivisions, int heightDivisions);
     void SetRaysDrawingOptions(bool drawRays, bool drawPhotons);
     void SetRaysPerIteration(unsigned int rays);
-    void SetSunshape(QString sunshapeType);
+    void SetSunshape(QString name);
     void SetSunshapeParameter(QString parameter, QString value);
-    void SetTransmissivity(QString transmissivityType);
-    void SetTransmissivityParameter(QString parameter, QString value);
+    void SetAir(QString name);
+    void SetAirParameter(QString parameter, QString value);
     void SetValue(QString nodeUrl, QString parameter, QString value);
 
 protected:

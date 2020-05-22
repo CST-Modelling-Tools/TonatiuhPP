@@ -1,3 +1,5 @@
+#include "tonatiuh_script.h"
+
 #include <iostream>
 
 #include <QDir>
@@ -7,8 +9,7 @@
 #include <QScriptEngine>
 
 #include "ScriptRayTracer.h"
-#include "kernel/random/RandomFactory.h"
-#include "tonatiuh_script.h"
+#include "kernel/random/Random.h"
 #include "libraries/sun/sunpos.h"
 
 
@@ -185,7 +186,7 @@ QScriptValue tonatiuh_script::tonatiuh_random_generator(QScriptContext* context,
     if (!rayTracer->IsValidRandomGeneratorType(randomDeviateType) ) return context->throwError("tonatiuh_random_generator: defined random generator type is not valid.");
     rayTracer->SetRandomDeviateType(randomDeviateType);
 
-    int result =    rayTracer->SetRandomDeviateType(randomDeviateType);
+    int result = rayTracer->SetRandomDeviateType(randomDeviateType);
     if (result == 0) return context->throwError("tonatiuh_random_generator: UnknownError.");
 
     return 1;
@@ -217,18 +218,18 @@ QScriptValue tonatiuh_script::tonatiuh_sunposition(QScriptContext* context, QScr
 QScriptValue tonatiuh_script::tonatiuh_calculatesun(QScriptContext* context, QScriptEngine* engine)
 {
     //tonatiuh_sunposition( azimuth, elevation, distance );
-        if ( (context->argumentCount()!=6))
-                return context->throwError("tonatiuh_calculatesun: must take 5 arguments.");
-        if (!context->argument(0).isNumber() ) return context->throwError("tonatiuh_calculatesun: argument 1 is not a number.");
-        if (!context->argument(1).isNumber() ) return context->throwError("tonatiuh_calculatesun: argument 2 is not a number.");
-        if (!context->argument(2).isNumber() ) return context->throwError("tonatiuh_calculatesun: argument 3 is not a number.");
-        if (!context->argument(3).isNumber() ) return context->throwError("tonatiuh_calculatesun: argument 4 is not a number.");
-        if (!context->argument(4).isNumber() ) return context->throwError("tonatiuh_calculatesun: argument 5 is not a number.");
-        if (!context->argument(5).isNumber() ) return context->throwError("tonatiuh_calculatesun: argument 6 is not a number.");
+    if ( (context->argumentCount() != 6))
+        return context->throwError("tonatiuh_calculatesun: must take 5 arguments.");
+    if (!context->argument(0).isNumber() ) return context->throwError("tonatiuh_calculatesun: argument 1 is not a number.");
+    if (!context->argument(1).isNumber() ) return context->throwError("tonatiuh_calculatesun: argument 2 is not a number.");
+    if (!context->argument(2).isNumber() ) return context->throwError("tonatiuh_calculatesun: argument 3 is not a number.");
+    if (!context->argument(3).isNumber() ) return context->throwError("tonatiuh_calculatesun: argument 4 is not a number.");
+    if (!context->argument(4).isNumber() ) return context->throwError("tonatiuh_calculatesun: argument 5 is not a number.");
+    if (!context->argument(5).isNumber() ) return context->throwError("tonatiuh_calculatesun: argument 6 is not a number.");
 
     QScriptValue rayTracerValue = engine->globalObject().property("rayTracer");
-    ScriptRayTracer* rayTracer = ( ScriptRayTracer* ) rayTracerValue.toQObject();
-        if (!rayTracer) return 0;
+    ScriptRayTracer* rayTracer = (ScriptRayTracer*) rayTracerValue.toQObject();
+    if (!rayTracer) return 0;
 
     int year = context->argument(0).toNumber();
     int month = context->argument(1).toNumber();
@@ -236,16 +237,16 @@ QScriptValue tonatiuh_script::tonatiuh_calculatesun(QScriptContext* context, QSc
     double hours = context->argument(3).toNumber();
     double latitude = context->argument(4).toNumber();
     double longitude = context->argument(5).toNumber();
-        if ( (month < 0) || (month> 12) ) return context->throwError("tonatiuh_calculatesun: month must be between 1 and 12.");
-        if ( (day < 0) || (day > 31) ) return context->throwError("tonatiuh_calculatesun: the day must be between 1 and 31.");
-        if ( (hours < 0) || (hours > 23) ) return context->throwError("tonatiuh_calculatesun: the hour must be between 1 and 31.");
-        if ( (longitude < -180.) || (longitude > 180.) ) return context->throwError("tonatiuh_calculatesun: the longitude must be between -180 and 180.");
-        if ( (latitude < -90.) || (latitude > 90.) ) return context->throwError("tonatiuh_calculatesun: the latitude must be between -90 and 90.");
+    if (month < 0 || month > 12) return context->throwError("tonatiuh_calculatesun: month must be between 1 and 12.");
+    if (day < 0 || day > 31) return context->throwError("tonatiuh_calculatesun: the day must be between 1 and 31.");
+    if (hours < 0 || hours > 23) return context->throwError("tonatiuh_calculatesun: the hour must be between 1 and 31.");
+    if (longitude < -180. || longitude > 180.) return context->throwError("tonatiuh_calculatesun: the longitude must be between -180 and 180.");
+    if (latitude < -90. || latitude > 90.) return context->throwError("tonatiuh_calculatesun: the latitude must be between -90 and 90.");
 
-    cTime myTime = { year, month, day, hours, 0, 0 };
-        cLocation myLocation = {longitude, latitude };
+    cTime myTime = {year, month, day, hours, 0, 0};
+    cLocation myLocation = {longitude, latitude};
     cSunCoordinates results;
-        sunpos(myTime, myLocation, &results);
+    sunpos(myTime, myLocation, &results);
 
     //if( ( results.dAzimuth < 0. ) || ( azimuth > 360. ) )    return context->throwError( "tonatiuh_sunposition: azimuth value must be between 0 and 360 degrees." );
         rayTracer->SetSunAzimtuh(results.dAzimuth);
@@ -266,10 +267,10 @@ QScriptValue tonatiuh_script::tonatiuh_calculatesun(QScriptContext* context, QSc
 QScriptValue tonatiuh_script::tonatiuh_setsunpositiontoscene(QScriptContext* context, QScriptEngine* engine)
 {
     QScriptValue rayTracerValue = engine->globalObject().property("rayTracer");
-    ScriptRayTracer* rayTracer = ( ScriptRayTracer* ) rayTracerValue.toQObject();
+    ScriptRayTracer* rayTracer = (ScriptRayTracer*) rayTracerValue.toQObject();
     if (!rayTracer) return 0;
 
-    if (context->argumentCount() ) context->throwError("tonatiuh_setsunpositiontoscene() no takes arguments.");
+    if (context->argumentCount()) context->throwError("tonatiuh_setsunpositiontoscene() no takes arguments.");
 
     int result = rayTracer->SetSunPositionToScene();
     if (result == 0) context->throwError("tonatiuh_setsunpositiontoscene() error.");
@@ -283,11 +284,11 @@ QScriptValue tonatiuh_script::tonatiuh_saveas(QScriptContext* context, QScriptEn
     ScriptRayTracer* rayTracer = ( ScriptRayTracer* ) rayTracerValue.toQObject();
     if (!rayTracer) return 0;
 
-    if (context->argumentCount()!=1) context->throwError("tonatiuh_saveas() takes exactly one argument.");
+    if (context->argumentCount() != 1) context->throwError("tonatiuh_saveas() takes exactly one argument.");
     if (!context->argument(0).isString() ) context->throwError("tonatiuh_saveas: argument is not a string.");
 
     QString fileName = context->argument(0).toString();
-    if (fileName.isEmpty()  ) context->throwError("tonatiuh_saveas: the model file is not correct.");
+    if (fileName.isEmpty()) context->throwError("tonatiuh_saveas: the model file is not correct.");
 
     QFileInfo file(fileName);
     if (!file.isAbsolute() )
@@ -310,7 +311,7 @@ QScriptValue tonatiuh_script::tonatiuh_trace(QScriptContext* context, QScriptEng
     ScriptRayTracer* rayTracer = (ScriptRayTracer*) rayTracerValue.toQObject();
     if (!rayTracer) return 0;
 
-    if (context->argumentCount() ) return context->throwError("tonatiuh_trace() no takes arguments.");
+    if (context->argumentCount()) return context->throwError("tonatiuh_trace() no takes arguments.");
 
     int result = rayTracer->Trace();
     if (result == 0) return context->throwError("tonatiuh_trace() error.");

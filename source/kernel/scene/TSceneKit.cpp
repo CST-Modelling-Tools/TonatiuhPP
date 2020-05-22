@@ -42,7 +42,7 @@ TSceneKit::TSceneKit()
     lightKit->setPart("tsunshape", new SunPillbox);
     setPart("lightList[0]", lightKit);
 
-    setPart("transmissivity", new AirVacuum);
+    setPart("air", new AirVacuum);
 }
 
 /*!

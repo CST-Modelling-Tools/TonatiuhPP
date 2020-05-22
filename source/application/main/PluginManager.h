@@ -41,6 +41,7 @@ public:
     const QMap<QString, AirFactory*>& getAirMap() const {return m_airMap;}
     const QMap<QString, PhotonsFactory*>& getExportMap() const {return m_exportMap;}
     const QMap<QString, MaterialFactory*>& getMaterialMap() const {return m_materialsMap;}
+    const QMap<QString, RandomFactory*>& getRandomMap() const {return m_randomMap;}
     const QMap<QString, ShapeFactory*>& getShapeMap() const {return m_shapesMap;}
     const QMap<QString, SunFactory*>& getSunMap() const {return m_sunMap;}
     const QMap<QString, TrackerFactory*>& getTrackerMap() const {return m_trackersMap;}
@@ -64,6 +65,7 @@ private:
     QMap<QString, AirFactory*> m_airMap;
     QMap<QString, PhotonsFactory*> m_exportMap;
     QMap<QString, MaterialFactory*> m_materialsMap;
+    QMap<QString, RandomFactory*> m_randomMap;
     QMap<QString, ShapeFactory*> m_shapesMap;
     QMap<QString, SunFactory*> m_sunMap;
     QMap<QString, TrackerFactory*> m_trackersMap;

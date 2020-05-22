@@ -80,8 +80,7 @@ SunKit::SunKit()
  */
 SunKit::~SunKit()
 {
-    //void ChangePosition( QDateTime time, double longitude, double latitude );
-    //void SetDateTime( QDateTime time );
+
 }
 
 /*!

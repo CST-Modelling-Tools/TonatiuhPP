@@ -2,7 +2,7 @@
 
 
 TSceneKit {
-  fields [ SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode transmissivity, SFNode topSeparator ]
+  fields [ SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode air, SFNode topSeparator ]
   lightList 
   NodeKitListPart {
     childTypeNames "LightKit"
@@ -280,7 +280,7 @@ TSceneKit {
     }
 
   }
-  transmissivity 
+  air 
   AirVacuum {
     fields [  ]
 

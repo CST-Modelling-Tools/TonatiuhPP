@@ -14,15 +14,14 @@ class Air;
 class CmdAirModified: public QUndoCommand
 {
 public:
-    CmdAirModified(Air* airNew, TSceneKit* scene, QUndoCommand* parent = 0);
+    CmdAirModified(Air* air, TSceneKit* sceneKit, QUndoCommand* parent = 0);
     ~CmdAirModified();
 
      void undo();
      void redo();
 
 private:
-     bool m_hasOld;
      Air* m_airOld;
-     Air* m_airNew;
-     TSceneKit* m_scene;
+     Air* m_air;
+     TSceneKit* m_sceneKit;
 };

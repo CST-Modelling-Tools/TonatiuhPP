@@ -76,7 +76,6 @@
 #include "kernel/photons/PhotonsFactory.h"
 #include "kernel/photons/PhotonsSettings.h"
 #include "kernel/random/Random.h"
-#include "kernel/random/RandomFactory.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/run/RayTracer.h"
 #include "kernel/scene/TSceneKit.h"
@@ -480,10 +479,12 @@ void MainWindow::FinishManipulation()
 
     QUndoCommand* command = new QUndoCommand();
 
-    QString translationValue = QString("%1 %2 %3").arg(QString::number(nodeTransform->translation.getValue()[0]),
-            QString::number(nodeTransform->translation.getValue()[1]),
-            QString::number(nodeTransform->translation.getValue()[2]) );
-    new CmdModifyParameter(nodeTransform, QString("translation"), translationValue, m_sceneModel, command);
+    QString translationValue = QString("%1 %2 %3").arg(
+        QString::number(nodeTransform->translation.getValue()[0]),
+        QString::number(nodeTransform->translation.getValue()[1]),
+        QString::number(nodeTransform->translation.getValue()[2])
+    );
+    new CmdModifyParameter(nodeTransform, "translation", translationValue, m_sceneModel, command);
     m_commandStack->push(command);
 
     UpdateLightSize();
@@ -518,7 +519,7 @@ void MainWindow::StartManipulation(SoDragger* dragger)
 
 
     nodePath->truncate(nodePath->getLength() - 1);
-    SoBaseKit* coinNode =  static_cast< SoBaseKit* > (nodePath->getTail() );
+    SoBaseKit* coinNode = static_cast<SoBaseKit*> (nodePath->getTail() );
 
     QModelIndex nodeIndex = m_sceneModel->IndexFromPath(*nodePath);
     m_selectionModel->setCurrentIndex(nodeIndex, QItemSelectionModel::ClearAndSelect);
@@ -530,9 +531,7 @@ void MainWindow::StartManipulation(SoDragger* dragger)
     int totalFields = manipulator->getFields(fieldList);
 
     SoField* pField = 0;
-    SbName fieldName;
     SbString fieldValue = "null";
-
 
     for (int index = 0; index < totalFields; ++index)
     {
@@ -595,13 +594,13 @@ void MainWindow::onAirDialog()
 
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
-    Air* airOld = static_cast<Air*>(sceneKit->getPart("transmissivity", false));
+    Air* airOld = static_cast<Air*>(sceneKit->getPart("air", false));
     if (airOld) dialog.setModel(airOld);
 
     if (!dialog.exec()) return;
 
-    Air* airNew = dialog.getModel();
-    CmdAirModified* cmd = new CmdAirModified(airNew, sceneKit);
+    Air* air = dialog.getModel();
+    CmdAirModified* cmd = new CmdAirModified(air, sceneKit);
     if (m_commandStack) m_commandStack->push(cmd);
     setModified(true);
 }
@@ -1242,8 +1241,8 @@ void MainWindow::ChangeSunPosition(int year, int month, int day, double hours, d
         return;
     }
 
-    cTime myTime = { year, month, day, hours, minutes, seconds };
-    cLocation myLocation = { longitude, latitude };
+    cTime myTime = {year, month, day, hours, minutes, seconds};
+    cLocation myLocation = {longitude, latitude};
     cSunCoordinates results;
     sunpos(myTime, myLocation, &results);
     ChangeSunPosition(results.dAzimuth, (90 - results.dZenithAngle) );
@@ -1730,15 +1729,14 @@ void MainWindow::Paste(QString nodeURL, QString pasteType)
         Paste(nodeIndex, tgc::Copied);
 }
 
-
 /*!
  * Inserts a new node as a current node child. The new node is a copy to node saved into the clipboard.
  */
 void MainWindow::PasteCopy()
 {
-    if (!m_selectionModel->hasSelection() )
+    if (!m_selectionModel->hasSelection())
     {
-        emit Abort(tr("PasteCopy: There is not node copied.") );
+        emit Abort("PasteCopy: There is not node copied.");
         return;
     }
     Paste(m_selectionModel->currentIndex(), tgc::Copied);
@@ -1749,9 +1747,9 @@ void MainWindow::PasteCopy()
  */
 void MainWindow::PasteLink()
 {
-    if (!m_selectionModel->hasSelection() )
+    if (!m_selectionModel->hasSelection())
     {
-        emit Abort(tr("PasteCopy: There is not node copied.") );
+        emit Abort("PasteCopy: There is not node copied.");
         return;
     }
     Paste(m_selectionModel->currentIndex(), tgc::Shared);
@@ -1981,7 +1979,7 @@ void MainWindow::SetExportIntersectionSurfaceSide(bool enabled)
 /*!
  * Sets the export photon mode type to \a exportModeType, for photon map.
  */
-void MainWindow::SetExportPhotonMapType(QString exportModeType)
+void MainWindow::SetExportPhotonMapType(QString name)
 {
     QVector<PhotonsFactory*> factoryList = m_pluginManager->getExportFactories();
     if (factoryList.size() == 0) return;
@@ -1990,7 +1988,7 @@ void MainWindow::SetExportPhotonMapType(QString exportModeType)
     for (int i = 0; i < factoryList.size(); i++)
         exportPMModeNames << factoryList[i]->name();
 
-    if (exportPMModeNames.indexOf(exportModeType) < 0)
+    if (exportPMModeNames.indexOf(name) < 0)
     {
         emit Abort(tr("exportModeType: Defined export mode is not valid type."));
         return;
@@ -1999,7 +1997,7 @@ void MainWindow::SetExportPhotonMapType(QString exportModeType)
     if (!m_photonsSettings)
         m_photonsSettings = new PhotonsSettings;
 
-    m_photonsSettings->modeTypeName = exportModeType;
+    m_photonsSettings->modeTypeName = name;
 }
 
 /*!
@@ -2040,7 +2038,7 @@ void MainWindow::SetNodeName(QString name)
         return;
     }
 
-    if (m_selectionModel->currentIndex() == ui->sceneModelView->rootIndex() )
+    if (m_selectionModel->currentIndex() == ui->sceneModelView->rootIndex())
     {
         emit Abort(tr("SetNodeName: Cannot change the name of the current selected node cannot.") );
         return;
@@ -2060,9 +2058,9 @@ void MainWindow::SetPhotonMapBufferSize(uint nPhotons)
 /*!
  * Sets the random number generator type, \a typeName, for ray tracing.
  */
-void MainWindow::SetRandomDeviateType(QString typeName)
+void MainWindow::SetRandomDeviateType(QString name)
 {
-    QVector< RandomFactory* > factoryList = m_pluginManager->getRandomFactories();
+    QVector<RandomFactory*> factoryList = m_pluginManager->getRandomFactories();
     if (factoryList.size() == 0) return;
 
     QVector< QString > randomNames;
@@ -2071,12 +2069,12 @@ void MainWindow::SetRandomDeviateType(QString typeName)
 
     int oldSelectedRandomDeviate = m_selectedRandomDeviate;
 
-    if (randomNames.indexOf(typeName) < 0)
+    if (randomNames.indexOf(name) < 0)
     {
         emit Abort(tr("SetRandomDeviateType: Defined random generator is not valid type.") );
         return;
     }
-    m_selectedRandomDeviate = randomNames.indexOf(typeName);
+    m_selectedRandomDeviate = randomNames.indexOf(name);
     if (oldSelectedRandomDeviate != m_selectedRandomDeviate)
     {
         delete m_rand;
@@ -2115,39 +2113,27 @@ void MainWindow::SetRaysPerIteration(uint rays)
 /*!
  *    Set selected sunshape, \a sunshapeType, to the sun.
  */
-void MainWindow::SetSunshape(QString sunshapeType)
+void MainWindow::SetSunshape(QString name)
 {
-    SoSceneKit* coinScene = m_document->getSceneKit();
-    SunKit* lightKit = 0;
-    if (coinScene->getPart("lightList[0]", false))
-    {
-        lightKit = static_cast< SunKit* >(coinScene->getPart("lightList[0]", false) );
-    }
-    else
-        lightKit = new SunKit;
-
-
-    QVector<SunFactory*> factoryList = m_pluginManager->getSunFactories();
-
-    if (factoryList.size() == 0) return;
-
-    QVector<QString> factoryNames;
-    for (int i = 0; i < factoryList.size(); i++)
-    {
-        QString name = factoryList[i]->name();
-        factoryNames << name;
-    }
-
-    int selectedSunShapeIndex = factoryNames.indexOf(sunshapeType);
-    if (selectedSunShapeIndex < 0)
+    SunFactory* f = m_pluginManager->getSunMap().value(name, 0);
+    if (!f)
     {
         emit Abort(tr("SetSunshape: Defined sunshape is not valid type.") );
         return;
     }
 
-    lightKit->setPart("tsunshape", factoryList[selectedSunShapeIndex]->create() );
+    SoSceneKit* sceneKit = m_document->getSceneKit();
+    SunKit* sunKit = 0;
+    if (sceneKit->getPart("lightList[0]", false))
+    {
+        sunKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
+    }
+    else
+        sunKit = new SunKit;
 
-    CmdLightKitModified* command = new CmdLightKitModified(lightKit, coinScene, *m_sceneModel);
+    sunKit->setPart("tsunshape", f->create() );
+
+    CmdLightKitModified* command = new CmdLightKitModified(sunKit, sceneKit, *m_sceneModel);
     m_commandStack->push(command);
 
     //UpdateLightDimensions();
@@ -2164,15 +2150,15 @@ void MainWindow::SetSunshape(QString sunshapeType)
  */
 void MainWindow::SetSunshapeParameter(QString parameter, QString value)
 {
-    SoSceneKit* coinScene = m_document->getSceneKit();
-    SunKit* lightKit = static_cast< SunKit* >(coinScene->getPart("lightList[0]", false) );
-    if (!lightKit)
+    TSceneKit* sceneKit = m_document->getSceneKit();
+    SunKit* sunKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
+    if (!sunKit)
     {
         emit Abort(tr("SetSunshapeParameter: There is not light defined.") );
         return;
     }
 
-    SunShape* sunshape = static_cast< SunShape* > (lightKit->getPart("tsunshape", false) );
+    SunShape* sunshape = static_cast<SunShape*>(sunKit->getPart("tsunshape", false));
     if (!sunshape)
     {
         emit Abort(tr("SetSunshapeParameter: There is not sunshape defined.") );
@@ -2187,61 +2173,38 @@ void MainWindow::SetSunshapeParameter(QString parameter, QString value)
 /*!
  *    Set selected transmissivity, \a transmissivityType, to the scene.
  */
-void MainWindow::SetTransmissivity(QString transmissivityType)
+void MainWindow::SetAir(QString name)
 {
-    TSceneKit* coinScene = m_document->getSceneKit();
-    if (!coinScene)
+    AirFactory* f = m_pluginManager->getAirMap().value(name, 0);
+    if (!f)
     {
-        emit Abort(tr("SetTransmissivity: Error defining transmissivity.") );
-        return;
-    }
-    QVector< AirFactory* > transmissivityFactoryList = m_pluginManager->getAirFactories();
-    if (transmissivityFactoryList.count() < 1)
-    {
-        emit Abort(tr("SetTransmissivity: Error defining transmissivity.") );
+        emit Abort("SetTransmissivity: Error defining transmissivity.");
         return;
     }
 
-    QStringList factoryNames;
-    for (int i = 0; i < transmissivityFactoryList.count(); i++)
-    {
-        QString name = transmissivityFactoryList[i]->name();
-        factoryNames << name;
-    }
+    Air* air = f->create();
 
-    int transmissivityIndex = factoryNames.indexOf(transmissivityType);
-    if (transmissivityIndex < 0)
-    {
-        emit Abort(tr("SetTransmissivity: Defined transmissivity is not valid type.") );
-        return;
-    }
+    TSceneKit* sceneKit = m_document->getSceneKit();
 
-    Air* transmissivity = transmissivityFactoryList[ transmissivityIndex ]->create();
-    if (!transmissivity)
-    {
-        emit Abort(tr("SetTransmissivity: Error defining transmissivity.") );
-        return;
-    }
-
-    CmdAirModified* cmd = new CmdAirModified(transmissivity, coinScene);
-    if (m_commandStack) m_commandStack->push(cmd);
+    CmdAirModified* cmd = new CmdAirModified(air, sceneKit);
+    m_commandStack->push(cmd);
     setModified(true);
 }
 
 /*!
  * Set the \a value for the transmissivity parameter \a parameter.
  */
-void MainWindow::SetTransmissivityParameter(QString parameter, QString value)
+void MainWindow::SetAirParameter(QString parameter, QString value)
 {
-    SoSceneKit* coinScene = m_document->getSceneKit();
-    Air* transmissivity = static_cast<Air*>(coinScene->getPart("transmissivity", false) );
-    if (!transmissivity)
+    TSceneKit* sceneKit = m_document->getSceneKit();
+    Air* air = static_cast<Air*>(sceneKit->getPart("air", false));
+    if (!air)
     {
         emit Abort("SetTransmissivity: No transmissivity type defined.");
         return;
     }
 
-    CmdModifyParameter* cmd = new CmdModifyParameter(transmissivity, parameter, value, m_sceneModel);
+    CmdModifyParameter* cmd = new CmdModifyParameter(air, parameter, value, m_sceneModel);
     if (m_commandStack) m_commandStack->push(cmd);
     setModified(true);
 }
@@ -2898,10 +2861,10 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return false;
 
-    if (!sceneKit->getPart("transmissivity", false))
+    if (!sceneKit->getPart("air", false))
         air = 0;
     else
-        air = static_cast<Air*>(sceneKit->getPart("transmissivity", false));
+        air = static_cast<Air*>(sceneKit->getPart("air", false));
 
     InstanceNode* sceneInstance = m_sceneModel->getInstance(QModelIndex());
     if (!sceneInstance) return false;

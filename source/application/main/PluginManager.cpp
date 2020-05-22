@@ -12,7 +12,6 @@
 #include "kernel/photons/PhotonsDefault.h"
 #include "kernel/photons/PhotonsFactory.h"
 #include "kernel/photons/PhotonsWidget.h"
-#include "kernel/random/RandomFactory.h"
 #include "kernel/random/RandomSTL.h"
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TShapeKit.h"
@@ -177,6 +176,7 @@ void PluginManager::loadTonatiuhPlugin(TFactory* p)
     else if (auto f = dynamic_cast<RandomFactory*>(p))
     {
         m_randomFactories << f;
+        m_randomMap[f->name()] = f;
     }
     else if (auto f = dynamic_cast<ShapeFactory*>(p))
     {

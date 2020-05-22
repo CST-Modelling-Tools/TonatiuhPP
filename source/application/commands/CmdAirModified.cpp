@@ -7,22 +7,20 @@
 /*!
  * Creates a new transmissivity definition command. The
  */
-CmdAirModified::CmdAirModified(Air* airNew, TSceneKit* scene, QUndoCommand* parent):
-    QUndoCommand("Transmissivity changed", parent),
-    m_hasOld(false),
-    m_airNew(0),
-    m_scene(scene)
+CmdAirModified::CmdAirModified(Air* air, TSceneKit* sceneKit, QUndoCommand* parent):
+    QUndoCommand("Air changed", parent),
+    m_airOld(0),
+    m_air(0),
+    m_sceneKit(sceneKit)
 {
-    if (airNew) {
-        m_airNew = static_cast<Air*>(airNew->copy(true) );
-        m_airNew->ref();
+    if (air) {
+        m_air = static_cast<Air*>(air->copy(true));
+        m_air->ref();
     }
 
-    SoNode* node = m_scene->getPart("transmissivity", false);
-    if (node) {
-        m_hasOld = true;
-        m_airOld = dynamic_cast<Air*>(node);
-        if (m_airOld) m_airOld->ref();
+    SoNode* node = m_sceneKit->getPart("air", false);
+    if (m_airOld = dynamic_cast<Air*>(node)) {
+        m_airOld->ref();
     }
 }
 
@@ -42,8 +40,7 @@ CmdAirModified::~CmdAirModified()
  */
 void CmdAirModified::undo()
 {
-    if (m_hasOld) m_scene->setPart("transmissivity", m_airOld);
-    else m_scene->setPart("transmissivity", 0);
+    m_sceneKit->setPart("air", m_airOld);
 }
 
 /*!
@@ -52,6 +49,5 @@ void CmdAirModified::undo()
  */
 void CmdAirModified::redo()
 {
-    if (m_airNew) m_scene->setPart("transmissivity", m_airNew);
-    else m_scene->setPart("transmissivity", 0);
+    m_sceneKit->setPart("air", m_air);
 }

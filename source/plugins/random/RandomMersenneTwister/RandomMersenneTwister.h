@@ -78,7 +78,6 @@ inline double RandomMersenneTwister::Random01()
 
 
 
-#include "kernel/random/RandomFactory.h"
 
 class RandomMersenneTwisterFactory:
     public QObject, public RandomFactoryT<RandomMersenneTwister>

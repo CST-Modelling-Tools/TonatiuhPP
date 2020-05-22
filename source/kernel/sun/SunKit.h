@@ -66,5 +66,4 @@ public:
 
 private:
     ~SunKit();
-//    void UpdateSunPosition();
 };

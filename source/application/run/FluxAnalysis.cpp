@@ -90,16 +90,16 @@ FluxAnalysis::~FluxAnalysis()
 QString FluxAnalysis::GetSurfaceType(QString nodeURL)
 {
     QModelIndex nodeIndex = m_pCurrentSceneModel->IndexFromUrl(nodeURL);
-    if (!nodeIndex.isValid()  ) return "";
+    if (!nodeIndex.isValid()) return "";
 
     InstanceNode* instanceNode = m_pCurrentSceneModel->getInstance(nodeIndex);
-    if (!instanceNode || instanceNode == 0) return "";
+    if (!instanceNode) return "";
 
-    TShapeKit* shapeKit = static_cast<TShapeKit* > (instanceNode->getNode() );
-    if (!shapeKit || shapeKit == 0) return "";
+    TShapeKit* shapeKit = static_cast<TShapeKit*> (instanceNode->getNode() );
+    if (!shapeKit) return "";
 
-    ShapeRT* shape = static_cast< ShapeRT* >(shapeKit->getPart("shape", false) );
-    if (!shape || shape == 0) return "";
+    ShapeRT* shape = static_cast<ShapeRT*>(shapeKit->getPart("shape", false) );
+    if (!shape) return "";
 
     return shape->getTypeId().getName().getString();
 }
@@ -145,7 +145,7 @@ bool FluxAnalysis::CheckSurfaceSide()
 /*
  * Fun flux analysis
  */
-void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned long nOfRays, bool increasePhotonMap, int heightDivisions, int widthDivisions)
+void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, ulong nOfRays, bool increasePhotonMap, int heightDivisions, int widthDivisions)
 {
     m_surfaceURL = nodeURL;
     m_surfaceSide = surfaceSide;
@@ -169,9 +169,9 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigne
 
     //Check if there is a transmissivity defined
     Air* transmissivity = 0;
-    if (!m_pCurrentScene->getPart("transmissivity", false) ) transmissivity = 0;
+    if (!m_pCurrentScene->getPart("air", false) ) transmissivity = 0;
     else
-        transmissivity = static_cast< Air* > (m_pCurrentScene->getPart("transmissivity", false) );
+        transmissivity = static_cast<Air*> (m_pCurrentScene->getPart("air", false) );
 
     //Check if there is a rootSeparator InstanceNode
     if (!m_pRootSeparatorInstance) return;

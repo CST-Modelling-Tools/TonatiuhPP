@@ -1,6 +1,6 @@
 #pragma once
 
-
+class QScriptValue;
 class QScriptContext;
 class QScriptEngine;
 

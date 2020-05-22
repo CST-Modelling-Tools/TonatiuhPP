@@ -15,7 +15,6 @@
 #include "view/GraphicRoot.h"
 #include "tree/SceneModel.h"
 #include "kernel/random/Random.h"
-#include "kernel/random/RandomFactory.h"
 #include "kernel/run/RayTracer.h"
 #include "kernel/TonatiuhFunctions.h"
 #include "kernel/sun/SunKit.h"
@@ -320,9 +319,9 @@ int ScriptRayTracer::Trace()
 
            //Check if there is a transmissivity defined
            AirTransmission* transmissivity;
-           if ( !coinScene->getPart( "transmissivity", false ) )    transmissivity = 0;
+           if ( !coinScene->getPart( "air", false ) )    transmissivity = 0;
            else
-                transmissivity = static_cast< AirTransmission* > ( coinScene->getPart( "transmissivity", false ) );
+                transmissivity = static_cast< AirTransmission* > ( coinScene->getPart( "air", false ) );
 
            //Compute the valid areas for the raytracing
 
