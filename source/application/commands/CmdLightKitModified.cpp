@@ -48,7 +48,7 @@ CmdSunKitModified::~CmdSunKitModified()
  */
 void CmdSunKitModified::undo()
 {
-    m_model->InsertLightNode(*m_sunKitOld);
+    m_model->insertSunNode(m_sunKitOld);
 }
 
 /*!
@@ -57,5 +57,5 @@ void CmdSunKitModified::undo()
  */
 void CmdSunKitModified::redo()
 {
-    m_model->InsertLightNode(*m_sunKit);
+    m_model->insertSunNode(m_sunKit);
 }

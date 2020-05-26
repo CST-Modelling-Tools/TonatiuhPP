@@ -40,7 +40,7 @@ CmdInsertMaterial::~CmdInsertMaterial()
 void CmdInsertMaterial::undo()
 {
     m_shapeKit->setPart("material", NULL);
-    m_model->RemoveCoinNode(m_row, *m_shapeKit);
+    m_model->removeCoinNode(m_row, *m_shapeKit);
 }
 
 /*!
@@ -50,5 +50,5 @@ void CmdInsertMaterial::undo()
 void CmdInsertMaterial::redo()
 {
     m_shapeKit->setPart("material", m_material);
-    m_row = m_model->InsertCoinNode(*m_material, *m_shapeKit);
+    m_row = m_model->insertCoinNode(m_material, m_shapeKit);
 }

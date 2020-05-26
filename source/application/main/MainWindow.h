@@ -68,6 +68,7 @@ signals:
     void Abort(QString error);
 
 public slots:
+    void onAbort(QString error);
     void AddExportSurfaceURL(QString nodeURL);
     void ChangeSunPosition(double azimuth, double elevation);
     void ChangeSunPosition(int year, int month, int day, double hours, double minutes, double seconds, double latitude, double longitude);

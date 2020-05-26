@@ -99,5 +99,5 @@ QString SelectSurfaceDialog::GetSelectedSurfaceURL() const
     InstanceNode* currentNode = m_model->getInstance(currentIndex);
     if (!currentNode) return QString();
 
-    return currentNode->GetNodeURL();
+    return currentNode->getURL();
 }

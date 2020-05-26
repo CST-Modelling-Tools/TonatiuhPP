@@ -207,9 +207,6 @@
    <addaction name="actionOpen"/>
    <addaction name="actionSave"/>
    <addaction name="actionSaveAs"/>
-   <addaction name="separator"/>
-   <addaction name="separator"/>
-   <addaction name="actionClose"/>
   </widget>
   <widget class="QToolBar" name="editToolBar">
    <property name="windowTitle">

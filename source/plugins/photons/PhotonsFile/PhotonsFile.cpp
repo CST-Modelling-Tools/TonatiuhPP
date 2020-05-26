@@ -798,7 +798,7 @@ void PhotonsFile::WriteFileFormat(QString exportFilename)
 
     out << "START SURFACES\n";
     for (int s = 0; s < m_surfaceIdentfier.size(); s++) {
-		QString surfaceURL = m_surfaceIdentfier[s]->GetNodeURL();
+		QString surfaceURL = m_surfaceIdentfier[s]->getURL();
         out << QString("%1 %2\n").arg(QString::number(s + 1), surfaceURL);
 	}
 

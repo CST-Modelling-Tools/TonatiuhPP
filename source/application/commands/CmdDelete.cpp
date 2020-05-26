@@ -10,22 +10,24 @@
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
 
-CmdDelete::CmdDelete(const QModelIndex& selectedIndex, SceneModel& model, QUndoCommand* parent)
-    : QUndoCommand("Delete", parent),  m_coinNode(0), m_coinParent(0), m_pModel(&model), m_row(-1)
+CmdDelete::CmdDelete(const QModelIndex& index, SceneModel* model, QUndoCommand* parent):
+    QUndoCommand("Delete", parent),
+    m_node(0),
+    m_nodeParent(0),
+    m_model(model),
+    m_row(-1)
 {
-    InstanceNode* instanceNode = m_pModel->getInstance(selectedIndex);
-    m_coinNode = instanceNode->getNode();
-    m_coinNode->ref();
-    m_coinParent = static_cast< SoBaseKit* > (instanceNode->getParent()->getNode() );
-    m_row = instanceNode->getParent()->children.indexOf(instanceNode);
+    InstanceNode* instance = m_model->getInstance(index);
+    m_node = instance->getNode();
+    m_node->ref();
+    InstanceNode* instanceParent = instance->getParent();
+    m_nodeParent = static_cast<SoBaseKit*>(instanceParent->getNode());
+    m_row = instanceParent->children.indexOf(instance);
 }
 
-/*!
- * Destroys the CmdDelete object.
- */
 CmdDelete::~CmdDelete()
 {
-    m_coinNode->unref();
+    m_node->unref();
 }
 
 /*!
@@ -34,7 +36,7 @@ CmdDelete::~CmdDelete()
  */
 void CmdDelete::undo()
 {
-    m_pModel->Paste(tgc::Shared, *m_coinParent, *m_coinNode, m_row);
+    m_model->Paste(tgc::Shared, *m_nodeParent, *m_node, m_row);
 }
 
 /*!
@@ -43,5 +45,5 @@ void CmdDelete::undo()
  */
 void CmdDelete::redo()
 {
-    m_pModel->Cut(*m_coinParent, m_row);
+    m_model->Cut(*m_nodeParent, m_row);
 }

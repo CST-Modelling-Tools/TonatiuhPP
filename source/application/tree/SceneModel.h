@@ -45,11 +45,11 @@ public:
     QModelIndex IndexFromPath(const SoNodeKitPath& path) const;
     SoNodeKitPath* PathFromIndex(const QModelIndex& index) const;
 
-    void InsertLightNode(SunKit& lightKit);
-    void RemoveLightNode(SunKit& lightKit);
+    void insertSunNode(SunKit* lightKit);
+    void removeSunNode(SunKit* sunKit);
 
-    int InsertCoinNode(SoNode& coinChild, SoBaseKit& coinParent);
-    void RemoveCoinNode(int row, SoBaseKit& parent);
+    int insertCoinNode(SoNode* coinChild, SoBaseKit* coinParent);
+    void removeCoinNode(int row, SoBaseKit& parent);
 
     bool Cut(SoBaseKit& parent, int row);
     bool Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinChild, int row);
@@ -58,9 +58,9 @@ public:
 
 private:
     void initScene();
-    InstanceNode* AddInstanceNode(InstanceNode& parent, SoNode* node);
-    void GenerateInstanceTree(InstanceNode& instance);
-    void DeleteInstanceTree(InstanceNode& instance);
+    InstanceNode* addInstanceNode(InstanceNode* parent, SoNode* node);
+    void generateInstanceTree(InstanceNode* instance);
+    void deleteInstanceTree(InstanceNode* instance);
 
 private:
     SoSeparator* m_nodeRoot;

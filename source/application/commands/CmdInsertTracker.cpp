@@ -54,7 +54,7 @@ CmdInsertTracker::~CmdInsertTracker()
  */
 void CmdInsertTracker::undo()
 {
-    m_model->RemoveCoinNode(m_row, *m_coinParent);
+    m_model->removeCoinNode(m_row, *m_coinParent);
 }
 
 /**
@@ -62,5 +62,5 @@ void CmdInsertTracker::undo()
  */
 void CmdInsertTracker::redo()
 {
-    m_row = m_model->InsertCoinNode(*m_tracker, *m_coinParent);
+    m_row = m_model->insertCoinNode(m_tracker, m_coinParent);
 }

@@ -187,7 +187,7 @@ void SunDialog::addNode()
     InstanceNode* node = m_sceneModel->getInstance(index);
     if (!node) return;
 
-    ui->disabledNodeList->addItem(node->GetNodeURL());
+    ui->disabledNodeList->addItem(node->getURL());
 }
 
 /*!

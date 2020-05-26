@@ -58,10 +58,10 @@ bool InstanceNode::operator==(const InstanceNode& other)
 /**
  * Returns node URL.
  */
-QString InstanceNode::GetNodeURL() const
+QString InstanceNode::getURL() const
 {
     QString url;
-    if (m_parent) url = m_parent->GetNodeURL();
+    if (m_parent) url = m_parent->getURL();
     url += "/";
     url += m_node->getName().getString();
     return url;
@@ -193,7 +193,7 @@ void InstanceNode::updateTree(const Transform& tParent)
 
 void InstanceNode::collectShapeTransforms(QStringList disabledNodes, QVector<QPair<TShapeKit*, Transform> >& shapes)
 {
-    if (disabledNodes.contains(GetNodeURL())) return;
+    if (disabledNodes.contains(getURL())) return;
 
     if (dynamic_cast<TSeparatorKit*>(m_node))
     {

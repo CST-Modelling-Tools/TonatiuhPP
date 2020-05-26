@@ -429,6 +429,8 @@ void MainWindow::SetupPluginsManager()
  */
 void MainWindow::SetupTriggers()
 {
+    connect(this, SIGNAL(Abort(QString)), this, SLOT(onAbort(QString)));
+
     // file
     connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(New()) );
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(Open()) );
@@ -500,6 +502,11 @@ void MainWindow::ExecuteScriptFile(QString tonatiuhScriptFile)
     editor.show();
     editor.ExecuteScript(tonatiuhScriptFile);
     editor.done(0);
+}
+
+void MainWindow::onAbort(QString error)
+{
+    statusBar()->showMessage(error, 2000);
 }
 
 /*!
@@ -1426,7 +1433,7 @@ void MainWindow::CreateMaterial(QString name)
     if (f)
         CreateMaterial(f);
     else
-        emit Abort("CreateMaterial: Selected material type is not valid.");
+        emit Abort("CreateMaterial: Material not found");
 }
 
 /*!
@@ -1441,7 +1448,7 @@ void MainWindow::CreateShape(QString name)
     if (f)
         CreateShape(f);
     else
-        emit Abort("CreateShape: Selected shape type is not valid.");
+        emit Abort("CreateShape: Shape not found");
 }
 
 /*!
@@ -1540,17 +1547,17 @@ void MainWindow::Delete()
 {
     if (!m_selectionModel->hasSelection() )
     {
-        emit Abort(tr("Delete: There is no node selected to delete.") );
+        emit Abort("Delete: There is no node selected to delete");
         return;
     }
 
-    QModelIndex selection = m_selectionModel->currentIndex();
+    QModelIndex index = m_selectionModel->currentIndex();
     m_selectionModel->clearSelection();
 
-    InstanceNode* selectionNode = m_sceneModel->getInstance(selection);
-    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromUrl(selectionNode->getParent()->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
+    InstanceNode* instance = m_sceneModel->getInstance(index);
+    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromUrl(instance->getParent()->getURL()), QItemSelectionModel::ClearAndSelect);
 
-    Delete(selection);
+    Delete(index);
 }
 
 /*!
@@ -1560,15 +1567,15 @@ void MainWindow::Delete()
  */
 void MainWindow::Delete(QString nodeURL)
 {
-    QModelIndex nodeIndex = m_sceneModel->IndexFromUrl(nodeURL);
-    if (!nodeIndex.isValid() )
+    QModelIndex index = m_sceneModel->IndexFromUrl(nodeURL);
+    if (!index.isValid())
     {
         emit Abort(tr("Delete: There is no node with defined url.") );
         return;
     }
 
-    Delete(nodeIndex);
-    if (m_selectionModel->isSelected (nodeIndex) ) m_selectionModel->clearSelection();
+    Delete(index);
+    if (m_selectionModel->isSelected(index)) m_selectionModel->clearSelection();
 }
 
 /*!
@@ -1582,25 +1589,24 @@ bool MainWindow::Delete(QModelIndex index)
     if (index == ui->sceneModelView->rootIndex() ) return false;
     if (index.parent() == ui->sceneModelView->rootIndex() ) return false;
 
-    InstanceNode* instanceNode = m_sceneModel->getInstance(index);
-    SoNode* coinNode = instanceNode->getNode();
+    InstanceNode* instance = m_sceneModel->getInstance(index);
+    SoNode* node = instance->getNode();
 
-    if (coinNode->getTypeId().isDerivedFrom(Tracker::getClassTypeId() ) )
+    if (node->getTypeId().isDerivedFrom(Tracker::getClassTypeId()))
     {
-        CmdDeleteTracker* commandDelete = new CmdDeleteTracker(index, m_document->getSceneKit(), *m_sceneModel);
-        m_commandStack->push(commandDelete);
+        CmdDeleteTracker* cmd = new CmdDeleteTracker(index, m_document->getSceneKit(), *m_sceneModel);
+        m_commandStack->push(cmd);
     }
-    else if (coinNode->getTypeId().isDerivedFrom(SunKit::getClassTypeId() ) ) return false;
+    else if (node->getTypeId().isDerivedFrom(SunKit::getClassTypeId()))
+        return false;
     else
     {
-        CmdDelete* commandDelete = new CmdDelete(index, *m_sceneModel);
-
-        m_commandStack->push(commandDelete);
+        CmdDelete* cmd = new CmdDelete(index, m_sceneModel);
+        m_commandStack->push(cmd);
     }
 
-    UpdateLightSize();
+//    UpdateLightSize();
     setDocumentModified(true);
-
     return true;
 }
 
@@ -2520,8 +2526,11 @@ void MainWindow::CreateMaterial(MaterialFactory* factory)
     MaterialRT* material = (MaterialRT*) kit->getPart("material", false);
     if (material)
     {
-        ShowWarning("This TShapeKit already contains a material node");
-        return;
+        for (int r = 0; r < parentInstance->children.size(); ++r)
+            if (parentInstance->children[r]->getNode() == material)
+                m_sceneModel->removeCoinNode(r, *kit);
+//        ShowWarning("This TShapeKit already contains a material node");
+//        return;
     }
     material = factory->create();
     material->setName(factory->name().toStdString().c_str());
@@ -2686,7 +2695,7 @@ void MainWindow::ChangeModelScene()
 
     InstanceNode* concentratorRoot = viewLayout->children[0];
 
-    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
+    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromUrl(concentratorRoot->getURL() ), QItemSelectionModel::ClearAndSelect);
 }
 
 /*!
@@ -3175,7 +3184,7 @@ bool MainWindow::StartOver(const QString& fileName)
     InstanceNode* sceneInstance = m_sceneModel->getInstance(ui->sceneModelView->rootIndex() );
 
     InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
-    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
+    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromUrl(concentratorRoot->getURL() ), QItemSelectionModel::ClearAndSelect);
 
     ui->actionViewRays->setEnabled(false);
     ui->actionViewRays->setChecked(false);
@@ -3202,6 +3211,7 @@ bool MainWindow::StartOver(const QString& fileName)
 
     ChangeModelScene();
     ui->sceneModelView->expandToDepth(0);
+    SelectNode("//Layout");
     on_actionViewAll_triggered();
     return true;
 }

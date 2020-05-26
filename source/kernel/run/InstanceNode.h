@@ -47,7 +47,7 @@ public:
     void insertChild(int row, InstanceNode* child);
 
     bool operator==(const InstanceNode& other);
-    QString GetNodeURL() const;
+    QString getURL() const;
     void Print(int level) const;
 
     bool intersect(const Ray& rayIn, Random& rand, bool& isShapeFront, InstanceNode*& modelNode, Ray& rayOut);
