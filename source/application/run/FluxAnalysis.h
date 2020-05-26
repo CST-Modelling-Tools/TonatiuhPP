@@ -16,7 +16,7 @@ public:
                  int sunWidthDivisions, int sunHeightDivisions, Random* randomDeviate);
     ~FluxAnalysis();
     QString GetSurfaceType(QString nodeURL);
-    void RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned long nOfRays, bool increasePhotonMap, int heightDivisions, int widthDivisions);
+    void RunFluxAnalysis(QString nodeURL, QString surfaceSide, ulong nOfRays, bool increasePhotonMap, int heightDivisions, int widthDivisions);
     void UpdatePhotonCounts(int heightDivisions, int widthDivisions);
     void ExportAnalysis(QString directory, QString fileName, bool saveCoords);
     int** photonCountsValue();

@@ -2,6 +2,7 @@
 
 #include <Inventor/nodekits/SoSceneKit.h>
 #include <Inventor/nodekits/SoNodeKitListPart.h>
+
 #include "libraries/geometry/gcf.h"
 #include "tree/SceneModel.h"
 #include "kernel/scene/TSceneKit.h"
@@ -12,76 +13,49 @@
  *
  * If the model has not previous light a light node is added to \a sceneModel.
  */
-
-CmdLightKitModified::CmdLightKitModified(
-    SunKit* lightKitNew,
-    SoSceneKit* sceneKit,
-    SceneModel& sceneModel,
+CmdSunKitModified::CmdSunKitModified(SunKit* sunKit,
+    TSceneKit* sceneKit,
+    SceneModel* model,
     QUndoCommand* parent
 ):
-    QUndoCommand("Modify LightKit", parent),
-    m_hasOld(false),
-    m_lightKitNew(0),
-    m_sunShapeOld(0),
-    m_azimuthOld(0),
-    m_zenithOld(0),
-    m_nodesOld(""),
+    QUndoCommand("Sun modified", parent),
+    m_sunKitOld(0),
+    m_sunKit(0),
     m_sceneKit(sceneKit),
-    m_sceneModel(&sceneModel)
+    m_model(model)
 {
-    if (!lightKitNew)
-        gcf::SevereError("CmdLightKitModified called with NULL SunKit*");
+    SunKit* sunKitOld = dynamic_cast<SunKit*>(m_sceneKit->getPart("lightList[0]", false));
+    if (sunKitOld) {
+        m_sunKitOld = sunKitOld;
+        m_sunKitOld->ref();
+    }
 
-    m_lightKitNew = static_cast<SunKit*>(lightKitNew->copy(true));
-    m_lightKitNew->ref();
-
-    SunKit* lightKit = dynamic_cast<SunKit*>(m_sceneKit->getPart("lightList[0]", false));
-    if (lightKit) {
-        m_hasOld = true;
-        m_sunShapeOld = dynamic_cast<SunShape*>(lightKit->getPart("tsunshape", false)->copy(true) );
-        if (m_sunShapeOld) m_sunShapeOld->ref();
-//        m_azimuthOld = lightKit->azimuth.getValue();
-//        m_zenithOld = lightKit->zenith.getValue();
-        m_nodesOld = lightKit->disabledNodes.getValue().getString();
+    if (sunKit) {
+        m_sunKit = static_cast<SunKit*>(sunKit->copy(true));
+        m_sunKit->ref();
     }
 }
 
-/*!
- * Destroys the CmdLightKitModified object.
- */
-CmdLightKitModified::~CmdLightKitModified()
+CmdSunKitModified::~CmdSunKitModified()
 {
-    m_lightKitNew->unref();
-    m_sunShapeOld->unref();
+    m_sunKitOld->unref();
+    m_sunKit->unref();
 }
 
 /*!
  * Reverts to the previous light. After undo() is called, the state of the scene will be the same as before redo() was called.
  *  * \sa redo().
  */
-void CmdLightKitModified::undo()
+void CmdSunKitModified::undo()
 {
-    if (m_hasOld) {
-        SunKit* lightKit = static_cast<SunKit*> (m_sceneKit->getPart("lightList[0]", false) );
-        lightKit->setPart("tsunshape", m_sunShapeOld);
-        lightKit->updatePosition();
-        lightKit->disabledNodes.setValue(m_nodesOld.toStdString().c_str() );
-    } else
-        m_sceneModel->RemoveLightNode(*m_lightKitNew);
+    m_model->InsertLightNode(*m_sunKitOld);
 }
 
 /*!
  * Applies a change to the light. After redo() scene will contain the light with the new definition.
  * \sa undo().
  */
-void CmdLightKitModified::redo()
+void CmdSunKitModified::redo()
 {
-    if (m_hasOld) {
-        SunKit* lightKit = static_cast<SunKit*>(m_sceneKit->getPart("lightList[0]", false));
-        SunShape* shape = static_cast<SunShape*>(m_lightKitNew->getPart("tsunshape", false));
-        lightKit->setPart("tsunshape", shape);
-        lightKit->updatePosition();
-        lightKit->disabledNodes.setValue(m_lightKitNew->disabledNodes.getValue() );
-    } else
-        m_sceneModel->InsertLightNode(*m_lightKitNew);
+    m_model->InsertLightNode(*m_sunKit);
 }

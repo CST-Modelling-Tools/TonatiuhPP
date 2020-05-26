@@ -21,7 +21,7 @@ public:
 
 protected:
     ~SunPillbox();
-    static void updateTheta(void* data, SoSensor*);
+    static void update_thetaMax(void* data, SoSensor*);
 
 private:
     SoFieldSensor* m_sensor_thetaMax;

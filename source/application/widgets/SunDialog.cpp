@@ -9,6 +9,7 @@
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/sun/SunShape.h"
+#include "kernel/sun/SunAperture.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/scene/TSceneKit.h"
 #include "libraries/geometry/gcf.h"
@@ -21,28 +22,27 @@
  * aperture and shows the the light parameters defined in the light \a currentLightKit.
  */
 
-SunDialog::SunDialog(
-    SceneModel& sceneModel,
-    SunKit* lightKitOld,
+SunDialog::SunDialog(SceneModel* sceneModel,
+    SunKit* sunKit,
     QMap<QString, SunFactory*> sunShapeMap,
     QWidget* parent
 ):
     QDialog(parent),
     ui(new Ui::SunDialog),
-    m_sceneModel(&sceneModel),
+    m_sceneModel(sceneModel),
     m_selectionModel(0),
-    m_lightKitOld(lightKitOld),
-    m_sunNew(0),
+    m_sunKit(sunKit),
+    m_sunShape(0),
     m_sunShapeMap(sunShapeMap),
     m_currentSunShapeIndex(-1)
 {
     ui->setupUi(this);
 
-    if (lightKitOld) {
-        SoNode* node = lightKitOld->getPart("tsunshape", false);
-        if (node)
-            m_sunNew = static_cast<SunShape*>(node->copy(true));
-    }
+//    if (sunKit) {
+//        SoNode* node = sunKit->getPart("tsunshape", false);
+//        if (node)
+//            m_sunShape = static_cast<SunShape*>(node->copy(true));
+//    }
 
     makeSunPositionTab();
     makeSunShapeTab();
@@ -59,57 +59,26 @@ SunDialog::~SunDialog()
 /*!
  * Returns a lightkit with the parameters defined in the dialog.
  */
-SunKit* SunDialog::getLightKit()
+SunKit* SunDialog::getSunKit()
 {
     SunKit* ans = new SunKit;
 
     ans->azimuth = ui->spinAzimuth->value()*gcf::degree;
     ans->elevation = ui->spinElevation->value()*gcf::degree;
     ans->irradiance.setValue(ui->spinIrradiance->value());
-    if (m_sunNew) ans->setPart("tsunshape", m_sunNew);
 
-//    lightKit->ChangePosition(
-//        ui->spinAzimuth->value()*gc::Degree,
-//        (90. - ui->spinElevation->value())*gc::Degree
-//    );
+    if (m_sunShape) ans->setPart("tsunshape", m_sunShape);
 
     QString nodes("");
     for (int n = 0; n < ui->disabledNodeList->count(); n++) {
         QString node = ui->disabledNodeList->item(n)->text();
         nodes += QString("%1;").arg(node);
     }
-    ans->disabledNodes.setValue(nodes.toStdString().c_str());
+    SunAperture* aperture = (SunAperture*) ans->getPart("icon", false);
+    aperture->disabledNodes.setValue(nodes.toStdString().c_str());
 
+    ans->updateTransform();
     return ans;
-}
-
-/*!
- * Updates the dialog values to the values of the current light.
- */
-void SunDialog::makeSunShapeTab()
-{
-    connect(
-        ui->sunshapeParameters, SIGNAL(valueModified(SoNode*, QString, QString)),
-        this, SLOT(SetValue(SoNode*, QString, QString))
-    );
-    connect(
-        ui->sunshapeCombo, SIGNAL(activated(int)),
-        this, SLOT(ChangeSunshape(int))
-    );
-
-    QList<SunFactory*> sunFactories = m_sunShapeMap.values();
-//    ui->sunshapeCombo->addItem("---");
-    for (SunFactory* f : sunFactories)
-        ui->sunshapeCombo->addItem(f->icon(), f->name());
-
-    m_currentSunShapeIndex = 0;
-    if (m_sunNew) {
-        QString name(m_sunNew->getTypeName());
-        m_currentSunShapeIndex = ui->sunshapeCombo->findText(name);
-    }
-
-    ui->sunshapeCombo->setCurrentIndex(m_currentSunShapeIndex);
-    ChangeSunshape(m_currentSunShapeIndex);
 }
 
 /*!
@@ -117,10 +86,38 @@ void SunDialog::makeSunShapeTab()
  */
 void SunDialog::makeSunPositionTab()
 {
-    if (!m_lightKitOld) return;
-    ui->spinAzimuth->setValue(m_lightKitOld->azimuth.getValue()/gcf::degree);
-    ui->spinElevation->setValue(m_lightKitOld->elevation.getValue()/gcf::degree);
-    ui->spinIrradiance->setValue(m_lightKitOld->irradiance.getValue());
+    if (!m_sunKit) return;
+    ui->spinAzimuth->setValue(m_sunKit->azimuth.getValue()/gcf::degree);
+    ui->spinElevation->setValue(m_sunKit->elevation.getValue()/gcf::degree);
+    ui->spinIrradiance->setValue(m_sunKit->irradiance.getValue());
+}
+
+/*!
+ * Updates the dialog values to the values of the current light.
+ */
+void SunDialog::makeSunShapeTab()
+{
+    QList<SunFactory*> sunFactories = m_sunShapeMap.values();
+    for (SunFactory* f : sunFactories)
+        ui->sunshapeCombo->addItem(f->icon(), f->name());
+
+    m_currentSunShapeIndex = 0;
+    if (m_sunShape) {
+        QString name(m_sunShape->getTypeName());
+        m_currentSunShapeIndex = ui->sunshapeCombo->findText(name);
+    }
+
+    ui->sunshapeCombo->setCurrentIndex(m_currentSunShapeIndex);
+    ChangeSunshape(m_currentSunShapeIndex);
+
+    connect(
+        ui->sunshapeCombo, SIGNAL(activated(int)),
+        this, SLOT(ChangeSunshape(int))
+    );
+    connect(
+        ui->sunshapeParameters, SIGNAL(valueModified(SoNode*, QString, QString)),
+        this, SLOT(SetValue(SoNode*, QString, QString))
+    );
 }
 
 /*!
@@ -133,19 +130,19 @@ void SunDialog::makeSunApertureTab()
     ui->modelTreeView->setSelectionModel(m_selectionModel);
     ui->modelTreeView->setRootIndex(m_sceneModel->IndexFromUrl("//"));
 
-    if (!m_lightKitOld) return;
-
-    QString nodeDisabled = QString(m_lightKitOld->disabledNodes.getValue().getString());
-    for (QString s : nodeDisabled.split(";", QString::SkipEmptyParts))
+    if (!m_sunKit) return;
+    SunAperture* aperture = (SunAperture*) m_sunKit->getPart("icon", false);
+    QString nodes = QString(aperture->disabledNodes.getValue().getString());
+    for (QString s : nodes.split(";", QString::SkipEmptyParts))
         ui->disabledNodeList->addItem(s);
 
     connect(
         ui->addNodeButton, SIGNAL(clicked()),
-        this, SLOT(AddNodeToDisabledNodeList())
+        this, SLOT(addNode())
     );
     connect(
         ui->removeNodeButton, SIGNAL(clicked()),
-        this, SLOT(RemoveNodeFromDisabledNodeList())
+        this, SLOT(removeNode())
     );
 }
 
@@ -154,16 +151,16 @@ void SunDialog::makeSunApertureTab()
  */
 void SunDialog::ChangeSunshape(int index)
 {
-    while (m_sunNew && m_sunNew->getRefCount() > 0)
-        m_sunNew->unref();
+    while (m_sunShape && m_sunShape->getRefCount() > 0)
+        m_sunShape->unref();
 
     if (index == m_currentSunShapeIndex)
-        m_sunNew = static_cast<SunShape*>(m_lightKitOld->getPart("tsunshape", false)->copy(true));
+        m_sunShape = static_cast<SunShape*>(m_sunKit->getPart("tsunshape", false)->copy(true));
     else {
         SunFactory* f = m_sunShapeMap[ui->sunshapeCombo->itemText(index)];
-        m_sunNew = f->create();
+        m_sunShape = f->create();
     }
-    ui->sunshapeParameters->SetContainer(m_sunNew);
+    ui->sunshapeParameters->SetContainer(m_sunShape);
 }
 
 void SunDialog::SetValue(SoNode* node, QString parameter, QString value)
@@ -179,10 +176,10 @@ void SunDialog::SetValue(SoNode* node, QString parameter, QString value)
 /*!
  * Adds in the tree view selected node to disabled node list.
  */
-void SunDialog::AddNodeToDisabledNodeList()
+void SunDialog::addNode()
 {
-    if ( !m_selectionModel->hasSelection() ) return;
-    if ( m_selectionModel->currentIndex() == ui->modelTreeView->rootIndex() ) return;
+    if (!m_selectionModel->hasSelection()) return;
+    if (m_selectionModel->currentIndex() == ui->modelTreeView->rootIndex()) return;
 
     QModelIndex index = m_selectionModel->currentIndex();
     if (!index.isValid()) return;
@@ -196,7 +193,7 @@ void SunDialog::AddNodeToDisabledNodeList()
 /*!
  * Removes the selected node in node list from disabled nodes.
  */
-void SunDialog::RemoveNodeFromDisabledNodeList()
+void SunDialog::removeNode()
 {
     QListWidgetItem* currentItem = ui->disabledNodeList->currentItem();
     if (!currentItem) return;

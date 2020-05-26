@@ -49,6 +49,7 @@ public:
 
     bool operator==(const Transform& mat) const;
 
+    static const Transform Identity;
     static Transform translate(double x, double y, double z);
     static Transform translate(const Vector3D& v) {return translate(v.x, v.y, v.z);}
     static Transform scale(double x, double y, double z);

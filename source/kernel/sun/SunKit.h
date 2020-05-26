@@ -55,14 +55,13 @@ public:
     static void initClass();
     SunKit();
 
-    void updatePosition();
+    void updateTransform();
     void setBox(BoundingBox box);
-    bool findTexture(int widthDivisions, int heightDivisions, InstanceNode* instanceRoot);
+    bool findTexture(int sizeX, int sizeY, InstanceNode* instanceRoot);
 
     SoSFDouble azimuth;  // in radians
     SoSFDouble elevation;
     SoSFDouble irradiance;
-    SoSFString disabledNodes;
 
 private:
     ~SunKit();

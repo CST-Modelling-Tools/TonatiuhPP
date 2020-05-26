@@ -24,6 +24,7 @@
 #include "libraries/fields/UserSField.h"
 #include "libraries/geometry/gcf.h"
 #include "view/SkyBackground.h"
+#include "kernel/scene/TSeparatorKit.h"
 
 
 template <class T>

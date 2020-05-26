@@ -15,6 +15,7 @@
 
 class Transform;
 class TShapeKit;
+class SunKit;
 
 class TONATIUH_KERNEL SunAperture: public SoShape
 {
@@ -30,7 +31,7 @@ public:
     Vector3D Sample(double u, double v, int w, int h) const;
 
     void setSize(double xMin, double xMax, double yMin, double yMax, double delta);
-    void findTexture(int widthDivisions, int heightDivisions, QVector< QPair<TShapeKit*, Transform> > surfacesList);
+    void findTexture(int widthDivisions, int heightDivisions, QVector< QPair<TShapeKit*, Transform> > surfaces, SunKit* sunKit);
 
     SoSFString disabledNodes;
 

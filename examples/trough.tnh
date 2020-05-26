@@ -9,12 +9,11 @@ TSceneKit {
     containerNode 
     Group {
 
-      DEF Light SunKit {
-        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFString disabledNodes, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
+      DEF Sun SunKit {
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
         azimuth 1.396263401595464
         elevation 0.5235987755982988
         irradiance 1000
-        disabledNodes "//Layout/Target;//Layout/T1/primary/axis;//Layout/T1/primary/target;"
         transform 
         Transform {
           translation 13.199775 2.327477 7.738462
@@ -28,7 +27,8 @@ TSceneKit {
         }
         icon 
         SunAperture {
-          fields [  ]
+          fields [ SFString disabledNodes ]
+          disabledNodes "T1/primary/axis;//Layout/T1/primary/target;//Layout/Target/Shape;"
 
         }
         iconMaterial 
@@ -147,7 +147,7 @@ TSceneKit {
                                 shape 
                                 DEF Parabolic ShapeParabolic {
                                   fields [ SFDouble focusX, SFDouble focusY, SFDouble sizeX, SFDouble sizeY, SFEnum activeSide ]
-                                  focusX 5
+                                  focusX 4
                                   focusY 1000
                                   sizeY 5
 

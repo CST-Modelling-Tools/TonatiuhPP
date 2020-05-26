@@ -1,16 +1,15 @@
 #pragma once
 
-//!  CmdTransmissivityModified class is the transmissivity definition command stored in the command stack.
-/*!
-  CmdTransmissivityModified represents a modification of the scene transmissivity. The modification could be a new transmissivity definition,
-  or a modificaiton of the transmissivity parameters values.
-*/
-
 #include <QUndoCommand>
 
 class TSceneKit;
 class Air;
 
+//!  CmdTransmissivityModified class is the transmissivity definition command stored in the command stack.
+/*!
+  CmdTransmissivityModified represents a modification of the scene transmissivity. The modification could be a new transmissivity definition,
+  or a modificaiton of the transmissivity parameters values.
+*/
 class CmdAirModified: public QUndoCommand
 {
 public:

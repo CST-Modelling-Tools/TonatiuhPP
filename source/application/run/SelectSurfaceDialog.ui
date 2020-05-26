@@ -2,14 +2,6 @@
 <ui version="4.0">
  <class>SelectSurfaceDialog</class>
  <widget class="QDialog" name="SelectSurfaceDialog">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>274</width>
-    <height>310</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>Select Surface</string>
   </property>

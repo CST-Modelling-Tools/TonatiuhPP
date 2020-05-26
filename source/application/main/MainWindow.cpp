@@ -17,6 +17,8 @@
 #include <QTime>
 #include <QUndoStack>
 #include <QUndoView>
+#include <QSplashScreen>
+#include <QElapsedTimer>
 
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
 #include <Inventor/actions/SoGetMatrixAction.h>
@@ -488,7 +490,7 @@ void MainWindow::FinishManipulation()
     m_commandStack->push(command);
 
     UpdateLightSize();
-    setModified(true);
+    setDocumentModified(true);
 }
 
 void MainWindow::ExecuteScriptFile(QString tonatiuhScriptFile)
@@ -552,34 +554,22 @@ void MainWindow::onSunDialog()
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
 
-    InstanceNode* sceneInstance = m_sceneModel->getInstance(ui->sceneModelView->rootIndex() );
-    InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
-    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromUrl(concentratorRoot->GetNodeURL() ), QItemSelectionModel::ClearAndSelect);
+    SunKit* sunKitOld = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
 
-    SunKit* lightKit = 0;
-    if (sceneKit->getPart("lightList[0]", false) )
-        lightKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
-
-    SunDialog dialog(*m_sceneModel, lightKit, m_pluginManager->getSunMap(), this);
+    SunDialog dialog(m_sceneModel, sunKitOld, m_pluginManager->getSunMap(), this);
     if (!dialog.exec()) return;
 
-    SunKit* lightKitNew = dialog.getLightKit();
-    if (!lightKitNew) return;
+    SunKit* sunKit = dialog.getSunKit();
+    if (!sunKit) return;
 
-//    CmdLightKitModified* cmd = new CmdLightKitModified(lightKit, sceneKit, *m_sceneModel);
-//    m_commandStack->push(cmd);
-    lightKit->setPart("tsunshape", lightKitNew->getPart("tsunshape", false));
-    lightKit->azimuth = lightKitNew->azimuth.getValue();
-    lightKit->elevation = lightKitNew->elevation.getValue();
-    lightKit->irradiance = lightKitNew->irradiance.getValue();
-    lightKit->disabledNodes.setValue(lightKitNew->disabledNodes.getValue() );
-    lightKit->updatePosition();
+    CmdSunKitModified* cmd = new CmdSunKitModified(sunKit, sceneKit, m_sceneModel);
+    m_commandStack->push(cmd);
+
     sceneKit->updateTrackers();
-
     UpdateLightSize();
 
     ui->parametersTabs->UpdateView();
-    setModified(true);
+    setDocumentModified(true);
 
     ui->actionViewRays->setEnabled(false);
     ui->actionViewRays->setChecked(false);
@@ -602,7 +592,7 @@ void MainWindow::onAirDialog()
     Air* air = dialog.getModel();
     CmdAirModified* cmd = new CmdAirModified(air, sceneKit);
     if (m_commandStack) m_commandStack->push(cmd);
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -670,7 +660,7 @@ void MainWindow::ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex
         m_commandStack->push(dragAndDrop);
 
         UpdateLightSize();
-        setModified(true);
+        setDocumentModified(true);
     }
 }
 
@@ -690,7 +680,7 @@ void MainWindow::ItemDragAndDropCopy(const QModelIndex& newParent, const QModelI
     m_commandStack->push(dragAndDropCopy);
 
     UpdateLightSize();
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -779,16 +769,17 @@ void MainWindow::RunCompleteRayTracer()
  */
 void MainWindow::RunFluxAnalysisRayTracer()
 {
-    TSceneKit* coinScene = m_document->getSceneKit();
-    if (!coinScene) return;
+    TSceneKit* sceneKit = m_document->getSceneKit();
+    if (!sceneKit) return;
 
-    SunKit* lightKit = static_cast< SunKit* >(coinScene->getPart("lightList[0]", false) );
-    if (!lightKit) return;
+    SunKit* sunKit = (SunKit*) sceneKit->getPart("lightList[0]", false);
+    if (!sunKit) return;
 
-    InstanceNode*  rootSeparatorInstance = m_sceneModel->getInstance(ui->sceneModelView->rootIndex() );
+    InstanceNode* rootSeparatorInstance = m_sceneModel->getInstance(QModelIndex());
     if (!rootSeparatorInstance) return;
+    rootSeparatorInstance = rootSeparatorInstance->children[1];
 
-    QVector< RandomFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
+    QVector<RandomFactory*> randomDeviateFactoryList = m_pluginManager->getRandomFactories();
     //Check if there is a random generator selected;
     if (m_selectedRandomDeviate == -1)
     {
@@ -797,9 +788,9 @@ void MainWindow::RunFluxAnalysisRayTracer()
     }
 
     //Create the random generator
-    Random* pRandomDeviate =  randomDeviateFactoryList[m_selectedRandomDeviate]->create();
+    Random* pRandomDeviate = randomDeviateFactoryList[m_selectedRandomDeviate]->create();
 
-    FluxAnalysisDialog dialog(coinScene, *m_sceneModel, rootSeparatorInstance, m_widthDivisions, m_heightDivisions, pRandomDeviate);
+    FluxAnalysisDialog dialog(sceneKit, *m_sceneModel, rootSeparatorInstance, m_widthDivisions, m_heightDivisions, pRandomDeviate);
     dialog.exec();
 }
 
@@ -975,7 +966,7 @@ void MainWindow::SetParameterValue(SoNode* node, QString name, QString value)
     CmdModifyParameter* cmd = new CmdModifyParameter(node, name, value, m_sceneModel);
     if (m_commandStack) m_commandStack->push(cmd);
 //    UpdateLightSize();
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -1186,7 +1177,7 @@ void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& name)
     CmdChangeNodeName* cmd = new CmdChangeNodeName(index, name, m_sceneModel);
     m_commandStack->push(cmd);
 
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -1216,7 +1207,7 @@ void MainWindow::ChangeSunPosition(double azimuth, double elevation)
 
     //UpdateLightDimensions();
     UpdateLightSize();
-    setModified(true);
+    setDocumentModified(true);
 
     ui->actionViewRays->setEnabled(false);
     ui->actionViewRays->setChecked(false);
@@ -1284,7 +1275,7 @@ void MainWindow::Copy()
     CmdCopy* command = new CmdCopy(m_selectionModel->currentIndex(), m_coinNode_Buffer, m_sceneModel);
     m_commandStack->push(command);
 
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -1310,7 +1301,7 @@ void MainWindow::Copy(QString nodeURL)
     CmdCopy* command = new CmdCopy(nodeIndex, m_coinNode_Buffer, m_sceneModel);
     m_commandStack->push(command);
 
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -1346,7 +1337,7 @@ void MainWindow::CreateGroupNode()
     while (!m_sceneModel->SetNodeName(kit, name))
         name = QString("Node_%1").arg(++count);
 
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -1374,7 +1365,7 @@ void MainWindow::CreateSurfaceNode()
     while (!m_sceneModel->SetNodeName(kit, name))
         name = QString("Shape_%1").arg(++count);
 
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -1402,7 +1393,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
         emit Abort(tr("CreateComponentNode: Selected component type is not valid.") );
         return;
     }
-    setModified(true);
+    setDocumentModified(true);
 
     ComponentFactory* pComponentFactory = factoryList[selectedCompoent];
     if (!pComponentFactory) return;
@@ -1421,7 +1412,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
     m_commandStack->push(cmd);
 
     UpdateLightSize();
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -1502,7 +1493,7 @@ void MainWindow::Cut()
     m_commandStack->push(cmd);
 
     UpdateLightSize();
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -1539,7 +1530,7 @@ void MainWindow::Cut(QString nodeURL)
     m_commandStack->push(command);
 
     UpdateLightSize();
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -1608,7 +1599,7 @@ bool MainWindow::Delete(QModelIndex index)
     }
 
     UpdateLightSize();
-    setModified(true);
+    setDocumentModified(true);
 
     return true;
 }
@@ -1663,7 +1654,7 @@ void MainWindow::InsertFileComponent(QString componentFileName)
     m_commandStack->push(cmdInsertSeparatorKit);
 
     UpdateLightSize();
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -1790,7 +1781,7 @@ void MainWindow::Run()
         UpdateLightSize();
 
         // compute bounding boxes and world to object transforms
-        instanceRoot->updateTree(Transform(new Matrix4x4));
+        instanceRoot->updateTree(Transform::Identity);
 
         m_photons->setTransform(instanceRoot->getTransform().inversed() ); //?
 
@@ -1873,16 +1864,17 @@ void MainWindow::Run()
  */
 void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned int nOfRays, int heightDivisions, int widthDivisions, QString directory, QString fileName, bool saveCoords)
 {
-    TSceneKit* coinScene = m_document->getSceneKit();
-    if (!coinScene) return;
+    TSceneKit* sceneKit = m_document->getSceneKit();
+    if (!sceneKit) return;
 
-    SunKit* lightKit = static_cast<SunKit*>(coinScene->getPart("lightList[0]", false) );
+    SunKit* lightKit = (SunKit*) sceneKit->getPart("lightList[0]", false);
     if (!lightKit) return;
 
-    InstanceNode*  rootSeparatorInstance = m_sceneModel->getInstance(ui->sceneModelView->rootIndex() );
+    InstanceNode* rootSeparatorInstance = m_sceneModel->getInstance(QModelIndex());
     if (!rootSeparatorInstance) return;
+    rootSeparatorInstance = rootSeparatorInstance->children[1];
 
-    QVector< RandomFactory* > randomDeviateFactoryList = m_pluginManager->getRandomFactories();
+    QVector<RandomFactory*> randomDeviateFactoryList = m_pluginManager->getRandomFactories();
     //Check if there is a random generator selected;
     if (m_selectedRandomDeviate == -1)
     {
@@ -1893,7 +1885,7 @@ void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned 
     //Create the random generator
     if (!m_rand) m_rand =  randomDeviateFactoryList[m_selectedRandomDeviate]->create();
 
-    FluxAnalysis fluxAnalysis(coinScene, *m_sceneModel, rootSeparatorInstance, m_widthDivisions, m_heightDivisions, m_rand);
+    FluxAnalysis fluxAnalysis(sceneKit, *m_sceneModel, rootSeparatorInstance, m_widthDivisions, m_heightDivisions, m_rand);
 
     fluxAnalysis.RunFluxAnalysis(nodeURL, surfaceSide, nOfRays, false, heightDivisions, widthDivisions);
 
@@ -2122,7 +2114,7 @@ void MainWindow::SetSunshape(QString name)
         return;
     }
 
-    SoSceneKit* sceneKit = m_document->getSceneKit();
+    TSceneKit* sceneKit = m_document->getSceneKit();
     SunKit* sunKit = 0;
     if (sceneKit->getPart("lightList[0]", false))
     {
@@ -2133,14 +2125,14 @@ void MainWindow::SetSunshape(QString name)
 
     sunKit->setPart("tsunshape", f->create() );
 
-    CmdLightKitModified* command = new CmdLightKitModified(sunKit, sceneKit, *m_sceneModel);
+    CmdSunKitModified* command = new CmdSunKitModified(sunKit, sceneKit, m_sceneModel);
     m_commandStack->push(command);
 
     //UpdateLightDimensions();
     UpdateLightSize();
 
     ui->parametersTabs->UpdateView();
-    setModified(true);
+    setDocumentModified(true);
 
     ui->actionCalculateSunPosition->setEnabled(true);
 }
@@ -2167,7 +2159,7 @@ void MainWindow::SetSunshapeParameter(QString parameter, QString value)
 
     CmdModifyParameter* cmd = new CmdModifyParameter(sunshape, parameter, value, m_sceneModel);
     if (m_commandStack) m_commandStack->push(cmd);
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -2188,7 +2180,7 @@ void MainWindow::SetAir(QString name)
 
     CmdAirModified* cmd = new CmdAirModified(air, sceneKit);
     m_commandStack->push(cmd);
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -2206,7 +2198,7 @@ void MainWindow::SetAirParameter(QString parameter, QString value)
 
     CmdModifyParameter* cmd = new CmdModifyParameter(air, parameter, value, m_sceneModel);
     if (m_commandStack) m_commandStack->push(cmd);
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -2279,7 +2271,7 @@ void MainWindow::SoTransform_to_SoCenterballManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    setModified(true);
+    setDocumentModified(true);
 }
 
 void MainWindow::SoTransform_to_SoJackManip()
@@ -2305,7 +2297,7 @@ void MainWindow::SoTransform_to_SoJackManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    setModified(true);
+    setDocumentModified(true);
 }
 
 void MainWindow::SoTransform_to_SoHandleBoxManip()
@@ -2331,7 +2323,7 @@ void MainWindow::SoTransform_to_SoHandleBoxManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    setModified(true);
+    setDocumentModified(true);
 }
 
 void MainWindow::SoTransform_to_SoTabBoxManip()
@@ -2357,7 +2349,7 @@ void MainWindow::SoTransform_to_SoTabBoxManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    setModified(true);
+    setDocumentModified(true);
 }
 
 void MainWindow::SoTransform_to_SoTrackballManip()
@@ -2383,7 +2375,7 @@ void MainWindow::SoTransform_to_SoTrackballManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    setModified(true);
+    setDocumentModified(true);
 }
 
 void MainWindow::SoTransform_to_SoTransformBoxManip()
@@ -2410,7 +2402,7 @@ void MainWindow::SoTransform_to_SoTransformBoxManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    setModified(true);
+    setDocumentModified(true);
 }
 
 void MainWindow::SoTransform_to_SoTransformerManip()
@@ -2437,7 +2429,7 @@ void MainWindow::SoTransform_to_SoTransformerManip()
     dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
     dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
 
-    setModified(true);
+    setDocumentModified(true);
 }
 
 void MainWindow::SoManip_to_SoTransform()
@@ -2460,7 +2452,7 @@ void MainWindow::SoManip_to_SoTransform()
     coinNode->setPart("transform", transform);
     ChangeSelection(currentIndex);
 
-    setModified(true);
+    setDocumentModified(true);
 }
 
 void MainWindow::ChangeSelection(const QModelIndex& current)
@@ -2506,7 +2498,7 @@ void MainWindow::CreateComponent(ComponentFactory* factory)
     m_commandStack->push(cmd);
 
     UpdateLightSize();
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -2537,7 +2529,7 @@ void MainWindow::CreateMaterial(MaterialFactory* factory)
     CmdInsertMaterial* cmd = new CmdInsertMaterial(kit, material, m_sceneModel);
     m_commandStack->push(cmd);
 
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -2568,7 +2560,7 @@ void MainWindow::CreateShape(ShapeFactory* factory)
     m_commandStack->push(cmd);
 
 //    UpdateLightSize();
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -2599,7 +2591,7 @@ void MainWindow::CreateShape(ShapeFactory* factory, int /*numberofParameters*/, 
     m_commandStack->push(cmd);
 
 //    UpdateLightSize();
-    setModified(true);
+    setDocumentModified(true);
 }
 
 /*!
@@ -2628,7 +2620,7 @@ void MainWindow::CreateTracker(TrackerFactory* factory)
     CmdInsertTracker* cmd = new CmdInsertTracker(tracker, parentIndex, m_sceneModel);
     m_commandStack->push(cmd);
 
-    setModified(true);
+    setDocumentModified(true);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -2823,7 +2815,7 @@ bool MainWindow::Paste(QModelIndex nodeIndex, tgc::PasteType type)
     m_commandStack->push(commandPaste);
 
     UpdateLightSize();
-    setModified(true);
+    setDocumentModified(true);
     return true;
 }
 
@@ -2945,7 +2937,7 @@ bool MainWindow::SaveFile(const QString& fileName)
 void MainWindow::SetCurrentFile(const QString& fileName)
 {
     m_currentFile = fileName;
-    setModified(false);
+    setDocumentModified(false);
 
     QString title = "Untitled";
     if (!m_currentFile.isEmpty() )
@@ -3214,7 +3206,7 @@ bool MainWindow::StartOver(const QString& fileName)
     return true;
 }
 
-void MainWindow::setModified(bool value)
+void MainWindow::setDocumentModified(bool value)
 {
     m_document->setModified(value);
     setWindowModified(value);

@@ -10,28 +10,22 @@
 #include <Inventor/nodekits/SoNodekitCatalog.h>
 
 #include "SunAperture.h"
+#include "SunPillbox.h"
 #include "kernel/TonatiuhFunctions.h"
+#include "kernel/run/InstanceNode.h"
 #include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Matrix4x4.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/gcf.h"
 #include "scene/TShapeKit.h"
-#include "sun/SunPillbox.h"
-#include "kernel/run/InstanceNode.h"
 
 SO_KIT_SOURCE(SunKit)
 
-/**
- * Initializates SunKit componets
- */
 void SunKit::initClass()
 {
     SO_KIT_INIT_CLASS(SunKit, SoLightKit, "LightKit");
 }
 
-/**
- * Creates a new SunKit.
- */
 SunKit::SunKit()
 {
     SO_KIT_CONSTRUCTOR(SunKit);
@@ -43,41 +37,36 @@ SunKit::SunKit()
     SO_NODE_ADD_FIELD( azimuth, (0.) );
     SO_NODE_ADD_FIELD( elevation, (90.*gcf::degree) );
     SO_NODE_ADD_FIELD( irradiance, (1000.) );
-    SO_NODE_ADD_FIELD( disabledNodes, ("") );
 
     SO_KIT_INIT_INSTANCE();
 
     SoDirectionalLight* light = static_cast<SoDirectionalLight*>(getPart("light", true) );
     light->direction.setValue(SbVec3f(0, 0, 1) );
 
-    SoTransform* transform = new SoTransform;
-    setPart("transform", transform);
+    updateTransform();
 
-    SoMaterial* lightMaterial = static_cast<SoMaterial*>(getPart("iconMaterial", true) );
-    lightMaterial->transparency = 0.75f;
-    setPart("iconMaterial", lightMaterial);
+    SoMaterial* material = static_cast<SoMaterial*>(getPart("iconMaterial", true) );
+    material->transparency = 0.75f;
+    setPart("iconMaterial", material);
 
-    int widthPixeles = 10;
-    int heightPixeles = 10;
-    QVector<uchar> bitmap(widthPixeles*heightPixeles);
+    int sizeX = 10;
+    int sizeY = 10;
+    QVector<uchar> bitmap(sizeX*sizeY);
     bitmap.fill(255);
 
     SoTexture2* texture = new SoTexture2;
-    texture->image.setValue(SbVec2s(heightPixeles, widthPixeles), 1, bitmap.data());
+    texture->image.setValue(SbVec2s(sizeX, sizeY), 1, bitmap.data());
     texture->model = SoTexture2::BLEND;
     texture->blendColor.setValue(1.f, 1.f, 1.f);
     setPart("iconTexture", texture);
 
-    SunAperture* iconShape = new SunAperture;
-    setPart("icon", iconShape);
+    SunAperture* aperture = new SunAperture;
+    setPart("icon", aperture);
 
-    setName("Light");
-    updatePosition();
+    setName("Sun");
+    setPart("tsunshape", new SunPillbox);
 }
 
-/**
- * Destructor.
- */
 SunKit::~SunKit()
 {
 
@@ -88,9 +77,9 @@ SunKit::~SunKit()
  * Azimuth and Zenith are in radians.
  * \sa redo().
  */
-void SunKit::updatePosition()
+void SunKit::updateTransform()
 {
-    SoTransform* transform = (SoTransform*) getPart("transform", false);
+    SoTransform* transform = (SoTransform*) getPart("transform", true);
 
     SbRotation elRotation(SbVec3f(1., 0., 0.), gcf::pi/2. + elevation.getValue());
     SbRotation azRotation(SbVec3f(0., 0., -1.), azimuth.getValue());
@@ -100,7 +89,7 @@ void SunKit::updatePosition()
 
 void SunKit::setBox(BoundingBox box)
 {
-    SoTransform* transform = (SoTransform*) getPart("transform", false);
+    SoTransform* transform = (SoTransform*) getPart("transform", true);
     SbMatrix mr;
     mr.setRotate(transform->rotation.getValue());
 
@@ -142,9 +131,12 @@ void SunKit::setBox(BoundingBox box)
     transform->translation = res;
 }
 
-bool SunKit::findTexture(int xPixels, int yPixels, InstanceNode* instanceRoot)
+bool SunKit::findTexture(int sizeX, int sizeY, InstanceNode* instanceRoot)
 {
-    QStringList disabledList = QString(disabledNodes.getValue().getString()).split(";", QString::SkipEmptyParts);
+    SunAperture* aperture = static_cast<SunAperture*>(getPart("icon", false));
+    if (!aperture) return false;
+
+    QStringList disabledList = QString(aperture->disabledNodes.getValue().getString()).split(";", QString::SkipEmptyParts);
     QVector< QPair<TShapeKit*, Transform> > surfacesList;
     instanceRoot->collectShapeTransforms(disabledList, surfacesList);
     if (surfacesList.isEmpty()) return false;
@@ -156,8 +148,7 @@ bool SunKit::findTexture(int xPixels, int yPixels, InstanceNode* instanceRoot)
     for (auto& s : surfacesList)
         s.second = tSun*s.second;
 
-    SunAperture* shape = static_cast<SunAperture*>(getPart("icon", false));
-    if (!shape) return false;
-    shape->findTexture(xPixels, yPixels, surfacesList);
+
+    aperture->findTexture(sizeX, sizeY, surfacesList, this);
     return true;
 }

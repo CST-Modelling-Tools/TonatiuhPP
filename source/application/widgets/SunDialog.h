@@ -11,8 +11,6 @@ class QItemSelectionModel;
 class QTabWidget;
 class SceneModel;
 class SunKit;
-class ShapeRT;
-class ShapeFactory;
 class SunShape;
 class SunFactory;
 
@@ -29,18 +27,18 @@ class SunDialog: public QDialog
     Q_OBJECT
 
 public:
-    SunDialog(SceneModel& sceneModel, SunKit* currentLightKit, QMap<QString, SunFactory*> sunShapeMap, QWidget* parent = 0);
+    SunDialog(SceneModel* sceneModel, SunKit* sunKit, QMap<QString, SunFactory*> sunShapeMap, QWidget* parent = 0);
     ~SunDialog();
 
-    SunKit* getLightKit();
+    SunKit* getSunKit();
 
 public slots:
     void SetValue(SoNode* node, QString parameter, QString value);
 
 protected slots:
     void ChangeSunshape(int index);
-    void AddNodeToDisabledNodeList();
-    void RemoveNodeFromDisabledNodeList();
+    void addNode();
+    void removeNode();
 
 private:
     Ui::SunDialog* ui;
@@ -51,8 +49,8 @@ private:
 
     SceneModel* m_sceneModel;
     QItemSelectionModel* m_selectionModel;
-    SunKit* m_lightKitOld;
-    SunShape* m_sunNew;
+    SunKit* m_sunKit;
+    SunShape* m_sunShape;
     QMap<QString, SunFactory*> m_sunShapeMap;
     int m_currentSunShapeIndex;
 };

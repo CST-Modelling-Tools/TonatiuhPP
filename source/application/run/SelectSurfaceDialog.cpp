@@ -1,11 +1,12 @@
+#include "SelectSurfaceDialog.h"
+#include "ui_selectsurfacedialog.h"
+
 #include <QItemSelectionModel>
 #include <QMessageBox>
 
-#include "SelectSurfaceDialog.h"
-#include "tree/SceneFilter.h"
-
 #include "kernel/run/InstanceNode.h"
 #include "kernel/scene/TShapeKit.h"
+#include "tree/SceneFilter.h"
 #include "tree/SceneModel.h"
 #include "tree/SceneView.h"
 
@@ -14,27 +15,29 @@
  */
 SelectSurfaceDialog::SelectSurfaceDialog(SceneModel& model, bool enableLight, QWidget* parent):
     QDialog(parent),
+    ui(new Ui::SelectSurfaceDialog),
     m_isLightVisible(enableLight),
     m_model(&model)
 {
-    setupUi(this);
+    ui->setupUi(this);
 
     if (!enableLight)
     {
-        lightRadio->setVisible(false);
-        sceneRadio->setVisible(false);
+        ui->lightRadio->setVisible(false);
+        ui->sceneRadio->setVisible(false);
     }
 
     m_filter = new SceneFilter(this);
     m_filter->setSourceModel(m_model);
-    sceneModelView->setModel(m_filter);
+    ui->sceneModelView->setModel(m_filter);
 
     QModelIndex viewLayoutIndex = model.IndexFromUrl("//");
-    sceneModelView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    sceneModelView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    sceneModelView->setSelectionMode(QAbstractItemView::SingleSelection);
-    sceneModelView->setRootIsDecorated(true);
-    sceneModelView->setRootIndex(viewLayoutIndex);
+    ui->sceneModelView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->sceneModelView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->sceneModelView->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->sceneModelView->setRootIsDecorated(true);
+    ui->sceneModelView->setRootIndex(viewLayoutIndex);
+    ui->sceneModelView->expandToDepth(1);
 }
 
 /*!
@@ -42,9 +45,9 @@ SelectSurfaceDialog::SelectSurfaceDialog(SceneModel& model, bool enableLight, QW
  */
 SelectSurfaceDialog::~SelectSurfaceDialog()
 {
+    delete ui;
     delete m_filter;
 }
-
 
 void SelectSurfaceDialog::SetShapeTypeFilters(QVector<QString> filters)
 {
@@ -56,8 +59,8 @@ void SelectSurfaceDialog::SetShapeTypeFilters(QVector<QString> filters)
  */
 void SelectSurfaceDialog::accept()
 {
-    QItemSelectionModel* selectionModel = sceneModelView->selectionModel();
-    if (sceneRadio->isChecked() && selectionModel->hasSelection() )
+    QItemSelectionModel* selectionModel = ui->sceneModelView->selectionModel();
+    if (ui->sceneRadio->isChecked() && selectionModel->hasSelection() )
     {
         QModelIndex selectedIndex = selectionModel->currentIndex();
         QModelIndex currentIndex = m_filter->mapToSource(selectedIndex);
@@ -79,10 +82,10 @@ void SelectSurfaceDialog::accept()
  */
 QString SelectSurfaceDialog::GetSelectedSurfaceURL() const
 {
-    if (m_isLightVisible && lightRadio->isChecked())
+    if (m_isLightVisible && ui->lightRadio->isChecked())
         return "//Light";
 
-    QItemSelectionModel* selectionModel = sceneModelView->selectionModel();
+    QItemSelectionModel* selectionModel = ui->sceneModelView->selectionModel();
 
     QModelIndex selectedIndex = selectionModel->currentIndex();
     QModelIndex currentIndex = m_filter->mapToSource(selectedIndex);

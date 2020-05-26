@@ -191,7 +191,7 @@ int ScriptRayTracer::SetSunPositionToScene()
             if (m_sunPosistionChanged) {
                 lightKit->azimuth.setValue(m_sunAzimuth);
                 lightKit->elevation.setValue(m_sunElevation);
-                lightKit->updatePosition();
+                lightKit->updateTransform();
             }
             return 1;
         }

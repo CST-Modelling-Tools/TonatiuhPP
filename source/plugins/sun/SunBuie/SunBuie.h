@@ -21,7 +21,7 @@ public:
 
 protected:
      ~SunBuie();
-     static void updateCSR(void* data, SoSensor*);
+     static void update_csr(void* data, SoSensor*);
 
 private:
      double chiValue(double csr) const;
@@ -46,8 +46,8 @@ private:
      double m_heightCS;
      double m_probabilitySD;
 
-     static const double m_minCRSValue;
-     static const double m_maxCRSValue;
+     static const double s_csrMin;
+     static const double s_csrMax;
 };
 
 

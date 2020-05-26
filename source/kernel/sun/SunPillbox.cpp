@@ -8,16 +8,16 @@ SO_NODE_SOURCE(SunPillbox)
 
 void SunPillbox::initClass()
 {
-    SO_NODE_INIT_CLASS(SunPillbox, SunShape, "SunAbstract");
+    SO_NODE_INIT_CLASS(SunPillbox, SunShape, "SunShape");
 }
 
 SunPillbox::SunPillbox()
 {
     SO_NODE_CONSTRUCTOR(SunPillbox);
     SO_NODE_ADD_FIELD( thetaMax, (4.65e-3) );
-    updateTheta(this, 0);
+    update_thetaMax(this, 0);
 
-    m_sensor_thetaMax = new SoFieldSensor(updateTheta, this);
+    m_sensor_thetaMax = new SoFieldSensor(update_thetaMax, this);
     m_sensor_thetaMax->attach(&thetaMax);
 }
 
@@ -26,7 +26,7 @@ SunPillbox::~SunPillbox()
     delete m_sensor_thetaMax;
 }
 
-void SunPillbox::updateTheta(void* data, SoSensor*)
+void SunPillbox::update_thetaMax(void* data, SoSensor*)
 {
     SunPillbox* sun = (SunPillbox*) data;
     sun->m_sinThetaMax = sin(sun->thetaMax.getValue());
@@ -56,9 +56,10 @@ SoNode* SunPillbox::copy(SbBool copyConnections) const
 {
 	// Use the standard version of the copy method to create
 	// a copy of this instance, including its field data
-    SunPillbox* sun = dynamic_cast<SunPillbox*>(SoNode::copy(copyConnections) );
+    SunPillbox* sun = dynamic_cast<SunPillbox*>(SoNode::copy(copyConnections));
 
     sun->thetaMax = thetaMax;
+    sun->m_sinThetaMax = m_sinThetaMax;
 
     return sun;
 }

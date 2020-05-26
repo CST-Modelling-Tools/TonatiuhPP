@@ -1,3 +1,6 @@
+#include "FluxAnalysisDialog.h"
+#include "ui_fluxanalysisdialog.h"
+
 #include <cmath>
 
 #include <QFileDialog>
@@ -13,7 +16,6 @@
 #include <Inventor/nodes/SoTransform.h>
 
 #include "FluxAnalysis.h"
-#include "FluxAnalysisDialog.h"
 #include "SelectSurfaceDialog.h"
 #include "tree/SceneModel.h"
 #include "kernel/air/Air.h"
@@ -30,9 +32,6 @@
 #include "libraries/geometry/gcf.h"
 
 
-/******************************************
- * FluxAnalysisDialog
- *****************************************/
 /*!
  * Create dialog object
  */
@@ -41,73 +40,70 @@ FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* currentScene, SceneModel& curr
                                        int sunWidthDivisions, int sunHeightDivisions,
                                        Random* randomDeviate,  QWidget* parent):
     QDialog(parent),
+    ui(new Ui::FluxAnalysisDialog),
     m_currentSurfaceURL(""),
     m_pCurrentSceneModel(&currentSceneModel),
     m_pGridWidthVal(0),
     m_pGridHeightVal(0),
     m_pNOfRays (0),
-    m_fluxLabelString(QString("Flux((unit power)/(unit length)^2)"))
+    m_fluxLabelString(QString("Flux((unit power)/m^2"))
 {
+    ui->setupUi(this);
+
     m_fluxAnalysis = new FluxAnalysis(currentScene, currentSceneModel, rootSeparatorInstance, sunWidthDivisions, sunHeightDivisions, randomDeviate);
-    setupUi(this);
 
-    QSize windowSize = size();
-    QList<int> sizes;
-    sizes << windowSize.width() * 0.3 << windowSize.width() * 0.7;
-    splitter->setSizes(sizes);
+//    QSize resultsWidgetSize = ui->resultsWidget->size();
+//    int resultsWidgetSizeHeight = resultsWidgetSize.height();
 
-    QSize resultsWidgetSize = resultsWidget->size();
-    int resultsWidgetSizeHeight = resultsWidgetSize.height();
-
-    contourPlotWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.34);
-    sectorsWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.34);
-    statisticalWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.25);
+//    ui->contourPlotWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.34);
+//    ui->sectorsWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.34);
+//    ui->statisticalWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.25);
 
     m_pGridWidthVal = new QIntValidator(2, 999999999, this);
-    gridWidthLine->setValidator(m_pGridWidthVal);
+    ui->gridWidthLine->setValidator(m_pGridWidthVal);
     m_pGridHeightVal = new QIntValidator (2, 999999999, this);
-    gridHeightLine->setValidator(m_pGridHeightVal);
+    ui->gridHeightLine->setValidator(m_pGridHeightVal);
 
     m_pNOfRays = new QIntValidator(1, 999999999, this);
 
-    connect(selectButton, SIGNAL(clicked()), this, SLOT(SelectSurface()) );
-    connect(sidesCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeCurrentSurfaceSide()) );
-    connect(surfaceEdit, SIGNAL(editingFinished()), this, SLOT(ChangeCurrentSurface()) );
-    connect(runButton, SIGNAL(clicked()), this, SLOT(Run()) );
-    connect(hSectorXCoordSpin, SIGNAL(valueChanged(double)), this, SLOT(UpdateSectorPlotSlot()) );
-    connect(hSectorYCoordSpin, SIGNAL(valueChanged(double)), this, SLOT(UpdateSectorPlotSlot()) );
-    connect(gridWidthLine, SIGNAL(editingFinished()), this, SLOT(UpdateAnalysis()) );
-    connect(gridHeightLine, SIGNAL(editingFinished()), this, SLOT(UpdateAnalysis()) );
-    connect(lengthUnitLine, SIGNAL(editingFinished()), this, SLOT(UpdateLabelsUnits()) );
-    connect(powerUnitLine, SIGNAL(editingFinished()), this, SLOT(UpdateLabelsUnits()) );
-    connect(selectFileButton, SIGNAL(clicked()), this, SLOT(SelectExportFile()) );
-    connect(exportButton, SIGNAL(clicked()), this, SLOT(ExportData()) );
-    connect(storeTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(SaveCoordsExport()) );
+    connect(ui->selectButton, SIGNAL(clicked()), this, SLOT(SelectSurface()) );
+    connect(ui->sidesCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeCurrentSurfaceSide()) );
+    connect(ui->surfaceEdit, SIGNAL(editingFinished()), this, SLOT(ChangeCurrentSurface()) );
+    connect(ui->runButton, SIGNAL(clicked()), this, SLOT(Run()) );
+    connect(ui->hSectorXCoordSpin, SIGNAL(valueChanged(double)), this, SLOT(UpdateSectorPlotSlot()) );
+    connect(ui->hSectorYCoordSpin, SIGNAL(valueChanged(double)), this, SLOT(UpdateSectorPlotSlot()) );
+    connect(ui->gridWidthLine, SIGNAL(editingFinished()), this, SLOT(UpdateAnalysis()) );
+    connect(ui->gridHeightLine, SIGNAL(editingFinished()), this, SLOT(UpdateAnalysis()) );
+    connect(ui->lengthUnitLine, SIGNAL(editingFinished()), this, SLOT(UpdateLabelsUnits()) );
+    connect(ui->powerUnitLine, SIGNAL(editingFinished()), this, SLOT(UpdateLabelsUnits()) );
+    connect(ui->selectFileButton, SIGNAL(clicked()), this, SLOT(SelectExportFile()) );
+    connect(ui->exportButton, SIGNAL(clicked()), this, SLOT(ExportData()) );
+    connect(ui->storeTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(SaveCoordsExport()) );
 
     // configure axis rect:
-    contourPlotWidget->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom); // this will also allow rescaling the color scale by dragging/zooming
-    contourPlotWidget->axisRect()->setupFullAxesBox(true);
+    ui->contourPlotWidget->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom); // this will also allow rescaling the color scale by dragging/zooming
+    ui->contourPlotWidget->axisRect()->setupFullAxesBox(true);
 
-    contourPlotWidget->plotLayout()->insertRow(0);
-    contourPlotWidget->plotLayout()->addElement(0, 0, new QCPTextElement(contourPlotWidget, "Incident Flux Distribution") );
-    contourPlotWidget->xAxis->setLabel("X (unit length)");
-    contourPlotWidget->yAxis->setLabel("Y (unit length)");
+    ui->contourPlotWidget->plotLayout()->insertRow(0);
+    ui->contourPlotWidget->plotLayout()->addElement(0, 0, new QCPTextElement(ui->contourPlotWidget, "Incident Flux Distribution") );
+    ui->contourPlotWidget->xAxis->setLabel("X (unit length)");
+    ui->contourPlotWidget->yAxis->setLabel("Y (unit length)");
 
-    horizontaSectorPlot->plotLayout()->insertRow(0);
-    horizontaSectorPlot->plotLayout()->addElement(0, 0, new QCPTextElement(horizontaSectorPlot, "Horizontal Sector") );
+    ui->horizontaSectorPlot->plotLayout()->insertRow(0);
+    ui->horizontaSectorPlot->plotLayout()->addElement(0, 0, new QCPTextElement(ui->horizontaSectorPlot, "Horizontal Sector") );
     // give the axes some labels:
-    horizontaSectorPlot->xAxis->setLabel("Y (unit length)");
-    horizontaSectorPlot->yAxis->setLabel("Flux ( (unit power) / (unit length)^2 )");
+    ui->horizontaSectorPlot->xAxis->setLabel("Y (unit length)");
+    ui->horizontaSectorPlot->yAxis->setLabel("Flux ( (unit power) / (unit length)^2 )");
 
-    verticalSectorPlot->plotLayout()->insertRow(0);
-    verticalSectorPlot->plotLayout()->addElement(0, 0, new QCPTextElement(verticalSectorPlot, "Vertical Sector") );
+    ui->verticalSectorPlot->plotLayout()->insertRow(0);
+    ui->verticalSectorPlot->plotLayout()->addElement(0, 0, new QCPTextElement(ui->verticalSectorPlot, "Vertical Sector") );
     // give the axes some labels:
-    verticalSectorPlot->xAxis->setLabel("X (unit length)");
-    verticalSectorPlot->yAxis->setLabel("Flux ( (unit power) / (unit length)^2 )");
+    ui->verticalSectorPlot->xAxis->setLabel("X (unit length)");
+    ui->verticalSectorPlot->yAxis->setLabel("Flux ( (unit power) / (unit length)^2 )");
 
     // give the y-axes an initial range:
-    verticalSectorPlot->yAxis->setRange(0, 1.08);
-    horizontaSectorPlot->yAxis->setRange(0, 1.08);
+    ui->verticalSectorPlot->yAxis->setRange(0, 1.08);
+    ui->horizontaSectorPlot->yAxis->setRange(0, 1.08);
 }
 
 /*!
@@ -115,6 +111,7 @@ FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* currentScene, SceneModel& curr
  */
 FluxAnalysisDialog::~FluxAnalysisDialog()
 {
+    delete ui;
     delete m_fluxAnalysis;
     delete m_pGridWidthVal;
     delete m_pGridHeightVal;
@@ -124,14 +121,15 @@ FluxAnalysisDialog::~FluxAnalysisDialog()
 /*!
  * Resizes results widget elements sizes when the dialog windows size is changed.
  */
-void FluxAnalysisDialog::resizeEvent(QResizeEvent* /*event*/)
+void FluxAnalysisDialog::resizeEvent(QResizeEvent* event)
 {
-	QSize resultsWidgetSize = resultsWidget->size();
-	int resultsWidgetSizeHeight = resultsWidgetSize.height();
+    QDialog::resizeEvent(event);
+//    QSize resultsWidgetSize = ui->resultsWidget->size();
+//    int resultsWidgetSizeHeight = resultsWidgetSize.height();
 
-    contourPlotWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.34);
-    sectorsWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.34);
-    statisticalWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.25);
+//    ui->contourPlotWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.34);
+//    ui->sectorsWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.34);
+//    ui->statisticalWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.25);
 }
 
 /*!
@@ -139,24 +137,24 @@ void FluxAnalysisDialog::resizeEvent(QResizeEvent* /*event*/)
  */
 void FluxAnalysisDialog::ChangeCurrentSurface()
 {
-	QString selectedSurfaceURL = surfaceEdit->text();
+    QString selectedSurfaceURL = ui->surfaceEdit->text();
     if (!selectedSurfaceURL.isEmpty() && (selectedSurfaceURL != m_currentSurfaceURL) )
 	{
         QString surfaceType = m_fluxAnalysis->GetSurfaceType(selectedSurfaceURL);
-        if (!surfaceType.isEmpty() && (surfaceType == "ShapeCylinder" || surfaceType == "ShapeFlatDisk" || surfaceType == "ShapeFlatRectangle") )
+        if (!surfaceType.isEmpty() && (surfaceType == "Cylinder" || surfaceType == "ShapeFlatDisk" || surfaceType == "Plane") )
 		{
 			m_fluxAnalysis->clearPhotonMap();
-            appendCheck->setChecked(false);
-            appendCheck->setEnabled(false);
+            ui->appendCheck->setChecked(false);
+            ui->appendCheck->setEnabled(false);
 			ClearCurrentAnalysis();
-            surfaceEdit->setText(selectedSurfaceURL);
+            ui->surfaceEdit->setText(selectedSurfaceURL);
 			m_currentSurfaceURL = selectedSurfaceURL;
             UpdateSurfaceSides(m_currentSurfaceURL);
 		}
         else QMessageBox::warning(this, tr("Tonatiuh"),
                               tr("The surface url defined is not valid.") );
 	}
-    else surfaceEdit->setText(m_currentSurfaceURL);
+    else ui->surfaceEdit->setText(m_currentSurfaceURL);
 }
 
 /*
@@ -165,8 +163,8 @@ void FluxAnalysisDialog::ChangeCurrentSurface()
 void FluxAnalysisDialog::ChangeCurrentSurfaceSide()
 {
     m_fluxAnalysis->clearPhotonMap();
-    appendCheck->setChecked(false);
-    appendCheck->setEnabled(false);
+    ui->appendCheck->setChecked(false);
+    ui->appendCheck->setEnabled(false);
     ClearCurrentAnalysis();
 }
 
@@ -175,12 +173,12 @@ void FluxAnalysisDialog::ChangeCurrentSurfaceSide()
  */
 void FluxAnalysisDialog::SaveCoordsExport()
 {
-    if (storeTypeCombo->currentText() == "IMAGE.PNG" || storeTypeCombo->currentText() == "IMAGE.JPG")
+    if (ui->storeTypeCombo->currentText() == "IMAGE.PNG" || ui->storeTypeCombo->currentText() == "IMAGE.JPG")
     {
-        saveCoordsCheckBox->setChecked(false);
-        saveCoordsCheckBox->setDisabled(true);
+        ui->saveCoordsCheckBox->setChecked(false);
+        ui->saveCoordsCheckBox->setDisabled(true);
     }
-    else saveCoordsCheckBox->setEnabled(true);
+    else ui->saveCoordsCheckBox->setEnabled(true);
 }
 
 /*
@@ -196,40 +194,40 @@ void FluxAnalysisDialog::ExportData()
 		return;
 	}
 
-    if (fileDirEdit->text().isEmpty() )
+    if (ui->fileDirEdit->text().isEmpty() )
 	{
         QString message = QString(tr("Directory not valid") );
         QMessageBox::warning(this,  "Tonatiuh", message);
 		return;
 	}
 
-    if (fileNameEdit->text().isEmpty() )
+    if (ui->fileNameEdit->text().isEmpty() )
 	{
         QString message = QString(tr("File name not valid") );
         QMessageBox::warning(this,  "Tonatiuh", message);
 		return;
 	}
 
-    QString exportDirectory(fileDirEdit->text() );
-	QString storeType = storeTypeCombo->currentText();
-	QString exportFileName = fileNameEdit->text();
+    QString exportDirectory(ui->fileDirEdit->text() );
+    QString storeType = ui->storeTypeCombo->currentText();
+    QString exportFileName = ui->fileNameEdit->text();
 
     QFileInfo exportFileInfo(exportFileName);
-    if (storeType == QLatin1String("ASCII") )
+    if (storeType == "ASCII")
 	{
-        if (saveCoordsCheckBox->isChecked() )
+        if (ui->saveCoordsCheckBox->isChecked() )
             m_fluxAnalysis->ExportAnalysis(exportDirectory, exportFileName, true);
 		else
             m_fluxAnalysis->ExportAnalysis(exportDirectory, exportFileName, false);
 
 	}
-    else if (storeType == QLatin1String("IMAGE.JPG") )
+    else if (storeType == "IMAGE.JPG")
 	{
         if (exportFileInfo.completeSuffix().compare("jpg") ) exportFileName.append(".jpg");
 
         QFile exportFile(exportDirectory + "/" + exportFileName);
         exportFile.open(QIODevice::WriteOnly);
-        contourPlotWidget->saveJpg(exportFile.fileName(), 0, 0, 1.0, -1);   //(QString &  fileName, int  width = 0, int  height = 0, double  scale = 1.0, int  quality = -1  )
+        ui->contourPlotWidget->saveJpg(exportFile.fileName(), 0, 0, 1.0, -1);   //(QString &  fileName, int  width = 0, int  height = 0, double  scale = 1.0, int  quality = -1  )
 		exportFile.close();
 	}
     else if (storeType == "IMAGE.PNG")
@@ -237,7 +235,7 @@ void FluxAnalysisDialog::ExportData()
         if (exportFileInfo.completeSuffix().compare("png") ) exportFileName.append(".png");
         QFile exportFile(exportDirectory + "/" + exportFileName);
         exportFile.open(QIODevice::WriteOnly);
-        contourPlotWidget->savePng(exportFile.fileName(), 0, 0, 1.0, -1);   //(QString &  fileName, int  width = 0, int  height = 0, double  scale = 1.0, int  quality = -1  )
+        ui->contourPlotWidget->savePng(exportFile.fileName(), 0, 0, 1.0, -1);   //(QString &  fileName, int  width = 0, int  height = 0, double  scale = 1.0, int  quality = -1  )
 		exportFile.close();
 	}
 
@@ -261,7 +259,7 @@ void FluxAnalysisDialog::Run()
 	}
 
 	//Check the number of rays
-	QString nOfRays = nRaysLine->text();
+    QString nOfRays = ui->nRaysLine->text();
 	int pos = 0;
     if (m_pNOfRays->validate(nOfRays, pos) != QValidator::Acceptable)
 	{
@@ -271,10 +269,10 @@ void FluxAnalysisDialog::Run()
 	}
 
 	//Check the grid division
-    QString widthDivisions = gridWidthLine->text();
+    QString widthDivisions = ui->gridWidthLine->text();
     QValidator::State widthState = m_pGridWidthVal->validate(widthDivisions, pos);
 
-    QString heightDivisions = gridHeightLine->text();
+    QString heightDivisions = ui->gridHeightLine->text();
     QValidator::State heightSate = m_pGridHeightVal->validate(heightDivisions, pos);
 
     if ( (widthState != QValidator::Acceptable) || (heightSate != QValidator::Acceptable) )
@@ -284,12 +282,12 @@ void FluxAnalysisDialog::Run()
 		return;
 	}
 
-	QString surfaceSide = sidesCombo->currentText();
-    bool increasePhotonMap = (appendCheck->isEnabled() && appendCheck->isChecked() );
+    QString surfaceSide = ui->sidesCombo->currentText();
+    bool increasePhotonMap = (ui->appendCheck->isEnabled() && ui->appendCheck->isChecked() );
     m_fluxAnalysis->RunFluxAnalysis(m_currentSurfaceURL, surfaceSide, nOfRays.toInt(), increasePhotonMap, heightDivisions.toInt(), widthDivisions.toInt() );
 
 	UpdateAnalysis();
-    appendCheck->setEnabled(true);
+    ui->appendCheck->setEnabled(true);
 
 	QDateTime endTime = QDateTime::currentDateTime();
     std::cout << "Elapsed time: " << startTime.secsTo(endTime) << std::endl;
@@ -301,10 +299,10 @@ void FluxAnalysisDialog::Run()
 void FluxAnalysisDialog::UpdateAnalysis()
 {
 	int pos = 0;
-    QString withValue = gridWidthLine->text();
+    QString withValue = ui->gridWidthLine->text();
     QValidator::State widthState = m_pGridWidthVal->validate(withValue, pos);
 
-    QString heightValue = gridHeightLine->text();
+    QString heightValue = ui->gridHeightLine->text();
     QValidator::State heightSate = m_pGridHeightVal->validate(heightValue, pos);
 
     if ( (widthState != QValidator::Acceptable) || (heightSate != QValidator::Acceptable) )
@@ -374,14 +372,14 @@ void FluxAnalysisDialog::UpdateAnalysis()
 void FluxAnalysisDialog::UpdateStatistics(double totalPower, double minimumFlux, double averageFlux, double maximumFlux,
                                           double maxXCoord, double maxYCoord, double error, double uniformity, double gravityX, double gravityY)
 {
-    totalPowerValue->setText(QString::number(totalPower) );
-    minimumFluxValue->setText(QString::number(minimumFlux) );
-    averageFluxValue->setText(QString::number(averageFlux) );
-    maximumFluxValue->setText(QString::number(maximumFlux) );
-    maxCoordinatesValue->setText(QString(QLatin1String("%1 ; %2")).arg(QString::number(maxXCoord), QString::number(maxYCoord) ) );
-    errorValue->setText(QString::number(error) );
-    uniformityValue->setText(QString::number(uniformity) );
-    centroidValue->setText(QString(QLatin1String("%1 ; %2")).arg(QString::number(gravityX), QString::number(gravityY) ) );
+    ui->totalPowerValue->setText(QString::number(totalPower) );
+    ui->minimumFluxValue->setText(QString::number(minimumFlux) );
+    ui->averageFluxValue->setText(QString::number(averageFlux) );
+    ui->maximumFluxValue->setText(QString::number(maximumFlux) );
+    ui->maxCoordinatesValue->setText(QString("%1 ; %2").arg(QString::number(maxXCoord), QString::number(maxYCoord) ) );
+    ui->errorValue->setText(QString::number(error) );
+    ui->uniformityValue->setText(QString::number(uniformity) );
+    ui->centroidValue->setText(QString("%1 ; %2").arg(QString::number(gravityX), QString::number(gravityY) ) );
 }
 
 /*
@@ -390,24 +388,24 @@ void FluxAnalysisDialog::UpdateStatistics(double totalPower, double minimumFlux,
 void FluxAnalysisDialog::UpdateFluxMapPlot(int** photonCounts, double wPhoton, int widthDivisions, int heightDivisions, double xmin, double ymin, double xmax, double ymax)
 {
 	//Delete previous colormap, scale
-	contourPlotWidget->clearPlottables();
-	contourPlotWidget->clearItems();
+    ui->contourPlotWidget->clearPlottables();
+    ui->contourPlotWidget->clearItems();
 
 	//see how many elements there are
-	int elementCount = contourPlotWidget->plotLayout()->elementCount();
+    int elementCount = ui->contourPlotWidget->plotLayout()->elementCount();
 	//loop over the elements
     for (int i = 0; i < elementCount; i++)
 	{
         //test to see if any of the layout elements are of QCPColorScale type
-        if (qobject_cast<QCPColorScale*>(contourPlotWidget->plotLayout()->elementAt(i) ) )
-            contourPlotWidget->plotLayout()->removeAt(i);
+        if (qobject_cast<QCPColorScale*>(ui->contourPlotWidget->plotLayout()->elementAt(i) ) )
+            ui->contourPlotWidget->plotLayout()->removeAt(i);
         //collapse the empty elements
-        contourPlotWidget->plotLayout()->simplify();
+        ui->contourPlotWidget->plotLayout()->simplify();
 	}
 
 	// Create a QCPColorMap object to draw flux distribution
-    QCPColorMap* colorMap = new QCPColorMap(contourPlotWidget->xAxis, contourPlotWidget->yAxis);
-//    contourPlotWidget->addPlottable(colorMap);
+    QCPColorMap* colorMap = new QCPColorMap(ui->contourPlotWidget->xAxis, ui->contourPlotWidget->yAxis);
+//    ui->contourPlotWidget->addPlottable(colorMap);
 
     colorMap->data()->setSize(widthDivisions, heightDivisions);   // we want the color map to have widthDivisions * heightDivisions data points
     colorMap->data()->setRange(QCPRange(xmin, xmax), QCPRange(ymin, ymax) );      // and span the coordinate range -4..4 in both key (x) and value (y) dimensions
@@ -426,8 +424,8 @@ void FluxAnalysisDialog::UpdateFluxMapPlot(int** photonCounts, double wPhoton, i
 	}
 
 	// add a color scale:
-    QCPColorScale* colorScale = new QCPColorScale(contourPlotWidget);
-    contourPlotWidget->plotLayout()->addElement(1, 1, colorScale);   // add it to the right of the main axis rect
+    QCPColorScale* colorScale = new QCPColorScale(ui->contourPlotWidget);
+    ui->contourPlotWidget->plotLayout()->addElement(1, 1, colorScale);   // add it to the right of the main axis rect
 
     colorScale->setType(QCPAxis::atRight);   // scale shall be vertical bar with tick/axis labels right (actually atRight is already the default)
     colorMap->setColorScale(colorScale);   // associate the color map with the color scale
@@ -444,13 +442,13 @@ void FluxAnalysisDialog::UpdateFluxMapPlot(int** photonCounts, double wPhoton, i
     colorScale->setRangeDrag(false);
 
 	// make sure the axis rect and color scale synchronize their bottom and top margins (so they line up):
-    QCPMarginGroup* marginGroup = new QCPMarginGroup(contourPlotWidget);
-    contourPlotWidget->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
+    QCPMarginGroup* marginGroup = new QCPMarginGroup(ui->contourPlotWidget);
+    ui->contourPlotWidget->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
     colorScale->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
 
 	// rescale axes and update plot view
-	contourPlotWidget->rescaleAxes();
-	contourPlotWidget->replot();
+    ui->contourPlotWidget->rescaleAxes();
+    ui->contourPlotWidget->replot();
 }
 
 /*
@@ -459,21 +457,21 @@ void FluxAnalysisDialog::UpdateFluxMapPlot(int** photonCounts, double wPhoton, i
 void FluxAnalysisDialog::CreateSectorPlots(double xmin, double ymin, double xmax, double ymax)
 {
 	// Create a vertical and horizontal line for sectors
-    QCPItemLine* tickVLine  = new  QCPItemLine(contourPlotWidget);
-    hSectorXCoordSpin->setMinimum(xmin);
-    hSectorXCoordSpin->setMaximum(xmax);
-    hSectorXCoordSpin->setSingleStep( (xmax - xmin) / 10);
-//    contourPlotWidget->addItem(tickVLine);
+    QCPItemLine* tickVLine  = new  QCPItemLine(ui->contourPlotWidget);
+    ui->hSectorXCoordSpin->setMinimum(xmin);
+    ui->hSectorXCoordSpin->setMaximum(xmax);
+    ui->hSectorXCoordSpin->setSingleStep( (xmax - xmin) / 10);
+//    ui->contourPlotWidget->addItem(tickVLine);
 
     tickVLine->start->setCoords(0, ymin - 1);
     tickVLine->end->setCoords(0, ymax + 1);
     tickVLine->setPen(QPen(QColor(137, 140, 140), 1) );
 
-    QCPItemLine* tickHLine = new QCPItemLine(contourPlotWidget);
-    hSectorYCoordSpin->setMinimum(ymin);
-    hSectorYCoordSpin->setMaximum(ymax);
-    hSectorYCoordSpin->setSingleStep( (ymax - ymin) / 10);
-//    contourPlotWidget->addItem(tickHLine);
+    QCPItemLine* tickHLine = new QCPItemLine(ui->contourPlotWidget);
+    ui->hSectorYCoordSpin->setMinimum(ymin);
+    ui->hSectorYCoordSpin->setMaximum(ymax);
+    ui->hSectorYCoordSpin->setSingleStep( (ymax - ymin) / 10);
+//    ui->contourPlotWidget->addItem(tickHLine);
 
     tickHLine->start->setCoords(xmin - 1,  0);
     tickHLine->end->setCoords(xmax + 1, 0);
@@ -485,28 +483,28 @@ void FluxAnalysisDialog::CreateSectorPlots(double xmin, double ymin, double xmax
  */
 void FluxAnalysisDialog::UpdateSectorPlots(int** photonCounts, double wPhoton, int widthDivisions, int heightDivisions, double xmin, double ymin, double xmax, double ymax, double maximumFlux)
 {
-    QCPItemLine* tickVLine  = ( QCPItemLine* ) contourPlotWidget->item(0);
+    QCPItemLine* tickVLine = (QCPItemLine*) ui->contourPlotWidget->item(0);
 	QPointF pointVStart = tickVLine->start->coords();
-    tickVLine->start->setCoords(hSectorXCoordSpin->value(), pointVStart.y() );
+    tickVLine->start->setCoords(ui->hSectorXCoordSpin->value(), pointVStart.y() );
     QPointF pointVEnd = tickVLine->end->coords();
-    tickVLine->end->setCoords(hSectorXCoordSpin->value(), pointVEnd.y() );
+    tickVLine->end->setCoords(ui->hSectorXCoordSpin->value(), pointVEnd.y() );
     tickVLine->setPen(QPen(QColor(137, 140, 140), 1) );
 
-    QCPItemLine* tickHLine  = ( QCPItemLine* ) contourPlotWidget->item(1);
+    QCPItemLine* tickHLine  = ( QCPItemLine* ) ui->contourPlotWidget->item(1);
 	QPointF pointHStart = tickHLine->start->coords();
-    tickHLine->start->setCoords(pointHStart.x(), hSectorYCoordSpin->value() );
+    tickHLine->start->setCoords(pointHStart.x(), ui->hSectorYCoordSpin->value() );
 	QPointF pointHEnd = tickHLine->end->coords();
-    tickHLine->end->setCoords(pointHEnd.x(), hSectorYCoordSpin->value() );
+    tickHLine->end->setCoords(pointHEnd.x(), ui->hSectorYCoordSpin->value() );
     tickHLine->setPen(QPen(QColor(137, 140, 140), 1) );
 
-	contourPlotWidget->replot();
+    ui->contourPlotWidget->replot();
 
 	//Delete previous plots
-	verticalSectorPlot->clearPlottables();
-	horizontaSectorPlot->clearPlottables();
+    ui->verticalSectorPlot->clearPlottables();
+    ui->horizontaSectorPlot->clearPlottables();
 
-	double xCoordSector = hSectorXCoordSpin->value();
-	double yCoordSector = hSectorYCoordSpin->value();
+    double xCoordSector = ui->hSectorXCoordSpin->value();
+    double yCoordSector = ui->hSectorYCoordSpin->value();
 
     double widthCell = (xmax - xmin) / widthDivisions;
     double heightCell = (ymax - ymin) / heightDivisions;
@@ -533,21 +531,21 @@ void FluxAnalysisDialog::UpdateSectorPlots(int** photonCounts, double wPhoton, i
 	}
 
 	// create graph and assign data to it:
-	verticalSectorPlot->addGraph();
-    verticalSectorPlot->graph(0)->setData(verticalXValues, verticalYValues);
+    ui->verticalSectorPlot->addGraph();
+    ui->verticalSectorPlot->graph(0)->setData(verticalXValues, verticalYValues);
 	// set axes ranges, so we see all data:
-    verticalSectorPlot->xAxis->setRange(ymin, ymax);
-    verticalSectorPlot->yAxis->setRange(0, 1.2 * maximumFlux);
+    ui->verticalSectorPlot->xAxis->setRange(ymin, ymax);
+    ui->verticalSectorPlot->yAxis->setRange(0, 1.2 * maximumFlux);
 	//verticalSectorPlot->rescaleAxes();
-	verticalSectorPlot->replot();
+    ui->verticalSectorPlot->replot();
 
 	// create graph and assign data to it:
-	horizontaSectorPlot->addGraph();
-    horizontaSectorPlot->graph(0)->setData(horizontalXValues, horizontalYValues);
+    ui->horizontaSectorPlot->addGraph();
+    ui->horizontaSectorPlot->graph(0)->setData(horizontalXValues, horizontalYValues);
 	// set axes ranges, so we see all data:
-    horizontaSectorPlot->xAxis->setRange(xmin, xmax);
-    horizontaSectorPlot->yAxis->setRange(0, 1.2 * maximumFlux);
-	horizontaSectorPlot->replot();
+    ui->horizontaSectorPlot->xAxis->setRange(xmin, xmax);
+    ui->horizontaSectorPlot->yAxis->setRange(0, 1.2*maximumFlux);
+    ui->horizontaSectorPlot->replot();
 }
 
 /*
@@ -555,36 +553,36 @@ void FluxAnalysisDialog::UpdateSectorPlots(int** photonCounts, double wPhoton, i
  */
 void FluxAnalysisDialog::UpdateLabelsUnits()
 {
-	QString lengthUnitString = lengthUnitLine->text();
-    if (lengthUnitString.isEmpty() ) lengthUnitString = QString("(unit length)");
+    QString lengthUnitString = ui->lengthUnitLine->text();
+    if (lengthUnitString.isEmpty() ) lengthUnitString = "(unit length)";
 
-	QString powerUnitString = powerUnitLine->text();
-    if (powerUnitString.isEmpty() ) powerUnitString = QString("(unit power)");
+    QString powerUnitString = ui->powerUnitLine->text();
+    if (powerUnitString.isEmpty()) powerUnitString = "(unit power)";
 
-    contourPlotWidget->xAxis->setLabel(QString("X (%1)").arg(lengthUnitString) );
-    contourPlotWidget->yAxis->setLabel(QString("Y (%1)").arg(lengthUnitString) );
+    ui->contourPlotWidget->xAxis->setLabel(QString("X (%1)").arg(lengthUnitString) );
+    ui->contourPlotWidget->yAxis->setLabel(QString("Y (%1)").arg(lengthUnitString) );
 
-    horizontaSectorPlot->xAxis->setLabel(QString("Y (%1)").arg(lengthUnitString) );
-    verticalSectorPlot->xAxis->setLabel(QString("X (%1)").arg(lengthUnitString) );
+    ui->horizontaSectorPlot->xAxis->setLabel(QString("Y (%1)").arg(lengthUnitString) );
+    ui->verticalSectorPlot->xAxis->setLabel(QString("X (%1)").arg(lengthUnitString) );
 
-    horizontaSectorPlot->yAxis->setLabel(QString("Flux(%1/%2^2)").arg(powerUnitString, lengthUnitString) );
-    verticalSectorPlot->yAxis->setLabel(QString("Flux(%1/%2^2)").arg(powerUnitString, lengthUnitString) );
+    ui->horizontaSectorPlot->yAxis->setLabel(QString("Flux(%1/%2^2)").arg(powerUnitString, lengthUnitString) );
+    ui->verticalSectorPlot->yAxis->setLabel(QString("Flux(%1/%2^2)").arg(powerUnitString, lengthUnitString) );
 
     m_fluxLabelString = QString("Flux(%1/%2^2)").arg(powerUnitString, lengthUnitString);
 
-    QCPColorMap* colorMapPlot = qobject_cast<QCPColorMap*>(contourPlotWidget->plottable() );
+    QCPColorMap* colorMapPlot = qobject_cast<QCPColorMap*>(ui->contourPlotWidget->plottable() );
 
 	//see how many elements there are
-	int elementCount = contourPlotWidget->plotLayout()->elementCount();
+    int elementCount = ui->contourPlotWidget->plotLayout()->elementCount();
 	//loop over the elements
     for (int i = 0; i < elementCount; i++) {
         //test to see if any of the layout elements are of QCPColorScale type
-        if (qobject_cast<QCPColorScale*>(contourPlotWidget->plotLayout()->elementAt(i) ) )
+        if (qobject_cast<QCPColorScale*>(ui->contourPlotWidget->plotLayout()->elementAt(i) ) )
             colorMapPlot->colorScale()->axis()->setLabel(m_fluxLabelString);
     }
-	contourPlotWidget->replot();
-	horizontaSectorPlot->replot();
-	verticalSectorPlot->replot();
+    ui->contourPlotWidget->replot();
+    ui->horizontaSectorPlot->replot();
+    ui->verticalSectorPlot->replot();
 }
 
 /*
@@ -600,8 +598,8 @@ void FluxAnalysisDialog::UpdateSectorPlotSlot()
     double xmax = m_fluxAnalysis->xmaxValue();
     double ymax = m_fluxAnalysis->ymaxValue();
     double wPhoton = m_fluxAnalysis->wPhotonValue();
-    QString withValue = gridWidthLine->text();
-    QString heightValue = gridHeightLine->text();
+    QString withValue = ui->gridWidthLine->text();
+    QString heightValue = ui->gridHeightLine->text();
     int widthDivisions = withValue.toInt();
     int heightDivisions = heightValue.toInt();
     double widthCell = (xmax - xmin) / widthDivisions;
@@ -617,7 +615,7 @@ void FluxAnalysisDialog::UpdateSectorPlotSlot()
 void FluxAnalysisDialog::SelectExportFile()
 {
     QString path = QFileDialog::getExistingDirectory(this, "Choose a directory to save");
-    fileDirEdit->setText(path);
+    ui->fileDirEdit->setText(path);
 }
 
 
@@ -628,16 +626,16 @@ void FluxAnalysisDialog::SelectExportFile()
 void FluxAnalysisDialog::SelectSurface()
 {
     SelectSurfaceDialog selectSurfaceDialog(*m_pCurrentSceneModel, false, this);
-    selectSurfaceDialog.SetShapeTypeFilters({"ShapeFlatRectangle", "ShapeFlatDisk", "ShapeCylinder"});
+    selectSurfaceDialog.SetShapeTypeFilters({"Plane", "Cylinder"});
     if (!selectSurfaceDialog.exec() ) return;
 
 	QString selectedSurfaceURL = selectSurfaceDialog.GetSelectedSurfaceURL();
 
-    if (!selectedSurfaceURL.isEmpty() && (selectedSurfaceURL != m_currentSurfaceURL) )
+    if (!selectedSurfaceURL.isEmpty() && selectedSurfaceURL != m_currentSurfaceURL)
 	{
 		m_fluxAnalysis->clearPhotonMap();
 		ClearCurrentAnalysis();
-        surfaceEdit->setText(selectedSurfaceURL);
+        ui->surfaceEdit->setText(selectedSurfaceURL);
 		m_currentSurfaceURL = selectedSurfaceURL;
         UpdateSurfaceSides(m_currentSurfaceURL);
 	}
@@ -649,43 +647,43 @@ void FluxAnalysisDialog::SelectSurface()
 void FluxAnalysisDialog::ClearCurrentAnalysis()
 {
     //Delete previous sector plots
-    verticalSectorPlot->clearPlottables();
-    verticalSectorPlot->yAxis->setRange(0, 1.05);
-    verticalSectorPlot->replot();
-    horizontaSectorPlot->clearPlottables();
-    horizontaSectorPlot->yAxis->setRange(0, 1.05);
-    horizontaSectorPlot->replot();
+    ui->verticalSectorPlot->clearPlottables();
+    ui->verticalSectorPlot->yAxis->setRange(0, 1.05);
+    ui->verticalSectorPlot->replot();
+    ui->horizontaSectorPlot->clearPlottables();
+    ui->horizontaSectorPlot->yAxis->setRange(0, 1.05);
+    ui->horizontaSectorPlot->replot();
     //Delete previous colormap, scale
-    contourPlotWidget->clearPlottables();
+    ui->contourPlotWidget->clearPlottables();
     //see how many elements there are
-    int elementCount = contourPlotWidget->plotLayout()->elementCount();
+    int elementCount = ui->contourPlotWidget->plotLayout()->elementCount();
     //loop over the elements
     for (int i = 0; i < elementCount; i++)
     {
     //test to see if any of the layout elements are of QCPColorScale type
-    if (qobject_cast<QCPColorScale* > (contourPlotWidget->plotLayout()->elementAt(i) ) )
-    contourPlotWidget->plotLayout()->removeAt(i);
+    if (qobject_cast<QCPColorScale*> (ui->contourPlotWidget->plotLayout()->elementAt(i) ) )
+    ui->contourPlotWidget->plotLayout()->removeAt(i);
     //collapse the empty elements
-    contourPlotWidget->plotLayout()->simplify();
+    ui->contourPlotWidget->plotLayout()->simplify();
     }
-    contourPlotWidget->replot();
+    ui->contourPlotWidget->replot();
 
-    hSectorXCoordSpin->setValue(0.00);
-    hSectorXCoordSpin->setMinimum(0.00);
-    hSectorXCoordSpin->setMaximum(0.00);
-    hSectorYCoordSpin->setValue(0.00);
-    hSectorYCoordSpin->setMinimum(0.00);
-    hSectorYCoordSpin->setMaximum(0.00);
+    ui->hSectorXCoordSpin->setValue(0.00);
+    ui->hSectorXCoordSpin->setMinimum(0.00);
+    ui->hSectorXCoordSpin->setMaximum(0.00);
+    ui->hSectorYCoordSpin->setValue(0.00);
+    ui->hSectorYCoordSpin->setMinimum(0.00);
+    ui->hSectorYCoordSpin->setMaximum(0.00);
 
-    totalPowerValue->setText(QString::number(0.0)  );
-    minimumFluxValue->setText(QString::number(0.0)  );
-    averageFluxValue->setText(QString::number(0.0)  );
-    maximumFluxValue->setText(QString::number(0.0) );
+    ui->totalPowerValue->setText(QString::number(0.0));
+    ui->minimumFluxValue->setText(QString::number(0.0));
+    ui->averageFluxValue->setText(QString::number(0.0));
+    ui->maximumFluxValue->setText(QString::number(0.0));
 
-    maxCoordinatesValue->setText(" ; ");
-    errorValue->setText(QString::number(0.0) );
-    uniformityValue->setText(QString::number(0.0) );
-    centroidValue->setText(" ; ");
+    ui->maxCoordinatesValue->setText(" ; ");
+    ui->errorValue->setText(QString::number(0.0) );
+    ui->uniformityValue->setText(QString::number(0.0) );
+    ui->centroidValue->setText(" ; ");
 }
 
 /*!
@@ -693,26 +691,15 @@ void FluxAnalysisDialog::ClearCurrentAnalysis()
  */
 void FluxAnalysisDialog::UpdateSurfaceSides(QString selectedSurfaceURL)
 {
-    sidesCombo->clear();
+    ui->sidesCombo->clear();
 
     QString surfaceType = m_fluxAnalysis->GetSurfaceType(selectedSurfaceURL);
 
-    if (!surfaceType.isEmpty() )
+    if (surfaceType.isEmpty() ) return;
+
+    if (surfaceType == "Plane" || surfaceType == "ShapeFlatDisk" || surfaceType == "Cylinder")
     {
-            if (surfaceType == QLatin1String("ShapeFlatRectangle") )
-            {
-                    sidesCombo->addItem(QLatin1String("FRONT") );
-                    sidesCombo->addItem(QLatin1String("BACK") );
-            }
-            else if (surfaceType == QLatin1String("ShapeFlatDisk") )
-            {
-                    sidesCombo->addItem("FRONT");
-                    sidesCombo->addItem("BACK");
-            }
-            else if (surfaceType == "ShapeCylinder")
-            {
-                    sidesCombo->addItem("INSIDE");
-                    sidesCombo->addItem("OUTSIDE");
-            }
+        ui->sidesCombo->addItem("front");
+        ui->sidesCombo->addItem("back");
     }
 }

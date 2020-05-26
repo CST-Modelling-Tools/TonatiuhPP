@@ -57,7 +57,7 @@ bool SceneFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParen
         if (!shapeKit) return false;
         ShapeRT* shape = static_cast<ShapeRT*>(shapeKit->getPart("shape", false) );
 
-        if (shape && m_shapeTypeList.contains(shape->getTypeId().getName().getString() ) )
+        if (shape && m_shapeTypeList.contains(shape->getTypeName()))
             return true;
     }
 

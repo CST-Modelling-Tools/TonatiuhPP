@@ -2,9 +2,11 @@
 
 #include <QDialog>
 
-#include "kernel/photons/Photons.h"
+namespace Ui {
+class FluxAnalysisDialog;
+}
 
-#include "ui_fluxanalysisdialog.h"
+#include "kernel/photons/Photons.h"
 
 class InstanceNode;
 class SceneModel;
@@ -14,7 +16,7 @@ class TSceneKit;
 class FluxAnalysis;
 
 
-class FluxAnalysisDialog: public QDialog, private Ui::FluxAnalysisDialog
+class FluxAnalysisDialog: public QDialog
 {
     Q_OBJECT
 
@@ -40,6 +42,8 @@ private slots:
     void SaveCoordsExport();
 
 private:
+    Ui::FluxAnalysisDialog* ui;
+
     void UpdateStatistics(double totalEnergy, double minimumFlux, double averageFlux, double maximumFlux,
                           double maxXCoord, double maxYCoord, double error, double uniformity, double gravityX, double gravityY);
     void UpdateFluxMapPlot(int** photonCounts, double wPhoton, int widthDivisions, int heightDivisions, double xmin, double ymin, double xmax, double ymax);

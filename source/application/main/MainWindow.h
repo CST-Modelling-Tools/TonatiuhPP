@@ -231,7 +231,7 @@ private:
     void WriteSettings();
 
     bool StartOver(const QString& fileName);
-    void setModified(bool value);
+    void setDocumentModified(bool value);
 
     void ShowRaysIn3DView();
     void UpdateLightSize();

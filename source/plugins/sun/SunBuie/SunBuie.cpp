@@ -4,15 +4,15 @@
 #include "libraries/geometry/gcf.h"
 
 
-const double SunBuie::m_minCRSValue = 0.000001;
-const double SunBuie::m_maxCRSValue = 0.849;
+const double SunBuie::s_csrMin = 0.000001;
+const double SunBuie::s_csrMax = 0.849;
 
 
 SO_NODE_SOURCE(SunBuie)
 
 void SunBuie::initClass()
 {
-    SO_NODE_INIT_CLASS(SunBuie, SunShape, "SunAbstract");
+    SO_NODE_INIT_CLASS(SunBuie, SunShape, "SunShape");
 }
 
 SunBuie::SunBuie()
@@ -20,11 +20,11 @@ SunBuie::SunBuie()
     SO_NODE_CONSTRUCTOR(SunBuie);
     SO_NODE_ADD_FIELD( csr, (0.02) );
 
-    m_sensor_csr = new SoFieldSensor(updateCSR, this);
+    m_sensor_csr = new SoFieldSensor(update_csr, this);
     m_sensor_csr->attach(&csr);
 
 	double csrValue = csr.getValue();
-    if (csrValue >= m_minCRSValue && csrValue <= m_maxCRSValue)
+    if (csrValue >= s_csrMin && csrValue <= s_csrMax)
         updateState(csrValue);
 }
 
@@ -99,11 +99,11 @@ SoNode* SunBuie::copy(SbBool copyConnections) const
     return sun;
 }
 
-void SunBuie::updateCSR(void* data, SoSensor*)
+void SunBuie::update_csr(void* data, SoSensor*)
 {
     SunBuie* sunshape = (SunBuie*) data;
 	double csrValue = sunshape->csr.getValue();
-    if (csrValue >= m_minCRSValue && csrValue <= m_maxCRSValue)
+    if (csrValue >= s_csrMin && csrValue <= s_csrMax)
         sunshape->updateState(csrValue);
 }
 

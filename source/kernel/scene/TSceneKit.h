@@ -1,29 +1,24 @@
 #pragma once
 
 #include <Inventor/nodekits/SoSceneKit.h>
-#include <Inventor/actions/SoSearchAction.h>
+//#include <Inventor/actions/SoSearchAction.h>
 
-#include "TSeparatorKit.h"
 #include "kernel/TonatiuhKernel.h"
 #include "kernel/TonatiuhTypes.h"
 #include "kernel/TonatiuhFunctions.h"
 
-struct Vector3D;
 class Transform;
+struct Vector3D;
 
 
 class TONATIUH_KERNEL TSceneKit: public SoSceneKit
 {
-    typedef SoSceneKit inherited;
-
     SO_KIT_HEADER(TSceneKit);
-    SO_KIT_CATALOG_ENTRY_HEADER(transmissivity);
+    SO_KIT_CATALOG_ENTRY_HEADER(air);
 
 public:
-    TSceneKit();
     static void initClass();
-
-    SoPath* GetSoPath(SoSearchAction* action);
+    TSceneKit();
 
     void updateTrackers();
 
@@ -31,5 +26,5 @@ public:
 
 protected:
     ~TSceneKit() {}
-    void updateTrackers(SoBaseKit* branch, Transform toGlobal, const Vector3D& vSun);
+    void updateTrackers(SoBaseKit* parent, Transform t, const Vector3D& vSun);
 };

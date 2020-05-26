@@ -3,10 +3,8 @@
 #include <QUndoCommand>
 
 class SceneModel;
-class SoSceneKit;
+class TSceneKit;
 class SunKit;
-class ShapeRT;
-class SunShape;
 
 //!  CmdLightKitModified class is the light definition command stored in the command stack.
 /*!
@@ -14,29 +12,23 @@ class SunShape;
   a modificaiton of the light position on the scene or change on the sun shape parameters value.
    \sa CmdLightPositionModified
 */
-
-class CmdLightKitModified: public QUndoCommand
+class CmdSunKitModified: public QUndoCommand
 {
 public:
-    CmdLightKitModified(
-        SunKit* lightKit,
-        SoSceneKit* sceneKit,
-        SceneModel& sceneModel,
+    CmdSunKitModified(
+        SunKit* sunKit,
+        TSceneKit* sceneKit,
+        SceneModel* model,
         QUndoCommand* parent = 0
      );
-    ~CmdLightKitModified();
+    ~CmdSunKitModified();
 
      void undo();
      void redo();
 
 private:
-    bool m_hasOld;
-    SunKit* m_lightKitNew;
-    SunShape* m_sunShapeOld;
-    double m_azimuthOld;
-    double m_zenithOld;
-    QString m_nodesOld;
-
-    SoSceneKit* m_sceneKit;
-    SceneModel* m_sceneModel;
+     SunKit* m_sunKitOld;
+     SunKit* m_sunKit;
+     TSceneKit* m_sceneKit;
+     SceneModel* m_model;
 };

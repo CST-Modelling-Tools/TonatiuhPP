@@ -101,7 +101,7 @@ QString FluxAnalysis::GetSurfaceType(QString nodeURL)
     ShapeRT* shape = static_cast<ShapeRT*>(shapeKit->getPart("shape", false) );
     if (!shape) return "";
 
-    return shape->getTypeId().getName().getString();
+    return shape->getTypeName();
 }
 
 /*
@@ -110,9 +110,9 @@ QString FluxAnalysis::GetSurfaceType(QString nodeURL)
 bool FluxAnalysis::CheckSurface()
 {
     QString surfaceType = GetSurfaceType(m_surfaceURL);
-    if (surfaceType == "ShapeFlatRectangle") return true;
+    if (surfaceType == "Plane") return true;
     if (surfaceType == "ShapeFlatDisk") return true;
-    if (surfaceType == "ShapeCylinder") return true;
+    if (surfaceType == "Cylinder") return true;
     return true;
 }
 
@@ -123,19 +123,19 @@ bool FluxAnalysis::CheckSurfaceSide()
 {
     QString surfaceType = GetSurfaceType(m_surfaceURL);
 
-    if (surfaceType == "ShapeFlatRectangle")
+    if (surfaceType == "Plane")
     {
-        if (m_surfaceSide != "FRONT" && m_surfaceSide != "BACK")
+        if (m_surfaceSide != "front" && m_surfaceSide != "back")
             return false;
     }
     else if (surfaceType == "ShapeFlatDisk")
     {
-        if (m_surfaceSide != "FRONT" && m_surfaceSide != "BACK")
+        if (m_surfaceSide != "front" && m_surfaceSide != "back")
             return false;
     }
-    else if (surfaceType == "ShapeCylinder")
+    else if (surfaceType == "Cylinder")
     {
-        if (m_surfaceSide != "INSIDE" && m_surfaceSide != "OUTSIDE")
+        if (m_surfaceSide != "front" && m_surfaceSide != "back")
             return false;
     }
 
@@ -168,10 +168,11 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, ulong n
     if (!m_pCurrentScene) return;
 
     //Check if there is a transmissivity defined
-    Air* transmissivity = 0;
-    if (!m_pCurrentScene->getPart("air", false) ) transmissivity = 0;
+    Air* air = 0;
+    if (!m_pCurrentScene->getPart("air", false) )
+        air = 0;
     else
-        transmissivity = static_cast<Air*> (m_pCurrentScene->getPart("air", false) );
+        air = static_cast<Air*> (m_pCurrentScene->getPart("air", false) );
 
     //Check if there is a rootSeparator InstanceNode
     if (!m_pRootSeparatorInstance) return;
@@ -181,7 +182,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, ulong n
 
     //Check if there is a light and is properly configured
     if (!m_pCurrentScene->getPart("lightList[0]", false) ) return;
-    SunKit* lightKit = static_cast< SunKit* >(m_pCurrentScene->getPart("lightList[0]", false) );
+    SunKit* lightKit = static_cast<SunKit*>(m_pCurrentScene->getPart("lightList[0]", false) );
 
     InstanceNode* lightInstance = sceneInstance->children[0];
     if (!lightInstance) return;
@@ -190,9 +191,9 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, ulong n
     SunShape* sunShape = static_cast< SunShape* >(lightKit->getPart("tsunshape", false) );
 
     if (!lightKit->getPart("icon", false) ) return;
-    SunAperture* aperture = static_cast< SunAperture* >(lightKit->getPart("icon", false) );
+    SunAperture* sunAperture = static_cast< SunAperture* >(lightKit->getPart("icon", false) );
 
-    if (!lightKit->getPart("transform",false) ) return;
+    if (!lightKit->getPart("transform", false) ) return;
     SoTransform* lightTransform = static_cast< SoTransform* >(lightKit->getPart("transform",false) );
 
     //Check if there is a random generator is defined.
@@ -213,7 +214,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, ulong n
         m_totalPower = 0;
     }
 
-    QVector< InstanceNode* > exportSuraceList;
+    QVector<InstanceNode*> exportSuraceList;
     QModelIndex nodeIndex = m_pCurrentSceneModel->IndexFromUrl(m_surfaceURL);
     if (!nodeIndex.isValid()) return;
 
@@ -243,7 +244,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, ulong n
     m_pCurrentSceneModel->UpdateSceneModel();
 
     //Compute bounding boxes and world to object transforms
-    m_pRootSeparatorInstance->updateTree(Transform(new Matrix4x4));
+    m_pRootSeparatorInstance->updateTree(Transform::Identity);
 
     m_pPhotonMap->setTransform(m_pRootSeparatorInstance->getTransform().inversed() );
 
@@ -278,12 +279,12 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, ulong n
     QMutex mutexPhotonMap;
     QFuture<void> photonMap;
     Air* airTemp = 0;
-    if (!dynamic_cast<AirVacuum*>(transmissivity))
-        airTemp = transmissivity;
+    if (!dynamic_cast<AirVacuum*>(air))
+        airTemp = air;
 
     photonMap = QtConcurrent::map(raysPerThread, RayTracer(
         m_pRootSeparatorInstance,
-        lightInstance, aperture, sunShape, airTemp,
+        lightInstance, sunAperture, sunShape, airTemp,
         *m_pRandomDeviate, &mutex, m_pPhotonMap, &mutexPhotonMap, exportSuraceList
     ));
 
@@ -296,7 +297,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, ulong n
     m_tracedRays += nOfRays;
 
     double irradiance = lightKit->irradiance.getValue();
-    double area = aperture->getArea();
+    double area = sunAperture->getArea();
     m_photonPower = area*irradiance/m_tracedRays;
 
     UpdatePhotonCounts();
@@ -349,7 +350,7 @@ void FluxAnalysis::UpdatePhotonCounts()
     QModelIndex nodeIndex = m_pCurrentSceneModel->IndexFromUrl(m_surfaceURL);
     InstanceNode* instanceNode = m_pCurrentSceneModel->getInstance(nodeIndex);
 
-    if (surfaceType == "ShapeFlatRectangle")
+    if (surfaceType == "Plane")
     {
         FluxAnalysisFlatRectangle(instanceNode);
     }
@@ -357,7 +358,7 @@ void FluxAnalysis::UpdatePhotonCounts()
     {
         FluxAnalysisFlatDisk(instanceNode);
     }
-    else if (surfaceType == "ShapeCylinder")
+    else if (surfaceType == "Cylinder")
     {
         FluxAnalysisCylinder(instanceNode);
     }
@@ -375,13 +376,13 @@ void FluxAnalysis::FluxAnalysisCylinder(InstanceNode* node)
     ShapeRT* shape = static_cast< ShapeRT* >(surfaceNode->getPart("shape", false) );
     if (!shape || shape == 0) return;
 
-    trt::TONATIUH_REAL* radiusField = static_cast< trt::TONATIUH_REAL* > (shape->getField("radius") );
+    SoSFDouble* radiusField = static_cast< SoSFDouble* > (shape->getField("radius") );
     double radius = radiusField->getValue();
 
-    trt::TONATIUH_REAL* lengthField = static_cast< trt::TONATIUH_REAL* > (shape->getField("length") );
+    SoSFDouble* lengthField = static_cast< SoSFDouble* > (shape->getField("sizeZ") );
     double length = lengthField->getValue();
 
-    trt::TONATIUH_REAL* phiMaxField = static_cast< trt::TONATIUH_REAL* > (shape->getField("phiMax") );
+    SoSFDouble* phiMaxField = static_cast< SoSFDouble* > (shape->getField("phiMax") );
     double phiMax = phiMaxField->getValue();
 
     int widthDivisionsError = m_widthDivisions - 1;
@@ -536,17 +537,17 @@ void FluxAnalysis::FluxAnalysisFlatRectangle(InstanceNode* node)
 {
     if (!node) return;
 
-    TShapeKit* surfaceNode = static_cast< TShapeKit* > (node->getNode() );
+    TShapeKit* surfaceNode = static_cast<TShapeKit*> (node->getNode() );
     if (!surfaceNode) return;
 
-    ShapeRT* shape = static_cast< ShapeRT* >(surfaceNode->getPart("shape", false) );
+    ShapeRT* shape = static_cast<ShapeRT*>(surfaceNode->getPart("shape", false) );
     if (!shape || shape == 0) return;
 
-    trt::TONATIUH_REAL* widthField = static_cast< trt::TONATIUH_REAL* > (shape->getField("width") );
-    double surfaceWidth = widthField->getValue();
+    SoSFDouble* sizeX = (SoSFDouble*) shape->getField("sizeX");
+    double surfaceWidth = sizeX->getValue();
 
-    trt::TONATIUH_REAL* heightField = static_cast< trt::TONATIUH_REAL* > (shape->getField("height") );
-    double surfaceHeight = heightField->getValue();
+    SoSFDouble* sizeY = (SoSFDouble*) shape->getField("sizeY");
+    double surfaceHeight = sizeY->getValue();
 
     int widthDivisionsError = m_widthDivisions - 1;
     int heightDivisionsError = m_heightDivisions - 1;
@@ -560,15 +561,15 @@ void FluxAnalysis::FluxAnalysisFlatRectangle(InstanceNode* node)
     }
 
     int activeSideID = 1;
-    if (m_surfaceSide == "BACK")
+    if (m_surfaceSide == "back")
         activeSideID = 0;
 
     Transform worldToObject = node->getTransform().inversed();
 
-    m_xmin = -0.5 * surfaceHeight;
-    m_ymin = -0.5 * surfaceWidth;
-    m_xmax = 0.5 * surfaceHeight;
-    m_ymax = 0.5 * surfaceWidth;
+    m_xmax = 0.5*surfaceWidth;
+    m_ymax = 0.5*surfaceHeight;
+    m_xmin = -m_xmax;
+    m_ymin = -m_ymax;
 
     const std::vector<Photon>& photonList = m_pPhotonMap->getPhotons();
     int totalPhotons = 0;
@@ -580,7 +581,7 @@ void FluxAnalysis::FluxAnalysisFlatRectangle(InstanceNode* node)
             totalPhotons++;
             Vector3D photonLocalCoord = worldToObject.transformPoint(photon.pos);
             int xbin = floor( (photonLocalCoord.x - m_xmin) / (m_xmax - m_xmin) * m_widthDivisions);
-            int ybin = floor( (photonLocalCoord.z - m_ymin) / (m_ymax - m_ymin) * m_heightDivisions);
+            int ybin = floor( (photonLocalCoord.y - m_ymin) / (m_ymax - m_ymin) * m_heightDivisions);
 
             m_photonCounts[ybin][xbin] += 1;
             if (m_maximumPhotons < m_photonCounts[ybin][xbin])
@@ -591,7 +592,7 @@ void FluxAnalysis::FluxAnalysisFlatRectangle(InstanceNode* node)
             }
 
             int xbinE = floor( (photonLocalCoord.x - m_xmin) / (m_xmax - m_xmin) * widthDivisionsError);
-            int ybinE = floor( (photonLocalCoord.z - m_ymin) / (m_ymax - m_ymin) * heightDivisionsError);
+            int ybinE = floor( (photonLocalCoord.y - m_ymin) / (m_ymax - m_ymin) * heightDivisionsError);
             photonCountsError[ybinE][xbinE] += 1;
             if (m_maximumPhotonsError < photonCountsError[ybinE][xbinE])
             {
@@ -600,7 +601,7 @@ void FluxAnalysis::FluxAnalysisFlatRectangle(InstanceNode* node)
         }
     }
 
-    m_totalPower = totalPhotons * m_photonPower;
+    m_totalPower = totalPhotons*m_photonPower;
 
     if (photonCountsError)
     {

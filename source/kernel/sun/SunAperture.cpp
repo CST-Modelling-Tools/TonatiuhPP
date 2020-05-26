@@ -9,6 +9,7 @@
 #include <QPaintEngine>
 
 #include <Inventor/SoPrimitiveVertex.h>
+#include <Inventor/nodes/SoTexture2.h>
 #include <Inventor/actions/SoGLRenderAction.h>
 #include <Inventor/elements/SoGLTextureCoordinateElement.h>
 #include <Inventor/elements/SoMaterialBindingElement.h>
@@ -21,6 +22,7 @@
 #include "libraries/geometry/gcf.h"
 #include "scene/TShapeKit.h"
 #include "shape/DifferentialGeometry.h"
+#include "SunKit.h"
 
 
 SO_NODE_SOURCE(SunAperture)
@@ -80,35 +82,34 @@ void SunAperture::setSize(double xMin, double xMax, double yMin, double yMax, do
     m_yMin = yMin - delta;
     m_yMax = yMax + delta;
     m_delta = delta;
-    disabledNodes = disabledNodes.getValue();
+    disabledNodes = disabledNodes.getValue(); // for update
 }
 
-void SunAperture::findTexture(int xPixels, int yPixels, QVector<QPair<TShapeKit*, Transform> > surfacesList)
+void SunAperture::findTexture(int xPixels, int yPixels, QVector<QPair<TShapeKit*, Transform> > surfaces, SunKit* sunKit)
 {
     double xWidth = m_xMax - m_xMin;
     double yWidth = m_yMax - m_yMin;
 
     while (xWidth / xPixels < m_delta) xPixels--;
-    double xWidthPixel = xWidth/xPixels;
+    double xStep = xWidth/xPixels;
 
     while (yWidth / yPixels < m_delta) yPixels--;
-    double yWidthPixel = yWidth/yPixels;
+    double yStep = yWidth/yPixels;
 
-    QImage* image = new QImage(xPixels, yPixels, QImage::Format_RGB32);
-    image->setOffset(QPoint(0.5, 0.5));
-    image->fill(Qt::white);
+    QImage* image = new QImage(xPixels, yPixels, QImage::Format_Grayscale8);
+    image->fill(Qt::black);
 
     QPainter painter(image);
 
-    QBrush brush(Qt::black);
+    QBrush brush(Qt::white);
     painter.setBrush(brush);
 
-    QPen pen(Qt::black);
+    QPen pen(Qt::white);
     painter.setPen(pen);
 
-    //painter.setRenderHint(QPainter::Antialiasing);
+    painter.setRenderHint(QPainter::Antialiasing, false);
 
-    for (const auto& s : surfacesList)
+    for (const auto& s : surfaces)
     {
         ShapeRT* shapeNode = static_cast<ShapeRT*>(s.first->getPart("shape", false));
         if (!shapeNode) continue;
@@ -116,26 +117,28 @@ void SunAperture::findTexture(int xPixels, int yPixels, QVector<QPair<TShapeKit*
 
         QVector<Vector3D> ps;
         ps << Vector3D(box.pMin.x, box.pMin.y, box.pMin.z);
-        ps << Vector3D(box.pMax.x, box.pMin.y, box.pMin.z);
-        ps << Vector3D(box.pMax.x, box.pMin.y, box.pMax.z);
         ps << Vector3D(box.pMin.x, box.pMin.y, box.pMax.z);
         ps << Vector3D(box.pMin.x, box.pMax.y, box.pMin.z);
+        ps << Vector3D(box.pMin.x, box.pMax.y, box.pMax.z);
+        ps << Vector3D(box.pMax.x, box.pMin.y, box.pMin.z);
+        ps << Vector3D(box.pMax.x, box.pMin.y, box.pMax.z);
         ps << Vector3D(box.pMax.x, box.pMax.y, box.pMin.z);
         ps << Vector3D(box.pMax.x, box.pMax.y, box.pMax.z);
-        ps << Vector3D(box.pMin.x, box.pMax.y, box.pMax.z);
 
         QVector<QPointF> qps;
         for (Vector3D& p : ps) {
             p = s.second.transformPoint(p);
-            qps << QPointF((p.x - m_xMin)/xWidthPixel, (p.y - m_yMin)/yWidthPixel);
+            QPointF q((p.x - m_xMin)/xStep, (p.y - m_yMin)/yStep);
+            qps << q;
+            painter.drawPoint(q); // for polygons smaller than pixel
         }
 
-        painter.drawPolygon(QPolygonF({qps[0], qps[1], qps[2], qps[3]}));
-        painter.drawPolygon(QPolygonF({qps[0], qps[1], qps[5], qps[4]}));
-        painter.drawPolygon(QPolygonF({qps[0], qps[3], qps[7], qps[4]}));
-        painter.drawPolygon(QPolygonF({qps[1], qps[2], qps[6], qps[5]}));
-        painter.drawPolygon(QPolygonF({qps[2], qps[3], qps[7], qps[6]}));
-        painter.drawPolygon(QPolygonF({qps[4], qps[5], qps[6], qps[7]}));
+        painter.drawPolygon(QPolygonF({qps[0], qps[1], qps[3], qps[2]})); // -x
+        painter.drawPolygon(QPolygonF({qps[4], qps[5], qps[7], qps[6]})); // +x
+        painter.drawPolygon(QPolygonF({qps[0], qps[4], qps[5], qps[1]})); // -y
+        painter.drawPolygon(QPolygonF({qps[2], qps[6], qps[7], qps[3]})); // +y
+        painter.drawPolygon(QPolygonF({qps[0], qps[4], qps[6], qps[2]})); // -z
+        painter.drawPolygon(QPolygonF({qps[5], qps[1], qps[3], qps[7]})); // +z
     }
 
     int** areaMatrix = new int*[yPixels];
@@ -146,10 +149,9 @@ void SunAperture::findTexture(int xPixels, int yPixels, QVector<QPair<TShapeKit*
     bmp.resize(xPixels*yPixels);
 
     QRgb black = qRgb(0, 0, 0);
-
-    for (int i = 0; i < xPixels; i++)
+    for (int i = 0; i < xPixels; ++i)
     {
-        for (int j = 0; j < yPixels; j++)
+        for (int j = 0; j < yPixels; ++j)
         {
             int v = 0;
             for (int qi = i - 1; qi <= i + 1; ++qi)
@@ -157,18 +159,24 @@ void SunAperture::findTexture(int xPixels, int yPixels, QVector<QPair<TShapeKit*
                 {
                     if (qi < 0 || qi >= xPixels) continue;
                     if (qj < 0 || qj >= yPixels) continue;
-                    v += image->pixel(qi, qj) == black ? 1 : 0;
+                    v += image->pixel(qi, qj) == black ? 0 : 1;
                 }
-            bmp[i*yPixels + j] = v > 0 ? 0 : 255;
+            bmp[i*yPixels + j] = v > 0 ? 255 : 0;
         }
     }
 
-//    SoTexture2* texture = static_cast< SoTexture2* >(getPart("iconTexture", true) );
-//    texture->image.setValue(SbVec2s(heightPixeles, widthPixeles), 1, bitmap);
+    SetLightSourceArea(xPixels, yPixels, bmp);
+
+//    QVector<uchar> bmpTr;
+//    bmpTr.resize(xPixels*yPixels);
+//    for (int i = 0; i < xPixels; ++i)
+//        for (int j = 0; j < yPixels; ++j)
+//            bmpTr[j*xPixels + i] = bmp[i*yPixels + j];
+
+//    SoTexture2* texture = static_cast<SoTexture2*>(sunKit->getPart("iconTexture", true));
+//    texture->image.setValue(SbVec2s(xPixels, yPixels), 1, bmpTr.data()); // 1 is for gray
 //    texture->wrapS = SoTexture2::CLAMP;
 //    texture->wrapT = SoTexture2::CLAMP;
-
-    SetLightSourceArea(xPixels, yPixels, bmp);
 }
 
 void SunAperture::SetLightSourceArea(int w, int h, QVector<uchar> bmp)
@@ -180,7 +188,7 @@ void SunAperture::SetLightSourceArea(int w, int h, QVector<uchar> bmp)
 
     for (int i = 0; i < m_xCells; ++i)
         for (int j = 0; j < m_yCells; ++j)
-            if (bmp[i*h + j] == 0)
+            if (bmp[i*h + j] > 0)
                 m_cells.push_back(QPair<int, int>(i, j));
 }
 
@@ -198,33 +206,29 @@ void SunAperture::generatePrimitives(SoAction* action)
     SbVec4f texCoord;
     SbVec3f normal(0., 0., -1.);
 
-    SoState* state = action->getState();
-    SbBool useTexFunc = (SoTextureCoordinateElement::getType(state) == SoTextureCoordinateElement::FUNCTION);
-    const SoTextureCoordinateElement* tce = 0;
-    if (useTexFunc)
-        tce = SoTextureCoordinateElement::getInstance(state);
-
     beginShape(action, TRIANGLE_STRIP);
 
-    // P1
-    SbVec3f point(m_xMin, m_yMax, 0.);
+    // P0
+    SbVec3f point(m_xMin, m_yMin, 0.);
     pv.setPoint(point);
     pv.setNormal(normal);
-    if (useTexFunc)
-        texCoord = tce->get(point, normal);
-    else
-        texCoord = SbVec4f(0., 1., 0., 1.);
+    texCoord = SbVec4f(0., 0., 0., 1.);
+    pv.setTextureCoords(texCoord);
+    shapeVertex(&pv);
+
+    // P1
+    point = SbVec3f(m_xMin, m_yMax, 0.);
+    pv.setPoint(point);
+    pv.setNormal(normal);
+    texCoord = SbVec4f(0., 1., 0., 1.);
     pv.setTextureCoords(texCoord);
     shapeVertex(&pv);
 
     // P2
-    point = SbVec3f( m_xMin, m_yMin, 0.);
+    point = SbVec3f(m_xMax, m_yMin, 0.);
     pv.setPoint(point);
     pv.setNormal(normal);
-    if (useTexFunc)
-        texCoord = tce->get(point, normal);
-    else
-        texCoord = SbVec4f(0., 0., 0., 1.);
+    texCoord = SbVec4f(1., 0., 0., 1.);
     pv.setTextureCoords(texCoord);
     shapeVertex(&pv);
 
@@ -232,21 +236,7 @@ void SunAperture::generatePrimitives(SoAction* action)
     point = SbVec3f(m_xMax, m_yMax, 0.);
     pv.setPoint(point);
     pv.setNormal(normal);
-    if (useTexFunc)
-        texCoord = tce->get(point, normal);
-    else
-        texCoord = SbVec4f(1., 1., 0., 1.);
-    pv.setTextureCoords(texCoord);
-    shapeVertex(&pv);
-
-    // P4
-    point = SbVec3f(m_xMax, m_yMin, 0.);
-    pv.setPoint(point);
-    pv.setNormal(normal);
-    if (useTexFunc)
-        texCoord = tce->get(point, normal);
-    else
-        texCoord = SbVec4f(1., 0., 0., 1.);
+    texCoord = SbVec4f(1., 1., 0., 1.);
     pv.setTextureCoords(texCoord);
     shapeVertex(&pv);
 

@@ -33,7 +33,7 @@ void CmdLightPositionModified::undo()
 {
     lightKit->azimuth.setValue(m_oldAzimuth);
     lightKit->elevation.setValue(m_oldZenith);
-    lightKit->updatePosition();
+    lightKit->updateTransform();
 }
 
 /*!
@@ -42,5 +42,5 @@ void CmdLightPositionModified::undo()
  */
 void CmdLightPositionModified::redo()
 {
-    lightKit->updatePosition();
+    lightKit->updateTransform();
 }

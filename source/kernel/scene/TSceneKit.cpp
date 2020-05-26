@@ -8,86 +8,52 @@
 #include "libraries/geometry/Vector3D.h"
 
 #include "kernel/air/AirVacuum.h"
-#include "TSeparatorKit.h"
 #include "kernel/trackers/Tracker.h"
 #include "kernel/air/Air.h"
+#include "kernel/sun/SunPillbox.h"
+#include "kernel/sun/SunKit.h"
+#include "kernel/scene/TSeparatorKit.h"
+
 
 SO_KIT_SOURCE(TSceneKit)
 
-/**
- * Does initialization common for all objects of the TSceneKit class.
- * This includes setting up the type system, among other things.
- */
 void TSceneKit::initClass()
 {
     SO_KIT_INIT_CLASS(TSceneKit, SoSceneKit, "SceneKit");
 }
 
-/**
- * Creates a new TSceneKit node.
- */
-
-#include "sun/SunPillbox.h"
-#include "sun/SunKit.h"
-
 TSceneKit::TSceneKit()
 {
     SO_KIT_CONSTRUCTOR(TSceneKit);
 
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(transmissivity, Air, AirVacuum, TRUE, topSeparator, "", TRUE);
+    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(air, Air, AirVacuum, TRUE, topSeparator, "", TRUE);
 
     SO_KIT_INIT_INSTANCE();
 
-    SunKit* lightKit = new SunKit;
-    lightKit->setPart("tsunshape", new SunPillbox);
-    setPart("lightList[0]", lightKit);
+    SunKit* sunKit = new SunKit;
+    setPart("lightList[0]", sunKit);
 
     setPart("air", new AirVacuum);
 }
 
-/*!
- * Returns the path from the scene node to the node in \a action.
- */
-SoPath* TSceneKit::GetSoPath(SoSearchAction* action)
-{
-    TSeparatorKit* sunNode = static_cast<TSeparatorKit*> (getPart("childList[0]", false) );
-    if (!sunNode) return NULL;
-
-    TSeparatorKit* rootNode = static_cast<TSeparatorKit*> (sunNode->getPart("childList[0]", false) );
-    if (!rootNode) return NULL;
-
-    action->setInterest(SoSearchAction::FIRST);
-    action->apply(rootNode);
-    SoPath* nodePath = action->getPath();
-    return nodePath;
-}
-
 void TSceneKit::updateTrackers()
 {
-    SunKit* lightKit = static_cast<SunKit*>(getPart("lightList[0]", false) );
+    auto nodes = (SoNodeKitListPart*) getPart("childList", true);
+    if (!nodes->getNumChildren()) return;
+    auto node = (SoBaseKit*) nodes->getChild(0); // Layout
+    if (!node) return;
 
-    double az = lightKit->azimuth.getValue();
-    double el = lightKit->elevation.getValue();
+    SunKit* sunKit = (SunKit*) getPart("lightList[0]", false);
+    double az = sunKit->azimuth.getValue();
+    double el = sunKit->elevation.getValue();
 
     Vector3D vSun(
         sin(az)*cos(el),
         cos(az)*cos(el),
         sin(el)
-    ); // to sun
-
-    Transform toGlobal(
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
     );
 
-    auto nodes = static_cast<SoNodeKitListPart*>(getPart("childList", true));
-    if (nodes->getNumChildren() == 0) return;
-
-    auto node = static_cast<SoBaseKit*>(nodes->getChild(0));     //Layout
-    if (!node) return;
-    updateTrackers(node, toGlobal, vSun);
+    updateTrackers(node, Transform::Identity, vSun);
 }
 
 /*!
@@ -95,23 +61,21 @@ void TSceneKit::updateTrackers()
  */
 void TSceneKit::updateTrackers(SoBaseKit* parent, Transform toGlobal, const Vector3D& vSun)
 {
-    if (!parent) return;
-    if (!parent->getTypeId().isDerivedFrom( TSeparatorKit::getClassTypeId() ) )
-        return;
+    if (!dynamic_cast<TSeparatorKit*>(parent)) return;
 
-    SoTransform* nodeTransform = static_cast<SoTransform*>(parent->getPart("transform", true));
-    Transform nodeOTW = toGlobal*tgf::makeTransform(nodeTransform);
+    SoTransform* tParent = (SoTransform*) parent->getPart("transform", true);
+    Transform t = toGlobal*tgf::makeTransform(tParent);
 
     if (Tracker* tracker = (Tracker*) parent->getPart("tracker", false))
     {
-        tracker->update(parent, nodeOTW, vSun);
+        tracker->update(parent, t, vSun);
     }
     else if (SoNodeKitListPart* nodes = (SoNodeKitListPart*) parent->getPart("childList", false))
     {
         for (int n = 0; n < nodes->getNumChildren(); ++n)
         {
             SoBaseKit* child = static_cast<SoBaseKit*>(nodes->getChild(n));
-            if (child) updateTrackers(child, nodeOTW, vSun);
+            if (child) updateTrackers(child, t, vSun);
         }
     }
 }

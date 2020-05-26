@@ -366,7 +366,7 @@ QModelIndex SceneModel::IndexFromUrl(QString url) const
     QStringList path = url.split("/", QString::SkipEmptyParts);
 
     if (path.size() == 0) return QModelIndex();
-    if (path.size() == 1 && path[0] == "Light") return index(0, 0);
+    if (path.size() == 1 && path[0] == "Sun") return index(0, 0);
 
     QString nodeName = path.last();
     path.removeLast();

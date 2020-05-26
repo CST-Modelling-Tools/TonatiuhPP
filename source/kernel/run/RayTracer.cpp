@@ -111,4 +111,3 @@ bool RayTracer::NewPrimitiveRay(Ray* ray, RandomParallel& rand)
     *ray = m_sunTransform(Ray(origin, direction));
     return true;
 }
-

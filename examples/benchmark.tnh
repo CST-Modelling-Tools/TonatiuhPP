@@ -10,11 +10,10 @@ TSceneKit {
     Group {
 
       DEF Light SunKit {
-        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFString disabledNodes, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
         azimuth 0
         elevation 1.570796326794897
         irradiance 1000
-        disabledNodes ""
         transform 
         Transform {
           translation 0 -9.6165058e-007 11
@@ -28,7 +27,8 @@ TSceneKit {
         }
         icon 
         SunAperture {
-          fields [  ]
+          fields [ SFString disabledNodes ]
+          disabledNodes ""
 
         }
         iconMaterial 
