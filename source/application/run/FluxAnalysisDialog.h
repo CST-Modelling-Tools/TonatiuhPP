@@ -26,9 +26,6 @@ public:
                        Random* randomDeviate, QWidget* parent = 0);
     ~FluxAnalysisDialog();
 
-protected:
-    void resizeEvent(QResizeEvent* event);
-
 private slots:
     void ChangeCurrentSurface();
     void ChangeCurrentSurfaceSide();
@@ -57,10 +54,5 @@ private:
 
     SceneModel* m_pCurrentSceneModel;
 
-    QIntValidator* m_pGridWidthVal;
-    QIntValidator* m_pGridHeightVal;
-    QIntValidator* m_pNOfRays;
-
-    //Labels
     QString m_fluxLabelString;
 };

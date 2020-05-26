@@ -6,14 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>833</width>
-    <height>510</height>
+    <width>819</width>
+    <height>594</height>
    </rect>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
+  <property name="windowTitle">
+   <string>Flux Analysis</string>
+  </property>
+  <layout class="QHBoxLayout" stretch="0,1">
    <item>
     <widget class="QWidget" name="parametersWidget" native="true">
-     <layout class="QVBoxLayout" name="parametersLayout" stretch="0,0,1">
+     <layout class="QVBoxLayout" name="layoutParameters" stretch="0,0,0,1">
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -32,13 +35,6 @@
          <string>Analysis</string>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="gridWidthLine">
-           <property name="text">
-            <string>20</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="0">
           <widget class="QLabel" name="widthDivisionsLabel">
            <property name="text">
@@ -50,13 +46,6 @@
           <widget class="QPushButton" name="selectButton">
            <property name="text">
             <string>Select</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QLineEdit" name="gridHeightLine">
-           <property name="text">
-            <string>20</string>
            </property>
           </widget>
          </item>
@@ -97,13 +86,6 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="nRaysLine">
-           <property name="text">
-            <string>10000</string>
-           </property>
-          </widget>
-         </item>
          <item row="3" column="0">
           <widget class="QLabel" name="heightDivisionsLabel">
            <property name="text">
@@ -125,6 +107,45 @@
            </property>
           </widget>
          </item>
+         <item row="4" column="1">
+          <widget class="QSpinBox" name="spinRays">
+           <property name="showGroupSeparator" stdset="0">
+            <bool>true</bool>
+           </property>
+           <property name="maximum">
+            <number>999999999</number>
+           </property>
+           <property name="value">
+            <number>10000</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QSpinBox" name="spinCellsX">
+           <property name="minimum">
+            <number>2</number>
+           </property>
+           <property name="maximum">
+            <number>10000</number>
+           </property>
+           <property name="value">
+            <number>20</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QSpinBox" name="spinCellsY">
+           <property name="minimum">
+            <number>2</number>
+           </property>
+           <property name="maximum">
+            <number>10000</number>
+           </property>
+           <property name="value">
+            <number>20</number>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -134,18 +155,12 @@
          <string>Export</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_8">
-         <item row="2" column="2">
-          <spacer name="horizontalSpacer_15">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="lengthUnitLine">
+           <property name="text">
+            <string>m</string>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
+          </widget>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="powerUnitLabel">
@@ -164,42 +179,21 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="powerUnitLine"/>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="lenghtUnitLabel">
-           <property name="text">
-            <string>Length:</string>
-           </property>
-          </widget>
-         </item>
          <item row="4" column="1" colspan="2">
           <widget class="QLineEdit" name="fileDirEdit"/>
          </item>
-         <item row="3" column="1">
-          <widget class="QCheckBox" name="saveCoordsCheckBox">
-           <property name="text">
-            <string>Save grid</string>
+         <item row="4" column="3">
+          <widget class="QPushButton" name="selectFileButton">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
-           <property name="checked">
-            <bool>true</bool>
+           <property name="text">
+            <string>Open</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="fileNameLabel">
-           <property name="text">
-            <string>File:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="directoryLabel">
-           <property name="text">
-            <string>Directory:</string>
-           </property>
-          </widget>
+         <item row="5" column="1" colspan="2">
+          <widget class="QLineEdit" name="fileNameEdit"/>
          </item>
          <item row="2" column="1">
           <widget class="QComboBox" name="storeTypeCombo">
@@ -220,13 +214,40 @@
            </item>
           </widget>
          </item>
-         <item row="4" column="3">
-          <widget class="QPushButton" name="selectFileButton">
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
+         <item row="3" column="1">
+          <widget class="QCheckBox" name="saveCoordsCheckBox">
            <property name="text">
-            <string>Open</string>
+            <string>Save grid</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="lenghtUnitLabel">
+           <property name="text">
+            <string>Length:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <spacer name="horizontalSpacer_15">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="directoryLabel">
+           <property name="text">
+            <string>Directory:</string>
            </property>
           </widget>
          </item>
@@ -237,11 +258,137 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="lengthUnitLine"/>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="powerUnitLine">
+           <property name="text">
+            <string>W</string>
+           </property>
+          </widget>
          </item>
-         <item row="5" column="1" colspan="2">
-          <widget class="QLineEdit" name="fileNameEdit"/>
+         <item row="5" column="0">
+          <widget class="QLabel" name="fileNameLabel">
+           <property name="text">
+            <string>File:</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="statisticalWidget" native="true">
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="9" column="1">
+          <widget class="QLabel" name="centroidValue">
+           <property name="text">
+            <string>;</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="maximumFluxLabel">
+           <property name="text">
+            <string>Maximum Flux:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="averageFluxLabel">
+           <property name="text">
+            <string>Average Flux: </string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="totalPowerLabel">
+           <property name="text">
+            <string>Total Power:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0">
+          <widget class="QLabel" name="centroidLabel">
+           <property name="text">
+            <string>Centroid:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="minimumFluxLabel">
+           <property name="text">
+            <string>Minimum Flux:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QLabel" name="uniformityLabel">
+           <property name="text">
+            <string>Uniformity:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="errorLabel">
+           <property name="text">
+            <string>Error:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QLabel" name="maxCoordinatesValue">
+           <property name="text">
+            <string>;</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="maxCoordinatesLabel">
+           <property name="text">
+            <string>Maximum Flux Coordinates:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="minimumFluxValue">
+           <property name="text">
+            <string>0.0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLabel" name="maximumFluxValue">
+           <property name="text">
+            <string>0.0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="totalPowerValue">
+           <property name="text">
+            <string>0.0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="averageFluxValue">
+           <property name="text">
+            <string>0.0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QLabel" name="errorValue">
+           <property name="text">
+            <string>0.0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QLabel" name="uniformityValue">
+           <property name="text">
+            <string>0.0</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -264,13 +411,7 @@
    </item>
    <item>
     <widget class="QWidget" name="resultsWidget" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <layout class="QVBoxLayout" name="resultsLayout" stretch="1,1,0">
+     <layout class="QGridLayout" name="layoutResults" rowstretch="3,0,2">
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -283,227 +424,88 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
-      <item>
-       <widget class="QCustomPlot" name="contourPlotWidget" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="yCoordlabel">
+          <property name="text">
+           <string>Slice y:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="hSectorYCoordSpin">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximum">
+           <double>0.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
-      <item>
-       <widget class="QWidget" name="sectorsWidget" native="true">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QWidget" name="verticalSectorWidget" native="true">
-           <layout class="QGridLayout" name="gridLayout_2">
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item row="1" column="0" colspan="2">
-             <widget class="QCustomPlot" name="verticalSectorPlot" native="true"/>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="xCoordlabel">
-              <property name="text">
-               <string>X Coord:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QDoubleSpinBox" name="hSectorXCoordSpin">
-              <property name="maximum">
-               <double>0.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QWidget" name="horizontalSectionWidget" native="true">
-           <layout class="QGridLayout" name="gridLayout_5">
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item row="1" column="0" colspan="2">
-             <widget class="QCustomPlot" name="horizontaSectorPlot" native="true"/>
-            </item>
-            <item row="0" column="1">
-             <widget class="QDoubleSpinBox" name="hSectorYCoordSpin">
-              <property name="minimum">
-               <double>0.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>0.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>0.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="yCoordlabel">
-              <property name="text">
-               <string>Y Coord:</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
-       </widget>
+      <item row="1" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="xCoordlabel">
+          <property name="text">
+           <string>Slice x:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="hSectorXCoordSpin">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximum">
+           <double>0.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
-      <item>
-       <widget class="QWidget" name="statisticalWidget" native="true">
-        <layout class="QGridLayout" name="gridLayout_3">
-         <item row="7" column="1">
-          <widget class="QLabel" name="errorValue">
-           <property name="text">
-            <string>0.0</string>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="1">
-          <widget class="QLabel" name="centroidValue">
-           <property name="text">
-            <string>;</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="totalPowerLabel">
-           <property name="text">
-            <string>Total Power:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="maximumFluxLabel">
-           <property name="text">
-            <string>Maximum Flux:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="errorLabel">
-           <property name="text">
-            <string>Error:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="0">
-          <widget class="QLabel" name="centroidLabel">
-           <property name="text">
-            <string>Centroid:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="QLabel" name="maxCoordinatesValue">
-           <property name="text">
-            <string>;</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="1">
-          <widget class="QLabel" name="uniformityValue">
-           <property name="text">
-            <string>0.0</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QLabel" name="averageFluxValue">
-           <property name="text">
-            <string>0.0</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="maxCoordinatesLabel">
-           <property name="text">
-            <string>Maximum Flux Coordinates:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLabel" name="totalPowerValue">
-           <property name="text">
-            <string>0.0</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLabel" name="maximumFluxValue">
-           <property name="text">
-            <string>0.0</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="minimumFluxLabel">
-           <property name="text">
-            <string>Minimum Flux:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="0">
-          <widget class="QLabel" name="uniformityLabel">
-           <property name="text">
-            <string>Uniformity:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLabel" name="minimumFluxValue">
-           <property name="text">
-            <string>0.0</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="averageFluxLabel">
-           <property name="text">
-            <string>Average Flux: </string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
+      <item row="2" column="1">
+       <widget class="QCustomPlot" name="horizontaSectorPlot" native="true"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCustomPlot" name="verticalSectorPlot" native="true"/>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QCustomPlot" name="contourPlotWidget" native="true"/>
       </item>
      </layout>
     </widget>
@@ -521,12 +523,10 @@
  <tabstops>
   <tabstop>surfaceEdit</tabstop>
   <tabstop>sidesCombo</tabstop>
-  <tabstop>nRaysLine</tabstop>
   <tabstop>storeTypeCombo</tabstop>
   <tabstop>saveCoordsCheckBox</tabstop>
   <tabstop>fileDirEdit</tabstop>
   <tabstop>fileNameEdit</tabstop>
-  <tabstop>hSectorXCoordSpin</tabstop>
   <tabstop>hSectorYCoordSpin</tabstop>
  </tabstops>
  <resources/>

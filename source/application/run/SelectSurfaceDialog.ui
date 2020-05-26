@@ -3,9 +3,9 @@
  <class>SelectSurfaceDialog</class>
  <widget class="QDialog" name="SelectSurfaceDialog">
   <property name="windowTitle">
-   <string>Select Surface</string>
+   <string>Select surface</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
@@ -23,7 +23,7 @@
    <item>
     <widget class="QRadioButton" name="sceneRadio">
      <property name="text">
-      <string>Scene Surface</string>
+      <string>Scene</string>
      </property>
      <property name="checked">
       <bool>true</bool>

@@ -790,7 +790,7 @@ void MainWindow::RunFluxAnalysisRayTracer()
     //Create the random generator
     Random* pRandomDeviate = randomDeviateFactoryList[m_selectedRandomDeviate]->create();
 
-    FluxAnalysisDialog dialog(sceneKit, *m_sceneModel, rootSeparatorInstance, m_widthDivisions, m_heightDivisions, pRandomDeviate);
+    FluxAnalysisDialog dialog(sceneKit, *m_sceneModel, rootSeparatorInstance, m_widthDivisions, m_heightDivisions, pRandomDeviate, this);
     dialog.exec();
 }
 

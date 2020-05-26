@@ -19,7 +19,7 @@ AboutDialog::AboutDialog(QWidget* parent):
 
     ui->label_version->setText(text);
 
-    setWindowFlag(Qt::WindowContextHelpButtonHint);
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     setWindowFlag(Qt::MSWindowsFixedSizeDialogHint, true);
 }
 

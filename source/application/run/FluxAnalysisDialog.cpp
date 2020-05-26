@@ -43,28 +43,11 @@ FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* currentScene, SceneModel& curr
     ui(new Ui::FluxAnalysisDialog),
     m_currentSurfaceURL(""),
     m_pCurrentSceneModel(&currentSceneModel),
-    m_pGridWidthVal(0),
-    m_pGridHeightVal(0),
-    m_pNOfRays (0),
-    m_fluxLabelString(QString("Flux((unit power)/m^2"))
+    m_fluxLabelString("Flux, W/m^2")
 {
     ui->setupUi(this);
 
     m_fluxAnalysis = new FluxAnalysis(currentScene, currentSceneModel, rootSeparatorInstance, sunWidthDivisions, sunHeightDivisions, randomDeviate);
-
-//    QSize resultsWidgetSize = ui->resultsWidget->size();
-//    int resultsWidgetSizeHeight = resultsWidgetSize.height();
-
-//    ui->contourPlotWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.34);
-//    ui->sectorsWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.34);
-//    ui->statisticalWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.25);
-
-    m_pGridWidthVal = new QIntValidator(2, 999999999, this);
-    ui->gridWidthLine->setValidator(m_pGridWidthVal);
-    m_pGridHeightVal = new QIntValidator (2, 999999999, this);
-    ui->gridHeightLine->setValidator(m_pGridHeightVal);
-
-    m_pNOfRays = new QIntValidator(1, 999999999, this);
 
     connect(ui->selectButton, SIGNAL(clicked()), this, SLOT(SelectSurface()) );
     connect(ui->sidesCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeCurrentSurfaceSide()) );
@@ -72,8 +55,8 @@ FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* currentScene, SceneModel& curr
     connect(ui->runButton, SIGNAL(clicked()), this, SLOT(Run()) );
     connect(ui->hSectorXCoordSpin, SIGNAL(valueChanged(double)), this, SLOT(UpdateSectorPlotSlot()) );
     connect(ui->hSectorYCoordSpin, SIGNAL(valueChanged(double)), this, SLOT(UpdateSectorPlotSlot()) );
-    connect(ui->gridWidthLine, SIGNAL(editingFinished()), this, SLOT(UpdateAnalysis()) );
-    connect(ui->gridHeightLine, SIGNAL(editingFinished()), this, SLOT(UpdateAnalysis()) );
+    connect(ui->spinCellsX, SIGNAL(editingFinished()), this, SLOT(UpdateAnalysis()) );
+    connect(ui->spinCellsY, SIGNAL(editingFinished()), this, SLOT(UpdateAnalysis()) );
     connect(ui->lengthUnitLine, SIGNAL(editingFinished()), this, SLOT(UpdateLabelsUnits()) );
     connect(ui->powerUnitLine, SIGNAL(editingFinished()), this, SLOT(UpdateLabelsUnits()) );
     connect(ui->selectFileButton, SIGNAL(clicked()), this, SLOT(SelectExportFile()) );
@@ -85,25 +68,24 @@ FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* currentScene, SceneModel& curr
     ui->contourPlotWidget->axisRect()->setupFullAxesBox(true);
 
     ui->contourPlotWidget->plotLayout()->insertRow(0);
-    ui->contourPlotWidget->plotLayout()->addElement(0, 0, new QCPTextElement(ui->contourPlotWidget, "Incident Flux Distribution") );
-    ui->contourPlotWidget->xAxis->setLabel("X (unit length)");
-    ui->contourPlotWidget->yAxis->setLabel("Y (unit length)");
+    ui->contourPlotWidget->plotLayout()->addElement(0, 0, new QCPTextElement(ui->contourPlotWidget, "Flux Distribution") );
+    ui->contourPlotWidget->xAxis->setLabel("x, m");
+    ui->contourPlotWidget->yAxis->setLabel("y, m");
 
-    ui->horizontaSectorPlot->plotLayout()->insertRow(0);
-    ui->horizontaSectorPlot->plotLayout()->addElement(0, 0, new QCPTextElement(ui->horizontaSectorPlot, "Horizontal Sector") );
-    // give the axes some labels:
-    ui->horizontaSectorPlot->xAxis->setLabel("Y (unit length)");
-    ui->horizontaSectorPlot->yAxis->setLabel("Flux ( (unit power) / (unit length)^2 )");
-
-    ui->verticalSectorPlot->plotLayout()->insertRow(0);
-    ui->verticalSectorPlot->plotLayout()->addElement(0, 0, new QCPTextElement(ui->verticalSectorPlot, "Vertical Sector") );
-    // give the axes some labels:
-    ui->verticalSectorPlot->xAxis->setLabel("X (unit length)");
-    ui->verticalSectorPlot->yAxis->setLabel("Flux ( (unit power) / (unit length)^2 )");
-
-    // give the y-axes an initial range:
-    ui->verticalSectorPlot->yAxis->setRange(0, 1.08);
+//    ui->horizontaSectorPlot->plotLayout()->insertRow(0);
+//    ui->horizontaSectorPlot->plotLayout()->addElement(0, 0, new QCPTextElement(ui->horizontaSectorPlot, "Horizontal Sector") );
+    ui->horizontaSectorPlot->xAxis->setLabel("x m");
+    ui->horizontaSectorPlot->yAxis->setLabel("Flux, W/m^2");
     ui->horizontaSectorPlot->yAxis->setRange(0, 1.08);
+
+//    ui->verticalSectorPlot->plotLayout()->insertRow(0);
+//    ui->verticalSectorPlot->plotLayout()->addElement(0, 0, new QCPTextElement(ui->verticalSectorPlot, "Vertical Sector") );
+    ui->verticalSectorPlot->xAxis->setLabel("y, m");
+    ui->verticalSectorPlot->yAxis->setLabel("Flux, W/m^2");
+    ui->verticalSectorPlot->yAxis->setRange(0, 1.08);
+
+    int q = fontMetrics().height();
+    resize(64*q, 48*q);
 }
 
 /*!
@@ -113,23 +95,6 @@ FluxAnalysisDialog::~FluxAnalysisDialog()
 {
     delete ui;
     delete m_fluxAnalysis;
-    delete m_pGridWidthVal;
-    delete m_pGridHeightVal;
-    delete m_pNOfRays;
-}
-
-/*!
- * Resizes results widget elements sizes when the dialog windows size is changed.
- */
-void FluxAnalysisDialog::resizeEvent(QResizeEvent* event)
-{
-    QDialog::resizeEvent(event);
-//    QSize resultsWidgetSize = ui->resultsWidget->size();
-//    int resultsWidgetSizeHeight = resultsWidgetSize.height();
-
-//    ui->contourPlotWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.34);
-//    ui->sectorsWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.34);
-//    ui->statisticalWidget->resize(resultsWidgetSize.width(), resultsWidgetSizeHeight * 0.25);
 }
 
 /*!
@@ -259,32 +224,32 @@ void FluxAnalysisDialog::Run()
 	}
 
 	//Check the number of rays
-    QString nOfRays = ui->nRaysLine->text();
-	int pos = 0;
-    if (m_pNOfRays->validate(nOfRays, pos) != QValidator::Acceptable)
-	{
-        QMessageBox::warning(this, "Tonatiuh",
-                             tr("The number of rays to trace must be a positive value.") );
-		return;
-	}
+//    QString nOfRays = ui->spinRays->value();
+//	int pos = 0;
+//    if (m_pNOfRays->validate(nOfRays, pos) != QValidator::Acceptable)
+//	{
+//        QMessageBox::warning(this, "Tonatiuh",
+//                             tr("The number of rays to trace must be a positive value.") );
+//		return;
+//	}
 
 	//Check the grid division
-    QString widthDivisions = ui->gridWidthLine->text();
-    QValidator::State widthState = m_pGridWidthVal->validate(widthDivisions, pos);
+//    QString widthDivisions = ui->spinCellsX->text();
+//    QValidator::State widthState = m_pGridWidthVal->validate(widthDivisions, pos);
 
-    QString heightDivisions = ui->gridHeightLine->text();
-    QValidator::State heightSate = m_pGridHeightVal->validate(heightDivisions, pos);
+//    QString heightDivisions = ui->spinCellsY->text();
+//    QValidator::State heightSate = m_pGridHeightVal->validate(heightDivisions, pos);
 
-    if ( (widthState != QValidator::Acceptable) || (heightSate != QValidator::Acceptable) )
-	{
-        QMessageBox::warning(this, "Tonatiuh",
-                             tr("The gird divisions size must be greater than 2.") );
-		return;
-	}
+//    if ( (widthState != QValidator::Acceptable) || (heightSate != QValidator::Acceptable) )
+//	{
+//        QMessageBox::warning(this, "Tonatiuh",
+//                             tr("The gird divisions size must be greater than 2.") );
+//		return;
+//	}
 
     QString surfaceSide = ui->sidesCombo->currentText();
     bool increasePhotonMap = (ui->appendCheck->isEnabled() && ui->appendCheck->isChecked() );
-    m_fluxAnalysis->RunFluxAnalysis(m_currentSurfaceURL, surfaceSide, nOfRays.toInt(), increasePhotonMap, heightDivisions.toInt(), widthDivisions.toInt() );
+    m_fluxAnalysis->RunFluxAnalysis(m_currentSurfaceURL, surfaceSide, ui->spinRays->value(), increasePhotonMap, ui->spinCellsY->value(), ui->spinCellsX->value());
 
 	UpdateAnalysis();
     ui->appendCheck->setEnabled(true);
@@ -298,21 +263,24 @@ void FluxAnalysisDialog::Run()
  */
 void FluxAnalysisDialog::UpdateAnalysis()
 {
-	int pos = 0;
-    QString withValue = ui->gridWidthLine->text();
-    QValidator::State widthState = m_pGridWidthVal->validate(withValue, pos);
+//	int pos = 0;
+//    QString withValue = ui->spinCellsX->text();
+//    QValidator::State widthState = m_pGridWidthVal->validate(withValue, pos);
 
-    QString heightValue = ui->gridHeightLine->text();
-    QValidator::State heightSate = m_pGridHeightVal->validate(heightValue, pos);
+//    QString heightValue = ui->spinCellsY->text();
+//    QValidator::State heightSate = m_pGridHeightVal->validate(heightValue, pos);
 
-    if ( (widthState != QValidator::Acceptable) || (heightSate != QValidator::Acceptable) )
-	{
-        QMessageBox::warning(this, "Tonatiuh",
-                             tr("The gird divisions size must be greater than 2.") );
-		return;
-	}
+//    if ( (widthState != QValidator::Acceptable) || (heightSate != QValidator::Acceptable) )
+//	{
+//        QMessageBox::warning(this, "Tonatiuh",
+//                             tr("The gird divisions size must be greater than 2.") );
+//		return;
+//	}
 
-    m_fluxAnalysis->UpdatePhotonCounts(heightValue.toInt(), withValue.toInt() );
+    int widthDivisions = ui->spinCellsX->value();
+    int heightDivisions = ui->spinCellsY->value();
+
+    m_fluxAnalysis->UpdatePhotonCounts(heightDivisions, widthDivisions);
 
 	int** photonCounts = m_fluxAnalysis->photonCountsValue();
     if (!photonCounts || photonCounts == 0) return;
@@ -325,8 +293,7 @@ void FluxAnalysisDialog::UpdateAnalysis()
 	double ymax = m_fluxAnalysis->ymaxValue();
 	double wPhoton = m_fluxAnalysis->wPhotonValue();
 	double totalPower = m_fluxAnalysis->totalPowerValue();
-	int widthDivisions = withValue.toInt();
-	int heightDivisions = heightValue.toInt();
+
     double widthCell = (xmax - xmin) / widthDivisions;
     double heightCell = (ymax - ymin) / heightDivisions;
 	double areaCell = widthCell * heightCell;
@@ -338,8 +305,8 @@ void FluxAnalysisDialog::UpdateAnalysis()
     double maxYCoord = ymin + (m_fluxAnalysis->maximumPhotonsYCoordValue() + 0.5) * heightCell;
     double maximumFluxError = (m_fluxAnalysis->maximumPhotonsErrorValue() * wPhoton) / ( ( (xmax - xmin) / (widthDivisions - 1) ) * ( (ymax - ymin) / (heightDivisions - 1) ) );
     double error = fabs(maximumFlux - maximumFluxError) / maximumFlux;
-	double gravityX = 0.0;
-	double gravityY = 0.0;
+    double gravityX = 0.;
+    double gravityY = 0.;
 	double E = 0;
 
     for (int xIndex = 0; xIndex < widthDivisions; ++xIndex)
@@ -349,14 +316,14 @@ void FluxAnalysisDialog::UpdateAnalysis()
 			double cellFlux = photonCounts[yIndex][xIndex] * wPhoton / areaCell;
             if (minimumFlux > cellFlux) minimumFlux = cellFlux;
 
-            gravityX += cellFlux * (xmin + (xIndex + 0.5) * widthCell);
-            gravityY += cellFlux * (ymin + (yIndex + 0.5) * heightCell);
-            E += (cellFlux - averageFlux) * (cellFlux - averageFlux);
+            gravityX += cellFlux*(xmin + (xIndex + 0.5)*widthCell);
+            gravityY += cellFlux*(ymin + (yIndex + 0.5)*heightCell);
+            E += (cellFlux - averageFlux)*(cellFlux - averageFlux);
 		}
 	}
 
-    double standarDeviation = sqrt(E / (widthDivisions * heightDivisions)  );
-	double uniformity = standarDeviation / averageFlux;
+    double standarDeviation = sqrt(E/(widthDivisions*heightDivisions));
+    double uniformity = standarDeviation/averageFlux;
 	gravityX /= totalFlux;
 	gravityY /= totalFlux;
 
@@ -411,8 +378,8 @@ void FluxAnalysisDialog::UpdateFluxMapPlot(int** photonCounts, double wPhoton, i
     colorMap->data()->setRange(QCPRange(xmin, xmax), QCPRange(ymin, ymax) );      // and span the coordinate range -4..4 in both key (x) and value (y) dimensions
 
 	//Assign flux data
-    double widthCell = (xmax - xmin) / widthDivisions;
-    double heightCell = (ymax - ymin) / heightDivisions;
+    double widthCell = (xmax - xmin)/widthDivisions;
+    double heightCell = (ymax - ymin)/heightDivisions;
 	double areaCell = widthCell * heightCell;
     for (int xIndex = 0; xIndex < widthDivisions; ++xIndex)
 	{
@@ -431,8 +398,8 @@ void FluxAnalysisDialog::UpdateFluxMapPlot(int** photonCounts, double wPhoton, i
     colorMap->setColorScale(colorScale);   // associate the color map with the color scale
     colorScale->axis()->setLabel(m_fluxLabelString);
 
-	// set the  contour plot color
-    colorMap->setGradient(QCPColorGradient::gpSpectrum);
+    // set the contour plot color
+    colorMap->setGradient(QCPColorGradient::gpThermal);
 
 	// rescale the data dimension (color) such that all data points lie in the span visualized by the color gradient:
 	colorMap->rescaleDataRange();
@@ -460,7 +427,7 @@ void FluxAnalysisDialog::CreateSectorPlots(double xmin, double ymin, double xmax
     QCPItemLine* tickVLine  = new  QCPItemLine(ui->contourPlotWidget);
     ui->hSectorXCoordSpin->setMinimum(xmin);
     ui->hSectorXCoordSpin->setMaximum(xmax);
-    ui->hSectorXCoordSpin->setSingleStep( (xmax - xmin) / 10);
+    ui->hSectorXCoordSpin->setSingleStep((xmax - xmin)/10);
 //    ui->contourPlotWidget->addItem(tickVLine);
 
     tickVLine->start->setCoords(0, ymin - 1);
@@ -475,7 +442,7 @@ void FluxAnalysisDialog::CreateSectorPlots(double xmin, double ymin, double xmax
 
     tickHLine->start->setCoords(xmin - 1,  0);
     tickHLine->end->setCoords(xmax + 1, 0);
-    tickHLine->setPen(QPen(QColor(137, 140, 140), 1) );
+    tickHLine->setPen(QPen(QColor(137, 140, 140), 1));
 }
 
 /*
@@ -554,21 +521,21 @@ void FluxAnalysisDialog::UpdateSectorPlots(int** photonCounts, double wPhoton, i
 void FluxAnalysisDialog::UpdateLabelsUnits()
 {
     QString lengthUnitString = ui->lengthUnitLine->text();
-    if (lengthUnitString.isEmpty() ) lengthUnitString = "(unit length)";
+    if (lengthUnitString.isEmpty() ) lengthUnitString = "m";
 
     QString powerUnitString = ui->powerUnitLine->text();
-    if (powerUnitString.isEmpty()) powerUnitString = "(unit power)";
+    if (powerUnitString.isEmpty()) powerUnitString = "W";
 
-    ui->contourPlotWidget->xAxis->setLabel(QString("X (%1)").arg(lengthUnitString) );
-    ui->contourPlotWidget->yAxis->setLabel(QString("Y (%1)").arg(lengthUnitString) );
+    ui->contourPlotWidget->xAxis->setLabel(QString("x, %1").arg(lengthUnitString) );
+    ui->contourPlotWidget->yAxis->setLabel(QString("y, %1").arg(lengthUnitString) );
 
-    ui->horizontaSectorPlot->xAxis->setLabel(QString("Y (%1)").arg(lengthUnitString) );
-    ui->verticalSectorPlot->xAxis->setLabel(QString("X (%1)").arg(lengthUnitString) );
+    ui->horizontaSectorPlot->xAxis->setLabel(QString("y, %1").arg(lengthUnitString) );
+    ui->verticalSectorPlot->xAxis->setLabel(QString("x, %1").arg(lengthUnitString) );
 
-    ui->horizontaSectorPlot->yAxis->setLabel(QString("Flux(%1/%2^2)").arg(powerUnitString, lengthUnitString) );
-    ui->verticalSectorPlot->yAxis->setLabel(QString("Flux(%1/%2^2)").arg(powerUnitString, lengthUnitString) );
+    ui->horizontaSectorPlot->yAxis->setLabel(QString("Flux, %1/%2^2").arg(powerUnitString, lengthUnitString) );
+    ui->verticalSectorPlot->yAxis->setLabel(QString("Flux, %1/%2^2").arg(powerUnitString, lengthUnitString) );
 
-    m_fluxLabelString = QString("Flux(%1/%2^2)").arg(powerUnitString, lengthUnitString);
+    m_fluxLabelString = QString("Flux, %1/%2^2").arg(powerUnitString, lengthUnitString);
 
     QCPColorMap* colorMapPlot = qobject_cast<QCPColorMap*>(ui->contourPlotWidget->plottable() );
 
@@ -598,8 +565,8 @@ void FluxAnalysisDialog::UpdateSectorPlotSlot()
     double xmax = m_fluxAnalysis->xmaxValue();
     double ymax = m_fluxAnalysis->ymaxValue();
     double wPhoton = m_fluxAnalysis->wPhotonValue();
-    QString withValue = ui->gridWidthLine->text();
-    QString heightValue = ui->gridHeightLine->text();
+    QString withValue = ui->spinCellsX->text();
+    QString heightValue = ui->spinCellsY->text();
     int widthDivisions = withValue.toInt();
     int heightDivisions = heightValue.toInt();
     double widthCell = (xmax - xmin) / widthDivisions;

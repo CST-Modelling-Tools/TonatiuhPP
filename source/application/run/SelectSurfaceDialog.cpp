@@ -38,6 +38,11 @@ SelectSurfaceDialog::SelectSurfaceDialog(SceneModel& model, bool enableLight, QW
     ui->sceneModelView->setRootIsDecorated(true);
     ui->sceneModelView->setRootIndex(viewLayoutIndex);
     ui->sceneModelView->expandToDepth(1);
+
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
+    int q = fontMetrics().height();
+    resize(36*q, 24*q);
 }
 
 /*!
