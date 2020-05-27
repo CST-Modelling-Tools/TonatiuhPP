@@ -10,6 +10,7 @@ LIBS += -lTonatiuh-Libraries
 HEADERS += \
     $$files(*.h) \
     $$files(air/*.h) \
+    $$files(apertures/*.h) \
     $$files(component/*.h) \
     $$files(scene/*.h) \
     $$files(material/*.h) \
@@ -23,6 +24,7 @@ HEADERS += \
 SOURCES += \
     $$files(*.cpp) \
     $$files(air/*.cpp) \
+    $$files(apertures/*.cpp) \
 #    $$files(component/*.cpp) \
     $$files(scene/*.cpp) \
     $$files(material/*.cpp) \

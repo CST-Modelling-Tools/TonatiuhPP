@@ -42,5 +42,6 @@
         <file>images/scene/nodeMaterial.png</file>
         <file>images/scene/nodeTracker.png</file>
         <file>images/view/ViewTop.png</file>
+        <file>images/scene/nodeAperture.png</file>
     </qresource>
 </RCC>

@@ -167,6 +167,7 @@ void SunAperture::findTexture(int xPixels, int yPixels, QVector<QPair<TShapeKit*
 
     SetLightSourceArea(xPixels, yPixels, bmp);
 
+    Q_UNUSED(sunKit)
 //    QVector<uchar> bmpTr;
 //    bmpTr.resize(xPixels*yPixels);
 //    for (int i = 0; i < xPixels; ++i)

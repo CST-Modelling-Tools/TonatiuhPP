@@ -3048,7 +3048,7 @@ void MainWindow::SetupActionsInsertShape()
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
 
     button = new QPushButton;
-    button->setIcon(QIcon(":/images/scene/nodeSurface.png"));
+    button->setIcon(QIcon(":/images/scene/nodeAperture.png"));
     button->setToolTip("Apertures");
     button->setMenu(new QMenu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);

@@ -7,5 +7,6 @@
         <file>images/MaterialVirtual.png</file>
         <file>images/ShapePlane.png</file>
         <file>images/MaterialAbsorber.png</file>
+        <file>images/ApertureRectangle.png</file>
     </qresource>
 </RCC>

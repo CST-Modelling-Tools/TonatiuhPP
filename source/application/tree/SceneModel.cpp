@@ -10,6 +10,7 @@
 #include <Inventor/nodekits/SoSceneKit.h>
 #include <Inventor/nodes/SoSelection.h>
 
+#include "kernel/apertures/Aperture.h"
 #include "kernel/material/MaterialRT.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/scene/TSceneKit.h"
@@ -123,6 +124,10 @@ void SceneModel::generateInstanceTree(InstanceNode* instance)
         if (shape)
             addInstanceNode(instance, shape);
 
+        SoNode* aperture = shapeKit->getPart("aperture", false);
+        if (aperture)
+            addInstanceNode(instance, aperture);
+
         SoNode* materialRT = shapeKit->getPart("materialRT", false);
         if (materialRT)
             addInstanceNode(instance, materialRT);
@@ -137,11 +142,11 @@ void SceneModel::generateInstanceTree(InstanceNode* instance)
         if (tracker)
             addInstanceNode(instance, tracker);
 
-        SoNodeKitListPart* childList = static_cast<SoNodeKitListPart*>(separatorKit->getPart("childList", false));
+        SoNodeKitListPart* childList = (SoNodeKitListPart*) separatorKit->getPart("childList", false);
         if (!childList) return;
         for (int n = 0; n < childList->getNumChildren(); ++n)
         {
-            SoBaseKit* coinChild = static_cast<SoBaseKit*>(childList->getChild(n));
+            SoBaseKit* coinChild = (SoBaseKit*) childList->getChild(n);
             InstanceNode* instanceChild = addInstanceNode(instance, coinChild);
             generateInstanceTree(instanceChild);
         }
@@ -263,6 +268,11 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
         {
             ShapeRT* shape = static_cast<ShapeRT*>(node);
             return QIcon(shape->getTypeIcon());
+        }
+        else if (node->getTypeId().isDerivedFrom(Aperture::getClassTypeId()))
+        {
+            Aperture* aperture = static_cast<Aperture*>(node);
+            return QIcon(aperture->getTypeIcon());
         }
         else if (node->getTypeId().isDerivedFrom(MaterialRT::getClassTypeId()))
         {

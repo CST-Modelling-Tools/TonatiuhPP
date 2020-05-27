@@ -8,6 +8,7 @@
 #include "kernel/air/AirPolynomial.h"
 #include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
+#include "kernel/apertures/ApertureRectangle.h"
 #include "kernel/material/MaterialVirtual.h"
 #include "kernel/material/MaterialAbsorber.h"
 #include "kernel/photons/PhotonsDefault.h"
@@ -66,6 +67,8 @@ PluginManager::PluginManager()
 
     TShapeKit::initClass();
     ShapeRT::initClass();
+    Aperture::initClass();
+    ApertureRectangle::initClass(); //
     MaterialRT::initClass();
 
     SkyBackground::initClass();
@@ -93,11 +96,13 @@ void PluginManager::load(QDir dir)
     loadTonatiuhPlugin(new AirFactoryT<AirExponential>);
     loadTonatiuhPlugin(new AirFactoryT<AirPolynomial>);
 
-    loadTonatiuhPlugin(new MaterialFactoryT<MaterialVirtual>);
-    loadTonatiuhPlugin(new MaterialFactoryT<MaterialAbsorber>);
-
     loadTonatiuhPlugin(new ShapeFactoryT<ShapePlane>);
 //    loadTonatiuhPlugin(new ShapeFactoryT<ShapeCube>);
+
+//    loadTonatiuhPlugin(new ApertureFactoryT<ApertureRectangle>); //
+
+    loadTonatiuhPlugin(new MaterialFactoryT<MaterialVirtual>);
+    loadTonatiuhPlugin(new MaterialFactoryT<MaterialAbsorber>);
 
     loadTonatiuhPlugin(new RandomFactoryT<RandomSTL>);
     loadTonatiuhPlugin(new PhotonsFactoryT<PhotonsDefault, PhotonsWidget>);

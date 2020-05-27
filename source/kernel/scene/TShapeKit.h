@@ -18,17 +18,12 @@ class MaterialRT;
 class TONATIUH_KERNEL TShapeKit: public SoShapeKit
 {
     SO_KIT_HEADER(TShapeKit);
+    SO_KIT_CATALOG_ENTRY_HEADER(aperture);
     SO_KIT_CATALOG_ENTRY_HEADER(materialRT);
 
 public:
-    TShapeKit();
     static void initClass();
-
-//    SbBool setPart(const SbName& part, SoNode* node);
-//    ShapeRT* getShape() {return m_shape;}
-//    MaterialRT* getMaterial() {return m_material;}
-//    ShapeRT* m_shape;
-//    MaterialRT* m_material;
+    TShapeKit();
 
 protected:
     virtual ~TShapeKit();
