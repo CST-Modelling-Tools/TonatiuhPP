@@ -122,13 +122,13 @@ void SceneModel::generateInstanceTree(InstanceNode* instance)
         SoNode* shape = shapeKit->getPart("shape", false);
         if (shape) {
             addInstanceNode(instance, shape);
-            shapeKit->m_shape = (ShapeRT*) shape;
+//            shapeKit->m_shape = (ShapeRT*) shape;
         }
 
         SoNode* material = shapeKit->getPart("appearance.material", false);
         if (material) {
             addInstanceNode(instance, material);
-            shapeKit->m_material = (MaterialRT*) material;
+//            shapeKit->m_material = (MaterialRT*) material;
         }
     }
     else if (TSeparatorKit* separatorKit = dynamic_cast<TSeparatorKit*>(node))
@@ -543,9 +543,22 @@ void SceneModel::removeCoinNode(int row, SoBaseKit* parent)
     emit layoutChanged();
 }
 
-void SceneModel::replaceCoinNode(SoNode* coinChild, SoBaseKit& parent)
+void SceneModel::replaceCoinNode(SoBaseKit* parent, int row, SoNode* node)
 {
+    for (InstanceNode* instanceParent : m_mapCoinQt[parent])
+    {
+        // remove
+        InstanceNode* instance = instanceParent->children[row];
+        QList<InstanceNode*>& instances = m_mapCoinQt[instance->getNode()];
+        instances.removeAt(instances.indexOf(instance));
 
+        // insert
+        instance = new InstanceNode(node);
+        instanceParent->replaceChild(row, instance);
+        m_mapCoinQt[node].append(instance);
+    }
+
+    emit layoutChanged();
 }
 
 /**

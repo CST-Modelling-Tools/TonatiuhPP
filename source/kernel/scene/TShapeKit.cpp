@@ -27,15 +27,15 @@ void TShapeKit::initClass()
 // faster getters
 // does not work for loading from file
 // see SceneModel::generateInstanceTree
-SbBool TShapeKit::setPart(const SbName& part, SoNode* node)
-{
-    if (part == "shape")
-        m_shape = (ShapeRT*) node;
-    else if (part == "material")
-        m_material = (MaterialRT*) node;
+//SbBool TShapeKit::setPart(const SbName& part, SoNode* node)
+//{
+//    if (part == "shape")
+//        m_shape = (ShapeRT*) node;
+//    else if (part == "material")
+//        m_material = (MaterialRT*) node;
 
-    return SoShapeKit::setPart(part, node);
-}
+//    return SoShapeKit::setPart(part, node);
+//}
 
 TShapeKit::TShapeKit()
 {

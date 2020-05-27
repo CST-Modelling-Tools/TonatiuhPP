@@ -1,9 +1,10 @@
-#include "libraries/geometry/gcf.h"
-
 #include "CmdInsertShape.h"
-#include "tree/SceneModel.h"
-#include "kernel/shape/ShapeRT.h"
+
+#include "kernel/run/InstanceNode.h"
 #include "kernel/scene/TShapeKit.h"
+#include "kernel/shape/ShapeRT.h"
+#include "libraries/geometry/gcf.h"
+#include "tree/SceneModel.h"
 
 /**
  * Creates a new shape insert command that adds a \a shape to \a shapekit node in the \a model.
@@ -14,23 +15,24 @@ CmdInsertShape::CmdInsertShape(TShapeKit* shapeKit, ShapeRT* shape, SceneModel* 
     QUndoCommand("InsertShape", parent),
     m_shapeKit(shapeKit),
     m_shape(shape),
-    m_model(model),
-    m_row(-1)
+    m_model(model)
 {
     if (!m_shapeKit) gcf::SevereError("CmdInsertShape called with NULL TShapeKit*");
     if (!m_shape) gcf::SevereError("CmdInsertShape called with NULL TShape*");
+
     m_shape->ref();
+
+    m_shapeOld = (ShapeRT*) m_shapeKit->getPart("shape", false);
+    m_shapeOld->ref();
 
     QString text = QString("Create Shape: %1").arg(shape->getTypeName());
     setText(text);
 }
 
-/*!
- * Destroys the CmdInsertShape object.
- */
 CmdInsertShape::~CmdInsertShape()
 {
     m_shape->unref();
+    m_shapeOld->unref();
 }
 
 /*!
@@ -39,8 +41,8 @@ CmdInsertShape::~CmdInsertShape()
  */
 void CmdInsertShape::undo()
 {
-    m_shapeKit->setPart("shape", NULL);
-    m_model->removeCoinNode(m_row, m_shapeKit);
+    m_shapeKit->setPart("shape", m_shapeOld);
+    m_model->replaceCoinNode(m_shapeKit, InstanceNode::IndexShapeRT, m_shapeOld);
 }
 
 /*!
@@ -50,5 +52,5 @@ void CmdInsertShape::undo()
 void CmdInsertShape::redo()
 {
     m_shapeKit->setPart("shape", m_shape);
-    m_row = m_model->insertCoinNode(m_shape, m_shapeKit);
+    m_model->replaceCoinNode(m_shapeKit, InstanceNode::IndexShapeRT, m_shape);
 }

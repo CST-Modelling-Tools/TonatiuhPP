@@ -22,7 +22,7 @@ public:
 
 private:
     TShapeKit* m_shapeKit;
+    ShapeRT* m_shapeOld;
     ShapeRT* m_shape;
     SceneModel* m_model;
-    int m_row;
 };

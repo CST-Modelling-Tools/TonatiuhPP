@@ -23,11 +23,11 @@ public:
     TShapeKit();
     static void initClass();
 
-    SbBool setPart(const SbName& part, SoNode* node);
-    ShapeRT* getShape() {return m_shape;}
-    MaterialRT* getMaterial() {return m_material;}
-    ShapeRT* m_shape;
-    MaterialRT* m_material;
+//    SbBool setPart(const SbName& part, SoNode* node);
+//    ShapeRT* getShape() {return m_shape;}
+//    MaterialRT* getMaterial() {return m_material;}
+//    ShapeRT* m_shape;
+//    MaterialRT* m_material;
 
 protected:
     virtual ~TShapeKit();

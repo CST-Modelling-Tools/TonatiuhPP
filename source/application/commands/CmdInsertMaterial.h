@@ -25,5 +25,4 @@ private:
     MaterialRT* m_materialOld;
     MaterialRT* m_material;
     SceneModel* m_model;
-    int m_row;
 };

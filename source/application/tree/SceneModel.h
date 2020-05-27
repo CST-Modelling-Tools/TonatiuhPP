@@ -31,7 +31,7 @@ public:
 
     QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const;
     int rowCount(const QModelIndex& index) const;
-    int columnCount(const QModelIndex&index) const;
+    int columnCount(const QModelIndex& index) const;
     QModelIndex parent(const QModelIndex& index) const;
     QVariant data(const QModelIndex& modelIndex, int role = Qt::DisplayRole) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
@@ -50,7 +50,7 @@ public:
 
     int insertCoinNode(SoNode* coinChild, SoBaseKit* coinParent);
     void removeCoinNode(int row, SoBaseKit* parent);
-    void replaceCoinNode(SoNode* coinChild, SoBaseKit& parent);
+    void replaceCoinNode(SoBaseKit* parent, int row, SoNode* node);
 
     bool Cut(SoBaseKit& parent, int row);
     bool Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinChild, int row);

@@ -1,9 +1,10 @@
 #include "CmdInsertMaterial.h"
 
+#include "kernel/material/MaterialRT.h"
+#include "kernel/run/InstanceNode.h"
+#include "kernel/scene/TShapeKit.h"
 #include "libraries/geometry/gcf.h"
 #include "tree/SceneModel.h"
-#include "kernel/material/MaterialRT.h"
-#include "kernel/scene/TShapeKit.h"
 
 /**
  * Creates a new material insert command that adds a \a material to \a shapekit node in the \a model.
@@ -14,27 +15,24 @@ CmdInsertMaterial::CmdInsertMaterial(TShapeKit* shapeKit, MaterialRT* material, 
     QUndoCommand(parent),
     m_shapeKit(shapeKit),
     m_material(material),
-    m_model(model),
-    m_row(-1)
+    m_model(model)
 {
     if (!m_shapeKit) gcf::SevereError("CmdInsertMaterial called with NULL TShapeKit");
     if (!m_material) gcf::SevereError("CmdInsertMaterial called with NULL TMaterial");
+
     m_material->ref();
+
+    m_materialOld = (MaterialRT*) m_shapeKit->getPart("material", false);
+    m_materialOld->ref();
 
     QString text = QString("Create Material: %1").arg(material->getTypeName());
     setText(text);
-
-//    m_materialOld = (MaterialRT*) m_shapeKit->getPart("material", false);
-//    m_materialOld->ref();
 }
 
-/*!
- * Destroys the CmdInsertMaterial object.
- */
 CmdInsertMaterial::~CmdInsertMaterial()
 {
     m_material->unref();
-//    m_materialOld->unref();
+    m_materialOld->unref();
 }
 
 /*!
@@ -43,8 +41,8 @@ CmdInsertMaterial::~CmdInsertMaterial()
  */
 void CmdInsertMaterial::undo()
 {
-    m_shapeKit->setPart("material", NULL);
-    m_model->removeCoinNode(m_row, m_shapeKit);
+    m_shapeKit->setPart("material", m_materialOld);
+    m_model->replaceCoinNode(m_shapeKit, InstanceNode::IndexMaterialRT, m_materialOld);
 }
 
 /*!
@@ -54,5 +52,5 @@ void CmdInsertMaterial::undo()
 void CmdInsertMaterial::redo()
 {
     m_shapeKit->setPart("material", m_material);
-    m_row = m_model->insertCoinNode(m_material, m_shapeKit);
+    m_model->replaceCoinNode(m_shapeKit, InstanceNode::IndexMaterialRT, m_material);
 }

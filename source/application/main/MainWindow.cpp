@@ -2514,25 +2514,16 @@ void MainWindow::CreateComponent(ComponentFactory* factory)
  */
 void MainWindow::CreateMaterial(MaterialFactory* factory)
 {
-    QModelIndex parentIndex = ui->sceneModelView->currentIndex();
-    if (!parentIndex.isValid()) return;
-    ui->sceneModelView->expand(parentIndex);
+    QModelIndex index = ui->sceneModelView->currentIndex();
+    if (!index.isValid()) return;
+    ui->sceneModelView->expand(index);
 
-    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
-    SoNode* parentNode = parentInstance->getNode();
-    TShapeKit* kit = dynamic_cast<TShapeKit*>(parentNode);
+    InstanceNode* instance = m_sceneModel->getInstance(index);
+    SoNode* node = instance->getNode();
+    TShapeKit* kit = dynamic_cast<TShapeKit*>(node);
     if (!kit) return;
 
-    MaterialRT* material = (MaterialRT*) kit->getPart("material", false);
-    if (material)
-    {
-//        for (int r = 0; r < parentInstance->children.size(); ++r)
-//            if (parentInstance->children[r]->getNode() == material)
-//                m_sceneModel->removeCoinNode(r, *kit);
-        ShowWarning("This TShapeKit already contains a material node");
-//        return;
-    }
-    material = factory->create();
+    MaterialRT* material = factory->create();
     material->setName(factory->name().toStdString().c_str());
 
     CmdInsertMaterial* cmd = new CmdInsertMaterial(kit, material, m_sceneModel);
@@ -2548,25 +2539,16 @@ void MainWindow::CreateMaterial(MaterialFactory* factory)
  */
 void MainWindow::CreateShape(ShapeFactory* factory)
 {
-    QModelIndex parentIndex = ui->sceneModelView->currentIndex();
-    if (!parentIndex.isValid()) return;
-    ui->sceneModelView->expand(parentIndex);
+    QModelIndex index = ui->sceneModelView->currentIndex();
+    if (!index.isValid()) return;
+    ui->sceneModelView->expand(index);
 
-    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
-    SoNode* parentNode = parentInstance->getNode();
-    TShapeKit* kit = dynamic_cast<TShapeKit*>(parentNode);
+    InstanceNode* instance = m_sceneModel->getInstance(index);
+    SoNode* node = instance->getNode();
+    TShapeKit* kit = dynamic_cast<TShapeKit*>(node);
     if (!kit) return;
 
-    ShapeRT* shape = (ShapeRT*) kit->getPart("shape", false);
-    if (shape)
-    {
-        for (int r = 0; r < parentInstance->children.size(); ++r)
-            if (parentInstance->children[r]->getNode() == shape)
-                m_sceneModel->removeCoinNode(r, kit);
-//        ShowWarning("This TShapeKit already contains a shape");
-//        return;
-    }
-    shape = factory->create();
+    ShapeRT* shape = factory->create();
     shape->setName(factory->name().toStdString().c_str());
 
     CmdInsertShape* cmd = new CmdInsertShape(kit, shape, m_sceneModel);

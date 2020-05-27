@@ -93,8 +93,7 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isShapeFront,
 //    if (TShapeKit* kit = dynamic_cast<TShapeKit*>(m_node)) // slower
     if (m_node->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId())) // faster
     {
-        TShapeKit* kit = (TShapeKit*) m_node;
-        ShapeRT* shape = kit->getShape();
+        ShapeRT* shape = (ShapeRT*) children[IndexShapeRT]->m_node;
         if (!shape) return false;
 
         Ray rayLocal = m_transform.transformInverse(rayIn);
@@ -105,7 +104,7 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isShapeFront,
         isShapeFront = dg.isFront;
         shapeNode = this;
 
-        MaterialRT* material = kit->getMaterial();
+        MaterialRT* material = (MaterialRT*) children[IndexMaterialRT]->m_node;
         if (!material) return false;
         Ray ray;
         if (material->OutputRay(rayLocal, dg, rand, ray))
@@ -168,16 +167,13 @@ void InstanceNode::updateTree(const Transform& tParent)
     }
     else if (TShapeKit* shapeKit = dynamic_cast<TShapeKit*>(m_node))
     {
-//        shapeKit->m_shape = (ShapeRT*) shapeKit->getPart("shape", false);
-//        shapeKit->m_material = (MaterialRT*) shapeKit->getPart("material", false);
-
         if (SoTransform* t = (SoTransform*) shapeKit->getPart("transform", false))
             m_transform = tParent*tgf::makeTransform(t);
         else
             m_transform = tParent;
 
-        m_box = m_transform(shapeKit->getShape()->getBox());
-
+        ShapeRT* shape = (ShapeRT*) children[IndexShapeRT]->m_node;
+        m_box = m_transform(shape->getBox());
     }
 }
 
