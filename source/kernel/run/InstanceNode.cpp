@@ -90,8 +90,10 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isShapeFront,
 {
     if (!m_box.intersect(rayIn)) return false;
 
-    if (TShapeKit* kit = dynamic_cast<TShapeKit*>(m_node))
+//    if (TShapeKit* kit = dynamic_cast<TShapeKit*>(m_node)) // slower
+    if (m_node->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId())) // faster
     {
+        TShapeKit* kit = (TShapeKit*) m_node;
         ShapeRT* shape = kit->getShape();
         if (!shape) return false;
 
