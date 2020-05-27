@@ -6,6 +6,8 @@
 
 class Random;
 class Ray;
+class ShapeRT;
+class MaterialRT;
 
 //!  TShapeKit class groups what is necessary to the shape.
 /*!
@@ -13,15 +15,19 @@ class Ray;
 
 */
 
-class TONATIUH_KERNEL TShapeKit : public SoShapeKit
+class TONATIUH_KERNEL TShapeKit: public SoShapeKit
 {
-    typedef SoShapeKit inherited;
-
     SO_KIT_HEADER(TShapeKit);
 
 public:
     TShapeKit();
     static void initClass();
+
+    SbBool setPart(const SbName& part, SoNode* node);
+    ShapeRT* getShape() {return m_shape;}
+    MaterialRT* getMaterial() {return m_material;}
+    ShapeRT* m_shape;
+    MaterialRT* m_material;
 
 protected:
     virtual ~TShapeKit();

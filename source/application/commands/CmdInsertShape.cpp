@@ -11,7 +11,11 @@
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
 CmdInsertShape::CmdInsertShape(TShapeKit* shapeKit, ShapeRT* shape, SceneModel* model, QUndoCommand* parent):
-    QUndoCommand("InsertShape", parent), m_shapeKit(shapeKit), m_shape(shape), m_pModel(model), m_row(-1)
+    QUndoCommand("InsertShape", parent),
+    m_shapeKit(shapeKit),
+    m_shape(shape),
+    m_model(model),
+    m_row(-1)
 {
     if (!m_shapeKit) gcf::SevereError("CmdInsertShape called with NULL TShapeKit*");
     if (!m_shape) gcf::SevereError("CmdInsertShape called with NULL TShape*");
@@ -36,7 +40,7 @@ CmdInsertShape::~CmdInsertShape()
 void CmdInsertShape::undo()
 {
     m_shapeKit->setPart("shape", NULL);
-    m_pModel->removeCoinNode(m_row, m_shapeKit);
+    m_model->removeCoinNode(m_row, m_shapeKit);
 }
 
 /*!
@@ -46,5 +50,5 @@ void CmdInsertShape::undo()
 void CmdInsertShape::redo()
 {
     m_shapeKit->setPart("shape", m_shape);
-    m_row = m_pModel->insertCoinNode(m_shape, m_shapeKit);
+    m_row = m_model->insertCoinNode(m_shape, m_shapeKit);
 }

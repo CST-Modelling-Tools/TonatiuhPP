@@ -120,12 +120,16 @@ void SceneModel::generateInstanceTree(InstanceNode* instance)
     if (TShapeKit* shapeKit = dynamic_cast<TShapeKit*>(node))
     {
         SoNode* shape = shapeKit->getPart("shape", false);
-        if (shape)
+        if (shape) {
             addInstanceNode(instance, shape);
+            shapeKit->m_shape = (ShapeRT*) shape;
+        }
 
         SoNode* material = shapeKit->getPart("appearance.material", false);
-        if (material)
+        if (material) {
             addInstanceNode(instance, material);
+            shapeKit->m_material = (MaterialRT*) material;
+        }
     }
     else if (TSeparatorKit* separatorKit = dynamic_cast<TSeparatorKit*>(node))
     {

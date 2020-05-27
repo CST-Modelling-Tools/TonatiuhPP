@@ -90,7 +90,29 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isShapeFront,
 {
     if (!m_box.intersect(rayIn)) return false;
 
-    if (!getNode()->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) ) // nodekit
+    if (TShapeKit* kit = dynamic_cast<TShapeKit*>(m_node))
+    {
+        ShapeRT* shape = kit->getShape();
+        if (!shape) return false;
+
+        Ray rayLocal = m_transform.transformInverse(rayIn);
+        double thit = 0.;
+        DifferentialGeometry dg;
+        if (!shape->intersect(rayLocal, &thit, &dg)) return false;
+        rayIn.tMax = thit;
+        isShapeFront = dg.isFront;
+        shapeNode = this;
+
+        MaterialRT* material = kit->getMaterial();
+        if (!material) return false;
+        Ray ray;
+        if (material->OutputRay(rayLocal, dg, rand, ray))
+        {
+            rayOut = m_transform.transformDirect(ray);
+            return true;
+        }
+    }
+    else
     {
         bool hasRayOut = false;
         double t = rayIn.tMax;
@@ -112,40 +134,6 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isShapeFront,
         }
         return hasRayOut;
     }
-    else // shapekit
-    {
-        ShapeRT* shape = 0;
-        MaterialRT* material = 0;
-        if (children[0]->getNode()->getTypeId().isDerivedFrom(ShapeRT::getClassTypeId() ) )
-        {
-            shape = (ShapeRT*) children[0]->m_node;
-            if (children.size() > 1)
-                material = (MaterialRT*) children[1]->m_node;
-        }
-        else if (children.count() > 1)
-        {
-            shape = (ShapeRT*) children[1]->m_node;
-            material = (MaterialRT*) children[0]->m_node;
-        }
-
-        if (!shape) return false;
-
-        Ray rayLocal = m_transform.transformInverse(rayIn);
-        double thit = 0.;
-        DifferentialGeometry dg;
-        if (!shape->intersect(rayLocal, &thit, &dg)) return false;
-        rayIn.tMax = thit;
-        isShapeFront = dg.isFront;
-        shapeNode = this;
-
-        if (!material) return false;
-        Ray ray;
-        if (material->OutputRay(rayLocal, dg, rand, ray))
-        {
-            rayOut = m_transform.transformDirect(ray);
-            return true;
-        }
-    }
     return false;
 }
 
@@ -163,12 +151,9 @@ void InstanceNode::extendBoxForLight(SbBox3f* extendedBox)
  */
 void InstanceNode::updateTree(const Transform& tParent)
 {
-    SoBaseKit* node = (SoBaseKit*) m_node;
-    if (!node) return;
-
-    if (dynamic_cast<TSeparatorKit*>(node))
+    if (TSeparatorKit* separatorKit = dynamic_cast<TSeparatorKit*>(m_node))
     {
-        SoTransform* t = (SoTransform*) node->getPart("transform", true);
+        SoTransform* t = (SoTransform*) separatorKit->getPart("transform", true);
         m_transform = tParent*tgf::makeTransform(t);
 
         BoundingBox box;
@@ -179,21 +164,18 @@ void InstanceNode::updateTree(const Transform& tParent)
         }
         m_box = box;
     }
-    else if (dynamic_cast<TShapeKit*>(node))
+    else if (TShapeKit* shapeKit = dynamic_cast<TShapeKit*>(m_node))
     {
-        for (InstanceNode* child : children)
-        {
-            if (!dynamic_cast<ShapeRT*>(child->m_node)) continue;
+//        shapeKit->m_shape = (ShapeRT*) shapeKit->getPart("shape", false);
+//        shapeKit->m_material = (MaterialRT*) shapeKit->getPart("material", false);
 
-            if (SoTransform* t = (SoTransform*) node->getPart("transform", false))
-                m_transform = tParent*tgf::makeTransform(t);
-            else
-                m_transform = tParent;
+        if (SoTransform* t = (SoTransform*) shapeKit->getPart("transform", false))
+            m_transform = tParent*tgf::makeTransform(t);
+        else
+            m_transform = tParent;
 
-            ShapeRT* shape = (ShapeRT*) child->m_node;
-            m_box = m_transform(shape->getBox());
-            break;
-        }
+        m_box = m_transform(shapeKit->getShape()->getBox());
+
     }
 }
 
@@ -208,7 +190,7 @@ void InstanceNode::collectShapeTransforms(QStringList disabledNodes, QVector<QPa
     }
     else if (TShapeKit* shape = dynamic_cast<TShapeKit*>(m_node))
     {
-        shapes << QPair<TShapeKit*, Transform>(shape, getTransform());
+        shapes << QPair<TShapeKit*, Transform>(shape, m_transform);
     }
 }
 

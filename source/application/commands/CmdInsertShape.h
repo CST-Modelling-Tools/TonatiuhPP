@@ -17,12 +17,12 @@ public:
     CmdInsertShape(TShapeKit* shapeKit, ShapeRT* shape, SceneModel* model, QUndoCommand* parent = 0);
     ~CmdInsertShape();
 
-    virtual void undo();
-    virtual void redo();
+    void undo();
+    void redo();
 
 private:
     TShapeKit* m_shapeKit;
     ShapeRT* m_shape;
-    SceneModel* m_pModel;
+    SceneModel* m_model;
     int m_row;
 };
