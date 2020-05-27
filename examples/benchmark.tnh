@@ -9,11 +9,8 @@ TSceneKit {
     containerNode 
     Group {
 
-      DEF Light SunKit {
+      DEF Sun SunKit {
         fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
-        azimuth 0
-        elevation 1.570796326794897
-        irradiance 1000
         transform 
         Transform {
           translation 0 -9.6165058e-007 11
@@ -59,7 +56,6 @@ TSceneKit {
         tsunshape 
         SunPillbox {
           fields [ SFDouble thetaMax ]
-          thetaMax 0.00465
 
         }
 
@@ -75,7 +71,6 @@ TSceneKit {
     Group {
 
       DEF Layout TSeparatorKit {
-        fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode tracker, SFNode topSeparator ]
         transform 
         Transform {
 
@@ -89,12 +84,10 @@ TSceneKit {
           Separator {
 
             DEF Shape TShapeKit {
-              fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode materialBinding, SFNode normalBinding, SFNode textureCoordinateBinding, SFNode shapeHints, SFNode coordinate3, SFNode coordinate4, SFNode normal, SFNode textureCoordinate2, SFNode textureCoordinateFunction, SFNode profileCoordinate2, SFNode profileCoordinate3, SFNode profileList, SFNode localTransform, SFNode shape, SFNode topSeparator, SFNode shapeSeparator ]
               appearance 
               AppearanceKit {
                 material 
-                DEF Specular MaterialSpecular {
-                  fields [ SFDouble reflectivity, SFDouble slope, SFEnum distribution, MFColor ambientColor, MFColor diffuseColor, MFColor specularColor, MFColor emissiveColor, MFFloat shininess, MFFloat transparency ]
+                DEF MaterialGL Material {
 
                 }
 
@@ -102,6 +95,11 @@ TSceneKit {
               shape 
               DEF Sphere ShapeSphere {
                 fields [ SFDouble radius, SFDouble phiMax, SFDouble alphaMin, SFDouble alphaMax, SFEnum activeSide ]
+
+              }
+              materialRT 
+              DEF Specular MaterialSpecular {
+                fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
               }
 

@@ -40,18 +40,24 @@ void TShapeKit::initClass()
 TShapeKit::TShapeKit()
 {
     SO_KIT_CONSTRUCTOR(TShapeKit);
+    isBuiltIn = TRUE;
 
-    SO_KIT_CHANGE_ENTRY_TYPE(shape, ShapeRT, ShapePlane);
-    SO_KIT_CHANGE_NULL_BY_DEFAULT(shape, TRUE);
+//    SO_KIT_CHANGE_ENTRY_TYPE(shape, ShapeRT, ShapePlane);
+//    SO_KIT_CHANGE_NULL_BY_DEFAULT(shape, TRUE);
+    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(materialRT, MaterialRT, MaterialAbsorber, TRUE, topSeparator, "", TRUE);
     SO_KIT_INIT_INSTANCE();
 
     ShapeRT* shape = new ShapePlane;
     shape->setName(shape->getTypeName());
     setPart("shape", shape);
 
-    MaterialRT* material = new MaterialAbsorber;
-    material->setName(material->getTypeName());
-    setPart("material", material);
+    MaterialRT* materialRT = new MaterialAbsorber;
+    materialRT->setName(materialRT->getTypeName());
+    setPart("materialRT", materialRT);
+
+    SoMaterial* materialGL = new SoMaterial;
+    materialGL->setName("MaterialGL");
+    setPart("material", materialGL);
 
     //SoTransform* transform = new SoTransform;
     //setPart("transform",  NULL);

@@ -17,9 +17,9 @@ struct TONATIUH_KERNEL DifferentialGeometry
     Vector3D point;
     double u;
     double v;
-    Vector3D dpdu;
-    Vector3D dpdv;
-    Vector3D normal;
+    Vector3D dpdu; // not normalized
+    Vector3D dpdv; // not normalized
+    Vector3D normal; // normalized
 
     const ShapeRT* shape;
     bool isFront;

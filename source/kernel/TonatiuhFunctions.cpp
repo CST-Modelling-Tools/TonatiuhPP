@@ -10,34 +10,6 @@
 #include "libraries/geometry/Vector2D.h"
 
 
-double tgf::AlternateBoxMuller(Random& rand)
-{
-    static bool firsttime = true;
-    static double x1;
-    static double x2;
-
-    if (firsttime) {
-        double s = 2;
-        double u1;
-        double u2;
-        while (s > 1) {
-            u1 = 2*rand.RandomDouble() - 1;
-            u2 = 2*rand.RandomDouble() - 1;
-            s = u1*u1 + u2*u2;
-        }
-
-        double z = sqrt( -2 * log(s) / s );
-        x1 = z*u1;
-        x2 = z*u2;
-
-        firsttime = false;
-        return x1;
-    } else {
-        firsttime = true;
-        return x2;
-    }
-}
-
 SbMatrix tgf::makeSbMatrix(const Transform& transform)
 {
     std::shared_ptr<Matrix4x4> transformMatrix = transform.getMatrix()->transposed();

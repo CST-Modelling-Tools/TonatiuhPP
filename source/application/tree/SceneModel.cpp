@@ -120,16 +120,16 @@ void SceneModel::generateInstanceTree(InstanceNode* instance)
     if (TShapeKit* shapeKit = dynamic_cast<TShapeKit*>(node))
     {
         SoNode* shape = shapeKit->getPart("shape", false);
-        if (shape) {
+        if (shape)
             addInstanceNode(instance, shape);
-//            shapeKit->m_shape = (ShapeRT*) shape;
-        }
 
-        SoNode* material = shapeKit->getPart("appearance.material", false);
-        if (material) {
+        SoNode* materialRT = shapeKit->getPart("materialRT", false);
+        if (materialRT)
+            addInstanceNode(instance, materialRT);
+
+        SoNode* material = shapeKit->getPart("material", false);
+        if (material)
             addInstanceNode(instance, material);
-//            shapeKit->m_material = (MaterialRT*) material;
-        }
     }
     else if (TSeparatorKit* separatorKit = dynamic_cast<TSeparatorKit*>(node))
     {
@@ -662,7 +662,7 @@ bool SceneModel::Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinN
             }
             coinParent.setPart("shape", child);
         }
-        if (child->getTypeId().isDerivedFrom(SoMaterial::getClassTypeId()))
+        if (child->getTypeId().isDerivedFrom(MaterialRT::getClassTypeId()))
         {
             TShapeKit* shapeKit = static_cast<TShapeKit*>(pCoinParent);
             if (!shapeKit) return false;

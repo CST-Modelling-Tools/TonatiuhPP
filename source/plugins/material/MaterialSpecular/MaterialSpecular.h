@@ -19,20 +19,16 @@ public:
     bool OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& rand, Ray& rayOut) const;
 
     SoSFDouble reflectivity;
-    SoSFDouble slope;
     SoSFEnum distribution;
+    SoSFDouble slope;
 
     NAME_ICON_FUNCTIONS("Specular", ":/MaterialSpecular.png")
 
 protected:
     ~MaterialSpecular();
 
-    double m_sigmaOpt;
-
-    static void updateReflectivity(void* data, SoSensor*);
-
-private:
-    SoFieldSensor* m_reflectivitySensor;
+    SoNodeSensor* m_sensor;
+    static void onSensor(void* data, SoSensor*);
 };
 
 

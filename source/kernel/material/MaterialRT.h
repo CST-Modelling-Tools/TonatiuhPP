@@ -1,7 +1,7 @@
 #pragma once
 
 #include "kernel/scene/TAbstract.h"
-#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoSubNode.h>
 
 
 struct DifferentialGeometry;
@@ -9,7 +9,7 @@ class Random;
 class Ray;
 
 
-class TONATIUH_KERNEL MaterialRT: public SoMaterial
+class TONATIUH_KERNEL MaterialRT: public SoNode
 {
     SO_NODE_ABSTRACT_HEADER(MaterialRT);
 

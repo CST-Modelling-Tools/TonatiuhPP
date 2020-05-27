@@ -17,6 +17,7 @@ void TSeparatorKit::initClass()
 TSeparatorKit::TSeparatorKit()
 {
     SO_KIT_CONSTRUCTOR(TSeparatorKit);
+    isBuiltIn = TRUE; // do not save the list of fields
 
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tracker, SoNode, Tracker, TRUE, this, "", TRUE);
     SO_KIT_INIT_INSTANCE();

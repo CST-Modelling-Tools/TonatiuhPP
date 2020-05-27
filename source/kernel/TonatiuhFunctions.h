@@ -16,7 +16,6 @@ struct Vector3D;
 
 namespace tgf
 {
-    TONATIUH_KERNEL double AlternateBoxMuller(Random& rand);
     TONATIUH_KERNEL SbMatrix makeSbMatrix(const Transform& transform);
     TONATIUH_KERNEL SbMatrix makeSbMatrix(SoTransform* soTransform);
 

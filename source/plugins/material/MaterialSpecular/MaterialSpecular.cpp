@@ -1,6 +1,6 @@
 #include "MaterialSpecular.h"
 
-#include <Inventor/sensors/SoFieldSensor.h>
+#include <Inventor/sensors/SoNodeSensor.h>
 
 #include "libraries/geometry/gcf.h"
 #include "libraries/geometry/Ray.h"
@@ -17,58 +17,59 @@ void MaterialSpecular::initClass()
     SO_NODE_INIT_CLASS(MaterialSpecular, MaterialRT, "MaterialRT");
 }
 
-MaterialSpecular::MaterialSpecular():
-    m_sigmaOpt(0)
+MaterialSpecular::MaterialSpecular()
 {
     SO_NODE_CONSTRUCTOR(MaterialSpecular);
 
     SO_NODE_ADD_FIELD(reflectivity, (0.9) );
-    SO_NODE_ADD_FIELD(slope, (2.) );
 
     //SO_NODE_DEFINE_ENUM_VALUE(Distribution, pillbox);
     SO_NODE_DEFINE_ENUM_VALUE(Distribution, Gaussian);
     SO_NODE_SET_SF_ENUM_TYPE(distribution, Distribution);
     SO_NODE_ADD_FIELD(distribution, (Gaussian) );
 
-    SO_NODE_ADD_FIELD( ambientColor, (0.2f, 0.2f, 0.2f) );
-    SO_NODE_ADD_FIELD( diffuseColor, (0.8f, 0.8f, 0.8f) );
-    SO_NODE_ADD_FIELD( specularColor, (0.f, 0.f, 0.f) );
-    SO_NODE_ADD_FIELD( emissiveColor, (0.f, 0.f, 0.f) );
-    SO_NODE_ADD_FIELD( shininess, (0.2f) );
-    SO_NODE_ADD_FIELD( transparency, (0.f) );
+    SO_NODE_ADD_FIELD(slope, (0.002) ); // in radians
 
-    m_reflectivitySensor = new SoFieldSensor(updateReflectivity, this);
-    m_reflectivitySensor->attach(&reflectivity);
+    m_sensor = new SoNodeSensor(onSensor, this);
+    m_sensor->attach(this);
 }
 
 MaterialSpecular::~MaterialSpecular()
 {
-    delete m_reflectivitySensor;
+    delete m_sensor;
 }
 
 bool MaterialSpecular::OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& rand, Ray& rayOut) const
 {
-    double randomNumber = rand.RandomDouble();
-    if (randomNumber >= reflectivity.getValue()) return false;
+    // reflectivity
+    if (rand.RandomDouble() >= reflectivity.getValue()) return false;
 
-    // Compute reflected ray (local coordinates)
     rayOut.origin = dg.point;
 
     Vector3D normal;
-    double sigma = slope.getValue()/1000.; // from mrad to rad
+    double sigma = slope.getValue();
     if (sigma > 0.) {
         if (distribution.getValue() == Distribution::pillbox)
         {
             double phi = gcf::TwoPi*rand.RandomDouble();
             double theta = sigma*rand.RandomDouble();
-            normal.x = sin(theta)*sin(phi);
-            normal.y = sin(theta)*cos(phi);
+            normal.x = sin(theta)*cos(phi);
+            normal.y = sin(theta)*sin(phi);
             normal.z = cos(theta);
         }
         else if (distribution.getValue() == Distribution::Gaussian)
         {
-            normal.x = sigma*tgf::AlternateBoxMuller(rand);
-            normal.y = sigma*tgf::AlternateBoxMuller(rand);
+            // https://en.wikipedia.org/wiki/Marsaglia_polar_method
+            double u, v, s;
+            do {
+                u = 2.*rand.RandomDouble() - 1.;
+                v = 2.*rand.RandomDouble() - 1.;
+                s = u*u + v*v;
+            } while (s > 1. || s == 0.);
+            s = sigma*sqrt(-2.*log(s)/s);
+
+            normal.x = s*u;
+            normal.y = s*v;
             normal.z = 1.;
         }
         Vector3D vx = dg.dpdu.normalized();
@@ -79,13 +80,13 @@ bool MaterialSpecular::OutputRay(const Ray& rayIn, const DifferentialGeometry& d
         normal = dg.normal;
 
     Vector3D d = rayIn.direction() - 2.*normal*dot(normal, rayIn.direction());
-    rayOut.setDirection(d.normalized()); // double sided
+    rayOut.setDirection(d); // double sided
     return true;
 }
 
-void MaterialSpecular::updateReflectivity(void* data, SoSensor*)
+void MaterialSpecular::onSensor(void* data, SoSensor*)
 {
-    MaterialSpecular* material = static_cast<MaterialSpecular*>(data);
+    MaterialSpecular* material = (MaterialSpecular*) data;
     if (material->reflectivity.getValue() < 0.)
         material->reflectivity = 0.;
     if (material->reflectivity.getValue() > 1.)

@@ -18,6 +18,7 @@ class MaterialRT;
 class TONATIUH_KERNEL TShapeKit: public SoShapeKit
 {
     SO_KIT_HEADER(TShapeKit);
+    SO_KIT_CATALOG_ENTRY_HEADER(materialRT);
 
 public:
     TShapeKit();

@@ -30,7 +30,8 @@ class TONATIUH_KERNEL InstanceNode
 public:
     enum IndicesTShapeKit {
         IndexShapeRT = 0,
-        IndexMaterialRT = 1
+        IndexMaterialRT = 1,
+        IndexMaterial = 2
     };
 
     InstanceNode(SoNode* node);

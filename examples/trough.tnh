@@ -16,7 +16,7 @@ TSceneKit {
         irradiance 1000
         transform 
         Transform {
-          translation 13.199775 2.327477 7.738462
+          translation 13.199774 2.327477 7.7384615
           rotation 0.71818328 -0.60262728 -0.34792697  2.3554611
 
         }
@@ -28,7 +28,7 @@ TSceneKit {
         icon 
         SunAperture {
           fields [ SFString disabledNodes ]
-          disabledNodes "T1/primary/axis;//Layout/T1/primary/target;//Layout/Target/Shape;"
+          disabledNodes "Layout//T1/primary/axis;//Layout/T1/primary/target;//Layout/Target/Shape;"
 
         }
         iconMaterial 
@@ -59,7 +59,6 @@ TSceneKit {
         tsunshape 
         SunPillbox {
           fields [ SFDouble thetaMax ]
-          thetaMax 0.00465
 
         }
 
@@ -75,7 +74,6 @@ TSceneKit {
     Group {
 
       DEF Layout TSeparatorKit {
-        fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode tracker, SFNode topSeparator ]
         transform 
         Transform {
 
@@ -89,7 +87,6 @@ TSceneKit {
           Separator {
 
             DEF T1 TSeparatorKit {
-              fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode tracker, SFNode topSeparator ]
               transform 
               Transform {
 
@@ -103,11 +100,10 @@ TSceneKit {
                 Separator {
 
                   DEF primary TSeparatorKit {
-                    fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode tracker, SFNode topSeparator ]
                     transform 
                     Transform {
                       translation 0 0 1
-                      rotation 0 1.0000005 0  0.45051602
+                      rotation 0 1 0  0.45051602
 
                     }
                     childList 
@@ -119,7 +115,6 @@ TSceneKit {
                       Separator {
 
                         DEF facet TSeparatorKit {
-                          fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode tracker, SFNode topSeparator ]
                           transform 
                           Transform {
                             translation 0 0 1
@@ -134,12 +129,10 @@ TSceneKit {
                             Separator {
 
                               DEF Shape TShapeKit {
-                                fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode materialBinding, SFNode normalBinding, SFNode textureCoordinateBinding, SFNode shapeHints, SFNode coordinate3, SFNode coordinate4, SFNode normal, SFNode textureCoordinate2, SFNode textureCoordinateFunction, SFNode profileCoordinate2, SFNode profileCoordinate3, SFNode profileList, SFNode localTransform, SFNode shape, SFNode topSeparator, SFNode shapeSeparator ]
                                 appearance 
                                 AppearanceKit {
                                   material 
-                                  DEF Specular MaterialSpecular {
-                                    fields [ SFDouble reflectivity, SFDouble slope, SFEnum distribution, MFColor ambientColor, MFColor diffuseColor, MFColor specularColor, MFColor emissiveColor, MFFloat shininess, MFFloat transparency ]
+                                  DEF MaterialGL Material {
 
                                   }
 
@@ -152,6 +145,11 @@ TSceneKit {
                                   sizeY 5
 
                                 }
+                                materialRT 
+                                DEF Specular MaterialSpecular {
+                                  fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+
+                                }
 
                               }
                             }
@@ -160,7 +158,6 @@ TSceneKit {
 
                         }
                         DEF target TSeparatorKit {
-                          fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode tracker, SFNode topSeparator ]
                           transform 
                           Transform {
                             translation 0 0 5
@@ -176,12 +173,24 @@ TSceneKit {
                             Separator {
 
                               DEF Shape TShapeKit {
-                                fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode materialBinding, SFNode normalBinding, SFNode textureCoordinateBinding, SFNode shapeHints, SFNode coordinate3, SFNode coordinate4, SFNode normal, SFNode textureCoordinate2, SFNode textureCoordinateFunction, SFNode profileCoordinate2, SFNode profileCoordinate3, SFNode profileList, SFNode localTransform, SFNode shape, SFNode topSeparator, SFNode shapeSeparator ]
+                                appearance 
+                                AppearanceKit {
+                                  material 
+                                  DEF MaterialGL Material {
+
+                                  }
+
+                                }
                                 shape 
                                 DEF Plane ShapePlane {
                                   fields [ SFDouble sizeX, SFDouble sizeY, SFEnum activeSide ]
                                   sizeX 0.2
                                   sizeY 5
+
+                                }
+                                materialRT 
+                                DEF Absorber MaterialAbsorber {
+                                  fields [  ]
 
                                 }
 
@@ -192,7 +201,6 @@ TSceneKit {
 
                         }
                         DEF axis TSeparatorKit {
-                          fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode tracker, SFNode topSeparator ]
                           transform 
                           Transform {
                             rotation 1 0 0  1.5700002
@@ -207,12 +215,24 @@ TSceneKit {
                             Separator {
 
                               DEF Shape TShapeKit {
-                                fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode materialBinding, SFNode normalBinding, SFNode textureCoordinateBinding, SFNode shapeHints, SFNode coordinate3, SFNode coordinate4, SFNode normal, SFNode textureCoordinate2, SFNode textureCoordinateFunction, SFNode profileCoordinate2, SFNode profileCoordinate3, SFNode profileList, SFNode localTransform, SFNode shape, SFNode topSeparator, SFNode shapeSeparator ]
+                                appearance 
+                                AppearanceKit {
+                                  material 
+                                  DEF MaterialGL Material {
+
+                                  }
+
+                                }
                                 shape 
                                 DEF Cylinder ShapeCylinder {
                                   fields [ SFDouble radius, SFDouble phiMax, SFDouble sizeZ, SFEnum activeSide ]
                                   radius 0.1
                                   sizeZ 5
+
+                                }
+                                materialRT 
+                                DEF Absorber MaterialAbsorber {
+                                  fields [  ]
 
                                 }
 
@@ -241,7 +261,6 @@ TSceneKit {
 
             }
             DEF Target TSeparatorKit {
-              fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode tracker, SFNode topSeparator ]
               transform 
               Transform {
                 translation 0 0 5
@@ -257,12 +276,24 @@ TSceneKit {
                 Separator {
 
                   DEF Shape TShapeKit {
-                    fields [ SFEnum renderCaching, SFEnum boundingBoxCaching, SFEnum renderCulling, SFEnum pickCulling, SFNode callbackList, SFNode pickStyle, SFNode appearance, SFNode units, SFNode transform, SFNode texture2Transform, SFNode childList, SFNode materialBinding, SFNode normalBinding, SFNode textureCoordinateBinding, SFNode shapeHints, SFNode coordinate3, SFNode coordinate4, SFNode normal, SFNode textureCoordinate2, SFNode textureCoordinateFunction, SFNode profileCoordinate2, SFNode profileCoordinate3, SFNode profileList, SFNode localTransform, SFNode shape, SFNode topSeparator, SFNode shapeSeparator ]
+                    appearance 
+                    AppearanceKit {
+                      material 
+                      DEF MaterialGL Material {
+
+                      }
+
+                    }
                     shape 
                     DEF Plane ShapePlane {
                       fields [ SFDouble sizeX, SFDouble sizeY, SFEnum activeSide ]
                       sizeX 0.5
                       sizeY 5
+
+                    }
+                    materialRT 
+                    DEF Absorber MaterialAbsorber {
+                      fields [  ]
 
                     }
 
