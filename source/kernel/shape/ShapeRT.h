@@ -3,8 +3,6 @@
 #include "kernel/scene/TAbstract.h"
 
 #include <Inventor/nodes/SoShape.h>
-#include <Inventor/fields/SoSFEnum.h>
-#include <Inventor/fields/SoSFBool.h>
 
 struct Vector3D;
 struct BoundingBox;

@@ -23,6 +23,9 @@ CmdInsertMaterial::CmdInsertMaterial(TShapeKit* shapeKit, MaterialRT* material, 
 
     QString text = QString("Create Material: %1").arg(material->getTypeName());
     setText(text);
+
+//    m_materialOld = (MaterialRT*) m_shapeKit->getPart("material", false);
+//    m_materialOld->ref();
 }
 
 /*!
@@ -31,6 +34,7 @@ CmdInsertMaterial::CmdInsertMaterial(TShapeKit* shapeKit, MaterialRT* material, 
 CmdInsertMaterial::~CmdInsertMaterial()
 {
     m_material->unref();
+//    m_materialOld->unref();
 }
 
 /*!
@@ -40,7 +44,7 @@ CmdInsertMaterial::~CmdInsertMaterial()
 void CmdInsertMaterial::undo()
 {
     m_shapeKit->setPart("material", NULL);
-    m_model->removeCoinNode(m_row, *m_shapeKit);
+    m_model->removeCoinNode(m_row, m_shapeKit);
 }
 
 /*!

@@ -14,7 +14,7 @@ SO_NODE_SOURCE(MaterialSpecular)
 
 void MaterialSpecular::initClass()
 {
-    SO_NODE_INIT_CLASS(MaterialSpecular, MaterialRT, "MaterialAbstract");
+    SO_NODE_INIT_CLASS(MaterialSpecular, MaterialRT, "MaterialRT");
 }
 
 MaterialSpecular::MaterialSpecular():

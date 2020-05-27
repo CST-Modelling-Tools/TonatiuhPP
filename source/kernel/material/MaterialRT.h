@@ -3,6 +3,7 @@
 #include "kernel/scene/TAbstract.h"
 #include <Inventor/nodes/SoMaterial.h>
 
+
 struct DifferentialGeometry;
 class Random;
 class Ray;

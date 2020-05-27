@@ -1,7 +1,8 @@
 #include "SunPillbox.h"
 
+#include <Inventor/sensors/SoNodeSensor.h>
+
 #include "libraries/geometry/gcf.h"
-#include <Inventor/sensors/SoFieldSensor.h>
 
 SO_NODE_SOURCE(SunPillbox)
 
@@ -15,21 +16,15 @@ SunPillbox::SunPillbox()
 {
     SO_NODE_CONSTRUCTOR(SunPillbox);
     SO_NODE_ADD_FIELD( thetaMax, (4.65e-3) );
-    update_thetaMax(this, 0);
+    onSensor(this, 0);
 
-    m_sensor_thetaMax = new SoFieldSensor(update_thetaMax, this);
-    m_sensor_thetaMax->attach(&thetaMax);
+    m_sensor = new SoNodeSensor(onSensor, this);
+    m_sensor->attach(this);
 }
 
 SunPillbox::~SunPillbox()
 {
-    delete m_sensor_thetaMax;
-}
-
-void SunPillbox::update_thetaMax(void* data, SoSensor*)
-{
-    SunPillbox* sun = (SunPillbox*) data;
-    sun->m_sinThetaMax = sin(sun->thetaMax.getValue());
+    delete m_sensor;
 }
 
 Vector3D SunPillbox::generateRay(Random& rand) const
@@ -58,8 +53,13 @@ SoNode* SunPillbox::copy(SbBool copyConnections) const
 	// a copy of this instance, including its field data
     SunPillbox* sun = dynamic_cast<SunPillbox*>(SoNode::copy(copyConnections));
 
-    sun->thetaMax = thetaMax;
-    sun->m_sinThetaMax = m_sinThetaMax;
+    sun->m_sinThetaMax = m_sinThetaMax; //?
 
     return sun;
+}
+
+void SunPillbox::onSensor(void* data, SoSensor*)
+{
+    SunPillbox* sun = (SunPillbox*) data;
+    sun->m_sinThetaMax = sin(sun->thetaMax.getValue());
 }

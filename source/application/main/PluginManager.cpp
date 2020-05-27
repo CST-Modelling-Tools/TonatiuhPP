@@ -9,6 +9,7 @@
 #include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/material/MaterialVirtual.h"
+#include "kernel/material/MaterialAbsorber.h"
 #include "kernel/photons/PhotonsDefault.h"
 #include "kernel/photons/PhotonsFactory.h"
 #include "kernel/photons/PhotonsWidget.h"
@@ -16,6 +17,7 @@
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeCube.h"
+#include "kernel/shape/ShapePlane.h"
 #include "kernel/sun/SunPillbox.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunAperture.h"
@@ -92,7 +94,9 @@ void PluginManager::load(QDir dir)
     loadTonatiuhPlugin(new AirFactoryT<AirPolynomial>);
 
     loadTonatiuhPlugin(new MaterialFactoryT<MaterialVirtual>);
+    loadTonatiuhPlugin(new MaterialFactoryT<MaterialAbsorber>);
 
+    loadTonatiuhPlugin(new ShapeFactoryT<ShapePlane>);
 //    loadTonatiuhPlugin(new ShapeFactoryT<ShapeCube>);
 
     loadTonatiuhPlugin(new RandomFactoryT<RandomSTL>);
@@ -128,6 +132,13 @@ void PluginManager::sort()
         "Buie"
     };
     sortFactories(sunNames, m_sunFactories);
+
+    QStringList materialNames = {
+        "Absorber",
+        "Virtual",
+        "Specular"
+    };
+    sortFactories(materialNames, m_materialFactories);
 }
 
 /*!

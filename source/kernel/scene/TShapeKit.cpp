@@ -1,14 +1,17 @@
+#include "TShapeKit.h"
+
 #include <Inventor/actions/SoGetMatrixAction.h>
 #include <Inventor/nodekits/SoAppearanceKit.h>
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoTransform.h>
 
-#include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/geometry/Ray.h"
-#include "kernel/shape/ShapeCube.h"
 #include "kernel/material/MaterialRT.h"
+#include "kernel/material/MaterialAbsorber.h"
+#include "kernel/shape/DifferentialGeometry.h"
+#include "kernel/shape/ShapeCube.h"
+#include "kernel/shape/ShapePlane.h"
 #include "kernel/shape/ShapeRT.h"
-#include "TShapeKit.h"
+#include "libraries/geometry/Ray.h"
 
 
 SO_KIT_SOURCE(TShapeKit)
@@ -21,47 +24,27 @@ void TShapeKit::initClass()
     SO_KIT_INIT_CLASS(TShapeKit, SoShapeKit, "ShapeKit");
 }
 
-/**
- * Constructor.
- *
- */
 TShapeKit::TShapeKit()
 {
     SO_KIT_CONSTRUCTOR(TShapeKit);
 
-    SO_KIT_CHANGE_ENTRY_TYPE(shape, ShapeRT, ShapeCube);
+    SO_KIT_CHANGE_ENTRY_TYPE(shape, ShapeRT, ShapePlane);
     SO_KIT_CHANGE_NULL_BY_DEFAULT(shape, TRUE);
     SO_KIT_INIT_INSTANCE();
 
-    setPart("shape", NULL);
+    ShapeRT* shape = new ShapePlane;
+    shape->setName(shape->getTypeName());
+    setPart("shape", shape);
+
+    MaterialRT* material = new MaterialAbsorber;
+    material->setName(material->getTypeName());
+    setPart("material", material);
 
     //SoTransform* transform = new SoTransform;
     //setPart("transform",  NULL);
 }
-/*!
- * Destroys the TShapeKit object.
- */
+
 TShapeKit::~TShapeKit()
 {
 
-}
-
-/**
- * Check if ray intersects with the node.
- *
- */
-bool TShapeKit::IntersectP(const Ray&) const
-{
-    return false;
-}
-
-/**
- * Interect \a object ray with the shape and computed reflected ray. The \a object ray
- * is on shape local coordinates.
- *
- *Return the reflected ray. If the returned value is null, there is not reflected ray.
- */
-Ray* TShapeKit::Intersect(const Ray& /* objectRay */, bool* /* isShapeFront */, Random& /* rand */ ) const
-{
-    return 0;
 }

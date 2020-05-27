@@ -1,6 +1,6 @@
 #include "SunBuie.h"
 
-#include <Inventor/sensors/SoFieldSensor.h>
+#include <Inventor/sensors/SoNodeSensor.h>
 #include "libraries/geometry/gcf.h"
 
 
@@ -20,8 +20,8 @@ SunBuie::SunBuie()
     SO_NODE_CONSTRUCTOR(SunBuie);
     SO_NODE_ADD_FIELD( csr, (0.02) );
 
-    m_sensor_csr = new SoFieldSensor(update_csr, this);
-    m_sensor_csr->attach(&csr);
+    m_sensor = new SoNodeSensor(onSensor, this);
+    m_sensor->attach(this);
 
 	double csrValue = csr.getValue();
     if (csrValue >= s_csrMin && csrValue <= s_csrMax)
@@ -54,7 +54,7 @@ void SunBuie::updateState(double csrValue)
 
 SunBuie::~SunBuie()
 {
-    delete m_sensor_csr;
+    delete m_sensor;
 }
 
 Vector3D SunBuie::generateRay(Random& rand) const
@@ -97,14 +97,6 @@ SoNode* SunBuie::copy(SbBool copyConnections) const
     sun->m_probabilitySD = m_probabilitySD;
 
     return sun;
-}
-
-void SunBuie::update_csr(void* data, SoSensor*)
-{
-    SunBuie* sunshape = (SunBuie*) data;
-	double csrValue = sunshape->csr.getValue();
-    if (csrValue >= s_csrMin && csrValue <= s_csrMax)
-        sunshape->updateState(csrValue);
 }
 
 double SunBuie::zenithAngle(Random& rand) const
@@ -157,6 +149,13 @@ double SunBuie::pdfTheta(double theta) const
     return m_alpha*phi(theta)*sin(theta);
 }
 
+void SunBuie::onSensor(void* data, SoSensor*)
+{
+    SunBuie* sun = (SunBuie*) data;
+    double csrValue = sun->csr.getValue();
+    if (csrValue >= s_csrMin && csrValue <= s_csrMax)
+        sun->updateState(csrValue);
+}
 
 // References:
 // D. Buie, C.J. Dey, S. Bosi. "The effective size of the solar cone for solar concentrating systems". Solar Energy 74 (2003) 417�427.

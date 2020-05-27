@@ -1,7 +1,6 @@
 #pragma once
 
 #include "kernel/shape/ShapeRT.h"
-#include "kernel/TonatiuhTypes.h"
 
 
 class ShapeCylinder: public ShapeRT

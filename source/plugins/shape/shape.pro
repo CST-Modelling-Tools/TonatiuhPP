@@ -5,7 +5,6 @@ TEMPLATE = subdirs
 #SUBDIRS += ShapeCone
 SUBDIRS += ShapeCylinder
 #SUBDIRS += ShapeFlatDisk
-SUBDIRS += ShapePlane
 #SUBDIRS += ShapeFlatTriangle
 #SUBDIRS += ShapeHyperboloid
 #SUBDIRS += ShapeParabolicDish

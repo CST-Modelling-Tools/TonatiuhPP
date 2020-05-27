@@ -1,7 +1,6 @@
 #pragma once
 
 #include "kernel/shape/ShapeRT.h"
-#include "kernel/TonatiuhTypes.h"
 
 class SoNodeSensor;
 class SoSensor;
@@ -35,7 +34,7 @@ protected:
     void generatePrimitives(SoAction* action);
 
     SoNodeSensor* m_sensor;
-    static void update(void* data, SoSensor*);
+    static void onSensor(void* data, SoSensor*);
 };
 
 

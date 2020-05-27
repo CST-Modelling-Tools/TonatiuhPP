@@ -3,18 +3,18 @@
 #include "kernel/material/MaterialRT.h"
 
 
-class TONATIUH_KERNEL MaterialVirtual: public MaterialRT
+class TONATIUH_KERNEL MaterialAbsorber: public MaterialRT
 {
-	SO_NODE_HEADER(MaterialVirtual);
+    SO_NODE_HEADER(MaterialAbsorber);
 
 public:
     static void initClass();
-    MaterialVirtual();
+    MaterialAbsorber();
 
     bool OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& rand, Ray& rayOut) const;
 
-    NAME_ICON_FUNCTIONS("Virtual", ":/images/MaterialVirtual.png")
+    NAME_ICON_FUNCTIONS("Absorber", ":/images/MaterialAbsorber.png")
 
 protected:
-    ~MaterialVirtual() {}
+    ~MaterialAbsorber() {}
 };

@@ -21,16 +21,12 @@ public:
 
 protected:
      ~SunBuie();
-     static void update_csr(void* data, SoSensor*);
 
-private:
      double chiValue(double csr) const;
      double phi(double theta) const;
      double pdfTheta(double theta) const;
      double zenithAngle(Random& rand) const;
      void updateState(double csrValue);
-
-     SoFieldSensor* m_sensor_csr;
 
 	 double m_chi;
 	 double m_k;
@@ -48,6 +44,9 @@ private:
 
      static const double s_csrMin;
      static const double s_csrMax;
+
+     SoNodeSensor* m_sensor;
+     static void onSensor(void* data, SoSensor*);
 };
 
 

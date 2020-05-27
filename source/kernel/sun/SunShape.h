@@ -5,10 +5,6 @@
 #include "libraries/geometry/Vector3D.h"
 
 #include <Inventor/nodes/SoSubNode.h>
-#include <Inventor/fields/SoSFDouble.h>
-
-class SoSensor;
-class SoFieldSensor;
 
 
 

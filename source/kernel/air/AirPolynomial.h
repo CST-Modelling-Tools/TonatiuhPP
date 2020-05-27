@@ -1,11 +1,6 @@
 #pragma once
 
 #include "kernel/air/Air.h"
-#include <Inventor/fields/SoSFEnum.h>
-#include <Inventor/fields/SoSFDouble.h>
-
-class SoFieldSensor;
-class SoSensor;
 
 
 class TONATIUH_KERNEL AirPolynomial: public Air

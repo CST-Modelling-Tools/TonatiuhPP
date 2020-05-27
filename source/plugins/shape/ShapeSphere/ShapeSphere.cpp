@@ -32,7 +32,7 @@ ShapeSphere::ShapeSphere()
 	SO_NODE_SET_SF_ENUM_TYPE( activeSide, Side );
     SO_NODE_ADD_FIELD( activeSide, (front) );
 
-    m_sensor = new SoNodeSensor(update, this);
+    m_sensor = new SoNodeSensor(onSensor, this);
     m_sensor->setPriority(1); // does not help
     m_sensor->attach(this);
 }
@@ -171,7 +171,7 @@ void ShapeSphere::generatePrimitives(SoAction* action)
     generateQuads(action, QSize(48, 24), activeSide.getValue() == Side::back, activeSide.getValue() == Side::back);
 }
 
-void ShapeSphere::update(void* data, SoSensor*)
+void ShapeSphere::onSensor(void* data, SoSensor*)
 {
     ShapeSphere* shape = (ShapeSphere*) data;
 

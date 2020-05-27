@@ -1,10 +1,6 @@
 #pragma once
 
 #include "kernel/material/MaterialRT.h"
-#include "kernel/TonatiuhTypes.h"
-
-class SoSensor;
-class SoFieldSensor;
 
 
 class MaterialSpecular: public MaterialRT

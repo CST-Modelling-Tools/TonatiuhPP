@@ -502,7 +502,7 @@ int SceneModel::insertCoinNode(SoNode* node, SoBaseKit* parent)
     else // parent shapeKit
     {
         if (parent->getPart("shape", false)) row++;
-        if (parent->getPart("appearance.material", false)) row++;
+        if (parent->getPart("material", false)) row++;
     }
 
     for (InstanceNode* instanceParent : m_mapCoinQt[parent])
@@ -517,26 +517,18 @@ int SceneModel::insertCoinNode(SoNode* node, SoBaseKit* parent)
     return row;
 }
 
-void SceneModel::removeCoinNode(int row, SoBaseKit& parent)
+void SceneModel::removeCoinNode(int row, SoBaseKit* parent)
 {
-    if (parent.getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
+    if (parent->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
     {
-        if (row == 0 && parent.getPart("tracker", false))
-        {
-            parent.setPart("tracker", 0);
-        }
-        else
-        {
-            SoNodeKitListPart* parts = static_cast<SoNodeKitListPart*>(parent.getPart("childList", false));
-            if (parts)
-            {
-                if (parent.getPart("tracker", false)) parts->removeChild(row - 1);
-                else parts->removeChild(row);
-            }
-        }
+        bool hasTracker = parent->getPart("tracker", false);
+        if (row == 0 && hasTracker)
+            parent->setPart("tracker", 0);
+        else if (SoNodeKitListPart* parts = (SoNodeKitListPart*) parent->getPart("childList", false))
+            parts->removeChild(hasTracker ? row - 1 : row);
     }
 
-    for (InstanceNode* instanceParent : m_mapCoinQt[&parent])
+    for (InstanceNode* instanceParent : m_mapCoinQt[parent])
     {
         InstanceNode* instance = instanceParent->children[row];
         instanceParent->children.remove(row);
@@ -545,6 +537,11 @@ void SceneModel::removeCoinNode(int row, SoBaseKit& parent)
     }
 
     emit layoutChanged();
+}
+
+void SceneModel::replaceCoinNode(SoNode* coinChild, SoBaseKit& parent)
+{
+
 }
 
 /**

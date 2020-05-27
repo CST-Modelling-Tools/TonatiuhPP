@@ -1,4 +1,4 @@
-#include "MaterialVirtual.h"
+#include "MaterialAbsorber.h"
 
 #include <Inventor/sensors/SoFieldSensor.h>
 
@@ -7,16 +7,16 @@
 #include "kernel/random/Random.h"
 
 
-SO_NODE_SOURCE(MaterialVirtual)
+SO_NODE_SOURCE(MaterialAbsorber)
 
-void MaterialVirtual::initClass()
+void MaterialAbsorber::initClass()
 {
-     SO_NODE_INIT_CLASS(MaterialVirtual, MaterialRT, "MaterialRT");
+     SO_NODE_INIT_CLASS(MaterialAbsorber, MaterialRT, "MaterialRT");
 }
 
-MaterialVirtual::MaterialVirtual()
+MaterialAbsorber::MaterialAbsorber()
 {
-    SO_NODE_CONSTRUCTOR(MaterialVirtual);
+    SO_NODE_CONSTRUCTOR(MaterialAbsorber);
 
     SO_NODE_ADD_FIELD( ambientColor, (0.2f, 0.2f, 0.2f) );
     SO_NODE_ADD_FIELD( diffuseColor, (0.8f, 0.8f, 0.8f) );
@@ -26,9 +26,7 @@ MaterialVirtual::MaterialVirtual()
     SO_NODE_ADD_FIELD( transparency, (0.f) );
 }
 
-bool MaterialVirtual::OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& /*rand*/, Ray& rayOut) const
+bool MaterialAbsorber::OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& /*rand*/, Ray& rayOut) const
 {
-    rayOut.origin = dg.point;
-    rayOut.setDirection(rayIn.direction());
-	return true;
+    return false;
 }

@@ -45,6 +45,7 @@ public:
 
     void addChild(InstanceNode* child);
     void insertChild(int row, InstanceNode* child);
+    void replaceChild(int row, InstanceNode* child);
 
     bool operator==(const InstanceNode& other);
     QString getURL() const;

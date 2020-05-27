@@ -35,7 +35,7 @@ InstanceNode::~InstanceNode()
 void InstanceNode::addChild(InstanceNode* child)
 {
     children << child;
-    child->setParent(this);
+    child->m_parent = this;
 }
 /**
  * Inserts the \a instanceChild node as child number \a row.
@@ -45,7 +45,13 @@ void InstanceNode::insertChild(int row, InstanceNode* child)
     if (row > children.size())
         row = children.size();
     children.insert(row, child);
-    child->setParent(this);
+    child->m_parent = this;
+}
+
+void InstanceNode::replaceChild(int row, InstanceNode* child)
+{
+    children[row] = child;
+    child->m_parent = this;
 }
 
 bool InstanceNode::operator==(const InstanceNode& other)

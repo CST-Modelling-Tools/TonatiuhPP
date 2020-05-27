@@ -49,7 +49,8 @@ public:
     void removeSunNode(SunKit* sunKit);
 
     int insertCoinNode(SoNode* coinChild, SoBaseKit* coinParent);
-    void removeCoinNode(int row, SoBaseKit& parent);
+    void removeCoinNode(int row, SoBaseKit* parent);
+    void replaceCoinNode(SoNode* coinChild, SoBaseKit& parent);
 
     bool Cut(SoBaseKit& parent, int row);
     bool Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinChild, int row);

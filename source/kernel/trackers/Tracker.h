@@ -2,7 +2,6 @@
 
 #include "kernel/scene/TAbstract.h"
 
-#include "kernel/TonatiuhTypes.h"
 #include <Inventor/nodes/SoSubNode.h>
 #include <Inventor/nodekits/SoBaseKit.h>
 

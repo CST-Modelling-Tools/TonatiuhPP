@@ -1,7 +1,6 @@
 #pragma once
 
-#include "ShapeRT.h"
-#include "kernel/TonatiuhTypes.h"
+#include "kernel/shape/ShapeRT.h"
 
 
 class TONATIUH_KERNEL ShapeCube: public ShapeRT

@@ -2526,10 +2526,10 @@ void MainWindow::CreateMaterial(MaterialFactory* factory)
     MaterialRT* material = (MaterialRT*) kit->getPart("material", false);
     if (material)
     {
-        for (int r = 0; r < parentInstance->children.size(); ++r)
-            if (parentInstance->children[r]->getNode() == material)
-                m_sceneModel->removeCoinNode(r, *kit);
-//        ShowWarning("This TShapeKit already contains a material node");
+//        for (int r = 0; r < parentInstance->children.size(); ++r)
+//            if (parentInstance->children[r]->getNode() == material)
+//                m_sceneModel->removeCoinNode(r, *kit);
+        ShowWarning("This TShapeKit already contains a material node");
 //        return;
     }
     material = factory->create();
@@ -2558,9 +2558,13 @@ void MainWindow::CreateShape(ShapeFactory* factory)
     if (!kit) return;
 
     ShapeRT* shape = (ShapeRT*) kit->getPart("shape", false);
-    if (shape) {
-        ShowWarning("This TShapeKit already contains a shape");
-        return;
+    if (shape)
+    {
+        for (int r = 0; r < parentInstance->children.size(); ++r)
+            if (parentInstance->children[r]->getNode() == shape)
+                m_sceneModel->removeCoinNode(r, kit);
+//        ShowWarning("This TShapeKit already contains a shape");
+//        return;
     }
     shape = factory->create();
     shape->setName(factory->name().toStdString().c_str());

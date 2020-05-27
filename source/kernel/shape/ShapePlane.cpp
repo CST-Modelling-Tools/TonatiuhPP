@@ -34,10 +34,10 @@ BoundingBox ShapePlane::getBox() const
 {
     double xMax = sizeX.getValue()/2.;
     double yMax = sizeY.getValue()/2.;
-    double eps = 0.01*std::min(xMax, yMax);
+    double zMax = 0.01*std::min(xMax, yMax);
     return BoundingBox(
-        Vector3D(-xMax, -yMax, -eps),
-        Vector3D(xMax, yMax, eps)
+        Vector3D(-xMax, -yMax, -zMax),
+        Vector3D(xMax, yMax, zMax)
     );
 }
 
@@ -58,7 +58,7 @@ bool ShapePlane::intersect(const Ray& ray, double *tHit, DifferentialGeometry* d
 
     if (tHit == 0 && dg == 0) return true;
     else if (tHit == 0 || dg == 0)
-        gcf::SevereError( "Function Sphere::Intersect(...) called with null pointers" );
+        gcf::SevereError("Function Sphere::Intersect(...) called with null pointers");
 
     Vector3D dpdu(1., 0., 0.);
     Vector3D dpdv(0., 1., 0.);

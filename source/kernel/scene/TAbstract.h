@@ -1,6 +1,11 @@
 #pragma once
 
 #include "kernel/TonatiuhKernel.h"
+#include "kernel/TonatiuhTypes.h"
+
+class SoSensor;
+class SoFieldSensor;
+class SoNodeSensor;
 
 #define NAME_ICON_FUNCTIONS(NAME, ICON) \
 static const char* getClassName() {return NAME;} \

@@ -36,7 +36,7 @@ CmdInsertShape::~CmdInsertShape()
 void CmdInsertShape::undo()
 {
     m_shapeKit->setPart("shape", NULL);
-    m_pModel->removeCoinNode(m_row, *m_shapeKit);
+    m_pModel->removeCoinNode(m_row, m_shapeKit);
 }
 
 /*!

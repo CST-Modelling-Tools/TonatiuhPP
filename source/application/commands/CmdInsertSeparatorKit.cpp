@@ -50,7 +50,7 @@ CmdInsertSeparatorKit::~CmdInsertSeparatorKit()
  */
 void CmdInsertSeparatorKit::undo()
 {
-    m_model->removeCoinNode(m_row, *m_nodeParent);
+    m_model->removeCoinNode(m_row, m_nodeParent);
 }
 
 /*!

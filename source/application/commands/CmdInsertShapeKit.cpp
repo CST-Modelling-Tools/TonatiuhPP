@@ -50,7 +50,7 @@ CmdInsertShapeKit::~CmdInsertShapeKit()
  */
 void CmdInsertShapeKit::undo()
 {
-    m_model->removeCoinNode(m_row, *m_nodeParent);
+    m_model->removeCoinNode(m_row, m_nodeParent);
 }
 
 /*!
