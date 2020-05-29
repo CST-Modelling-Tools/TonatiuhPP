@@ -4,18 +4,17 @@
 #include <QMap>
 
 class QDir;
-class QStringList;
-class QObject;
 
 class TFactory;
+class SunFactory;
 class AirFactory;
 class ComponentFactory;
-class PhotonsFactory;
+class TrackerFactory;
+class ShapeFactory;
+class ApertureFactory;
 class MaterialFactory;
 class RandomFactory;
-class ShapeFactory;
-class SunFactory;
-class TrackerFactory;
+class PhotonsFactory;
 
 
 /*!
@@ -29,46 +28,50 @@ class PluginManager
 public:
     PluginManager();
 
+    void load(QDir dir);
+
+    QVector<SunFactory*> getSunFactories() const {return m_sunFactories;}
     QVector<AirFactory*> getAirFactories() const {return m_airFactories;}
     QVector<ComponentFactory*> getComponentFactories() const {return m_componentFactories;}
-    QVector<PhotonsFactory*> getExportFactories() const {return m_exportFactories;}
+    QVector<TrackerFactory*> getTrackerFactories() const {return m_trackerFactories;}
+    QVector<ShapeFactory*> getShapeFactories() const {return m_shapeFactories;}
+    QVector<ApertureFactory*> getApertureFactories() const {return m_apertureFactories;}
     QVector<MaterialFactory*> getMaterialFactories() const {return m_materialFactories;}
     QVector<RandomFactory*> getRandomFactories() const {return m_randomFactories;}
-    QVector<ShapeFactory*> getShapeFactories() const {return m_shapeFactories;}
-    QVector<SunFactory*> getSunFactories() const {return m_sunFactories;}
-    QVector<TrackerFactory*> getTrackerFactories() const {return m_trackerFactories;}
+    QVector<PhotonsFactory*> getExportFactories() const {return m_exportFactories;}
 
-    const QMap<QString, AirFactory*>& getAirMap() const {return m_airMap;}
-    const QMap<QString, PhotonsFactory*>& getExportMap() const {return m_exportMap;}
-    const QMap<QString, MaterialFactory*>& getMaterialMap() const {return m_materialsMap;}
-    const QMap<QString, RandomFactory*>& getRandomMap() const {return m_randomMap;}
-    const QMap<QString, ShapeFactory*>& getShapeMap() const {return m_shapesMap;}
     const QMap<QString, SunFactory*>& getSunMap() const {return m_sunMap;}
-    const QMap<QString, TrackerFactory*>& getTrackerMap() const {return m_trackersMap;}
-
-    void load(QDir dir);
-    void sort();
+    const QMap<QString, AirFactory*>& getAirMap() const {return m_airMap;}
+    const QMap<QString, TrackerFactory*>& getTrackerMap() const {return m_trackerMap;}
+    const QMap<QString, ShapeFactory*>& getShapeMap() const {return m_shapeMap;}
+    const QMap<QString, ApertureFactory*>& getApertureMap() const {return m_apertureMap;}
+    const QMap<QString, MaterialFactory*>& getMaterialMap() const {return m_materialMap;}
+    const QMap<QString, RandomFactory*>& getRandomMap() const {return m_randomMap;}
+    const QMap<QString, PhotonsFactory*>& getExportMap() const {return m_exportMap;}
 
 private:
     void findFiles(QDir dir, QStringList& files);
-    void loadTonatiuhPlugin(TFactory* p);
+    void loadPlugin(TFactory* p);
+    void sort();
 
+    QVector<SunFactory*> m_sunFactories;
     QVector<AirFactory*> m_airFactories;
     QVector<ComponentFactory*> m_componentFactories;
-    QVector<PhotonsFactory*> m_exportFactories;
+    QVector<TrackerFactory*> m_trackerFactories;
+    QVector<ShapeFactory*> m_shapeFactories;
+    QVector<ApertureFactory*> m_apertureFactories;
     QVector<MaterialFactory*> m_materialFactories;
     QVector<RandomFactory*> m_randomFactories;
-    QVector<ShapeFactory*> m_shapeFactories;
-    QVector<SunFactory*> m_sunFactories;
-    QVector<TrackerFactory*> m_trackerFactories;
+    QVector<PhotonsFactory*> m_exportFactories;
 
-    QMap<QString, AirFactory*> m_airMap;
-    QMap<QString, PhotonsFactory*> m_exportMap;
-    QMap<QString, MaterialFactory*> m_materialsMap;
-    QMap<QString, RandomFactory*> m_randomMap;
-    QMap<QString, ShapeFactory*> m_shapesMap;
     QMap<QString, SunFactory*> m_sunMap;
-    QMap<QString, TrackerFactory*> m_trackersMap;
+    QMap<QString, AirFactory*> m_airMap;
+    QMap<QString, TrackerFactory*> m_trackerMap;
+    QMap<QString, ShapeFactory*> m_shapeMap;
+    QMap<QString, ApertureFactory*> m_apertureMap;
+    QMap<QString, MaterialFactory*> m_materialMap;
+    QMap<QString, RandomFactory*> m_randomMap;
+    QMap<QString, PhotonsFactory*> m_exportMap;
 };
 
 

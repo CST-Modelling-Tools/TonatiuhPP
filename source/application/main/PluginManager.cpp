@@ -9,6 +9,8 @@
 #include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/apertures/ApertureRectangle.h"
+#include "kernel/apertures/ApertureStrip.h"
+#include "kernel/apertures/ApertureRing.h"
 #include "kernel/material/MaterialVirtual.h"
 #include "kernel/material/MaterialAbsorber.h"
 #include "kernel/photons/PhotonsDefault.h"
@@ -18,7 +20,7 @@
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeCube.h"
-#include "kernel/shape/ShapePlane.h"
+#include "kernel/shape/ShapePlanar.h"
 #include "kernel/sun/SunPillbox.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunAperture.h"
@@ -28,26 +30,6 @@
 #include "libraries/geometry/gcf.h"
 #include "view/SkyBackground.h"
 #include "kernel/scene/TSeparatorKit.h"
-
-
-template <class T>
-void sortFactories(const QStringList& sorting, QVector<T*>& factories) {
-    int nA = 0;
-    for (const QString& name : sorting) {
-        if (name == "") {
-            factories.append(nullptr);
-            std::swap(factories[nA++], factories.last());
-        } else {
-            for (int n = 0; n < factories.size(); ++n) {
-                if (factories[n] == nullptr) continue;
-                if (factories[n]->name() == name) {
-                    std::swap(factories[nA++], factories[n]);
-                    break;
-                }
-            }
-        }
-    }
-}
 
 
 PluginManager::PluginManager()
@@ -68,7 +50,6 @@ PluginManager::PluginManager()
     TShapeKit::initClass();
     ShapeRT::initClass();
     Aperture::initClass();
-    ApertureRectangle::initClass(); //
     MaterialRT::initClass();
 
     SkyBackground::initClass();
@@ -87,63 +68,24 @@ void PluginManager::load(QDir dir)
         QPluginLoader loader(file);
         QObject* p = loader.instance();
         TFactory* f = dynamic_cast<TFactory*>(p);
-        loadTonatiuhPlugin(f);
+        loadPlugin(f);
     }
 
-    loadTonatiuhPlugin(new SunFactoryT<SunPillbox>);
-
-    loadTonatiuhPlugin(new AirFactoryT<AirVacuum>);
-    loadTonatiuhPlugin(new AirFactoryT<AirExponential>);
-    loadTonatiuhPlugin(new AirFactoryT<AirPolynomial>);
-
-    loadTonatiuhPlugin(new ShapeFactoryT<ShapePlane>);
-//    loadTonatiuhPlugin(new ShapeFactoryT<ShapeCube>);
-
-//    loadTonatiuhPlugin(new ApertureFactoryT<ApertureRectangle>); //
-
-    loadTonatiuhPlugin(new MaterialFactoryT<MaterialVirtual>);
-    loadTonatiuhPlugin(new MaterialFactoryT<MaterialAbsorber>);
-
-    loadTonatiuhPlugin(new RandomFactoryT<RandomSTL>);
-    loadTonatiuhPlugin(new PhotonsFactoryT<PhotonsDefault, PhotonsWidget>);
+    loadPlugin(new SunFactoryT<SunPillbox>);
+    loadPlugin(new AirFactoryT<AirVacuum>);
+    loadPlugin(new AirFactoryT<AirExponential>);
+    loadPlugin(new AirFactoryT<AirPolynomial>);
+    loadPlugin(new ShapeFactoryT<ShapePlanar>);
+//    loadPlugin(new ShapeFactoryT<ShapeCube>);
+    loadPlugin(new ApertureFactoryT<ApertureRectangle>);
+    loadPlugin(new ApertureFactoryT<ApertureStrip>);
+    loadPlugin(new ApertureFactoryT<ApertureRing>);
+    loadPlugin(new MaterialFactoryT<MaterialAbsorber>);
+    loadPlugin(new MaterialFactoryT<MaterialVirtual>);
+    loadPlugin(new RandomFactoryT<RandomSTL>);
+    loadPlugin(new PhotonsFactoryT<PhotonsDefault, PhotonsWidget>);
 
     sort();
-}
-
-void PluginManager::sort()
-{
-    QStringList shapeNames = {
-        "Plane",
-        "Parabolic",
-        "Sphere",
-        "Cylinder"
-    };
-    sortFactories(shapeNames, m_shapeFactories);
-
-    QStringList exportNames = {
-        "No export",
-        "File"
-    };
-    sortFactories(exportNames, m_exportFactories);
-
-    QStringList trackerNames = {
-        "Trough",
-        "Heliostat"
-    };
-    sortFactories(trackerNames, m_trackerFactories);
-
-    QStringList sunNames = {
-        "Pillbox",
-        "Buie"
-    };
-    sortFactories(sunNames, m_sunFactories);
-
-    QStringList materialNames = {
-        "Absorber",
-        "Virtual",
-        "Specular"
-    };
-    sortFactories(materialNames, m_materialFactories);
 }
 
 /*!
@@ -152,23 +94,19 @@ void PluginManager::sort()
  */
 void PluginManager::findFiles(QDir dir, QStringList& files)
 {
-    QString path(dir.absolutePath().append("/"));
+    QString path = dir.absolutePath() + "/";
 
-    QStringList fileList = dir.entryList(QDir::Files, QDir::Unsorted);
-    for (QString file : fileList)
-        files << path + file;
+    for (QString f : dir.entryList(QDir::Files))
+        files << path + f;
 
-    QStringList dirList = dir.entryList(QDir::Dirs, QDir::Unsorted);
-    for (QString subdir : dirList) {
-        if (subdir == "."  || subdir == "..") continue;
-        findFiles(QDir(path + subdir), files);
-    }
+    for (QString d : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))
+        findFiles(path + d, files);
 }
 
 /*!
  * Loads the plugin is defined in \a fileName, if it is a valid plugin.
  */
-void PluginManager::loadTonatiuhPlugin(TFactory* p)
+void PluginManager::loadPlugin(TFactory* p)
 {
     if (auto f = dynamic_cast<AirFactory*>(p))
     {
@@ -188,7 +126,13 @@ void PluginManager::loadTonatiuhPlugin(TFactory* p)
     {
         f->init();
         m_materialFactories << f;
-        m_materialsMap[f->name()] = f;
+        m_materialMap[f->name()] = f;
+    }
+    else if (auto f = dynamic_cast<ApertureFactory*>(p))
+    {
+        f->init();
+        m_apertureFactories << f;
+        m_apertureMap[f->name()] = f;
     }
     else if (auto f = dynamic_cast<RandomFactory*>(p))
     {
@@ -199,7 +143,7 @@ void PluginManager::loadTonatiuhPlugin(TFactory* p)
     {
         f->init();
         m_shapeFactories << f;
-        m_shapesMap[f->name()] = f;
+        m_shapeMap[f->name()] = f;
     }
     else if (auto f = dynamic_cast<SunFactory*>(p))
     {
@@ -211,6 +155,61 @@ void PluginManager::loadTonatiuhPlugin(TFactory* p)
     {
         f->init();
         m_trackerFactories << f;
-        m_trackersMap[f->name()] = f;
+        m_trackerMap[f->name()] = f;
     }
+}
+
+template <class T>
+void sortFactories(const QStringList& sorting, QVector<T*>& factories) {
+    int nA = 0;
+    for (const QString& name : sorting) {
+        if (name == "") {
+            factories.append(nullptr);
+            std::swap(factories[nA++], factories.last());
+        } else {
+            for (int n = 0; n < factories.size(); ++n) {
+                if (factories[n] == nullptr) continue;
+                if (factories[n]->name() == name) {
+                    std::swap(factories[nA++], factories[n]);
+                    break;
+                }
+            }
+        }
+    }
+}
+
+void PluginManager::sort()
+{
+    QStringList sunNames = {
+        "Pillbox",
+        "Buie"
+    };
+    sortFactories(sunNames, m_sunFactories);
+
+    QStringList shapeNames = {
+        "Planar",
+        "Parabolic",
+        "Sphere",
+        "Cylinder"
+    };
+    sortFactories(shapeNames, m_shapeFactories);
+
+    QStringList materialNames = {
+        "Absorber",
+        "Virtual",
+        "Specular"
+    };
+    sortFactories(materialNames, m_materialFactories);
+
+    QStringList trackerNames = {
+        "Trough",
+        "Heliostat"
+    };
+    sortFactories(trackerNames, m_trackerFactories);
+
+    QStringList exportNames = {
+        "No export",
+        "File"
+    };
+    sortFactories(exportNames, m_exportFactories);
 }

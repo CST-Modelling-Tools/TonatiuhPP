@@ -154,7 +154,8 @@ void InstanceNode::updateTree(const Transform& tParent)
 {
     if (TSeparatorKit* separatorKit = dynamic_cast<TSeparatorKit*>(m_node))
     {
-        SoTransform* t = (SoTransform*) separatorKit->getPart("transform", true);
+        SoTransform* t = SO_GET_PART(separatorKit, "transform", SoTransform);
+//        SoTransform* t = (SoTransform*) separatorKit->getPart("transform", true);
         m_transform = tParent*tgf::makeTransform(t);
 
         BoundingBox box;

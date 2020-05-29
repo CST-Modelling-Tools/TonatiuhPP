@@ -3,13 +3,13 @@
 #include "kernel/shape/ShapeRT.h"
 
 
-class TONATIUH_KERNEL ShapePlane: public ShapeRT
+class TONATIUH_KERNEL ShapePlanar: public ShapeRT
 {
-    SO_NODE_HEADER(ShapePlane);
+    SO_NODE_HEADER(ShapePlanar);
 
 public:
     static void initClass();
-    ShapePlane();
+    ShapePlanar();
 
     double getArea() const;
     BoundingBox getBox() const;
@@ -19,7 +19,7 @@ public:
     SoSFDouble sizeY;
 	SoSFEnum activeSide;
 
-    NAME_ICON_FUNCTIONS("Plane", ":/images/ShapePlane.png")
+    NAME_ICON_FUNCTIONS("Planar", ":/images/ShapePlanar.png")
     static bool isFlat() {return true;}
 
 protected:

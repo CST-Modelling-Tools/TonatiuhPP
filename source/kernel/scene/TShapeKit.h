@@ -2,12 +2,13 @@
 
 #include "kernel/TonatiuhKernel.h"
 #include <Inventor/nodekits/SoShapeKit.h>
-#include <QString>
+#include <Inventor/fields/SoSFNode.h>
 
-class Random;
-class Ray;
 class ShapeRT;
 class MaterialRT;
+
+class SoFieldSensor;
+class SoSensor;
 
 //!  TShapeKit class groups what is necessary to the shape.
 /*!
@@ -18,13 +19,17 @@ class MaterialRT;
 class TONATIUH_KERNEL TShapeKit: public SoShapeKit
 {
     SO_KIT_HEADER(TShapeKit);
-    SO_KIT_CATALOG_ENTRY_HEADER(aperture);
     SO_KIT_CATALOG_ENTRY_HEADER(materialRT);
 
 public:
     static void initClass();
     TShapeKit();
 
+    SoSFNode aperture;
+
 protected:
     virtual ~TShapeKit();
+
+    SoFieldSensor* m_sensor;
+    static void onSensor(void* data, SoSensor*);
 };

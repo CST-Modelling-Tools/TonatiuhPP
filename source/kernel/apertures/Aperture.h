@@ -16,8 +16,7 @@ class TONATIUH_KERNEL Aperture: public SoNode
 public:
     static void initClass();
 
-    //Ray* OutputRay( const Ray& incident, DifferentialGeometry* dg, RandomDeviate& rand) const;
-    virtual bool OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& rand, Ray& rayOut) const = 0;
+    virtual bool isInside(double /*x*/, double /*y*/) const {return true;}
 
     NAME_ICON_FUNCTIONS("X", ":/MaterialX.png")
 

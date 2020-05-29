@@ -17,10 +17,6 @@ void ShapeRT::initClass()
     SO_NODE_INIT_ABSTRACT_CLASS(ShapeRT, SoShape, "Shape");
 }
 
-bool ShapeRT::intersectP(const Ray& ray) const
-{
-     return intersect(ray, 0, 0);
-}
 
 bool ShapeRT::isInside(double u, double v) const
 {

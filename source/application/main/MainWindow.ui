@@ -136,10 +136,16 @@
      </property>
      <addaction name="separator"/>
     </widget>
+    <widget class="QMenu" name="menuAperture">
+     <property name="title">
+      <string>Aperture</string>
+     </property>
+    </widget>
     <addaction name="actionNode"/>
     <addaction name="actionSurfaceNode"/>
     <addaction name="separator"/>
     <addaction name="menuShape"/>
+    <addaction name="menuAperture"/>
     <addaction name="menuMaterial"/>
     <addaction name="menuTracker"/>
     <addaction name="separator"/>
@@ -741,6 +747,11 @@
   <action name="actionTestC">
    <property name="text">
     <string>C</string>
+   </property>
+  </action>
+  <action name="actionter">
+   <property name="text">
+    <string>ter</string>
    </property>
   </action>
  </widget>

@@ -124,7 +124,7 @@ void SceneModel::generateInstanceTree(InstanceNode* instance)
         if (shape)
             addInstanceNode(instance, shape);
 
-        SoNode* aperture = shapeKit->getPart("aperture", false);
+        SoNode* aperture = shapeKit->aperture.getValue();
         if (aperture)
             addInstanceNode(instance, aperture);
 

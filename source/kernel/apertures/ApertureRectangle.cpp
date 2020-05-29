@@ -1,9 +1,5 @@
 #include "ApertureRectangle.h"
 
-#include "kernel/random/Random.h"
-#include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/geometry/Ray.h"
-
 
 SO_NODE_SOURCE(ApertureRectangle)
 
@@ -15,14 +11,12 @@ void ApertureRectangle::initClass()
 ApertureRectangle::ApertureRectangle()
 {
     SO_NODE_CONSTRUCTOR(ApertureRectangle);
+    SO_NODE_ADD_FIELD( sizeX, (1.) );
+    SO_NODE_ADD_FIELD( sizeY, (1.) );
 }
 
-bool ApertureRectangle::OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& rand, Ray& rayOut) const
+bool ApertureRectangle::isInside(double x, double y) const
 {
-    Q_UNUSED(rayIn)
-    Q_UNUSED(dg)
-    Q_UNUSED(rand)
-    Q_UNUSED(rayOut)
-
-    return false;
+    return 2.*std::abs(x) <= sizeX.getValue() &&
+           2.*std::abs(y) <= sizeY.getValue();
 }

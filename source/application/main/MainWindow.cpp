@@ -80,6 +80,7 @@
 #include "kernel/random/Random.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/run/RayTracer.h"
+#include "kernel/apertures/Aperture.h"
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
@@ -3004,7 +3005,7 @@ void MainWindow::SetupActionsInsertMaterial()
     }
 
     QPushButton* button = new QPushButton;
-    button->setIcon(QIcon(":/images/scene/nodeMaterial.png"));
+    button->setIcon(QIcon(":/images/scene/nodeMaterial.png")); // can be static
     button->setToolTip("Materials");
     button->setMenu(menu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
@@ -3047,10 +3048,23 @@ void MainWindow::SetupActionsInsertShape()
     button->setMenu(menu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
 
+    // apertures
+    menu = ui->menuInsert->findChild<QMenu*>("menuAperture");
+
+    for (ApertureFactory* f : m_pluginManager->getApertureFactories()) {
+//        ActionInsertMaterial* a = new ActionInsertMaterial(f, this);
+//        menu->addAction(a);
+        menu->addAction(f->icon(), f->name());
+//        connect(
+//            a, SIGNAL(CreateMaterial(MaterialFactory*)),
+//            this, SLOT(CreateMaterial(MaterialFactory*))
+//        );
+    }
+
     button = new QPushButton;
     button->setIcon(QIcon(":/images/scene/nodeAperture.png"));
     button->setToolTip("Apertures");
-    button->setMenu(new QMenu);
+    button->setMenu(menu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
 }
 

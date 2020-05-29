@@ -11,7 +11,11 @@ public:
     static void initClass();
     ApertureRectangle();
 
-    bool OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& rand, Ray& rayOut) const;
+    SoSFDouble sizeX;
+    SoSFDouble sizeY;
+
+    bool isInside(double x, double y) const;
+    // mesh
 
     NAME_ICON_FUNCTIONS("Rectangle", ":/images/ApertureRectangle.png")
 

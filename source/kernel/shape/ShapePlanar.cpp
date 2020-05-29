@@ -1,21 +1,21 @@
-#include "ShapePlane.h"
+#include "ShapePlanar.h"
 
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/gcf.h"
 #include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Ray.h"
 
-SO_NODE_SOURCE(ShapePlane)
+SO_NODE_SOURCE(ShapePlanar)
 
 
-void ShapePlane::initClass()
+void ShapePlanar::initClass()
 {
-    SO_NODE_INIT_CLASS(ShapePlane, ShapeRT, "ShapeRT");
+    SO_NODE_INIT_CLASS(ShapePlanar, ShapeRT, "ShapeRT");
 }
 
-ShapePlane::ShapePlane()
+ShapePlanar::ShapePlanar()
 {
-    SO_NODE_CONSTRUCTOR(ShapePlane);
+    SO_NODE_CONSTRUCTOR(ShapePlanar);
     SO_NODE_ADD_FIELD( sizeX, (1.) );
     SO_NODE_ADD_FIELD( sizeY, (1.) );
 
@@ -25,12 +25,12 @@ ShapePlane::ShapePlane()
     SO_NODE_ADD_FIELD( activeSide, (front) );
 }
 
-double ShapePlane::getArea() const
+double ShapePlanar::getArea() const
 {
     return sizeX.getValue()*sizeY.getValue();
 }
 
-BoundingBox ShapePlane::getBox() const
+BoundingBox ShapePlanar::getBox() const
 {
     double xMax = sizeX.getValue()/2.;
     double yMax = sizeY.getValue()/2.;
@@ -41,7 +41,7 @@ BoundingBox ShapePlane::getBox() const
     );
 }
 
-bool ShapePlane::intersect(const Ray& ray, double *tHit, DifferentialGeometry* dg) const
+bool ShapePlanar::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const
 {
     // intersection with full shape (in local coordinates)
     // r0_z + d_z*t = 0
@@ -71,19 +71,41 @@ bool ShapePlane::intersect(const Ray& ray, double *tHit, DifferentialGeometry* d
 	return true;
 }
 
-Vector3D ShapePlane::getPoint(double u, double v) const
+Vector3D ShapePlanar::getPoint(double u, double v) const
 {
     double x = (u - 0.5)*sizeX.getValue();
     double y = (v - 0.5)*sizeY.getValue();
     return Vector3D(x, y, 0.);
 }
 
-Vector3D ShapePlane::getNormal(double /*u*/, double /*v*/) const
+Vector3D ShapePlanar::getNormal(double /*u*/, double /*v*/) const
 {
     return Vector3D(0., 0., 1.);
 }
 
-void ShapePlane::generatePrimitives(SoAction* action)
+#include <Inventor/nodes/SoCoordinate3.h>
+void ShapePlanar::generatePrimitives(SoAction* action)
 {
-     generateQuads(action, QSize(2, 2), activeSide.getValue() == Side::back);
+//     generateQuads(action, QSize(2, 2), activeSide.getValue() == Side::back);
+
+//    static float vertexPositions[12][3] =
+//    {
+//    { 0.0000, 1.2142, 0.7453}, // top
+//    { 0.0000, 1.2142, -0.7453}, // points surrounding top
+//    {-1.2142, 0.7453, 0.0000},
+//    {-0.7453, 0.0000, 1.2142},
+//    { 0.7453, 0.0000, 1.2142},
+//    { 1.2142, 0.7453, 0.0000},
+//    { 0.0000, -1.2142, 0.7453}, // points surrounding bottom
+//    {-1.2142, -0.7453, 0.0000},
+//    {-0.7453, 0.0000, -1.2142},
+//    { 0.7453, 0.0000, -1.2142},
+//    { 1.2142, -0.7453, 0.0000},
+//    { 0.0000, -1.2142, -0.7453}, // bottom
+//    };
+
+//    // Define coordinates for vertices
+//    SoCoordinate3 *myCoords = new SoCoordinate3;
+//    myCoords->point.setValues(0, 12, vertexPositions);
+
 }

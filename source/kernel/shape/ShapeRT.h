@@ -25,7 +25,7 @@ public:
     // with computing dg
     virtual bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const = 0;
     // without computing dg
-    virtual bool intersectP(const Ray& ray) const;
+    virtual bool intersectP(const Ray& ray) const {return intersect(ray, 0, 0);}
 
     enum Side {
         back = 0, // FRONT, INSIDE
@@ -38,12 +38,12 @@ public:
     static bool isFlat() {return false;}
 
 protected:
-    virtual void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
+    void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
 
     virtual bool isInside(double u, double v) const;
     virtual Vector3D getPoint(double u, double v) const = 0;
     virtual Vector3D getNormal(double u, double v) const = 0;
-    virtual void generatePrimitives(SoAction* action) = 0;
+    void generatePrimitives(SoAction* action) = 0;
     void generateQuads(SoAction* action, const QSize& dims, bool reverseNormals = false, bool reverseClock = false);
 
     ShapeRT() {}

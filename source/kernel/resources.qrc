@@ -5,7 +5,7 @@
         <file>images/PhotonsDefault.png</file>
         <file>images/AirAbstract.png</file>
         <file>images/MaterialVirtual.png</file>
-        <file>images/ShapePlane.png</file>
+        <file>images/ShapePlanar.png</file>
         <file>images/MaterialAbsorber.png</file>
         <file>images/ApertureRectangle.png</file>
     </qresource>
