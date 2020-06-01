@@ -10,7 +10,6 @@ class MaterialRT;
 /*!
    CmdInsertShape represents a single material insertion action on a scene, insert a new material node to the scene.
  */
-
 class CmdInsertMaterial: public QUndoCommand
 {
 public:

@@ -128,7 +128,7 @@ void SceneModel::generateInstanceTree(InstanceNode* instance)
         if (aperture)
             addInstanceNode(instance, aperture);
 
-        SoNode* materialRT = shapeKit->getPart("materialRT", false);
+        SoNode* materialRT = shapeKit->materialRT.getValue();
         if (materialRT)
             addInstanceNode(instance, materialRT);
 

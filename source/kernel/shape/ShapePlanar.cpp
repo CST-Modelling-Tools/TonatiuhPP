@@ -68,7 +68,18 @@ bool ShapePlanar::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     *dg = DifferentialGeometry(pHit, pHit.x, pHit.y, dpdu, dpdv, normal, this, isFront);
 
     *tHit = t;
-	return true;
+    return true;
+}
+
+#include "kernel/scene/TShapeKit.h"
+#include <Inventor/nodes/SoCone.h>
+#include <Inventor/nodes/SoSeparator.h>
+void ShapePlanar::updateShapeGL(TShapeKit* parent)
+{
+//    SoGroup* sep = new SoGroup;
+//    sep->addChild(new SoCone);
+//    parent->setPart("childList[0]", sep);
+//    parent->add
 }
 
 Vector3D ShapePlanar::getPoint(double u, double v) const

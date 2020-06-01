@@ -41,7 +41,7 @@ CmdInsertMaterial::~CmdInsertMaterial()
  */
 void CmdInsertMaterial::undo()
 {
-    m_shapeKit->setPart("materialRT", m_materialOld);
+    m_shapeKit->materialRT = m_materialOld;
     m_model->replaceCoinNode(m_shapeKit, InstanceNode::IndexMaterialRT, m_materialOld);
 }
 
@@ -51,6 +51,6 @@ void CmdInsertMaterial::undo()
  */
 void CmdInsertMaterial::redo()
 {
-    m_shapeKit->setPart("materialRT", m_material);
+    m_shapeKit->materialRT = m_material;
     m_model->replaceCoinNode(m_shapeKit, InstanceNode::IndexMaterialRT, m_material);
 }

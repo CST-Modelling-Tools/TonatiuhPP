@@ -19,13 +19,13 @@ class SoSensor;
 class TONATIUH_KERNEL TShapeKit: public SoShapeKit
 {
     SO_KIT_HEADER(TShapeKit);
-    SO_KIT_CATALOG_ENTRY_HEADER(materialRT);
 
 public:
     static void initClass();
     TShapeKit();
 
     SoSFNode aperture;
+    SoSFNode materialRT;
 
 protected:
     virtual ~TShapeKit();

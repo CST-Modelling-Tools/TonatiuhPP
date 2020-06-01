@@ -28,7 +28,7 @@ TShapeKit::TShapeKit()
     isBuiltIn = TRUE;
 
     SO_NODE_ADD_FIELD( aperture, (0) );
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(materialRT, MaterialRT, MaterialAbsorber, TRUE, topSeparator, "", TRUE);
+    SO_NODE_ADD_FIELD( materialRT, (0) );
     SO_KIT_INIT_INSTANCE();
 
     ShapeRT* shape = new ShapePlanar;
@@ -39,16 +39,13 @@ TShapeKit::TShapeKit()
     a->setName(a->getTypeName());
     aperture = a;
 
-    MaterialRT* materialRT = new MaterialAbsorber;
-    materialRT->setName(materialRT->getTypeName());
-    setPart("materialRT", materialRT);
+    MaterialRT* mRT = new MaterialAbsorber;
+    mRT->setName(mRT->getTypeName());
+    materialRT = mRT;
 
     SoMaterial* materialGL = new SoMaterial;
     materialGL->setName("MaterialGL");
     setPart("material", materialGL);
-
-    //SoTransform* transform = new SoTransform;
-    //setPart("transform",  NULL);
 
     m_sensor = new SoFieldSensor(onSensor, this);
     m_sensor->attach(&aperture);
@@ -56,8 +53,9 @@ TShapeKit::TShapeKit()
 
 TShapeKit::~TShapeKit()
 {
-
+    delete m_sensor;
 }
+
 #include <QDebug>
 
 void TShapeKit::onSensor(void* data, SoSensor*)
@@ -65,4 +63,5 @@ void TShapeKit::onSensor(void* data, SoSensor*)
     TShapeKit* kit = (TShapeKit*) data;
     qDebug() << "called " << kit->getName();
     ShapeRT* shape = (ShapeRT*) kit->getPart("shape", false);
+    shape->updateShapeGL(kit);
 }

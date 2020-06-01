@@ -9,6 +9,7 @@ struct BoundingBox;
 class Ray;
 struct DifferentialGeometry;
 class QSize;
+class TShapeKit;
 
 
 class TONATIUH_KERNEL ShapeRT: public SoShape
@@ -36,6 +37,8 @@ public:
 
     NAME_ICON_FUNCTIONS("X", ":/ShapeX.png")
     static bool isFlat() {return false;}
+
+    virtual void updateShapeGL(TShapeKit* /*parent*/) {}
 
 protected:
     void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
