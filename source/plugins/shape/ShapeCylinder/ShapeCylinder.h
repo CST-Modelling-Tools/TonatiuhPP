@@ -22,12 +22,13 @@ public:
 
     NAME_ICON_FUNCTIONS("Cylinder", ":/ShapeCylinder.png")
 
+    void updateShapeGL(TShapeKit* parent);
+
 protected:
     ~ShapeCylinder() {}
 
     Vector3D getPoint(double u, double v) const;
     Vector3D getNormal(double u, double v) const;
-    void generatePrimitives(SoAction* action);
 };
 
 

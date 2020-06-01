@@ -7,6 +7,7 @@
 
 struct Vector3D;
 class Transform;
+class TSeparatorKit;
 
 
 class TONATIUH_KERNEL Tracker: public SoNode
@@ -16,7 +17,7 @@ class TONATIUH_KERNEL Tracker: public SoNode
 public:
     static void initClass();
 
-    virtual void update(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun);
+    virtual void update(TSeparatorKit* parent, const Transform& toGlobal, const Vector3D& vSun);
 
     NAME_ICON_FUNCTIONS("X", ":/TrackerX.png")
 

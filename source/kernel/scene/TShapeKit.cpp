@@ -27,13 +27,17 @@ TShapeKit::TShapeKit()
     SO_KIT_CONSTRUCTOR(TShapeKit);
     isBuiltIn = TRUE;
 
+    SO_NODE_ADD_FIELD( shapeRT, (0) );
     SO_NODE_ADD_FIELD( aperture, (0) );
     SO_NODE_ADD_FIELD( materialRT, (0) );
     SO_KIT_INIT_INSTANCE();
 
-    ShapeRT* shape = new ShapePlanar;
-    shape->setName(shape->getTypeName());
-    setPart("shape", shape);
+    m_sensorS = new SoFieldSensor(onSensor, this);
+    m_sensorS->attach(&shapeRT);
+
+    ShapeRT* sRT = new ShapePlanar;
+    sRT->setName(sRT->getTypeName());
+    shapeRT = sRT;
 
     Aperture* a = new ApertureRectangle;
     a->setName(a->getTypeName());
@@ -47,13 +51,23 @@ TShapeKit::TShapeKit()
     materialGL->setName("MaterialGL");
     setPart("material", materialGL);
 
-    m_sensor = new SoFieldSensor(onSensor, this);
-    m_sensor->attach(&aperture);
+    m_sensorA = new SoFieldSensor(onSensor, this);
+    m_sensorA->attach(&aperture);
 }
 
 TShapeKit::~TShapeKit()
 {
-    delete m_sensor;
+    delete m_sensorS;
+    delete m_sensorA;
+}
+
+void TShapeKit::setDefaultOnNonWritingFields()
+{
+    coordinate3.setDefault(TRUE); // do not save
+    normal.setDefault(TRUE);
+    shape.setDefault(TRUE);
+
+    SoShapeKit::setDefaultOnNonWritingFields();
 }
 
 #include <QDebug>
@@ -62,6 +76,7 @@ void TShapeKit::onSensor(void* data, SoSensor*)
 {
     TShapeKit* kit = (TShapeKit*) data;
     qDebug() << "called " << kit->getName();
-    ShapeRT* shape = (ShapeRT*) kit->getPart("shape", false);
+
+    ShapeRT* shape = (ShapeRT*) kit->shapeRT.getValue();
     shape->updateShapeGL(kit);
 }

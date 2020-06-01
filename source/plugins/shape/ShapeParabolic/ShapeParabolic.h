@@ -21,10 +21,11 @@ public:
 
     NAME_ICON_FUNCTIONS("Parabolic", ":/ShapeParabolic.png")
 
+    void updateShapeGL(TShapeKit* parent);
+
 protected:
     Vector3D getPoint(double u, double v) const;
     Vector3D getNormal(double u, double v) const;
-    void generatePrimitives(SoAction* action);
 };
 
 

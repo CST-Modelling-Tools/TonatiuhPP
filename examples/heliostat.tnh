@@ -66,304 +66,50 @@ TSceneKit {
     }
 
   }
-  childList 
-  NodeKitListPart {
-    childTypeNames [ "ShapeKit",
-        "SeparatorKit" ]
-    containerNode 
-    Group {
+  group 
+  Group {
 
-      DEF Layout TSeparatorKit {
-        transform 
-        Transform {
+    DEF Layout TSeparatorKit {
+      transform 
+      Transform {
 
-        }
-        childList 
-        NodeKitListPart {
-          containerTypeName "Separator"
-          childTypeNames [ "ShapeKit",
-              "SeparatorKit" ]
-          containerNode 
-          Separator {
+      }
+      group 
+      Group {
 
-            DEF Target TSeparatorKit {
-              transform 
-              Transform {
-                translation 0 10 10
+        DEF Target TSeparatorKit {
+          transform 
+          Transform {
+            translation 0 10 10
+
+          }
+          group 
+          Group {
+
+            DEF Shape TShapeKit {
+              shapeRT 
+              DEF Sphere ShapeSphere {
+                fields [ SFDouble radius, SFDouble phiMax, SFDouble alphaMin, SFDouble alphaMax, SFEnum activeSide ]
+                radius 0.5
+                phiMax 6.283185307179584
 
               }
-              childList 
-              NodeKitListPart {
-                containerTypeName "Separator"
-                childTypeNames [ "ShapeKit",
-                    "SeparatorKit" ]
-                containerNode 
-                Separator {
+              aperture 
+              DEF Rectangle ApertureRectangle {
+                fields [ SFDouble sizeX, SFDouble sizeY ]
 
-                  DEF Shape TShapeKit {
-                    appearance 
-                    AppearanceKit {
-                      material 
-                      DEF MaterialGL Material {
+              }
+              materialRT 
+              DEF Absorber MaterialAbsorber {
+                fields [  ]
 
-                      }
+              }
+              appearance 
+              AppearanceKit {
+                material 
+                DEF MaterialGL Material {
 
-                    }
-                    shape 
-                    DEF Sphere ShapeSphere {
-                      fields [ SFDouble radius, SFDouble phiMax, SFDouble alphaMin, SFDouble alphaMax, SFEnum activeSide ]
-                      radius 0.5
-                      phiMax 6.283185307179584
-
-                    }
-                    materialRT 
-                    DEF Absorber MaterialAbsorber {
-                      fields [  ]
-
-                    }
-
-                  }
                 }
-
-              }
-
-            }
-            DEF H1 TSeparatorKit {
-              transform 
-              Transform {
-                translation 5 0 0
-
-              }
-              childList 
-              NodeKitListPart {
-                containerTypeName "Separator"
-                childTypeNames [ "ShapeKit",
-                    "SeparatorKit" ]
-                containerNode 
-                Separator {
-
-                  DEF primary TSeparatorKit {
-                    transform 
-                    Transform {
-                      translation 0 0 1
-                      rotation -1 -0 -0  0.41002494
-
-                    }
-                    childList 
-                    NodeKitListPart {
-                      containerTypeName "Separator"
-                      childTypeNames [ "ShapeKit",
-                          "SeparatorKit" ]
-                      containerNode 
-                      Separator {
-
-                        DEF secondary TSeparatorKit {
-                          transform 
-                          Transform {
-                            translation 0 0 0.2
-                            rotation -0 -1 -0  0.19830778
-
-                          }
-                          childList 
-                          NodeKitListPart {
-                            containerTypeName "Separator"
-                            childTypeNames [ "ShapeKit",
-                                "SeparatorKit" ]
-                            containerNode 
-                            Separator {
-
-                              DEF facet TSeparatorKit {
-                                transform 
-                                Transform {
-                                  translation 0 0 0.2
-
-                                }
-                                childList 
-                                NodeKitListPart {
-                                  containerTypeName "Separator"
-                                  childTypeNames [ "ShapeKit",
-                                      "SeparatorKit" ]
-                                  containerNode 
-                                  Separator {
-
-                                    DEF Shape TShapeKit {
-                                      appearance 
-                                      AppearanceKit {
-                                        material 
-                                        DEF MaterialGL Material {
-
-                                        }
-
-                                      }
-                                      shape 
-                                      DEF Parabolic ShapeParabolic {
-                                        fields [ SFDouble focusX, SFDouble focusY, SFDouble sizeX, SFDouble sizeY, SFEnum activeSide ]
-                                        focusX 10
-                                        focusY 10
-
-                                      }
-                                      materialRT 
-                                      DEF Specular MaterialSpecular {
-                                        fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
-
-                                      }
-
-                                    }
-                                  }
-
-                                }
-
-                              }
-                              DEF target TSeparatorKit {
-                                transform 
-                                Transform {
-                                  translation 0 10 10
-
-                                }
-                                childList 
-                                NodeKitListPart {
-                                  containerTypeName "Separator"
-                                  childTypeNames [ "ShapeKit",
-                                      "SeparatorKit" ]
-                                  containerNode 
-                                  Separator {
-
-                                    DEF Shape TShapeKit {
-                                      appearance 
-                                      AppearanceKit {
-                                        material 
-                                        DEF MaterialGL Material {
-
-                                        }
-
-                                      }
-                                      shape 
-                                      DEF Sphere ShapeSphere {
-                                        fields [ SFDouble radius, SFDouble phiMax, SFDouble alphaMin, SFDouble alphaMax, SFEnum activeSide ]
-                                        radius 0.2
-                                        phiMax 6.283185307179584
-
-                                      }
-                                      materialRT 
-                                      DEF Absorber MaterialAbsorber {
-                                        fields [  ]
-
-                                      }
-
-                                    }
-                                  }
-
-                                }
-
-                              }
-                              DEF axis TSeparatorKit {
-                                transform 
-                                Transform {
-                                  translation 0 0 0
-                                  rotation 1 0 0  1.5700002
-
-                                }
-                                childList 
-                                NodeKitListPart {
-                                  containerTypeName "Separator"
-                                  childTypeNames [ "ShapeKit",
-                                      "SeparatorKit" ]
-                                  containerNode 
-                                  Separator {
-
-                                    DEF Shape TShapeKit {
-                                      appearance 
-                                      AppearanceKit {
-                                        material 
-                                        DEF MaterialGL Material {
-
-                                        }
-
-                                      }
-                                      shape 
-                                      DEF Cylinder ShapeCylinder {
-                                        fields [ SFDouble radius, SFDouble phiMax, SFDouble sizeZ, SFEnum activeSide ]
-                                        radius 0.03000000000000001
-                                        sizeZ 0.2
-
-                                      }
-                                      materialRT 
-                                      DEF Absorber MaterialAbsorber {
-                                        fields [  ]
-
-                                      }
-
-                                    }
-                                  }
-
-                                }
-
-                              }
-                            }
-
-                          }
-
-                        }
-                        DEF axis TSeparatorKit {
-                          transform 
-                          Transform {
-                            translation 0 0 0
-                            rotation 0 1 0  1.5700002
-
-                          }
-                          childList 
-                          NodeKitListPart {
-                            containerTypeName "Separator"
-                            childTypeNames [ "ShapeKit",
-                                "SeparatorKit" ]
-                            containerNode 
-                            Separator {
-
-                              DEF Shape TShapeKit {
-                                appearance 
-                                AppearanceKit {
-                                  material 
-                                  DEF MaterialGL Material {
-
-                                  }
-
-                                }
-                                shape 
-                                DEF Cylinder ShapeCylinder {
-                                  fields [ SFDouble radius, SFDouble phiMax, SFDouble sizeZ, SFEnum activeSide ]
-                                  radius 0.03000000000000001
-                                  sizeZ 0.2
-
-                                }
-                                materialRT 
-                                DEF Absorber MaterialAbsorber {
-                                  fields [  ]
-
-                                }
-
-                              }
-                            }
-
-                          }
-
-                        }
-                      }
-
-                    }
-
-                  }
-                }
-
-              }
-              tracker 
-              DEF Heliostat TrackerHeliostat {
-                fields [ SFVec3f primaryShift, SFVec3f primaryAxis, SFVec2f primaryAngles, SFVec3f secondaryShift, SFVec3f secondaryAxis, SFVec2f secondaryAngles, SFVec3f facetShift, SFVec3f facetNormal, SFEnum aimingFrame, SFVec3f aimingPoint, SFVec2f anglesDefault ]
-                primaryAxis 1 0 0
-                secondaryShift 0 0 0.2
-                secondaryAxis 0 1 0
-                facetShift 0 0 0.2
-                aimingFrame global
-                aimingPoint 0 10 10
 
               }
 
@@ -371,10 +117,220 @@ TSceneKit {
           }
 
         }
+        DEF H1 TSeparatorKit {
+          transform 
+          Transform {
+            translation 5 0 0
 
+          }
+          group 
+          Group {
+
+            DEF primary TSeparatorKit {
+              transform 
+              Transform {
+                translation 0 0 1
+                rotation -1 -0 -0  0.41002494
+
+              }
+              group 
+              Group {
+
+                DEF secondary TSeparatorKit {
+                  transform 
+                  Transform {
+                    translation 0 0 0.2
+                    rotation -0 -1 -0  0.19830778
+
+                  }
+                  group 
+                  Group {
+
+                    DEF facet TSeparatorKit {
+                      transform 
+                      Transform {
+                        translation 0 0 0.2
+
+                      }
+                      group 
+                      Group {
+
+                        DEF Shape TShapeKit {
+                          shapeRT 
+                          DEF Parabolic ShapeParabolic {
+                            fields [ SFDouble focusX, SFDouble focusY, SFDouble sizeX, SFDouble sizeY, SFEnum activeSide ]
+                            focusX 10
+                            focusY 10
+
+                          }
+                          aperture 
+                          DEF Rectangle ApertureRectangle {
+                            fields [ SFDouble sizeX, SFDouble sizeY ]
+
+                          }
+                          materialRT 
+                          DEF Specular MaterialSpecular {
+                            fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+
+                          }
+                          appearance 
+                          AppearanceKit {
+                            material 
+                            DEF MaterialGL Material {
+
+                            }
+
+                          }
+
+                        }
+                      }
+
+                    }
+                    DEF target TSeparatorKit {
+                      transform 
+                      Transform {
+                        translation 0 10 10
+
+                      }
+                      group 
+                      Group {
+
+                        DEF Shape TShapeKit {
+                          shapeRT 
+                          DEF Sphere ShapeSphere {
+                            fields [ SFDouble radius, SFDouble phiMax, SFDouble alphaMin, SFDouble alphaMax, SFEnum activeSide ]
+                            radius 0.2
+                            phiMax 6.283185307179584
+
+                          }
+                          aperture 
+                          DEF Rectangle ApertureRectangle {
+                            fields [ SFDouble sizeX, SFDouble sizeY ]
+
+                          }
+                          materialRT 
+                          DEF Absorber MaterialAbsorber {
+                            fields [  ]
+
+                          }
+                          appearance 
+                          AppearanceKit {
+                            material 
+                            DEF MaterialGL Material {
+
+                            }
+
+                          }
+
+                        }
+                      }
+
+                    }
+                    DEF axis TSeparatorKit {
+                      transform 
+                      Transform {
+                        translation 0 0 0
+                        rotation 1 0 0  1.5700002
+
+                      }
+                      group 
+                      Group {
+
+                        DEF Shape TShapeKit {
+                          shapeRT 
+                          DEF Cylinder ShapeCylinder {
+                            fields [ SFDouble radius, SFDouble phiMax, SFDouble sizeZ, SFEnum activeSide ]
+                            radius 0.03000000000000001
+                            sizeZ 0.2
+
+                          }
+                          aperture 
+                          DEF Rectangle ApertureRectangle {
+                            fields [ SFDouble sizeX, SFDouble sizeY ]
+
+                          }
+                          materialRT 
+                          DEF Absorber MaterialAbsorber {
+                            fields [  ]
+
+                          }
+                          appearance 
+                          AppearanceKit {
+                            material 
+                            DEF MaterialGL Material {
+
+                            }
+
+                          }
+
+                        }
+                      }
+
+                    }
+                  }
+
+                }
+                DEF axis TSeparatorKit {
+                  transform 
+                  Transform {
+                    translation 0 0 0
+                    rotation 0 1 0  1.5700002
+
+                  }
+                  group 
+                  Group {
+
+                    DEF Shape TShapeKit {
+                      shapeRT 
+                      DEF Cylinder ShapeCylinder {
+                        fields [ SFDouble radius, SFDouble phiMax, SFDouble sizeZ, SFEnum activeSide ]
+                        radius 0.03000000000000001
+                        sizeZ 0.2
+
+                      }
+                      aperture 
+                      DEF Rectangle ApertureRectangle {
+                        fields [ SFDouble sizeX, SFDouble sizeY ]
+
+                      }
+                      materialRT 
+                      DEF Absorber MaterialAbsorber {
+                        fields [  ]
+
+                      }
+                      appearance 
+                      AppearanceKit {
+                        material 
+                        DEF MaterialGL Material {
+
+                        }
+
+                      }
+
+                    }
+                  }
+
+                }
+              }
+
+            }
+          }
+          tracker 
+          DEF Heliostat TrackerHeliostat {
+            fields [ SFVec3f primaryShift, SFVec3f primaryAxis, SFVec2f primaryAngles, SFVec3f secondaryShift, SFVec3f secondaryAxis, SFVec2f secondaryAngles, SFVec3f facetShift, SFVec3f facetNormal, SFEnum aimingFrame, SFVec3f aimingPoint, SFVec2f anglesDefault ]
+            primaryAxis 1 0 0
+            secondaryShift 0 0 0.2
+            secondaryAxis 0 1 0
+            facetShift 0 0 0.2
+            aimingFrame global
+            aimingPoint 0 10 10
+
+          }
+
+        }
       }
-    }
 
+    }
   }
   air 
   AirVacuum {

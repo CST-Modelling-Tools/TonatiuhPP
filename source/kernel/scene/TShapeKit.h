@@ -24,12 +24,16 @@ public:
     static void initClass();
     TShapeKit();
 
-    SoSFNode aperture;
+    SoSFNode shapeRT;
+    SoSFNode aperture; // profileRT
     SoSFNode materialRT;
 
 protected:
     virtual ~TShapeKit();
 
-    SoFieldSensor* m_sensor;
+    void setDefaultOnNonWritingFields();
+
+    SoFieldSensor* m_sensorS;
+    SoFieldSensor* m_sensorA;
     static void onSensor(void* data, SoSensor*);
 };

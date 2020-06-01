@@ -71,15 +71,9 @@ bool ShapePlanar::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     return true;
 }
 
-#include "kernel/scene/TShapeKit.h"
-#include <Inventor/nodes/SoCone.h>
-#include <Inventor/nodes/SoSeparator.h>
 void ShapePlanar::updateShapeGL(TShapeKit* parent)
 {
-//    SoGroup* sep = new SoGroup;
-//    sep->addChild(new SoCone);
-//    parent->setPart("childList[0]", sep);
-//    parent->add
+    makeQuadMesh(parent, QSize(2, 2), activeSide.getValue() == Side::back);
 }
 
 Vector3D ShapePlanar::getPoint(double u, double v) const
@@ -92,31 +86,4 @@ Vector3D ShapePlanar::getPoint(double u, double v) const
 Vector3D ShapePlanar::getNormal(double /*u*/, double /*v*/) const
 {
     return Vector3D(0., 0., 1.);
-}
-
-#include <Inventor/nodes/SoCoordinate3.h>
-void ShapePlanar::generatePrimitives(SoAction* action)
-{
-//     generateQuads(action, QSize(2, 2), activeSide.getValue() == Side::back);
-
-//    static float vertexPositions[12][3] =
-//    {
-//    { 0.0000, 1.2142, 0.7453}, // top
-//    { 0.0000, 1.2142, -0.7453}, // points surrounding top
-//    {-1.2142, 0.7453, 0.0000},
-//    {-0.7453, 0.0000, 1.2142},
-//    { 0.7453, 0.0000, 1.2142},
-//    { 1.2142, 0.7453, 0.0000},
-//    { 0.0000, -1.2142, 0.7453}, // points surrounding bottom
-//    {-1.2142, -0.7453, 0.0000},
-//    {-0.7453, 0.0000, -1.2142},
-//    { 0.7453, 0.0000, -1.2142},
-//    { 1.2142, -0.7453, 0.0000},
-//    { 0.0000, -1.2142, -0.7453}, // bottom
-//    };
-
-//    // Define coordinates for vertices
-//    SoCoordinate3 *myCoords = new SoCoordinate3;
-//    myCoords->point.setValues(0, 12, vertexPositions);
-
 }

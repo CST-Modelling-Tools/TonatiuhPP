@@ -86,6 +86,21 @@ bool ShapeParabolic::intersect(const Ray& ray, double *tHit, DifferentialGeometr
     return false;
 }
 
+void ShapeParabolic::updateShapeGL(TShapeKit* parent)
+{
+    double s;
+
+    s = sizeX.getValue()/(360*gcf::degree*2.*focusX.getValue());
+    if (s > 1.) s = 1.;
+    int rows = 1 + ceil(48*s);
+
+    s = sizeY.getValue()/(360*gcf::degree*2.*focusY.getValue());
+    if (s > 1.) s = 1.;
+    int columns = 1 + ceil(48*s);
+
+    makeQuadMesh(parent, QSize(rows, columns), activeSide.getValue() == Side::back);
+}
+
 Vector3D ShapeParabolic::getPoint(double u, double v) const
 {
     double x = (u - 0.5)*sizeX.getValue();
@@ -100,19 +115,4 @@ Vector3D ShapeParabolic::getNormal(double u, double v) const
     double y = (v - 0.5)*sizeY.getValue();
     Vector3D n(-x/focusX.getValue(), -y/focusY.getValue(), 2.);
     return n.normalized();
-}
-
-void ShapeParabolic::generatePrimitives(SoAction* action)
-{
-    double s;
-
-    s = sizeX.getValue()/(360*gcf::degree*2.*focusX.getValue());
-    if (s > 1.) s = 1.;
-    int rows = 1 + ceil(48*s);
-
-    s = sizeY.getValue()/(360*gcf::degree*2.*focusY.getValue());
-    if (s > 1.) s = 1.;
-    int columns = 1 + ceil(48*s);
-
-    generateQuads(action, QSize(rows, columns), activeSide.getValue() == Side::back);
 }

@@ -22,7 +22,7 @@ CmdInsertShape::CmdInsertShape(TShapeKit* shapeKit, ShapeRT* shape, SceneModel* 
 
     m_shape->ref();
 
-    m_shapeOld = (ShapeRT*) m_shapeKit->getPart("shape", false);
+    m_shapeOld = (ShapeRT*) m_shapeKit->shapeRT.getValue();
     m_shapeOld->ref();
 
     QString text = QString("Create Shape: %1").arg(shape->getTypeName());
@@ -41,7 +41,7 @@ CmdInsertShape::~CmdInsertShape()
  */
 void CmdInsertShape::undo()
 {
-    m_shapeKit->setPart("shape", m_shapeOld);
+    m_shapeKit->shapeRT = m_shapeOld;
     m_model->replaceCoinNode(m_shapeKit, InstanceNode::IndexShapeRT, m_shapeOld);
 }
 
@@ -51,6 +51,6 @@ void CmdInsertShape::undo()
  */
 void CmdInsertShape::redo()
 {
-    m_shapeKit->setPart("shape", m_shape);
+    m_shapeKit->shapeRT = m_shape;
     m_model->replaceCoinNode(m_shapeKit, InstanceNode::IndexShapeRT, m_shape);
 }

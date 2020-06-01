@@ -33,7 +33,7 @@ ShapeSphere::ShapeSphere()
     SO_NODE_ADD_FIELD( activeSide, (front) );
 
     m_sensor = new SoNodeSensor(onSensor, this);
-    m_sensor->setPriority(1); // does not help
+//    m_sensor->setPriority(0); // does not help
     m_sensor->attach(this);
 }
 
@@ -149,6 +149,11 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     return false;
 }
 
+void ShapeSphere::updateShapeGL(TShapeKit* parent)
+{
+    makeQuadMesh(parent, QSize(48, 24), activeSide.getValue() == Side::back, activeSide.getValue() == Side::back);
+}
+
 Vector3D ShapeSphere::getPoint(double u, double v) const
 {
     return radius.getValue()*getNormal(u, v);
@@ -166,11 +171,6 @@ Vector3D ShapeSphere::getNormal(double u, double v) const
     );
 }
 
-void ShapeSphere::generatePrimitives(SoAction* action)
-{
-    generateQuads(action, QSize(48, 24), activeSide.getValue() == Side::back, activeSide.getValue() == Side::back);
-}
-
 void ShapeSphere::onSensor(void* data, SoSensor*)
 {
     ShapeSphere* shape = (ShapeSphere*) data;
@@ -179,7 +179,7 @@ void ShapeSphere::onSensor(void* data, SoSensor*)
         shape->radius.setValue(1.);
 
     double phi = shape->phiMax.getValue();
-    if (phi <= 0. || phi >= gcf::TwoPi)
+    if (phi <= 0. || phi > gcf::TwoPi)
         shape->phiMax.setValue(gcf::TwoPi);
 
     if (shape->alphaMin.getValue() < -gcf::pi/2.)

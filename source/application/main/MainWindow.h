@@ -126,7 +126,7 @@ private slots:
     void CalculateSunPosition();
     void ChangeGridSettings();
     void ChangeNodeName(const QModelIndex& index, const QString& name);
-    void ChangeSelection(const QModelIndex& current);
+    void ChangeSelection(const QModelIndex& index);
     void CreateComponent(ComponentFactory* factory);
     void CreateMaterial(MaterialFactory* factory);
     void CreateShape(ShapeFactory* factory);

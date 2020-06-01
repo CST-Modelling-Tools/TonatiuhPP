@@ -1,7 +1,6 @@
 #include "CmdLightKitModified.h"
 
 #include <Inventor/nodekits/SoSceneKit.h>
-#include <Inventor/nodekits/SoNodeKitListPart.h>
 
 #include "libraries/geometry/gcf.h"
 #include "tree/SceneModel.h"

@@ -9,11 +9,13 @@
 
 class Transform;
 struct Vector3D;
+class TSeparatorKit;
 
 
 class TONATIUH_KERNEL TSceneKit: public SoSceneKit
 {
     SO_KIT_HEADER(TSceneKit);
+    SO_KIT_CATALOG_ENTRY_HEADER(group);
     SO_KIT_CATALOG_ENTRY_HEADER(air);
 
 public:
@@ -26,5 +28,5 @@ public:
 
 protected:
     ~TSceneKit() {}
-    void updateTrackers(SoBaseKit* parent, Transform t, const Vector3D& vSun);
+    void updateTrackers(TSeparatorKit* parent, Transform t, const Vector3D& vSun);
 };

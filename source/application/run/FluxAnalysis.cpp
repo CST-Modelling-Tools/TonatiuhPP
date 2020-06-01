@@ -98,7 +98,7 @@ QString FluxAnalysis::GetSurfaceType(QString nodeURL)
     TShapeKit* shapeKit = static_cast<TShapeKit*> (instanceNode->getNode() );
     if (!shapeKit) return "";
 
-    ShapeRT* shape = static_cast<ShapeRT*>(shapeKit->getPart("shape", false) );
+    ShapeRT* shape = (ShapeRT*) shapeKit->shapeRT.getValue();
     if (!shape) return "";
 
     return shape->getTypeName();
@@ -223,7 +223,7 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, ulong n
     exportSuraceList.push_back(surfaceNode);
 
     //UpdateLightSize();
-    TSeparatorKit* concentratorRoot = static_cast< TSeparatorKit* >(m_pCurrentScene->getPart("childList[0]", false) );
+    TSeparatorKit* concentratorRoot = static_cast< TSeparatorKit* >(m_pCurrentScene->getPart("group[0]", false) );
     if (!concentratorRoot) return;
 
     SoGetBoundingBoxAction* bbAction = new SoGetBoundingBoxAction(SbViewportRegion() );
@@ -370,10 +370,10 @@ void FluxAnalysis::UpdatePhotonCounts()
 void FluxAnalysis::FluxAnalysisCylinder(InstanceNode* node)
 {
     if (!node) return;
-    TShapeKit* surfaceNode = static_cast< TShapeKit* > (node->getNode() );
-    if (!surfaceNode) return;
+    TShapeKit* shapeKit = static_cast< TShapeKit* > (node->getNode() );
+    if (!shapeKit) return;
 
-    ShapeRT* shape = static_cast< ShapeRT* >(surfaceNode->getPart("shape", false) );
+    ShapeRT* shape = (ShapeRT*) shapeKit->shapeRT.getValue();
     if (!shape || shape == 0) return;
 
     SoSFDouble* radiusField = static_cast< SoSFDouble* > (shape->getField("radius") );
@@ -462,7 +462,7 @@ void FluxAnalysis::FluxAnalysisFlatDisk(InstanceNode* node)
     TShapeKit* surfaceNode = static_cast< TShapeKit* > (node->getNode() );
     if (!surfaceNode) return;
 
-    ShapeRT* shape = static_cast< ShapeRT* >(surfaceNode->getPart("shape", false) );
+    ShapeRT* shape = (ShapeRT*)surfaceNode->shapeRT.getValue();
     if (!shape || shape == 0) return;
 
     trt::TONATIUH_REAL* radiusField = static_cast< trt::TONATIUH_REAL* > (shape->getField("radius") );
@@ -537,10 +537,10 @@ void FluxAnalysis::FluxAnalysisFlatRectangle(InstanceNode* node)
 {
     if (!node) return;
 
-    TShapeKit* surfaceNode = static_cast<TShapeKit*> (node->getNode() );
-    if (!surfaceNode) return;
+    TShapeKit* shapeKit = static_cast<TShapeKit*> (node->getNode() );
+    if (!shapeKit) return;
 
-    ShapeRT* shape = static_cast<ShapeRT*>(surfaceNode->getPart("shape", false) );
+    ShapeRT* shape = (ShapeRT*) shapeKit->shapeRT.getValue();
     if (!shape || shape == 0) return;
 
     SoSFDouble* sizeX = (SoSFDouble*) shape->getField("sizeX");

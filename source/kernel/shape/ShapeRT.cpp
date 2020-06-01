@@ -1,12 +1,15 @@
 #include "ShapeRT.h"
 
-#include "libraries/geometry/Vector3D.h"
-#include "libraries/geometry/BoundingBox.h"
-#include <Inventor/actions/SoGLRenderAction.h>
-#include <Inventor/elements/SoGLTextureCoordinateElement.h>
-#include <Inventor/SoPrimitiveVertex.h>
 #include <QSize>
 #include <QVector>
+
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoNormal.h>
+#include <Inventor/nodes/SoQuadMesh.h>
+
+#include "kernel/scene/TShapeKit.h"
+#include "libraries/geometry/Vector3D.h"
+#include "libraries/geometry/BoundingBox.h"
 
 
 SO_NODE_ABSTRACT_SOURCE(ShapeRT)
@@ -14,13 +17,7 @@ SO_NODE_ABSTRACT_SOURCE(ShapeRT)
 
 void ShapeRT::initClass()
 {
-    SO_NODE_INIT_ABSTRACT_CLASS(ShapeRT, SoShape, "Shape");
-}
-
-
-bool ShapeRT::isInside(double u, double v) const
-{
-    return u < 0. || u > 1. || v < 0. || v > 1.;
+    SO_NODE_INIT_ABSTRACT_CLASS(ShapeRT, SoNode, "Node");
 }
 
 void ShapeRT::computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center)
@@ -36,7 +33,7 @@ void ShapeRT::computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center)
 //    center.setValue(0., 0., 0.);
 }
 
-void ShapeRT::generateQuads(SoAction* action, const QSize& dims, bool reverseNormals, bool reverseClock)
+void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals, bool reverseClock)
 {
     const int iMax = dims.width(); // u
     const int jMax = dims.height(); // v
@@ -57,30 +54,18 @@ void ShapeRT::generateQuads(SoAction* action, const QSize& dims, bool reverseNor
         }
     }
 
-    const SoTextureCoordinateElement* tce = 0;
-    SoState* state = action->getState();
-    SbBool useTexFunc = (SoTextureCoordinateElement::getType(state) ==
-        SoTextureCoordinateElement::FUNCTION);
-    if (useTexFunc) tce = SoTextureCoordinateElement::getInstance(state);
+    SoCoordinate3* sVertices = new SoCoordinate3;
+    sVertices->point.setValues(0, vertices.size(), vertices.data());
 
-    beginShape(action, QUADS);
-    SoPrimitiveVertex pv;
-    for (int i = 0; i < iMax - 1; ++i)
-        for (int j = 0; j < jMax - 1; ++j) {
-            int quad[] =  {
-                i*jMax + j,
-                i*jMax + j + 1,
-                (i + 1)*jMax + j + 1,
-                (i + 1)*jMax + j
-            };
-            for (int k = 0; k < 4; ++k) {
-                int q = reverseClock ? quad[3 - k] : quad[k];
-                pv.setPoint(vertices[q]);
-                pv.setNormal(normals[q]);
-                SbVec4f texCoord = useTexFunc ? tce->get(pv.getPoint(), pv.getNormal()): SbVec4f(1., 1., 0., 1.);
-                pv.setTextureCoords(texCoord);
-                shapeVertex(&pv);
-            }
-        }
-    endShape();
+    SoNormal* sNormals = new SoNormal;
+    sNormals->vector.setValues(0, normals.size(), normals.data());
+
+    parent->setPart("coordinate3", sVertices);
+    parent->setPart("normal", sNormals);
+
+    SoQuadMesh* sMesh = new SoQuadMesh;
+    sMesh->verticesPerRow = jMax;
+    sMesh->verticesPerColumn = iMax;
+
+    parent->setPart("shape", sMesh);
 }

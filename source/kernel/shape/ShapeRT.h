@@ -12,7 +12,7 @@ class QSize;
 class TShapeKit;
 
 
-class TONATIUH_KERNEL ShapeRT: public SoShape
+class TONATIUH_KERNEL ShapeRT: public SoNode
 {
     SO_NODE_ABSTRACT_HEADER(ShapeRT);
 
@@ -36,18 +36,15 @@ public:
     SoSFEnum activeSide;
 
     NAME_ICON_FUNCTIONS("X", ":/ShapeX.png")
-    static bool isFlat() {return false;}
 
     virtual void updateShapeGL(TShapeKit* /*parent*/) {}
 
 protected:
     void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
 
-    virtual bool isInside(double u, double v) const;
     virtual Vector3D getPoint(double u, double v) const = 0;
     virtual Vector3D getNormal(double u, double v) const = 0;
-    void generatePrimitives(SoAction* action) = 0;
-    void generateQuads(SoAction* action, const QSize& dims, bool reverseNormals = false, bool reverseClock = false);
+    void makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals = false, bool reverseClock = false);
 
     ShapeRT() {}
     ~ShapeRT() {}
@@ -65,7 +62,6 @@ class ShapeFactory: public TFactory
 public:
     virtual ShapeRT* create() const = 0;
     virtual ShapeRT* create(QVector<QVariant> /*parameters*/) const {return create();}
-    virtual bool isFlat() = 0; // better without const?
 };
 
 Q_DECLARE_INTERFACE(ShapeFactory, "tonatiuh.ShapeFactory")
@@ -81,5 +77,4 @@ public:
     QIcon icon() const {return QIcon(T::getClassIcon());}
     void init() const {T::initClass();}
     T* create() const {return new T;}
-    bool isFlat() {return T::isFlat();}
 };

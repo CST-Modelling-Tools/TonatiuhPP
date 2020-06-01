@@ -5,7 +5,6 @@
 #include <QMouseEvent>
 
 #include <Inventor/nodekits/SoBaseKit.h>
-#include <Inventor/nodekits/SoNodeKitListPart.h>
 
 #include "kernel/run/InstanceNode.h"
 #include "SceneView.h"

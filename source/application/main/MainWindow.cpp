@@ -2462,20 +2462,11 @@ void MainWindow::SoManip_to_SoTransform()
     setDocumentModified(true);
 }
 
-void MainWindow::ChangeSelection(const QModelIndex& current)
+void MainWindow::ChangeSelection(const QModelIndex& index)
 {
-    InstanceNode* instanceSelected = m_sceneModel->getInstance(current);
-    SoNode* selectedCoinNode = instanceSelected->getNode();
-
-    if (selectedCoinNode->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) )
-    {
-        SoBaseKit* selectedCoinNodeKit = static_cast< SoBaseKit* >(selectedCoinNode);
-        ui->parametersTabs->SelectionChangedToKit(selectedCoinNodeKit);
-    }
-    else
-    {
-        ui->parametersTabs->SelectionChangedToPart(selectedCoinNode);
-    }
+    InstanceNode* instance = m_sceneModel->getInstance(index);
+    SoNode* node = instance->getNode();
+    ui->parametersTabs->SelectionChanged(node);
 }
 
 /*!
@@ -2574,13 +2565,7 @@ void MainWindow::CreateShape(ShapeFactory* factory, int /*numberofParameters*/, 
     TShapeKit* kit = dynamic_cast<TShapeKit*>(parentNode);
     if (!kit) return;
 
-    ShapeRT* shape = (ShapeRT*) kit->getPart("shape", false);
-    if (shape)
-    {
-        ShowWarning("This TShapeKit already contains a shape");
-        return;
-    }
-    shape = factory->create(parametersList);
+    ShapeRT* shape = factory->create(parametersList);
     shape->setName(factory->name().toStdString().c_str() );
 
     CmdInsertShape* cmd = new CmdInsertShape(kit, shape, m_sceneModel);
@@ -3232,7 +3217,7 @@ void MainWindow::UpdateLightSize()
     SunKit* lightKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
     if (!lightKit) return;
 
-    TSeparatorKit* separatorKit = static_cast<TSeparatorKit*>(sceneKit->getPart("childList[0]", false) );
+    SoGroup* separatorKit = static_cast<SoGroup*>(sceneKit->getPart("group", false) );
     if (!separatorKit) return;
 
     SoGetBoundingBoxAction* action = new SoGetBoundingBoxAction(SbViewportRegion() );

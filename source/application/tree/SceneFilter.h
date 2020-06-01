@@ -11,12 +11,12 @@ class SceneFilter: public QSortFilterProxyModel
 public:
     SceneFilter(QObject* parent = 0);
 
-    void AddShapeTypeFilter(QString shapeType);
-    void SetShapeTypeFilters(QVector<QString> shapeTypeFilters);
+    void AddShapeTypeFilter(QString shape);
+    void SetShapeTypeFilters(QVector<QString> shapes);
 
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const;
 
 private:
-    QVector<QString> m_shapeTypeList;
+    QVector<QString> m_shapes;
 };

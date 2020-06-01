@@ -1,9 +1,12 @@
 #include "TrackerTrough.h"
 
 #include <Inventor/sensors/SoNodeSensor.h>
+#include <Inventor/nodes/SoGroup.h>
 
 #include "kernel/trf.h"
 #include "TroughModel.h"
+#include "kernel/scene/TSeparatorKit.h"
+
 
 SO_NODE_SOURCE(TrackerTrough)
 
@@ -44,7 +47,7 @@ TrackerTrough::~TrackerTrough()
     delete m_trough;
 }
 
-void TrackerTrough::update(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun)
+void TrackerTrough::update(TSeparatorKit* parent, const Transform& toGlobal, const Vector3D& vSun)
 {
     Transform toLocal = toGlobal.inversed();
     Vector3D vSunL = toLocal.transformVector(vSun);
@@ -62,7 +65,9 @@ void TrackerTrough::update(SoBaseKit* parent, const Transform& toGlobal, const V
     angle = m_trough->selectSolution(angle);
 
     // rotate nodes
-    auto node = static_cast<SoBaseKit*>(parent->getPart("childList[0]", false));
+//    auto node = static_cast<TSeparatorKit*>(parent->getPart("group[0]", false));
+    SoGroup* childList = (SoGroup*) parent->getPart("group", false);
+    auto node = static_cast<TSeparatorKit*>(childList->getChild(0));
     if (!node) return;
     SoTransform* tPrimary = (SoTransform*) node->getPart("transform", true);
     tPrimary->translation = primaryShift.getValue();

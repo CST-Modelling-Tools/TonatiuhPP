@@ -44,7 +44,6 @@ GraphicRoot::GraphicRoot():
     m_pRootTransform(0),
     m_pSceneSeparator(0),
     m_pSelectionNode(0)
-//    m_pTracker(0)
 {
     m_nodeRoot = new SoSeparator;
     m_nodeRoot->ref();
@@ -59,10 +58,6 @@ GraphicRoot::GraphicRoot():
     m_pRootTransform->ref();
     m_pSceneSeparator->addChild(m_pRootTransform);
 
-//    m_pTracker = new GraphicRootTracker;
-//    //m_pTracker->ref();
-//    m_pTracker->ConnectParentTranform(m_pRootTransform);
-
     m_pSelectionNode = new SoSelection;
     m_pSelectionNode->ref();
     m_pSelectionNode->policy = SoSelection::SINGLE;
@@ -73,12 +68,12 @@ GraphicRoot::GraphicRoot():
 GraphicRoot::~GraphicRoot()
 {
     if (m_pGrid) {
-        while ( m_pGrid->getRefCount( ) > 1 )    m_pGrid->unref();
+        while (m_pGrid->getRefCount( ) > 1)    m_pGrid->unref();
         m_pGrid = 0;
     }
-    if( m_pRays )
+    if (m_pRays)
     {
-        while ( m_pRays->getRefCount( ) > 1 )    m_pRays->unref();
+        while (m_pRays->getRefCount( ) > 1)    m_pRays->unref();
         m_pRays = 0;
     }
     if( m_pSelectionNode)
@@ -135,8 +130,9 @@ void GraphicRoot::RemoveGrid()
     {
         ShowGrid( false );
         m_pGrid->removeAllChildren();
-        while( m_pGrid->getRefCount() > 1 ) m_pGrid->unref();
-        if ( m_pGrid->getRefCount() > 1 ) gcf::SevereError( "RemoveGrid: m_pGrid referenced in excess ");
+        while(m_pGrid->getRefCount() > 1) m_pGrid->unref();
+        if (m_pGrid->getRefCount() > 1)
+            gcf::SevereError( "RemoveGrid: m_pGrid referenced in excess ");
         m_pGrid->unref();
         m_pGrid = 0;
     }
@@ -146,7 +142,8 @@ void GraphicRoot::RemoveRays()
 {
     if (m_pRays) {
         m_pRays->removeAllChildren();
-        if ( m_pRays->getRefCount() > 1 ) gcf::SevereError( "RemoveRays: m_pRays referenced in excess ");
+        if (m_pRays->getRefCount() > 1)
+            gcf::SevereError( "RemoveRays: m_pRays referenced in excess");
         m_pRays->unref();
         m_pRays = 0;
     }
@@ -154,7 +151,7 @@ void GraphicRoot::RemoveRays()
 
 void GraphicRoot::RemoveModel()
 {
-    if( m_pSelectionNode->getNumChildren() > 0 )
+    if (m_pSelectionNode->getNumChildren() > 0)
     {
 //        m_pTracker->SetSceneKit(0);
 //        m_pTracker->Disconnect();
@@ -207,14 +204,16 @@ void GraphicRoot::ShowGrid(bool view)
     if (view && m_pGrid)
         m_nodeRoot->addChild(m_pGrid);
     else if (!view)
-        if ( m_pGrid->getRefCount() > 0 )    m_nodeRoot->removeChild( m_pGrid );
+        if (m_pGrid->getRefCount() > 0)
+            m_nodeRoot->removeChild(m_pGrid);
 }
 
-void GraphicRoot::ShowRays( bool view )
+void GraphicRoot::ShowRays(bool view)
 {
-    if( view && ( m_pRays ) )
-        m_pSceneSeparator->addChild( m_pRays );
-    else if( !view )
-        if ( m_pRays->getRefCount( ) > 0 )    m_pSceneSeparator->removeChild( m_pRays );
+    if (view && m_pRays)
+        m_pSceneSeparator->addChild(m_pRays);
+    else if (!view)
+        if (m_pRays->getRefCount( ) > 0)
+            m_pSceneSeparator->removeChild(m_pRays);
 }
 

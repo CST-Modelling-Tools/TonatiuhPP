@@ -1,7 +1,9 @@
 #include "TrackerHeliostat.h"
 
 #include <Inventor/sensors/SoNodeSensor.h>
+#include <Inventor/nodes/SoGroup.h>
 
+#include "kernel/scene/TSeparatorKit.h"
 #include "kernel/trf.h"
 #include "HeliostatModel.h"
 
@@ -48,7 +50,7 @@ TrackerHeliostat::~TrackerHeliostat()
     delete m_heliostat;
 }
 
-void TrackerHeliostat::update(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun)
+void TrackerHeliostat::update(TSeparatorKit* parent, const Transform& toGlobal, const Vector3D& vSun)
 {
     QVector<Angles> solutions;
     Transform toLocal = toGlobal.inversed();
@@ -63,13 +65,16 @@ void TrackerHeliostat::update(SoBaseKit* parent, const Transform& toGlobal, cons
     Angles solution = m_heliostat->selectSolution(solutions);
 
     // rotate nodes
-    auto nodePrimary = static_cast<SoBaseKit*>(parent->getPart("childList[0]", false));
+    SoGroup* childList = (SoGroup*) parent->getPart("group", false);
+    auto nodePrimary = static_cast<TSeparatorKit*>(childList->getChild(0));
     if (!nodePrimary) return;
     SoTransform* tPrimary = (SoTransform*) nodePrimary->getPart("transform", true);
     tPrimary->translation = primaryShift.getValue();
     tPrimary->rotation.setValue(primaryAxis.getValue(), solution.x);
 
-    auto nodeSecondary = static_cast<SoBaseKit*>(nodePrimary->getPart("childList[0]", false));
+    childList = (SoGroup*) nodePrimary->getPart("group", false);
+//    auto nodeSecondary = static_cast<TSeparatorKit*>(nodePrimary->getPart("group[0]", false));
+    auto nodeSecondary = static_cast<TSeparatorKit*>(childList->getChild(0));
     if (!nodeSecondary) return;
     SoTransform* tSecondary = (SoTransform*) nodeSecondary->getPart("transform", true);
     tSecondary->translation = secondaryShift.getValue();

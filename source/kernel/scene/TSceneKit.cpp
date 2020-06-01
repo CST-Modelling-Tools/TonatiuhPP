@@ -1,7 +1,7 @@
 #include "TSceneKit.h"
 
 #include <Inventor/nodes/SoTransform.h>
-#include <Inventor/nodekits/SoNodeKitListPart.h>
+#include <Inventor/nodes/SoGroup.h>
 
 #include "libraries/geometry/gcf.h"
 #include "libraries/geometry/Transform.h"
@@ -25,22 +25,21 @@ void TSceneKit::initClass()
 TSceneKit::TSceneKit()
 {
     SO_KIT_CONSTRUCTOR(TSceneKit);
-
+//    SO_KIT_CHANGE_ENTRY_TYPE(childList, SoGroup, SoGroup);
+    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(group, SoGroup, SoGroup, TRUE, topSeparator, "", TRUE);
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(air, Air, AirVacuum, TRUE, topSeparator, "", TRUE);
-
     SO_KIT_INIT_INSTANCE();
 
     SunKit* sunKit = new SunKit;
     setPart("lightList[0]", sunKit);
-
     setPart("air", new AirVacuum);
 }
 
 void TSceneKit::updateTrackers()
 {
-    auto nodes = (SoNodeKitListPart*) getPart("childList", true);
+    SoGroup* nodes = (SoGroup*) getPart("group", true);
     if (!nodes->getNumChildren()) return;
-    auto node = (SoBaseKit*) nodes->getChild(0); // Layout
+    auto node = (TSeparatorKit*) nodes->getChild(0); // Layout
     if (!node) return;
 
     SunKit* sunKit = (SunKit*) getPart("lightList[0]", false);
@@ -59,10 +58,8 @@ void TSceneKit::updateTrackers()
 /*!
  * Updates all trackers transform for the current sun angles.
  */
-void TSceneKit::updateTrackers(SoBaseKit* parent, Transform toGlobal, const Vector3D& vSun)
+void TSceneKit::updateTrackers(TSeparatorKit* parent, Transform toGlobal, const Vector3D& vSun)
 {
-    if (!dynamic_cast<TSeparatorKit*>(parent)) return;
-
     SoTransform* tParent = (SoTransform*) parent->getPart("transform", true);
     Transform t = toGlobal*tgf::makeTransform(tParent);
 
@@ -70,11 +67,11 @@ void TSceneKit::updateTrackers(SoBaseKit* parent, Transform toGlobal, const Vect
     {
         tracker->update(parent, t, vSun);
     }
-    else if (SoNodeKitListPart* nodes = (SoNodeKitListPart*) parent->getPart("childList", false))
+    else if (SoGroup* nodes = (SoGroup*) parent->getPart("group", false))
     {
         for (int n = 0; n < nodes->getNumChildren(); ++n)
         {
-            SoBaseKit* child = static_cast<SoBaseKit*>(nodes->getChild(n));
+            TSeparatorKit* child = dynamic_cast<TSeparatorKit*>(nodes->getChild(n));
             if (child) updateTrackers(child, t, vSun);
         }
     }

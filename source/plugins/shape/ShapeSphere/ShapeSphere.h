@@ -26,12 +26,13 @@ public:
 
     NAME_ICON_FUNCTIONS("Sphere", ":/ShapeSphere.png")
 
+    void updateShapeGL(TShapeKit* parent);
+
 protected:
     ~ShapeSphere();
 
     Vector3D getPoint(double u, double v) const;
     Vector3D getNormal(double u, double v) const;
-    void generatePrimitives(SoAction* action);
 
     SoNodeSensor* m_sensor;
     static void onSensor(void* data, SoSensor*);

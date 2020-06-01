@@ -88,7 +88,7 @@ void SceneModel::initScene()
     if (SunKit* sunKit = static_cast<SunKit*>(m_nodeScene->getPart("lightList[0]", false)))
         insertSunNode(sunKit);
 
-    SoNodeKitListPart* coinPartList = static_cast<SoNodeKitListPart*>(m_nodeScene->getPart("childList", true));
+    SoGroup* coinPartList = (SoGroup*) m_nodeScene->getPart("group", true);
     if (coinPartList->getNumChildren() == 0)
     {
         TSeparatorKit* nodeLayout = new TSeparatorKit();
@@ -120,7 +120,7 @@ void SceneModel::generateInstanceTree(InstanceNode* instance)
 
     if (TShapeKit* shapeKit = dynamic_cast<TShapeKit*>(node))
     {
-        SoNode* shape = shapeKit->getPart("shape", false);
+        SoNode* shape = shapeKit->shapeRT.getValue();
         if (shape)
             addInstanceNode(instance, shape);
 
@@ -142,7 +142,7 @@ void SceneModel::generateInstanceTree(InstanceNode* instance)
         if (tracker)
             addInstanceNode(instance, tracker);
 
-        SoNodeKitListPart* childList = (SoNodeKitListPart*) separatorKit->getPart("childList", false);
+        SoGroup* childList = (SoGroup*) separatorKit->getPart("group", false);
         if (!childList) return;
         for (int n = 0; n < childList->getNumChildren(); ++n)
         {
@@ -264,7 +264,7 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
         {
             return QIcon(":/images/scene/nodeShape.png");
         }
-        else if (node->getTypeId().isDerivedFrom(SoShape::getClassTypeId()))
+        else if (node->getTypeId().isDerivedFrom(ShapeRT::getClassTypeId()))
         {
             ShapeRT* shape = static_cast<ShapeRT*>(node);
             return QIcon(shape->getTypeIcon());
@@ -408,7 +408,7 @@ QModelIndex SceneModel::IndexFromPath(const SoNodeKitPath& path) const
         return QModelIndex();
     }
 
-    SoNodeKitListPart* coinPartList = static_cast<SoNodeKitListPart*>(coinParent->getPart("childList", true));
+    SoGroup* coinPartList = static_cast<SoGroup*>(coinParent->getPart("group", true));
     if (!coinPartList) gcf::SevereError("IndexFromPath Null coinPartList.");
     int row = coinPartList->findChild(coinNode);
     if (coinParent->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
@@ -501,7 +501,7 @@ int SceneModel::insertCoinNode(SoNode* node, SoBaseKit* parent)
         }
         else // separatorKits and shapeKits
         {
-            SoNodeKitListPart* childList = (SoNodeKitListPart*) parent->getPart("childList", true);
+            SoGroup* childList = (SoGroup*) parent->getPart("group", true);
 
             row = childList->getNumChildren();
             if (parent->getPart("tracker", false)) row++;
@@ -515,7 +515,7 @@ int SceneModel::insertCoinNode(SoNode* node, SoBaseKit* parent)
     }
     else // parent shapeKit
     {
-        if (parent->getPart("shape", false)) row++;
+        if (parent->getPart("shape", false)) row++; //?
         if (parent->getPart("material", false)) row++;
     }
 
@@ -538,7 +538,7 @@ void SceneModel::removeCoinNode(int row, SoBaseKit* parent)
         bool hasTracker = parent->getPart("tracker", false);
         if (row == 0 && hasTracker)
             parent->setPart("tracker", 0);
-        else if (SoNodeKitListPart* parts = (SoNodeKitListPart*) parent->getPart("childList", false))
+        else if (SoGroup* parts = (SoGroup*) parent->getPart("group", false))
             parts->removeChild(hasTracker ? row - 1 : row);
     }
 
@@ -596,7 +596,7 @@ bool SceneModel::Cut(SoBaseKit& parent, int row)
     {
         if (parent.getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
         {
-            SoNodeKitListPart* childList = static_cast<SoNodeKitListPart*>(parent.getPart("childList", false));
+            SoGroup* childList = (SoGroup*) parent.getPart("group", false);
             if (!childList) return false;
 
             int r = row;
@@ -687,7 +687,7 @@ bool SceneModel::Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinN
     }
     else
     {
-        SoNodeKitListPart* parts = static_cast<SoNodeKitListPart*>(coinParent.getPart("childList", true));
+        SoGroup* parts = static_cast<SoGroup*>(coinParent.getPart("group", true));
         if (!parts) gcf::SevereError( "SceneModel::Paste Null coinPartList pointer");
         if (coinParent.getPart("tracker", false))
             parts->insertChild(child, row - 1);

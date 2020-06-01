@@ -18,7 +18,8 @@ TSeparatorKit::TSeparatorKit()
 {
     SO_KIT_CONSTRUCTOR(TSeparatorKit);
     isBuiltIn = TRUE; // do not save the list of fields
-
+//    SO_KIT_CHANGE_ENTRY_TYPE(childList, SoGroup, SoGroup); // without node lists
+    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(group, SoGroup, SoGroup, TRUE, topSeparator, "", TRUE); // temp
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tracker, SoNode, Tracker, TRUE, this, "", TRUE);
     SO_KIT_INIT_INSTANCE();
 

@@ -123,6 +123,11 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
     return false;
 }
 
+void ShapeCylinder::updateShapeGL(TShapeKit* parent)
+{
+    makeQuadMesh(parent, QSize(48, 2), activeSide.getValue() == Side::back, activeSide.getValue() != Side::back);
+}
+
 Vector3D ShapeCylinder::getPoint(double u, double v) const
 {
     double phi = u*phiMax.getValue();
@@ -132,15 +137,11 @@ Vector3D ShapeCylinder::getPoint(double u, double v) const
     return Vector3D(x, y, z);
 }
 
-Vector3D ShapeCylinder::getNormal(double u, double /*v*/) const
+Vector3D ShapeCylinder::getNormal(double u, double v) const
 {
+    Q_UNUSED(v)
     double phi = u*phiMax.getValue();
     double x = cos(phi);
     double y = sin(phi);
     return Vector3D(x, y, 0.);
-}
-
-void ShapeCylinder::generatePrimitives(SoAction* action)
-{
-    generateQuads(action, QSize(48, 2), activeSide.getValue() == Side::back, activeSide.getValue() != Side::back);
 }

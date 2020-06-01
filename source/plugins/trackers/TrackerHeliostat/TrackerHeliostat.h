@@ -15,7 +15,7 @@ public:
     static void initClass();
     TrackerHeliostat();
 
-    void update(SoBaseKit* parent, const Transform& toGlobal, const Vector3D& vSun);
+    void update(TSeparatorKit* parent, const Transform& toGlobal, const Vector3D& vSun);
 
     // all vectors should be for zero rotation
     SoSFVec3f primaryShift;

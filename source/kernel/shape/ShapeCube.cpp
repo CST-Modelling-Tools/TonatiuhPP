@@ -122,105 +122,105 @@ bool ShapeCube::intersectP(const Ray& ray) const
         return false;
 }
 
-void ShapeCube::generatePrimitives(SoAction* action)
-{
-    SbVec3d frontNormal(0.0, 0.0, 1.0);
-    SbVec3d rearNormal(0.0, 0.0, -1.0);
-    SbVec3d leftNormal(1.0, 0.0, 0.0);
-    SbVec3d rightNormal(-1.0, 0.0, 0.0);
-    SbVec3d baseNormal(0.0, -1.0, 0.0);
-    SbVec3d topNormal(0., 1., 0.);
+//void ShapeCube::generatePrimitives(SoAction* action)
+//{
+//    SbVec3d frontNormal(0.0, 0.0, 1.0);
+//    SbVec3d rearNormal(0.0, 0.0, -1.0);
+//    SbVec3d leftNormal(1.0, 0.0, 0.0);
+//    SbVec3d rightNormal(-1.0, 0.0, 0.0);
+//    SbVec3d baseNormal(0.0, -1.0, 0.0);
+//    SbVec3d topNormal(0., 1., 0.);
 
-    // The ShapeCube will generate 6 quads: 1 for each side
-    // This variable is used to store each vertex.
-    SoPrimitiveVertex pv;
+//    // The ShapeCube will generate 6 quads: 1 for each side
+//    // This variable is used to store each vertex.
+//    SoPrimitiveVertex pv;
 
-    // Access the state from the action.
-    SoState  *state = action->getState();
+//    // Access the state from the action.
+//    SoState  *state = action->getState();
 
-    // See if we have to use a texture coordinate function,
-    // rather than generating explicit texture coordinates.
-    SbBool useTexFunc = ( SoTextureCoordinateElement::getType(state) ==
-                          SoTextureCoordinateElement::FUNCTION );
+//    // See if we have to use a texture coordinate function,
+//    // rather than generating explicit texture coordinates.
+//    SbBool useTexFunc = ( SoTextureCoordinateElement::getType(state) ==
+//                          SoTextureCoordinateElement::FUNCTION );
 
-   // If we need to generate texture coordinates with a
-   // function, we'll need an SoGLTextureCoordinateElement.
-   // Otherwise, we'll set up the coordinates directly.
-   const SoTextureCoordinateElement* tce = 0;
-   SbVec4f texCoord;
-   if ( useTexFunc )    tce = SoTextureCoordinateElement::getInstance( state );
-   else {
-     texCoord[2] = 0.0;
-     texCoord[3] = 1.0;
-   }
+//   // If we need to generate texture coordinates with a
+//   // function, we'll need an SoGLTextureCoordinateElement.
+//   // Otherwise, we'll set up the coordinates directly.
+//   const SoTextureCoordinateElement* tce = 0;
+//   SbVec4f texCoord;
+//   if ( useTexFunc )    tce = SoTextureCoordinateElement::getInstance( state );
+//   else {
+//     texCoord[2] = 0.0;
+//     texCoord[3] = 1.0;
+//   }
 
-   // We need the size to adjust the coordinates.
-   double halfWidth = sizeX.getValue()/2.0;
-   double halfHeight = sizeY.getValue()/2.0;
-   double halfDepth = sizeZ.getValue()/2.0;
+//   // We need the size to adjust the coordinates.
+//   double halfWidth = sizeX.getValue()/2.0;
+//   double halfHeight = sizeY.getValue()/2.0;
+//   double halfDepth = sizeZ.getValue()/2.0;
 
-   // We'll use this macro to make the code easier. It uses the
-   // "point" variable to store the primitive vertex's point.
-   SbVec3f  point;
+//   // We'll use this macro to make the code easier. It uses the
+//   // "point" variable to store the primitive vertex's point.
+//   SbVec3f  point;
 
 
-#define GEN_VERTEX(pv, x, y, z, s, t, normal)   \
-     point.setValue(halfWidth  * x,             \
-                halfHeight * y,                 \
-                halfDepth  * z);                \
-     if (useTexFunc)                            \
-       texCoord = tce->get(SbVec3f( point ), SbVec3f( normal ) );      \
-     else {                                     \
-       texCoord[0] = s;                         \
-       texCoord[1] = t;                         \
-     }                                          \
-     pv.setPoint(point);                        \
-     pv.setNormal( SbVec3f( normal ) );         \
-     pv.setTextureCoords(texCoord);             \
-     shapeVertex(&pv)
+//#define GEN_VERTEX(pv, x, y, z, s, t, normal)   \
+//     point.setValue(halfWidth  * x,             \
+//                halfHeight * y,                 \
+//                halfDepth  * z);                \
+//     if (useTexFunc)                            \
+//       texCoord = tce->get(SbVec3f( point ), SbVec3f( normal ) );      \
+//     else {                                     \
+//       texCoord[0] = s;                         \
+//       texCoord[1] = t;                         \
+//     }                                          \
+//     pv.setPoint(point);                        \
+//     pv.setNormal( SbVec3f( normal ) );         \
+//     pv.setTextureCoords(texCoord);             \
+//     shapeVertex(&pv)
 
-     // We will generate two triangles for the base, as a
-     // triangle strip.
-     beginShape(action, QUADS);
+//     // We will generate two triangles for the base, as a
+//     // triangle strip.
+//     beginShape(action, QUADS);
 
-     // Base: left front, left rear, right front, right rear
-     GEN_VERTEX(pv,  1.0, -1.0,  1.0, 1.0,  1.0, baseNormal);
-     GEN_VERTEX(pv,  1.0, -1.0, -1.0, 0.0,  1.0, baseNormal);
-     GEN_VERTEX(pv, -1.0, -1.0, -1.0, 0.0,  0.0, baseNormal);
-     GEN_VERTEX(pv, -1.0, -1.0,  1.0, 1.0,  0.0, baseNormal);
+//     // Base: left front, left rear, right front, right rear
+//     GEN_VERTEX(pv,  1.0, -1.0,  1.0, 1.0,  1.0, baseNormal);
+//     GEN_VERTEX(pv,  1.0, -1.0, -1.0, 0.0,  1.0, baseNormal);
+//     GEN_VERTEX(pv, -1.0, -1.0, -1.0, 0.0,  0.0, baseNormal);
+//     GEN_VERTEX(pv, -1.0, -1.0,  1.0, 1.0,  0.0, baseNormal);
 
-     // Top: left front, left rear, right front, right rear
-     GEN_VERTEX(pv,  1.0, 1.0,  1.0, 1.0,  1.0, topNormal);
-     GEN_VERTEX(pv,  1.0, 1.0, -1.0, 0.0,  1.0, topNormal);
-     GEN_VERTEX(pv, -1.0, 1.0, -1.0, 0.0,  0.0, topNormal);
-     GEN_VERTEX(pv, -1.0, 1.0,  1.0, 1.0,  0.0, topNormal);
+//     // Top: left front, left rear, right front, right rear
+//     GEN_VERTEX(pv,  1.0, 1.0,  1.0, 1.0,  1.0, topNormal);
+//     GEN_VERTEX(pv,  1.0, 1.0, -1.0, 0.0,  1.0, topNormal);
+//     GEN_VERTEX(pv, -1.0, 1.0, -1.0, 0.0,  0.0, topNormal);
+//     GEN_VERTEX(pv, -1.0, 1.0,  1.0, 1.0,  0.0, topNormal);
 
-     // Front
-     GEN_VERTEX(pv,  1.0, -1.0, 1.0, 1.0,  1.0, frontNormal);
-     GEN_VERTEX(pv,  1.0,  1.0, 1.0, 0.0,  1.0, frontNormal);
-     GEN_VERTEX(pv, -1.0,  1.0, 1.0, 0.0,  0.0, frontNormal);
-     GEN_VERTEX(pv, -1.0, -1.0, 1.0, 1.0,  0.0, frontNormal);
+//     // Front
+//     GEN_VERTEX(pv,  1.0, -1.0, 1.0, 1.0,  1.0, frontNormal);
+//     GEN_VERTEX(pv,  1.0,  1.0, 1.0, 0.0,  1.0, frontNormal);
+//     GEN_VERTEX(pv, -1.0,  1.0, 1.0, 0.0,  0.0, frontNormal);
+//     GEN_VERTEX(pv, -1.0, -1.0, 1.0, 1.0,  0.0, frontNormal);
 
-      // Rear
-     GEN_VERTEX(pv,  1.0, -1.0, -1.0, 1.0,  1.0, frontNormal);
-     GEN_VERTEX(pv,  1.0,  1.0, -1.0, 0.0,  1.0, frontNormal);
-     GEN_VERTEX(pv, -1.0,  1.0, -1.0, 0.0,  0.0, frontNormal);
-     GEN_VERTEX(pv, -1.0, -1.0, -1.0, 1.0,  0.0, frontNormal);
+//      // Rear
+//     GEN_VERTEX(pv,  1.0, -1.0, -1.0, 1.0,  1.0, frontNormal);
+//     GEN_VERTEX(pv,  1.0,  1.0, -1.0, 0.0,  1.0, frontNormal);
+//     GEN_VERTEX(pv, -1.0,  1.0, -1.0, 0.0,  0.0, frontNormal);
+//     GEN_VERTEX(pv, -1.0, -1.0, -1.0, 1.0,  0.0, frontNormal);
 
-     //Left
-     GEN_VERTEX(pv,  1.0, -1.0,  1.0, 1.0,  1.0, leftNormal);
-     GEN_VERTEX(pv,  1.0,  1.0,  1.0, 0.0,     1.0, leftNormal);
-     GEN_VERTEX(pv,  1.0,  1.0, -1.0, 0.0,  0.0, leftNormal);
-     GEN_VERTEX(pv,  1.0, -1.0, -1.0, 1.0,  0.0, leftNormal);
+//     //Left
+//     GEN_VERTEX(pv,  1.0, -1.0,  1.0, 1.0,  1.0, leftNormal);
+//     GEN_VERTEX(pv,  1.0,  1.0,  1.0, 0.0,     1.0, leftNormal);
+//     GEN_VERTEX(pv,  1.0,  1.0, -1.0, 0.0,  0.0, leftNormal);
+//     GEN_VERTEX(pv,  1.0, -1.0, -1.0, 1.0,  0.0, leftNormal);
 
-      //Right
-     GEN_VERTEX(pv, -1.0, -1.0,  1.0, 1.0,  1.0, leftNormal);
-     GEN_VERTEX(pv, -1.0,  1.0,  1.0, 0.0,  1.0, leftNormal);
-     GEN_VERTEX(pv, -1.0,  1.0, -1.0, 0.0,  0.0, leftNormal);
-     GEN_VERTEX(pv, -1.0, -1.0, -1.0, 1.0,  0.0, leftNormal);
+//      //Right
+//     GEN_VERTEX(pv, -1.0, -1.0,  1.0, 1.0,  1.0, leftNormal);
+//     GEN_VERTEX(pv, -1.0,  1.0,  1.0, 0.0,  1.0, leftNormal);
+//     GEN_VERTEX(pv, -1.0,  1.0, -1.0, 0.0,  0.0, leftNormal);
+//     GEN_VERTEX(pv, -1.0, -1.0, -1.0, 1.0,  0.0, leftNormal);
 
-     endShape();
-}
+//     endShape();
+//}
 
 Vector3D ShapeCube::getPoint(double /*u*/, double /*v*/ ) const
 {

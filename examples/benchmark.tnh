@@ -2,7 +2,7 @@
 
 
 TSceneKit {
-  fields [ SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode air, SFNode topSeparator ]
+  fields [ SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode group, SFNode air, SFNode topSeparator ]
   lightList 
   NodeKitListPart {
     childTypeNames "LightKit"
@@ -63,54 +63,46 @@ TSceneKit {
     }
 
   }
-  childList 
-  NodeKitListPart {
-    childTypeNames [ "ShapeKit",
-        "SeparatorKit" ]
-    containerNode 
-    Group {
+  group 
+  Group {
 
-      DEF Layout TSeparatorKit {
-        transform 
-        Transform {
+    DEF Layout TSeparatorKit {
+      transform 
+      Transform {
 
-        }
-        childList 
-        NodeKitListPart {
-          containerTypeName "Separator"
-          childTypeNames [ "ShapeKit",
-              "SeparatorKit" ]
-          containerNode 
-          Separator {
+      }
+      group 
+      Group {
 
-            DEF Shape TShapeKit {
-              appearance 
-              AppearanceKit {
-                material 
-                DEF MaterialGL Material {
+        DEF Shape TShapeKit {
+          shapeRT 
+          DEF Sphere ShapeSphere {
+            fields [ SFDouble radius, SFDouble phiMax, SFDouble alphaMin, SFDouble alphaMax, SFEnum activeSide ]
 
-                }
+          }
+          aperture 
+          DEF Rectangle ApertureRectangle {
+            fields [ SFDouble sizeX, SFDouble sizeY ]
 
-              }
-              shape 
-              DEF Sphere ShapeSphere {
-                fields [ SFDouble radius, SFDouble phiMax, SFDouble alphaMin, SFDouble alphaMax, SFEnum activeSide ]
+          }
+          materialRT 
+          DEF Specular MaterialSpecular {
+            fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
-              }
-              materialRT 
-              DEF Specular MaterialSpecular {
-                fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
-
-              }
+          }
+          appearance 
+          AppearanceKit {
+            material 
+            DEF MaterialGL Material {
 
             }
+
           }
 
         }
-
       }
-    }
 
+    }
   }
   air 
   AirVacuum {
