@@ -67,10 +67,9 @@ bool InstanceNode::operator==(const InstanceNode& other)
 QString InstanceNode::getURL() const
 {
     QString url;
-    if (m_parent) url = m_parent->getURL();
-    url += "/";
-    url += m_node->getName().getString();
-    return url;
+    if (m_parent)
+        url = m_parent->getURL();
+    return url + "/" + m_node->getName().getString();
 }
 
 void InstanceNode::Print(int level) const

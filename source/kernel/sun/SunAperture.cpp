@@ -83,7 +83,9 @@ void SunAperture::setSize(double xMin, double xMax, double yMin, double yMax, do
     m_yMin = yMin - delta;
     m_yMax = yMax + delta;
     m_delta = delta;
-    disabledNodes = disabledNodes.getValue(); // for update
+
+//    disabledNodes = disabledNodes.getValue(); // character 0 lost
+    disabledNodes = disabledNodes.getValue().getString(); // for update
 }
 
 void SunAperture::findTexture(int xPixels, int yPixels, QVector<QPair<TShapeKit*, Transform> > surfaces, SunKit* sunKit)

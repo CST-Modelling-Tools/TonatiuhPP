@@ -75,7 +75,7 @@ void TShapeKit::setDefaultOnNonWritingFields()
 void TShapeKit::onSensor(void* data, SoSensor*)
 {
     TShapeKit* kit = (TShapeKit*) data;
-    qDebug() << "called " << kit->getName();
+//    qDebug() << "called " << kit->getName();
 
     ShapeRT* shape = (ShapeRT*) kit->shapeRT.getValue();
     shape->updateShapeGL(kit);

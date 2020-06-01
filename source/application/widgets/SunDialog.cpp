@@ -69,13 +69,12 @@ SunKit* SunDialog::getSunKit()
 
     if (m_sunShape) ans->setPart("tsunshape", m_sunShape);
 
-    QString nodes("");
-    for (int n = 0; n < ui->disabledNodeList->count(); n++) {
-        QString node = ui->disabledNodeList->item(n)->text();
-        nodes += QString("%1;").arg(node);
-    }
+    QString nodes;
+    for (int n = 0; n < ui->disabledNodeList->count(); ++n)
+        nodes += ui->disabledNodeList->item(n)->text() + ";";
+
     SunAperture* aperture = (SunAperture*) ans->getPart("icon", false);
-    aperture->disabledNodes.setValue(nodes.toStdString().c_str());
+    aperture->disabledNodes = nodes.toStdString().c_str();
 
     ans->updateTransform();
     return ans;
@@ -128,11 +127,11 @@ void SunDialog::makeSunApertureTab()
     ui->modelTreeView->setModel(m_sceneModel);
     m_selectionModel = new QItemSelectionModel(m_sceneModel);
     ui->modelTreeView->setSelectionModel(m_selectionModel);
-    ui->modelTreeView->setRootIndex(m_sceneModel->IndexFromUrl("//"));
+    ui->modelTreeView->setRootIndex(QModelIndex());
 
     if (!m_sunKit) return;
     SunAperture* aperture = (SunAperture*) m_sunKit->getPart("icon", false);
-    QString nodes = QString(aperture->disabledNodes.getValue().getString());
+    QString nodes = aperture->disabledNodes.getValue().getString();
     for (QString s : nodes.split(";", QString::SkipEmptyParts))
         ui->disabledNodeList->addItem(s);
 
