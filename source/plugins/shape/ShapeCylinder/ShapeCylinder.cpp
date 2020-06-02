@@ -1,12 +1,10 @@
 #include "ShapeCylinder.h"
 
+#include "kernel/apertures/Aperture.h"
+#include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/geometry/gcf.h"
-#include "libraries/geometry/gcf.h"
 #include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Ray.h"
-#include "libraries/geometry/Vector3D.h"
-
 
 SO_NODE_SOURCE(ShapeCylinder)
 
@@ -21,56 +19,32 @@ ShapeCylinder::ShapeCylinder()
     SO_NODE_CONSTRUCTOR(ShapeCylinder);
 
     SO_NODE_ADD_FIELD( radius, (1.) );
-    SO_NODE_ADD_FIELD( phiMax, (gcf::TwoPi) );
-    SO_NODE_ADD_FIELD( sizeZ, (1.) );
-
-    SO_NODE_DEFINE_ENUM_VALUE(Side, back);
-    SO_NODE_DEFINE_ENUM_VALUE(Side, front);
-    SO_NODE_SET_SF_ENUM_TYPE(activeSide, Side);
-    SO_NODE_ADD_FIELD( activeSide, (front) );
 }
 
-double ShapeCylinder::getArea() const
+BoundingBox ShapeCylinder::getBox(Aperture* aperture) const
 {
-    return 2.*gcf::pi*radius.getValue()*sizeZ.getValue();
-}
+    BoundingBox box = aperture->getBox();
+    double phiMin = gcf::TwoPi*box.pMin.x;
+    double phiMax = gcf::TwoPi*box.pMax.x;
+    double zMin = box.pMin.y;
+    double zMax = box.pMax.y;
 
-double ShapeCylinder::getVolume() const
-{
-    return gcf::pi*radius.getValue()*radius.getValue()*sizeZ.getValue();
-}
-
-BoundingBox ShapeCylinder::getBox() const
-{
     double r = radius.getValue();
-    double pM = phiMax.getValue();
-    double cosPhiMax = cos(pM);
-    double sinPhiMax = sin(pM);
+    double xMin = r*cos(phiMin);
+    double xMax = r*cos(phiMax);
+    double yMin = r*sin(phiMin);
+    double yMax = r*sin(phiMax);
+    if (xMin > xMax) std::swap(xMin, xMax);
+    if (yMin > yMax) std::swap(yMin, yMax);
 
-    double xMin;
-    if (pM > gcf::pi)
+    if (phiMin <= 0. && 0. <= phiMax)
+        xMax = r;
+    if (phiMin <= -gcf::pi || phiMax >= gcf::pi)
         xMin = -r;
-    else
-        xMin = r*cosPhiMax;
-
-    double xMax = r;
-
-    double yMin;
-    if (pM > 1.5*gcf::pi)
-        yMin = -r;
-    else if (pM > gcf::pi)
-        yMin = r*sinPhiMax;
-    else
-        yMin = 0.;
-
-    double yMax;
-    if (pM > 0.5*gcf::pi)
+    if (phiMin <= 0.5*gcf::pi && 0.5*gcf::pi <= phiMax)
         yMax = r;
-    else
-        yMax = r*sinPhiMax;
-
-    double zMax = sizeZ.getValue()/2.;
-    double zMin = -zMax;
+    if (phiMin <= -0.5*gcf::pi && -0.5*gcf::pi <= phiMax)
+        yMin = -r;
 
     return BoundingBox(
         Vector3D(xMin, yMin, zMin),
@@ -78,46 +52,44 @@ BoundingBox ShapeCylinder::getBox() const
     );
 }
 
-bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const
+bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, Aperture* aperture) const
 {
+    const Vector3D& rayO = ray.origin;
+    const Vector3D& rayD = ray.direction();
     double r = radius.getValue();
 
-    // intersection with full cylinder
-    // |r0xy + dxy*t|^2 = R^2 (in local coordinates)
-    double A = ray.direction().x*ray.direction().x + ray.direction().y*ray.direction().y;
-    double B = 2.*(ray.direction().x*ray.origin.x + ray.direction().y*ray.origin.y);
-    double C = ray.origin.x*ray.origin.x + ray.origin.y*ray.origin.y - r*r;
+    // |r0xy + dxy*t|^2 = R^2
+    double A = rayD.x*rayD.x + rayD.y*rayD.y;
+    double B = 2.*(rayD.x*rayO.x + rayD.y*rayO.y);
+    double C = rayO.x*rayO.x + rayO.y*rayO.y - r*r;
     double ts[2];
     if (!gcf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
 
-    // intersection with clipped shape
-    double raytMin = ray.tMin + 1e-5;
     for (int i = 0; i < 2; ++i)
     {
         double t = ts[i];
-        if (t < raytMin || t > ray.tMax) continue;
+        if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
 
         Vector3D pHit = ray.point(t);
         double phi = atan2(pHit.y, pHit.x);
-        if (phi < 0.) phi += gcf::TwoPi;
+        double u = phi/gcf::TwoPi;
+        double v = pHit.z;
+        if (!aperture->isInside(u, v)) continue;
 
-        if (phi > phiMax.getValue() ||  2.*abs(pHit.z) > sizeZ.getValue())
-            continue;
-
-        // differential geometry
         if (tHit == 0 && dg == 0)
             return true;
         else if (tHit == 0 || dg == 0)
-            gcf::SevereError("Function Cylinder::Intersect(...) called with null pointers");
-
-        Vector3D dpdu(-pHit.y, pHit.x, 0.);
-        Vector3D dpdv(0., 0., 1.);
-        Vector3D normal(pHit.x/r, pHit.y/r, 0.);
-
-        bool isFront = dot(normal, ray.direction()) <= 0.;
-        *dg = DifferentialGeometry(pHit, phi, pHit.z, dpdu, dpdv, normal, this, isFront);
+            gcf::SevereError("ShapeCylinder::intersect");
 
         *tHit = t;
+        dg->point = pHit;
+        dg->u = u;
+        dg->v = v;
+        dg->dpdu = Vector3D(-pHit.y, pHit.x, 0.);
+        dg->dpdv = Vector3D(0., 0., 1.);
+        dg->normal = Vector3D(pHit.x, pHit.y, 0.)/r;
+        dg->shape = this;
+        dg->isFront = dot(dg->normal, rayD) <= 0.;
         return true;
     }
     return false;
@@ -125,23 +97,27 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
 
 void ShapeCylinder::updateShapeGL(TShapeKit* parent)
 {
-    makeQuadMesh(parent, QSize(48, 2), activeSide.getValue() == Side::back, activeSide.getValue() != Side::back);
+    Aperture* aperture = (Aperture*) parent->aperture.getValue();
+    BoundingBox box = aperture->getBox();
+    Vector3D v = box.extent();
+
+    double s = v.x;
+    if (s > 1.) s = 1.;
+    int rows = 1 + ceil(48*s);
+
+    makeQuadMesh(parent, QSize(rows, 2));
 }
 
 Vector3D ShapeCylinder::getPoint(double u, double v) const
 {
-    double phi = u*phiMax.getValue();
-    double x = radius.getValue()*cos(phi);
-    double y = radius.getValue()*sin(phi);
-    double z = (v - 0.5)*sizeZ.getValue();
-    return Vector3D(x, y, z);
+    double r = radius.getValue();
+    double phi = u*gcf::TwoPi;
+    return Vector3D(r*cos(phi), r*sin(phi), v);
 }
 
 Vector3D ShapeCylinder::getNormal(double u, double v) const
 {
     Q_UNUSED(v)
-    double phi = u*phiMax.getValue();
-    double x = cos(phi);
-    double y = sin(phi);
-    return Vector3D(x, y, 0.);
+    double phi = u*gcf::TwoPi;
+    return Vector3D(cos(phi), sin(phi), 0.);
 }

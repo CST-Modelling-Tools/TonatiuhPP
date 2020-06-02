@@ -11,14 +11,12 @@ public:
     static void initClass();
     ApertureRectangle();
 
-    SoSFDouble sizeX;
-    SoSFDouble sizeY;
+    SoSFDouble uSize;
+    SoSFDouble vSize;
 
-    bool isInside(double x, double y) const;
-    // mesh
+    BoundingBox getBox() const;
+    bool isInside(double u, double v) const;
+    QVector<Vector2D> makeMesh(const QSize& dims) const;
 
     NAME_ICON_FUNCTIONS("Rectangle", ":/images/ApertureRectangle.png")
-
-protected:
-    ~ApertureRectangle() {}
 };

@@ -1,7 +1,7 @@
 #include "ShapePlanar.h"
 
+#include "kernel/apertures/Aperture.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/geometry/gcf.h"
 #include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Ray.h"
 
@@ -16,74 +16,58 @@ void ShapePlanar::initClass()
 ShapePlanar::ShapePlanar()
 {
     SO_NODE_CONSTRUCTOR(ShapePlanar);
-    SO_NODE_ADD_FIELD( sizeX, (1.) );
-    SO_NODE_ADD_FIELD( sizeY, (1.) );
-
-    SO_NODE_DEFINE_ENUM_VALUE( Side, back );
-    SO_NODE_DEFINE_ENUM_VALUE( Side, front );
-    SO_NODE_SET_SF_ENUM_TYPE( activeSide, Side );
-    SO_NODE_ADD_FIELD( activeSide, (front) );
 }
 
-double ShapePlanar::getArea() const
+BoundingBox ShapePlanar::getBox(Aperture* aperture) const
 {
-    return sizeX.getValue()*sizeY.getValue();
+    BoundingBox box = aperture->getBox();
+    double zMax = 0.01*box.extent().max();
+    box.pMin.z = -zMax;
+    box.pMax.z = zMax;
+    return box;
 }
 
-BoundingBox ShapePlanar::getBox() const
+bool ShapePlanar::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, Aperture* aperture) const
 {
-    double xMax = sizeX.getValue()/2.;
-    double yMax = sizeY.getValue()/2.;
-    double zMax = 0.01*std::min(xMax, yMax);
-    return BoundingBox(
-        Vector3D(-xMax, -yMax, -zMax),
-        Vector3D(xMax, yMax, zMax)
-    );
-}
-
-bool ShapePlanar::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const
-{
-    // intersection with full shape (in local coordinates)
     // r0_z + d_z*t = 0
     if (ray.origin.z == 0 && ray.direction().z == 0) return false;
     double t = -ray.origin.z*ray.invDirection().z;
 
-    double tolerance = 1e-5;
-    if (t < ray.tMin + tolerance || t > ray.tMax) return false;
+    if (t < ray.tMin + 1e-5 || t > ray.tMax) return false;
 
-    // intersection with clipped shape
     Vector3D pHit = ray.point(t);
-    if (2.*abs(pHit.x) > sizeX.getValue() || 2.*abs(pHit.y) > sizeY.getValue())
-        return false;
+    if (!aperture->isInside(pHit.x, pHit.y)) return false;
 
-    if (tHit == 0 && dg == 0) return true;
+    if (tHit == 0 && dg == 0)
+        return true;
     else if (tHit == 0 || dg == 0)
-        gcf::SevereError("Function Sphere::Intersect(...) called with null pointers");
-
-    Vector3D dpdu(1., 0., 0.);
-    Vector3D dpdv(0., 1., 0.);
-    Vector3D normal(0., 0., 1.);
-
-    bool isFront = dot(normal, ray.direction()) <= 0.;
-    *dg = DifferentialGeometry(pHit, pHit.x, pHit.y, dpdu, dpdv, normal, this, isFront);
+        gcf::SevereError("ShapePlanar::intersect");
 
     *tHit = t;
+    dg->point = pHit;
+    dg->u = pHit.x;
+    dg->v = pHit.y;
+    dg->dpdu = Vector3D(1., 0., 0.);
+    dg->dpdv = Vector3D(0., 1., 0.);
+    dg->normal = Vector3D(0., 0., 1.);
+    dg->shape = this;
+    dg->isFront = dot(dg->normal, ray.direction()) <= 0.;
     return true;
 }
 
 void ShapePlanar::updateShapeGL(TShapeKit* parent)
 {
-    makeQuadMesh(parent, QSize(2, 2), activeSide.getValue() == Side::back);
+    makeQuadMesh(parent, QSize(2, 2));
 }
 
 Vector3D ShapePlanar::getPoint(double u, double v) const
 {
-    double x = (u - 0.5)*sizeX.getValue();
-    double y = (v - 0.5)*sizeY.getValue();
-    return Vector3D(x, y, 0.);
+    return Vector3D(u, v, 0.);
 }
 
-Vector3D ShapePlanar::getNormal(double /*u*/, double /*v*/) const
+Vector3D ShapePlanar::getNormal(double u, double v) const
 {
+    Q_UNUSED(u)
+    Q_UNUSED(v)
     return Vector3D(0., 0., 1.);
 }

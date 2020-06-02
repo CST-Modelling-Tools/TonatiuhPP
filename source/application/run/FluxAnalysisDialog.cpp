@@ -106,7 +106,7 @@ void FluxAnalysisDialog::ChangeCurrentSurface()
     if (!selectedSurfaceURL.isEmpty() && (selectedSurfaceURL != m_currentSurfaceURL) )
 	{
         QString surfaceType = m_fluxAnalysis->GetSurfaceType(selectedSurfaceURL);
-        if (!surfaceType.isEmpty() && (surfaceType == "Cylinder" || surfaceType == "ShapeFlatDisk" || surfaceType == "Plane") )
+        if (!surfaceType.isEmpty() && (surfaceType == "Cylinder" || surfaceType == "ShapeFlatDisk" || surfaceType == "Planar") )
 		{
 			m_fluxAnalysis->clearPhotonMap();
             ui->appendCheck->setChecked(false);
@@ -585,18 +585,17 @@ void FluxAnalysisDialog::SelectExportFile()
     ui->fileDirEdit->setText(path);
 }
 
-
 /*!
  * Opens a dialog to select a surface from the system.
  * If the selected surface is ok
  */
 void FluxAnalysisDialog::SelectSurface()
 {
-    SelectSurfaceDialog selectSurfaceDialog(*m_pCurrentSceneModel, false, this);
-    selectSurfaceDialog.SetShapeTypeFilters({"Plane", "Cylinder"});
-    if (!selectSurfaceDialog.exec() ) return;
+    SelectSurfaceDialog dialog(*m_pCurrentSceneModel, false, this);
+    dialog.SetShapeTypeFilters({"Planar", "Cylinder"});
+    if (!dialog.exec() ) return;
 
-	QString selectedSurfaceURL = selectSurfaceDialog.GetSelectedSurfaceURL();
+    QString selectedSurfaceURL = dialog.GetSelectedSurfaceURL();
 
     if (!selectedSurfaceURL.isEmpty() && selectedSurfaceURL != m_currentSurfaceURL)
 	{
@@ -664,7 +663,7 @@ void FluxAnalysisDialog::UpdateSurfaceSides(QString selectedSurfaceURL)
 
     if (surfaceType.isEmpty() ) return;
 
-    if (surfaceType == "Plane" || surfaceType == "ShapeFlatDisk" || surfaceType == "Cylinder")
+    if (surfaceType == "Planar" || surfaceType == "ShapeFlatDisk" || surfaceType == "Cylinder")
     {
         ui->sidesCombo->addItem("front");
         ui->sidesCombo->addItem("back");

@@ -77,12 +77,12 @@ TSceneKit {
         DEF Shape TShapeKit {
           shapeRT 
           DEF Sphere ShapeSphere {
-            fields [ SFDouble radius, SFDouble phiMax, SFDouble alphaMin, SFDouble alphaMax, SFEnum activeSide ]
+            fields [ SFDouble radius ]
 
           }
           aperture 
           DEF Rectangle ApertureRectangle {
-            fields [ SFDouble sizeX, SFDouble sizeY ]
+            fields [ SFDouble uSize, SFDouble vSize ]
 
           }
           materialRT 

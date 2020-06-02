@@ -11,16 +11,10 @@ public:
     static void initClass();
     ShapePlanar();
 
-    double getArea() const;
-    BoundingBox getBox() const;
-    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
-
-    SoSFDouble sizeX;
-    SoSFDouble sizeY;
-	SoSFEnum activeSide;
+    BoundingBox getBox(Aperture* aperture) const;
+    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, Aperture* aperture) const;
 
     NAME_ICON_FUNCTIONS("Planar", ":/images/ShapePlanar.png")
-
     void updateShapeGL(TShapeKit* parent);
 
 protected:

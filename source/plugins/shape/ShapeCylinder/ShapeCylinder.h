@@ -11,22 +11,15 @@ public:
     static void initClass();
     ShapeCylinder();
 
-    double getArea() const;
-    double getVolume() const;
-    BoundingBox getBox() const;
-    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
+    BoundingBox getBox(Aperture* aperture) const;
+    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, Aperture* aperture) const;
 
     SoSFDouble radius;
-    SoSFDouble phiMax;
-    SoSFDouble sizeZ;
 
     NAME_ICON_FUNCTIONS("Cylinder", ":/ShapeCylinder.png")
-
     void updateShapeGL(TShapeKit* parent);
 
 protected:
-    ~ShapeCylinder() {}
-
     Vector3D getPoint(double u, double v) const;
     Vector3D getNormal(double u, double v) const;
 };

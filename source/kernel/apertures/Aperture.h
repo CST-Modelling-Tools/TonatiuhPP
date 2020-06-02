@@ -1,8 +1,13 @@
 #pragma once
 
-#include "kernel/scene/TAbstract.h"
+#include <QVector>
+#include <QSize>
+
 #include <Inventor/nodes/SoSubNode.h>
 
+#include "kernel/scene/TAbstract.h"
+#include "libraries/geometry/Vector2D.h"
+#include "libraries/geometry/BoundingBox.h"
 
 struct DifferentialGeometry;
 class Random;
@@ -16,9 +21,11 @@ class TONATIUH_KERNEL Aperture: public SoNode
 public:
     static void initClass();
 
+    virtual BoundingBox getBox() const {return BoundingBox::UnitCube;}
     virtual bool isInside(double /*x*/, double /*y*/) const {return true;}
+    virtual QVector<Vector2D> makeMesh(const QSize& /*dims*/) const {return {};}
 
-    NAME_ICON_FUNCTIONS("X", ":/MaterialX.png")
+    NAME_ICON_FUNCTIONS("X", ":/MaterialX.png") // use some default icon
 
 protected:
     Aperture() {}

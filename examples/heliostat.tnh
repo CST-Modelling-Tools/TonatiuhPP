@@ -2,7 +2,7 @@
 
 
 TSceneKit {
-  fields [ SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode air, SFNode topSeparator ]
+  fields [ SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode group, SFNode air, SFNode topSeparator ]
   lightList 
   NodeKitListPart {
     childTypeNames "LightKit"
@@ -89,14 +89,13 @@ TSceneKit {
             DEF Shape TShapeKit {
               shapeRT 
               DEF Sphere ShapeSphere {
-                fields [ SFDouble radius, SFDouble phiMax, SFDouble alphaMin, SFDouble alphaMax, SFEnum activeSide ]
+                fields [ SFDouble radius ]
                 radius 0.5
-                phiMax 6.283185307179584
 
               }
               aperture 
               DEF Rectangle ApertureRectangle {
-                fields [ SFDouble sizeX, SFDouble sizeY ]
+                fields [ SFDouble uSize, SFDouble vSize ]
 
               }
               materialRT 
@@ -158,14 +157,14 @@ TSceneKit {
                         DEF Shape TShapeKit {
                           shapeRT 
                           DEF Parabolic ShapeParabolic {
-                            fields [ SFDouble focusX, SFDouble focusY, SFDouble sizeX, SFDouble sizeY, SFEnum activeSide ]
+                            fields [ SFDouble focusX, SFDouble focusY ]
                             focusX 10
                             focusY 10
 
                           }
                           aperture 
                           DEF Rectangle ApertureRectangle {
-                            fields [ SFDouble sizeX, SFDouble sizeY ]
+                            fields [ SFDouble uSize, SFDouble vSize ]
 
                           }
                           materialRT 
@@ -198,14 +197,13 @@ TSceneKit {
                         DEF Shape TShapeKit {
                           shapeRT 
                           DEF Sphere ShapeSphere {
-                            fields [ SFDouble radius, SFDouble phiMax, SFDouble alphaMin, SFDouble alphaMax, SFEnum activeSide ]
+                            fields [ SFDouble radius ]
                             radius 0.2
-                            phiMax 6.283185307179584
 
                           }
                           aperture 
                           DEF Rectangle ApertureRectangle {
-                            fields [ SFDouble sizeX, SFDouble sizeY ]
+                            fields [ SFDouble uSize, SFDouble vSize ]
 
                           }
                           materialRT 
@@ -239,14 +237,14 @@ TSceneKit {
                         DEF Shape TShapeKit {
                           shapeRT 
                           DEF Cylinder ShapeCylinder {
-                            fields [ SFDouble radius, SFDouble phiMax, SFDouble sizeZ, SFEnum activeSide ]
+                            fields [ SFDouble radius ]
                             radius 0.03000000000000001
-                            sizeZ 0.2
 
                           }
                           aperture 
                           DEF Rectangle ApertureRectangle {
-                            fields [ SFDouble sizeX, SFDouble sizeY ]
+                            fields [ SFDouble uSize, SFDouble vSize ]
+                            vSize 0.2
 
                           }
                           materialRT 
@@ -283,14 +281,14 @@ TSceneKit {
                     DEF Shape TShapeKit {
                       shapeRT 
                       DEF Cylinder ShapeCylinder {
-                        fields [ SFDouble radius, SFDouble phiMax, SFDouble sizeZ, SFEnum activeSide ]
+                        fields [ SFDouble radius ]
                         radius 0.03000000000000001
-                        sizeZ 0.2
 
                       }
                       aperture 
                       DEF Rectangle ApertureRectangle {
-                        fields [ SFDouble sizeX, SFDouble sizeY ]
+                        fields [ SFDouble uSize, SFDouble vSize ]
+                        vSize 0.2
 
                       }
                       materialRT 

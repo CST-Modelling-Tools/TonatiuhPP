@@ -5,6 +5,10 @@
 #include "gcf.h"
 #include "Vector3D.h"
 
+const BoundingBox BoundingBox::UnitCube(
+    Vector3D(-0.5, -0.5, -0.5),
+    Vector3D(0.5, 0.5, 0.5)
+);
 
 BoundingBox::BoundingBox():
     pMin(gcf::infinity, gcf::infinity, gcf::infinity),
@@ -22,6 +26,8 @@ BoundingBox::BoundingBox(const Vector3D& pA, const Vector3D& pB)
     pMin = min(pA, pB);
     pMax = max(pA, pB);
 }
+
+
 
 int BoundingBox::maxDimension() const
 {

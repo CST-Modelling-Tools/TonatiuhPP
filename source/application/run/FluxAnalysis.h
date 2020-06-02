@@ -38,16 +38,16 @@ private:
     void UpdatePhotonCounts();
     void FluxAnalysisCylinder(InstanceNode* node);
     void FluxAnalysisFlatDisk(InstanceNode* node);
-    void FluxAnalysisFlatRectangle(InstanceNode* node);
+    void FluxAnalysisPlanar(InstanceNode* node);
 
-    TSceneKit* m_pCurrentScene;
-    SceneModel* m_pCurrentSceneModel;
-    InstanceNode* m_pRootSeparatorInstance;
+    TSceneKit* m_sceneKit;
+    SceneModel* m_sceneModel;
+    InstanceNode* m_instanceRoot;
     int m_sunWidthDivisions;
     int m_sunHeightDivisions;
-    Random* m_pRandomDeviate;
+    Random* m_rand;
 
-    Photons* m_pPhotonMap;
+    Photons* m_photons;
 
     QString m_surfaceURL;
     QString m_surfaceSide;
@@ -57,10 +57,10 @@ private:
     int** m_photonCounts;
     int m_heightDivisions;
     int m_widthDivisions;
-    double m_xmin;
-    double m_xmax;
-    double m_ymin;
-    double m_ymax;
+    double m_uMin;
+    double m_uMax;
+    double m_vMin;
+    double m_vMax;
     int m_maximumPhotons;
     int m_maximumPhotonsXCoord;
     int m_maximumPhotonsYCoord;

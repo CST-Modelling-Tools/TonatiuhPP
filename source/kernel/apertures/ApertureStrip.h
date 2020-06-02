@@ -11,14 +11,14 @@ public:
     static void initClass();
     ApertureStrip();
 
-    SoSFDouble sizeX;
-    SoSFDouble sizeY;
+    SoSFDouble uMin;
+    SoSFDouble uMax;
+    SoSFDouble vMin;
+    SoSFDouble vMax;
 
-    bool isInside(double x, double y) const;
-    // mesh
+    BoundingBox getBox() const;
+    bool isInside(double u, double v) const;
+    QVector<Vector2D> makeMesh(const QSize& dims) const;
 
     NAME_ICON_FUNCTIONS("Strip", ":/images/ApertureStrip.png")
-
-protected:
-    ~ApertureStrip() {}
 };

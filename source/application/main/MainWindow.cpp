@@ -3214,8 +3214,8 @@ void MainWindow::UpdateLightSize()
 {
     SoSceneKit* sceneKit = m_document->getSceneKit();
 
-    SunKit* lightKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
-    if (!lightKit) return;
+    SunKit* sunKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
+    if (!sunKit) return;
 
     SoGroup* separatorKit = static_cast<SoGroup*>(sceneKit->getPart("group", false) );
     if (!separatorKit) return;
@@ -3232,7 +3232,7 @@ void MainWindow::UpdateLightSize()
             Vector3D(box.getMax()[0], box.getMax()[1], box.getMax()[2])
         );
 
-        if (lightKit) lightKit->setBox(sceneBox);
+        if (sunKit) sunKit->setBox(sceneBox);
     }
 
     m_sceneModel->UpdateSceneModel();

@@ -14,18 +14,12 @@ public:
     static void initClass();
     ShapeSphere();
 
-    double getArea() const;
-    double getVolume() const;
-    BoundingBox getBox() const;
-    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
+    BoundingBox getBox(Aperture* aperture) const;
+    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, Aperture* aperture) const;
 
-    SoSFDouble radius;
-    SoSFDouble phiMax;
-    SoSFDouble alphaMin;
-    SoSFDouble alphaMax;
+    SoSFDouble radius; // scaling?
 
     NAME_ICON_FUNCTIONS("Sphere", ":/ShapeSphere.png")
-
     void updateShapeGL(TShapeKit* parent);
 
 protected:

@@ -1,7 +1,8 @@
 #pragma once
 
-#include "gcf.h"
-#include "Vector3D.h"
+#include "libraries/geometry/gcf.h"
+#include "libraries/geometry/Vector3D.h"
+
 
 class TONATIUH_LIBRARIES Ray
 {

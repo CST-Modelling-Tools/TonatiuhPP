@@ -89,12 +89,53 @@ TSceneKit {
               transform 
               Transform {
                 translation 0 0 1
-                rotation 0 1.0000005 0  0.45051602
+                rotation 0 1 0  0.45051602
 
               }
               group 
               Group {
 
+                DEF axis TSeparatorKit {
+                  transform 
+                  Transform {
+                    rotation 1 0 0  1.5700002
+
+                  }
+                  group 
+                  Group {
+
+                    DEF Shape TShapeKit {
+                      shapeRT 
+                      DEF Cylinder ShapeCylinder {
+                        fields [ SFDouble radius ]
+                        radius 0.05000000000000001
+
+                      }
+                      aperture 
+                      DEF Rectangle ApertureRectangle {
+                        fields [ SFDouble uSize, SFDouble vSize ]
+                        vSize 5
+
+                      }
+                      materialRT 
+                      DEF Absorber MaterialAbsorber {
+                        fields [  ]
+
+                      }
+                      appearance 
+                      AppearanceKit {
+                        material 
+                        DEF MaterialGL Material {
+
+                        }
+
+                      }
+
+                    }
+                  }
+
+                }
+				
                 DEF facet TSeparatorKit {
                   transform 
                   Transform {
@@ -107,15 +148,15 @@ TSceneKit {
                     DEF Shape TShapeKit {
                       shapeRT 
                       DEF Parabolic ShapeParabolic {
-                        fields [ SFDouble focusX, SFDouble focusY, SFDouble sizeX, SFDouble sizeY, SFEnum activeSide ]
+                        fields [ SFDouble focusX, SFDouble focusY ]
                         focusX 4
                         focusY 1000
-                        sizeY 5
 
                       }
                       aperture 
                       DEF Rectangle ApertureRectangle {
-                        fields [ SFDouble sizeX, SFDouble sizeY ]
+                        fields [ SFDouble uSize, SFDouble vSize ]
+                        vSize 5
 
                       }
                       materialRT 
@@ -148,15 +189,15 @@ TSceneKit {
 
                     DEF Shape TShapeKit {
                       shapeRT 
-                      DEF Plane ShapePlanar {
-                        fields [ SFDouble sizeX, SFDouble sizeY, SFEnum activeSide ]
-                        sizeX 0.2
-                        sizeY 5
+                      DEF Planar ShapePlanar {
+                        fields [  ]
 
                       }
                       aperture 
                       DEF Rectangle ApertureRectangle {
-                        fields [ SFDouble sizeX, SFDouble sizeY ]
+                        fields [ SFDouble uSize, SFDouble vSize ]
+                        uSize 0.2
+                        vSize 5
 
                       }
                       materialRT 
@@ -177,46 +218,7 @@ TSceneKit {
                   }
 
                 }
-                DEF axis TSeparatorKit {
-                  transform 
-                  Transform {
-                    rotation 1 0 0  1.5700002
 
-                  }
-                  group 
-                  Group {
-
-                    DEF Shape TShapeKit {
-                      shapeRT 
-                      DEF Cylinder ShapeCylinder {
-                        fields [ SFDouble radius, SFDouble phiMax, SFDouble sizeZ, SFEnum activeSide ]
-                        radius 0.05000000000000004
-                        sizeZ 5
-
-                      }
-                      aperture 
-                      DEF Rectangle ApertureRectangle {
-                        fields [ SFDouble sizeX, SFDouble sizeY ]
-
-                      }
-                      materialRT 
-                      DEF Absorber MaterialAbsorber {
-                        fields [  ]
-
-                      }
-                      appearance 
-                      AppearanceKit {
-                        material 
-                        DEF MaterialGL Material {
-
-                        }
-
-                      }
-
-                    }
-                  }
-
-                }
               }
 
             }
@@ -243,15 +245,15 @@ TSceneKit {
 
             DEF Shape TShapeKit {
               shapeRT 
-              DEF Plane ShapePlanar {
-                fields [ SFDouble sizeX, SFDouble sizeY, SFEnum activeSide ]
-                sizeX 0.5
-                sizeY 5
+              DEF Planar ShapePlanar {
+                fields [  ]
 
               }
               aperture 
               DEF Rectangle ApertureRectangle {
-                fields [ SFDouble sizeX, SFDouble sizeY ]
+                fields [ SFDouble uSize, SFDouble vSize ]
+                uSize 0.5
+                vSize 5
 
               }
               materialRT 

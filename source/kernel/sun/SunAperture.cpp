@@ -24,6 +24,7 @@
 #include "shape/DifferentialGeometry.h"
 #include "SunKit.h"
 #include "kernel/scene/TShapeKit.h"
+#include "kernel/apertures/Aperture.h"
 
 
 SO_NODE_SOURCE(SunAperture)
@@ -114,9 +115,11 @@ void SunAperture::findTexture(int xPixels, int yPixels, QVector<QPair<TShapeKit*
 
     for (const QPair<TShapeKit*, Transform>& s : surfaces)
     {
-        ShapeRT* shapeNode = static_cast<ShapeRT*>(s.first->shapeRT.getValue());
-        if (!shapeNode) continue;
-        BoundingBox box = shapeNode->getBox();
+        ShapeRT* shape = static_cast<ShapeRT*>(s.first->shapeRT.getValue());
+        if (!shape) continue;
+        Aperture* aperture = static_cast<Aperture*>(s.first->aperture.getValue());
+        if (!aperture) continue;
+        BoundingBox box = shape->getBox(aperture);
 
         QVector<Vector3D> ps;
         ps << Vector3D(box.pMin.x, box.pMin.y, box.pMin.z);

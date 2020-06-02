@@ -121,6 +121,10 @@ struct TONATIUH_LIBRARIES Vector3D
 
     Vector3D reflected(const Vector3D& n) const;
 
+    double min() const {return std::min(std::min(x, y), z);}
+    double max() const {return std::max(std::max(x, y), z);}
+    Vector3D abs() const {return Vector3D(std::abs(x), std::abs(y), std::abs(z));}
+
     double x;
     double y;
     double z;

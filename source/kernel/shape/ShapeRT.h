@@ -10,6 +10,7 @@ class Ray;
 struct DifferentialGeometry;
 class QSize;
 class TShapeKit;
+class Aperture;
 
 
 class TONATIUH_KERNEL ShapeRT: public SoNode
@@ -21,26 +22,19 @@ public:
 
     virtual double getArea() const {return -1.;}
     virtual double getVolume() const {return 0.;}
-    virtual BoundingBox getBox() const = 0;
+    virtual BoundingBox getBox(Aperture* aperture) const;
 
-    // with computing dg
-    virtual bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const = 0;
+    // with computing dg, ray in local coordinates
+    virtual bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, Aperture* aperture) const = 0;
     // without computing dg
-    virtual bool intersectP(const Ray& ray) const {return intersect(ray, 0, 0);}
-
-    enum Side {
-        back = 0, // FRONT, INSIDE
-        front = 1 // BACK, OUTSIDE
-    };
-
-    SoSFEnum activeSide;
+    virtual bool intersectP(const Ray& ray, Aperture* aperture) const {return intersect(ray, 0, 0, aperture);}
 
     NAME_ICON_FUNCTIONS("X", ":/ShapeX.png")
 
     virtual void updateShapeGL(TShapeKit* /*parent*/) {}
 
 protected:
-    void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
+//    void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
 
     virtual Vector3D getPoint(double u, double v) const = 0;
     virtual Vector3D getNormal(double u, double v) const = 0;

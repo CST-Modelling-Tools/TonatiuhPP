@@ -94,11 +94,12 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isShapeFront,
     {
         ShapeRT* shape = (ShapeRT*) children[IndexShapeRT]->m_node;
         if (!shape) return false;
+        Aperture* aperture = (Aperture*) children[IndexAperture]->m_node;
 
         Ray rayLocal = m_transform.transformInverse(rayIn);
         double thit = 0.;
         DifferentialGeometry dg;
-        if (!shape->intersect(rayLocal, &thit, &dg)) return false;
+        if (!shape->intersect(rayLocal, &thit, &dg, aperture)) return false;
         rayIn.tMax = thit;
         isShapeFront = dg.isFront;
         shapeNode = this;
@@ -173,7 +174,8 @@ void InstanceNode::updateTree(const Transform& tParent)
             m_transform = tParent;
 
         ShapeRT* shape = (ShapeRT*) children[IndexShapeRT]->m_node;
-        m_box = m_transform(shape->getBox());
+        Aperture* aperture = (Aperture*) children[IndexAperture]->m_node;
+        m_box = m_transform(shape->getBox(aperture));
     }
 }
 

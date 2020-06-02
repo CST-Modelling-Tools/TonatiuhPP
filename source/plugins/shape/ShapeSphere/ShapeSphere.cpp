@@ -2,13 +2,11 @@
 
 #include <Inventor/sensors/SoNodeSensor.h>
 
+#include "kernel/apertures/Aperture.h"
+#include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "kernel/TonatiuhFunctions.h"
-#include "libraries/geometry/gcf.h"
-#include "libraries/geometry/gcf.h"
 #include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Ray.h"
-
 
 SO_NODE_SOURCE(ShapeSphere)
 
@@ -23,14 +21,6 @@ ShapeSphere::ShapeSphere()
 	SO_NODE_CONSTRUCTOR(ShapeSphere);
 
     SO_NODE_ADD_FIELD( radius, (1.) );
-    SO_NODE_ADD_FIELD( phiMax, (gcf::TwoPi) );
-    SO_NODE_ADD_FIELD( alphaMin, (-gcf::pi/2.) );
-    SO_NODE_ADD_FIELD( alphaMax, (gcf::pi/2.) );
-
-    SO_NODE_DEFINE_ENUM_VALUE( Side, back );
-    SO_NODE_DEFINE_ENUM_VALUE( Side, front );
-	SO_NODE_SET_SF_ENUM_TYPE( activeSide, Side );
-    SO_NODE_ADD_FIELD( activeSide, (front) );
 
     m_sensor = new SoNodeSensor(onSensor, this);
 //    m_sensor->setPriority(0); // does not help
@@ -42,55 +32,45 @@ ShapeSphere::~ShapeSphere()
     delete m_sensor;
 }
 
-double ShapeSphere::getArea() const
+BoundingBox ShapeSphere::getBox(Aperture* aperture) const
 {
+    BoundingBox box = aperture->getBox();
+    double phiMin = gcf::TwoPi*box.pMin.x;
+    double phiMax = gcf::TwoPi*box.pMax.x;
+    double alphaMin = gcf::pi*gcf::clamp(box.pMin.y, -0.5, 0.5);
+    double alphaMax = gcf::pi*gcf::clamp(box.pMax.y, -0.5, 0.5);
+
     double r = radius.getValue();
-    return 4.*gcf::pi*r*r;
-}
-double ShapeSphere::getVolume() const
-{
-    double r = radius.getValue();
-    return 4.*gcf::pi*r*r*r/3.;
-}
+    double rMin = r*cos(alphaMin);
+    double rMax = r*cos(alphaMax);
+    if (rMin > rMax) std::swap(rMin, rMax);
+    if (alphaMin <= 0. && 0. <= alphaMax)
+        rMax = r;
 
-BoundingBox ShapeSphere::getBox() const
-{
-    double r = radius.getValue();
-    double pM = phiMax.getValue();
-    double cosPhiMax = cos(pM);
-    double sinPhiMax = sin(pM);
-    double aMin = alphaMin.getValue();
-    double aMax = alphaMax.getValue();
+    double xMin = cos(phiMin);
+    double xMax = cos(phiMax);
+    double yMin = sin(phiMin);
+    double yMax = sin(phiMax);
+    if (xMin > xMax) std::swap(xMin, xMax);
+    if (yMin > yMax) std::swap(yMin, yMax);
 
-    double rhoMin = std::min(r*cos(aMin), r*cos(aMax));
-    double rhoMax = aMin*aMax > 0. ? std::max(r*cos(aMin), r*cos(aMax)) : r;
+    if (phiMin <= 0. && 0. <= phiMax)
+        xMax = 1.;
+    if (phiMin <= -gcf::pi || phiMax >= gcf::pi)
+        xMin = -1.;
+    if (phiMin <= 0.5*gcf::pi && 0.5*gcf::pi <= phiMax)
+        yMax = 1.;
+    if (phiMin <= -0.5*gcf::pi && -0.5*gcf::pi <= phiMax)
+        yMin = -1.;
 
-    double xMin;
-    if (pM > gcf::pi)
-        xMin = -rhoMax;
-    else if (pM > 0.5*gcf::pi)
-        xMin = rhoMax*cosPhiMax;
-    else
-        xMin = rhoMin*cosPhiMax;
+    xMax *= xMax > 0. ? rMax : rMin;
+    xMin *= xMin > 0. ? rMin : rMax;
 
-    double xMax = rhoMax;
+    yMax *= yMax > 0. ? rMax : rMin;
+    yMin *= yMin > 0. ? rMin : rMax;
 
-    double yMin;
-    if (pM > 1.5*gcf::pi)
-        yMin = -rhoMax;
-    else if (pM > gcf::pi)
-        yMin = rhoMax*sinPhiMax;
-    else
-        yMin = 0.;
-
-    double yMax;
-    if (pM > 0.5*gcf::pi)
-        yMax = rhoMax;
-    else
-        yMax = rhoMax*sinPhiMax;
-
-    double zMin = r*sin(aMin);
-    double zMax = r*sin(aMax);
+    double zMin = r*sin(alphaMin);
+    double zMax = r*sin(alphaMax);
 
     return BoundingBox(
         Vector3D(xMin, yMin, zMin),
@@ -98,52 +78,45 @@ BoundingBox ShapeSphere::getBox() const
     );
 }
 
-bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const
+bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, Aperture* aperture) const
 {
-    const Vector3D& r0 = ray.origin;
+    const Vector3D& rayO = ray.origin;
+    const Vector3D& rayD = ray.direction();
     double r = radius.getValue();
 
-    // intersection with full shape
-    // |r0 + t*d|^2 = R^2  (local coordinates)
-    // a*t^2 + b*t + c = 0
-    double A = ray.direction().norm2();
-    double B = 2.*dot(ray.direction(), r0);
-    double C = r0.norm2() - r*r;
+    // |r0 + t*d|^2 = R^2
+    double A = rayD.norm2();
+    double B = 2.*dot(rayD, rayO);
+    double C = rayO.norm2() - r*r;
     double ts[2];
     if (!gcf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
 
-    // intersection with clipped shape
-    double raytMin = ray.tMin + 1e-5;
     for (int i = 0; i < 2; ++i)
     {
         double t = ts[i];
-        if (t < raytMin || t > ray.tMax) continue;
+        if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
 
         Vector3D pHit = ray.point(t);
         double phi = atan2(pHit.y, pHit.x);
-        if (phi < 0.) phi += gcf::TwoPi;
         double alpha = asin(gcf::clamp(pHit.z/r, -1., 1.));
+        double u = phi/gcf::TwoPi;
+        double v = alpha/gcf::pi;
+        if (!aperture->isInside(u, v)) continue;
 
-        if (phi > phiMax.getValue() || alpha < alphaMin.getValue() || alpha > alphaMax.getValue())
-            continue;
-
-        // differential geometry
         if (tHit == 0 && dg == 0)
             return true;
         else if (tHit == 0 || dg == 0)
-            gcf::SevereError("Function ShapeSphere::Intersect(...) called with null pointers");
+            gcf::SevereError("ShapeSphere::intersect");
 
         *tHit = t;
-
         dg->point = pHit;
-        dg->u = phi;
-        dg->v = alpha;
+        dg->u = u;
+        dg->v = v;
         dg->dpdu = Vector3D(-pHit.y, pHit.x, 0.);
         dg->dpdv = Vector3D(-cos(phi)*pHit.z, -sin(phi)*pHit.z, r*cos(alpha));
-        dg->normal = Vector3D(pHit)/r;
+        dg->normal = pHit/r;
         dg->shape = this;
-        dg->isFront = dot(dg->normal, ray.direction()) <= 0.;
-
+        dg->isFront = dot(dg->normal, rayD) <= 0.;
         return true;
     }
     return false;
@@ -151,7 +124,19 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
 
 void ShapeSphere::updateShapeGL(TShapeKit* parent)
 {
-    makeQuadMesh(parent, QSize(48, 24), activeSide.getValue() == Side::back, activeSide.getValue() == Side::back);
+    Aperture* aperture = (Aperture*) parent->aperture.getValue();
+    BoundingBox box = aperture->getBox();
+    Vector3D v = box.extent();
+
+    double s = v.x;
+    if (s > 1.) s = 1.;
+    int rows = 1 + ceil(48*s);
+
+    s = v.y;
+    if (s > 1.) s = 1.;
+    int columns = 1 + ceil(24*s);
+
+    makeQuadMesh(parent, QSize(rows, columns));
 }
 
 Vector3D ShapeSphere::getPoint(double u, double v) const
@@ -161,9 +146,8 @@ Vector3D ShapeSphere::getPoint(double u, double v) const
 
 Vector3D ShapeSphere::getNormal(double u, double v) const
 {
-    double phi = u*phiMax.getValue();
-    double alpha = (1. - v)*alphaMin.getValue() + v*alphaMax.getValue();
-
+    double phi = u*gcf::TwoPi;
+    double alpha = v*gcf::pi;
     return Vector3D(
         cos(phi)*cos(alpha),
         sin(phi)*cos(alpha),
@@ -178,19 +162,19 @@ void ShapeSphere::onSensor(void* data, SoSensor*)
     if (shape->radius.getValue() <= 0.)
         shape->radius.setValue(1.);
 
-    double phi = shape->phiMax.getValue();
-    if (phi <= 0. || phi > gcf::TwoPi)
-        shape->phiMax.setValue(gcf::TwoPi);
+//    double phi = shape->phiMax.getValue();
+//    if (phi <= 0. || phi > gcf::TwoPi)
+//        shape->phiMax.setValue(gcf::TwoPi);
 
-    if (shape->alphaMin.getValue() < -gcf::pi/2.)
-        shape->alphaMin.setValue(-gcf::pi/2.);
+//    if (shape->alphaMin.getValue() < -gcf::pi/2.)
+//        shape->alphaMin.setValue(-gcf::pi/2.);
 
-    if (shape->alphaMax.getValue() > gcf::pi/2.)
-        shape->alphaMax.setValue(gcf::pi/2.);
+//    if (shape->alphaMax.getValue() > gcf::pi/2.)
+//        shape->alphaMax.setValue(gcf::pi/2.);
 
-    if (shape->alphaMax.getValue() <= shape->alphaMin.getValue())
-    {
-        shape->alphaMin.setValue(-gcf::pi/2.);
-        shape->alphaMax.setValue(gcf::pi/2.);
-    }
+//    if (shape->alphaMax.getValue() <= shape->alphaMin.getValue())
+//    {
+//        shape->alphaMin.setValue(-gcf::pi/2.);
+//        shape->alphaMax.setValue(gcf::pi/2.);
+//    }
 }

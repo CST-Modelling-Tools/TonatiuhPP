@@ -26,50 +26,37 @@ ShapeCube::ShapeCube()
 {
     SO_NODE_CONSTRUCTOR(ShapeCube);
 
-    SO_NODE_ADD_FIELD(sizeX, (2.));
-    SO_NODE_ADD_FIELD(sizeY, (2.));
-    SO_NODE_ADD_FIELD(sizeZ, (2.));
+    SO_NODE_ADD_FIELD(xSize, (2.));
+    SO_NODE_ADD_FIELD(ySize, (2.));
+    SO_NODE_ADD_FIELD(zSize, (2.));
 }
 
-double ShapeCube::getArea() const
-{
-    double xy = sizeX.getValue()*sizeY.getValue();
-    double yz = sizeY.getValue()*sizeZ.getValue();
-    double xz = sizeX.getValue()*sizeZ.getValue();
-    return 2.*(xy + yz + xz);
-}
-
-double ShapeCube::getVolume() const
-{
-    return sizeX.getValue()*sizeY.getValue()*sizeZ.getValue();
-}
-
-BoundingBox ShapeCube::getBox() const
+BoundingBox ShapeCube::getBox(Aperture* aperture) const
 {
     Vector3D p(
-        sizeX.getValue(),
-        sizeY.getValue(),
-        sizeZ.getValue()
+        xSize.getValue(),
+        ySize.getValue(),
+        zSize.getValue()
     );
     p /= 2.;
 
     return BoundingBox(-p, p);
 }
 
-bool ShapeCube::intersect(const Ray& /*objectRay*/, double* /*tHit*/, DifferentialGeometry* /*dg*/) const
+bool ShapeCube::intersect(const Ray& /*objectRay*/, double* /*tHit*/, DifferentialGeometry* /*dg*/, Aperture* aperture) const
 {
     //Yet to be implemented
     return false;
 }
 
-bool ShapeCube::intersectP(const Ray& ray) const
+bool ShapeCube::intersectP(const Ray& ray, Aperture* aperture) const
 {
     double t0 = ray.tMin;
     double t1 = ray.tMax;
     double tmin, tmax, tymin, tymax, tzmin, tzmax;
-    double halfWidth = sizeX.getValue()/2.;
-    double halfHeight = sizeY.getValue()/2.;
-    double halfDepth = sizeZ.getValue()/2.;
+    double halfWidth = xSize.getValue()/2.;
+    double halfHeight = ySize.getValue()/2.;
+    double halfDepth = zSize.getValue()/2.;
 
     double invDirection = ray.invDirection().x;
     if (invDirection >= 0.)

@@ -11,18 +11,18 @@ public:
     ShapeCube();
     static void initClass();
 
-    double getArea() const;
-    double getVolume() const;
-    BoundingBox getBox() const;
-    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
-    bool intersectP(const Ray& ray) const;
+    BoundingBox getBox(Aperture* aperture) const;
+    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, Aperture* aperture) const;
+    bool intersectP(const Ray& ray, Aperture* aperture) const;
 
-    trt::TONATIUH_REAL sizeX;
-    trt::TONATIUH_REAL sizeY;
-    trt::TONATIUH_REAL sizeZ;
+    trt::TONATIUH_REAL xSize;
+    trt::TONATIUH_REAL ySize;
+    trt::TONATIUH_REAL zSize;
+
+    NAME_ICON_FUNCTIONS("Cube", ":/ShapeCube.png")
+//    void updateShapeGL(TShapeKit* parent);
 
 protected:
-    ~ShapeCube() {}
     Vector3D getPoint(double u, double v) const;
     Vector3D getNormal(double u, double v) const;
 };

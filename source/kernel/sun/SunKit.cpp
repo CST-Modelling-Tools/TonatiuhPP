@@ -153,7 +153,6 @@ bool SunKit::findTexture(int sizeX, int sizeY, InstanceNode* instanceRoot)
     for (auto& s : surfacesList)
         s.second = tSun*s.second;
 
-
     aperture->findTexture(sizeX, sizeY, surfacesList, this);
     return true;
 }

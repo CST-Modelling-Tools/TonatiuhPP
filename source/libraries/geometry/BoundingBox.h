@@ -10,8 +10,10 @@ struct TONATIUH_LIBRARIES BoundingBox
     explicit BoundingBox(const Vector3D& p);
     BoundingBox(const Vector3D& pA, const Vector3D& pB);
 
+    Vector3D extent() const {return pMax - pMin;}
     int maxDimension() const;
     double volume() const;
+    Vector3D absMax() const {return max(pMin.abs(), pMax.abs());}
 
     void expand(double delta);
     void expand(const Vector3D& p);
@@ -26,6 +28,8 @@ struct TONATIUH_LIBRARIES BoundingBox
 
     Vector3D pMin;
     Vector3D pMax;
+
+    static const BoundingBox UnitCube;
 };
 
 

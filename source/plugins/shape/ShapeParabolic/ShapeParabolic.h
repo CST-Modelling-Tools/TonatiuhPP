@@ -11,16 +11,13 @@ public:
     static void initClass();
     ShapeParabolic();
 
-    BoundingBox getBox() const;
-    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg) const;
+    BoundingBox getBox(Aperture* aperture) const;
+    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, Aperture* aperture) const;
 
     SoSFDouble focusX;
     SoSFDouble focusY;
-    SoSFDouble sizeX;
-    SoSFDouble sizeY;
 
     NAME_ICON_FUNCTIONS("Parabolic", ":/ShapeParabolic.png")
-
     void updateShapeGL(TShapeKit* parent);
 
 protected:
