@@ -32,9 +32,9 @@ ShapeSphere::~ShapeSphere()
     delete m_sensor;
 }
 
-BoundingBox ShapeSphere::getBox(ProfileRT* aperture) const
+BoundingBox ShapeSphere::getBox(ProfileRT* profile) const
 {
-    BoundingBox box = aperture->getBox();
+    BoundingBox box = profile->getBox();
     double phiMin = gcf::TwoPi*box.pMin.x;
     double phiMax = gcf::TwoPi*box.pMax.x;
     double alphaMin = gcf::pi*gcf::clamp(box.pMin.y, -0.5, 0.5);
@@ -78,7 +78,7 @@ BoundingBox ShapeSphere::getBox(ProfileRT* aperture) const
     );
 }
 
-bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const
+bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
 {
     const Vector3D& rayO = ray.origin;
     const Vector3D& rayD = ray.direction();
@@ -101,7 +101,7 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
         double alpha = asin(gcf::clamp(pHit.z/r, -1., 1.));
         double u = phi/gcf::TwoPi;
         double v = alpha/gcf::pi;
-        if (!aperture->isInside(u, v)) continue;
+        if (!profile->isInside(u, v)) continue;
 
         if (tHit == 0 && dg == 0)
             return true;

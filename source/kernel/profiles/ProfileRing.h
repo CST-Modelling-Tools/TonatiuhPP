@@ -17,7 +17,7 @@ public:
     SoSFDouble phiMax;
 
     BoundingBox getBox() const;
-    bool isInside(double x, double y) const;
+    bool isInside(double u, double v) const;
     QVector<Vector2D> makeMesh(const QSize& dims) const;
 
     NAME_ICON_FUNCTIONS("Ring", ":/images/ProfileRing.png")

@@ -1,6 +1,8 @@
 #include "ShapePlanar.h"
 
 #include "kernel/profiles/ProfileRT.h"
+#include "kernel/profiles/ProfileRing.h"
+#include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Ray.h"
@@ -57,7 +59,21 @@ bool ShapePlanar::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
 
 void ShapePlanar::updateShapeGL(TShapeKit* parent)
 {
-    makeQuadMesh(parent, QSize(2, 2));
+    ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
+
+    int rows;
+    if (ProfileRing* pr = dynamic_cast<ProfileRing*>(profile))
+    {
+        double s = (pr->phiMax.getValue() - pr->phiMin.getValue())/gcf::TwoPi;
+        if (s > 1.) s = 1.;
+        rows = 1 + ceil(48*s);
+    }
+    else
+    {
+        rows = 2;
+    }
+
+    makeQuadMesh(parent, QSize(rows, 2));
 }
 
 Vector3D ShapePlanar::getPoint(double u, double v) const

@@ -10,5 +10,6 @@
         <file>images/ProfileRectangle.png</file>
         <file>images/ProfileStripe.png</file>
         <file>images/Profile.png</file>
+        <file>images/ProfileRing.png</file>
     </qresource>
 </RCC>

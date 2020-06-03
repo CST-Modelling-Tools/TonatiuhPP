@@ -1,6 +1,7 @@
 #include "ShapeParabolic.h"
 
 #include "kernel/profiles/ProfileRT.h"
+#include "kernel/profiles/ProfileRing.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/BoundingBox.h"
@@ -22,15 +23,15 @@ ShapeParabolic::ShapeParabolic()
     SO_NODE_ADD_FIELD( focusY, (1.) );
 }
 
-BoundingBox ShapeParabolic::getBox(ProfileRT* aperture) const
+BoundingBox ShapeParabolic::getBox(ProfileRT* profile) const
 {  
-    BoundingBox box = aperture->getBox();
+    BoundingBox box = profile->getBox();
     Vector3D v = box.absMax();
     box.pMax.z = (v.x*v.x/focusX.getValue() + v.y*v.y/focusY.getValue())/4.;
     return box;
 }
 
-bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const
+bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
 {
     const Vector3D& rayO = ray.origin;
     const Vector3D& rayD = ray.direction();
@@ -50,7 +51,7 @@ bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometr
         if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
 
         Vector3D pHit = ray.point(t);
-        if (!aperture->isInside(pHit.x, pHit.y)) continue;
+        if (!profile->isInside(pHit.x, pHit.y)) continue;
 
         if (tHit == 0 && dg == 0)
             return true;
@@ -72,18 +73,35 @@ bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometr
 
 void ShapeParabolic::updateShapeGL(TShapeKit* parent)
 {
-    ProfileRT* aperture = (ProfileRT*) parent->profileRT.getValue();
-    BoundingBox box = aperture->getBox();
-    Vector3D v = box.extent();
+    ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
 
-    // radius = 2*focus, 48 divs for 2 pi
-    double s = v.x/(gcf::TwoPi*2.*focusX.getValue());
-    if (s > 1.) s = 1.;
-    int rows = 1 + ceil(48*s);
+    int rows, columns;
+    double s;
+    if (ProfileRing* pr = dynamic_cast<ProfileRing*>(profile))
+    {
+        s = (pr->phiMax.getValue() - pr->phiMin.getValue())/gcf::TwoPi;
+        if (s > 1.) s = 1.;
+        rows = 1 + ceil(48*s);
 
-    s = v.y/(gcf::TwoPi*2.*focusY.getValue());
-    if (s > 1.) s = 1.;
-    int columns = 1 + ceil(48*s);
+        double f = std::min(focusX.getValue(), focusY.getValue());
+        s = (pr->rMax.getValue() - pr->rMin.getValue())/(gcf::TwoPi*2.*f);
+        if (s > 1.) s = 1.;
+        columns = 1 + ceil(48*s);
+    }
+    else
+    {
+        BoundingBox box = profile->getBox();
+        Vector3D v = box.extent();
+
+        // radius = 2*focus, 48 divs for 2 pi
+        s = v.x/(gcf::TwoPi*2.*focusX.getValue());
+        if (s > 1.) s = 1.;
+        rows = 1 + ceil(48*s);
+
+        s = v.y/(gcf::TwoPi*2.*focusY.getValue());
+        if (s > 1.) s = 1.;
+        columns = 1 + ceil(48*s);
+    }
 
     makeQuadMesh(parent, QSize(rows, columns));
 }

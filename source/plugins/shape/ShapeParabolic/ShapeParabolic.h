@@ -11,7 +11,7 @@ public:
     static void initClass();
     ShapeParabolic();
 
-    BoundingBox getBox(ProfileRT* aperture) const;
+    BoundingBox getBox(ProfileRT* profile) const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
 
     SoSFDouble focusX;
