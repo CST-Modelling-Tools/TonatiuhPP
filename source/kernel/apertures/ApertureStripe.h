@@ -3,13 +3,13 @@
 #include "kernel/apertures/Aperture.h"
 
 
-class TONATIUH_KERNEL ApertureStrip: public Aperture
+class TONATIUH_KERNEL ApertureStripe: public Aperture
 {
-    SO_NODE_HEADER(ApertureStrip);
+    SO_NODE_HEADER(ApertureStripe);
 
 public:
     static void initClass();
-    ApertureStrip();
+    ApertureStripe();
 
     SoSFDouble uMin;
     SoSFDouble uMax;
@@ -20,5 +20,5 @@ public:
     bool isInside(double u, double v) const;
     QVector<Vector2D> makeMesh(const QSize& dims) const;
 
-    NAME_ICON_FUNCTIONS("Strip", ":/images/ApertureStrip.png")
+    NAME_ICON_FUNCTIONS("Strip", ":/images/ApertureStripe.png")
 };

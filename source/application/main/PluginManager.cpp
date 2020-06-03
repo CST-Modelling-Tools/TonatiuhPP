@@ -9,7 +9,7 @@
 #include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/apertures/ApertureRectangle.h"
-#include "kernel/apertures/ApertureStrip.h"
+#include "kernel/apertures/ApertureStripe.h"
 #include "kernel/apertures/ApertureRing.h"
 #include "kernel/material/MaterialVirtual.h"
 #include "kernel/material/MaterialAbsorber.h"
@@ -78,7 +78,7 @@ void PluginManager::load(QDir dir)
     loadPlugin(new ShapeFactoryT<ShapePlanar>);
 //    loadPlugin(new ShapeFactoryT<ShapeCube>);
     loadPlugin(new ApertureFactoryT<ApertureRectangle>);
-    loadPlugin(new ApertureFactoryT<ApertureStrip>);
+    loadPlugin(new ApertureFactoryT<ApertureStripe>);
     loadPlugin(new ApertureFactoryT<ApertureRing>);
     loadPlugin(new MaterialFactoryT<MaterialAbsorber>);
     loadPlugin(new MaterialFactoryT<MaterialVirtual>);

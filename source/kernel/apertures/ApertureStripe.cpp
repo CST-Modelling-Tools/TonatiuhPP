@@ -1,23 +1,23 @@
-#include "ApertureStrip.h"
+#include "ApertureStripe.h"
 
 
-SO_NODE_SOURCE(ApertureStrip)
+SO_NODE_SOURCE(ApertureStripe)
 
-void ApertureStrip::initClass()
+void ApertureStripe::initClass()
 {
-     SO_NODE_INIT_CLASS(ApertureStrip, Aperture, "Aperture");
+     SO_NODE_INIT_CLASS(ApertureStripe, Aperture, "Aperture");
 }
 
-ApertureStrip::ApertureStrip()
+ApertureStripe::ApertureStripe()
 {
-    SO_NODE_CONSTRUCTOR(ApertureStrip);
+    SO_NODE_CONSTRUCTOR(ApertureStripe);
     SO_NODE_ADD_FIELD( uMin, (-0.5) );
     SO_NODE_ADD_FIELD( uMax, (0.5) );
     SO_NODE_ADD_FIELD( vMin, (-0.5) );
     SO_NODE_ADD_FIELD( vMax, (0.5) );
 }
 
-BoundingBox ApertureStrip::getBox() const
+BoundingBox ApertureStripe::getBox() const
 {
     return BoundingBox(
         Vector3D(uMin.getValue(), vMin.getValue(), 0.),
@@ -25,13 +25,13 @@ BoundingBox ApertureStrip::getBox() const
     );
 }
 
-bool ApertureStrip::isInside(double u, double v) const
+bool ApertureStripe::isInside(double u, double v) const
 {
     return uMin.getValue() <= u && u <= uMax.getValue() &&
            vMin.getValue() <= v && v <= vMax.getValue();
 }
 
-QVector<Vector2D> ApertureStrip::makeMesh(const QSize& dims) const
+QVector<Vector2D> ApertureStripe::makeMesh(const QSize& dims) const
 {
     const int iMax = dims.width();
     const int jMax = dims.height();
