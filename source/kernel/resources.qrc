@@ -11,5 +11,7 @@
         <file>images/ProfileStripe.png</file>
         <file>images/Profile.png</file>
         <file>images/ProfileRing.png</file>
+        <file>images/ProfileTriangle.png</file>
+        <file>images/ProfilePolygon.png</file>
     </qresource>
 </RCC>

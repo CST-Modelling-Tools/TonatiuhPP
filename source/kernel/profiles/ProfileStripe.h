@@ -16,7 +16,7 @@ public:
     SoSFDouble vMin;
     SoSFDouble vMax;
 
-    BoundingBox getBox() const;
+    Box3D getBox() const;
     bool isInside(double u, double v) const;
     QVector<Vector2D> makeMesh(const QSize& dims) const;
 

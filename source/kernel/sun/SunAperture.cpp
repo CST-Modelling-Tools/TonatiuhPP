@@ -15,7 +15,7 @@
 #include <Inventor/elements/SoMaterialBindingElement.h>
 
 #include <math.h>
-#include "libraries/geometry/BoundingBox.h"
+#include "libraries/geometry/Box3D.h"
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/Vector3D.h"
@@ -119,7 +119,7 @@ void SunAperture::findTexture(int xPixels, int yPixels, QVector<QPair<TShapeKit*
         if (!shape) continue;
         ProfileRT* aperture = static_cast<ProfileRT*>(s.first->profileRT.getValue());
         if (!aperture) continue;
-        BoundingBox box = shape->getBox(aperture);
+        Box3D box = shape->getBox(aperture);
 
         QVector<Vector3D> ps;
         ps << Vector3D(box.pMin.x, box.pMin.y, box.pMin.z);

@@ -19,7 +19,7 @@ ProfileRing::ProfileRing()
     SO_NODE_ADD_FIELD( phiMax, (gcf::pi) );
 }
 
-BoundingBox ProfileRing::getBox() const
+Box3D ProfileRing::getBox() const
 {
     double rMinV = rMin.getValue();
     double rMaxV = rMax.getValue();
@@ -48,7 +48,7 @@ BoundingBox ProfileRing::getBox() const
     yMax *= yMax > 0. ? rMaxV : rMinV;
     yMin *= yMin > 0. ? rMinV : rMaxV;
 
-    return BoundingBox(
+    return Box3D(
         Vector3D(xMin, yMin, 0.),
         Vector3D(xMax, yMax, 0.)
     );

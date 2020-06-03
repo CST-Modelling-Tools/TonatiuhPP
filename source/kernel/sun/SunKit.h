@@ -8,7 +8,7 @@
 #include "kernel/TonatiuhTypes.h"
 #include "kernel/sun/SunShape.h"
 
-struct BoundingBox;
+struct Box3D;
 class InstanceNode;
 
 /*!
@@ -56,7 +56,7 @@ public:
     SunKit();
 
     void updateTransform();
-    void setBox(BoundingBox box);
+    void setBox(Box3D box);
     bool findTexture(int sizeX, int sizeY, InstanceNode* instanceRoot);
 
     SoSFDouble azimuth;  // in radians

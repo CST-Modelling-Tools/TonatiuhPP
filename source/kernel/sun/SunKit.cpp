@@ -13,7 +13,7 @@
 #include "SunPillbox.h"
 #include "kernel/TonatiuhFunctions.h"
 #include "kernel/run/InstanceNode.h"
-#include "libraries/geometry/BoundingBox.h"
+#include "libraries/geometry/Box3D.h"
 #include "libraries/geometry/Matrix4x4.h"
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/gcf.h"
@@ -92,7 +92,7 @@ void SunKit::updateTransform()
 //    transform->translation = res;
 }
 
-void SunKit::setBox(BoundingBox box)
+void SunKit::setBox(Box3D box)
 {
     updateTransform();
     SoTransform* transform = (SoTransform*) getPart("transform", true);

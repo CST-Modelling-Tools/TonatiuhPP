@@ -10,7 +10,7 @@
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/profiles/ProfileRT.h"
 #include "libraries/geometry/Vector3D.h"
-#include "libraries/geometry/BoundingBox.h"
+#include "libraries/geometry/Box3D.h"
 
 
 SO_NODE_ABSTRACT_SOURCE(ShapeRT)
@@ -21,10 +21,10 @@ void ShapeRT::initClass()
     SO_NODE_INIT_ABSTRACT_CLASS(ShapeRT, SoNode, "Node");
 }
 
-BoundingBox ShapeRT::getBox(ProfileRT* aperture) const
+Box3D ShapeRT::getBox(ProfileRT* aperture) const
 {
     Q_UNUSED(aperture)
-    return BoundingBox::UnitCube;
+    return Box3D::UnitCube;
 }
 
 //void ShapeRT::computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center)

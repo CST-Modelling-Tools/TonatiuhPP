@@ -4,7 +4,7 @@
 #include "kernel/profiles/ProfileRing.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/geometry/BoundingBox.h"
+#include "libraries/geometry/Box3D.h"
 #include "libraries/geometry/Ray.h"
 
 SO_NODE_SOURCE(ShapePlanar)
@@ -20,9 +20,9 @@ ShapePlanar::ShapePlanar()
     SO_NODE_CONSTRUCTOR(ShapePlanar);
 }
 
-BoundingBox ShapePlanar::getBox(ProfileRT* aperture) const
+Box3D ShapePlanar::getBox(ProfileRT* aperture) const
 {
-    BoundingBox box = aperture->getBox();
+    Box3D box = aperture->getBox();
     double zMax = 0.01*box.extent().max();
     box.pMin.z = -zMax;
     box.pMax.z = zMax;

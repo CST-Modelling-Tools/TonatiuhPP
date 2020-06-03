@@ -5,7 +5,7 @@
 #include <Inventor/nodes/SoShape.h>
 
 struct Vector3D;
-struct BoundingBox;
+struct Box3D;
 class Ray;
 struct DifferentialGeometry;
 class QSize;
@@ -22,7 +22,7 @@ public:
 
     virtual double getArea() const {return -1.;}
     virtual double getVolume() const {return 0.;}
-    virtual BoundingBox getBox(ProfileRT* aperture) const;
+    virtual Box3D getBox(ProfileRT* aperture) const;
 
     // with computing dg, ray in local coordinates
     virtual bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const = 0;

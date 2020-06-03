@@ -4,7 +4,7 @@
 #include "kernel/profiles/ProfileRing.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/geometry/BoundingBox.h"
+#include "libraries/geometry/Box3D.h"
 #include "libraries/geometry/Ray.h"
 
 SO_NODE_SOURCE(ShapeParabolic)
@@ -23,9 +23,9 @@ ShapeParabolic::ShapeParabolic()
     SO_NODE_ADD_FIELD( focusY, (1.) );
 }
 
-BoundingBox ShapeParabolic::getBox(ProfileRT* profile) const
+Box3D ShapeParabolic::getBox(ProfileRT* profile) const
 {  
-    BoundingBox box = profile->getBox();
+    Box3D box = profile->getBox();
     Vector3D v = box.absMax();
     box.pMax.z = (v.x*v.x/focusX.getValue() + v.y*v.y/focusY.getValue())/4.;
     return box;
@@ -90,7 +90,7 @@ void ShapeParabolic::updateShapeGL(TShapeKit* parent)
     }
     else
     {
-        BoundingBox box = profile->getBox();
+        Box3D box = profile->getBox();
         Vector3D v = box.extent();
 
         // radius = 2*focus, 48 divs for 2 pi

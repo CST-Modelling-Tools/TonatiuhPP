@@ -9,7 +9,7 @@
 #include <Inventor/SbBox3f.h>
 #include <Inventor/SbMatrix.h>
 
-#include "libraries/geometry/BoundingBox.h"
+#include "libraries/geometry/Box3D.h"
 #include "libraries/geometry/Transform.h"
 
 class Random;
@@ -44,8 +44,8 @@ public:
     InstanceNode* getParent() const {return m_parent;}
     void setParent(InstanceNode* parent) {m_parent = parent;}
 
-    const BoundingBox& getBox() const {return m_box;}
-    void setBox(const BoundingBox& box) {m_box = box;}
+    const Box3D& getBox() const {return m_box;}
+    void setBox(const Box3D& box) {m_box = box;}
 
     const Transform& getTransform() {return m_transform;}
     void setTransform(const Transform& t) {m_transform = t;}
@@ -70,7 +70,7 @@ public:
 private:
     SoNode* m_node;
     InstanceNode* m_parent;
-    BoundingBox m_box; // in world frame
+    Box3D m_box; // in world frame
     Transform m_transform; // from object to world
 };
 

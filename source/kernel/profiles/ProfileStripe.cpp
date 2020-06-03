@@ -17,9 +17,9 @@ ProfileStripe::ProfileStripe()
     SO_NODE_ADD_FIELD( vMax, (0.5) );
 }
 
-BoundingBox ProfileStripe::getBox() const
+Box3D ProfileStripe::getBox() const
 {
-    return BoundingBox(
+    return Box3D(
         Vector3D(uMin.getValue(), vMin.getValue(), 0.),
         Vector3D(uMax.getValue(), vMax.getValue(), 0.)
     );

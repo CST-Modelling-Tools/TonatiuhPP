@@ -9,7 +9,7 @@
 #include "kernel/material/MaterialRT.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/shape/ShapeRT.h"
-#include "libraries/geometry/BoundingBox.h"
+#include "libraries/geometry/Box3D.h"
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Transform.h"
 #include "scene/TShapeKit.h"
@@ -158,7 +158,7 @@ void InstanceNode::updateTree(const Transform& tParent)
 //        SoTransform* t = (SoTransform*) separatorKit->getPart("transform", true);
         m_transform = tParent*tgf::makeTransform(t);
 
-        BoundingBox box;
+        Box3D box;
         for (InstanceNode* child : children)
         {
             child->updateTree(m_transform);

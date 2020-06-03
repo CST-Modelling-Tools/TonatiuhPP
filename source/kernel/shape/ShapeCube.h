@@ -11,7 +11,7 @@ public:
     ShapeCube();
     static void initClass();
 
-    BoundingBox getBox(ProfileRT* aperture) const;
+    Box3D getBox(ProfileRT* aperture) const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
     bool intersectP(const Ray& ray, ProfileRT* aperture) const;
 

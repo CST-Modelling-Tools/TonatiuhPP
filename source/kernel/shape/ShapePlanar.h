@@ -11,7 +11,7 @@ public:
     static void initClass();
     ShapePlanar();
 
-    BoundingBox getBox(ProfileRT* aperture) const;
+    Box3D getBox(ProfileRT* aperture) const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
 
     NAME_ICON_FUNCTIONS("Planar", ":/images/ShapePlanar.png")

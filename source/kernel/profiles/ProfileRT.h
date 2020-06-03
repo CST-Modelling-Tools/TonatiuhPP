@@ -7,7 +7,7 @@
 
 #include "kernel/scene/TAbstract.h"
 #include "libraries/geometry/Vector2D.h"
-#include "libraries/geometry/BoundingBox.h"
+#include "libraries/geometry/Box3D.h"
 
 struct DifferentialGeometry;
 class Random;
@@ -21,7 +21,7 @@ class TONATIUH_KERNEL ProfileRT: public SoNode
 public:
     static void initClass();
 
-    virtual BoundingBox getBox() const {return BoundingBox::UnitCube;}
+    virtual Box3D getBox() const {return Box3D::UnitCube;}
     virtual bool isInside(double /*x*/, double /*y*/) const {return true;}
     virtual QVector<Vector2D> makeMesh(const QSize& /*dims*/) const {return {};}
 

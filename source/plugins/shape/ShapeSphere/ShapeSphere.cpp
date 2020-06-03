@@ -5,7 +5,7 @@
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/geometry/BoundingBox.h"
+#include "libraries/geometry/Box3D.h"
 #include "libraries/geometry/Ray.h"
 
 SO_NODE_SOURCE(ShapeSphere)
@@ -32,9 +32,9 @@ ShapeSphere::~ShapeSphere()
     delete m_sensor;
 }
 
-BoundingBox ShapeSphere::getBox(ProfileRT* profile) const
+Box3D ShapeSphere::getBox(ProfileRT* profile) const
 {
-    BoundingBox box = profile->getBox();
+    Box3D box = profile->getBox();
     double phiMin = gcf::TwoPi*box.pMin.x;
     double phiMax = gcf::TwoPi*box.pMax.x;
     double alphaMin = gcf::pi*gcf::clamp(box.pMin.y, -0.5, 0.5);
@@ -72,7 +72,7 @@ BoundingBox ShapeSphere::getBox(ProfileRT* profile) const
     double zMin = r*sin(alphaMin);
     double zMax = r*sin(alphaMax);
 
-    return BoundingBox(
+    return Box3D(
         Vector3D(xMin, yMin, zMin),
         Vector3D(xMax, yMax, zMax)
     );
@@ -125,7 +125,7 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
 void ShapeSphere::updateShapeGL(TShapeKit* parent)
 {
     ProfileRT* aperture = (ProfileRT*) parent->profileRT.getValue();
-    BoundingBox box = aperture->getBox();
+    Box3D box = aperture->getBox();
     Vector3D v = box.extent();
 
     double s = v.x;

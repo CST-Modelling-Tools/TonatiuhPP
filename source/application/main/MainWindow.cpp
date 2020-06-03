@@ -3241,7 +3241,7 @@ void MainWindow::UpdateLightSize()
 
     if (!box.isEmpty())
     {
-        BoundingBox sceneBox(
+        Box3D sceneBox(
             Vector3D(box.getMin()[0], box.getMin()[1], box.getMin()[2]),
             Vector3D(box.getMax()[0], box.getMax()[1], box.getMax()[2])
         );

@@ -128,6 +128,11 @@ inline double dot(const Vector2D& a, const Vector2D& b)
     return a.x*b.x + a.y*b.y;
 }
 
+inline double cross(const Vector2D& a, const Vector2D& b)
+{
+    return a.x*b.y - a.y*b.x;
+}
+
 inline Vector2D min(const Vector2D& a, const Vector2D& b)
 {
     return Vector2D(

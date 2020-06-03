@@ -4,7 +4,7 @@
 #include "libraries/geometry/Matrix4x4.h"
 
 class Ray;
-struct BoundingBox;
+struct Box3D;
 
 
 class TONATIUH_LIBRARIES Transform
@@ -41,8 +41,8 @@ public:
     Ray operator()(const Ray& r) const;
     void operator()(const Ray& r, Ray& ans) const;
 
-    BoundingBox operator()(const BoundingBox& b) const;
-    void operator()(const BoundingBox& b, BoundingBox& ans) const;
+    Box3D operator()(const Box3D& b) const;
+    void operator()(const Box3D& b, Box3D& ans) const;
 
     Vector3D multVecMatrix(const Vector3D& v) const;
     Vector3D multDirMatrix(const Vector3D& src) const;

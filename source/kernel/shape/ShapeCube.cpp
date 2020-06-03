@@ -8,7 +8,7 @@
 #include <Inventor/elements/SoGLTextureCoordinateElement.h>
 #include <Inventor/misc/SoState.h>
 
-#include "libraries/geometry/BoundingBox.h"
+#include "libraries/geometry/Box3D.h"
 #include "libraries/geometry/Ray.h"
 
 using namespace std;
@@ -31,7 +31,7 @@ ShapeCube::ShapeCube()
     SO_NODE_ADD_FIELD(zSize, (2.));
 }
 
-BoundingBox ShapeCube::getBox(ProfileRT* aperture) const
+Box3D ShapeCube::getBox(ProfileRT* aperture) const
 {
     Vector3D p(
         xSize.getValue(),
@@ -40,7 +40,7 @@ BoundingBox ShapeCube::getBox(ProfileRT* aperture) const
     );
     p /= 2.;
 
-    return BoundingBox(-p, p);
+    return Box3D(-p, p);
 }
 
 bool ShapeCube::intersect(const Ray& /*objectRay*/, double* /*tHit*/, DifferentialGeometry* /*dg*/, ProfileRT* aperture) const

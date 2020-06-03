@@ -11,7 +11,7 @@ public:
     static void initClass();
     ShapeCylinder();
 
-    BoundingBox getBox(ProfileRT* aperture) const;
+    Box3D getBox(ProfileRT* aperture) const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
 
     SoSFDouble radius;

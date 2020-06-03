@@ -1,14 +1,15 @@
 #pragma once
 
-#include "libraries/TonatiuhLibraries.h"
-#include <cmath>
-#include <iostream>
+#include "libraries/geometry/Vector2D.h"
 
 
 struct TONATIUH_LIBRARIES Vector3D
 {
     Vector3D(double x = 0., double y = 0., double z = 0.):
         x(x), y(y), z(z) {}
+
+    Vector3D(const Vector2D& v, double z = 0.):
+        x(v.x), y(v.y), z(z) {}
 
     // constants
     static const Vector3D Zero;

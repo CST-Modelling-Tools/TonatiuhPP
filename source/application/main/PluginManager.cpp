@@ -8,28 +8,30 @@
 #include "kernel/air/AirPolynomial.h"
 #include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
-#include "kernel/profiles/ProfileRectangle.h"
-#include "kernel/profiles/ProfileStripe.h"
-#include "kernel/profiles/ProfileRing.h"
-#include "kernel/material/MaterialVirtual.h"
 #include "kernel/material/MaterialAbsorber.h"
+#include "kernel/material/MaterialVirtual.h"
 #include "kernel/photons/PhotonsDefault.h"
 #include "kernel/photons/PhotonsFactory.h"
 #include "kernel/photons/PhotonsWidget.h"
+#include "kernel/profiles/ProfileRectangle.h"
+#include "kernel/profiles/ProfileRing.h"
+#include "kernel/profiles/ProfileTriangle.h"
+#include "kernel/profiles/ProfilePolygon.h"
+#include "kernel/profiles/ProfileStripe.h"
 #include "kernel/random/RandomSTL.h"
 #include "kernel/scene/TSceneKit.h"
+#include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeCube.h"
 #include "kernel/shape/ShapePlanar.h"
-#include "kernel/sun/SunPillbox.h"
-#include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunAperture.h"
+#include "kernel/sun/SunKit.h"
+#include "kernel/sun/SunPillbox.h"
 #include "kernel/trackers/Tracker.h"
 #include "libraries/fields/UserMField.h"
 #include "libraries/fields/UserSField.h"
 #include "libraries/geometry/gcf.h"
 #include "view/SkyBackground.h"
-#include "kernel/scene/TSeparatorKit.h"
 
 
 PluginManager::PluginManager()
@@ -80,6 +82,8 @@ void PluginManager::load(QDir dir)
     loadPlugin(new ProfileFactoryT<ProfileRectangle>);
     loadPlugin(new ProfileFactoryT<ProfileStripe>);
     loadPlugin(new ProfileFactoryT<ProfileRing>);
+    loadPlugin(new ProfileFactoryT<ProfileTriangle>);
+    loadPlugin(new ProfileFactoryT<ProfilePolygon>);
     loadPlugin(new MaterialFactoryT<MaterialAbsorber>);
     loadPlugin(new MaterialFactoryT<MaterialVirtual>);
     loadPlugin(new RandomFactoryT<RandomSTL>);

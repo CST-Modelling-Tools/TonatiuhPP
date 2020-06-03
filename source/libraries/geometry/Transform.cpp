@@ -2,7 +2,7 @@
 
 #include "gcf.h"
 #include "Ray.h"
-#include "BoundingBox.h"
+#include "Box3D.h"
 
 const Transform Transform::Identity(new Matrix4x4);
 
@@ -215,9 +215,9 @@ void Transform::operator()(const Ray& r, Ray& ans) const
     ans.tMax = r.tMax;
 }
 
-BoundingBox Transform::operator()(const BoundingBox& b) const
+Box3D Transform::operator()(const Box3D& b) const
 {
-    BoundingBox ans;
+    Box3D ans;
     ans << transformPoint(Vector3D(b.pMin.x, b.pMin.y, b.pMin.z));
     ans << transformPoint(Vector3D(b.pMin.x, b.pMin.y, b.pMax.z));
     ans << transformPoint(Vector3D(b.pMin.x, b.pMax.y, b.pMin.z));
@@ -229,9 +229,9 @@ BoundingBox Transform::operator()(const BoundingBox& b) const
     return ans;
 }
 
-void Transform::operator()(const BoundingBox& b, BoundingBox& ans) const
+void Transform::operator()(const Box3D& b, Box3D& ans) const
 {
-    ans = BoundingBox();
+    ans = Box3D();
     ans << transformPoint(Vector3D(b.pMin.x, b.pMin.y, b.pMin.z));
     ans << transformPoint(Vector3D(b.pMin.x, b.pMin.y, b.pMax.z));
     ans << transformPoint(Vector3D(b.pMin.x, b.pMax.y, b.pMin.z));

@@ -15,10 +15,10 @@ ProfileRectangle::ProfileRectangle()
     SO_NODE_ADD_FIELD( vSize, (1.) );
 }
 
-BoundingBox ProfileRectangle::getBox() const
+Box3D ProfileRectangle::getBox() const
 {
     Vector3D v(uSize.getValue()/2., vSize.getValue()/2., 0.);
-    return BoundingBox(-v, v);
+    return Box3D(-v, v);
 }
 
 bool ProfileRectangle::isInside(double u, double v) const
