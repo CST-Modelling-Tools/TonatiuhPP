@@ -14,9 +14,9 @@ class Random;
 class Ray;
 
 
-class TONATIUH_KERNEL Aperture: public SoNode
+class TONATIUH_KERNEL ProfileRT: public SoNode
 {
-    SO_NODE_ABSTRACT_HEADER(Aperture);
+    SO_NODE_ABSTRACT_HEADER(ProfileRT);
 
 public:
     static void initClass();
@@ -28,8 +28,8 @@ public:
     NAME_ICON_FUNCTIONS("X", ":/MaterialX.png") // use some default icon
 
 protected:
-    Aperture() {}
-    ~Aperture() {}
+    ProfileRT() {}
+    ~ProfileRT() {}
 };
 
 
@@ -39,7 +39,7 @@ protected:
 class ApertureFactory: public TFactory
 {
 public:
-    virtual Aperture* create() const = 0;
+    virtual ProfileRT* create() const = 0;
 };
 
 Q_DECLARE_INTERFACE(ApertureFactory, "tonatiuh.ApertureFactory")

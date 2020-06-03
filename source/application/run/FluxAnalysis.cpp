@@ -28,7 +28,7 @@
 #include "libraries/geometry/Transform.h"
 #include "libraries/geometry/gcf.h"
 #include "kernel/air/AirVacuum.h"
-#include "kernel/apertures/Aperture.h"
+#include "kernel/profiles/ProfileRT.h"
 
 /******************************************
  * FluxAnalysis
@@ -544,7 +544,7 @@ void FluxAnalysis::FluxAnalysisPlanar(InstanceNode* node)
     ShapeRT* shape = (ShapeRT*) shapeKit->shapeRT.getValue();
     if (!shape || shape == 0) return;
 
-    Aperture* aperture = (Aperture*) shapeKit->aperture.getValue();
+    ProfileRT* aperture = (ProfileRT*) shapeKit->profileRT.getValue();
     BoundingBox box = aperture->getBox();
 
     int widthDivisionsError = m_widthDivisions - 1;

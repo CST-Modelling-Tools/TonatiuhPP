@@ -31,7 +31,7 @@ ShapeCube::ShapeCube()
     SO_NODE_ADD_FIELD(zSize, (2.));
 }
 
-BoundingBox ShapeCube::getBox(Aperture* aperture) const
+BoundingBox ShapeCube::getBox(ProfileRT* aperture) const
 {
     Vector3D p(
         xSize.getValue(),
@@ -43,13 +43,13 @@ BoundingBox ShapeCube::getBox(Aperture* aperture) const
     return BoundingBox(-p, p);
 }
 
-bool ShapeCube::intersect(const Ray& /*objectRay*/, double* /*tHit*/, DifferentialGeometry* /*dg*/, Aperture* aperture) const
+bool ShapeCube::intersect(const Ray& /*objectRay*/, double* /*tHit*/, DifferentialGeometry* /*dg*/, ProfileRT* aperture) const
 {
     //Yet to be implemented
     return false;
 }
 
-bool ShapeCube::intersectP(const Ray& ray, Aperture* aperture) const
+bool ShapeCube::intersectP(const Ray& ray, ProfileRT* aperture) const
 {
     double t0 = ray.tMin;
     double t1 = ray.tMax;

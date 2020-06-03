@@ -11,9 +11,9 @@ public:
     ShapeCube();
     static void initClass();
 
-    BoundingBox getBox(Aperture* aperture) const;
-    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, Aperture* aperture) const;
-    bool intersectP(const Ray& ray, Aperture* aperture) const;
+    BoundingBox getBox(ProfileRT* aperture) const;
+    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
+    bool intersectP(const Ray& ray, ProfileRT* aperture) const;
 
     trt::TONATIUH_REAL xSize;
     trt::TONATIUH_REAL ySize;

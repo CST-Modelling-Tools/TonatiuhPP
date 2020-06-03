@@ -25,7 +25,7 @@ public:
     TShapeKit();
 
     SoSFNode shapeRT;
-    SoSFNode aperture; // profileRT
+    SoSFNode profileRT;
     SoSFNode materialRT;
 
 protected:

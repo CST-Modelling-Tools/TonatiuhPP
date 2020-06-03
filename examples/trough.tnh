@@ -111,8 +111,8 @@ TSceneKit {
                         radius 0.05000000000000001
 
                       }
-                      aperture 
-                      DEF Rectangle ApertureRectangle {
+                      profileRT 
+                      DEF Rectangle ProfileRectangle {
                         fields [ SFDouble uSize, SFDouble vSize ]
                         vSize 5
 
@@ -153,8 +153,8 @@ TSceneKit {
                         focusY 1000
 
                       }
-                      aperture 
-                      DEF Rectangle ApertureRectangle {
+                      profileRT 
+                      DEF Rectangle ProfileRectangle {
                         fields [ SFDouble uSize, SFDouble vSize ]
                         vSize 5
 
@@ -193,8 +193,8 @@ TSceneKit {
                         fields [  ]
 
                       }
-                      aperture 
-                      DEF Rectangle ApertureRectangle {
+                      profileRT 
+                      DEF Rectangle ProfileRectangle {
                         fields [ SFDouble uSize, SFDouble vSize ]
                         uSize 0.2
                         vSize 5
@@ -249,8 +249,8 @@ TSceneKit {
                 fields [  ]
 
               }
-              aperture 
-              DEF Rectangle ApertureRectangle {
+              profileRT 
+              DEF Rectangle ProfileRectangle {
                 fields [ SFDouble uSize, SFDouble vSize ]
                 uSize 0.5
                 vSize 5

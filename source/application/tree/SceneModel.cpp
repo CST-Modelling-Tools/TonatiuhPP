@@ -10,7 +10,7 @@
 #include <Inventor/nodekits/SoSceneKit.h>
 #include <Inventor/nodes/SoSelection.h>
 
-#include "kernel/apertures/Aperture.h"
+#include "kernel/profiles/ProfileRT.h"
 #include "kernel/material/MaterialRT.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/scene/TSceneKit.h"
@@ -124,7 +124,7 @@ void SceneModel::generateInstanceTree(InstanceNode* instance)
         if (shape)
             addInstanceNode(instance, shape);
 
-        SoNode* aperture = shapeKit->aperture.getValue();
+        SoNode* aperture = shapeKit->profileRT.getValue();
         if (aperture)
             addInstanceNode(instance, aperture);
 
@@ -269,9 +269,9 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
             ShapeRT* shape = static_cast<ShapeRT*>(node);
             return QIcon(shape->getTypeIcon());
         }
-        else if (node->getTypeId().isDerivedFrom(Aperture::getClassTypeId()))
+        else if (node->getTypeId().isDerivedFrom(ProfileRT::getClassTypeId()))
         {
-            Aperture* aperture = static_cast<Aperture*>(node);
+            ProfileRT* aperture = static_cast<ProfileRT*>(node);
             return QIcon(aperture->getTypeIcon());
         }
         else if (node->getTypeId().isDerivedFrom(MaterialRT::getClassTypeId()))

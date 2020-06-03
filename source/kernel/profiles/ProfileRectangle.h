@@ -1,15 +1,15 @@
 #pragma once
 
-#include "kernel/apertures/Aperture.h"
+#include "kernel/profiles/ProfileRT.h"
 
 
-class TONATIUH_KERNEL ApertureRectangle: public Aperture
+class TONATIUH_KERNEL ProfileRectangle: public ProfileRT
 {
-    SO_NODE_HEADER(ApertureRectangle);
+    SO_NODE_HEADER(ProfileRectangle);
 
 public:
     static void initClass();
-    ApertureRectangle();
+    ProfileRectangle();
 
     SoSFDouble uSize;
     SoSFDouble vSize;
@@ -18,5 +18,5 @@ public:
     bool isInside(double u, double v) const;
     QVector<Vector2D> makeMesh(const QSize& dims) const;
 
-    NAME_ICON_FUNCTIONS("Rectangle", ":/images/ApertureRectangle.png")
+    NAME_ICON_FUNCTIONS("Rectangle", ":/images/ProfileRectangle.png")
 };

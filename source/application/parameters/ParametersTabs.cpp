@@ -107,7 +107,7 @@ QStringList ParametersTabs::ContainerNodeParts(SoBaseKit* kit)
     if (type == "SunKit")
         return {"transform", "icon", "tsunshape"};
     else if (type == "TShapeKit")
-        return {"shapeRT", "aperture", "materialRT", "appearance.material"};
+        return {"shapeRT", "profileRT", "materialRT", "appearance.material"};
     else
         return {"transform"};
 }

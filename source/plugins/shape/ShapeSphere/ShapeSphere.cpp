@@ -2,7 +2,7 @@
 
 #include <Inventor/sensors/SoNodeSensor.h>
 
-#include "kernel/apertures/Aperture.h"
+#include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/BoundingBox.h"
@@ -32,7 +32,7 @@ ShapeSphere::~ShapeSphere()
     delete m_sensor;
 }
 
-BoundingBox ShapeSphere::getBox(Aperture* aperture) const
+BoundingBox ShapeSphere::getBox(ProfileRT* aperture) const
 {
     BoundingBox box = aperture->getBox();
     double phiMin = gcf::TwoPi*box.pMin.x;
@@ -78,7 +78,7 @@ BoundingBox ShapeSphere::getBox(Aperture* aperture) const
     );
 }
 
-bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, Aperture* aperture) const
+bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const
 {
     const Vector3D& rayO = ray.origin;
     const Vector3D& rayD = ray.direction();
@@ -124,7 +124,7 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
 
 void ShapeSphere::updateShapeGL(TShapeKit* parent)
 {
-    Aperture* aperture = (Aperture*) parent->aperture.getValue();
+    ProfileRT* aperture = (ProfileRT*) parent->profileRT.getValue();
     BoundingBox box = aperture->getBox();
     Vector3D v = box.extent();
 

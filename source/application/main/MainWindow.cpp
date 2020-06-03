@@ -80,7 +80,7 @@
 #include "kernel/random/Random.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/run/RayTracer.h"
-#include "kernel/apertures/Aperture.h"
+#include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
@@ -3033,7 +3033,7 @@ void MainWindow::SetupActionsInsertShape()
     button->setMenu(menu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
 
-    // apertures
+    // profiles
     menu = ui->menuInsert->findChild<QMenu*>("menuAperture");
 
     for (ApertureFactory* f : m_pluginManager->getApertureFactories()) {
@@ -3048,7 +3048,7 @@ void MainWindow::SetupActionsInsertShape()
 
     button = new QPushButton;
     button->setIcon(QIcon(":/images/scene/nodeAperture.png"));
-    button->setToolTip("Apertures");
+    button->setToolTip("Profiles");
     button->setMenu(menu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
 }

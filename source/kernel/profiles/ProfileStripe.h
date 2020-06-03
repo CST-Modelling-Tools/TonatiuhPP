@@ -1,15 +1,15 @@
 #pragma once
 
-#include "kernel/apertures/Aperture.h"
+#include "kernel/profiles/ProfileRT.h"
 
 
-class TONATIUH_KERNEL ApertureStripe: public Aperture
+class TONATIUH_KERNEL ProfileStripe: public ProfileRT
 {
-    SO_NODE_HEADER(ApertureStripe);
+    SO_NODE_HEADER(ProfileStripe);
 
 public:
     static void initClass();
-    ApertureStripe();
+    ProfileStripe();
 
     SoSFDouble uMin;
     SoSFDouble uMax;
@@ -20,5 +20,5 @@ public:
     bool isInside(double u, double v) const;
     QVector<Vector2D> makeMesh(const QSize& dims) const;
 
-    NAME_ICON_FUNCTIONS("Strip", ":/images/ApertureStripe.png")
+    NAME_ICON_FUNCTIONS("Strip", ":/images/ProfileStripe.png")
 };

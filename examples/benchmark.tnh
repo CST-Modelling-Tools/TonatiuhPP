@@ -80,8 +80,8 @@ TSceneKit {
             fields [ SFDouble radius ]
 
           }
-          aperture 
-          DEF Rectangle ApertureRectangle {
+          profileRT 
+          DEF Rectangle ProfileRectangle {
             fields [ SFDouble uSize, SFDouble vSize ]
 
           }

@@ -1,33 +1,33 @@
-#include "ApertureRectangle.h"
+#include "ProfileRectangle.h"
 
 
-SO_NODE_SOURCE(ApertureRectangle)
+SO_NODE_SOURCE(ProfileRectangle)
 
-void ApertureRectangle::initClass()
+void ProfileRectangle::initClass()
 {
-     SO_NODE_INIT_CLASS(ApertureRectangle, Aperture, "Aperture");
+     SO_NODE_INIT_CLASS(ProfileRectangle, ProfileRT, "Profile");
 }
 
-ApertureRectangle::ApertureRectangle()
+ProfileRectangle::ProfileRectangle()
 {
-    SO_NODE_CONSTRUCTOR(ApertureRectangle);
+    SO_NODE_CONSTRUCTOR(ProfileRectangle);
     SO_NODE_ADD_FIELD( uSize, (1.) );
     SO_NODE_ADD_FIELD( vSize, (1.) );
 }
 
-BoundingBox ApertureRectangle::getBox() const
+BoundingBox ProfileRectangle::getBox() const
 {
     Vector3D v(uSize.getValue()/2., vSize.getValue()/2., 0.);
     return BoundingBox(-v, v);
 }
 
-bool ApertureRectangle::isInside(double u, double v) const
+bool ProfileRectangle::isInside(double u, double v) const
 {
     return 2.*std::abs(u) <= uSize.getValue() &&
            2.*std::abs(v) <= vSize.getValue();
 }
 
-QVector<Vector2D> ApertureRectangle::makeMesh(const QSize& dims) const
+QVector<Vector2D> ProfileRectangle::makeMesh(const QSize& dims) const
 {
     const int iMax = dims.width();
     const int jMax = dims.height();

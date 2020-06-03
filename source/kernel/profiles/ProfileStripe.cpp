@@ -1,23 +1,23 @@
-#include "ApertureStripe.h"
+#include "ProfileStripe.h"
 
 
-SO_NODE_SOURCE(ApertureStripe)
+SO_NODE_SOURCE(ProfileStripe)
 
-void ApertureStripe::initClass()
+void ProfileStripe::initClass()
 {
-     SO_NODE_INIT_CLASS(ApertureStripe, Aperture, "Aperture");
+     SO_NODE_INIT_CLASS(ProfileStripe, ProfileRT, "Profile");
 }
 
-ApertureStripe::ApertureStripe()
+ProfileStripe::ProfileStripe()
 {
-    SO_NODE_CONSTRUCTOR(ApertureStripe);
+    SO_NODE_CONSTRUCTOR(ProfileStripe);
     SO_NODE_ADD_FIELD( uMin, (-0.5) );
     SO_NODE_ADD_FIELD( uMax, (0.5) );
     SO_NODE_ADD_FIELD( vMin, (-0.5) );
     SO_NODE_ADD_FIELD( vMax, (0.5) );
 }
 
-BoundingBox ApertureStripe::getBox() const
+BoundingBox ProfileStripe::getBox() const
 {
     return BoundingBox(
         Vector3D(uMin.getValue(), vMin.getValue(), 0.),
@@ -25,13 +25,13 @@ BoundingBox ApertureStripe::getBox() const
     );
 }
 
-bool ApertureStripe::isInside(double u, double v) const
+bool ProfileStripe::isInside(double u, double v) const
 {
     return uMin.getValue() <= u && u <= uMax.getValue() &&
            vMin.getValue() <= v && v <= vMax.getValue();
 }
 
-QVector<Vector2D> ApertureStripe::makeMesh(const QSize& dims) const
+QVector<Vector2D> ProfileStripe::makeMesh(const QSize& dims) const
 {
     const int iMax = dims.width();
     const int jMax = dims.height();

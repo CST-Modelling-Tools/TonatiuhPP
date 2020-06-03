@@ -1,6 +1,6 @@
 #include "ShapeParabolic.h"
 
-#include "kernel/apertures/Aperture.h"
+#include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/BoundingBox.h"
@@ -22,7 +22,7 @@ ShapeParabolic::ShapeParabolic()
     SO_NODE_ADD_FIELD( focusY, (1.) );
 }
 
-BoundingBox ShapeParabolic::getBox(Aperture* aperture) const
+BoundingBox ShapeParabolic::getBox(ProfileRT* aperture) const
 {  
     BoundingBox box = aperture->getBox();
     Vector3D v = box.absMax();
@@ -30,7 +30,7 @@ BoundingBox ShapeParabolic::getBox(Aperture* aperture) const
     return box;
 }
 
-bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, Aperture* aperture) const
+bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const
 {
     const Vector3D& rayO = ray.origin;
     const Vector3D& rayD = ray.direction();
@@ -72,7 +72,7 @@ bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometr
 
 void ShapeParabolic::updateShapeGL(TShapeKit* parent)
 {
-    Aperture* aperture = (Aperture*) parent->aperture.getValue();
+    ProfileRT* aperture = (ProfileRT*) parent->profileRT.getValue();
     BoundingBox box = aperture->getBox();
     Vector3D v = box.extent();
 

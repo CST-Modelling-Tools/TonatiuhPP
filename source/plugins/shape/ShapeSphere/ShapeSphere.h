@@ -14,8 +14,8 @@ public:
     static void initClass();
     ShapeSphere();
 
-    BoundingBox getBox(Aperture* aperture) const;
-    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, Aperture* aperture) const;
+    BoundingBox getBox(ProfileRT* aperture) const;
+    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
 
     SoSFDouble radius; // scaling?
 

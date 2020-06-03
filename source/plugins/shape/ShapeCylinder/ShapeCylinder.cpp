@@ -1,6 +1,6 @@
 #include "ShapeCylinder.h"
 
-#include "kernel/apertures/Aperture.h"
+#include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/BoundingBox.h"
@@ -21,7 +21,7 @@ ShapeCylinder::ShapeCylinder()
     SO_NODE_ADD_FIELD( radius, (1.) );
 }
 
-BoundingBox ShapeCylinder::getBox(Aperture* aperture) const
+BoundingBox ShapeCylinder::getBox(ProfileRT* aperture) const
 {
     BoundingBox box = aperture->getBox();
     double phiMin = gcf::TwoPi*box.pMin.x;
@@ -52,7 +52,7 @@ BoundingBox ShapeCylinder::getBox(Aperture* aperture) const
     );
 }
 
-bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, Aperture* aperture) const
+bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const
 {
     const Vector3D& rayO = ray.origin;
     const Vector3D& rayD = ray.direction();
@@ -97,7 +97,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
 
 void ShapeCylinder::updateShapeGL(TShapeKit* parent)
 {
-    Aperture* aperture = (Aperture*) parent->aperture.getValue();
+    ProfileRT* aperture = (ProfileRT*) parent->profileRT.getValue();
     BoundingBox box = aperture->getBox();
     Vector3D v = box.extent();
 

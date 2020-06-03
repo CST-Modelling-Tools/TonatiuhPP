@@ -8,9 +8,9 @@
 #include "kernel/air/AirPolynomial.h"
 #include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
-#include "kernel/apertures/ApertureRectangle.h"
-#include "kernel/apertures/ApertureStripe.h"
-#include "kernel/apertures/ApertureRing.h"
+#include "kernel/profiles/ProfileRectangle.h"
+#include "kernel/profiles/ProfileStripe.h"
+#include "kernel/profiles/ProfileRing.h"
 #include "kernel/material/MaterialVirtual.h"
 #include "kernel/material/MaterialAbsorber.h"
 #include "kernel/photons/PhotonsDefault.h"
@@ -49,7 +49,7 @@ PluginManager::PluginManager()
 
     TShapeKit::initClass();
     ShapeRT::initClass();
-    Aperture::initClass();
+    ProfileRT::initClass();
     MaterialRT::initClass();
 
     SkyBackground::initClass();
@@ -77,9 +77,9 @@ void PluginManager::load(QDir dir)
     loadPlugin(new AirFactoryT<AirPolynomial>);
     loadPlugin(new ShapeFactoryT<ShapePlanar>);
 //    loadPlugin(new ShapeFactoryT<ShapeCube>);
-    loadPlugin(new ApertureFactoryT<ApertureRectangle>);
-    loadPlugin(new ApertureFactoryT<ApertureStripe>);
-    loadPlugin(new ApertureFactoryT<ApertureRing>);
+    loadPlugin(new ApertureFactoryT<ProfileRectangle>);
+    loadPlugin(new ApertureFactoryT<ProfileStripe>);
+    loadPlugin(new ApertureFactoryT<ProfileRing>);
     loadPlugin(new MaterialFactoryT<MaterialAbsorber>);
     loadPlugin(new MaterialFactoryT<MaterialVirtual>);
     loadPlugin(new RandomFactoryT<RandomSTL>);

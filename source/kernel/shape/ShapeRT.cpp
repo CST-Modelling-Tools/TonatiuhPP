@@ -8,7 +8,7 @@
 #include <Inventor/nodes/SoQuadMesh.h>
 
 #include "kernel/scene/TShapeKit.h"
-#include "kernel/apertures/Aperture.h"
+#include "kernel/profiles/ProfileRT.h"
 #include "libraries/geometry/Vector3D.h"
 #include "libraries/geometry/BoundingBox.h"
 
@@ -21,7 +21,7 @@ void ShapeRT::initClass()
     SO_NODE_INIT_ABSTRACT_CLASS(ShapeRT, SoNode, "Node");
 }
 
-BoundingBox ShapeRT::getBox(Aperture* aperture) const
+BoundingBox ShapeRT::getBox(ProfileRT* aperture) const
 {
     Q_UNUSED(aperture)
     return BoundingBox::UnitCube;
@@ -42,7 +42,7 @@ BoundingBox ShapeRT::getBox(Aperture* aperture) const
 
 void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals, bool reverseClock)
 {
-    Aperture* aperture = (Aperture*) parent->aperture.getValue();
+    ProfileRT* aperture = (ProfileRT*) parent->profileRT.getValue();
     QVector<Vector2D> uvs = aperture->makeMesh(dims);
 
     QVector<SbVec3f> vertices;

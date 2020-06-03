@@ -10,7 +10,7 @@ class Ray;
 struct DifferentialGeometry;
 class QSize;
 class TShapeKit;
-class Aperture;
+class ProfileRT;
 
 
 class TONATIUH_KERNEL ShapeRT: public SoNode
@@ -22,12 +22,12 @@ public:
 
     virtual double getArea() const {return -1.;}
     virtual double getVolume() const {return 0.;}
-    virtual BoundingBox getBox(Aperture* aperture) const;
+    virtual BoundingBox getBox(ProfileRT* aperture) const;
 
     // with computing dg, ray in local coordinates
-    virtual bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, Aperture* aperture) const = 0;
+    virtual bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const = 0;
     // without computing dg
-    virtual bool intersectP(const Ray& ray, Aperture* aperture) const {return intersect(ray, 0, 0, aperture);}
+    virtual bool intersectP(const Ray& ray, ProfileRT* aperture) const {return intersect(ray, 0, 0, aperture);}
 
     NAME_ICON_FUNCTIONS("X", ":/ShapeX.png")
 

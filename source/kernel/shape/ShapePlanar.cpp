@@ -1,6 +1,6 @@
 #include "ShapePlanar.h"
 
-#include "kernel/apertures/Aperture.h"
+#include "kernel/profiles/ProfileRT.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/BoundingBox.h"
 #include "libraries/geometry/Ray.h"
@@ -18,7 +18,7 @@ ShapePlanar::ShapePlanar()
     SO_NODE_CONSTRUCTOR(ShapePlanar);
 }
 
-BoundingBox ShapePlanar::getBox(Aperture* aperture) const
+BoundingBox ShapePlanar::getBox(ProfileRT* aperture) const
 {
     BoundingBox box = aperture->getBox();
     double zMax = 0.01*box.extent().max();
@@ -27,7 +27,7 @@ BoundingBox ShapePlanar::getBox(Aperture* aperture) const
     return box;
 }
 
-bool ShapePlanar::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, Aperture* aperture) const
+bool ShapePlanar::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const
 {
     // r0_z + d_z*t = 0
     if (ray.origin.z == 0 && ray.direction().z == 0) return false;

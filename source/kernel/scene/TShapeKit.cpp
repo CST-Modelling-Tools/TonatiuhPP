@@ -5,7 +5,7 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/sensors/SoFieldSensor.h>
 
-#include "kernel/apertures/ApertureRectangle.h"
+#include "kernel/profiles/ProfileRectangle.h"
 #include "kernel/material/MaterialAbsorber.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "kernel/shape/ShapePlanar.h"
@@ -28,7 +28,7 @@ TShapeKit::TShapeKit()
     isBuiltIn = TRUE;
 
     SO_NODE_ADD_FIELD( shapeRT, (0) );
-    SO_NODE_ADD_FIELD( aperture, (0) );
+    SO_NODE_ADD_FIELD( profileRT, (0) );
     SO_NODE_ADD_FIELD( materialRT, (0) );
     SO_KIT_INIT_INSTANCE();
 
@@ -39,9 +39,9 @@ TShapeKit::TShapeKit()
     sRT->setName(sRT->getTypeName());
     shapeRT = sRT;
 
-    Aperture* a = new ApertureRectangle;
+    ProfileRT* a = new ProfileRectangle;
     a->setName(a->getTypeName());
-    aperture = a;
+    profileRT = a;
 
     MaterialRT* mRT = new MaterialAbsorber;
     mRT->setName(mRT->getTypeName());
@@ -52,7 +52,7 @@ TShapeKit::TShapeKit()
     setPart("material", materialGL);
 
     m_sensorA = new SoFieldSensor(onSensor, this);
-    m_sensorA->attach(&aperture);
+    m_sensorA->attach(&profileRT);
 }
 
 TShapeKit::~TShapeKit()
