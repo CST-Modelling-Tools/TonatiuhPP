@@ -3,14 +3,15 @@
 #include "kernel/scene/TFactory.h"
 
 class TSeparatorKit;
+class PluginManager;
 
 
 
 class ComponentFactory: public TFactory
 {
 public:
-    virtual TSeparatorKit* CreateTComponent(PluginManager* pPluginManager) const = 0;
-    virtual TSeparatorKit* CreateTComponent(PluginManager* pPluginManager, int numberofParameters, QVector<QVariant> parametersList) const = 0;
+    virtual TSeparatorKit* CreateTComponent(PluginManager* pm) const {}
+    virtual TSeparatorKit* CreateTComponent(PluginManager* pm, int numberofParameters, QVector<QVariant> parametersList) const {}
 };
 
 Q_DECLARE_INTERFACE(ComponentFactory, "tonatiuh.ComponentFactory")

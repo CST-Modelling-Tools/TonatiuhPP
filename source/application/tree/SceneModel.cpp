@@ -553,8 +553,25 @@ void SceneModel::removeCoinNode(int row, SoBaseKit* parent)
     emit layoutChanged();
 }
 
-void SceneModel::replaceCoinNode(SoBaseKit* parent, int row, SoNode* node)
+void SceneModel::replaceCoinNode(TShapeKit* parent, SoNode* node)
 {
+    int row;
+    if (dynamic_cast<ShapeRT*>(node))
+    {
+        row = InstanceNode::IndexShapeRT;
+        parent->shapeRT = node;
+    }
+    else if (dynamic_cast<ProfileRT*>(node))
+    {
+        row = InstanceNode::IndexProfileRT;
+        parent->profileRT = node;
+    }
+    else if (dynamic_cast<MaterialRT*>(node))
+    {
+        row = InstanceNode::IndexMaterialRT;
+        parent->materialRT = node;
+    }
+
     for (InstanceNode* instanceParent : m_mapCoinQt[parent])
     {
         // remove

@@ -4,6 +4,7 @@
 class QModelIndex;
 class SoBaseKit;
 class SceneModel;
+class SoNode;
 
 //!  CmdCopy class is the copy command stored in the command stack.
 /*!

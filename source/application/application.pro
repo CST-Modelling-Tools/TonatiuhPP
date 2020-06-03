@@ -11,7 +11,6 @@ QT += gui # QVector3D
 LIBS += -lTonatiuh-Kernel -lTonatiuh-Libraries -lOpengl32
 
 HEADERS += \
-    $$files(actions/*.h) \
     $$files(calculator/*.h) \
     $$files(commands/*.h) \
     $$files(run/*.h) \
@@ -23,7 +22,6 @@ HEADERS += \
     $$files(widgets/*.h)
 
 SOURCES += \
-    $$files(actions/*.cpp) \
     $$files(calculator/*.cpp) \
     $$files(commands/*.cpp) \
     $$files(run/*.cpp) \

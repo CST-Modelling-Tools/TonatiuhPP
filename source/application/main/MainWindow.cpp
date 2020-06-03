@@ -45,21 +45,14 @@
 #include "libraries/geometry/Ray.h"
 #include "libraries/geometry/Transform.h"
 
-#include "actions/ActionInsertComponent.h"
-#include "actions/ActionInsertShape.h"
-#include "actions/ActionInsertProfile.h"
-#include "actions/ActionInsertMaterial.h"
-#include "actions/ActionInsertTracker.h"
-
+#include "commands/ActionInsert.h"
 #include "commands/CmdChangeNodeName.h"
 #include "commands/CmdCopy.h"
 #include "commands/CmdCut.h"
 #include "commands/CmdDelete.h"
 #include "commands/CmdDeleteTracker.h"
-#include "commands/CmdInsertMaterial.h"
 #include "commands/CmdInsertSeparatorKit.h"
 #include "commands/CmdInsertShape.h"
-#include "commands/CmdInsertProfile.h"
 #include "commands/CmdInsertShapeKit.h"
 #include "commands/CmdInsertTracker.h"
 #include "commands/CmdLightKitModified.h"
@@ -234,11 +227,11 @@ border-width: 0 0 1 0;
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete m_commandView;
     delete m_pluginManager;
     delete m_sceneModel;
     delete m_document;
     delete m_commandStack;
-    delete m_commandView;
     delete m_rand;
     delete m_photons;
 }
@@ -321,6 +314,8 @@ void MainWindow::SetupCommandView()
     m_commandView = new QUndoView(m_commandStack);
     m_commandView->setWindowTitle("Command List");
     m_commandView->setAttribute(Qt::WA_QuitOnClose, false);
+    int q = fontMetrics().height();
+    m_commandView->resize(24*q, 16*q);
 
     connect(m_commandStack, SIGNAL(canRedoChanged(bool)),
             ui->actionRedo, SLOT(setEnabled(bool)) );
@@ -2520,7 +2515,7 @@ void MainWindow::CreateMaterial(MaterialFactory* factory)
     MaterialRT* material = factory->create();
     material->setName(factory->name().toStdString().c_str());
 
-    CmdInsertMaterial* cmd = new CmdInsertMaterial(kit, material, m_sceneModel);
+    CmdInsertShape* cmd = new CmdInsertShape(kit, material, m_sceneModel);
     m_commandStack->push(cmd);
 
     setDocumentModified(true);
@@ -2591,7 +2586,7 @@ void MainWindow::CreateProfile(ProfileFactory* factory)
     ProfileRT* profile = factory->create();
     profile->setName(factory->name().toStdString().c_str());
 
-    CmdInsertProfile* cmd = new CmdInsertProfile(kit, profile, m_sceneModel);
+    CmdInsertShape* cmd = new CmdInsertShape(kit, profile, m_sceneModel);
     m_commandStack->push(cmd);
 
 //    UpdateLightSize();
@@ -2985,16 +2980,13 @@ void MainWindow::SetupActionsInsertComponent()
     for (int i = 0; i < componentFactoryList.size(); ++i)
     {
         ComponentFactory* pComponentFactory = componentFactoryList[i];
-
-        ActionInsertComponent* actionInsertComponent = new ActionInsertComponent(pComponentFactory->name(), this, pComponentFactory);
-        actionInsertComponent->setIcon(pComponentFactory->icon() );
-
-        menu->addAction(actionInsertComponent);
+        ActionInsert* a = new ActionInsert(pComponentFactory, this);
+        menu->addAction(a);
         //m_materialsToolBar->addAction( actionInsertComponent );
         //m_materialsToolBar->addSeparator();
-        connect(actionInsertComponent, SIGNAL(triggered()),
-                actionInsertComponent, SLOT(OnActionInsertComponentTriggered()) );
-        connect(actionInsertComponent, SIGNAL(CreateComponent(ComponentFactory*)),
+        connect(a, SIGNAL(triggered()),
+                a, SLOT(OnActionInsertComponentTriggered()) );
+        connect(a, SIGNAL(CreateComponent(ComponentFactory*)),
                 this, SLOT(CreateComponent(ComponentFactory*)) );
     }
 }
@@ -3004,7 +2996,7 @@ void MainWindow::SetupActionsInsertMaterial()
     QMenu* menu = ui->menuInsert->findChild<QMenu*>("menuMaterial");
 
     for (MaterialFactory* f : m_pluginManager->getMaterialFactories()) {
-        ActionInsertMaterial* a = new ActionInsertMaterial(f, this);
+        ActionInsert* a = new ActionInsert(f, this);
         menu->addAction(a);
         connect(
             a, SIGNAL(CreateMaterial(MaterialFactory*)),
@@ -3037,7 +3029,7 @@ void MainWindow::SetupActionsInsertShape()
 
     for (ShapeFactory* f : m_pluginManager->getShapeFactories()) {
         if (f) {
-            ActionInsertShape* a = new ActionInsertShape(f, this);
+            ActionInsert* a = new ActionInsert(f, this);
             menu->addAction(a);
 //            toolbar->addAction(a);
             connect(
@@ -3060,7 +3052,7 @@ void MainWindow::SetupActionsInsertShape()
     menu = ui->menuInsert->findChild<QMenu*>("menuProfile");
 
     for (ProfileFactory* f : m_pluginManager->getProfileFactories()) {
-        ActionInsertProfile* a = new ActionInsertProfile(f, this);
+        ActionInsert* a = new ActionInsert(f, this);
         menu->addAction(a);
         connect(
             a, SIGNAL(CreateProfile(ProfileFactory*)),
@@ -3081,7 +3073,7 @@ void MainWindow::SetupActionsInsertTracker()
 
     for (TrackerFactory* f : m_pluginManager->getTrackerFactories())
     {
-        ActionInsertTracker* a = new ActionInsertTracker(f, this);
+        ActionInsert* a = new ActionInsert(f, this);
         menu->addAction(a);
         connect(
             a, SIGNAL(CreateTracker(TrackerFactory*)),

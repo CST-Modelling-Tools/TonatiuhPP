@@ -48,9 +48,9 @@ CmdModifyParameter::CmdModifyParameter(SoNode* node, QString name, QString value
  */
 void CmdModifyParameter::undo()
 {
-    SoField* parameterField = m_coinNode->getField( m_parameterName.toStdString().c_str() );
-    if (parameterField)
-        parameterField->set( m_oldValue.toStdString().c_str() );
+    SoField* field = m_coinNode->getField( m_parameterName.toStdString().c_str() );
+    if (field)
+        field->set( m_oldValue.toStdString().c_str() );
 }
 
 /*!
