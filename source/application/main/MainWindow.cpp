@@ -46,8 +46,9 @@
 #include "libraries/geometry/Transform.h"
 
 #include "actions/ActionInsertComponent.h"
-#include "actions/ActionInsertMaterial.h"
 #include "actions/ActionInsertShape.h"
+#include "actions/ActionInsertProfile.h"
+#include "actions/ActionInsertMaterial.h"
 #include "actions/ActionInsertTracker.h"
 
 #include "commands/CmdChangeNodeName.h"
@@ -58,6 +59,7 @@
 #include "commands/CmdInsertMaterial.h"
 #include "commands/CmdInsertSeparatorKit.h"
 #include "commands/CmdInsertShape.h"
+#include "commands/CmdInsertProfile.h"
 #include "commands/CmdInsertShapeKit.h"
 #include "commands/CmdInsertTracker.h"
 #include "commands/CmdLightKitModified.h"
@@ -1767,6 +1769,8 @@ void MainWindow::Run()
     QElapsedTimer timer;
     timer.start();
 
+    UpdateLightSize();
+
     if (ReadyForRaytracing(instanceRoot, instanceSun, sunShape, sunAperture, transmissivity) )
     {
         if (!m_photons->getExporter() )
@@ -1784,8 +1788,6 @@ void MainWindow::Run()
             InstanceNode* node = m_sceneModel->getInstance(m_sceneModel->IndexFromUrl(s));
             exportSuraceList << node;
         }
-
-        UpdateLightSize();
 
         // compute bounding boxes and world to object transforms
         instanceRoot->updateTree(Transform::Identity);
@@ -2557,18 +2559,39 @@ void MainWindow::CreateShape(ShapeFactory* factory)
  */
 void MainWindow::CreateShape(ShapeFactory* factory, int /*numberofParameters*/, QVector<QVariant> parametersList)
 {
-    QModelIndex parentIndex = ui->sceneModelView->currentIndex();
-    if (!parentIndex.isValid()) return;
+    QModelIndex index = ui->sceneModelView->currentIndex();
+    if (!index.isValid()) return;
 
-    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
-    SoNode* parentNode = parentInstance->getNode();
-    TShapeKit* kit = dynamic_cast<TShapeKit*>(parentNode);
+    InstanceNode* instance = m_sceneModel->getInstance(index);
+    SoNode* node = instance->getNode();
+    TShapeKit* kit = dynamic_cast<TShapeKit*>(node);
     if (!kit) return;
 
     ShapeRT* shape = factory->create(parametersList);
     shape->setName(factory->name().toStdString().c_str() );
 
     CmdInsertShape* cmd = new CmdInsertShape(kit, shape, m_sceneModel);
+    m_commandStack->push(cmd);
+
+//    UpdateLightSize();
+    setDocumentModified(true);
+}
+
+void MainWindow::CreateProfile(ProfileFactory* factory)
+{
+    QModelIndex index = ui->sceneModelView->currentIndex();
+    if (!index.isValid()) return;
+    ui->sceneModelView->expand(index);
+
+    InstanceNode* instance = m_sceneModel->getInstance(index);
+    SoNode* node = instance->getNode();
+    TShapeKit* kit = dynamic_cast<TShapeKit*>(node);
+    if (!kit) return;
+
+    ProfileRT* profile = factory->create();
+    profile->setName(factory->name().toStdString().c_str());
+
+    CmdInsertProfile* cmd = new CmdInsertProfile(kit, profile, m_sceneModel);
     m_commandStack->push(cmd);
 
 //    UpdateLightSize();
@@ -2850,17 +2873,17 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
 
     //Check if there is a light and is properly configured
     if (!sceneKit->getPart("lightList[0]", false) ) return false;
-    SunKit* lightKit = static_cast< SunKit* >(sceneKit->getPart("lightList[0]", false) );
+    SunKit* sunKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
+//    sunKit->updateTransform();
 
+    if (!sunKit->getPart("tsunshape", false)) return false;
+    sunShape = static_cast<SunShape*>(sunKit->getPart("tsunshape", false));
 
-    if (!lightKit->getPart("tsunshape", false)) return false;
-    sunShape = static_cast<SunShape*>(lightKit->getPart("tsunshape", false));
+    if (!sunKit->getPart("icon", false)) return false;
+    sunAperture = static_cast<SunAperture*>(sunKit->getPart("icon", false));
 
-    if (!lightKit->getPart("icon", false)) return false;
-    sunAperture = static_cast<SunAperture*>(lightKit->getPart("icon", false));
-
-    if (!lightKit->getPart("transform", false)) return false;
-    SoTransform* sunTransform = static_cast<SoTransform*>(lightKit->getPart("transform", false));
+    if (!sunKit->getPart("transform", false)) return false;
+    SoTransform* sunTransform = static_cast<SoTransform*>(sunKit->getPart("transform", false));
     instanceSun->setTransform(tgf::makeTransform(sunTransform));
 
     QVector<RandomFactory*> randomDeviateFactoryList = m_pluginManager->getRandomFactories();
@@ -3034,20 +3057,19 @@ void MainWindow::SetupActionsInsertShape()
     findChild<QToolBar*>("insertToolBar")->addWidget(button);
 
     // profiles
-    menu = ui->menuInsert->findChild<QMenu*>("menuAperture");
+    menu = ui->menuInsert->findChild<QMenu*>("menuProfile");
 
-    for (ApertureFactory* f : m_pluginManager->getApertureFactories()) {
-//        ActionInsertMaterial* a = new ActionInsertMaterial(f, this);
-//        menu->addAction(a);
-        menu->addAction(f->icon(), f->name());
-//        connect(
-//            a, SIGNAL(CreateMaterial(MaterialFactory*)),
-//            this, SLOT(CreateMaterial(MaterialFactory*))
-//        );
+    for (ProfileFactory* f : m_pluginManager->getProfileFactories()) {
+        ActionInsertProfile* a = new ActionInsertProfile(f, this);
+        menu->addAction(a);
+        connect(
+            a, SIGNAL(CreateProfile(ProfileFactory*)),
+            this, SLOT(CreateProfile(ProfileFactory*))
+        );
     }
 
     button = new QPushButton;
-    button->setIcon(QIcon(":/images/scene/nodeAperture.png"));
+    button->setIcon(QIcon(":/images/scene/nodeProfile.png"));
     button->setToolTip("Profiles");
     button->setMenu(menu);
     findChild<QToolBar*>("insertToolBar")->addWidget(button);

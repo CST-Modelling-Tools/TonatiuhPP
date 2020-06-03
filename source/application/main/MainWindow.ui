@@ -136,16 +136,16 @@
      </property>
      <addaction name="separator"/>
     </widget>
-    <widget class="QMenu" name="menuAperture">
+    <widget class="QMenu" name="menuProfile">
      <property name="title">
-      <string>Aperture</string>
+      <string>Profile</string>
      </property>
     </widget>
     <addaction name="actionNode"/>
     <addaction name="actionSurfaceNode"/>
     <addaction name="separator"/>
     <addaction name="menuShape"/>
-    <addaction name="menuAperture"/>
+    <addaction name="menuProfile"/>
     <addaction name="menuMaterial"/>
     <addaction name="menuTracker"/>
     <addaction name="separator"/>

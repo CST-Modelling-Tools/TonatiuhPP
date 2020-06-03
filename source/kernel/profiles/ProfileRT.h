@@ -36,17 +36,17 @@ protected:
 
 #include "kernel/scene/TFactory.h"
 
-class ApertureFactory: public TFactory
+class ProfileFactory: public TFactory
 {
 public:
     virtual ProfileRT* create() const = 0;
 };
 
-Q_DECLARE_INTERFACE(ApertureFactory, "tonatiuh.ApertureFactory")
+Q_DECLARE_INTERFACE(ProfileFactory, "tonatiuh.ProfileFactory")
 
 
 template<class T>
-class ApertureFactoryT: public ApertureFactory
+class ProfileFactoryT: public ProfileFactory
 {
 public:
     QString name() const {return T::getClassName();}

@@ -85,15 +85,16 @@ void SunKit::updateTransform()
     SbRotation azRotation(SbVec3f(0., 0., -1.), azimuth.getValue());
     transform->rotation = elRotation*azRotation;
 
-    SbMatrix mr;
-    mr.setRotate(transform->rotation.getValue());
-    SbVec3f res;
-    mr.multVecMatrix(SbVec3f(0., 0., -10.), res);
-    transform->translation = res;
+//    SbMatrix mr;
+//    mr.setRotate(transform->rotation.getValue());
+//    SbVec3f res;
+//    mr.multVecMatrix(SbVec3f(0., 0., -10.), res);
+//    transform->translation = res;
 }
 
 void SunKit::setBox(BoundingBox box)
 {
+    updateTransform();
     SoTransform* transform = (SoTransform*) getPart("transform", true);
     SbMatrix mr;
     mr.setRotate(transform->rotation.getValue());

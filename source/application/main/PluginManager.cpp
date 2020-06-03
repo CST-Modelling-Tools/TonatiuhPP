@@ -77,9 +77,9 @@ void PluginManager::load(QDir dir)
     loadPlugin(new AirFactoryT<AirPolynomial>);
     loadPlugin(new ShapeFactoryT<ShapePlanar>);
 //    loadPlugin(new ShapeFactoryT<ShapeCube>);
-    loadPlugin(new ApertureFactoryT<ProfileRectangle>);
-    loadPlugin(new ApertureFactoryT<ProfileStripe>);
-    loadPlugin(new ApertureFactoryT<ProfileRing>);
+    loadPlugin(new ProfileFactoryT<ProfileRectangle>);
+    loadPlugin(new ProfileFactoryT<ProfileStripe>);
+    loadPlugin(new ProfileFactoryT<ProfileRing>);
     loadPlugin(new MaterialFactoryT<MaterialAbsorber>);
     loadPlugin(new MaterialFactoryT<MaterialVirtual>);
     loadPlugin(new RandomFactoryT<RandomSTL>);
@@ -128,11 +128,11 @@ void PluginManager::loadPlugin(TFactory* p)
         m_materialFactories << f;
         m_materialMap[f->name()] = f;
     }
-    else if (auto f = dynamic_cast<ApertureFactory*>(p))
+    else if (auto f = dynamic_cast<ProfileFactory*>(p))
     {
         f->init();
-        m_apertureFactories << f;
-        m_apertureMap[f->name()] = f;
+        m_profileFactories << f;
+        m_profileMap[f->name()] = f;
     }
     else if (auto f = dynamic_cast<RandomFactory*>(p))
     {

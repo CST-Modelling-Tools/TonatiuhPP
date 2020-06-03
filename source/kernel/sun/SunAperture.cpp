@@ -171,7 +171,15 @@ void SunAperture::findTexture(int xPixels, int yPixels, QVector<QPair<TShapeKit*
         }
     }
 
-    SetLightSourceArea(xPixels, yPixels, bmp);
+    m_xCells = xPixels;
+    m_yCells = yPixels;
+
+    m_cells.clear();
+
+    for (int i = 0; i < m_xCells; ++i)
+        for (int j = 0; j < m_yCells; ++j)
+            if (bmp[i*m_yCells + j] > 0)
+                m_cells.push_back(QPair<int, int>(i, j));
 
     Q_UNUSED(sunKit)
 //    QVector<uchar> bmpTr;
@@ -184,19 +192,6 @@ void SunAperture::findTexture(int xPixels, int yPixels, QVector<QPair<TShapeKit*
 //    texture->image.setValue(SbVec2s(xPixels, yPixels), 1, bmpTr.data()); // 1 is for gray
 //    texture->wrapS = SoTexture2::CLAMP;
 //    texture->wrapT = SoTexture2::CLAMP;
-}
-
-void SunAperture::SetLightSourceArea(int w, int h, QVector<uchar> bmp)
-{
-    m_xCells = w;
-    m_yCells = h;
-
-    m_cells.clear();
-
-    for (int i = 0; i < m_xCells; ++i)
-        for (int j = 0; j < m_yCells; ++j)
-            if (bmp[i*h + j] > 0)
-                m_cells.push_back(QPair<int, int>(i, j));
 }
 
 void SunAperture::computeBBox(SoAction*, SbBox3f& box, SbVec3f& /*center*/)

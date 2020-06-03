@@ -12,7 +12,7 @@
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
 CmdInsertShape::CmdInsertShape(TShapeKit* shapeKit, ShapeRT* shape, SceneModel* model, QUndoCommand* parent):
-    QUndoCommand("InsertShape", parent),
+    QUndoCommand(parent),
     m_shapeKit(shapeKit),
     m_shape(shape),
     m_model(model)

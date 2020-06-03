@@ -37,7 +37,6 @@ public:
 
 protected:
     ~SunAperture();
-    void SetLightSourceArea(int w, int h, QVector<uchar> bmp);
     void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
     void generatePrimitives(SoAction* action);
 

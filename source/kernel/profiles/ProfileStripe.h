@@ -20,5 +20,5 @@ public:
     bool isInside(double u, double v) const;
     QVector<Vector2D> makeMesh(const QSize& dims) const;
 
-    NAME_ICON_FUNCTIONS("Strip", ":/images/ProfileStripe.png")
+    NAME_ICON_FUNCTIONS("Stripe", ":/images/ProfileStripe.png")
 };

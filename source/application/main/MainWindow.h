@@ -37,9 +37,9 @@ class SunShape;
 class TrackerFactory;
 class Air;
 class SoCamera;
-
 class SceneModel;
 struct PhotonsSettings;
+class ProfileFactory;
 
 //!  Main window class.
 /*!
@@ -131,6 +131,7 @@ private slots:
     void CreateMaterial(MaterialFactory* factory);
     void CreateShape(ShapeFactory* factory);
     void CreateShape(ShapeFactory* factory, int numberOfParameters, QVector<QVariant> parametersList);
+    void CreateProfile(ProfileFactory* factory);
     void CreateTracker(TrackerFactory* factory);
     void onSunDialog();
     void onAirDialog();

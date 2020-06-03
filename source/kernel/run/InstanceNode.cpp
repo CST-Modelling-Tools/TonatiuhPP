@@ -94,7 +94,7 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isShapeFront,
     {
         ShapeRT* shape = (ShapeRT*) children[IndexShapeRT]->m_node;
         if (!shape) return false;
-        ProfileRT* aperture = (ProfileRT*) children[IndexAperture]->m_node;
+        ProfileRT* aperture = (ProfileRT*) children[IndexProfileRT]->m_node;
 
         Ray rayLocal = m_transform.transformInverse(rayIn);
         double thit = 0.;
@@ -174,7 +174,7 @@ void InstanceNode::updateTree(const Transform& tParent)
             m_transform = tParent;
 
         ShapeRT* shape = (ShapeRT*) children[IndexShapeRT]->m_node;
-        ProfileRT* aperture = (ProfileRT*) children[IndexAperture]->m_node;
+        ProfileRT* aperture = (ProfileRT*) children[IndexProfileRT]->m_node;
         m_box = m_transform(shape->getBox(aperture));
     }
 }

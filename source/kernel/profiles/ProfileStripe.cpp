@@ -42,7 +42,7 @@ QVector<Vector2D> ProfileStripe::makeMesh(const QSize& dims) const
         double u = (1. - un)*uMin.getValue() + un*uMax.getValue();
         for (int j = 0; j < jMax; ++j) {
             double vn = j/double(jMax - 1);
-            double v = (1. - vn)*uMin.getValue() + vn*vMax.getValue();
+            double v = (1. - vn)*vMin.getValue() + vn*vMax.getValue();
             ans << Vector2D(u, v);
         }
     }
