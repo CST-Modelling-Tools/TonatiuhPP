@@ -1314,27 +1314,27 @@ void MainWindow::Copy(QString nodeURL)
  */
 void MainWindow::CreateGroupNode()
 {
-    QModelIndex parentIndex = ui->sceneModelView->currentIndex();
-    if (!parentIndex.isValid()) return;
-    ui->sceneModelView->expand(parentIndex);
+    QModelIndex index = ui->sceneModelView->currentIndex();
+    if (!index.isValid()) return;
+    ui->sceneModelView->expand(index);
 
-    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
-    if (!parentInstance)
+    InstanceNode* instance = m_sceneModel->getInstance(index);
+    if (!instance)
     {
         emit Abort(tr("CreateGroupNode: Error creating new group node.") );
         return;
     }
-    SoNode* parentNode = parentInstance->getNode();
-    if (!parentNode)
+    SoNode* node = instance->getNode();
+    if (!node)
     {
         emit Abort(tr("CreateGroupNode: Error creating new group node.") );
         return;
     }
-    if (!parentNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
+    if (!node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
         return;
 
     TSeparatorKit* kit = new TSeparatorKit();
-    CmdInsertSeparatorKit* cmd = new CmdInsertSeparatorKit(kit, QPersistentModelIndex(parentIndex), m_sceneModel);
+    CmdInsertSeparatorKit* cmd = new CmdInsertSeparatorKit(kit, QPersistentModelIndex(index), m_sceneModel);
     m_commandStack->push(cmd);
 
     QString name("Node");
@@ -1350,19 +1350,19 @@ void MainWindow::CreateGroupNode()
  */
 void MainWindow::CreateSurfaceNode()
 {
-    QModelIndex parentIndex = ui->sceneModelView->currentIndex();
-    if (!parentIndex.isValid()) return;
-    ui->sceneModelView->expand(parentIndex);
+    QModelIndex index = ui->sceneModelView->currentIndex();
+    if (!index.isValid()) return;
+    ui->sceneModelView->expand(index);
 
-    InstanceNode* parentInstance = m_sceneModel->getInstance(parentIndex);
-    if (!parentInstance) return;
-    SoNode* parentNode = parentInstance->getNode();
-    if (!parentNode) return;
-    if (!parentNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
+    InstanceNode* instance = m_sceneModel->getInstance(index);
+    if (!instance) return;
+    SoNode* node = instance->getNode();
+    if (!node) return;
+    if (!node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
         return;
 
     TShapeKit* kit = new TShapeKit;
-    CmdInsertShapeKit* cmd = new CmdInsertShapeKit(kit, parentIndex, m_sceneModel);
+    CmdInsertShapeKit* cmd = new CmdInsertShapeKit(kit, index, m_sceneModel);
     m_commandStack->push(cmd);
 
     QString name("Shape");
@@ -1370,6 +1370,7 @@ void MainWindow::CreateSurfaceNode()
     while (!m_sceneModel->SetNodeName(kit, name))
         name = QString("Shape_%1").arg(++count);
 
+    SelectNode(instance->getURL() + "/" + name);
     setDocumentModified(true);
 }
 
@@ -1926,10 +1927,10 @@ void MainWindow::SaveAs(QString fileName)
  * Changes selected node to the node with \a nodeUrl. If model does not contains a node with defined url,
  * the selection will be null.
  */
-void MainWindow::SelectNode(QString nodeUrl)
+void MainWindow::SelectNode(QString url)
 {
-    QModelIndex nodeIndex = m_sceneModel->IndexFromUrl(nodeUrl);
-    m_selectionModel->setCurrentIndex(nodeIndex, QItemSelectionModel::ClearAndSelect);
+    QModelIndex index = m_sceneModel->IndexFromUrl(url);
+    m_selectionModel->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
 }
 
 /*!

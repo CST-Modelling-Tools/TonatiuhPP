@@ -51,7 +51,7 @@ SoSeparator* trf::DrawPhotons(const Photons& map)
     return ans;
 }
 
-SoSeparator* trf::DrawRays(const Photons& map, unsigned long /*numberOfRays*/)
+SoSeparator* trf::DrawRays(const Photons& map, ulong /*numberOfRays*/)
 {
     SoSeparator* ans = new SoSeparator;
 

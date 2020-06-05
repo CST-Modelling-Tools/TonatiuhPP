@@ -105,10 +105,25 @@ Vector3D Transform::transformVector(const Vector3D& v) const
 //https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals
 Vector3D Transform::transformNormal(const Vector3D& n) const
 {
+    const double* t0 = m_minv->m[0];
+    const double* t1 = m_minv->m[1];
+    const double* t2 = m_minv->m[2];
     return Vector3D(
-        m_minv->m[0][0]*n.x + m_minv->m[1][0]*n.y + m_minv->m[2][0]*n.z,
-        m_minv->m[0][1]*n.x + m_minv->m[1][1]*n.y + m_minv->m[2][1]*n.z,
-        m_minv->m[0][2]*n.x + m_minv->m[1][2]*n.y + m_minv->m[2][2]*n.z
+        t0[0]*n.x + t1[0]*n.y + t2[0]*n.z,
+        t0[1]*n.x + t1[1]*n.y + t2[1]*n.z,
+        t0[2]*n.x + t1[2]*n.y + t2[2]*n.z
+    );
+}
+
+Vector3D Transform::transformInverseNormal(const Vector3D& n) const
+{
+    const double* t0 = m_mdir->m[0];
+    const double* t1 = m_mdir->m[1];
+    const double* t2 = m_mdir->m[2];
+    return Vector3D(
+        t0[0]*n.x + t1[0]*n.y + t2[0]*n.z,
+        t0[1]*n.x + t1[1]*n.y + t2[1]*n.z,
+        t0[2]*n.x + t1[2]*n.y + t2[2]*n.z
     );
 }
 
@@ -138,6 +153,14 @@ Ray Transform::transformDirect(const Ray& r) const
         t1[0]*v.x + t1[1]*v.y + t1[2]*v.z,
         t2[0]*v.x + t2[1]*v.y + t2[2]*v.z
     );
+//    const double* ti0 = m_minv->m[0];
+//    const double* ti1 = m_minv->m[1];
+//    const double* ti2 = m_minv->m[2];
+//    Vector3D d(
+//        ti0[0]*v.x + ti1[0]*v.y + ti2[0]*v.z,
+//        ti0[1]*v.x + ti1[1]*v.y + ti2[1]*v.z,
+//        ti0[2]*v.x + ti1[2]*v.y + ti2[2]*v.z
+//    );
 
     return Ray(o, d, r.tMin, r.tMax);
 }
@@ -161,6 +184,14 @@ Ray Transform::transformInverse(const Ray& r) const
         t1[0]*v.x + t1[1]*v.y + t1[2]*v.z,
         t2[0]*v.x + t2[1]*v.y + t2[2]*v.z
     );
+//    const double* ti0 = m_mdir->m[0];
+//    const double* ti1 = m_mdir->m[1];
+//    const double* ti2 = m_mdir->m[2];
+//    Vector3D d(
+//        ti0[0]*v.x + ti1[0]*v.y + ti2[0]*v.z,
+//        ti0[1]*v.x + ti1[1]*v.y + ti2[1]*v.z,
+//        ti0[2]*v.x + ti1[2]*v.y + ti2[2]*v.z
+//    );
 
     return Ray(o, d, r.tMin, r.tMax);
 }

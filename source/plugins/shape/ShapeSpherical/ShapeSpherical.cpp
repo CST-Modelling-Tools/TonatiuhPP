@@ -20,7 +20,8 @@ ShapeSpherical::ShapeSpherical()
 {
     SO_NODE_CONSTRUCTOR(ShapeSpherical);
 
-    SO_NODE_ADD_FIELD( radiusXY, (1.) );
+    SO_NODE_ADD_FIELD( radiusX, (1.) );
+    SO_NODE_ADD_FIELD( radiusY, (1.) );
     SO_NODE_ADD_FIELD( radiusZ, (1.) );
 }
 
@@ -28,9 +29,10 @@ Box3D ShapeSpherical::getBox(ProfileRT* profile) const
 {  
     Box3D box = profile->getBox();
     Vector3D v = box.absMax();
-    double r = radiusXY.getValue();
+    double rX = radiusX.getValue();
+    double rY = radiusY.getValue();
     double rZ = radiusZ.getValue();
-    double s = 1. - pow2(v.x/r) - pow2(v.y/r);
+    double s = 1. - pow2(v.x/rX) - pow2(v.y/rY);
     s = 1. - sqrt(s);
     box.pMax.z = rZ*s;
     return box;
@@ -40,12 +42,10 @@ Box3D ShapeSpherical::getBox(ProfileRT* profile) const
 // r = r0 + d*t
 bool ShapeSpherical::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
 {
-    double r = radiusXY.getValue();
-    double rz = radiusZ.getValue();
-    double gxy = 1./r;
-    double gz = 1./rz;
-    Vector3D rayO = (ray.origin - Vector3D(0., 0., rz))*Vector3D(gxy, gxy, gz);
-    Vector3D rayD = ray.direction()*Vector3D(gxy, gxy, gz);
+    double rZ = radiusZ.getValue();
+    Vector3D g(1./radiusX.getValue(), 1./radiusY.getValue(), 1./rZ);
+    Vector3D rayO = (ray.origin - Vector3D(0., 0., rZ))*g;
+    Vector3D rayD = ray.direction()*g;
 
     double A = rayD.norm2();
     double B = 2.*dot(rayD, rayO);
@@ -59,7 +59,7 @@ bool ShapeSpherical::intersect(const Ray& ray, double* tHit, DifferentialGeometr
         if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
 
         Vector3D pHit = ray.point(t);
-        if (pHit.z > rz) continue;
+        if (pHit.z > rZ) continue;
         if (!profile->isInside(pHit.x, pHit.y)) continue;
 
         if (tHit == 0 && dg == 0)
@@ -71,10 +71,10 @@ bool ShapeSpherical::intersect(const Ray& ray, double* tHit, DifferentialGeometr
         dg->point = pHit;
         dg->u = pHit.x;
         dg->v = pHit.y;
-        double zp = 1. - pHit.z/rz;
-        dg->dpdu = Vector3D(1., 0., pHit.x/zp);
-        dg->dpdv = Vector3D(0., 1., pHit.y/zp);
-        dg->normal = Vector3D(-pHit.x, -pHit.y, zp).normalized();
+        double zp = 1. - pHit.z/rZ;
+        dg->dpdu = Vector3D(1., 0., pHit.x/zp*g.x*g.x*rZ);
+        dg->dpdv = Vector3D(0., 1., pHit.y/zp*g.y*g.y*rZ);
+        dg->normal = Vector3D(-dg->dpdu.z, -dg->dpdv.z, 1.).normalized();
         dg->shape = this;
         dg->isFront = dot(dg->normal, ray.direction()) <= 0.;
         return true;
@@ -86,7 +86,7 @@ bool ShapeSpherical::intersect(const Ray& ray, double* tHit, DifferentialGeometr
 // z = x^2/(4f)
 // f = rX^2/(2rZ)
 
-// use curvature or subdivision
+// use curvature or subdivision (better)
 // https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces
 void ShapeSpherical::updateShapeGL(TShapeKit* parent)
 {
@@ -100,7 +100,8 @@ void ShapeSpherical::updateShapeGL(TShapeKit* parent)
         if (s > 1.) s = 1.;
         rows = 1 + ceil(48*s);
 
-        s = (pr->rMax.getValue() - pr->rMin.getValue())/(gcf::TwoPi*radiusXY.getValue());
+        double r = std::min(radiusX.getValue(), radiusY.getValue());
+        s = (pr->rMax.getValue() - pr->rMin.getValue())/(gcf::TwoPi*r);
         if (s > 1.) s = 1.;
         columns = 1 + ceil(48*s);
     }
@@ -110,11 +111,11 @@ void ShapeSpherical::updateShapeGL(TShapeKit* parent)
         Vector3D v = box.extent();
 
         // 48 divs for 2 pi
-        s = v.x/(gcf::TwoPi*radiusXY.getValue());
+        s = v.x/(gcf::TwoPi*radiusX.getValue());
         if (s > 1.) s = 1.;
         rows = 1 + ceil(48*s);
 
-        s = v.y/(gcf::TwoPi*radiusXY.getValue());
+        s = v.y/(gcf::TwoPi*radiusY.getValue());
         if (s > 1.) s = 1.;
         columns = 1 + ceil(48*s);
     }
@@ -126,9 +127,10 @@ void ShapeSpherical::updateShapeGL(TShapeKit* parent)
 // z/rZ = 1 - sqrt[1 - (x/rX)^2 - (y/rY)^2]
 Vector3D ShapeSpherical::getPoint(double u, double v) const
 {
-    double r = radiusXY.getValue();
+    double rX = radiusX.getValue();
+    double rY = radiusY.getValue();
     double rZ = radiusZ.getValue();
-    double s = 1. - pow2(u/r) - pow2(v/r);
+    double s = 1. - pow2(u/rX) - pow2(v/rY);
     s = 1. - sqrt(s);
     return Vector3D(u, v, rZ*s);
 }
@@ -136,8 +138,9 @@ Vector3D ShapeSpherical::getPoint(double u, double v) const
 // [x/rx^2, y/rY^2, (z/rZ - 1)/rZ]
 Vector3D ShapeSpherical::getNormal(double u, double v) const
 {
-    double r = radiusXY.getValue();
+    double rX = radiusX.getValue();
+    double rY = radiusY.getValue();
     double rZ = radiusZ.getValue();
-    double s = pow2(r) - pow2(u) - pow2(v);
-    return Vector3D(-u, -v, (r/rZ)*sqrt(s)).normalized();
+    double s = 1. - pow2(u/rX) - pow2(v/rY);
+    return Vector3D(-u/(rX*rX), -v/(rY*rY), sqrt(s)/rZ).normalized();
 }

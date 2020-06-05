@@ -104,12 +104,18 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isShapeFront,
         isShapeFront = dg.isFront;
         shapeNode = this;
 
+        dg.point = m_transform.transformPoint(dg.point);
+        dg.dpdu = m_transform.transformVector(dg.dpdu);
+        dg.dpdv = m_transform.transformVector(dg.dpdv);
+        dg.normal = m_transform.transformNormal(dg.normal);
+
         MaterialRT* material = (MaterialRT*) children[IndexMaterialRT]->m_node;
         if (!material) return false;
         Ray ray;
-        if (material->OutputRay(rayLocal, dg, rand, ray))
+        if (material->OutputRay(rayIn, dg, rand, rayOut))
+//        if (material->OutputRay(rayLocal, dg, rand, ray))
         {
-            rayOut = m_transform.transformDirect(ray);
+//            rayOut = m_transform.transformDirect(ray);
             return true;
         }
     }

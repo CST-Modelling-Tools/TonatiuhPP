@@ -32,6 +32,7 @@ public:
     Vector3D transformPoint(const Vector3D& p) const;
     Vector3D transformVector(const Vector3D& v) const;
     Vector3D transformNormal(const Vector3D& n) const;
+    Vector3D transformInverseNormal(const Vector3D& n) const;
     Ray transformDirect(const Ray& r) const;
     Ray transformInverse(const Ray& r) const;
 

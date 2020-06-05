@@ -82,7 +82,7 @@ bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometr
         dg->v = pHit.y;
         dg->dpdu = Vector3D(1., 0., pHit.x*gX/2.);
         dg->dpdv = Vector3D(0., 1., pHit.y*gY/2.);
-        dg->normal = Vector3D(-pHit.x*gX, -pHit.y*gY, 2.).normalized();
+        dg->normal = Vector3D(-dg->dpdu.z, -dg->dpdv.z, 1.).normalized();
         dg->shape = this;
         dg->isFront = dot(dg->normal, rayD) <= 0.;
         return true;

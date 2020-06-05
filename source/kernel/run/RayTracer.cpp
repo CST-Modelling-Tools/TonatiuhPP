@@ -16,9 +16,9 @@ RayTracer::RayTracer(InstanceNode* instanceRoot,
     SunShape* const sunShape,
     Air* air,
     Random& rand,
-    QMutex* mutex,
-    Photons* photonMap,
-    QMutex* mutexPhotonMap,
+    QMutex* mutexRand,
+    Photons* photons,
+    QMutex* mutexPhotons,
     QVector<InstanceNode*> exportSuraceList
 ):
     m_instanceLayout(instanceRoot),
@@ -28,9 +28,9 @@ RayTracer::RayTracer(InstanceNode* instanceRoot,
     m_sunTransform(instanceSun->getTransform()),
     m_air(air),
     m_rand(&rand),
-    m_mutex(mutex),
-    m_photonMap(photonMap),
-    m_pPhotonMapMutex(mutexPhotonMap),
+    m_mutexRand(mutexRand),
+    m_photons(photons),
+    m_mutexPhotons(mutexPhotons),
     m_exportSuraceList(exportSuraceList),
     m_sunCells(sunAperture->getCells())
 {   
@@ -45,7 +45,7 @@ void RayTracer::operator()(ulong nRays)
 
     std::vector<Photon> photons;
     // Photon(Point3D pos, int side, double id = 0, InstanceNode* intersectedSurface = 0, int absorbedPhoton = 0);
-    RandomParallel rand(m_rand, m_mutex);
+    RandomParallel rand(m_rand, m_mutexRand);
 
     for (ulong n = 0; n < nRays; ++n)
     {
@@ -61,7 +61,7 @@ void RayTracer::operator()(ulong nRays)
         // Part 2: middle photon points (intersection with shapes)
         bool isReflected = true;
         while (isReflected) {
-            Ray rayReflected;
+            Ray rayReflected; // scattered?
             isFront = false;
             intersectedSurface = 0;
             isReflected = m_instanceLayout->intersect(ray, rand, isFront, intersectedSurface, rayReflected);
@@ -96,9 +96,9 @@ void RayTracer::operator()(ulong nRays)
         photons.push_back(Photon(ray.point(ray.tMax), isFront, ++rayLength, intersectedSurface) );
     }
 
-    m_pPhotonMapMutex->lock();
-    m_photonMap->addPhotons(photons);
-    m_pPhotonMapMutex->unlock();
+    m_mutexPhotons->lock();
+    m_photons->addPhotons(photons);
+    m_mutexPhotons->unlock();
 }
 
 bool RayTracer::NewPrimitiveRay(Ray* ray, RandomParallel& rand)

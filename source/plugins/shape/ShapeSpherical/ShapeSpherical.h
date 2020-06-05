@@ -14,7 +14,8 @@ public:
     Box3D getBox(ProfileRT* profile) const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
 
-    SoSFDouble radiusXY;
+    SoSFDouble radiusX;
+    SoSFDouble radiusY;
     SoSFDouble radiusZ;
 
     NAME_ICON_FUNCTIONS("Spherical", ":/ShapeSpherical.png")

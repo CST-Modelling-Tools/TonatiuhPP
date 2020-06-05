@@ -33,9 +33,9 @@ public:
               SunShape* const sunShape,
               Air* air,
               Random& rand,
-              QMutex* mutex,
-              Photons* photonMap,
-              QMutex* mutexPhotonMap,
+              QMutex* mutexRand,
+              Photons* photons,
+              QMutex* mutexPhotons,
               QVector<InstanceNode*> exportSuraceList);
 
     typedef void result_type;
@@ -52,9 +52,9 @@ private:
     Transform m_sunTransform;
     Air* m_air;
     Random* m_rand;
-    QMutex* m_mutex;
-    Photons* m_photonMap;
-    QMutex* m_pPhotonMapMutex;
+    QMutex* m_mutexRand;
+    Photons* m_photons;
+    QMutex* m_mutexPhotons;
     QVector<InstanceNode*> m_exportSuraceList;
 
     const std::vector< QPair<int, int> >&  m_sunCells;

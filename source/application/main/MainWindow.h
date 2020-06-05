@@ -97,7 +97,7 @@ public slots:
     bool Save();
     void SaveComponent(QString componentFileName);
     void SaveAs(QString fileName);
-    void SelectNode(QString nodeUrl);
+    void SelectNode(QString url);
     void SetExportAllPhotonMap();
     void SetExportCoordinates(bool enabled, bool global);
     void SetExportIntersectionSurface(bool enabled);
