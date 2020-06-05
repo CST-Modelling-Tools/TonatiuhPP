@@ -28,7 +28,7 @@ TSceneKit {
         icon 
         SunAperture {
           fields [ SFString disabledNodes ]
-          disabledNodes "//Layout/Target;//Layout/H1/primary/secondary/target;"
+          disabledNodes "//Layout/Target;//Layout/Heliostat/primary/secondary/target;"
 
         }
         iconMaterial 
@@ -94,7 +94,7 @@ TSceneKit {
 
               }
               profileRT 
-              DEF Rectangle ProfileRectangle {
+              DEF Box ProfileBox {
                 fields [ SFDouble uSize, SFDouble vSize ]
 
               }
@@ -116,7 +116,7 @@ TSceneKit {
           }
 
         }
-        DEF H1 TSeparatorKit {
+        DEF Heliostat TSeparatorKit {
           transform 
           Transform {
             translation 5 0 0
@@ -129,7 +129,7 @@ TSceneKit {
               transform 
               Transform {
                 translation 0 0 1
-                rotation -1 -0 -0  0.41002494
+                rotation -0.99999934 -0 -0  0.41002494
 
               }
               group 
@@ -139,7 +139,7 @@ TSceneKit {
                   transform 
                   Transform {
                     translation 0 0 0.2
-                    rotation -0 -1 -0  0.19830778
+                    rotation -0 -0.99999952 -0  0.19830778
 
                   }
                   group 
@@ -163,7 +163,7 @@ TSceneKit {
 
                           }
                           profileRT 
-                          DEF Rectangle ProfileRectangle {
+                          DEF Box ProfileBox {
                             fields [ SFDouble uSize, SFDouble vSize ]
 
                           }
@@ -202,7 +202,7 @@ TSceneKit {
 
                           }
                           profileRT 
-                          DEF Rectangle ProfileRectangle {
+                          DEF Box ProfileBox {
                             fields [ SFDouble uSize, SFDouble vSize ]
 
                           }
@@ -238,11 +238,11 @@ TSceneKit {
                           shapeRT 
                           DEF Cylinder ShapeCylinder {
                             fields [ SFDouble radius ]
-                            radius 0.03000000000000001
+                            radius 0.03000000000000003
 
                           }
                           profileRT 
-                          DEF Rectangle ProfileRectangle {
+                          DEF Box ProfileBox {
                             fields [ SFDouble uSize, SFDouble vSize ]
                             vSize 0.2
 
@@ -282,11 +282,11 @@ TSceneKit {
                       shapeRT 
                       DEF Cylinder ShapeCylinder {
                         fields [ SFDouble radius ]
-                        radius 0.03000000000000001
+                        radius 0.03000000000000003
 
                       }
                       profileRT 
-                      DEF Rectangle ProfileRectangle {
+                      DEF Box ProfileBox {
                         fields [ SFDouble uSize, SFDouble vSize ]
                         vSize 0.2
 
@@ -314,7 +314,7 @@ TSceneKit {
             }
           }
           tracker 
-          DEF Heliostat TrackerHeliostat {
+          DEF Dual TrackerDual {
             fields [ SFVec3f primaryShift, SFVec3f primaryAxis, SFVec2f primaryAngles, SFVec3f secondaryShift, SFVec3f secondaryAxis, SFVec2f secondaryAngles, SFVec3f facetShift, SFVec3f facetNormal, SFEnum aimingFrame, SFVec3f aimingPoint, SFVec2f anglesDefault ]
             primaryAxis 1 0 0
             secondaryShift 0 0 0.2

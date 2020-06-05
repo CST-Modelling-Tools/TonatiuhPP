@@ -77,7 +77,7 @@ TSceneKit {
       group 
       Group {
 
-        DEF T1 TSeparatorKit {
+        DEF Trough TSeparatorKit {
           transform 
           Transform {
 
@@ -108,11 +108,11 @@ TSceneKit {
                       shapeRT 
                       DEF Cylinder ShapeCylinder {
                         fields [ SFDouble radius ]
-                        radius 0.05000000000000001
+                        radius 0.05000000000000002
 
                       }
                       profileRT 
-                      DEF Rectangle ProfileRectangle {
+                      DEF Box ProfileBox {
                         fields [ SFDouble uSize, SFDouble vSize ]
                         vSize 5
 
@@ -135,7 +135,6 @@ TSceneKit {
                   }
 
                 }
-				
                 DEF facet TSeparatorKit {
                   transform 
                   Transform {
@@ -154,7 +153,7 @@ TSceneKit {
 
                       }
                       profileRT 
-                      DEF Rectangle ProfileRectangle {
+                      DEF Box ProfileBox {
                         fields [ SFDouble uSize, SFDouble vSize ]
                         vSize 5
 
@@ -194,7 +193,7 @@ TSceneKit {
 
                       }
                       profileRT 
-                      DEF Rectangle ProfileRectangle {
+                      DEF Box ProfileBox {
                         fields [ SFDouble uSize, SFDouble vSize ]
                         uSize 0.2
                         vSize 5
@@ -218,13 +217,12 @@ TSceneKit {
                   }
 
                 }
-
               }
 
             }
           }
           tracker 
-          DEF Trough TrackerTrough {
+          DEF Single TrackerSingle {
             fields [ SFVec3f primaryShift, SFVec3f primaryAxis, SFVec2f primaryAngles, SFVec3f facetShift, SFVec3f facetNormal, SFEnum aimingFrame, SFVec3f aimingPoint, SFFloat angleDefault ]
             facetShift 0 0 1
             aimingFrame global
@@ -250,7 +248,7 @@ TSceneKit {
 
               }
               profileRT 
-              DEF Rectangle ProfileRectangle {
+              DEF Box ProfileBox {
                 fields [ SFDouble uSize, SFDouble vSize ]
                 uSize 0.5
                 vSize 5

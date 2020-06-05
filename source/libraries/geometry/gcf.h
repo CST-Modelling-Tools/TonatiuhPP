@@ -19,6 +19,8 @@ namespace gcf
     const double Epsilon = DBL_EPSILON;
     const double Ecliptic = 23.5*degree;
 
+    template<class T>
+    T pow2(T x) {return x*x;}
 
     template<class T>
     T clamp(T x, T a, T b)

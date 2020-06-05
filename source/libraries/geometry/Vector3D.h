@@ -53,6 +53,11 @@ struct TONATIUH_LIBRARIES Vector3D
         return Vector3D(x*s, y*s, z*s);
     }
 
+    Vector3D operator*(const Vector3D& v) const
+    {
+        return Vector3D(x*v.x, y*v.y, z*v.z);
+    }
+
     Vector3D& operator*=(double s)
     {
         x *= s;

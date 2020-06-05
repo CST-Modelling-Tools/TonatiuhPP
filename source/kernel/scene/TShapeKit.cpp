@@ -5,7 +5,7 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/sensors/SoFieldSensor.h>
 
-#include "kernel/profiles/ProfileRectangle.h"
+#include "kernel/profiles/ProfileBox.h"
 #include "kernel/material/MaterialAbsorber.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "kernel/shape/ShapePlanar.h"
@@ -39,7 +39,7 @@ TShapeKit::TShapeKit()
     sRT->setName(sRT->getTypeName());
     shapeRT = sRT;
 
-    ProfileRT* a = new ProfileRectangle;
+    ProfileRT* a = new ProfileBox;
     a->setName(a->getTypeName());
     profileRT = a;
 

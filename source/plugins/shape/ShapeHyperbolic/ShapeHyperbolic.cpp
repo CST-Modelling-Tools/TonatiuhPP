@@ -1,4 +1,4 @@
-#include "ShapeParabolic.h"
+#include "ShapeHyperbolic.h"
 
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/profiles/ProfileCircular.h"
@@ -6,50 +6,32 @@
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/Box3D.h"
 #include "libraries/geometry/Ray.h"
-using gcf::pow2;
 
-SO_NODE_SOURCE(ShapeParabolic)
+SO_NODE_SOURCE(ShapeHyperbolic)
 
 
-void ShapeParabolic::initClass()
+void ShapeHyperbolic::initClass()
 {
-    SO_NODE_INIT_CLASS(ShapeParabolic, ShapeRT, "ShapeRT");
+    SO_NODE_INIT_CLASS(ShapeHyperbolic, ShapeRT, "ShapeRT");
 }
 
-ShapeParabolic::ShapeParabolic()
+ShapeHyperbolic::ShapeHyperbolic()
 {
-    SO_NODE_CONSTRUCTOR(ShapeParabolic);
+    SO_NODE_CONSTRUCTOR(ShapeHyperbolic);
 
     SO_NODE_ADD_FIELD( focusX, (1.) );
     SO_NODE_ADD_FIELD( focusY, (1.) );
 }
 
-Box3D ShapeParabolic::getBox(ProfileRT* profile) const
+Box3D ShapeHyperbolic::getBox(ProfileRT* profile) const
 {  
     Box3D box = profile->getBox();
     Vector3D v = box.absMax();
-    double zX = v.x*v.x/(4.*focusX.getValue());
-    double zY = v.y*v.y/(4.*focusY.getValue());
-    if (zX >= 0.) {
-        if (zY >= 0.)
-            box.pMax.z = zX + zY;
-        else {
-            box.pMax.z = zX;
-            box.pMin.z = zY;
-        }
-    } else {
-        if (zY >= 0.) {
-            box.pMax.z = zY;
-            box.pMin.z = zX;
-        } else
-            box.pMin.z = zX + zY;
-    }
+    box.pMax.z = (v.x*v.x/focusX.getValue() + v.y*v.y/focusY.getValue())/4.;
     return box;
 }
 
-// x^2*gx + y^2*gy = 4z
-// r = r0 + d*t
-bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
+bool ShapeHyperbolic::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
 {
     const Vector3D& rayO = ray.origin;
     const Vector3D& rayD = ray.direction();
@@ -57,9 +39,9 @@ bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometr
     double gY = 1./focusY.getValue();
 
     // (x0 + t*d_x)^2*gX + (y0 + t*d_y)^2*gY = 4*(z0 + t*d_z)
-    double A = pow2(rayD.x)*gX + pow2(rayD.y)*gY;
+    double A = rayD.x*rayD.x*gX + rayD.y*rayD.y*gY;
     double B = 2.*(rayD.x*rayO.x*gX + rayD.y*rayO.y*gY) - 4.*rayD.z;
-    double C = pow2(rayO.x)*gX + pow2(rayO.y)*gY - 4.*rayO.z;
+    double C = rayO.x*rayO.x*gX + rayO.y*rayO.y*gY - 4.*rayO.z;
     double ts[2];
     if (!gcf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
 
@@ -74,7 +56,7 @@ bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometr
         if (tHit == 0 && dg == 0)
             return true;
         else if (tHit == 0 || dg == 0)
-            gcf::SevereError("ShapeParabolic::intersect");
+            gcf::SevereError("ShapeHyperbolic::intersect");
 
         *tHit = t;
         dg->point = pHit;
@@ -90,20 +72,20 @@ bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometr
     return false;
 }
 
-void ShapeParabolic::updateShapeGL(TShapeKit* parent)
+void ShapeHyperbolic::updateShapeGL(TShapeKit* parent)
 {
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
 
     int rows, columns;
-    double s, r;
+    double s;
     if (ProfileCircular* pr = dynamic_cast<ProfileCircular*>(profile))
     {
         s = (pr->phiMax.getValue() - pr->phiMin.getValue())/gcf::TwoPi;
         if (s > 1.) s = 1.;
         rows = 1 + ceil(48*s);
 
-        r = 2.*std::min(std::abs(focusX.getValue()), std::abs(focusY.getValue()));
-        s = (pr->rMax.getValue() - pr->rMin.getValue())/(gcf::TwoPi*r);
+        double f = std::min(focusX.getValue(), focusY.getValue());
+        s = (pr->rMax.getValue() - pr->rMin.getValue())/(gcf::TwoPi*2.*f);
         if (s > 1.) s = 1.;
         columns = 1 + ceil(48*s);
     }
@@ -112,14 +94,12 @@ void ShapeParabolic::updateShapeGL(TShapeKit* parent)
         Box3D box = profile->getBox();
         Vector3D v = box.extent();
 
-        // 48 divs for 2 pi
-        r = 2.*std::abs(focusX.getValue());
-        s = v.x/(gcf::TwoPi*r);
+        // radius = 2*focus, 48 divs for 2 pi
+        s = v.x/(gcf::TwoPi*2.*focusX.getValue());
         if (s > 1.) s = 1.;
         rows = 1 + ceil(48*s);
 
-        r = 2.*std::abs(focusY.getValue());
-        s = v.y/(gcf::TwoPi*r);
+        s = v.y/(gcf::TwoPi*2.*focusY.getValue());
         if (s > 1.) s = 1.;
         columns = 1 + ceil(48*s);
     }
@@ -127,7 +107,7 @@ void ShapeParabolic::updateShapeGL(TShapeKit* parent)
     makeQuadMesh(parent, QSize(rows, columns));
 }
 
-Vector3D ShapeParabolic::getPoint(double u, double v) const
+Vector3D ShapeHyperbolic::getPoint(double u, double v) const
 {
     return Vector3D(
         u,
@@ -136,7 +116,7 @@ Vector3D ShapeParabolic::getPoint(double u, double v) const
     );
 }
 
-Vector3D ShapeParabolic::getNormal(double u, double v) const
+Vector3D ShapeHyperbolic::getNormal(double u, double v) const
 {
     return Vector3D(
         -u/focusX.getValue(),

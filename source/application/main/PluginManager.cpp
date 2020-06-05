@@ -13,11 +13,11 @@
 #include "kernel/photons/PhotonsDefault.h"
 #include "kernel/photons/PhotonsFactory.h"
 #include "kernel/photons/PhotonsWidget.h"
-#include "kernel/profiles/ProfileRectangle.h"
-#include "kernel/profiles/ProfileRing.h"
+#include "kernel/profiles/ProfileBox.h"
+#include "kernel/profiles/ProfileCircular.h"
 #include "kernel/profiles/ProfileTriangle.h"
 #include "kernel/profiles/ProfilePolygon.h"
-#include "kernel/profiles/ProfileStripe.h"
+#include "kernel/profiles/ProfileRectangular.h"
 #include "kernel/random/RandomSTL.h"
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TSeparatorKit.h"
@@ -79,9 +79,9 @@ void PluginManager::load(QDir dir)
     loadPlugin(new AirFactoryT<AirPolynomial>);
     loadPlugin(new ShapeFactoryT<ShapePlanar>);
 //    loadPlugin(new ShapeFactoryT<ShapeCube>);
-    loadPlugin(new ProfileFactoryT<ProfileRectangle>);
-    loadPlugin(new ProfileFactoryT<ProfileStripe>);
-    loadPlugin(new ProfileFactoryT<ProfileRing>);
+    loadPlugin(new ProfileFactoryT<ProfileBox>);
+    loadPlugin(new ProfileFactoryT<ProfileRectangular>);
+    loadPlugin(new ProfileFactoryT<ProfileCircular>);
     loadPlugin(new ProfileFactoryT<ProfileTriangle>);
     loadPlugin(new ProfileFactoryT<ProfilePolygon>);
     loadPlugin(new MaterialFactoryT<MaterialAbsorber>);
@@ -193,8 +193,12 @@ void PluginManager::sort()
     QStringList shapeNames = {
         "Planar",
         "Parabolic",
+        "Hyperbolic",
+        "Spherical",
+        "",
         "Sphere",
-        "Cylinder"
+        "Cylinder",
+        "Cone"
     };
     sortFactories(shapeNames, m_shapeFactories);
 
@@ -206,8 +210,8 @@ void PluginManager::sort()
     sortFactories(materialNames, m_materialFactories);
 
     QStringList trackerNames = {
-        "Trough",
-        "Heliostat"
+        "Single",
+        "Dual"
     };
     sortFactories(trackerNames, m_trackerFactories);
 

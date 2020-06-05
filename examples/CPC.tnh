@@ -13,7 +13,6 @@ TSceneKit {
         fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
         transform 
         Transform {
-          translation 0 -9.6165058e-007 11
           rotation 1 0 0  3.1415927
 
         }
@@ -25,7 +24,6 @@ TSceneKit {
         icon 
         SunAperture {
           fields [ SFString disabledNodes ]
-          disabledNodes ""
 
         }
         iconMaterial 
@@ -76,8 +74,8 @@ TSceneKit {
 
         DEF Shape TShapeKit {
           shapeRT 
-          DEF Sphere ShapeSphere {
-            fields [ SFDouble radius ]
+          DEF Planar ShapePlanar {
+            fields [  ]
 
           }
           profileRT 
@@ -86,8 +84,8 @@ TSceneKit {
 
           }
           materialRT 
-          DEF Specular MaterialSpecular {
-            fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+          DEF Absorber MaterialAbsorber {
+            fields [  ]
 
           }
           appearance 

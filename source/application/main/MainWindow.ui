@@ -532,14 +532,14 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="checked">
-    <bool>false</bool>
-   </property>
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="text">
     <string>Rays</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="actionViewAll">
@@ -657,7 +657,7 @@
     <string>&amp;Ray Tracing...</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+R</string>
+    <string>Ctrl+T</string>
    </property>
   </action>
   <action name="actionRayTraceOptions">
@@ -665,7 +665,7 @@
     <string>Ray Tracing Options...</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+R</string>
+    <string>Ctrl+Shift+T</string>
    </property>
   </action>
   <action name="actionRunFluxAnalysis">

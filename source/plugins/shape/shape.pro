@@ -1,15 +1,15 @@
 TEMPLATE = subdirs
 
+SUBDIRS += ShapeParabolic
+SUBDIRS += ShapeHyperbolic
+SUBDIRS += ShapeSpherical
+
+SUBDIRS += ShapeSphere
+SUBDIRS += ShapeCylinder
+SUBDIRS += ShapeCone
+
 #SUBDIRS += ShapeBezierSurface
 #SUBDIRS += ShapeCAD
-#SUBDIRS += ShapeCone
-SUBDIRS += ShapeCylinder
-#SUBDIRS += ShapeHyperboloid
-#SUBDIRS += ShapeParabolicDish
-SUBDIRS += ShapeParabolic
-SUBDIRS += ShapeSphere
-#SUBDIRS += ShapeSphericalPolygon
-#SUBDIRS += ShapeSphericalRectangle
 #SUBDIRS += ShapeTroughAsymmetricCPC
 #SUBDIRS += ShapeTroughCHC
 #SUBDIRS += ShapeTroughCPC

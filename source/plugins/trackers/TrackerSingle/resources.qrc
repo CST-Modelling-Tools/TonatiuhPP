@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>TrackerSingle.png</file>
+    </qresource>
+</RCC>

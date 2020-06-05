@@ -1,0 +1,224 @@
+#Inventor V2.1 ascii
+
+
+TSceneKit {
+  fields [ SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode group, SFNode air, SFNode topSeparator ]
+  lightList 
+  NodeKitListPart {
+    childTypeNames "LightKit"
+    containerNode 
+    Group {
+
+      DEF Sun SunKit {
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
+        azimuth -1.570796326794897
+        elevation 0.7853981633974483
+        irradiance 1000
+        transform 
+        Transform {
+          translation -13.279409 0 13.279411
+          rotation 0.67859828 0.67859828 0.28108463  2.5935643
+
+        }
+        light 
+        DirectionalLight {
+          direction 0 0 1
+
+        }
+        icon 
+        SunAperture {
+          fields [ SFString disabledNodes ]
+          disabledNodes "//Layout/Target;"
+
+        }
+        iconMaterial 
+        Material {
+          transparency 0.75
+
+        }
+        iconTexture 
+        Texture2 {
+          image 10 10 1
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 
+          model BLEND
+          blendColor 1 1 1
+
+        }
+        tsunshape 
+        SunPillbox {
+          fields [ SFDouble thetaMax ]
+
+        }
+
+      }
+    }
+
+  }
+  group 
+  Group {
+
+    DEF Layout TSeparatorKit {
+      transform 
+      Transform {
+
+      }
+      group 
+      Group {
+
+        DEF Node TSeparatorKit {
+          transform 
+          Transform {
+
+          }
+          group 
+          Group {
+
+            DEF Shape TShapeKit {
+              shapeRT 
+              DEF Parabolic ShapeParabolic {
+                fields [ SFDouble focusX, SFDouble focusY ]
+                focusX 10
+                focusY 10
+
+              }
+              profileRT 
+              DEF Box ProfileBox {
+                fields [ SFDouble uSize, SFDouble vSize ]
+                uSize 2
+                vSize 2
+
+              }
+              materialRT 
+              DEF Specular MaterialSpecular {
+                fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+
+              }
+              appearance 
+              AppearanceKit {
+                material 
+                DEF MaterialGL Material {
+
+                }
+
+              }
+
+            }
+          }
+
+        }
+        DEF Target TSeparatorKit {
+          transform 
+          Transform {
+            translation 0 0 0
+            rotation 0 1 0  0.78500009
+
+          }
+          group 
+          Group {
+
+            DEF tangential TSeparatorKit {
+              transform 
+              Transform {
+                translation 0 0 7.0700002
+
+              }
+              group 
+              Group {
+
+                DEF Shape TShapeKit {
+                  shapeRT 
+                  DEF Sphere ShapeSphere {
+                    fields [ SFDouble radius ]
+                    radius 0.5
+
+                  }
+                  profileRT 
+                  DEF Box ProfileBox {
+                    fields [ SFDouble uSize, SFDouble vSize ]
+
+                  }
+                  materialRT 
+                  DEF Virtual MaterialVirtual {
+                    fields [  ]
+
+                  }
+                  appearance 
+                  AppearanceKit {
+                    material 
+                    DEF MaterialGL Material {
+                      transparency 0.5
+
+                    }
+
+                  }
+
+                }
+              }
+
+            }
+            DEF skew TSeparatorKit {
+              transform 
+              Transform {
+                translation 0 0 14.14
+
+              }
+              group 
+              Group {
+
+                DEF Shape TShapeKit {
+                  shapeRT 
+                  DEF Sphere ShapeSphere {
+                    fields [ SFDouble radius ]
+                    radius 1
+
+                  }
+                  profileRT 
+                  DEF Box ProfileBox {
+                    fields [ SFDouble uSize, SFDouble vSize ]
+
+                  }
+                  materialRT 
+                  DEF Virtual MaterialVirtual {
+                    fields [  ]
+
+                  }
+                  appearance 
+                  AppearanceKit {
+                    material 
+                    DEF MaterialGL Material {
+                      transparency 0.5
+
+                    }
+
+                  }
+
+                }
+              }
+
+            }
+          }
+
+        }
+      }
+
+    }
+  }
+  air 
+  AirVacuum {
+    fields [  ]
+
+  }
+
+}
