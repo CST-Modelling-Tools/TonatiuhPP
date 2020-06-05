@@ -19,17 +19,6 @@ void ShapeSphere::initClass()
 ShapeSphere::ShapeSphere()
 {
 	SO_NODE_CONSTRUCTOR(ShapeSphere);
-
-    SO_NODE_ADD_FIELD( radius, (1.) );
-
-    m_sensor = new SoNodeSensor(onSensor, this);
-//    m_sensor->setPriority(0); // does not help
-    m_sensor->attach(this);
-}
-
-ShapeSphere::~ShapeSphere()
-{
-    delete m_sensor;
 }
 
 Box3D ShapeSphere::getBox(ProfileRT* profile) const
@@ -40,12 +29,11 @@ Box3D ShapeSphere::getBox(ProfileRT* profile) const
     double alphaMin = gcf::pi*gcf::clamp(box.pMin.y, -0.5, 0.5);
     double alphaMax = gcf::pi*gcf::clamp(box.pMax.y, -0.5, 0.5);
 
-    double r = radius.getValue();
-    double rMin = r*cos(alphaMin);
-    double rMax = r*cos(alphaMax);
+    double rMin = cos(alphaMin);
+    double rMax = cos(alphaMax);
     if (rMin > rMax) std::swap(rMin, rMax);
     if (alphaMin <= 0. && 0. <= alphaMax)
-        rMax = r;
+        rMax = 1.;
 
     double xMin = cos(phiMin);
     double xMax = cos(phiMax);
@@ -69,8 +57,8 @@ Box3D ShapeSphere::getBox(ProfileRT* profile) const
     yMax *= yMax > 0. ? rMax : rMin;
     yMin *= yMin > 0. ? rMin : rMax;
 
-    double zMin = r*sin(alphaMin);
-    double zMax = r*sin(alphaMax);
+    double zMin = sin(alphaMin);
+    double zMax = sin(alphaMax);
 
     return Box3D(
         Vector3D(xMin, yMin, zMin),
@@ -82,12 +70,11 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
 {
     const Vector3D& rayO = ray.origin;
     const Vector3D& rayD = ray.direction();
-    double r = radius.getValue();
 
-    // |r0 + t*d|^2 = R^2
+    // |r0 + t*d|^2 = 1
     double A = rayD.norm2();
     double B = 2.*dot(rayD, rayO);
-    double C = rayO.norm2() - r*r;
+    double C = rayO.norm2() - 1.;
     double ts[2];
     if (!gcf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
 
@@ -98,7 +85,7 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
 
         Vector3D pHit = ray.point(t);
         double phi = atan2(pHit.y, pHit.x);
-        double alpha = asin(gcf::clamp(pHit.z/r, -1., 1.));
+        double alpha = asin(gcf::clamp(pHit.z, -1., 1.));
         double u = phi/gcf::TwoPi;
         double v = alpha/gcf::pi;
         if (!profile->isInside(u, v)) continue;
@@ -113,8 +100,8 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
         dg->u = u;
         dg->v = v;
         dg->dpdu = Vector3D(-pHit.y, pHit.x, 0.);
-        dg->dpdv = Vector3D(-cos(phi)*pHit.z, -sin(phi)*pHit.z, r*cos(alpha));
-        dg->normal = pHit/r;
+        dg->dpdv = Vector3D(-cos(phi)*pHit.z, -sin(phi)*pHit.z, cos(alpha));
+        dg->normal = pHit;
         dg->shape = this;
         dg->isFront = dot(dg->normal, rayD) <= 0.;
         return true;
@@ -141,11 +128,6 @@ void ShapeSphere::updateShapeGL(TShapeKit* parent)
 
 Vector3D ShapeSphere::getPoint(double u, double v) const
 {
-    return radius.getValue()*getNormal(u, v);
-}
-
-Vector3D ShapeSphere::getNormal(double u, double v) const
-{
     double phi = u*gcf::TwoPi;
     double alpha = v*gcf::pi;
     return Vector3D(
@@ -155,26 +137,7 @@ Vector3D ShapeSphere::getNormal(double u, double v) const
     );
 }
 
-void ShapeSphere::onSensor(void* data, SoSensor*)
+Vector3D ShapeSphere::getNormal(double u, double v) const
 {
-    ShapeSphere* shape = (ShapeSphere*) data;
-
-    if (shape->radius.getValue() <= 0.)
-        shape->radius.setValue(1.);
-
-//    double phi = shape->phiMax.getValue();
-//    if (phi <= 0. || phi > gcf::TwoPi)
-//        shape->phiMax.setValue(gcf::TwoPi);
-
-//    if (shape->alphaMin.getValue() < -gcf::pi/2.)
-//        shape->alphaMin.setValue(-gcf::pi/2.);
-
-//    if (shape->alphaMax.getValue() > gcf::pi/2.)
-//        shape->alphaMax.setValue(gcf::pi/2.);
-
-//    if (shape->alphaMax.getValue() <= shape->alphaMin.getValue())
-//    {
-//        shape->alphaMin.setValue(-gcf::pi/2.);
-//        shape->alphaMax.setValue(gcf::pi/2.);
-//    }
+    return getPoint(u, v);
 }

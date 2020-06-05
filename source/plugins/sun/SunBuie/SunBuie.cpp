@@ -21,6 +21,7 @@ SunBuie::SunBuie()
     SO_NODE_ADD_FIELD( csr, (0.02) );
 
     m_sensor = new SoNodeSensor(onSensor, this);
+//    m_sensor->setPriority(0); // does not help
     m_sensor->attach(this);
 
 	double csrValue = csr.getValue();

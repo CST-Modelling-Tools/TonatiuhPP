@@ -77,8 +77,7 @@ TSceneKit {
         DEF Shape TShapeKit {
           shapeRT 
           DEF Sphere ShapeSphere {
-            fields [ SFDouble radius ]
-
+       
           }
           profileRT 
           DEF Box ProfileBox {

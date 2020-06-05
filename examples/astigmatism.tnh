@@ -132,6 +132,7 @@ TSceneKit {
               transform 
               Transform {
                 translation 0 0 7.0700002
+                scaleFactor 0.5 0.5 0.5
 
               }
               group 
@@ -140,8 +141,7 @@ TSceneKit {
                 DEF Shape TShapeKit {
                   shapeRT 
                   DEF Sphere ShapeSphere {
-                    fields [ SFDouble radius ]
-                    radius 0.5
+                    fields [  ]
 
                   }
                   profileRT 
@@ -180,8 +180,7 @@ TSceneKit {
                 DEF Shape TShapeKit {
                   shapeRT 
                   DEF Sphere ShapeSphere {
-                    fields [ SFDouble radius ]
-                    radius 1
+                    fields [  ]
 
                   }
                   profileRT 
