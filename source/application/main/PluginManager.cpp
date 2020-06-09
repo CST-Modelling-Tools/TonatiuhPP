@@ -194,7 +194,7 @@ void PluginManager::sort()
         "Planar",
         "Parabolic",
         "Hyperbolic",
-        "Spherical",
+        "Elliptic",
         "",
         "Sphere",
         "Cylinder",

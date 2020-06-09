@@ -2,7 +2,7 @@ TEMPLATE = subdirs
 
 SUBDIRS += ShapeParabolic
 SUBDIRS += ShapeHyperbolic
-SUBDIRS += ShapeSpherical
+SUBDIRS += ShapeElliptic
 
 SUBDIRS += ShapeSphere
 SUBDIRS += ShapeCylinder

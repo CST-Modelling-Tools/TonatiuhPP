@@ -14,8 +14,7 @@ public:
     Box3D getBox(ProfileRT* aperture) const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
 
-    SoSFDouble r;
-    SoSFDouble drdz;
+    SoSFDouble dr;
 
     NAME_ICON_FUNCTIONS("Cone", ":/ShapeCone.png")
     void updateShapeGL(TShapeKit* parent);

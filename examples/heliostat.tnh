@@ -16,7 +16,7 @@ TSceneKit {
         irradiance 1000
         transform 
         Transform {
-          translation 0 -1.8047799e-006 20.644276
+          translation 0 -1.8047797e-006 20.644274
           rotation 1 0 0  3.1415927
 
         }
@@ -81,6 +81,7 @@ TSceneKit {
           transform 
           Transform {
             translation 0 10 10
+            scaleFactor 0.5 0.5 0.5
 
           }
           group 
@@ -89,8 +90,7 @@ TSceneKit {
             DEF Shape TShapeKit {
               shapeRT 
               DEF Sphere ShapeSphere {
-                fields [ SFDouble radius ]
-                radius 0.5
+                fields [  ]
 
               }
               profileRT 
@@ -129,7 +129,7 @@ TSceneKit {
               transform 
               Transform {
                 translation 0 0 1
-                rotation -0.99999934 -0 -0  0.41002494
+                rotation -1 -0 -0  0.41002494
 
               }
               group 
@@ -139,7 +139,7 @@ TSceneKit {
                   transform 
                   Transform {
                     translation 0 0 0.2
-                    rotation -0 -0.99999952 -0  0.19830778
+                    rotation -0 -1 -0  0.19830778
 
                   }
                   group 
@@ -157,9 +157,9 @@ TSceneKit {
                         DEF Shape TShapeKit {
                           shapeRT 
                           DEF Parabolic ShapeParabolic {
-                            fields [ SFDouble focusX, SFDouble focusY ]
-                            focusX 10
-                            focusY 10
+                            fields [ SFDouble fX, SFDouble fY ]
+                            fX 10
+                            fY 10
 
                           }
                           profileRT 
@@ -189,6 +189,7 @@ TSceneKit {
                       transform 
                       Transform {
                         translation 0 10 10
+                        scaleFactor 0.2 0.2 0.2
 
                       }
                       group 
@@ -197,8 +198,7 @@ TSceneKit {
                         DEF Shape TShapeKit {
                           shapeRT 
                           DEF Sphere ShapeSphere {
-                            fields [ SFDouble radius ]
-                            radius 0.2
+                            fields [  ]
 
                           }
                           profileRT 
@@ -229,6 +229,7 @@ TSceneKit {
                       Transform {
                         translation 0 0 0
                         rotation 1 0 0  1.5700002
+                        scaleFactor 0.029999999 0.029999999 1
 
                       }
                       group 
@@ -237,8 +238,7 @@ TSceneKit {
                         DEF Shape TShapeKit {
                           shapeRT 
                           DEF Cylinder ShapeCylinder {
-                            fields [ SFDouble radius ]
-                            radius 0.03000000000000003
+                            fields [  ]
 
                           }
                           profileRT 
@@ -273,6 +273,7 @@ TSceneKit {
                   Transform {
                     translation 0 0 0
                     rotation 0 1 0  1.5700002
+                    scaleFactor 0.029999999 0.029999999 1
 
                   }
                   group 
@@ -281,8 +282,7 @@ TSceneKit {
                     DEF Shape TShapeKit {
                       shapeRT 
                       DEF Cylinder ShapeCylinder {
-                        fields [ SFDouble radius ]
-                        radius 0.03000000000000003
+                        fields [  ]
 
                       }
                       profileRT 

@@ -20,16 +20,16 @@ ShapeParabolic::ShapeParabolic()
 {
     SO_NODE_CONSTRUCTOR(ShapeParabolic);
 
-    SO_NODE_ADD_FIELD( focusX, (1.) );
-    SO_NODE_ADD_FIELD( focusY, (1.) );
+    SO_NODE_ADD_FIELD( fX, (1.) );
+    SO_NODE_ADD_FIELD( fY, (1.) );
 }
 
 Box3D ShapeParabolic::getBox(ProfileRT* profile) const
 {  
     Box3D box = profile->getBox();
     Vector3D v = box.absMax();
-    double zX = v.x*v.x/(4.*focusX.getValue());
-    double zY = v.y*v.y/(4.*focusY.getValue());
+    double zX = v.x*v.x/(4.*fX.getValue());
+    double zY = v.y*v.y/(4.*fY.getValue());
     if (zX >= 0.) {
         if (zY >= 0.)
             box.pMax.z = zX + zY;
@@ -53,10 +53,9 @@ bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometr
 {
     const Vector3D& rayO = ray.origin;
     const Vector3D& rayD = ray.direction();
-    double gX = 1./focusX.getValue();
-    double gY = 1./focusY.getValue();
+    double gX = 1./fX.getValue();
+    double gY = 1./fY.getValue();
 
-    // (x0 + t*d_x)^2*gX + (y0 + t*d_y)^2*gY = 4*(z0 + t*d_z)
     double A = pow2(rayD.x)*gX + pow2(rayD.y)*gY;
     double B = 2.*(rayD.x*rayO.x*gX + rayD.y*rayO.y*gY) - 4.*rayD.z;
     double C = pow2(rayO.x)*gX + pow2(rayO.y)*gY - 4.*rayO.z;
@@ -102,7 +101,7 @@ void ShapeParabolic::updateShapeGL(TShapeKit* parent)
         if (s > 1.) s = 1.;
         rows = 1 + ceil(48*s);
 
-        r = 2.*std::min(std::abs(focusX.getValue()), std::abs(focusY.getValue()));
+        r = 2.*std::min(std::abs(fX.getValue()), std::abs(fY.getValue()));
         s = (pr->rMax.getValue() - pr->rMin.getValue())/(gcf::TwoPi*r);
         if (s > 1.) s = 1.;
         columns = 1 + ceil(48*s);
@@ -113,12 +112,12 @@ void ShapeParabolic::updateShapeGL(TShapeKit* parent)
         Vector3D v = box.extent();
 
         // 48 divs for 2 pi
-        r = 2.*std::abs(focusX.getValue());
+        r = 2.*std::abs(fX.getValue());
         s = v.x/(gcf::TwoPi*r);
         if (s > 1.) s = 1.;
         rows = 1 + ceil(48*s);
 
-        r = 2.*std::abs(focusY.getValue());
+        r = 2.*std::abs(fY.getValue());
         s = v.y/(gcf::TwoPi*r);
         if (s > 1.) s = 1.;
         columns = 1 + ceil(48*s);
@@ -132,15 +131,26 @@ Vector3D ShapeParabolic::getPoint(double u, double v) const
     return Vector3D(
         u,
         v,
-        (u*u/focusX.getValue() + v*v/focusY.getValue())/4.
+        (u*u/fX.getValue() + v*v/fY.getValue())/4.
     );
 }
 
 Vector3D ShapeParabolic::getNormal(double u, double v) const
 {
     return Vector3D(
-        -u/focusX.getValue(),
-        -v/focusY.getValue(),
+        -u/fX.getValue(),
+        -v/fY.getValue(),
         2.
     ).normalized();
 }
+
+
+// Cassegrain
+// f = r/2
+// F1 = -DF/(F - B)
+// F2 = -DB/(F - B - D)
+// D = 5
+// B = 6
+// F = 10
+// F1 = 50/4
+// F2 = 30/1 ???

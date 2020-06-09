@@ -44,3 +44,12 @@ RESOURCES += resources.qrc
 win32 { # icon for windows explorer
     RC_ICONS = images/about/Tonatiuh.ico
 }
+
+DISTFILES += \
+    ../../examples/CPC.tnh \
+    ../../examples/astigmatism.tnh \
+    ../../examples/benchmark.tnh \
+    ../../examples/focusing.tnh \
+    ../../examples/heliostat.tnh \
+    ../../examples/script.tnhs \
+    ../../examples/trough.tnh

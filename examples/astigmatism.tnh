@@ -77,7 +77,7 @@ TSceneKit {
       group 
       Group {
 
-        DEF Node TSeparatorKit {
+        DEF Mirror TSeparatorKit {
           transform 
           Transform {
 
@@ -88,9 +88,9 @@ TSceneKit {
             DEF Shape TShapeKit {
               shapeRT 
               DEF Parabolic ShapeParabolic {
-                fields [ SFDouble focusX, SFDouble focusY ]
-                focusX 10
-                focusY 10
+                fields [ SFDouble fX, SFDouble fY ]
+                fX 10
+                fY 10
 
               }
               profileRT 

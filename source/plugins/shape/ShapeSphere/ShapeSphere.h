@@ -2,9 +2,6 @@
 
 #include "kernel/shape/ShapeRT.h"
 
-class SoNodeSensor;
-class SoSensor;
-
 
 class ShapeSphere: public ShapeRT
 {

@@ -17,8 +17,6 @@ void ShapeCylinder::initClass()
 ShapeCylinder::ShapeCylinder()
 {
     SO_NODE_CONSTRUCTOR(ShapeCylinder);
-
-    SO_NODE_ADD_FIELD( radius, (1.) );
 }
 
 Box3D ShapeCylinder::getBox(ProfileRT* aperture) const
@@ -29,22 +27,21 @@ Box3D ShapeCylinder::getBox(ProfileRT* aperture) const
     double zMin = box.pMin.y;
     double zMax = box.pMax.y;
 
-    double r = radius.getValue();
-    double xMin = r*cos(phiMin);
-    double xMax = r*cos(phiMax);
-    double yMin = r*sin(phiMin);
-    double yMax = r*sin(phiMax);
+    double xMin = cos(phiMin);
+    double xMax = cos(phiMax);
+    double yMin = sin(phiMin);
+    double yMax = sin(phiMax);
     if (xMin > xMax) std::swap(xMin, xMax);
     if (yMin > yMax) std::swap(yMin, yMax);
 
     if (phiMin <= 0. && 0. <= phiMax)
-        xMax = r;
+        xMax = 1.;
     if (phiMin <= -gcf::pi || phiMax >= gcf::pi)
-        xMin = -r;
+        xMin = -1.;
     if (phiMin <= 0.5*gcf::pi && 0.5*gcf::pi <= phiMax)
-        yMax = r;
+        yMax = 1.;
     if (phiMin <= -0.5*gcf::pi && -0.5*gcf::pi <= phiMax)
-        yMin = -r;
+        yMin = -1.;
 
     return Box3D(
         Vector3D(xMin, yMin, zMin),
@@ -56,12 +53,11 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
 {
     const Vector3D& rayO = ray.origin;
     const Vector3D& rayD = ray.direction();
-    double r = radius.getValue();
 
-    // |r0xy + dxy*t|^2 = R^2
+    // |rxy|^2 = 1, r = r0 + t*d
     double A = rayD.x*rayD.x + rayD.y*rayD.y;
     double B = 2.*(rayD.x*rayO.x + rayD.y*rayO.y);
-    double C = rayO.x*rayO.x + rayO.y*rayO.y - r*r;
+    double C = rayO.x*rayO.x + rayO.y*rayO.y - 1.;
     double ts[2];
     if (!gcf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
 
@@ -87,7 +83,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
         dg->v = v;
         dg->dpdu = Vector3D(-pHit.y, pHit.x, 0.);
         dg->dpdv = Vector3D(0., 0., 1.);
-        dg->normal = Vector3D(pHit.x, pHit.y, 0.)/r;
+        dg->normal = Vector3D(pHit.x, pHit.y, 0.);
         dg->shape = this;
         dg->isFront = dot(dg->normal, rayD) <= 0.;
         return true;
@@ -110,14 +106,13 @@ void ShapeCylinder::updateShapeGL(TShapeKit* parent)
 
 Vector3D ShapeCylinder::getPoint(double u, double v) const
 {
-    double r = radius.getValue();
-    double phi = u*gcf::TwoPi;
-    return Vector3D(r*cos(phi), r*sin(phi), v);
+    double phi = gcf::TwoPi*u;
+    return Vector3D(cos(phi), sin(phi), v);
 }
 
 Vector3D ShapeCylinder::getNormal(double u, double v) const
 {
     Q_UNUSED(v)
-    double phi = u*gcf::TwoPi;
+    double phi = gcf::TwoPi*u;
     return Vector3D(cos(phi), sin(phi), 0.);
 }

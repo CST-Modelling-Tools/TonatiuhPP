@@ -14,8 +14,8 @@ public:
     Box3D getBox(ProfileRT* profile) const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
 
-    SoSFDouble focusX;
-    SoSFDouble focusY;
+    SoSFDouble fX;
+    SoSFDouble fY;
 
     NAME_ICON_FUNCTIONS("Parabolic", ":/ShapeParabolic.png")
     void updateShapeGL(TShapeKit* parent);

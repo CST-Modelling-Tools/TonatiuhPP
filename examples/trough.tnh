@@ -99,6 +99,7 @@ TSceneKit {
                   transform 
                   Transform {
                     rotation 1 0 0  1.5700002
+                    scaleFactor 0.050000001 0.050000001 5
 
                   }
                   group 
@@ -107,14 +108,14 @@ TSceneKit {
                     DEF Shape TShapeKit {
                       shapeRT 
                       DEF Cylinder ShapeCylinder {
-                        fields [ SFDouble radius ]
-                        radius 0.05000000000000002
+                        fields [ ]
+          
 
                       }
                       profileRT 
                       DEF Box ProfileBox {
                         fields [ SFDouble uSize, SFDouble vSize ]
-                        vSize 5
+                   
 
                       }
                       materialRT 
@@ -147,9 +148,9 @@ TSceneKit {
                     DEF Shape TShapeKit {
                       shapeRT 
                       DEF Parabolic ShapeParabolic {
-                        fields [ SFDouble focusX, SFDouble focusY ]
-                        focusX 4
-                        focusY 1000
+                        fields [ SFDouble fX, SFDouble fY ]
+                        fX 4
+                        fY 1000
 
                       }
                       profileRT 

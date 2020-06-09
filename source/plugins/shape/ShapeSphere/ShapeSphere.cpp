@@ -1,7 +1,5 @@
 #include "ShapeSphere.h"
 
-#include <Inventor/sensors/SoNodeSensor.h>
-
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
@@ -71,7 +69,7 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     const Vector3D& rayO = ray.origin;
     const Vector3D& rayD = ray.direction();
 
-    // |r0 + t*d|^2 = 1
+    // |r|^2 = 1, r = r0 + t*d
     double A = rayD.norm2();
     double B = 2.*dot(rayD, rayO);
     double C = rayO.norm2() - 1.;
@@ -128,8 +126,8 @@ void ShapeSphere::updateShapeGL(TShapeKit* parent)
 
 Vector3D ShapeSphere::getPoint(double u, double v) const
 {
-    double phi = u*gcf::TwoPi;
-    double alpha = v*gcf::pi;
+    double phi = gcf::TwoPi*u;
+    double alpha = gcf::pi*v;
     return Vector3D(
         cos(phi)*cos(alpha),
         sin(phi)*cos(alpha),

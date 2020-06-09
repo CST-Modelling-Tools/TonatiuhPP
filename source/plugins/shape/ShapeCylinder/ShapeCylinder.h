@@ -14,8 +14,6 @@ public:
     Box3D getBox(ProfileRT* aperture) const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
 
-    SoSFDouble radius;
-
     NAME_ICON_FUNCTIONS("Cylinder", ":/ShapeCylinder.png")
     void updateShapeGL(TShapeKit* parent);
 

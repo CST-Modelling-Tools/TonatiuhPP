@@ -19,8 +19,7 @@ ShapeCone::ShapeCone()
 {
     SO_NODE_CONSTRUCTOR(ShapeCone);
 
-    SO_NODE_ADD_FIELD( r, (1.) );
-    SO_NODE_ADD_FIELD( drdz, (0.) );
+    SO_NODE_ADD_FIELD( dr, (-1.) );
 }
 
 Box3D ShapeCone::getBox(ProfileRT* aperture) const
@@ -28,10 +27,9 @@ Box3D ShapeCone::getBox(ProfileRT* aperture) const
     Box3D box = aperture->getBox();
     double zMin = box.pMin.y;
     double zMax = box.pMax.y;
-    double rV = r.getValue();
-    double drdzV = drdz.getValue();
-    double rMin = std::abs(rV + drdzV*zMin);
-    double rMax = std::abs(rV + drdzV*zMax);
+    double drV = dr.getValue();
+    double rMin = std::abs(1. + drV*zMin);
+    double rMax = std::abs(1. + drV*zMax);
     if (rMin > rMax) std::swap(rMin, rMax);
 
     return Box3D(
@@ -44,12 +42,11 @@ bool ShapeCone::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
 {
     const Vector3D& rayO = ray.origin;
     const Vector3D& rayD = ray.direction();
-    double rV = r.getValue();
-    double drdzV = drdz.getValue();
+    double drV = dr.getValue();
 
-    // |r0xy + dxy*t|^2 = |r + drdz*(r0z + dz*t)|^2
-    double rz = rV + drdzV*rayO.z;
-    double dz = drdzV*rayD.z;
+    // |rxy|^2 = |1 + dr*z|^2, r = r0 + t*d
+    double rz = 1. + drV*rayO.z;
+    double dz = drV*rayD.z;
     double A = pow2(rayD.x) + pow2(rayD.y) - pow2(dz);
     double B = 2.*(rayD.x*rayO.x + rayD.y*rayO.y - dz*rz);
     double C = pow2(rayO.x) + pow2(rayO.y) - pow2(rz);
@@ -72,16 +69,16 @@ bool ShapeCone::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
         else if (tHit == 0 || dg == 0)
             gcf::SevereError("ShapeCone::intersect");
 
-        double rz = rV + drdzV*v;
-        if (gcf::eqz(rz)) return false;
+        double r = 1. + drV*v;
+        if (gcf::eqz(r)) return false;
 
         *tHit = t;
         dg->point = pHit;
         dg->u = u;
         dg->v = v;
         dg->dpdu = Vector3D(-pHit.y, pHit.x, 0.);
-        dg->dpdv = Vector3D(drdzV/rz*pHit.x, drdzV/rz*pHit.y, 1.);
-        dg->normal = Vector3D(pHit.x, pHit.y, -drdzV*rz).normalized();
+        dg->dpdv = Vector3D(drV*pHit.x/r, drV*pHit.y/r, 1.);
+        dg->normal = Vector3D(pHit.x, pHit.y, -drV*r).normalized();
         dg->shape = this;
         dg->isFront = dot(dg->normal, rayD) <= 0.;
         return true;
@@ -105,15 +102,17 @@ void ShapeCone::updateShapeGL(TShapeKit* parent)
 Vector3D ShapeCone::getPoint(double u, double v) const
 {
     double phi = gcf::TwoPi*u;
-    double rz = r.getValue() + drdz.getValue()*v;
-    return Vector3D(rz*cos(phi), rz*sin(phi), v);
+    double r = 1. + dr.getValue()*v;
+    return Vector3D(r*cos(phi), r*sin(phi), v);
 }
 
+// |rxy|^2 = |1 + dr*z|^2
+// [x, y, -(1 + dr*z)dr]
 Vector3D ShapeCone::getNormal(double u, double v) const
 {
     double phi = gcf::TwoPi*u;
-    double drdzV = drdz.getValue();
-    double rz = r.getValue() + drdzV*v;
-    if (gcf::eqz(rz)) rz = 1.;
-    return Vector3D(rz*cos(phi), rz*sin(phi), -rz*drdzV).normalized();
+    double drV = dr.getValue();
+    double r = 1. + drV*v;
+    r = r >= 0. ? 1. : -1;
+    return Vector3D(r*cos(phi), r*sin(phi), -r*drV).normalized();
 }

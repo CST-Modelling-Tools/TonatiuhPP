@@ -6,6 +6,7 @@
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/Box3D.h"
 #include "libraries/geometry/Ray.h"
+using gcf::pow2;
 
 SO_NODE_SOURCE(ShapeHyperbolic)
 
@@ -19,29 +20,34 @@ ShapeHyperbolic::ShapeHyperbolic()
 {
     SO_NODE_CONSTRUCTOR(ShapeHyperbolic);
 
-    SO_NODE_ADD_FIELD( focusX, (1.) );
-    SO_NODE_ADD_FIELD( focusY, (1.) );
+    SO_NODE_ADD_FIELD( aX, (1.) );
+    SO_NODE_ADD_FIELD( aY, (1.) );
+    SO_NODE_ADD_FIELD( aZ, (1.) );
 }
 
 Box3D ShapeHyperbolic::getBox(ProfileRT* profile) const
 {  
     Box3D box = profile->getBox();
     Vector3D v = box.absMax();
-    box.pMax.z = (v.x*v.x/focusX.getValue() + v.y*v.y/focusY.getValue())/4.;
+    double rX = aX.getValue();
+    double rY = aY.getValue();
+    double rZ = aZ.getValue();
+    double s = 1. + pow2(v.x/rX) + pow2(v.y/rY);
+    s = sqrt(s) - 1.;
+    box.pMax.z = s*rZ;
     return box;
 }
 
 bool ShapeHyperbolic::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
 {
-    const Vector3D& rayO = ray.origin;
-    const Vector3D& rayD = ray.direction();
-    double gX = 1./focusX.getValue();
-    double gY = 1./focusY.getValue();
+    double rZ = aZ.getValue();
+    Vector3D g(1./aX.getValue(), 1./aY.getValue(), 1./rZ);
+    Vector3D rayO = (ray.origin + Vector3D(0., 0., rZ))*g;
+    Vector3D rayD = ray.direction()*g;
 
-    // (x0 + t*d_x)^2*gX + (y0 + t*d_y)^2*gY = 4*(z0 + t*d_z)
-    double A = rayD.x*rayD.x*gX + rayD.y*rayD.y*gY;
-    double B = 2.*(rayD.x*rayO.x*gX + rayD.y*rayO.y*gY) - 4.*rayD.z;
-    double C = rayO.x*rayO.x*gX + rayO.y*rayO.y*gY - 4.*rayO.z;
+    double A = pow2(rayD.x) + pow2(rayD.y) - pow2(rayD.z);
+    double B = 2.*(rayD.x*rayO.x + rayD.y*rayO.y - rayD.z*rayO.z);
+    double C = pow2(rayO.x) + pow2(rayO.y) - pow2(rayO.z) + 1.;
     double ts[2];
     if (!gcf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
 
@@ -51,6 +57,7 @@ bool ShapeHyperbolic::intersect(const Ray& ray, double* tHit, DifferentialGeomet
         if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
 
         Vector3D pHit = ray.point(t);
+        if (pHit.z < 0.) continue; // discard lower branch
         if (!profile->isInside(pHit.x, pHit.y)) continue;
 
         if (tHit == 0 && dg == 0)
@@ -62,11 +69,12 @@ bool ShapeHyperbolic::intersect(const Ray& ray, double* tHit, DifferentialGeomet
         dg->point = pHit;
         dg->u = pHit.x;
         dg->v = pHit.y;
-        dg->dpdu = Vector3D(1., 0., pHit.x*gX/2.);
-        dg->dpdv = Vector3D(0., 1., pHit.y*gY/2.);
-        dg->normal = Vector3D(-pHit.x*gX, -pHit.y*gY, 2.).normalized();
+        double s = 1. + pHit.z/rZ;
+        dg->dpdu = Vector3D(1., 0., pHit.x/s*g.x*g.x*rZ);
+        dg->dpdv = Vector3D(0., 1., pHit.y/s*g.y*g.y*rZ);
+        dg->normal = Vector3D(-dg->dpdu.z, -dg->dpdv.z, 1.).normalized();
         dg->shape = this;
-        dg->isFront = dot(dg->normal, rayD) <= 0.;
+        dg->isFront = dot(dg->normal, ray.direction()) <= 0.;
         return true;
     }
     return false;
@@ -84,8 +92,8 @@ void ShapeHyperbolic::updateShapeGL(TShapeKit* parent)
         if (s > 1.) s = 1.;
         rows = 1 + ceil(48*s);
 
-        double f = std::min(focusX.getValue(), focusY.getValue());
-        s = (pr->rMax.getValue() - pr->rMin.getValue())/(gcf::TwoPi*2.*f);
+        double r = std::min(aX.getValue(), aY.getValue());
+        s = (pr->rMax.getValue() - pr->rMin.getValue())/(gcf::TwoPi*r);
         if (s > 1.) s = 1.;
         columns = 1 + ceil(48*s);
     }
@@ -94,12 +102,12 @@ void ShapeHyperbolic::updateShapeGL(TShapeKit* parent)
         Box3D box = profile->getBox();
         Vector3D v = box.extent();
 
-        // radius = 2*focus, 48 divs for 2 pi
-        s = v.x/(gcf::TwoPi*2.*focusX.getValue());
+        // 48 divs for 2 pi
+        s = v.x/(gcf::TwoPi*aX.getValue());
         if (s > 1.) s = 1.;
         rows = 1 + ceil(48*s);
 
-        s = v.y/(gcf::TwoPi*2.*focusY.getValue());
+        s = v.y/(gcf::TwoPi*aY.getValue());
         if (s > 1.) s = 1.;
         columns = 1 + ceil(48*s);
     }
@@ -109,18 +117,19 @@ void ShapeHyperbolic::updateShapeGL(TShapeKit* parent)
 
 Vector3D ShapeHyperbolic::getPoint(double u, double v) const
 {
-    return Vector3D(
-        u,
-        v,
-        (u*u/focusX.getValue() + v*v/focusY.getValue())/4.
-    );
+    double rX = aX.getValue();
+    double rY = aY.getValue();
+    double rZ = aZ.getValue();
+    double s = 1. + pow2(u/rX) + pow2(v/rY);
+    s = sqrt(s) - 1.;
+    return Vector3D(u, v, s*rZ);
 }
 
 Vector3D ShapeHyperbolic::getNormal(double u, double v) const
 {
-    return Vector3D(
-        -u/focusX.getValue(),
-        -v/focusY.getValue(),
-        2.
-    ).normalized();
+    double rX = aX.getValue();
+    double rY = aY.getValue();
+    double rZ = aZ.getValue();
+    double s = 1. + pow2(u/rX) + pow2(v/rY);
+    return Vector3D(-u/(rX*rX), -v/(rY*rY), sqrt(s)/rZ).normalized();
 }

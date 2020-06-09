@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/" >
-        <file>ShapeSpherical.png</file>
+        <file>ShapeElliptic.png</file>
     </qresource>
 </RCC>
