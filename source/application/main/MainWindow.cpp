@@ -693,24 +693,22 @@ void MainWindow::ItemDragAndDropCopy(const QModelIndex& newParent, const QModelI
  */
 void MainWindow::Open()
 {
-    if (OkToContinue() )
-    {
-        // HKEY_CURRENT_USER\Software\CyI\Tonatiuh
-        QSettings settings("CyI", "Tonatiuh");
-        QString openDirectory = settings.value("openDirectory", "../examples").toString();
+    if (!OkToContinue()) return;
 
-        QString fileName = QFileDialog::getOpenFileName(
-            this, "Open", openDirectory,
-            "Tonatiuh files (*.tnh)"
-        );
+    // HKEY_CURRENT_USER\Software\CyI\Tonatiuh
+    QSettings settings("CyI", "Tonatiuh");
+    QString dir = settings.value("openDirectory", "../examples").toString();
 
-        if (fileName.isEmpty() ) return;
+    QString file = QFileDialog::getOpenFileName(
+                this, "Open", dir,
+                "Tonatiuh files (*.tnh)"
+    );
+    if (file.isEmpty()) return;
 
-        QFileInfo file(fileName);
-        settings.setValue("openDirectory", file.path());
+    QFileInfo info(file);
+    settings.setValue("openDirectory", info.path());
 
-        StartOver(fileName);
-    }
+    StartOver(file);
 }
 
 /*!
@@ -863,23 +861,18 @@ void MainWindow::SaveComponent(QString componentFileName)
 bool MainWindow::SaveAs()
 {
     QSettings settings("CyI", "Tonatiuh");
-    QString saveDirectory = settings.value("saveDirectory", ".").toString();
+    QString dir = settings.value("saveDirectory", "../examples").toString();
 
-    QString fileName = QFileDialog::getSaveFileName(
-        this,
-        tr("Save"),
-        saveDirectory,
+    QString file = QFileDialog::getSaveFileName(
+        this, "Save", dir,
         "Tonatiuh files (*.tnh);; Tonatiuh debug (*.tnhd)"
     );
+    if (file.isEmpty() ) return false;
 
-    if (fileName.isEmpty() ) return false;
+    QFileInfo info(file);
+    settings.setValue("saveDirectory", info.path());
 
-    QFileInfo file(fileName);
-    settings.setValue("saveDirectory", file.absolutePath() );
-
-//    if (file.completeSuffix().compare("tnh") )
-//        fileName.append(".tnh");
-    return SaveFile(fileName);
+    return SaveFile(file);
 }
 
 /*!

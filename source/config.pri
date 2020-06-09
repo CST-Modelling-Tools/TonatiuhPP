@@ -14,7 +14,7 @@ LIBS += -lCoin -lSoQt
 LIBS += -L$$COINDIR/bin # for running
 
 QMAKE_CXXFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS_RELEASE += -O3 -march=native
+QMAKE_CXXFLAGS_RELEASE += -O3 -march=skylake # native?
 }
 
 msvc {
