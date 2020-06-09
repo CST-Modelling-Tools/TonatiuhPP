@@ -78,7 +78,7 @@ void PluginManager::load(QDir dir)
     loadPlugin(new AirFactoryT<AirExponential>);
     loadPlugin(new AirFactoryT<AirPolynomial>);
     loadPlugin(new ShapeFactoryT<ShapePlanar>);
-//    loadPlugin(new ShapeFactoryT<ShapeCube>);
+    loadPlugin(new ShapeFactoryT<ShapeCube>);
     loadPlugin(new ProfileFactoryT<ProfileBox>);
     loadPlugin(new ProfileFactoryT<ProfileRectangular>);
     loadPlugin(new ProfileFactoryT<ProfileCircular>);
@@ -196,6 +196,7 @@ void PluginManager::sort()
         "Hyperbolic",
         "Elliptic",
         "",
+        "Cube",
         "Sphere",
         "Cylinder",
         "Cone"

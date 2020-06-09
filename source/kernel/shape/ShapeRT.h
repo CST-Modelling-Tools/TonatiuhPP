@@ -20,8 +20,6 @@ class TONATIUH_KERNEL ShapeRT: public SoNode
 public:
     static void initClass();
 
-    virtual double getArea() const {return -1.;}
-    virtual double getVolume() const {return 0.;}
     virtual Box3D getBox(ProfileRT* aperture) const;
 
     // with computing dg, ray in local coordinates
@@ -34,10 +32,8 @@ public:
     virtual void updateShapeGL(TShapeKit* /*parent*/) {}
 
 protected:
-//    void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
-
-    virtual Vector3D getPoint(double u, double v) const = 0;
-    virtual Vector3D getNormal(double u, double v) const = 0;
+    virtual Vector3D getPoint(double u, double v) const;
+    virtual Vector3D getNormal(double u, double v) const;
     void makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals = false, bool reverseClock = false);
 
     ShapeRT() {}

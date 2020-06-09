@@ -6,7 +6,7 @@
 #include "Vector3D.h"
 
 const Box3D Box3D::UnitCube(
-    Vector3D(-0.5, -0.5, -0.5),
+    -Vector3D(0.5, 0.5, 0.5),
     Vector3D(0.5, 0.5, 0.5)
 );
 
@@ -80,47 +80,46 @@ bool Box3D::intersect(const Box3D& b) const
 
 bool Box3D::intersect(const Ray& ray, double* t0, double* t1) const
 {
+    const Vector3D& rayO = ray.origin;
+    const Vector3D& rayI = ray.invDirection();
     double trMin = ray.tMin;
     double trMax = ray.tMax;
     double tMin, tMax, tyMin, tyMax, tzMin, tzMax;
 
-    double dInv = ray.invDirection().x;
-    if (dInv >= 0.)
+    if (rayI.x >= 0.)
     {
-        tMin = (pMin.x - ray.origin.x)*dInv;
-        tMax = (pMax.x - ray.origin.x)*dInv;
+        tMin = (pMin.x - rayO.x)*rayI.x;
+        tMax = (pMax.x - rayO.x)*rayI.x;
     }
     else
     {
-        tMin = (pMax.x - ray.origin.x)*dInv;
-        tMax = (pMin.x - ray.origin.x)*dInv;
+        tMin = (pMax.x - rayO.x)*rayI.x;
+        tMax = (pMin.x - rayO.x)*rayI.x;
     }
 
-    dInv = ray.invDirection().y;
-    if (dInv >= 0.)
+    if (rayI.y >= 0.)
     {
-        tyMin = (pMin.y - ray.origin.y)*dInv;
-        tyMax = (pMax.y - ray.origin.y)*dInv;
+        tyMin = (pMin.y - rayO.y)*rayI.y;
+        tyMax = (pMax.y - rayO.y)*rayI.y;
     }
     else
     {
-        tyMin = (pMax.y - ray.origin.y)*dInv;
-        tyMax = (pMin.y - ray.origin.y)*dInv;
+        tyMin = (pMax.y - rayO.y)*rayI.y;
+        tyMax = (pMin.y - rayO.y)*rayI.y;
     }
     if (tyMin > tMax || tyMax < tMin) return false;
     if (tyMin > tMin) tMin = tyMin;
     if (tyMax < tMax) tMax = tyMax;
 
-    dInv = ray.invDirection().z;
-    if (dInv >= 0.)
+    if (rayI.z >= 0.)
     {
-        tzMin = (pMin.z - ray.origin.z)*dInv;
-        tzMax = (pMax.z - ray.origin.z)*dInv;
+        tzMin = (pMin.z - rayO.z)*rayI.z;
+        tzMax = (pMax.z - rayO.z)*rayI.z;
     }
     else
     {
-        tzMin = (pMax.z - ray.origin.z)*dInv;
-        tzMax = (pMin.z - ray.origin.z)*dInv;
+        tzMin = (pMax.z - rayO.z)*rayI.z;
+        tzMax = (pMin.z - rayO.z)*rayI.z;
     }
     if (tzMin > tMax || tzMax < tMin) return false;
     if (tzMin > tMin) tMin = tzMin;

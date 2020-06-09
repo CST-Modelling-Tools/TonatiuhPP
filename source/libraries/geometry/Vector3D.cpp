@@ -20,6 +20,15 @@ bool Vector3D::operator!=(const Vector3D& v) const
     return !(*this == v);
 }
 
+int Vector3D::maxDimension() const
+{
+    if (x > y && x > z)
+        return 0;
+    else if (y > z)
+        return 1;
+    return 2;
+}
+
 std::ostream& operator<<(std::ostream& os, const Vector3D& v)
 {
     os << v.x << ", " << v.y << ", " << v.z;

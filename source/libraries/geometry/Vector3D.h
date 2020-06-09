@@ -130,6 +130,7 @@ struct TONATIUH_LIBRARIES Vector3D
     double min() const {return std::min(std::min(x, y), z);}
     double max() const {return std::max(std::max(x, y), z);}
     Vector3D abs() const {return Vector3D(std::abs(x), std::abs(y), std::abs(z));}
+    int maxDimension() const;
 
     double x;
     double y;

@@ -27,18 +27,15 @@ Box3D ShapeRT::getBox(ProfileRT* aperture) const
     return Box3D::UnitCube;
 }
 
-//void ShapeRT::computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center)
-//{
-//    Q_UNUSED(action)
-//    Q_UNUSED(center)
+Vector3D ShapeRT::getPoint(double u, double v) const
+{
+    return Vector3D(0, 0, 0);
+}
 
-//    BoundingBox b = getBox();
-//    SbVec3f min(b.pMin.x, b.pMin.y, b.pMin.z);
-//    SbVec3f max(b.pMax.x, b.pMax.y, b.pMax.z);
-//    box.setBounds(min, max);
-
-////    center.setValue(0., 0., 0.);
-//}
+Vector3D ShapeRT::getNormal(double u, double v) const
+{
+    return Vector3D(0, 0, 0);
+}
 
 void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals, bool reverseClock)
 {
