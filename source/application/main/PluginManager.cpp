@@ -30,6 +30,7 @@
 #include "kernel/trackers/Tracker.h"
 #include "libraries/fields/UserMField.h"
 #include "libraries/fields/UserSField.h"
+#include "libraries/fields/MFVec2.h"
 #include "libraries/geometry/gcf.h"
 #include "view/SkyBackground.h"
 
@@ -38,6 +39,7 @@ PluginManager::PluginManager()
 {
     UserMField::initClass();
     UserSField::initClass();
+    MFVec2::initClass();
 
     Tracker::initClass();
 

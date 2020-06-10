@@ -11,7 +11,7 @@
 #include "kernel/profiles/ProfileRT.h"
 #include "libraries/geometry/Vector3D.h"
 #include "libraries/geometry/Box3D.h"
-
+#include "kernel/profiles/ProfilePolygon.h"
 
 SO_NODE_ABSTRACT_SOURCE(ShapeRT)
 
@@ -39,8 +39,8 @@ Vector3D ShapeRT::getNormal(double u, double v) const
 
 void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals, bool reverseClock)
 {
-    ProfileRT* aperture = (ProfileRT*) parent->profileRT.getValue();
-    QVector<Vector2D> uvs = aperture->makeMesh(dims);
+    ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
+    QVector<Vector2D> uvs = profile->makeMesh(dims);
 
     QVector<SbVec3f> vertices;
     QVector<SbVec3f> normals;
@@ -66,4 +66,9 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNor
     sMesh->verticesPerColumn = dims.width();
 
     parent->setPart("shape", sMesh);
+
+//    if (ProfilePolygon* pp = dynamic_cast<ProfilePolygon*>(profile))
+//    {
+//        parent->setPart('profile', );
+//    }
 }

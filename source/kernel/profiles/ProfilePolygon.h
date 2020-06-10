@@ -2,6 +2,7 @@
 
 #include "kernel/profiles/ProfileRT.h"
 #include "libraries/geometry/Vector2D.h"
+#include "libraries/fields/MFVec2.h"
 
 
 class TONATIUH_KERNEL ProfilePolygon: public ProfileRT
@@ -12,9 +13,7 @@ public:
     static void initClass();
     ProfilePolygon();
 
-    SoSFVec2f a;
-    SoSFVec2f b;
-    SoSFVec2f c;
+    MFVec2 points;
 
     Box3D getBox() const;
     bool isInside(double u, double v) const;
@@ -25,10 +24,7 @@ public:
 protected:
     ~ProfilePolygon();
 
-    Vector2D m_pAC;
-    Vector2D m_pBC;
-    Vector2D m_pC;
-    double m_det;
+    QPolygonF m_polygon;
 
     SoNodeSensor* m_sensor;
     static void onSensor(void* data, SoSensor*);

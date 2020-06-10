@@ -23,6 +23,7 @@ ShapeCube::ShapeCube()
 
 Box3D ShapeCube::getBox(ProfileRT* aperture) const
 {
+    Q_UNUSED(aperture)
     return Box3D::UnitCube;
 }
 
@@ -81,7 +82,7 @@ bool ShapeCube::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
         if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
 
         Vector3D pHit = ray.point(t);
-        // aperture
+        Q_UNUSED(aperture)
 
         if (tHit == 0 && dg == 0)
             return true;
@@ -145,4 +146,3 @@ void ShapeCube::updateShapeGL(TShapeKit* parent)
     cube->depth = 1.;
     parent->setPart("shape", cube);
 }
-

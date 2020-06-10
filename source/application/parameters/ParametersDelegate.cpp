@@ -60,7 +60,7 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
     }
     else if (UserMField* f = dynamic_cast<UserMField*>(field))
     {
-        FieldEditor* editor = f->GetEditor();
+        FieldEditor* editor = f->getEditor();
         editor->setGeometry(option.rect);
         editor->setParent(parent);
         connect(

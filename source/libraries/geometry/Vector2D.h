@@ -49,6 +49,11 @@ struct TONATIUH_LIBRARIES Vector2D
         return Vector2D(x*s, y*s);
     }
 
+    Vector2D operator*(const Vector2D& v) const
+    {
+        return Vector2D(x*v.x, y*v.y);
+    }
+
     Vector2D& operator*=(double s)
     {
         x *= s;

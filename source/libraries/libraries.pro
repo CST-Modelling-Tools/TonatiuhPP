@@ -25,3 +25,6 @@ SOURCES += \
     $$files(geometry/*.cpp) \
     $$files(qcustomplot/*.cpp) \
     $$files(sun/*.cpp)
+
+FORMS += \
+    $$files(fields/*.ui)

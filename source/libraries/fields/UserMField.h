@@ -1,9 +1,11 @@
 #pragma once
 
 #include "libraries/TonatiuhLibraries.h"
+
 #include <QStringList>
-#include <Inventor/fields/SoSubField.h>
+
 #include <Inventor/fields/SoMField.h>
+#include <Inventor/fields/SoSubField.h>
 
 
 class FieldEditor;
@@ -13,24 +15,18 @@ class TONATIUH_LIBRARIES UserMField: public SoMField
     typedef SoMField inherited;
 
 public:
-    virtual ~UserMField() {}
     static void initClass(void);
-    static SoType getClassTypeId(void);
+    virtual ~UserMField() {}
+
+    static SoType getClassTypeId(void) {return classTypeId;}
     static void atexit_cleanup(void);
-    virtual FieldEditor* GetEditor() const = 0;
+    virtual FieldEditor* getEditor() const = 0;
 
-    QStringList GetNames() const
-    {
-        return m_dimensionsNames;
-    }
-
-    void SetNames(QStringList dimensionsNames)
-    {
-        m_dimensionsNames = dimensionsNames;
-    }
+    QStringList getNames() const {return m_names;}
+    void setNames(QStringList names) {m_names = names;}
 
 private:
-    QStringList m_dimensionsNames;
-    FieldEditor* m_pEditor;
+    QStringList m_names;
+    FieldEditor* m_editor;
     static SoType classTypeId;
 };

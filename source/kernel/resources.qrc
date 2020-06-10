@@ -13,5 +13,6 @@
         <file>images/ProfileCircular.png</file>
         <file>images/ProfileTriangle.png</file>
         <file>images/ProfilePolygon.png</file>
+        <file>images/ShapeCube.png</file>
     </qresource>
 </RCC>

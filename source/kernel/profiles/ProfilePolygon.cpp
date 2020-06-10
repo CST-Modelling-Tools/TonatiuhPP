@@ -15,9 +15,16 @@ void ProfilePolygon::initClass()
 ProfilePolygon::ProfilePolygon()
 {
     SO_NODE_CONSTRUCTOR(ProfilePolygon);
-    SO_NODE_ADD_FIELD( a, (1., 0.) );
-    SO_NODE_ADD_FIELD( b, (0., 1.) );
-    SO_NODE_ADD_FIELD( c, (0., 0.) );
+
+    SO_NODE_ADD_FIELD( points, (0., 0.) );
+    SbVec2f vs[] = {
+        SbVec2f(1., 0.),
+        SbVec2f(0., 1.),
+        SbVec2f(-1., 0.),
+        SbVec2f(0., -1.)
+    };
+    points.setValues(0, 4, vs);
+    points.setNames({"x", "y"});
 
     m_sensor = new SoNodeSensor(onSensor, this);
     m_sensor->attach(this);
@@ -26,26 +33,20 @@ ProfilePolygon::ProfilePolygon()
 
 Box3D ProfilePolygon::getBox() const
 {
-    Box3D box;
-    box << Vector3D(tgf::makeVector2D(a.getValue()));
-    box << Vector3D(tgf::makeVector2D(b.getValue()));
-    box << Vector3D(tgf::makeVector2D(c.getValue()));
+    QRectF rect = m_polygon.boundingRect();
+    Box3D box(
+        Vector3D(rect.left(), rect.top(), 0.),
+        Vector3D(rect.right(), rect.bottom(), 0.)
+    );
+    double zMax = 0.01*box.extent().max();
+    box.pMin.z = -zMax;
+    box.pMax.z = zMax;
     return box;
 }
 
-// use QPolygon
 bool ProfilePolygon::isInside(double u, double v) const
 {
-    if (gcf::eqz(m_det)) return false;
-
-    Vector2D p(u, v);
-    p -= m_pC;
-    double alpha = cross(p, m_pBC)/m_det;
-    if (alpha < 0.) return false;
-    double beta = cross(m_pAC, p)/m_det;
-    if (beta < 0.) return false;
-    if (alpha + beta > 1.) return false;
-    return true;
+    return m_polygon.containsPoint(QPointF(u, v), Qt::OddEvenFill);
 }
 
 // use profile field of Coin ShapeKit
@@ -55,11 +56,14 @@ QVector<Vector2D> ProfilePolygon::makeMesh(const QSize& dims) const
     const int jMax = dims.height();
     QVector<Vector2D> ans;
 
+    QRectF rect = m_polygon.boundingRect();
+    Vector2D v0(rect.left(), rect.top());
+    Vector2D dv(rect.width(), rect.height());
     for (int i = 0; i < iMax; ++i) {
         double un = i/double(iMax - 1);
         for (int j = 0; j < jMax; ++j) {
             double vn = j/double(jMax - 1);
-            ans << m_pC + un*m_pAC + vn*(1. - un)*m_pBC;
+            ans << v0 + Vector2D(un, vn)*dv;
         }
     }
     return ans;
@@ -73,15 +77,12 @@ ProfilePolygon::~ProfilePolygon()
 void ProfilePolygon::onSensor(void* data, SoSensor*)
 {
     ProfilePolygon* profile = (ProfilePolygon*) data;
+    MFVec2& points = profile->points;
+    QPolygonF& polygon = profile->m_polygon;
 
-    Vector2D pAC = tgf::makeVector2D(profile->a.getValue());
-    Vector2D pBC = tgf::makeVector2D(profile->b.getValue());
-    Vector2D pC = tgf::makeVector2D(profile->c.getValue());
-    pAC -= pC;
-    pBC -= pC;
-
-    profile->m_pAC = pAC;
-    profile->m_pBC = pBC;
-    profile->m_pC = pC;
-    profile->m_det = cross(pAC, pBC);
+    polygon.clear();
+    for (int n = 0; n < points.getNum(); ++n) {
+       const SbVec2f& v = *points.getValues(n);
+        polygon << QPointF(v[0], v[1]);
+    }
 }
