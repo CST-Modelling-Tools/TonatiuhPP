@@ -21,6 +21,10 @@ AboutDialog::AboutDialog(QWidget* parent):
 
     setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     setWindowFlag(Qt::MSWindowsFixedSizeDialogHint, true);
+
+    QPixmap pixmap(":/images/about/SplashScreen.png");
+    int q = fontMetrics().height();
+    ui->label->setPixmap(pixmap.scaledToWidth(42*q, Qt::SmoothTransformation));
 }
 
 AboutDialog::~AboutDialog()

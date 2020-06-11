@@ -2,28 +2,17 @@
 <ui version="4.0">
  <class>AboutDialog</class>
  <widget class="QDialog" name="AboutDialog">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>846</width>
-    <height>418</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>About</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label">
-     <property name="midLineWidth">
-      <number>6</number>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
      <property name="pixmap">
       <pixmap resource="../resources.qrc">:/images/about/SplashScreen.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

@@ -43,7 +43,14 @@ SunKit::SunKit()
     SoDirectionalLight* light = static_cast<SoDirectionalLight*>(getPart("light", true) );
     light->direction.setValue(SbVec3f(0, 0, 1) );
 
+    // temp
     updateTransform();
+    SoTransform* transform = (SoTransform*) getPart("transform", true);
+    SbMatrix mr;
+    mr.setRotate(transform->rotation.getValue());
+    SbVec3f res;
+    mr.multVecMatrix(SbVec3f(0., 0., -10.), res);
+    transform->translation = res;
 
     SoMaterial* material = static_cast<SoMaterial*>(getPart("iconMaterial", true) );
     material->transparency = 0.75f;
@@ -80,16 +87,9 @@ SunKit::~SunKit()
 void SunKit::updateTransform()
 {
     SoTransform* transform = (SoTransform*) getPart("transform", true);
-
     SbRotation elRotation(SbVec3f(1., 0., 0.), gcf::pi/2. + elevation.getValue());
     SbRotation azRotation(SbVec3f(0., 0., -1.), azimuth.getValue());
     transform->rotation = elRotation*azRotation;
-
-//    SbMatrix mr;
-//    mr.setRotate(transform->rotation.getValue());
-//    SbVec3f res;
-//    mr.multVecMatrix(SbVec3f(0., 0., -10.), res);
-//    transform->translation = res;
 }
 
 void SunKit::setBox(Box3D box)

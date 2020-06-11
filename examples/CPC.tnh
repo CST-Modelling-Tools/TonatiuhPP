@@ -11,9 +11,13 @@ TSceneKit {
 
       DEF Sun SunKit {
         fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
+        azimuth -1.570796326794897
+        elevation 1.047197551196598
+        irradiance 1000
         transform 
         Transform {
-          rotation 1 0 0  3.1415927
+          translation -7.1665797 0 12.412879
+          rotation 0.69474655 0.69474655 0.18615681  2.7734926
 
         }
         light 
@@ -24,6 +28,7 @@ TSceneKit {
         icon 
         SunAperture {
           fields [ SFString disabledNodes ]
+          disabledNodes "//Layout/Right/Focus;//Layout/Right/Axis;"
 
         }
         iconMaterial 
@@ -67,34 +72,251 @@ TSceneKit {
     DEF Layout TSeparatorKit {
       transform 
       Transform {
+        scaleFactor 1 5 1
 
       }
       group 
       Group {
 
-        DEF Shape TShapeKit {
-          shapeRT 
-          DEF Planar ShapePlanar {
-            fields [  ]
+        DEF absorber TSeparatorKit {
+          transform 
+          Transform {
+            translation 0 0 0
 
           }
-          profileRT 
-          DEF Box ProfileBox {
-            fields [ SFDouble uSize, SFDouble vSize ]
+          group 
+          Group {
 
-          }
-          materialRT 
-          DEF Absorber MaterialAbsorber {
-            fields [  ]
+            DEF Shape TShapeKit {
+              shapeRT 
+              DEF Planar ShapePlanar {
+                fields [  ]
 
-          }
-          appearance 
-          AppearanceKit {
-            material 
-            DEF MaterialGL Material {
+              }
+              profileRT 
+              DEF Box ProfileBox {
+                fields [ SFDouble uSize, SFDouble vSize ]
+                uSize 1.333
+                vSize 1
+
+              }
+              materialRT 
+              DEF Virtual MaterialVirtual {
+                fields [  ]
+
+              }
+              appearance 
+              AppearanceKit {
+                material 
+                DEF MaterialGL Material {
+
+                }
+
+              }
 
             }
+          }
 
+        }
+        DEF left TSeparatorKit {
+          transform 
+          Transform {
+            translation 0.1666 0 -0.866
+            rotation 0 1 0  0.52359891
+
+          }
+          group 
+          Group {
+
+            DEF parabola TSeparatorKit {
+              transform 
+              Transform {
+
+              }
+              group 
+              Group {
+
+                DEF Shape TShapeKit {
+                  shapeRT 
+                  DEF Parabolic ShapeParabolic {
+                    fields [ SFDouble fX, SFDouble fY ]
+                    fX 1
+                    fY 1000
+
+                  }
+                  profileRT 
+                  DEF Rectangular ProfileRectangular {
+                    fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
+                    uMin -3.464
+                    uMax -1.155
+                    vMin -0.5
+                    vMax 0.5
+
+                  }
+                  materialRT 
+                  DEF Specular MaterialSpecular {
+                    fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+
+                  }
+                  appearance 
+                  AppearanceKit {
+                    material 
+                    DEF MaterialGL Material {
+                      diffuseColor 0.5 0.5 0.80000001
+
+                    }
+
+                  }
+
+                }
+              }
+
+            }
+            DEF center TSeparatorKit {
+              transform 
+              Transform {
+                translation 0 0 0
+                rotation 0 0 1  0
+                scaleFactor 1 1 1
+
+              }
+              group 
+              Group {
+
+                DEF Shape TShapeKit {
+                  shapeRT 
+                  DEF Planar ShapePlanar {
+                    fields [  ]
+
+                  }
+                  profileRT 
+                  DEF Box ProfileBox {
+                    fields [ SFDouble uSize, SFDouble vSize ]
+                    uSize 0.1
+                    vSize 1
+
+                  }
+                  materialRT 
+                  DEF Absorber MaterialAbsorber {
+                    fields [  ]
+
+                  }
+                  appearance 
+                  AppearanceKit {
+                    material 
+                    DEF MaterialGL Material {
+                      diffuseColor 0 0 0
+                      emissiveColor 0.5 0.5 0.80000001
+
+                    }
+
+                  }
+
+                }
+              }
+
+            }
+          }
+
+        }
+        DEF right TSeparatorKit {
+          transform 
+          Transform {
+            translation -0.1666 0 -0.866
+            rotation -0 -0.99999976 -0  0.52359891
+
+          }
+          group 
+          Group {
+
+            DEF parabola TSeparatorKit {
+              transform 
+              Transform {
+                translation 0 0 0
+
+              }
+              group 
+              Group {
+
+                DEF Shape TShapeKit {
+                  shapeRT 
+                  DEF Parabolic ShapeParabolic {
+                    fields [ SFDouble fX, SFDouble fY ]
+                    fX 1
+                    fY 1000
+
+                  }
+                  profileRT 
+                  DEF Rectangular ProfileRectangular {
+                    fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
+                    uMin 1.155
+                    uMax 3.464
+                    vMin -0.5
+                    vMax 0.5
+
+                  }
+                  materialRT 
+                  DEF Specular MaterialSpecular {
+                    fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+
+                  }
+                  appearance 
+                  AppearanceKit {
+                    material 
+                    DEF MaterialGL Material {
+                      diffuseColor 0.80000001 0.5 0.5
+
+                    }
+
+                  }
+
+                }
+              }
+
+            }
+            DEF center TSeparatorKit {
+              transform 
+              Transform {
+                translation 0 0 0
+                rotation 0 0 1  0
+
+              }
+              group 
+              Group {
+
+                DEF Shape TShapeKit {
+                  shapeRT 
+                  DEF Planar ShapePlanar {
+                    fields [  ]
+
+                  }
+                  profileRT 
+                  DEF Box ProfileBox {
+                    fields [ SFDouble uSize, SFDouble vSize ]
+                    uSize 0.1
+                    vSize 1
+
+                  }
+                  materialRT 
+                  DEF Absorber MaterialAbsorber {
+                    fields [  ]
+
+                  }
+                  appearance 
+                  AppearanceKit {
+                    material 
+                    DEF MaterialGL Material {
+                      diffuseColor 0 0 0
+                      emissiveColor 0.80000001 0.5 0.5
+
+                    }
+
+                  }
+
+                }
+              }
+
+            }
           }
 
         }

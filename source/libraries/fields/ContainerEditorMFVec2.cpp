@@ -83,7 +83,7 @@ void ContainerEditorMFVec2::focusOutEvent(QFocusEvent* event)
  */
 void ContainerEditorMFVec2::CloseEditor()
 {
-    if (!hasFocus() && !m_editButton->hasFocus() && !m_valuesEdit->hasFocus() )
+    if (!hasFocus() && !m_editButton->hasFocus() && !m_valuesEdit->hasFocus())
         emit editingFinished();
 }
 

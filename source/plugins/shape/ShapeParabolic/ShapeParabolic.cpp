@@ -98,29 +98,26 @@ void ShapeParabolic::updateShapeGL(TShapeKit* parent)
     if (ProfileCircular* pr = dynamic_cast<ProfileCircular*>(profile))
     {
         s = (pr->phiMax.getValue() - pr->phiMin.getValue())/gcf::TwoPi;
-        if (s > 1.) s = 1.;
         rows = 1 + ceil(48*s);
 
         r = 2.*std::min(std::abs(fX.getValue()), std::abs(fY.getValue()));
         s = (pr->rMax.getValue() - pr->rMin.getValue())/(gcf::TwoPi*r);
-        if (s > 1.) s = 1.;
         columns = 1 + ceil(48*s);
     }
     else
     {
         Box3D box = profile->getBox();
-        Vector3D v = box.extent();
+        Vector3D s = box.extent();
 
-        // 48 divs for 2 pi
-        r = 2.*std::abs(fX.getValue());
-        s = v.x/(gcf::TwoPi*r);
-        if (s > 1.) s = 1.;
-        rows = 1 + ceil(48*s);
-
-        r = 2.*std::abs(fY.getValue());
-        s = v.y/(gcf::TwoPi*r);
-        if (s > 1.) s = 1.;
-        columns = 1 + ceil(48*s);
+        // area  y''s^3/3 vs (1 + y'^2)s^2
+        // y' = x/(2f), y'' = 1/(2f)
+        Vector3D q = box.absMin();
+        double fx = std::abs(fX.getValue());
+        double fy = std::abs(fY.getValue());
+        double sx = 0.03*6*fx*(1. + pow2(q.x/(2*fx)));
+        double sy = 0.03*6*fy*(1. + pow2(q.y/(2*fy)));
+        rows = 1 + ceil(s.x/sx);
+        columns = 1 + ceil(s.y/sy);
     }
 
     makeQuadMesh(parent, QSize(rows, columns));
@@ -143,14 +140,3 @@ Vector3D ShapeParabolic::getNormal(double u, double v) const
         2.
     ).normalized();
 }
-
-
-// Cassegrain
-// f = r/2
-// F1 = -DF/(F - B)
-// F2 = -DB/(F - B - D)
-// D = 5
-// B = 6
-// F = 10
-// F1 = 50/4
-// F2 = 30/1 ???

@@ -14,6 +14,7 @@ public:
     ProfilePolygon();
 
     MFVec2 points;
+    const QPolygonF& getPolygon() const {return m_polygon;}
 
     Box3D getBox() const;
     bool isInside(double u, double v) const;

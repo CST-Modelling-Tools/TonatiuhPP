@@ -19,6 +19,7 @@
 // --------------------------------------------------------------------
 
 #pragma once
+#include "libraries/TonatiuhLibraries.h"
 
 namespace distmesh {
 namespace utils {
@@ -69,7 +70,7 @@ namespace utils {
     }
 
     // easy creation of n-dimensional bounding box
-    Eigen::ArrayXXd boundingBox(unsigned const dimensions);
+    TONATIUH_LIBRARIES Eigen::ArrayXXd boundingBox(unsigned const dimensions);
 
     // create initial points distribution
     Eigen::ArrayXXd createInitialPoints(Functional const& distanceFunction,

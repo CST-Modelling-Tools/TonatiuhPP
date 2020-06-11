@@ -45,6 +45,15 @@ double Box3D::volume() const
     return d.x*d.y*d.z;
 }
 
+Vector3D Box3D::absMin() const
+{
+    Vector3D ans = min(pMin.abs(), pMax.abs());
+    if ((pMin.x > 0.) != (pMax.x > 0.)) ans.x = 0.;
+    if ((pMin.y > 0.) != (pMax.y > 0.)) ans.y = 0.;
+    if ((pMin.z > 0.) != (pMax.z > 0.)) ans.z = 0.;
+    return ans;
+}
+
 void Box3D::expand(double delta)
 {
     Vector3D v(delta, delta, delta);

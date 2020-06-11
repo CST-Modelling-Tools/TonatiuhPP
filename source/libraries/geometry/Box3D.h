@@ -13,6 +13,7 @@ struct TONATIUH_LIBRARIES Box3D
     Vector3D extent() const {return pMax - pMin;}
     int maxDimension() const;
     double volume() const;
+    Vector3D absMin() const;
     Vector3D absMax() const {return max(pMin.abs(), pMax.abs());}
 
     void expand(double delta);
