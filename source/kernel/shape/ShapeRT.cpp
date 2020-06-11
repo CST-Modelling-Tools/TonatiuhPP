@@ -40,6 +40,8 @@ Vector3D ShapeRT::getNormal(double u, double v) const
 void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals, bool reverseClock)
 {
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
+// check poly, insert
+
     QVector<Vector2D> uvs = profile->makeMesh(dims);
 
     QVector<SbVec3f> vertices;
