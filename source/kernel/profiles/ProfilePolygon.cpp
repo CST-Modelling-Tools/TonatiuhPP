@@ -50,7 +50,7 @@ bool ProfilePolygon::isInside(double u, double v) const
 }
 
 // use profile field of Coin ShapeKit
-QVector<Vector2D> ProfilePolygon::makeMesh(const QSize& dims) const
+QVector<Vector2D> ProfilePolygon::makeMesh(QSize& dims) const
 {
     const int iMax = dims.width();
     const int jMax = dims.height();

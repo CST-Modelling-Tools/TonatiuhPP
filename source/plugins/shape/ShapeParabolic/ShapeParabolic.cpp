@@ -1,7 +1,6 @@
 #include "ShapeParabolic.h"
 
 #include "kernel/profiles/ProfileRT.h"
-#include "kernel/profiles/ProfileCircular.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/Box3D.h"
@@ -92,33 +91,16 @@ bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometr
 void ShapeParabolic::updateShapeGL(TShapeKit* parent)
 {
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
+    Box3D box = profile->getBox();
+    Vector3D q = box.absMin();
+    Vector3D s = box.extent();
 
-    int rows, columns;
-    double s, r;
-    if (ProfileCircular* pr = dynamic_cast<ProfileCircular*>(profile))
-    {
-        s = (pr->phiMax.getValue() - pr->phiMin.getValue())/gcf::TwoPi;
-        rows = 1 + ceil(48*s);
-
-        r = 2.*std::min(std::abs(fX.getValue()), std::abs(fY.getValue()));
-        s = (pr->rMax.getValue() - pr->rMin.getValue())/(gcf::TwoPi*r);
-        columns = 1 + ceil(48*s);
-    }
-    else
-    {
-        Box3D box = profile->getBox();
-        Vector3D s = box.extent();
-
-        // area  y''s^3/3 vs (1 + y'^2)s^2
-        // y' = x/(2f), y'' = 1/(2f)
-        Vector3D q = box.absMin();
-        double fx = std::abs(fX.getValue());
-        double fy = std::abs(fY.getValue());
-        double sx = 0.03*6*fx*(1. + pow2(q.x/(2*fx)));
-        double sy = 0.03*6*fy*(1. + pow2(q.y/(2*fy)));
-        rows = 1 + ceil(s.x/sx);
-        columns = 1 + ceil(s.y/sy);
-    }
+    double cx = 2.*std::abs(fX.getValue());
+    double cy = 2.*std::abs(fY.getValue());
+    double sx = 0.1*cx*(1. + pow2(q.x/cx));
+    double sy = 0.1*cy*(1. + pow2(q.y/cy));
+    int rows = 1 + ceil(s.x/sx);
+    int columns = 1 + ceil(s.y/sy);
 
     makeQuadMesh(parent, QSize(rows, columns));
 }

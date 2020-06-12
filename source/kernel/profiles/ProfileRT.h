@@ -23,7 +23,7 @@ public:
 
     virtual Box3D getBox() const {return Box3D::UnitCube;}
     virtual bool isInside(double /*x*/, double /*y*/) const {return true;}
-    virtual QVector<Vector2D> makeMesh(const QSize& /*dims*/) const {return {};}
+    virtual QVector<Vector2D> makeMesh(QSize& /*dims*/) const {return {};}
 
     NAME_ICON_FUNCTIONS("X", ":/MaterialX.png") // use some default icon
 

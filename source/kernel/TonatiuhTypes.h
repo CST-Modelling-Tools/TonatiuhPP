@@ -2,6 +2,7 @@
 
 #include <Inventor/fields/SoSFBool.h>
 
+#include <Inventor/fields/SoSFInt32.h>
 #include <Inventor/fields/SoSFFloat.h>
 #include <Inventor/fields/SoSFDouble.h>
 

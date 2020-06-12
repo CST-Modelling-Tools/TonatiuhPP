@@ -47,7 +47,7 @@ bool ProfileTriangle::isInside(double u, double v) const
     return true;
 }
 
-QVector<Vector2D> ProfileTriangle::makeMesh(const QSize& dims) const
+QVector<Vector2D> ProfileTriangle::makeMesh(QSize& dims) const
 {
     const int iMax = dims.width();
     const int jMax = dims.height();

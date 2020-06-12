@@ -13,7 +13,7 @@
 #include "libraries/geometry/Vector3D.h"
 #include "libraries/geometry/Box3D.h"
 #include "kernel/profiles/ProfilePolygon.h"
-#include "libraries/DistMesh/distmesh.h"
+#include "libraries/DistMesh/PolygonMesh.h"
 
 SO_NODE_ABSTRACT_SOURCE(ShapeRT)
 
@@ -46,15 +46,9 @@ Vector3D ShapeRT::getNormal(double u, double v) const
 void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals, bool reverseClock)
 {
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
-    if (ProfilePolygon* porfilePolygon = dynamic_cast<ProfilePolygon*>(profile))
+    if (ProfilePolygon* profilePolygon = dynamic_cast<ProfilePolygon*>(profile))
     {
-        const QPolygonF& qpolygon = porfilePolygon->getPolygon();
-        Eigen::ArrayXXd polygon(qpolygon.size(), 2);
-        for (int n = 0; n < qpolygon.size(); ++n) {
-            polygon(n, 0) = qpolygon[n].x();
-            polygon(n, 1) = qpolygon[n].y();
-        }
-
+        const QPolygonF& qpolygon = profilePolygon->getPolygon();
         QSizeF rect = qpolygon.boundingRect().size();
         double s = std::min(rect.width()/(dims.width() - 1), rect.height()/(dims.height() - 1));
 
@@ -64,31 +58,24 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNor
             if (se < s) s = se;
         }
 
-        Eigen::ArrayXXd points;
-        Eigen::ArrayXXi elements;
-        std::tie(points, elements) = distmesh::distmesh(
-            distmesh::distanceFunction::polygon(polygon),
-            s,
-            1.0,
-            distmesh::utils::boundingBox(2),
-            polygon);
+        PolygonMesh polygonMesh(qpolygon);
+        polygonMesh.makeMesh(s);
 
         QVector<SbVec3f> vertices;
         QVector<SbVec3f> normals;
-        for (int n = 0; n < points.rows(); ++n) {
-            double u = points(n, 0);
-            double v = points(n, 1);
-            Vector3D point = getPoint(u, v);
-            Vector3D normal = getNormal(u, v);
+        for (const Vector2D& uv : polygonMesh.getPoints()) {
+            Vector3D point = getPoint(uv.x, uv.y);
+            Vector3D normal = getNormal(uv.x, uv.y);
             if (reverseNormals) normal = -normal;
             vertices << SbVec3f(point.x, point.y, point.z);
             normals << SbVec3f(normal.x, normal.y, normal.z);
         }
 
         QVector<int> indices;
-        for (int n = 0; n < elements.rows(); ++n) {
-            for (int m = 0; m < elements.cols(); ++m)
-                indices <<  elements(n, m);
+        for (const auto& tri : polygonMesh.getTriangles()) {
+            indices << tri.a;
+            indices << tri.b;
+            indices << tri.c;
             indices << SO_END_FACE_INDEX;
         }
 
@@ -108,7 +95,8 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNor
     }
     else
     {
-        QVector<Vector2D> uvs = profile->makeMesh(dims);
+        QSize dimensions = dims;
+        QVector<Vector2D> uvs = profile->makeMesh(dimensions);
 
         QVector<SbVec3f> vertices;
         QVector<SbVec3f> normals;
@@ -129,8 +117,8 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNor
         parent->setPart("normal", sNormals);
 
         SoQuadMesh* sMesh = new SoQuadMesh;
-        sMesh->verticesPerRow = dims.height();
-        sMesh->verticesPerColumn = dims.width();
+        sMesh->verticesPerRow = dimensions.height();
+        sMesh->verticesPerColumn = dimensions.width();
 
         parent->setPart("shape", sMesh);
     }

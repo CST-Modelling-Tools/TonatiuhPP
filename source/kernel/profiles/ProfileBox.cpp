@@ -27,7 +27,7 @@ bool ProfileBox::isInside(double u, double v) const
            2.*std::abs(v) <= vSize.getValue();
 }
 
-QVector<Vector2D> ProfileBox::makeMesh(const QSize& dims) const
+QVector<Vector2D> ProfileBox::makeMesh(QSize& dims) const
 {
     const int iMax = dims.width();
     const int jMax = dims.height();

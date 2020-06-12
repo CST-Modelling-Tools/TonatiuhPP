@@ -64,3 +64,6 @@ class ShapeEllipticFactory:
 // ellipse: rays from one focus are directed to another focus
 // hyperbola: rays from one focus are directed from another focus
 // parabola: rays from infinity
+
+// area  y''s^3/3 vs (1 + y'^2)s^2
+// parabola y' = x/(2f), y'' = 1/(2f)

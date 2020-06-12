@@ -15,6 +15,7 @@
 #include "kernel/photons/PhotonsWidget.h"
 #include "kernel/profiles/ProfileBox.h"
 #include "kernel/profiles/ProfileCircular.h"
+#include "kernel/profiles/ProfileRegular.h"
 #include "kernel/profiles/ProfileTriangle.h"
 #include "kernel/profiles/ProfilePolygon.h"
 #include "kernel/profiles/ProfileRectangular.h"
@@ -81,11 +82,14 @@ void PluginManager::load(QDir dir)
     loadPlugin(new AirFactoryT<AirPolynomial>);
     loadPlugin(new ShapeFactoryT<ShapePlanar>);
     loadPlugin(new ShapeFactoryT<ShapeCube>);
+
     loadPlugin(new ProfileFactoryT<ProfileBox>);
     loadPlugin(new ProfileFactoryT<ProfileRectangular>);
     loadPlugin(new ProfileFactoryT<ProfileCircular>);
+    loadPlugin(new ProfileFactoryT<ProfileRegular>);
     loadPlugin(new ProfileFactoryT<ProfileTriangle>);
     loadPlugin(new ProfileFactoryT<ProfilePolygon>);
+
     loadPlugin(new MaterialFactoryT<MaterialAbsorber>);
     loadPlugin(new MaterialFactoryT<MaterialVirtual>);
     loadPlugin(new RandomFactoryT<RandomSTL>);

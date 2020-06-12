@@ -1,7 +1,6 @@
 #include "ShapeElliptic.h"
 
 #include "kernel/profiles/ProfileRT.h"
-#include "kernel/profiles/ProfileCircular.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/geometry/Box3D.h"
@@ -84,33 +83,16 @@ void ShapeElliptic::updateShapeGL(TShapeKit* parent)
 {
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
 
-    int rows, columns;
-    double s;
-    if (ProfileCircular* pr = dynamic_cast<ProfileCircular*>(profile))
-    {
-        s = (pr->phiMax.getValue() - pr->phiMin.getValue())/gcf::TwoPi;
-        if (s > 1.) s = 1.;
-        rows = 1 + ceil(48*s);
+    Box3D box = profile->getBox();
+    Vector3D q = box.absMin();
+    Vector3D s = box.extent();
 
-        double r = std::min(aX.getValue(), aY.getValue());
-        s = (pr->rMax.getValue() - pr->rMin.getValue())/(gcf::TwoPi*r);
-        if (s > 1.) s = 1.;
-        columns = 1 + ceil(48*s);
-    }
-    else
-    {
-        Box3D box = profile->getBox();
-        Vector3D v = box.extent();
-
-        // 48 divs for 2 pi
-        s = v.x/(gcf::TwoPi*aX.getValue());
-        if (s > 1.) s = 1.;
-        rows = 1 + ceil(48*s);
-
-        s = v.y/(gcf::TwoPi*aY.getValue());
-        if (s > 1.) s = 1.;
-        columns = 1 + ceil(48*s);
-    }
+    double cx = aX.getValue()*aX.getValue()/std::abs(aZ.getValue());
+    double cy = aY.getValue()*aY.getValue()/std::abs(aZ.getValue());
+    double sx = 0.1*cx*(1. + pow2(q.x/cx));
+    double sy = 0.1*cy*(1. + pow2(q.y/cy));
+    int rows = 1 + ceil(s.x/sx);
+    int columns = 1 + ceil(s.y/sy);
 
     makeQuadMesh(parent, QSize(rows, columns));
 }

@@ -7,8 +7,6 @@ include(../config.pri)
 
 LIBS += -lTonatiuh-Libraries
 
-INCLUDEPATH += $$PWD/../../libraries/eigen-3.3.7
-
 HEADERS += \
     $$files(*.h) \
     $$files(air/*.h) \

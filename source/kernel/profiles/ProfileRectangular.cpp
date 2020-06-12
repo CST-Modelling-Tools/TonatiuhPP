@@ -31,7 +31,7 @@ bool ProfileRectangular::isInside(double u, double v) const
            vMin.getValue() <= v && v <= vMax.getValue();
 }
 
-QVector<Vector2D> ProfileRectangular::makeMesh(const QSize& dims) const
+QVector<Vector2D> ProfileRectangular::makeMesh(QSize& dims) const
 {
     const int iMax = dims.width();
     const int jMax = dims.height();
