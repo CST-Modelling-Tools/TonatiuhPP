@@ -256,6 +256,7 @@ TSceneKit {
                           AppearanceKit {
                             material 
                             DEF MaterialGL Material {
+                              diffuseColor 0.5 0.80000001 0.5
 
                             }
 
@@ -300,6 +301,7 @@ TSceneKit {
                       AppearanceKit {
                         material 
                         DEF MaterialGL Material {
+                          diffuseColor 0.80000001 0.5 0.80000001
 
                         }
 

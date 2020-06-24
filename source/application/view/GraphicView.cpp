@@ -35,7 +35,7 @@ void GraphicView::SetSceneGraph(GraphicRoot* sceneGraphRoot)
 
     SoBoxHighlightRenderAction* highlighter = new SoBoxHighlightRenderAction();
     highlighter->setColor(SbColor(100/255., 180/255., 120/255.));
-    highlighter->setLineWidth(2.);
+    highlighter->setLineWidth(1.);
     m_viewer->setGLRenderAction(highlighter);
 
     m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
@@ -131,6 +131,9 @@ QRegion GraphicView::visualRegionForSelection(const QItemSelection& /*selection*
     return QRegion();
 }
 
+#include "tree/SceneModel.h"
+#include "kernel/run/InstanceNode.h"
+#include "kernel/scene/TSeparatorKit.h"
 void GraphicView::currentChanged(const QModelIndex& current, const QModelIndex& /*previous*/)
 {
     if (m_sceneGraphRoot)
@@ -142,6 +145,13 @@ void GraphicView::currentChanged(const QModelIndex& current, const QModelIndex& 
 
         if (variant.canConvert<SoPathVariant>() )
         {
+            SceneModel* model = (SceneModel*) current.model();
+            if (!model) return;
+            InstanceNode* inst = model->getInstance(current);
+            if (!inst) return;
+            SoNode* node = inst->getNode();
+            if (!node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId())) return;
+
             path = static_cast< SoFullPath*>(variant.value< SoPathVariant >().GetPath() );
             m_sceneGraphRoot->Select(path);
         }
