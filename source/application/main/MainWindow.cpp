@@ -147,8 +147,8 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
     m_manipulators_Buffer(0),
     m_raysTracedTotal(0),
     m_raysTraced(10000),
-    m_heightDivisions(200),
     m_widthDivisions(200),
+    m_heightDivisions(200),
     m_drawPhotons(false),
     m_drawRays(true),
     m_graphicView(0),
@@ -1048,7 +1048,7 @@ void MainWindow::onRayOptionsDialog()
     RayOptionsDialog* options = new RayOptionsDialog(
         m_raysTraced,
         randomDeviateFactoryList, m_selectedRandomDeviate,
-        m_widthDivisions,m_heightDivisions,
+        m_widthDivisions, m_heightDivisions,
         m_drawRays, m_drawPhotons,
         m_bufferPhotons, m_increasePhotonMap, this);
     options->exec();

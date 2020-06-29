@@ -1,5 +1,5 @@
 #include "SelectSurfaceDialog.h"
-#include "ui_selectsurfacedialog.h"
+#include "ui_SelectSurfaceDialog.h"
 
 #include <QItemSelectionModel>
 #include <QMessageBox>
@@ -57,6 +57,7 @@ SelectSurfaceDialog::~SelectSurfaceDialog()
 void SelectSurfaceDialog::SetShapeTypeFilters(QVector<QString> filters)
 {
     m_filter->SetShapeTypeFilters(filters);
+    m_filter->invalidate();
 }
 
 /*!
@@ -70,8 +71,8 @@ void SelectSurfaceDialog::accept()
         QModelIndex selectedIndex = selectionModel->currentIndex();
         QModelIndex currentIndex = m_filter->mapToSource(selectedIndex);
 
-        InstanceNode* selectedNode = m_model->getInstance(currentIndex);
-        if (!selectedNode->getNode()->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) )
+        InstanceNode* instance = m_model->getInstance(currentIndex);
+        if (!instance->getNode()->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) )
         {
             QMessageBox::information(this, "Tonatiuh", tr("Selected node is not surface node"), 1);
             return;
@@ -96,8 +97,7 @@ QString SelectSurfaceDialog::GetSelectedSurfaceURL() const
     QModelIndex currentIndex = m_filter->mapToSource(selectedIndex);
     if (!currentIndex.isValid()) return QString();
 
-    InstanceNode* currentNode = m_model->getInstance(currentIndex);
-    if (!currentNode) return QString();
-
-    return currentNode->getURL();
+    InstanceNode* instance = m_model->getInstance(currentIndex);
+    if (!instance) return QString();
+    return instance->getURL();
 }

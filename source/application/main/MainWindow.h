@@ -273,8 +273,8 @@ private:
 
     ulong m_raysTracedTotal;
     ulong m_raysTraced;
+    int m_widthDivisions; // for sun
     int m_heightDivisions;
-    int m_widthDivisions;
 
     bool m_drawPhotons;
     bool m_drawRays;

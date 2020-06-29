@@ -15,7 +15,7 @@ class SelectSurfaceDialog: public QDialog
     Q_OBJECT
 
 public:
-    SelectSurfaceDialog(SceneModel& model, bool enableLight = true, QWidget* parent = 0 );
+    SelectSurfaceDialog(SceneModel& model, bool enableLight = true, QWidget* parent = 0);
     ~SelectSurfaceDialog();
 
     void SetShapeTypeFilters(QVector<QString> filters);

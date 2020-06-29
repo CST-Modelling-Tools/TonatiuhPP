@@ -499,13 +499,13 @@
        </layout>
       </item>
       <item row="2" column="1">
-       <widget class="QCustomPlot" name="horizontaSectorPlot" native="true"/>
+       <widget class="QCustomPlot" name="plotFx" native="true"/>
       </item>
       <item row="2" column="0">
-       <widget class="QCustomPlot" name="verticalSectorPlot" native="true"/>
+       <widget class="QCustomPlot" name="plotFy" native="true"/>
       </item>
       <item row="0" column="0" colspan="2">
-       <widget class="QCustomPlot" name="contourPlotWidget" native="true"/>
+       <widget class="QCustomPlot" name="plotFxy" native="true"/>
       </item>
      </layout>
     </widget>
