@@ -4,6 +4,7 @@
 
 #include <Inventor/nodes/SoShape.h>
 
+struct Vector2D;
 struct Vector3D;
 struct Box3D;
 class Ray;
@@ -20,20 +21,21 @@ class TONATIUH_KERNEL ShapeRT: public SoNode
 public:
     static void initClass();
 
-    virtual Box3D getBox(ProfileRT* aperture) const;
+    virtual Vector3D getPoint(double u, double v) const;
+    virtual Vector3D getNormal(double u, double v) const;
+    virtual Vector2D getUV(const Vector3D& p) const;
+    virtual Box3D getBox(ProfileRT* profile) const;
 
     // with computing dg, ray in local coordinates
-    virtual bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const = 0;
+    virtual bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const = 0;
     // without computing dg
-    virtual bool intersectP(const Ray& ray, ProfileRT* aperture) const {return intersect(ray, 0, 0, aperture);}
+    virtual bool intersectP(const Ray& ray, ProfileRT* profile) const {return intersect(ray, 0, 0, profile);}
 
     NAME_ICON_FUNCTIONS("X", ":/ShapeX.png")
 
     virtual void updateShapeGL(TShapeKit* /*parent*/) {}
 
 protected:
-    virtual Vector3D getPoint(double u, double v) const;
-    virtual Vector3D getNormal(double u, double v) const;
     void makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals = false, bool reverseClock = false);
 
     ShapeRT() {}

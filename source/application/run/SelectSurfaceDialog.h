@@ -18,7 +18,7 @@ public:
     SelectSurfaceDialog(SceneModel& model, bool enableLight = true, QWidget* parent = 0);
     ~SelectSurfaceDialog();
 
-    void SetShapeTypeFilters(QVector<QString> filters);
+    void SetShapeTypeFilters(QStringList filters);
 
     QString GetSelectedSurfaceURL() const;
 

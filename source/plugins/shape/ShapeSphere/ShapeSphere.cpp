@@ -19,6 +19,29 @@ ShapeSphere::ShapeSphere()
 	SO_NODE_CONSTRUCTOR(ShapeSphere);
 }
 
+Vector3D ShapeSphere::getPoint(double u, double v) const
+{
+    double phi = gcf::TwoPi*u;
+    double alpha = gcf::pi*v;
+    return Vector3D(
+        cos(phi)*cos(alpha),
+        sin(phi)*cos(alpha),
+        sin(alpha)
+    );
+}
+
+Vector3D ShapeSphere::getNormal(double u, double v) const
+{
+    return getPoint(u, v);
+}
+
+Vector2D ShapeSphere::getUV(const Vector3D& p) const
+{
+    double phi = atan2(p.y, p.x);
+    double alpha = asin(gcf::clamp(p.z, -1., 1.));
+    return Vector2D(phi/gcf::TwoPi, alpha/gcf::pi);
+}
+
 Box3D ShapeSphere::getBox(ProfileRT* profile) const
 {
     Box3D box = profile->getBox();
@@ -122,20 +145,4 @@ void ShapeSphere::updateShapeGL(TShapeKit* parent)
     int columns = 1 + ceil(24*s);
 
     makeQuadMesh(parent, QSize(rows, columns));
-}
-
-Vector3D ShapeSphere::getPoint(double u, double v) const
-{
-    double phi = gcf::TwoPi*u;
-    double alpha = gcf::pi*v;
-    return Vector3D(
-        cos(phi)*cos(alpha),
-        sin(phi)*cos(alpha),
-        sin(alpha)
-    );
-}
-
-Vector3D ShapeSphere::getNormal(double u, double v) const
-{
-    return getPoint(u, v);
 }

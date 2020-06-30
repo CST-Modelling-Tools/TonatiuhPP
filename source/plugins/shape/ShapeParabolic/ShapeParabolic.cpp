@@ -23,6 +23,24 @@ ShapeParabolic::ShapeParabolic()
     SO_NODE_ADD_FIELD( fY, (1.) );
 }
 
+Vector3D ShapeParabolic::getPoint(double u, double v) const
+{
+    return Vector3D(
+        u,
+        v,
+        (u*u/fX.getValue() + v*v/fY.getValue())/4.
+    );
+}
+
+Vector3D ShapeParabolic::getNormal(double u, double v) const
+{
+    return Vector3D(
+        -u/fX.getValue(),
+        -v/fY.getValue(),
+        2.
+    ).normalized();
+}
+
 Box3D ShapeParabolic::getBox(ProfileRT* profile) const
 {  
     Box3D box = profile->getBox();
@@ -103,22 +121,4 @@ void ShapeParabolic::updateShapeGL(TShapeKit* parent)
     int columns = 1 + ceil(s.y/sy);
 
     makeQuadMesh(parent, QSize(rows, columns));
-}
-
-Vector3D ShapeParabolic::getPoint(double u, double v) const
-{
-    return Vector3D(
-        u,
-        v,
-        (u*u/fX.getValue() + v*v/fY.getValue())/4.
-    );
-}
-
-Vector3D ShapeParabolic::getNormal(double u, double v) const
-{
-    return Vector3D(
-        -u/fX.getValue(),
-        -v/fY.getValue(),
-        2.
-    ).normalized();
 }

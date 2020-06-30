@@ -23,17 +23,9 @@ void ShapeRT::initClass()
     SO_NODE_INIT_ABSTRACT_CLASS(ShapeRT, SoNode, "Node");
 }
 
-Box3D ShapeRT::getBox(ProfileRT* aperture) const
-{
-    Q_UNUSED(aperture)
-    return Box3D::UnitCube;
-}
-
 Vector3D ShapeRT::getPoint(double u, double v) const
 {
-    Q_UNUSED(u)
-    Q_UNUSED(v)
-    return Vector3D(0., 0., 0.);
+    return Vector3D(u, v, 0.);
 }
 
 Vector3D ShapeRT::getNormal(double u, double v) const
@@ -41,6 +33,20 @@ Vector3D ShapeRT::getNormal(double u, double v) const
     Q_UNUSED(u)
     Q_UNUSED(v)
     return Vector3D(0., 0., 1.);
+}
+
+Vector2D ShapeRT::getUV(const Vector3D& p) const
+{
+    return Vector2D(p.x, p.y);
+}
+
+Box3D ShapeRT::getBox(ProfileRT* profile) const
+{
+    Box3D box = profile->getBox();
+    double zMax = 0.01*box.extent().max();
+    box.pMin.z = -zMax;
+    box.pMax.z = zMax;
+    return box;
 }
 
 void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals, bool reverseClock)

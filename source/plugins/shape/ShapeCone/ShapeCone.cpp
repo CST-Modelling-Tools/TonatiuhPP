@@ -22,6 +22,29 @@ ShapeCone::ShapeCone()
     SO_NODE_ADD_FIELD( dr, (-1.) );
 }
 
+Vector3D ShapeCone::getPoint(double u, double v) const
+{
+    double phi = gcf::TwoPi*u;
+    double r = 1. + dr.getValue()*v;
+    return Vector3D(r*cos(phi), r*sin(phi), v);
+}
+
+// |rxy|^2 = |1 + dr*z|^2
+// [x, y, -(1 + dr*z)dr]
+Vector3D ShapeCone::getNormal(double u, double v) const
+{
+    double phi = gcf::TwoPi*u;
+    double drV = dr.getValue();
+    double r = 1. + drV*v;
+    r = r >= 0. ? 1. : -1;
+    return Vector3D(r*cos(phi), r*sin(phi), -r*drV).normalized();
+}
+
+Vector2D ShapeCone::getUV(const Vector3D& p) const
+{
+    return Vector2D(atan2(p.y, p.x)/gcf::TwoPi, p.z);
+}
+
 Box3D ShapeCone::getBox(ProfileRT* aperture) const
 {
     Box3D box = aperture->getBox();
@@ -97,22 +120,4 @@ void ShapeCone::updateShapeGL(TShapeKit* parent)
     int rows = 1 + ceil(48*s);
 
     makeQuadMesh(parent, QSize(rows, 2));
-}
-
-Vector3D ShapeCone::getPoint(double u, double v) const
-{
-    double phi = gcf::TwoPi*u;
-    double r = 1. + dr.getValue()*v;
-    return Vector3D(r*cos(phi), r*sin(phi), v);
-}
-
-// |rxy|^2 = |1 + dr*z|^2
-// [x, y, -(1 + dr*z)dr]
-Vector3D ShapeCone::getNormal(double u, double v) const
-{
-    double phi = gcf::TwoPi*u;
-    double drV = dr.getValue();
-    double r = 1. + drV*v;
-    r = r >= 0. ? 1. : -1;
-    return Vector3D(r*cos(phi), r*sin(phi), -r*drV).normalized();
 }

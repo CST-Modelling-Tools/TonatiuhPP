@@ -1860,7 +1860,7 @@ void MainWindow::Run()
  * The map will be calculated with the parameters \a nOfRays, \a heightDivisions and \a heightDivisions.
  * The results will save in a file \a directory \a QString fileName, the coordinates of the cells depending on the variable \a saveCoord.
  */
-void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned int nOfRays, int heightDivisions, int widthDivisions, QString directory, QString fileName, bool saveCoords)
+void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned int nOfRays, int heightDivisions, int widthDivisions, QString directory, QString file, bool saveCoords)
 {
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
@@ -1884,17 +1884,8 @@ void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned 
     if (!m_rand) m_rand =  randomDeviateFactoryList[m_selectedRandomDeviate]->create();
 
     FluxAnalysis fluxAnalysis(sceneKit, *m_sceneModel, rootSeparatorInstance, m_widthDivisions, m_heightDivisions, m_rand);
-
-    fluxAnalysis.RunFluxAnalysis(nodeURL, surfaceSide, nOfRays, false, heightDivisions, widthDivisions);
-
-    int** photonCounts = fluxAnalysis.photonCountsValue();
-    if (!photonCounts || photonCounts == 0)
-    {
-        emit Abort(tr("RunFluxAnalysis: Some parameter is not correctly defined.") );
-        return;
-    }
-
-    fluxAnalysis.ExportAnalysis(directory, fileName, saveCoords);
+    fluxAnalysis.run(nodeURL, surfaceSide, nOfRays, false, heightDivisions, widthDivisions);
+    fluxAnalysis.write(directory, file, saveCoords);
 }
 
 /*!

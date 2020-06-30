@@ -24,6 +24,25 @@ ShapeHyperbolic::ShapeHyperbolic()
     SO_NODE_ADD_FIELD( aZ, (1.) );
 }
 
+Vector3D ShapeHyperbolic::getPoint(double u, double v) const
+{
+    double rX = aX.getValue();
+    double rY = aY.getValue();
+    double rZ = aZ.getValue();
+    double s = 1. + pow2(u/rX) + pow2(v/rY);
+    s = sqrt(s) - 1.;
+    return Vector3D(u, v, s*rZ);
+}
+
+Vector3D ShapeHyperbolic::getNormal(double u, double v) const
+{
+    double rX = aX.getValue();
+    double rY = aY.getValue();
+    double rZ = aZ.getValue();
+    double s = 1. + pow2(u/rX) + pow2(v/rY);
+    return Vector3D(-u/(rX*rX), -v/(rY*rY), sqrt(s)/rZ).normalized();
+}
+
 Box3D ShapeHyperbolic::getBox(ProfileRT* profile) const
 {  
     Box3D box = profile->getBox();
@@ -95,23 +114,4 @@ void ShapeHyperbolic::updateShapeGL(TShapeKit* parent)
     int columns = 1 + ceil(s.y/sy);
 
     makeQuadMesh(parent, QSize(rows, columns));
-}
-
-Vector3D ShapeHyperbolic::getPoint(double u, double v) const
-{
-    double rX = aX.getValue();
-    double rY = aY.getValue();
-    double rZ = aZ.getValue();
-    double s = 1. + pow2(u/rX) + pow2(v/rY);
-    s = sqrt(s) - 1.;
-    return Vector3D(u, v, s*rZ);
-}
-
-Vector3D ShapeHyperbolic::getNormal(double u, double v) const
-{
-    double rX = aX.getValue();
-    double rY = aY.getValue();
-    double rZ = aZ.getValue();
-    double s = 1. + pow2(u/rX) + pow2(v/rY);
-    return Vector3D(-u/(rX*rX), -v/(rY*rY), sqrt(s)/rZ).normalized();
 }

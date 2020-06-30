@@ -11,6 +11,8 @@ public:
     static void initClass();
     ShapeElliptic();
 
+    Vector3D getPoint(double u, double v) const;
+    Vector3D getNormal(double u, double v) const;
     Box3D getBox(ProfileRT* profile) const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
 
@@ -20,10 +22,6 @@ public:
 
     NAME_ICON_FUNCTIONS("Elliptic", ":/ShapeElliptic.png")
     void updateShapeGL(TShapeKit* parent);
-
-protected:
-    Vector3D getPoint(double u, double v) const;
-    Vector3D getNormal(double u, double v) const;
 };
 
 

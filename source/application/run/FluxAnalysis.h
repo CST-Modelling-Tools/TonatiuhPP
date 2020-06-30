@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QString>
+#include "libraries/geometry/Matrix2D.h"
 
 class TSceneKit;
 class SceneModel;
@@ -12,33 +13,30 @@ class FluxAnalysis
 {
 
 public:
-    FluxAnalysis(TSceneKit* currentScene, SceneModel& currentSceneModel, InstanceNode* rootSeparatorInstance,
+    FluxAnalysis(TSceneKit* sceneKit, SceneModel& sceneModel, InstanceNode* instanceRoot,
                  int sunWidthDivisions, int sunHeightDivisions, Random* randomDeviate);
     ~FluxAnalysis();
-    QString GetSurfaceType(QString nodeURL);
-    void RunFluxAnalysis(QString nodeURL, QString surfaceSide, ulong nOfRays, bool increasePhotonMap, int heightDivisions, int widthDivisions);
-    void UpdatePhotonCounts(int heightDivisions, int widthDivisions);
-    void ExportAnalysis(QString directory, QString fileName, bool saveCoords);
-    int** photonCountsValue();
-    double xminValue();
-    double yminValue();
-    double xmaxValue();
-    double ymaxValue();
-    int maximumPhotonsValue();
-    int maximumPhotonsXCoordValue();
-    int maximumPhotonsYCoordValue();
-    int maximumPhotonsErrorValue();
-    double wPhotonValue();
-    double totalPowerValue();
-    void clearPhotonMap();
+
+    QString getShapeType(QString nodeURL);
+    void run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool increasePhotonMap, int rows, int cols);
+    void setBins(int rows, int cols);
+    void write(QString directory, QString file, bool withCoords);
+    void clear();
+
+    Matrix2D<int>& getBins() {return m_bins;}
+    double uMin() {return m_uMin;}
+    double uMax() {return m_uMax;}
+    double vMin() {return m_vMin;}
+    double vMax() {return m_vMax;}
+    int photonsMax() {return m_photonsMax;} // photons in bin with maximal photons
+    int photonsMaxRow() {return m_photonsMaxRow;} // row of bin with maximal photons
+    int photonsMaxCol() {return m_photonsMaxCol;} // col of bin with maximal photons
+    int photonsError() {return m_photonsError;} //?
+    double powerPhoton() {return m_powerPhoton;}
+    double powerTotal() {return m_powerTotal;}
 
 private:
-    bool CheckSurface();
-    bool CheckSurfaceSide();
-    void UpdatePhotonCounts();
-    void FluxAnalysisCylinder(InstanceNode* node);
-    void FluxAnalysisFlatDisk(InstanceNode* node);
-    void FluxAnalysisPlanar(InstanceNode* node);
+    void fillBins();
 
     TSceneKit* m_sceneKit;
     SceneModel* m_sceneModel;
@@ -51,19 +49,20 @@ private:
 
     QString m_surfaceURL;
     QString m_surfaceSide;
-    unsigned long m_tracedRays;
-    double m_photonPower;
 
-    int** m_photonCounts;
-    int m_heightDivisions;
-    int m_widthDivisions;
+    ulong m_tracedRays;
+    double m_powerTotal;
+    double m_powerPhoton;
+
+    Matrix2D<int> m_bins;
+
     double m_uMin;
     double m_uMax;
     double m_vMin;
     double m_vMax;
-    int m_maximumPhotons;
-    int m_maximumPhotonsXCoord;
-    int m_maximumPhotonsYCoord;
-    int m_maximumPhotonsError;
-    double m_totalPower;
+
+    int m_photonsMax;
+    int m_photonsMaxRow;
+    int m_photonsMaxCol;
+    int m_photonsError;
 };

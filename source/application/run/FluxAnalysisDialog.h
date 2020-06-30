@@ -7,6 +7,7 @@ class FluxAnalysisDialog;
 }
 
 #include "kernel/photons/Photons.h"
+#include "libraries/geometry/Matrix2D.h"
 
 class InstanceNode;
 class SceneModel;
@@ -27,31 +28,32 @@ public:
     ~FluxAnalysisDialog();
 
 private slots:
-    void SelectSurface();
-    void ChangeCurrentSurface();
-    void ChangeCurrentSurfaceSide();
-    void ExportData();
-    void Run();
+    void SurfaceSelected();
+    void SurfaceChanged();
+    void SideChanged();
     void UpdateAnalysis();
+    void run();
+
+    void UnitsChanged();
+    void FormatChanged();
+    void SelectDir();
+    void Export();
+
     void UpdateSectorPlotSlot();
-    void SelectExportFile();
-    void UpdateLabelsUnits();
-    void SaveCoordsExport();
 
 private:
-    void ClearCurrentAnalysis();
-    void UpdateSurfaceSides(QString selectedSurfaceURL);
+    void ClearAnalysis();
 
-    void UpdateStatistics(double totalEnergy, double minimumFlux, double averageFlux, double maximumFlux,
-                          double maxXCoord, double maxYCoord, double error, double uniformity, double gravityX, double gravityY);
-    void UpdateFluxMapPlot(int** photonCounts, double wPhoton, int widthDivisions, int heightDivisions, double xmin, double ymin, double xmax, double ymax);
-    void CreateSectorPlots(double xmin, double ymin, double xmax, double ymax);
-    void UpdateSectorPlots(int** photonCounts, double wPhoton, int widthDivisions, int heightDivisions, double xmin, double ymin, double xmax, double ymax, double maximumFlux);
+    void UpdateStatistics(double powerTotal, double fluxMin, double fluxAverage, double fluxMax,
+                          double fluxMaxU, double fluxMaxV, double error, double uniformity, double gravityX, double gravityY);
+    void UpdateFluxMapPlot(const Matrix2D<int>& photonCounts, double powerPhoton, int widthDivisions, int heightDivisions, double xmin, double ymin, double xmax, double ymax);
+    void CreateSectorPlots(double xMin, double yMin, double xMax, double yMax);
+    void UpdateSectorPlots(const Matrix2D<int>& photonCounts, double wPhoton, int widthDivisions, int heightDivisions, double xmin, double ymin, double xmax, double ymax, double maximumFlux);
 
 private:
     Ui::FluxAnalysisDialog* ui;
     FluxAnalysis* m_fluxAnalysis;
     SceneModel* m_sceneModel;
-    QString m_currentSurfaceURL;
-    QString m_fluxLabelString;
+    QString m_fluxSurfaceURL;
+    QString m_fluxLabel;
 };

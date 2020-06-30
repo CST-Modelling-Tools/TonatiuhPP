@@ -29,75 +29,57 @@
 #include "libraries/geometry/gcf.h"
 #include "kernel/air/AirVacuum.h"
 #include "kernel/profiles/ProfileRT.h"
+#include "libraries/geometry/Matrix2D.h"
 
-/******************************************
- * FluxAnalysis
- *****************************************/
 
-/*!
- * Create FluxAnalysis object
- */
-FluxAnalysis::FluxAnalysis(
-    TSceneKit* currentScene,
-    SceneModel& currentSceneModel,
-    InstanceNode* rootSeparatorInstance,
+
+FluxAnalysis::FluxAnalysis(TSceneKit* sceneKit,
+    SceneModel& sceneModel,
+    InstanceNode* instanceRoot,
     int sunWidthDivisions,
     int sunHeightDivisions,
     Random* randomDeviate
 ):
-    m_sceneKit(currentScene),
-    m_sceneModel(&currentSceneModel),
-    m_instanceRoot(rootSeparatorInstance),
+    m_sceneKit(sceneKit),
+    m_sceneModel(&sceneModel),
+    m_instanceRoot(instanceRoot),
     m_sunWidthDivisions(sunWidthDivisions),
     m_sunHeightDivisions(sunHeightDivisions),
     m_rand(randomDeviate),
     m_photons(0),
     m_surfaceURL(""),
     m_tracedRays(0),
-    m_photonPower(0),
-    m_photonCounts(0),
-    m_heightDivisions(0),
-    m_widthDivisions(0),
-    m_uMin(0),
-    m_uMax(0),
-    m_vMin(0),
-    m_vMax(0),
-    m_maximumPhotons(0),
-    m_maximumPhotonsXCoord(0),
-    m_maximumPhotonsYCoord(0),
-    m_maximumPhotonsError(0),
-    m_totalPower(0)
+    m_powerTotal(0.),
+    m_powerPhoton(0.),
+    m_uMin(0.),
+    m_uMax(0.),
+    m_vMin(0.),
+    m_vMax(0.),
+    m_photonsMax(0),
+    m_photonsMaxRow(0),
+    m_photonsMaxCol(0),
+    m_photonsError(0)
 {
 
 }
 
-/*!
- * Destroy FluxAnalysis object
- */
 FluxAnalysis::~FluxAnalysis()
 {
-    clearPhotonMap();
-
-    if (m_photonCounts) {
-        for (int h = 0; h < m_heightDivisions; h++)
-            delete[] m_photonCounts[h];
-
-        delete[] m_photonCounts;
-    }
+    clear();
 }
 
 /*
  * Returns the type of the surface
  */
-QString FluxAnalysis::GetSurfaceType(QString nodeURL)
+QString FluxAnalysis::getShapeType(QString nodeURL)
 {
-    QModelIndex nodeIndex = m_sceneModel->IndexFromUrl(nodeURL);
-    if (!nodeIndex.isValid()) return "";
+    QModelIndex index = m_sceneModel->IndexFromUrl(nodeURL);
+    if (!index.isValid()) return "";
 
-    InstanceNode* instanceNode = m_sceneModel->getInstance(nodeIndex);
-    if (!instanceNode) return "";
+    InstanceNode* instance = m_sceneModel->getInstance(index);
+    if (!instance) return "";
 
-    TShapeKit* shapeKit = static_cast<TShapeKit*> (instanceNode->getNode() );
+    TShapeKit* shapeKit = static_cast<TShapeKit*>(instance->getNode());
     if (!shapeKit) return "";
 
     ShapeRT* shape = (ShapeRT*) shapeKit->shapeRT.getValue();
@@ -107,66 +89,15 @@ QString FluxAnalysis::GetSurfaceType(QString nodeURL)
 }
 
 /*
- * Check if it the selected surface is suitable (cylinder, flat disk or flat rectangle) for the analysis
- */
-bool FluxAnalysis::CheckSurface()
-{
-    QString surfaceType = GetSurfaceType(m_surfaceURL);
-    if (surfaceType == "Planar") return true;
-    if (surfaceType == "ShapeFlatDisk") return true;
-    if (surfaceType == "Cylinder") return true;
-    return true;
-}
-
-/*
- * Check the surface side.
- */
-bool FluxAnalysis::CheckSurfaceSide()
-{
-    QString surfaceType = GetSurfaceType(m_surfaceURL);
-
-    if (surfaceType == "Planar")
-    {
-        if (m_surfaceSide != "front" && m_surfaceSide != "back")
-            return false;
-    }
-    else if (surfaceType == "ShapeFlatDisk")
-    {
-        if (m_surfaceSide != "front" && m_surfaceSide != "back")
-            return false;
-    }
-    else if (surfaceType == "Cylinder")
-    {
-        if (m_surfaceSide != "front" && m_surfaceSide != "back")
-            return false;
-    }
-
-    return true;
-}
-
-/*
  * Fun flux analysis
  */
-void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, ulong nOfRays, bool increasePhotonMap, int heightDivisions, int widthDivisions)
+void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool increasePhotonMap, int rows, int cols)
 {
     m_surfaceURL = nodeURL;
     m_surfaceSide = surfaceSide;
 
-    //Delete a photonCounts
-    if (m_photonCounts && m_photonCounts != 0)
-    {
-        for (int h = 0; h < m_heightDivisions; h++)
-        {
-            delete[] m_photonCounts[h];
-        }
+    m_bins.resize(rows, cols);
 
-        delete[] m_photonCounts;
-    }
-    m_photonCounts = 0;
-    m_heightDivisions = heightDivisions;
-    m_widthDivisions = widthDivisions;
-
-    //Check if there is a scene
     if (!m_sceneKit) return;
 
     //Check if there is a transmissivity defined
@@ -199,21 +130,26 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, ulong n
     SoTransform* lightTransform = static_cast< SoTransform* >(sunKit->getPart("transform",false) );
 
     //Check if there is a random generator is defined.
-    if (!m_rand || m_rand== 0) return;
+    if (!m_rand) return;
 
     //Check if the surface and the surface side defined is suitable
-    if (CheckSurface() == false || CheckSurfaceSide() == false) return;
+//    QString shapeType = getShapeType(m_surfaceURL);
+//    QStringList list = {"Planar", "Cylinder"};
+//    if (!list.contains(shapeType)) return;
+
+//    if (m_surfaceSide != "front" && m_surfaceSide != "back")
+//        return;
 
     //Create the photon map where photons are going to be stored
-    if (!m_photons  || !increasePhotonMap)
+    if (!m_photons || !increasePhotonMap)
     {
         if (m_photons) m_photons->endExport(-1);
         delete m_photons;
         m_photons = new Photons();
         m_photons->setBufferSize(HUGE_VAL);
         m_tracedRays = 0;
-        m_photonPower = 0;
-        m_totalPower = 0;
+        m_powerPhoton = 0;
+        m_powerTotal = 0;
     }
 
     QVector<InstanceNode*> exportSuraceList;
@@ -270,11 +206,11 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, ulong n
     dialog.setLabelText(QString("Progressing using %1 thread(s)...").arg(QThread::idealThreadCount() ) );
 
     // Create a QFutureWatcher and conncect signals and slots.
-    QFutureWatcher< void > futureWatcher;
-    QObject::connect(&futureWatcher, SIGNAL(finished()), &dialog, SLOT(reset()));
-    QObject::connect(&dialog, SIGNAL(canceled()), &futureWatcher, SLOT(cancel()));
-    QObject::connect(&futureWatcher, SIGNAL(progressRangeChanged(int,int)), &dialog, SLOT(setRange(int,int)));
-    QObject::connect(&futureWatcher, SIGNAL(progressValueChanged(int)), &dialog, SLOT(setValue(int)));
+    QFutureWatcher<void> watcher;
+    QObject::connect(&watcher, SIGNAL(finished()), &dialog, SLOT(reset()));
+    QObject::connect(&dialog, SIGNAL(canceled()), &watcher, SLOT(cancel()));
+    QObject::connect(&watcher, SIGNAL(progressRangeChanged(int,int)), &dialog, SLOT(setRange(int,int)));
+    QObject::connect(&watcher, SIGNAL(progressValueChanged(int)), &dialog, SLOT(setValue(int)));
 
     QMutex mutex;
     QMutex mutexPhotonMap;
@@ -289,470 +225,144 @@ void FluxAnalysis::RunFluxAnalysis(QString nodeURL, QString surfaceSide, ulong n
         *m_rand, &mutex, m_photons, &mutexPhotonMap, exportSuraceList
     ));
 
-    futureWatcher.setFuture(photonMap);
+    watcher.setFuture(photonMap);
 
     // Display the dialog and start the event loop.
     dialog.exec();
-    futureWatcher.waitForFinished();
+    watcher.waitForFinished();
 
     m_tracedRays += nOfRays;
 
     double irradiance = sunKit->irradiance.getValue();
     double area = sunAperture->getArea();
-    m_photonPower = area*irradiance/m_tracedRays;
+    m_powerPhoton = area*irradiance/m_tracedRays;
 
-    UpdatePhotonCounts();
+    fillBins();
 }
 
 /*
  * Update photon counts for a specific grid divisions
  */
-void FluxAnalysis::UpdatePhotonCounts(int heightDivisions, int widthDivisions)
+void FluxAnalysis::setBins(int rows, int cols)
 {
-    //Delete a photonCounts
-    if (m_photonCounts && (m_photonCounts != 0) )
-    {
-        for (int h = 0; h < m_heightDivisions; h++)
-        {
-            delete[] m_photonCounts[h];
-        }
-
-        delete[] m_photonCounts;
-    }
-
-    m_heightDivisions = heightDivisions;
-    m_widthDivisions = widthDivisions;
-
-    UpdatePhotonCounts();
-}
-
-/*
- * Update photon counts
- */
-void FluxAnalysis::UpdatePhotonCounts()
-{
-    if (!m_photons) return;
-
-    //Create a new photonCounts
-    m_photonCounts = new int*[m_heightDivisions];
-    for (int h = 0; h < m_heightDivisions; h++)
-    {
-        m_photonCounts[h] = new int[m_widthDivisions];
-        for (int w = 0; w < m_widthDivisions; w++)
-            m_photonCounts[h][w] = 0;
-    }
-
-    m_maximumPhotons = 0;
-    m_maximumPhotonsXCoord = 0;
-    m_maximumPhotonsYCoord = 0;
-    m_maximumPhotonsError = 0;
-
-    QString surfaceType = GetSurfaceType(m_surfaceURL);
-    QModelIndex nodeIndex = m_sceneModel->IndexFromUrl(m_surfaceURL);
-    InstanceNode* instanceNode = m_sceneModel->getInstance(nodeIndex);
-
-    if (surfaceType == "Planar")
-    {
-        FluxAnalysisPlanar(instanceNode);
-    }
-    else if (surfaceType == "ShapeFlatDisk")
-    {
-        FluxAnalysisFlatDisk(instanceNode);
-    }
-    else if (surfaceType == "Cylinder")
-    {
-        FluxAnalysisCylinder(instanceNode);
-    }
-}
-
-/*
- * Flux Analysis for cylinder surfaces.
- */
-void FluxAnalysis::FluxAnalysisCylinder(InstanceNode* node)
-{
-    if (!node) return;
-    TShapeKit* shapeKit = static_cast< TShapeKit* > (node->getNode() );
-    if (!shapeKit) return;
-
-    ShapeRT* shape = (ShapeRT*) shapeKit->shapeRT.getValue();
-    if (!shape || shape == 0) return;
-
-    SoSFDouble* radiusField = static_cast< SoSFDouble* > (shape->getField("radius") );
-    double radius = radiusField->getValue();
-
-    SoSFDouble* lengthField = static_cast< SoSFDouble* > (shape->getField("sizeZ") );
-    double length = lengthField->getValue();
-
-    SoSFDouble* phiMaxField = static_cast< SoSFDouble* > (shape->getField("phiMax") );
-    double phiMax = phiMaxField->getValue();
-
-    int widthDivisionsError = m_widthDivisions - 1;
-    int heightDivisionsError = m_heightDivisions - 1;
-
-    int** photonCountsError = new int*[heightDivisionsError];
-    for (int i = 0; i < heightDivisionsError; ++i)
-    {
-        photonCountsError[i] = new int[widthDivisionsError];
-        for (int w = 0; w < widthDivisionsError; w++)
-            photonCountsError[i][w] = 0;
-    }
-
-    int activeSideID = 1;
-    if (m_surfaceSide == "INSIDE")
-        activeSideID = 0;
-
-    Transform worldToObject = node->getTransform().inversed();
-
-    m_uMin = 0.;
-    m_uMax = phiMax*radius;
-    m_vMin = -length/2;
-    m_vMax = length/2;
-
-    const std::vector<Photon>& photonList = m_photons->getPhotons();
-    int totalPhotons = 0;
-    for (uint p = 0; p < photonList.size(); p++)
-    {
-        const Photon& photon = photonList[p];
-        if (photon.side == activeSideID)
-        {
-            totalPhotons++;
-            Vector3D photonLocalCoord = worldToObject.transformPoint(photon.pos);
-            double phi = atan2(photonLocalCoord.y, photonLocalCoord.x);
-            if (phi < 0.) phi += 2 * gcf::pi;
-            double arcLength = phi * radius;
-
-            int xbin = floor( (arcLength - m_uMin) / (m_uMax - m_uMin) * m_widthDivisions);
-            int ybin = floor( (photonLocalCoord.z - m_vMin) / (m_vMax - m_vMin) * m_heightDivisions);
-            m_photonCounts[ybin][xbin] += 1;
-            if (m_maximumPhotons < m_photonCounts[ybin][xbin])
-            {
-                m_maximumPhotons = m_photonCounts[ybin][xbin];
-                m_maximumPhotonsXCoord = xbin;
-                m_maximumPhotonsYCoord = ybin;
-            }
-
-            int xbinE = floor( (arcLength - m_uMin) / (m_uMax - m_uMin) * widthDivisionsError);
-            int ybinE = floor( (photonLocalCoord.z - m_vMin) / (m_vMax - m_vMin) * heightDivisionsError);
-            photonCountsError[ybinE][xbinE] += 1;
-            if (m_maximumPhotonsError < photonCountsError[ybinE][xbinE])
-            {
-                m_maximumPhotonsError = photonCountsError[ybinE][xbinE];
-            }
-        }
-    }
-
-    m_totalPower = totalPhotons * m_photonPower;
-
-    if (photonCountsError)
-    {
-        for (int h = 0; h < heightDivisionsError; h++)
-        {
-            delete[] photonCountsError[h];
-        }
-
-        delete[] photonCountsError;
-    }
-}
-
-/*
- * Flux Analysis for flat disk surfaces.
- */
-void FluxAnalysis::FluxAnalysisFlatDisk(InstanceNode* node)
-{
-    if (!node) return;
-    TShapeKit* surfaceNode = static_cast< TShapeKit* > (node->getNode() );
-    if (!surfaceNode) return;
-
-    ShapeRT* shape = (ShapeRT*)surfaceNode->shapeRT.getValue();
-    if (!shape || shape == 0) return;
-
-    trt::TONATIUH_REAL* radiusField = static_cast< trt::TONATIUH_REAL* > (shape->getField("radius") );
-    double radius = radiusField->getValue();
-
-    int widthDivisionsError = m_widthDivisions - 1;
-    int heightDivisionsError = m_heightDivisions - 1;
-
-    int** photonCountsError = new int*[heightDivisionsError];
-    for (int i = 0; i < heightDivisionsError; ++i)
-    {
-        photonCountsError[i] = new int[widthDivisionsError];
-        for (int w = 0; w < widthDivisionsError; w++)
-            photonCountsError[i][w] = 0;
-    }
-
-    int activeSideID = 1;
-    if (m_surfaceSide == "BACK")
-        activeSideID = 0;
-
-    Transform worldToObject = node->getTransform().inversed();
-
-    m_uMin = -radius;
-    m_vMin = -radius;
-    m_uMax = radius;
-    m_vMax = radius;
-
-    const std::vector<Photon>& photonList = m_photons->getPhotons();
-    int totalPhotons = 0;
-    for (uint p = 0; p < photonList.size(); p++)
-    {
-        const Photon& photon = photonList[p];
-        if (photon.side == activeSideID)
-        {
-            totalPhotons++;
-            Vector3D photonLocalCoord = worldToObject.transformPoint(photon.pos);
-            int xbin = floor( (photonLocalCoord.x - m_uMin) / (m_uMax - m_uMin) * m_widthDivisions);
-            int ybin = floor( (photonLocalCoord.z - m_vMin) / (m_vMax - m_vMin) * m_heightDivisions);
-            m_photonCounts[ybin][xbin] += 1;
-            if (m_maximumPhotons < m_photonCounts[ybin][xbin])
-            {
-                m_maximumPhotons = m_photonCounts[ybin][xbin];
-                m_maximumPhotonsXCoord = xbin;
-                m_maximumPhotonsYCoord = ybin;
-            }
-
-            int xbinE = floor( (photonLocalCoord.x - m_uMin) / (m_uMax - m_uMin) * widthDivisionsError);
-            int ybinE = floor( (photonLocalCoord.z - m_vMin) / (m_vMax - m_vMin) * heightDivisionsError);
-            photonCountsError[ybinE][xbinE] += 1;
-            if (m_maximumPhotonsError < photonCountsError[ybinE][xbinE])
-            {
-                m_maximumPhotonsError = photonCountsError[ybinE][xbinE];
-            }
-        }
-    }
-
-    m_totalPower = totalPhotons * m_photonPower;
-
-    if (photonCountsError)
-    {
-        for (int h = 0; h < heightDivisionsError; h++)
-            delete[] photonCountsError[h];
-
-        delete[] photonCountsError;
-    }
-}
-
-/*
- * Flux Analysis for flat rectangle surfaces.
- */
-void FluxAnalysis::FluxAnalysisPlanar(InstanceNode* node)
-{
-    if (!node) return;
-
-    TShapeKit* shapeKit = static_cast<TShapeKit*> (node->getNode());
-    if (!shapeKit) return;
-
-    ShapeRT* shape = (ShapeRT*) shapeKit->shapeRT.getValue();
-    if (!shape || shape == 0) return;
-
-    ProfileRT* aperture = (ProfileRT*) shapeKit->profileRT.getValue();
-    Box3D box = aperture->getBox();
-
-    int widthDivisionsError = m_widthDivisions - 1;
-    int heightDivisionsError = m_heightDivisions - 1;
-
-    int** photonCountsError = new int*[heightDivisionsError];
-    for (int i = 0; i < heightDivisionsError; ++i)
-    {
-        photonCountsError[i] = new int[widthDivisionsError];
-        for (int w = 0; w < widthDivisionsError; w++)
-            photonCountsError[i][w] = 0;
-    }
-
-    int activeSideID = 1;
-    if (m_surfaceSide == "back")
-        activeSideID = 0;
-
-    Transform worldToObject = node->getTransform().inversed();
-
-    m_uMin = box.pMin.x;
-    m_uMax = box.pMax.x;
-    m_vMin = box.pMin.y;
-    m_vMax = box.pMax.y;
-
-    int totalPhotons = 0;
-    for (const Photon& photon : m_photons->getPhotons())
-    {
-        if (photon.side == activeSideID)
-        {
-            totalPhotons++;
-            Vector3D pos = worldToObject.transformPoint(photon.pos);
-            int xbin = floor( (pos.x - m_uMin) / (m_uMax - m_uMin) * m_widthDivisions);
-            int ybin = floor( (pos.y - m_vMin) / (m_vMax - m_vMin) * m_heightDivisions);
-
-            m_photonCounts[ybin][xbin] += 1;
-            if (m_maximumPhotons < m_photonCounts[ybin][xbin])
-            {
-                m_maximumPhotons = m_photonCounts[ybin][xbin];
-                m_maximumPhotonsXCoord = xbin;
-                m_maximumPhotonsYCoord = ybin;
-            }
-
-            int xbinE = floor( (pos.x - m_uMin) / (m_uMax - m_uMin) * widthDivisionsError);
-            int ybinE = floor( (pos.y - m_vMin) / (m_vMax - m_vMin) * heightDivisionsError);
-            photonCountsError[ybinE][xbinE] += 1;
-            if (m_maximumPhotonsError < photonCountsError[ybinE][xbinE])
-            {
-                m_maximumPhotonsError = photonCountsError[ybinE][xbinE];
-            }
-        }
-    }
-
-    m_totalPower = totalPhotons*m_photonPower;
-
-    if (photonCountsError)
-    {
-        for (int h = 0; h < heightDivisionsError; h++)
-            delete[] photonCountsError[h];
-
-        delete[] photonCountsError;
-    }
+    m_bins.resize(rows, cols);
+    fillBins();
 }
 
 /*
  * Export the flux distribution
  */
-void FluxAnalysis::ExportAnalysis(QString directory, QString fileName, bool saveCoords)
+void FluxAnalysis::write(QString directory, QString file, bool withCoords)
 {
-    if (m_photons == 0 || !m_photons) return;
+    if (!m_photons) return;
+    if (directory.isEmpty()) return;
+    if (file.isEmpty()) return;
 
-    if (directory.isEmpty() ) return;
+    QFileInfo info(file);
+    if (info.completeSuffix().compare("txt"))
+        file.append(".txt");
 
-    if (fileName.isEmpty() ) return;
+    QFile fileOut(directory + "/" + file);
+    fileOut.open(QIODevice::WriteOnly);
+    QTextStream out(&fileOut);
 
-    QFileInfo exportFileInfo(fileName);
-    if (exportFileInfo.completeSuffix().compare("txt") ) fileName.append(".txt");
+    double uStep = (m_uMax - m_uMin)/m_bins.cols();
+    double vStep = (m_vMax - m_vMin)/m_bins.rows();
+    double coeff = m_powerPhoton/(uStep*vStep);
 
-    QFile exportFile(directory + "/" + fileName);
-    exportFile.open(QIODevice::WriteOnly);
-    QTextStream out(&exportFile);
-
-    double widthCell = (m_uMax - m_uMin) / m_widthDivisions;
-    double heightCell = (m_vMax - m_vMin) / m_heightDivisions;
-    double areaCell = widthCell * heightCell;
-
-    if (saveCoords)
+    if (withCoords)
     {
-        out << "x(m)\ty(m)\tFlux(W/m2)" << "\n";
-
-        for (int i = 0; i < m_heightDivisions; i++)
-        {
-            for (int j = 0; j < m_widthDivisions; j++)
-            {
-                out << m_uMin + widthCell / 2 + j * widthCell  << "\t" << m_vMin + heightCell / 2 + i * heightCell <<  "\t" << m_photonCounts[i][j] * m_photonPower / areaCell << "\n";
-            }
+        out << "x(m)\ty(m)\tFlux(W/m2)\n";
+        for (int r = 0; r < m_bins.rows(); r++) {
+            for (int c = 0; c < m_bins.cols(); c++)
+                out << m_uMin + uStep*(c + 0.5)  << "\t" << m_vMin + vStep*(r + 0.5) << "\t" << m_bins(r, c)*coeff << "\n";
         }
     }
     else
     {
-        for (int i = 0; i < m_heightDivisions; i++)
-        {
-            for (int j = 0; j < m_widthDivisions; j++)
-            {
-                out << m_photonCounts[m_heightDivisions - 1 - i][j] * m_photonPower / areaCell << "\t";
-            }
+        for (int r = m_bins.rows() - 1; r >= 0; r--) {
+            for (int c = 0; c < m_bins.cols(); c++)
+                out << m_bins(r, c)*coeff << "\t";
             out << "\n";
         }
     }
-    exportFile.close();
-}
 
-/*
- * Returns m_photoCounts.
- */
-int** FluxAnalysis::photonCountsValue()
-{
-    return m_photonCounts;
-}
-
-/*
- * Returns m_xmin value.
- */
-double FluxAnalysis::xminValue()
-{
-    return m_uMin;
-}
-
-/*
- * Returns m_xmax value.
- */
-double FluxAnalysis::xmaxValue()
-{
-    return m_uMax;
-}
-
-/*
- * Returns m_ymin value.
- */
-double FluxAnalysis::yminValue()
-{
-    return m_vMin;
-}
-
-/*
- * Returns m_ymax value.
- */
-double FluxAnalysis::ymaxValue()
-{
-    return m_vMax;
-}
-
-/*
- * Returns m_maximumPhotons value.
- */
-int FluxAnalysis::maximumPhotonsValue()
-{
-    return m_maximumPhotons;
-}
-
-/*
- * Returns m_maximumPhotonsXCoord value.
- */
-int FluxAnalysis::maximumPhotonsXCoordValue()
-{
-    return m_maximumPhotonsXCoord;
-}
-
-/*
- * Returns m_maximumPhotonsYCoord value.
- */
-int FluxAnalysis::maximumPhotonsYCoordValue()
-{
-    return m_maximumPhotonsYCoord;
-}
-
-/*
- * Returns m_maximumPhotonsError value.
- */
-int FluxAnalysis::maximumPhotonsErrorValue()
-{
-    return m_maximumPhotonsError;
-}
-
-/*
- * Returns m_wPhoton value.
- */
-double FluxAnalysis::wPhotonValue()
-{
-    return m_photonPower;
-}
-
-/*
- * Returns m_totalFlux value.
- */
-double FluxAnalysis::totalPowerValue()
-{
-    return m_totalPower;
+    fileOut.close();
 }
 
 /*
  * Clear photon map
  */
-void FluxAnalysis::clearPhotonMap()
+void FluxAnalysis::clear()
 {
     if (m_photons) m_photons->endExport(-1);
     delete m_photons;
     m_photons = 0;
     m_tracedRays = 0;
-    m_photonPower = 0;
-    m_totalPower = 0;
+    m_powerPhoton = 0.;
+    m_powerTotal = 0.;
+}
+
+/*
+ * Update photon counts
+ */
+void FluxAnalysis::fillBins()
+{
+    if (!m_photons) return;
+
+    m_bins.fill(0);
+    m_photonsMax = 0;
+    m_photonsMaxRow = 0;
+    m_photonsMaxCol = 0;
+    m_photonsError = 0;
+
+    QString shapeType = getShapeType(m_surfaceURL);
+    QModelIndex index = m_sceneModel->IndexFromUrl(m_surfaceURL);
+    InstanceNode* instance = m_sceneModel->getInstance(index);
+    if (!instance) return;
+    TShapeKit* shapeKit = static_cast<TShapeKit*>(instance->getNode());
+    if (!shapeKit) return;
+    ShapeRT* shape = (ShapeRT*) shapeKit->shapeRT.getValue();
+    if (!shape) return;
+    ProfileRT* profile = (ProfileRT*) shapeKit->profileRT.getValue();
+    Box3D box = profile->getBox();
+    m_uMin = box.pMin.x;
+    m_uMax = box.pMax.x;
+    m_vMin = box.pMin.y;
+    m_vMax = box.pMax.y;
+
+    int activeSideID = m_surfaceSide == "back" ? 0 : 1;
+    Transform toObject = instance->getTransform().inversed();
+
+    Matrix2D<int> binErrors(m_bins.rows() - 1, m_bins.cols() - 1);
+    binErrors.fill(0);
+
+    int photonsTotal = 0;
+    for (const Photon& photon : m_photons->getPhotons())
+    {
+        if (photon.side != activeSideID) continue;
+        photonsTotal++;
+        Vector3D p = toObject.transformPoint(photon.pos);
+        Vector2D uv = shape->getUV(p);
+        int row = floor((uv.y - m_vMin)/(m_vMax - m_vMin)*m_bins.rows());
+        int col = floor((uv.x - m_uMin)/(m_uMax - m_uMin)*m_bins.cols());
+
+        int& bin = m_bins(row, col);
+        bin++;
+        if (m_photonsMax < bin)
+        {
+            m_photonsMax = bin;
+            m_photonsMaxRow = row;
+            m_photonsMaxCol = col;
+        }
+
+        int rowE = floor((uv.y - m_vMin)/(m_vMax - m_vMin)*binErrors.rows());
+        int colE = floor((uv.x - m_uMin)/(m_uMax - m_uMin)*binErrors.cols());
+        int& binE = binErrors(rowE, colE);
+        binE++;
+        if (m_photonsError < binE)
+            m_photonsError = binE;
+    }
+
+    m_powerTotal = photonsTotal*m_powerPhoton;
 }

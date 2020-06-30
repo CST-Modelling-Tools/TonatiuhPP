@@ -25,7 +25,7 @@ void SceneFilter::AddShapeTypeFilter(QString shape)
 /*!
  * Sets the shape filters to \a  shapeTypeFilters. Previously defined shape filters will be removed.
  */
-void SceneFilter::SetShapeTypeFilters(QVector<QString> shapes)
+void SceneFilter::SetShapeTypeFilters(QStringList shapes)
 {
     m_shapes = shapes;
 }

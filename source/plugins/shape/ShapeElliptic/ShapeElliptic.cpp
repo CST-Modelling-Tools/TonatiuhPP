@@ -24,6 +24,25 @@ ShapeElliptic::ShapeElliptic()
     SO_NODE_ADD_FIELD( aZ, (1.) );
 }
 
+Vector3D ShapeElliptic::getPoint(double u, double v) const
+{
+    double rX = aX.getValue();
+    double rY = aY.getValue();
+    double rZ = aZ.getValue();
+    double s = 1. - pow2(u/rX) - pow2(v/rY);
+    s = 1. - sqrt(s);
+    return Vector3D(u, v, s*rZ);
+}
+
+Vector3D ShapeElliptic::getNormal(double u, double v) const
+{
+    double rX = aX.getValue();
+    double rY = aY.getValue();
+    double rZ = aZ.getValue();
+    double s = 1. - pow2(u/rX) - pow2(v/rY);
+    return Vector3D(-u/(rX*rX), -v/(rY*rY), sqrt(s)/rZ).normalized();
+}
+
 Box3D ShapeElliptic::getBox(ProfileRT* profile) const
 {  
     Box3D box = profile->getBox();
@@ -95,23 +114,4 @@ void ShapeElliptic::updateShapeGL(TShapeKit* parent)
     int columns = 1 + ceil(s.y/sy);
 
     makeQuadMesh(parent, QSize(rows, columns));
-}
-
-Vector3D ShapeElliptic::getPoint(double u, double v) const
-{
-    double rX = aX.getValue();
-    double rY = aY.getValue();
-    double rZ = aZ.getValue();
-    double s = 1. - pow2(u/rX) - pow2(v/rY);
-    s = 1. - sqrt(s);
-    return Vector3D(u, v, s*rZ);
-}
-
-Vector3D ShapeElliptic::getNormal(double u, double v) const
-{
-    double rX = aX.getValue();
-    double rY = aY.getValue();
-    double rZ = aZ.getValue();
-    double s = 1. - pow2(u/rX) - pow2(v/rY);
-    return Vector3D(-u/(rX*rX), -v/(rY*rY), sqrt(s)/rZ).normalized();
 }

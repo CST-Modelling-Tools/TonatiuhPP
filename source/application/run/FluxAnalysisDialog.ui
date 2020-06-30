@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>819</width>
+    <width>807</width>
     <height>594</height>
    </rect>
   </property>
@@ -34,26 +34,37 @@
         <property name="title">
          <string>Analysis</string>
         </property>
-        <layout class="QGridLayout" name="gridLayout">
+        <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,0,0">
          <item row="2" column="0">
-          <widget class="QLabel" name="widthDivisionsLabel">
+          <widget class="QLabel" name="surfaceXLabel">
            <property name="text">
             <string>Cells X:</string>
            </property>
           </widget>
          </item>
          <item row="0" column="3">
-          <widget class="QPushButton" name="selectButton">
+          <widget class="QPushButton" name="surfaceButton">
            <property name="text">
             <string>Select</string>
            </property>
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QComboBox" name="sidesCombo"/>
+          <widget class="QComboBox" name="surfaceSideCombo">
+           <item>
+            <property name="text">
+             <string>front</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>back</string>
+            </property>
+           </item>
+          </widget>
          </item>
          <item row="4" column="2">
-          <widget class="QCheckBox" name="appendCheck">
+          <widget class="QCheckBox" name="raysAppendCheck">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -73,7 +84,7 @@
           </widget>
          </item>
          <item row="4" column="3">
-          <widget class="QPushButton" name="runButton">
+          <widget class="QPushButton" name="raysButton">
            <property name="text">
             <string>Run</string>
            </property>
@@ -87,14 +98,14 @@
           </widget>
          </item>
          <item row="3" column="0">
-          <widget class="QLabel" name="heightDivisionsLabel">
+          <widget class="QLabel" name="surfaceYLabel">
            <property name="text">
             <string>Cells Y:</string>
            </property>
           </widget>
          </item>
          <item row="4" column="0">
-          <widget class="QLabel" name="nRaysLabel">
+          <widget class="QLabel" name="raysLabel">
            <property name="text">
             <string>Rays:</string>
            </property>
@@ -108,7 +119,7 @@
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="QSpinBox" name="spinRays">
+          <widget class="QSpinBox" name="raysSpin">
            <property name="showGroupSeparator" stdset="0">
             <bool>true</bool>
            </property>
@@ -121,7 +132,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QSpinBox" name="spinCellsX">
+          <widget class="QSpinBox" name="surfaceXSpin">
            <property name="minimum">
             <number>2</number>
            </property>
@@ -134,7 +145,7 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QSpinBox" name="spinCellsY">
+          <widget class="QSpinBox" name="surfaceYSpin">
            <property name="minimum">
             <number>2</number>
            </property>
@@ -154,22 +165,92 @@
         <property name="title">
          <string>Export</string>
         </property>
-        <layout class="QGridLayout" name="gridLayout_8">
+        <layout class="QGridLayout" name="gridLayout_8" columnstretch="0,1,0,0">
+         <item row="2" column="0">
+          <widget class="QLabel" name="exportFormatLabel">
+           <property name="text">
+            <string>Format:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" colspan="2">
+          <widget class="QLineEdit" name="exportDirEdit"/>
+         </item>
+         <item row="3" column="3">
+          <widget class="QPushButton" name="exportFileButton">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>Open</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="exportPowerEdit">
+           <property name="text">
+            <string>W</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QCheckBox" name="exportGridCheck">
+           <property name="text">
+            <string>Grid</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="1">
-          <widget class="QLineEdit" name="lengthUnitLine">
+          <widget class="QLineEdit" name="exportLengthEdit">
            <property name="text">
             <string>m</string>
            </property>
           </widget>
          </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="exportDirLabel">
+           <property name="text">
+            <string>Directory:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="exportFormatCombo">
+           <item>
+            <property name="text">
+             <string>txt</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>png</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>jpg</string>
+            </property>
+           </item>
+          </widget>
+         </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="powerUnitLabel">
+          <widget class="QLabel" name="exportPowerLabel">
            <property name="text">
             <string>Power:</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="3">
+         <item row="4" column="0">
+          <widget class="QLabel" name="exportFileLabel">
+           <property name="text">
+            <string>File:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="3">
           <widget class="QPushButton" name="exportButton">
            <property name="focusPolicy">
             <enum>Qt::NoFocus</enum>
@@ -180,95 +261,12 @@
           </widget>
          </item>
          <item row="4" column="1" colspan="2">
-          <widget class="QLineEdit" name="fileDirEdit"/>
-         </item>
-         <item row="4" column="3">
-          <widget class="QPushButton" name="selectFileButton">
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string>Open</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1" colspan="2">
-          <widget class="QLineEdit" name="fileNameEdit"/>
-         </item>
-         <item row="2" column="1">
-          <widget class="QComboBox" name="storeTypeCombo">
-           <item>
-            <property name="text">
-             <string>ASCII</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>IMAGE.PNG</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>IMAGE.JPG</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QCheckBox" name="saveCoordsCheckBox">
-           <property name="text">
-            <string>Save grid</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
+          <widget class="QLineEdit" name="exportFileEdit"/>
          </item>
          <item row="0" column="0">
-          <widget class="QLabel" name="lenghtUnitLabel">
+          <widget class="QLabel" name="exportLengthLabel">
            <property name="text">
             <string>Length:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="2">
-          <spacer name="horizontalSpacer_15">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="directoryLabel">
-           <property name="text">
-            <string>Directory:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="storeTypeLabel">
-           <property name="text">
-            <string>Format:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="powerUnitLine">
-           <property name="text">
-            <string>W</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="fileNameLabel">
-           <property name="text">
-            <string>File:</string>
            </property>
           </widget>
          </item>
@@ -286,21 +284,21 @@
           </widget>
          </item>
          <item row="4" column="0">
-          <widget class="QLabel" name="maximumFluxLabel">
+          <widget class="QLabel" name="fluxMaxLabel">
            <property name="text">
             <string>Maximum Flux:</string>
            </property>
           </widget>
          </item>
          <item row="3" column="0">
-          <widget class="QLabel" name="averageFluxLabel">
+          <widget class="QLabel" name="fluxAverageLabel">
            <property name="text">
             <string>Average Flux: </string>
            </property>
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="totalPowerLabel">
+          <widget class="QLabel" name="powerTotalLabel">
            <property name="text">
             <string>Total Power:</string>
            </property>
@@ -314,7 +312,7 @@
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QLabel" name="minimumFluxLabel">
+          <widget class="QLabel" name="fluxMinLabel">
            <property name="text">
             <string>Minimum Flux:</string>
            </property>
@@ -335,42 +333,42 @@
           </widget>
          </item>
          <item row="6" column="1">
-          <widget class="QLabel" name="maxCoordinatesValue">
+          <widget class="QLabel" name="fluxMaxUV">
            <property name="text">
             <string>;</string>
            </property>
           </widget>
          </item>
          <item row="6" column="0">
-          <widget class="QLabel" name="maxCoordinatesLabel">
+          <widget class="QLabel" name="fluxMaxUVLabel">
            <property name="text">
             <string>Maximum Flux Coordinates:</string>
            </property>
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QLabel" name="minimumFluxValue">
+          <widget class="QLabel" name="fluxMin">
            <property name="text">
             <string>0.0</string>
            </property>
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="QLabel" name="maximumFluxValue">
+          <widget class="QLabel" name="fluxMax">
            <property name="text">
             <string>0.0</string>
            </property>
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLabel" name="totalPowerValue">
+          <widget class="QLabel" name="powerTotal">
            <property name="text">
             <string>0.0</string>
            </property>
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QLabel" name="averageFluxValue">
+          <widget class="QLabel" name="fluxAverage">
            <property name="text">
             <string>0.0</string>
            </property>
@@ -434,7 +432,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="hSectorYCoordSpin">
+         <widget class="QDoubleSpinBox" name="spinY">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -471,7 +469,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QDoubleSpinBox" name="hSectorXCoordSpin">
+         <widget class="QDoubleSpinBox" name="spinX">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -522,12 +520,11 @@
  </customwidgets>
  <tabstops>
   <tabstop>surfaceEdit</tabstop>
-  <tabstop>sidesCombo</tabstop>
-  <tabstop>storeTypeCombo</tabstop>
-  <tabstop>saveCoordsCheckBox</tabstop>
-  <tabstop>fileDirEdit</tabstop>
-  <tabstop>fileNameEdit</tabstop>
-  <tabstop>hSectorYCoordSpin</tabstop>
+  <tabstop>surfaceSideCombo</tabstop>
+  <tabstop>exportFormatCombo</tabstop>
+  <tabstop>exportDirEdit</tabstop>
+  <tabstop>exportFileEdit</tabstop>
+  <tabstop>spinY</tabstop>
  </tabstops>
  <resources/>
  <connections/>

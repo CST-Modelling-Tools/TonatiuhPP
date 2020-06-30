@@ -19,9 +19,27 @@ ShapeCylinder::ShapeCylinder()
     SO_NODE_CONSTRUCTOR(ShapeCylinder);
 }
 
-Box3D ShapeCylinder::getBox(ProfileRT* aperture) const
+Vector3D ShapeCylinder::getPoint(double u, double v) const
 {
-    Box3D box = aperture->getBox();
+    double phi = gcf::TwoPi*u;
+    return Vector3D(cos(phi), sin(phi), v);
+}
+
+Vector3D ShapeCylinder::getNormal(double u, double v) const
+{
+    Q_UNUSED(v)
+    double phi = gcf::TwoPi*u;
+    return Vector3D(cos(phi), sin(phi), 0.);
+}
+
+Vector2D ShapeCylinder::getUV(const Vector3D& p) const
+{
+    return Vector2D(atan2(p.y, p.x)/gcf::TwoPi, p.z);
+}
+
+Box3D ShapeCylinder::getBox(ProfileRT* profile) const
+{
+    Box3D box = profile->getBox();
     double phiMin = gcf::TwoPi*box.pMin.x;
     double phiMax = gcf::TwoPi*box.pMax.x;
     double zMin = box.pMin.y;
@@ -49,7 +67,7 @@ Box3D ShapeCylinder::getBox(ProfileRT* aperture) const
     );
 }
 
-bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const
+bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
 {
     const Vector3D& rayO = ray.origin;
     const Vector3D& rayD = ray.direction();
@@ -70,7 +88,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
         double phi = atan2(pHit.y, pHit.x);
         double u = phi/gcf::TwoPi;
         double v = pHit.z;
-        if (!aperture->isInside(u, v)) continue;
+        if (!profile->isInside(u, v)) continue;
 
         if (tHit == 0 && dg == 0)
             return true;
@@ -102,17 +120,4 @@ void ShapeCylinder::updateShapeGL(TShapeKit* parent)
     int rows = 1 + ceil(48*s);
 
     makeQuadMesh(parent, QSize(rows, 2));
-}
-
-Vector3D ShapeCylinder::getPoint(double u, double v) const
-{
-    double phi = gcf::TwoPi*u;
-    return Vector3D(cos(phi), sin(phi), v);
-}
-
-Vector3D ShapeCylinder::getNormal(double u, double v) const
-{
-    Q_UNUSED(v)
-    double phi = gcf::TwoPi*u;
-    return Vector3D(cos(phi), sin(phi), 0.);
 }

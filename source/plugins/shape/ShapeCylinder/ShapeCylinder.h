@@ -11,15 +11,14 @@ public:
     static void initClass();
     ShapeCylinder();
 
-    Box3D getBox(ProfileRT* aperture) const;
+    Vector3D getPoint(double u, double v) const;
+    Vector3D getNormal(double u, double v) const;
+    Vector2D getUV(const Vector3D& p) const;
+    Box3D getBox(ProfileRT* profile) const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
 
     NAME_ICON_FUNCTIONS("Cylinder", ":/ShapeCylinder.png")
     void updateShapeGL(TShapeKit* parent);
-
-protected:
-    Vector3D getPoint(double u, double v) const;
-    Vector3D getNormal(double u, double v) const;
 };
 
 

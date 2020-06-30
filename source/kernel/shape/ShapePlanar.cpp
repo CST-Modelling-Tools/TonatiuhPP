@@ -19,16 +19,7 @@ ShapePlanar::ShapePlanar()
     SO_NODE_CONSTRUCTOR(ShapePlanar);
 }
 
-Box3D ShapePlanar::getBox(ProfileRT* aperture) const
-{
-    Box3D box = aperture->getBox();
-    double zMax = 0.01*box.extent().max();
-    box.pMin.z = -zMax;
-    box.pMax.z = zMax;
-    return box;
-}
-
-bool ShapePlanar::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const
+bool ShapePlanar::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
 {
     // r0_z + d_z*t = 0
     if (ray.origin.z == 0 && ray.direction().z == 0) return false;
@@ -37,7 +28,7 @@ bool ShapePlanar::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     if (t < ray.tMin + 1e-5 || t > ray.tMax) return false;
 
     Vector3D pHit = ray.point(t);
-    if (!aperture->isInside(pHit.x, pHit.y)) return false;
+    if (!profile->isInside(pHit.x, pHit.y)) return false;
 
     if (tHit == 0 && dg == 0)
         return true;
@@ -59,16 +50,4 @@ bool ShapePlanar::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
 void ShapePlanar::updateShapeGL(TShapeKit* parent)
 {
     makeQuadMesh(parent, QSize(2, 2));
-}
-
-Vector3D ShapePlanar::getPoint(double u, double v) const
-{
-    return Vector3D(u, v, 0.);
-}
-
-Vector3D ShapePlanar::getNormal(double u, double v) const
-{
-    Q_UNUSED(u)
-    Q_UNUSED(v)
-    return Vector3D(0., 0., 1.);
 }
