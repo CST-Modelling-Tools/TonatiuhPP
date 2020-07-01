@@ -15,10 +15,10 @@
 #include <Inventor/elements/SoMaterialBindingElement.h>
 
 #include <math.h>
-#include "libraries/math/Box3D.h"
-#include "libraries/math/Ray.h"
-#include "libraries/math/Transform.h"
-#include "libraries/math/Vector3D.h"
+#include "libraries/math/3D/Box3D.h"
+#include "libraries/math/3D/Ray.h"
+#include "libraries/math/3D/Transform.h"
+#include "libraries/math/3D/vec3d.h"
 #include "libraries/math/gcf.h"
 #include "scene/TShapeKit.h"
 #include "shape/DifferentialGeometry.h"
@@ -63,7 +63,7 @@ double SunAperture::getArea() const
 /*!
  * Returns the indexes of the valid areas to the ray tracer.
  */
-Vector3D SunAperture::Sample(double u, double v, int w, int h) const //? w <> h
+vec3d SunAperture::Sample(double u, double v, int w, int h) const //? w <> h
 {
     if (u < 0. || u > 1. || v < 0. || v > 1.)
         gcf::SevereError("Function SunAperture::GetPoint3D called with invalid parameters");
@@ -74,7 +74,7 @@ Vector3D SunAperture::Sample(double u, double v, int w, int h) const //? w <> h
     double x = m_xMin + (w + u)*xWidth;
     double y = m_yMin + (h + v)*yWidth;
 
-    return Vector3D(x, y, 0.);
+    return vec3d(x, y, 0.);
 }
 
 void SunAperture::setSize(double xMin, double xMax, double yMin, double yMax, double delta)
@@ -121,18 +121,18 @@ void SunAperture::findTexture(int xPixels, int yPixels, QVector<QPair<TShapeKit*
         if (!aperture) continue;
         Box3D box = shape->getBox(aperture);
 
-        QVector<Vector3D> ps;
-        ps << Vector3D(box.pMin.x, box.pMin.y, box.pMin.z);
-        ps << Vector3D(box.pMin.x, box.pMin.y, box.pMax.z);
-        ps << Vector3D(box.pMin.x, box.pMax.y, box.pMin.z);
-        ps << Vector3D(box.pMin.x, box.pMax.y, box.pMax.z);
-        ps << Vector3D(box.pMax.x, box.pMin.y, box.pMin.z);
-        ps << Vector3D(box.pMax.x, box.pMin.y, box.pMax.z);
-        ps << Vector3D(box.pMax.x, box.pMax.y, box.pMin.z);
-        ps << Vector3D(box.pMax.x, box.pMax.y, box.pMax.z);
+        QVector<vec3d> ps;
+        ps << vec3d(box.pMin.x, box.pMin.y, box.pMin.z);
+        ps << vec3d(box.pMin.x, box.pMin.y, box.pMax.z);
+        ps << vec3d(box.pMin.x, box.pMax.y, box.pMin.z);
+        ps << vec3d(box.pMin.x, box.pMax.y, box.pMax.z);
+        ps << vec3d(box.pMax.x, box.pMin.y, box.pMin.z);
+        ps << vec3d(box.pMax.x, box.pMin.y, box.pMax.z);
+        ps << vec3d(box.pMax.x, box.pMax.y, box.pMin.z);
+        ps << vec3d(box.pMax.x, box.pMax.y, box.pMax.z);
 
         QVector<QPointF> qps;
-        for (Vector3D& p : ps) {
+        for (vec3d& p : ps) {
             p = s.second.transformPoint(p);
             QPointF q((p.x - m_xMin)/xStep, (p.y - m_yMin)/yStep);
             qps << q;

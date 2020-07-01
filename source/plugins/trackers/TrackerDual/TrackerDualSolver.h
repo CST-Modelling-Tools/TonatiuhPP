@@ -1,9 +1,9 @@
 #pragma once
 
 #include "kernel/trackers/TrackingDrive.h"
-#include "libraries/math/Vector2D.h"
+#include "libraries/math/2D/vec2d.h"
 
-typedef Vector2D Angles;
+typedef vec2d Angles;
 
 
 struct TrackerDualSolver
@@ -20,13 +20,13 @@ struct TrackerDualSolver
     TrackingVertex facet;
     Angles angles0; // default angles
 
-    Vector3D findFacetPoint(const Angles& angles);
+    vec3d findFacetPoint(const Angles& angles);
 
-    QVector<Angles> solveRotation(const Vector3D& v0, const Vector3D& v);
+    QVector<Angles> solveRotation(const vec3d& v0, const vec3d& v);
 
-    QVector<Angles> solveFacetNormal(const Vector3D& normal);
-    QVector<Angles> solveReflectionSecondary(const Vector3D& vSun, const Vector3D& rAim);
-    QVector<Angles> solveReflectionGlobal(const Vector3D& vSun, const Vector3D& rAim);
+    QVector<Angles> solveFacetNormal(const vec3d& normal);
+    QVector<Angles> solveReflectionSecondary(const vec3d& vSun, const vec3d& rAim);
+    QVector<Angles> solveReflectionGlobal(const vec3d& vSun, const vec3d& rAim);
 
     Angles selectSolution(const QVector<Angles>& solutions);
 };

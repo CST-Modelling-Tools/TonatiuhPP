@@ -11,8 +11,8 @@ public:
     static void initClass();
     ShapeParabolic();
 
-    Vector3D getPoint(double u, double v) const;
-    Vector3D getNormal(double u, double v) const;
+    vec3d getPoint(double u, double v) const;
+    vec3d getNormal(double u, double v) const;
     Box3D getBox(ProfileRT* profile) const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
 

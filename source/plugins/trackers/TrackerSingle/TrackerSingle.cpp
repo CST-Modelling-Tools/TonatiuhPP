@@ -47,11 +47,11 @@ TrackerSingle::~TrackerSingle()
     delete m_trough;
 }
 
-void TrackerSingle::update(TSeparatorKit* parent, const Transform& toGlobal, const Vector3D& vSun)
+void TrackerSingle::update(TSeparatorKit* parent, const Transform& toGlobal, const vec3d& vSun)
 {
     Transform toLocal = toGlobal.inversed();
-    Vector3D vSunL = toLocal.transformVector(vSun);
-    Vector3D rAim = tgf::makeVector3D(aimingPoint.getValue());
+    vec3d vSunL = toLocal.transformVector(vSun);
+    vec3d rAim = tgf::makeVector3D(aimingPoint.getValue());
 
     double angle;
     if (aimingFrame.getValue() == global) {
@@ -79,7 +79,7 @@ void TrackerSingle::onModified(void* data, SoSensor*)
     TrackerSingle* tracker = (TrackerSingle*) data;
     if (tracker->m_trough) delete tracker->m_trough;
 
-    Vector2D pa = tgf::makeVector2D(tracker->primaryAngles.getValue());
+    vec2d pa = tgf::makeVector2D(tracker->primaryAngles.getValue());
 
     tracker->m_trough = new TrackerSingleSolver(
         TrackingDrive(

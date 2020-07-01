@@ -5,7 +5,7 @@
 #include <QVector>
 
 // rotation around a from m to v
-inline double findAngle(const Vector3D& a, const Vector3D& m, const Vector3D& v, double av)
+inline double findAngle(const vec3d& a, const vec3d& m, const vec3d& v, double av)
 {
     return atan2(dot(a, cross(m, v)), dot(m, v) - av*av);
 }
@@ -24,19 +24,19 @@ TrackerDualSolver::TrackerDualSolver(
 
 }
 
-Vector3D TrackerDualSolver::findFacetPoint(const Angles& angles)
+vec3d TrackerDualSolver::findFacetPoint(const Angles& angles)
 {
-    Vector3D r = secondary.getTransform(angles.y).transformPoint(facet.shift);
+    vec3d r = secondary.getTransform(angles.y).transformPoint(facet.shift);
     return primary.getTransform(angles.x).transformPoint(r);
 }
 
 // rotate v0 to v
-QVector<Angles> TrackerDualSolver::solveRotation(const Vector3D& v0, const Vector3D& v)
+QVector<Angles> TrackerDualSolver::solveRotation(const vec3d& v0, const vec3d& v)
 {
-    const Vector3D& a = primary.axis;
-    const Vector3D& b = secondary.axis;
+    const vec3d& a = primary.axis;
+    const vec3d& b = secondary.axis;
 
-    Vector3D k = cross(a, b);
+    vec3d k = cross(a, b);
     double k2 = k.norm2();
     double ab = dot(a, b);
     double det = 1. - ab*ab;
@@ -50,9 +50,9 @@ QVector<Angles> TrackerDualSolver::solveRotation(const Vector3D& v0, const Vecto
     if (mk < 0.) return {};
 
     mk = sqrt(mk/k2);
-    Vector3D m0 = ma*a + mb*b;
+    vec3d m0 = ma*a + mb*b;
     QVector<Angles> ans;
-    Vector3D m = m0 - mk*k;
+    vec3d m = m0 - mk*k;
     ans << Angles(findAngle(a, m, v, av), findAngle(b, v0, m, bv0));
     m = m0 + mk*k;
     ans << Angles(findAngle(a, m, v, av), findAngle(b, v0, m, bv0));
@@ -60,19 +60,19 @@ QVector<Angles> TrackerDualSolver::solveRotation(const Vector3D& v0, const Vecto
 }
 
 // rotate facet.normal to normal
-QVector<Angles> TrackerDualSolver::solveFacetNormal(const Vector3D& normal)
+QVector<Angles> TrackerDualSolver::solveFacetNormal(const vec3d& normal)
 {
     return solveRotation(facet.normal, normal);
 }
 
-QVector<Angles> TrackerDualSolver::solveReflectionSecondary(const Vector3D& vSun, const Vector3D& rAim)
+QVector<Angles> TrackerDualSolver::solveReflectionSecondary(const vec3d& vSun, const vec3d& rAim)
 {
-    Vector3D vTarget0 = (rAim - facet.shift).normalized();
-    Vector3D vSun0 = -vTarget0.reflected(facet.normal);
+    vec3d vTarget0 = (rAim - facet.shift).normalized();
+    vec3d vSun0 = -vTarget0.reflected(facet.normal);
     return solveRotation(vSun0, vSun);
 }
 
-QVector<Angles> TrackerDualSolver::solveReflectionGlobal(const Vector3D& vSun, const Vector3D& rAim)
+QVector<Angles> TrackerDualSolver::solveReflectionGlobal(const vec3d& vSun, const vec3d& rAim)
 {
     QVector<Angles> ans;
     int iMax = 5; // max iterations
@@ -80,11 +80,11 @@ QVector<Angles> TrackerDualSolver::solveReflectionGlobal(const Vector3D& vSun, c
 
     for (int s = 0; s < 2; ++s) // solutions
     {
-        Vector3D rFacet = findFacetPoint(angles0);
+        vec3d rFacet = findFacetPoint(angles0);
         for (int i = 0; i < iMax; ++i)
         {
-            Vector3D vTarget = (rAim - rFacet).normalized();
-            Vector3D normal = (vSun + vTarget).normalized();
+            vec3d vTarget = (rAim - rFacet).normalized();
+            vec3d normal = (vSun + vTarget).normalized();
             QVector<Angles> temp = solveFacetNormal(normal);
             if (temp.empty()) break;
             Angles& angles = temp[s];

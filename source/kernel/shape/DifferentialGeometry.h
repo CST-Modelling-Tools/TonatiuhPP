@@ -1,25 +1,25 @@
 #pragma once
 
 #include "kernel/TonatiuhKernel.h"
-#include "libraries/math/Vector3D.h"
+#include "libraries/math/3D/vec3d.h"
 
 class ShapeRT;
 
 struct TONATIUH_KERNEL DifferentialGeometry
 {
     DifferentialGeometry();
-    DifferentialGeometry(const Vector3D& point,
+    DifferentialGeometry(const vec3d& point,
         double u, double v,
-        const Vector3D& dpdu, const Vector3D& dpdv,
-        const Vector3D& normal,
+        const vec3d& dpdu, const vec3d& dpdv,
+        const vec3d& normal,
         const ShapeRT* shape, bool isFront);
 
-    Vector3D point;
+    vec3d point;
     double u;
     double v;
-    Vector3D dpdu; // not normalized
-    Vector3D dpdv; // not normalized
-    Vector3D normal; // normalized
+    vec3d dpdu; // not normalized
+    vec3d dpdv; // not normalized
+    vec3d normal; // normalized
 
     const ShapeRT* shape;
     bool isFront;

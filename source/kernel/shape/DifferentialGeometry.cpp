@@ -8,10 +8,10 @@ DifferentialGeometry::DifferentialGeometry():
 }
 
 DifferentialGeometry::DifferentialGeometry(
-    const Vector3D& point,
+    const vec3d& point,
     double u, double v,
-    const Vector3D& dpdu, const Vector3D& dpdv,
-    const Vector3D& normal,
+    const vec3d& dpdu, const vec3d& dpdv,
+    const vec3d& normal,
     const ShapeRT* sh, bool isFront):
     point(point),
     u(u), v(v),

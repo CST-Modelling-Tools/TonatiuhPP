@@ -2,7 +2,7 @@
 
 #include "kernel/random/Random.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/math/Ray.h"
+#include "libraries/math/3D/Ray.h"
 
 
 SO_NODE_SOURCE(MaterialVirtual)

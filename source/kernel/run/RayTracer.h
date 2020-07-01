@@ -8,7 +8,7 @@
 #include <QPair>
 #include <QObject>
 
-#include "libraries/math/Transform.h"
+#include "libraries/math/3D/Transform.h"
 
 class InstanceNode;
 class RandomParallel;

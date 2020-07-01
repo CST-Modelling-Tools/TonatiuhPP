@@ -13,9 +13,9 @@
 #include "SunPillbox.h"
 #include "kernel/TonatiuhFunctions.h"
 #include "kernel/run/InstanceNode.h"
-#include "libraries/math/Box3D.h"
-#include "libraries/math/Matrix4x4.h"
-#include "libraries/math/Transform.h"
+#include "libraries/math/3D/Box3D.h"
+#include "libraries/math/3D/Matrix4x4.h"
+#include "libraries/math/3D/Transform.h"
 #include "libraries/math/gcf.h"
 #include "scene/TShapeKit.h"
 

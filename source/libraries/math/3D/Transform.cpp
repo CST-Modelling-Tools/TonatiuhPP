@@ -1,6 +1,6 @@
 #include "Transform.h"
 
-#include "gcf.h"
+#include "math/gcf.h"
 #include "Ray.h"
 #include "Box3D.h"
 
@@ -78,24 +78,24 @@ Transform Transform::operator*(const Transform& t) const
     );
 }
 
-Vector3D Transform::transformPoint(const Vector3D& p) const
+vec3d Transform::transformPoint(const vec3d& p) const
 {
     const double* t0 = m_mdir->m[0];
     const double* t1 = m_mdir->m[1];
     const double* t2 = m_mdir->m[2];
-    return Vector3D(
+    return vec3d(
         t0[0]*p.x + t0[1]*p.y + t0[2]*p.z + t0[3],
         t1[0]*p.x + t1[1]*p.y + t1[2]*p.z + t1[3],
         t2[0]*p.x + t2[1]*p.y + t2[2]*p.z + t2[3]
     );
 }
 
-Vector3D Transform::transformVector(const Vector3D& v) const
+vec3d Transform::transformVector(const vec3d& v) const
 {
     const double* t0 = m_mdir->m[0];
     const double* t1 = m_mdir->m[1];
     const double* t2 = m_mdir->m[2];
-    return Vector3D(
+    return vec3d(
         t0[0]*v.x + t0[1]*v.y + t0[2]*v.z,
         t1[0]*v.x + t1[1]*v.y + t1[2]*v.z,
         t2[0]*v.x + t2[1]*v.y + t2[2]*v.z
@@ -103,24 +103,24 @@ Vector3D Transform::transformVector(const Vector3D& v) const
 }
 
 //https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals
-Vector3D Transform::transformNormal(const Vector3D& n) const
+vec3d Transform::transformNormal(const vec3d& n) const
 {
     const double* t0 = m_minv->m[0];
     const double* t1 = m_minv->m[1];
     const double* t2 = m_minv->m[2];
-    return Vector3D(
+    return vec3d(
         t0[0]*n.x + t1[0]*n.y + t2[0]*n.z,
         t0[1]*n.x + t1[1]*n.y + t2[1]*n.z,
         t0[2]*n.x + t1[2]*n.y + t2[2]*n.z
     );
 }
 
-Vector3D Transform::transformInverseNormal(const Vector3D& n) const
+vec3d Transform::transformInverseNormal(const vec3d& n) const
 {
     const double* t0 = m_mdir->m[0];
     const double* t1 = m_mdir->m[1];
     const double* t2 = m_mdir->m[2];
-    return Vector3D(
+    return vec3d(
         t0[0]*n.x + t1[0]*n.y + t2[0]*n.z,
         t0[1]*n.x + t1[1]*n.y + t2[1]*n.z,
         t0[2]*n.x + t1[2]*n.y + t2[2]*n.z
@@ -140,15 +140,15 @@ Ray Transform::transformDirect(const Ray& r) const
     const double* t1 = m_mdir->m[1];
     const double* t2 = m_mdir->m[2];
 
-    const Vector3D& p = r.origin;
-    Vector3D o(
+    const vec3d& p = r.origin;
+    vec3d o(
         t0[0]*p.x + t0[1]*p.y + t0[2]*p.z + t0[3],
         t1[0]*p.x + t1[1]*p.y + t1[2]*p.z + t1[3],
         t2[0]*p.x + t2[1]*p.y + t2[2]*p.z + t2[3]
     );
 
-    const Vector3D& v = r.direction();
-    Vector3D d(
+    const vec3d& v = r.direction();
+    vec3d d(
         t0[0]*v.x + t0[1]*v.y + t0[2]*v.z,
         t1[0]*v.x + t1[1]*v.y + t1[2]*v.z,
         t2[0]*v.x + t2[1]*v.y + t2[2]*v.z
@@ -171,15 +171,15 @@ Ray Transform::transformInverse(const Ray& r) const
     const double* t1 = m_minv->m[1];
     const double* t2 = m_minv->m[2];
 
-    const Vector3D& p = r.origin;
-    Vector3D o(
+    const vec3d& p = r.origin;
+    vec3d o(
         t0[0]*p.x + t0[1]*p.y + t0[2]*p.z + t0[3],
         t1[0]*p.x + t1[1]*p.y + t1[2]*p.z + t1[3],
         t2[0]*p.x + t2[1]*p.y + t2[2]*p.z + t2[3]
     );
 
-    const Vector3D& v = r.direction();
-    Vector3D d(
+    const vec3d& v = r.direction();
+    vec3d d(
         t0[0]*v.x + t0[1]*v.y + t0[2]*v.z,
         t1[0]*v.x + t1[1]*v.y + t1[2]*v.z,
         t2[0]*v.x + t2[1]*v.y + t2[2]*v.z
@@ -210,16 +210,16 @@ Ray Transform::transformInverse(const Ray& r) const
 //    return ans;
 //}
 
-Vector3D Transform::operator()(const Vector3D& v) const
+vec3d Transform::operator()(const vec3d& v) const
 {
-    return Vector3D(
+    return vec3d(
         m_mdir->m[0][0]*v.x + m_mdir->m[0][1]*v.y + m_mdir->m[0][2]*v.z,
         m_mdir->m[1][0]*v.x + m_mdir->m[1][1]*v.y + m_mdir->m[1][2]*v.z,
         m_mdir->m[2][0]*v.x + m_mdir->m[2][1]*v.y + m_mdir->m[2][2]*v.z
     );
 }
 
-void Transform::operator()(const Vector3D& v, Vector3D& ans) const
+void Transform::operator()(const vec3d& v, vec3d& ans) const
 {
     ans.x = m_mdir->m[0][0]*v.x + m_mdir->m[0][1]*v.y + m_mdir->m[0][2]*v.z;
     ans.y = m_mdir->m[1][0]*v.x + m_mdir->m[1][1]*v.y + m_mdir->m[1][2]*v.z;
@@ -230,7 +230,7 @@ Ray Transform::operator()(const Ray& r) const
 {
     Ray ans;
     ans.origin = transformPoint(r.origin);
-    Vector3D d = transformVector(r.direction());
+    vec3d d = transformVector(r.direction());
     ans.setDirection(d);
     ans.tMin = r.tMin;
     ans.tMax = r.tMax;
@@ -240,7 +240,7 @@ Ray Transform::operator()(const Ray& r) const
 void Transform::operator()(const Ray& r, Ray& ans) const
 {
     ans.origin = transformPoint(r.origin);
-    Vector3D d = transformVector(r.direction());
+    vec3d d = transformVector(r.direction());
     ans.setDirection(d);
     ans.tMin = r.tMin;
     ans.tMax = r.tMax;
@@ -249,28 +249,28 @@ void Transform::operator()(const Ray& r, Ray& ans) const
 Box3D Transform::operator()(const Box3D& b) const
 {
     Box3D ans;
-    ans << transformPoint(Vector3D(b.pMin.x, b.pMin.y, b.pMin.z));
-    ans << transformPoint(Vector3D(b.pMin.x, b.pMin.y, b.pMax.z));
-    ans << transformPoint(Vector3D(b.pMin.x, b.pMax.y, b.pMin.z));
-    ans << transformPoint(Vector3D(b.pMin.x, b.pMax.y, b.pMax.z));
-    ans << transformPoint(Vector3D(b.pMax.x, b.pMin.y, b.pMin.z));
-    ans << transformPoint(Vector3D(b.pMax.x, b.pMin.y, b.pMax.z));
-    ans << transformPoint(Vector3D(b.pMax.x, b.pMax.y, b.pMin.z));
-    ans << transformPoint(Vector3D(b.pMax.x, b.pMax.y, b.pMax.z));
+    ans << transformPoint(vec3d(b.pMin.x, b.pMin.y, b.pMin.z));
+    ans << transformPoint(vec3d(b.pMin.x, b.pMin.y, b.pMax.z));
+    ans << transformPoint(vec3d(b.pMin.x, b.pMax.y, b.pMin.z));
+    ans << transformPoint(vec3d(b.pMin.x, b.pMax.y, b.pMax.z));
+    ans << transformPoint(vec3d(b.pMax.x, b.pMin.y, b.pMin.z));
+    ans << transformPoint(vec3d(b.pMax.x, b.pMin.y, b.pMax.z));
+    ans << transformPoint(vec3d(b.pMax.x, b.pMax.y, b.pMin.z));
+    ans << transformPoint(vec3d(b.pMax.x, b.pMax.y, b.pMax.z));
     return ans;
 }
 
 void Transform::operator()(const Box3D& b, Box3D& ans) const
 {
     ans = Box3D();
-    ans << transformPoint(Vector3D(b.pMin.x, b.pMin.y, b.pMin.z));
-    ans << transformPoint(Vector3D(b.pMin.x, b.pMin.y, b.pMax.z));
-    ans << transformPoint(Vector3D(b.pMin.x, b.pMax.y, b.pMin.z));
-    ans << transformPoint(Vector3D(b.pMin.x, b.pMax.y, b.pMax.z));
-    ans << transformPoint(Vector3D(b.pMax.x, b.pMin.y, b.pMin.z));
-    ans << transformPoint(Vector3D(b.pMax.x, b.pMin.y, b.pMax.z));
-    ans << transformPoint(Vector3D(b.pMax.x, b.pMax.y, b.pMin.z));
-    ans << transformPoint(Vector3D(b.pMax.x, b.pMax.y, b.pMax.z));
+    ans << transformPoint(vec3d(b.pMin.x, b.pMin.y, b.pMin.z));
+    ans << transformPoint(vec3d(b.pMin.x, b.pMin.y, b.pMax.z));
+    ans << transformPoint(vec3d(b.pMin.x, b.pMax.y, b.pMin.z));
+    ans << transformPoint(vec3d(b.pMin.x, b.pMax.y, b.pMax.z));
+    ans << transformPoint(vec3d(b.pMax.x, b.pMin.y, b.pMin.z));
+    ans << transformPoint(vec3d(b.pMax.x, b.pMin.y, b.pMax.z));
+    ans << transformPoint(vec3d(b.pMax.x, b.pMax.y, b.pMin.z));
+    ans << transformPoint(vec3d(b.pMax.x, b.pMax.y, b.pMax.z));
 }
 
 bool Transform::operator==(const Transform& t) const
@@ -285,9 +285,9 @@ bool Transform::operator==(const Transform& t) const
     return true;
 }
 
-Vector3D Transform::multVecMatrix(const Vector3D& v) const
+vec3d Transform::multVecMatrix(const vec3d& v) const
 {
-    Vector3D ans;
+    vec3d ans;
 
     const double* t0 = m_mdir->m[0];
     const double* t1 = m_mdir->m[1];
@@ -305,9 +305,9 @@ Vector3D Transform::multVecMatrix(const Vector3D& v) const
     return ans;
 }
 
-Vector3D Transform::multDirMatrix(const Vector3D& src) const
+vec3d Transform::multDirMatrix(const vec3d& src) const
 {
-    Vector3D dst;
+    vec3d dst;
     // Checks if the "this" matrix is equal to the identity matrix.  See
     // also code comments at the start of SbMatrix::multRight().
     //if (SbMatrixP::isIdentity(this->matrix)) { dst = src; return dst; }
@@ -408,9 +408,9 @@ Transform Transform::rotateZ(double angle)
     return Transform(mdir, mdir->transposed());
 }
 
-Transform Transform::rotate(double angle, const Vector3D& axis)
+Transform Transform::rotate(double angle, const vec3d& axis)
 {
-    Vector3D a = axis.normalized();
+    vec3d a = axis.normalized();
     double s = sin(angle);
     double c = cos(angle);
     double d = 1. - c;
@@ -440,7 +440,7 @@ Transform Transform::rotate(double angle, const Vector3D& axis)
     return Transform(mdir, mdir->transposed());
 }
 
-Transform Transform::LookAt(const Vector3D& pos, const Vector3D& look, const Vector3D& up)
+Transform Transform::LookAt(const vec3d& pos, const vec3d& look, const vec3d& up)
 {
     double m[4][4];
     m[0][3] = pos.x;
@@ -448,9 +448,9 @@ Transform Transform::LookAt(const Vector3D& pos, const Vector3D& look, const Vec
     m[2][3] = pos.z;
     m[3][3] = 1.;
 
-    Vector3D dir = (look - pos).normalized();
-    Vector3D right = cross(dir, up).normalized();
-    Vector3D newUp = cross(right, dir);
+    vec3d dir = (look - pos).normalized();
+    vec3d right = cross(dir, up).normalized();
+    vec3d newUp = cross(right, dir);
 
     m[0][0] = right.x;
     m[1][0] = right.y;

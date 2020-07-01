@@ -1,28 +1,29 @@
 #pragma once
 
-#include "libraries/math/Vector2D.h"
+#include "libraries/math/2D/vec2d.h"
 
 
-struct TONATIUH_LIBRARIES Vector3D
+struct TONATIUH_LIBRARIES vec3d
 {
-    Vector3D(double x = 0., double y = 0., double z = 0.):
+    vec3d(double x = 0., double y = 0., double z = 0.):
         x(x), y(y), z(z) {}
 
-    Vector3D(const Vector2D& v, double z = 0.):
+    vec3d(const vec2d& v, double z = 0.):
         x(v.x), y(v.y), z(z) {}
 
     // constants
-    static const Vector3D Zero;
-    static const Vector3D UnitX;
-    static const Vector3D UnitY;
-    static const Vector3D UnitZ;
+    static const vec3d Zero;
+    static const vec3d One;
+    static const vec3d UnitX;
+    static const vec3d UnitY;
+    static const vec3d UnitZ;
 
-    Vector3D operator+(const Vector3D& v) const
+    vec3d operator+(const vec3d& v) const
     {
-        return Vector3D(x + v.x, y + v.y, z + v.z);
+        return vec3d(x + v.x, y + v.y, z + v.z);
     }
 
-    Vector3D& operator+=(const Vector3D& v)
+    vec3d& operator+=(const vec3d& v)
     {
         x += v.x;
         y += v.y;
@@ -30,17 +31,17 @@ struct TONATIUH_LIBRARIES Vector3D
         return *this;
     }
 
-    Vector3D operator-() const
+    vec3d operator-() const
     {
-        return Vector3D(-x, -y, -z);
+        return vec3d(-x, -y, -z);
     }
 
-    Vector3D operator-(const Vector3D& v) const
+    vec3d operator-(const vec3d& v) const
     {
-        return Vector3D(x - v.x, y - v.y, z - v.z);
+        return vec3d(x - v.x, y - v.y, z - v.z);
     }
 
-    Vector3D& operator-=(const Vector3D& v)
+    vec3d& operator-=(const vec3d& v)
     {
         x -= v.x;
         y -= v.y;
@@ -48,17 +49,17 @@ struct TONATIUH_LIBRARIES Vector3D
         return *this;
     }
 
-    Vector3D operator*(double s) const
+    vec3d operator*(double s) const
     {
-        return Vector3D(x*s, y*s, z*s);
+        return vec3d(x*s, y*s, z*s);
     }
 
-    Vector3D operator*(const Vector3D& v) const
+    vec3d operator*(const vec3d& v) const
     {
-        return Vector3D(x*v.x, y*v.y, z*v.z);
+        return vec3d(x*v.x, y*v.y, z*v.z);
     }
 
-    Vector3D& operator*=(double s)
+    vec3d& operator*=(double s)
     {
         x *= s;
         y *= s;
@@ -66,13 +67,18 @@ struct TONATIUH_LIBRARIES Vector3D
         return *this;
     }
 
-    Vector3D operator/(double s) const
+    vec3d operator/(double s) const
     {
         s = 1./s;
-        return Vector3D(x*s, y*s, z*s);
+        return vec3d(x*s, y*s, z*s);
     }
 
-    Vector3D& operator/=(double s)
+    vec3d operator/(const vec3d& v) const
+    {
+        return vec3d(x/v.x, y/v.y, z/v.z);
+    }
+
+    vec3d& operator/=(double s)
     {
         s = 1./s;
         x *= s;
@@ -81,8 +87,9 @@ struct TONATIUH_LIBRARIES Vector3D
         return *this;
     }
 
-    bool operator==(const Vector3D& vector) const;
-    bool operator!=(const Vector3D& vector) const;
+    bool operator==(const vec3d& v) const;
+    bool operator!=(const vec3d& v) const;
+    bool operator<=(const vec3d& v) const;
 
     double operator[](int i) const
     {
@@ -107,7 +114,7 @@ struct TONATIUH_LIBRARIES Vector3D
         return std::sqrt(norm2());
     }
 
-    Vector3D normalized() const
+    vec3d normalized() const
     {
         double s = norm2();
         if (s > 0.)
@@ -125,11 +132,11 @@ struct TONATIUH_LIBRARIES Vector3D
         return false;
     }
 
-    Vector3D reflected(const Vector3D& n) const;
+    vec3d reflected(const vec3d& n) const;
 
     double min() const {return std::min(std::min(x, y), z);}
     double max() const {return std::max(std::max(x, y), z);}
-    Vector3D abs() const {return Vector3D(std::abs(x), std::abs(y), std::abs(z));}
+    vec3d abs() const {return vec3d(std::abs(x), std::abs(y), std::abs(z));}
     int maxDimension() const;
 
     double x;
@@ -138,46 +145,46 @@ struct TONATIUH_LIBRARIES Vector3D
 };
 
 
-inline Vector3D operator*(double s, const Vector3D& v)
+inline vec3d operator*(double s, const vec3d& v)
 {
-    return Vector3D(s*v.x, s*v.y, s*v.z);
+    return vec3d(s*v.x, s*v.y, s*v.z);
 }
 
-inline double dot(const Vector3D& a, const Vector3D& b)
+inline double dot(const vec3d& a, const vec3d& b)
 {
     return a.x*b.x + a.y*b.y + a.z*b.z;
 }
 
-inline Vector3D cross(const Vector3D& a, const Vector3D& b)
+inline vec3d cross(const vec3d& a, const vec3d& b)
 {
-    return Vector3D(
+    return vec3d(
         a.y*b.z - a.z*b.y,
         a.z*b.x - a.x*b.z,
         a.x*b.y - a.y*b.x
     );
 }
 
-inline Vector3D Vector3D::reflected(const Vector3D& n) const
+inline vec3d vec3d::reflected(const vec3d& n) const
 {
     return *this - 2.*dot(*this, n)*n;
 }
 
-inline Vector3D min(const Vector3D& a, const Vector3D& b)
+inline vec3d min(const vec3d& a, const vec3d& b)
 {
-    return Vector3D(
+    return vec3d(
         std::min(a.x, b.x),
         std::min(a.y, b.y),
         std::min(a.z, b.z)
     );
 }
 
-inline Vector3D max(const Vector3D& a, const Vector3D& b)
+inline vec3d max(const vec3d& a, const vec3d& b)
 {
-    return Vector3D(
+    return vec3d(
         std::max(a.x, b.x),
         std::max(a.y, b.y),
         std::max(a.z, b.z)
     );
 }
 
-TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const Vector3D& vector);
+TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const vec3d& vector);

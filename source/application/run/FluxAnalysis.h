@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QString>
-#include "libraries/math/Matrix2D.h"
+#include "libraries/math/2D/Matrix2D.h"
 
 class TSceneKit;
 class SceneModel;

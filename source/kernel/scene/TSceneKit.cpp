@@ -4,8 +4,8 @@
 #include <Inventor/nodes/SoGroup.h>
 
 #include "libraries/math/gcf.h"
-#include "libraries/math/Transform.h"
-#include "libraries/math/Vector3D.h"
+#include "libraries/math/3D/Transform.h"
+#include "libraries/math/3D/vec3d.h"
 
 #include "kernel/air/AirVacuum.h"
 #include "kernel/trackers/Tracker.h"
@@ -46,7 +46,7 @@ void TSceneKit::updateTrackers()
     double az = sunKit->azimuth.getValue();
     double el = sunKit->elevation.getValue();
 
-    Vector3D vSun(
+    vec3d vSun(
         sin(az)*cos(el),
         cos(az)*cos(el),
         sin(el)
@@ -58,7 +58,7 @@ void TSceneKit::updateTrackers()
 /*!
  * Updates all trackers transform for the current sun angles.
  */
-void TSceneKit::updateTrackers(TSeparatorKit* parent, Transform toGlobal, const Vector3D& vSun)
+void TSceneKit::updateTrackers(TSeparatorKit* parent, Transform toGlobal, const vec3d& vSun)
 {
     SoTransform* tParent = (SoTransform*) parent->getPart("transform", true);
     Transform t = toGlobal*tgf::makeTransform(tParent);

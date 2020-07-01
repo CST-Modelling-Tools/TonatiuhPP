@@ -8,7 +8,7 @@
 #include "kernel/TonatiuhFunctions.h"
 
 class Transform;
-struct Vector3D;
+struct vec3d;
 class TSeparatorKit;
 
 
@@ -28,5 +28,5 @@ public:
 
 protected:
     ~TSceneKit() {}
-    void updateTrackers(TSeparatorKit* parent, Transform t, const Vector3D& vSun);
+    void updateTrackers(TSeparatorKit* parent, Transform t, const vec3d& vSun);
 };

@@ -2,12 +2,12 @@
 
 #include <cmath>
 #include "Ray.h"
-#include "gcf.h"
-#include "Vector3D.h"
+#include "math/gcf.h"
+#include "vec3d.h"
 
 const Box3D Box3D::UnitCube(
-    -Vector3D(0.5, 0.5, 0.5),
-    Vector3D(0.5, 0.5, 0.5)
+    -vec3d(0.5, 0.5, 0.5),
+    vec3d(0.5, 0.5, 0.5)
 );
 
 Box3D::Box3D():
@@ -16,12 +16,12 @@ Box3D::Box3D():
 {
 }
 
-Box3D::Box3D(const Vector3D& p):
+Box3D::Box3D(const vec3d& p):
     pMin(p), pMax(p)
 {
 }
 
-Box3D::Box3D(const Vector3D& pA, const Vector3D& pB)
+Box3D::Box3D(const vec3d& pA, const vec3d& pB)
 {
     pMin = min(pA, pB);
     pMax = max(pA, pB);
@@ -31,7 +31,7 @@ Box3D::Box3D(const Vector3D& pA, const Vector3D& pB)
 
 int Box3D::maxDimension() const
 {
-    Vector3D d = pMax - pMin;
+    vec3d d = pMax - pMin;
     if (d.x > d.y && d.x > d.z)
         return 0;
     else if (d.y > d.z)
@@ -41,13 +41,13 @@ int Box3D::maxDimension() const
 
 double Box3D::volume() const
 {
-    Vector3D d = pMax - pMin;
+    vec3d d = pMax - pMin;
     return d.x*d.y*d.z;
 }
 
-Vector3D Box3D::absMin() const
+vec3d Box3D::absMin() const
 {
-    Vector3D ans = min(pMin.abs(), pMax.abs());
+    vec3d ans = min(pMin.abs(), pMax.abs());
     if ((pMin.x > 0.) != (pMax.x > 0.)) ans.x = 0.;
     if ((pMin.y > 0.) != (pMax.y > 0.)) ans.y = 0.;
     if ((pMin.z > 0.) != (pMax.z > 0.)) ans.z = 0.;
@@ -56,12 +56,12 @@ Vector3D Box3D::absMin() const
 
 void Box3D::expand(double delta)
 {
-    Vector3D v(delta, delta, delta);
+    vec3d v(delta, delta, delta);
     pMin -= v;
     pMax += v;
 }
 
-void Box3D::expand(const Vector3D& p)
+void Box3D::expand(const vec3d& p)
 {
     pMin = min(pMin, p);
     pMax = max(pMax, p);
@@ -73,7 +73,7 @@ void Box3D::expand(const Box3D& b)
     pMax = max(pMax, b.pMax);
 }
 
-bool Box3D::intersect(const Vector3D& p) const
+bool Box3D::intersect(const vec3d& p) const
 {
     return pMin.x <= p.x && p.x <= pMax.x &&
            pMin.y <= p.y && p.y <= pMax.y &&
@@ -89,8 +89,8 @@ bool Box3D::intersect(const Box3D& b) const
 
 bool Box3D::intersect(const Ray& ray, double* t0, double* t1) const
 {
-    const Vector3D& rayO = ray.origin;
-    const Vector3D& rayI = ray.invDirection();
+    const vec3d& rayO = ray.origin;
+    const vec3d& rayI = ray.invDirection();
     double trMin = ray.tMin;
     double trMax = ray.tMax;
     double tMin, tMax, tyMin, tyMax, tzMin, tzMax;
@@ -143,7 +143,7 @@ bool Box3D::intersect(const Ray& ray, double* t0, double* t1) const
     return true;
 }
 
-Box3D Union(const Box3D& b, const Vector3D& p)
+Box3D Union(const Box3D& b, const vec3d& p)
 {
     return Box3D(
         min(b.pMin, p),

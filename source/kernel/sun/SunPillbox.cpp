@@ -27,7 +27,7 @@ SunPillbox::~SunPillbox()
     delete m_sensor;
 }
 
-Vector3D SunPillbox::generateRay(Random& rand) const
+vec3d SunPillbox::generateRay(Random& rand) const
 {
     double phi = gcf::TwoPi*rand.RandomDouble();
     double sinTheta = m_sinThetaMax*sqrt(rand.RandomDouble());
@@ -35,7 +35,7 @@ Vector3D SunPillbox::generateRay(Random& rand) const
     double cosPhi = cos(phi);
     double sinPhi = sin(phi);
 
-    return Vector3D(
+    return vec3d(
         sinTheta*cosPhi,
         sinTheta*sinPhi,
         cosTheta

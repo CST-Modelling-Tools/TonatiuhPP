@@ -7,7 +7,7 @@ class FluxAnalysisDialog;
 }
 
 #include "kernel/photons/Photons.h"
-#include "libraries/math/Matrix2D.h"
+#include "libraries/math/2D/Matrix2D.h"
 
 class InstanceNode;
 class SceneModel;

@@ -10,8 +10,8 @@
 
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/profiles/ProfileRT.h"
-#include "libraries/math/Vector3D.h"
-#include "libraries/math/Box3D.h"
+#include "libraries/math/3D/vec3d.h"
+#include "libraries/math/3D/Box3D.h"
 #include "kernel/profiles/ProfilePolygon.h"
 #include "libraries/DistMesh/PolygonMesh.h"
 
@@ -23,21 +23,21 @@ void ShapeRT::initClass()
     SO_NODE_INIT_ABSTRACT_CLASS(ShapeRT, SoNode, "Node");
 }
 
-Vector3D ShapeRT::getPoint(double u, double v) const
+vec3d ShapeRT::getPoint(double u, double v) const
 {
-    return Vector3D(u, v, 0.);
+    return vec3d(u, v, 0.);
 }
 
-Vector3D ShapeRT::getNormal(double u, double v) const
+vec3d ShapeRT::getNormal(double u, double v) const
 {
     Q_UNUSED(u)
     Q_UNUSED(v)
-    return Vector3D(0., 0., 1.);
+    return vec3d(0., 0., 1.);
 }
 
-Vector2D ShapeRT::getUV(const Vector3D& p) const
+vec2d ShapeRT::getUV(const vec3d& p) const
 {
-    return Vector2D(p.x, p.y);
+    return vec2d(p.x, p.y);
 }
 
 Box3D ShapeRT::getBox(ProfileRT* profile) const
@@ -69,9 +69,9 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNor
 
         QVector<SbVec3f> vertices;
         QVector<SbVec3f> normals;
-        for (const Vector2D& uv : polygonMesh.getPoints()) {
-            Vector3D point = getPoint(uv.x, uv.y);
-            Vector3D normal = getNormal(uv.x, uv.y);
+        for (const vec2d& uv : polygonMesh.getPoints()) {
+            vec3d point = getPoint(uv.x, uv.y);
+            vec3d normal = getNormal(uv.x, uv.y);
             if (reverseNormals) normal = -normal;
             vertices << SbVec3f(point.x, point.y, point.z);
             normals << SbVec3f(normal.x, normal.y, normal.z);
@@ -102,13 +102,13 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNor
     else
     {
         QSize dimensions = dims;
-        QVector<Vector2D> uvs = profile->makeMesh(dimensions);
+        QVector<vec2d> uvs = profile->makeMesh(dimensions);
 
         QVector<SbVec3f> vertices;
         QVector<SbVec3f> normals;
-        for (const Vector2D& uv : uvs) {
-            Vector3D point = getPoint(uv.x, uv.y);
-            Vector3D normal = getNormal(uv.x, uv.y);
+        for (const vec2d& uv : uvs) {
+            vec3d point = getPoint(uv.x, uv.y);
+            vec3d normal = getNormal(uv.x, uv.y);
             if (reverseNormals) normal = -normal;
             vertices << SbVec3f(point.x, point.y, point.z);
             normals << SbVec3f(normal.x, normal.y, normal.z);

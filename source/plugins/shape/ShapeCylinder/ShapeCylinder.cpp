@@ -3,8 +3,8 @@
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/math/Box3D.h"
-#include "libraries/math/Ray.h"
+#include "libraries/math/3D/Box3D.h"
+#include "libraries/math/3D/Ray.h"
 
 SO_NODE_SOURCE(ShapeCylinder)
 
@@ -19,22 +19,22 @@ ShapeCylinder::ShapeCylinder()
     SO_NODE_CONSTRUCTOR(ShapeCylinder);
 }
 
-Vector3D ShapeCylinder::getPoint(double u, double v) const
+vec3d ShapeCylinder::getPoint(double u, double v) const
 {
     double phi = gcf::TwoPi*u;
-    return Vector3D(cos(phi), sin(phi), v);
+    return vec3d(cos(phi), sin(phi), v);
 }
 
-Vector3D ShapeCylinder::getNormal(double u, double v) const
+vec3d ShapeCylinder::getNormal(double u, double v) const
 {
     Q_UNUSED(v)
     double phi = gcf::TwoPi*u;
-    return Vector3D(cos(phi), sin(phi), 0.);
+    return vec3d(cos(phi), sin(phi), 0.);
 }
 
-Vector2D ShapeCylinder::getUV(const Vector3D& p) const
+vec2d ShapeCylinder::getUV(const vec3d& p) const
 {
-    return Vector2D(atan2(p.y, p.x)/gcf::TwoPi, p.z);
+    return vec2d(atan2(p.y, p.x)/gcf::TwoPi, p.z);
 }
 
 Box3D ShapeCylinder::getBox(ProfileRT* profile) const
@@ -62,15 +62,15 @@ Box3D ShapeCylinder::getBox(ProfileRT* profile) const
         yMin = -1.;
 
     return Box3D(
-        Vector3D(xMin, yMin, zMin),
-        Vector3D(xMax, yMax, zMax)
+        vec3d(xMin, yMin, zMin),
+        vec3d(xMax, yMax, zMax)
     );
 }
 
 bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
 {
-    const Vector3D& rayO = ray.origin;
-    const Vector3D& rayD = ray.direction();
+    const vec3d& rayO = ray.origin;
+    const vec3d& rayD = ray.direction();
 
     // |rxy|^2 = 1, r = r0 + t*d
     double A = rayD.x*rayD.x + rayD.y*rayD.y;
@@ -84,7 +84,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
         double t = ts[i];
         if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
 
-        Vector3D pHit = ray.point(t);
+        vec3d pHit = ray.point(t);
         double phi = atan2(pHit.y, pHit.x);
         double u = phi/gcf::TwoPi;
         double v = pHit.z;
@@ -99,9 +99,9 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
         dg->point = pHit;
         dg->u = u;
         dg->v = v;
-        dg->dpdu = Vector3D(-pHit.y, pHit.x, 0.);
-        dg->dpdv = Vector3D(0., 0., 1.);
-        dg->normal = Vector3D(pHit.x, pHit.y, 0.);
+        dg->dpdu = vec3d(-pHit.y, pHit.x, 0.);
+        dg->dpdv = vec3d(0., 0., 1.);
+        dg->normal = vec3d(pHit.x, pHit.y, 0.);
         dg->shape = this;
         dg->isFront = dot(dg->normal, rayD) <= 0.;
         return true;
@@ -113,7 +113,7 @@ void ShapeCylinder::updateShapeGL(TShapeKit* parent)
 {
     ProfileRT* aperture = (ProfileRT*) parent->profileRT.getValue();
     Box3D box = aperture->getBox();
-    Vector3D v = box.extent();
+    vec3d v = box.extent();
 
     double s = v.x;
     if (s > 1.) s = 1.;

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "libraries/math/Vector3D.h"
-#include "libraries/math/Matrix4x4.h"
+#include "libraries/math/3D/vec3d.h"
+#include "libraries/math/3D/Matrix4x4.h"
 
 class Ray;
 struct Box3D;
@@ -29,15 +29,15 @@ public:
 
     Transform operator*(const Transform& rhs) const;
 
-    Vector3D transformPoint(const Vector3D& p) const;
-    Vector3D transformVector(const Vector3D& v) const;
-    Vector3D transformNormal(const Vector3D& n) const;
-    Vector3D transformInverseNormal(const Vector3D& n) const;
+    vec3d transformPoint(const vec3d& p) const;
+    vec3d transformVector(const vec3d& v) const;
+    vec3d transformNormal(const vec3d& n) const;
+    vec3d transformInverseNormal(const vec3d& n) const;
     Ray transformDirect(const Ray& r) const;
     Ray transformInverse(const Ray& r) const;
 
-    Vector3D operator()(const Vector3D& v) const;
-    void operator()(const Vector3D& v, Vector3D& ans) const;
+    vec3d operator()(const vec3d& v) const;
+    void operator()(const vec3d& v, vec3d& ans) const;
 
     Ray operator()(const Ray& r) const;
     void operator()(const Ray& r, Ray& ans) const;
@@ -45,20 +45,20 @@ public:
     Box3D operator()(const Box3D& b) const;
     void operator()(const Box3D& b, Box3D& ans) const;
 
-    Vector3D multVecMatrix(const Vector3D& v) const;
-    Vector3D multDirMatrix(const Vector3D& src) const;
+    vec3d multVecMatrix(const vec3d& v) const;
+    vec3d multDirMatrix(const vec3d& src) const;
 
     bool operator==(const Transform& mat) const;
 
     static const Transform Identity;
     static Transform translate(double x, double y, double z);
-    static Transform translate(const Vector3D& v) {return translate(v.x, v.y, v.z);}
+    static Transform translate(const vec3d& v) {return translate(v.x, v.y, v.z);}
     static Transform scale(double x, double y, double z);
     static Transform rotateX(double angle);
     static Transform rotateY(double angle);
     static Transform rotateZ(double angle);
-    static Transform rotate(double angle, const Vector3D& axis);
-    static Transform LookAt(const Vector3D& pos, const Vector3D& look, const Vector3D& up);
+    static Transform rotate(double angle, const vec3d& axis);
+    static Transform LookAt(const vec3d& pos, const vec3d& look, const vec3d& up);
 
 private:
     std::shared_ptr<Matrix4x4> m_mdir;

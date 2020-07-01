@@ -42,8 +42,8 @@
 
 #include "libraries/math/gcf.h"
 #include "libraries/math/gcf.h"
-#include "libraries/math/Ray.h"
-#include "libraries/math/Transform.h"
+#include "libraries/math/3D/Ray.h"
+#include "libraries/math/3D/Transform.h"
 
 #include "commands/ActionInsert.h"
 #include "commands/CmdChangeNodeName.h"
@@ -3227,8 +3227,8 @@ void MainWindow::UpdateLightSize()
     if (!box.isEmpty())
     {
         Box3D sceneBox(
-            Vector3D(box.getMin()[0], box.getMin()[1], box.getMin()[2]),
-            Vector3D(box.getMax()[0], box.getMax()[1], box.getMax()[2])
+            vec3d(box.getMin()[0], box.getMin()[1], box.getMin()[2]),
+            vec3d(box.getMax()[0], box.getMax()[1], box.getMax()[2])
         );
 
         if (sunKit) sunKit->setBox(sceneBox);

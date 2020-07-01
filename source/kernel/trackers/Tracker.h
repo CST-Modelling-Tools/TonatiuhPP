@@ -5,7 +5,7 @@
 #include <Inventor/nodes/SoSubNode.h>
 #include <Inventor/nodekits/SoBaseKit.h>
 
-struct Vector3D;
+struct vec3d;
 class Transform;
 class TSeparatorKit;
 
@@ -17,7 +17,7 @@ class TONATIUH_KERNEL Tracker: public SoNode
 public:
     static void initClass();
 
-    virtual void update(TSeparatorKit* parent, const Transform& toGlobal, const Vector3D& vSun);
+    virtual void update(TSeparatorKit* parent, const Transform& toGlobal, const vec3d& vSun);
 
     NAME_ICON_FUNCTIONS("X", ":/TrackerX.png")
 

@@ -3,7 +3,7 @@
 
 Photon::Photon():
     id(-1),
-    pos(Vector3D()),
+    pos(vec3d()),
     side(-1),
     intersectedSurface(0),
     isAbsorbed(-1)
@@ -11,7 +11,7 @@ Photon::Photon():
 
 }
 
-Photon::Photon(const Vector3D& pos, int side, double id, InstanceNode* intersectedSurface, int absorbedPhoton):
+Photon::Photon(const vec3d& pos, int side, double id, InstanceNode* intersectedSurface, int absorbedPhoton):
     id(id),
     pos(pos),
     side(side),

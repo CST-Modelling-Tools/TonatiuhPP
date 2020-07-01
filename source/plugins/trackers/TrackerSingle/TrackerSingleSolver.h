@@ -15,13 +15,13 @@ struct TrackerSingleSolver
     TrackingVertex facet;
     double angle0; // default angle
 
-    Vector3D findFacetPoint(double angle);
+    vec3d findFacetPoint(double angle);
 
-    double solveRotation(const Vector3D& v0, const Vector3D& v);
+    double solveRotation(const vec3d& v0, const vec3d& v);
 
-    double solveFacetNormal(const Vector3D& normal);
-    double solveReflectionPrimary(const Vector3D& vSun, const Vector3D& rAim);
-    double solveReflectionGlobal(const Vector3D& vSun, const Vector3D& rAim);
+    double solveFacetNormal(const vec3d& normal);
+    double solveReflectionPrimary(const vec3d& vSun, const vec3d& rAim);
+    double solveReflectionGlobal(const vec3d& vSun, const vec3d& rAim);
 
     double selectSolution(double solution);
 };

@@ -4,7 +4,7 @@
 
 
 // rotation around a from m to v
-inline double findAngle(const Vector3D& a, const Vector3D& m, const Vector3D& v)
+inline double findAngle(const vec3d& a, const vec3d& m, const vec3d& v)
 {
     return atan2(dot(a, cross(m, v)), dot(m, v));
 }
@@ -18,51 +18,51 @@ TrackerSingleSolver::TrackerSingleSolver(
     facet(facet),
     angle0(angle0)
 {
-    Vector3D& a = this->primary.axis;
-    Vector3D& n = this->facet.normal;
+    vec3d& a = this->primary.axis;
+    vec3d& n = this->facet.normal;
     n-= dot(n, a)*a;
 }
 
-Vector3D TrackerSingleSolver::findFacetPoint(double angle)
+vec3d TrackerSingleSolver::findFacetPoint(double angle)
 {
     return primary.getTransform(angle).transformPoint(facet.shift);
 }
 
-double TrackerSingleSolver::solveReflectionPrimary(const Vector3D& vSun, const Vector3D& rAim)
+double TrackerSingleSolver::solveReflectionPrimary(const vec3d& vSun, const vec3d& rAim)
 {
-    const Vector3D& a = primary.axis;
-    const Vector3D& n = facet.normal;
+    const vec3d& a = primary.axis;
+    const vec3d& n = facet.normal;
 
-    Vector3D t = rAim - facet.shift;
+    vec3d t = rAim - facet.shift;
     t -= dot(t, a)*a;
     t.normalize();
-    Vector3D v0 = -t.reflected(n);
+    vec3d v0 = -t.reflected(n);
 
-    Vector3D v = vSun - dot(vSun, a)*a;
+    vec3d v = vSun - dot(vSun, a)*a;
     v.normalize();
 
     return findAngle(a, v0, v);
 }
 
-double TrackerSingleSolver::solveReflectionGlobal(const Vector3D& vSun, const Vector3D& rAim)
+double TrackerSingleSolver::solveReflectionGlobal(const vec3d& vSun, const vec3d& rAim)
 {
-    const Vector3D& a = primary.axis;
-    const Vector3D& n0 = facet.normal;
+    const vec3d& a = primary.axis;
+    const vec3d& n0 = facet.normal;
 
-    Vector3D v = vSun - dot(vSun, a)*a;
+    vec3d v = vSun - dot(vSun, a)*a;
     v.normalize();
 
     int iMax = 5; // max iterations
     double deltaMin = 0.01; // accuracy in meters
 
     double ans;
-    Vector3D rFacet = findFacetPoint(angle0);
+    vec3d rFacet = findFacetPoint(angle0);
     for (int i = 0; i < iMax; ++i)
     {
-        Vector3D t = rAim - rFacet;
+        vec3d t = rAim - rFacet;
         t -= dot(t, a)*a;
         t.normalize();
-        Vector3D n = (v + t).normalized();
+        vec3d n = (v + t).normalized();
         ans = findAngle(a, n0, n);
         rFacet = findFacetPoint(ans);
         double delta = dot(cross(t, a), rAim - rFacet);

@@ -6,8 +6,8 @@
 #include <Inventor/nodes/SoSubNode.h>
 
 #include "kernel/scene/TAbstract.h"
-#include "libraries/math/Vector2D.h"
-#include "libraries/math/Box3D.h"
+#include "libraries/math/2D/vec2d.h"
+#include "libraries/math/3D/Box3D.h"
 
 struct DifferentialGeometry;
 class Random;
@@ -23,7 +23,7 @@ public:
 
     virtual Box3D getBox() const {return Box3D::UnitCube;}
     virtual bool isInside(double /*x*/, double /*y*/) const {return true;}
-    virtual QVector<Vector2D> makeMesh(QSize& /*dims*/) const {return {};}
+    virtual QVector<vec2d> makeMesh(QSize& /*dims*/) const {return {};}
 
     NAME_ICON_FUNCTIONS("X", ":/MaterialX.png") // use some default icon
 

@@ -3,8 +3,8 @@
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/math/Box3D.h"
-#include "libraries/math/Ray.h"
+#include "libraries/math/3D/Box3D.h"
+#include "libraries/math/3D/Ray.h"
 
 SO_NODE_SOURCE(ShapeSphere)
 
@@ -19,27 +19,27 @@ ShapeSphere::ShapeSphere()
 	SO_NODE_CONSTRUCTOR(ShapeSphere);
 }
 
-Vector3D ShapeSphere::getPoint(double u, double v) const
+vec3d ShapeSphere::getPoint(double u, double v) const
 {
     double phi = gcf::TwoPi*u;
     double alpha = gcf::pi*v;
-    return Vector3D(
+    return vec3d(
         cos(phi)*cos(alpha),
         sin(phi)*cos(alpha),
         sin(alpha)
     );
 }
 
-Vector3D ShapeSphere::getNormal(double u, double v) const
+vec3d ShapeSphere::getNormal(double u, double v) const
 {
     return getPoint(u, v);
 }
 
-Vector2D ShapeSphere::getUV(const Vector3D& p) const
+vec2d ShapeSphere::getUV(const vec3d& p) const
 {
     double phi = atan2(p.y, p.x);
     double alpha = asin(gcf::clamp(p.z, -1., 1.));
-    return Vector2D(phi/gcf::TwoPi, alpha/gcf::pi);
+    return vec2d(phi/gcf::TwoPi, alpha/gcf::pi);
 }
 
 Box3D ShapeSphere::getBox(ProfileRT* profile) const
@@ -82,15 +82,15 @@ Box3D ShapeSphere::getBox(ProfileRT* profile) const
     double zMax = sin(alphaMax);
 
     return Box3D(
-        Vector3D(xMin, yMin, zMin),
-        Vector3D(xMax, yMax, zMax)
+        vec3d(xMin, yMin, zMin),
+        vec3d(xMax, yMax, zMax)
     );
 }
 
 bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
 {
-    const Vector3D& rayO = ray.origin;
-    const Vector3D& rayD = ray.direction();
+    const vec3d& rayO = ray.origin;
+    const vec3d& rayD = ray.direction();
 
     // |r|^2 = 1, r = r0 + t*d
     double A = rayD.norm2();
@@ -104,7 +104,7 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
         double t = ts[i];
         if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
 
-        Vector3D pHit = ray.point(t);
+        vec3d pHit = ray.point(t);
         double phi = atan2(pHit.y, pHit.x);
         double alpha = asin(gcf::clamp(pHit.z, -1., 1.));
         double u = phi/gcf::TwoPi;
@@ -120,8 +120,8 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
         dg->point = pHit;
         dg->u = u;
         dg->v = v;
-        dg->dpdu = Vector3D(-pHit.y, pHit.x, 0.);
-        dg->dpdv = Vector3D(-cos(phi)*pHit.z, -sin(phi)*pHit.z, cos(alpha));
+        dg->dpdu = vec3d(-pHit.y, pHit.x, 0.);
+        dg->dpdv = vec3d(-cos(phi)*pHit.z, -sin(phi)*pHit.z, cos(alpha));
         dg->normal = pHit;
         dg->shape = this;
         dg->isFront = dot(dg->normal, rayD) <= 0.;
@@ -134,7 +134,7 @@ void ShapeSphere::updateShapeGL(TShapeKit* parent)
 {
     ProfileRT* aperture = (ProfileRT*) parent->profileRT.getValue();
     Box3D box = aperture->getBox();
-    Vector3D v = box.extent();
+    vec3d v = box.extent();
 
     double s = v.x;
     if (s > 1.) s = 1.;

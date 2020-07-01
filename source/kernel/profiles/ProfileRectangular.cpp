@@ -20,8 +20,8 @@ ProfileRectangular::ProfileRectangular()
 Box3D ProfileRectangular::getBox() const
 {
     return Box3D(
-        Vector3D(uMin.getValue(), vMin.getValue(), 0.),
-        Vector3D(uMax.getValue(), vMax.getValue(), 0.)
+        vec3d(uMin.getValue(), vMin.getValue(), 0.),
+        vec3d(uMax.getValue(), vMax.getValue(), 0.)
     );
 }
 
@@ -31,11 +31,11 @@ bool ProfileRectangular::isInside(double u, double v) const
            vMin.getValue() <= v && v <= vMax.getValue();
 }
 
-QVector<Vector2D> ProfileRectangular::makeMesh(QSize& dims) const
+QVector<vec2d> ProfileRectangular::makeMesh(QSize& dims) const
 {
     const int iMax = dims.width();
     const int jMax = dims.height();
-    QVector<Vector2D> ans;
+    QVector<vec2d> ans;
 
     for (int i = 0; i < iMax; ++i) {
         double un = i/double(iMax - 1);
@@ -43,7 +43,7 @@ QVector<Vector2D> ProfileRectangular::makeMesh(QSize& dims) const
         for (int j = 0; j < jMax; ++j) {
             double vn = j/double(jMax - 1);
             double v = (1. - vn)*vMin.getValue() + vn*vMax.getValue();
-            ans << Vector2D(u, v);
+            ans << vec2d(u, v);
         }
     }
     return ans;

@@ -50,12 +50,12 @@ TrackerDual::~TrackerDual()
     delete m_heliostat;
 }
 
-void TrackerDual::update(TSeparatorKit* parent, const Transform& toGlobal, const Vector3D& vSun)
+void TrackerDual::update(TSeparatorKit* parent, const Transform& toGlobal, const vec3d& vSun)
 {
     QVector<Angles> solutions;
     Transform toLocal = toGlobal.inversed();
-    Vector3D vSunL = toLocal.transformVector(vSun);
-    Vector3D rAim = tgf::makeVector3D(aimingPoint.getValue());
+    vec3d vSunL = toLocal.transformVector(vSun);
+    vec3d rAim = tgf::makeVector3D(aimingPoint.getValue());
     if (aimingFrame.getValue() == global) {
         rAim = toLocal.transformPoint(rAim);
         solutions = m_heliostat->solveReflectionGlobal(vSunL, rAim);
@@ -86,8 +86,8 @@ void TrackerDual::onModified(void* data, SoSensor*)
     TrackerDual* tracker = (TrackerDual*) data;
     if (tracker->m_heliostat) delete tracker->m_heliostat;
 
-    Vector2D pa = tgf::makeVector2D(tracker->primaryAngles.getValue());
-    Vector2D pb = tgf::makeVector2D(tracker->secondaryAngles.getValue());
+    vec2d pa = tgf::makeVector2D(tracker->primaryAngles.getValue());
+    vec2d pb = tgf::makeVector2D(tracker->secondaryAngles.getValue());
 
     tracker->m_heliostat = new TrackerDualSolver(
         TrackingDrive(

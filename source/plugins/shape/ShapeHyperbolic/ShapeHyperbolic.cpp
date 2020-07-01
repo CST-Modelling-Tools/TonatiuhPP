@@ -3,8 +3,8 @@
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/math/Box3D.h"
-#include "libraries/math/Ray.h"
+#include "libraries/math/3D/Box3D.h"
+#include "libraries/math/3D/Ray.h"
 using gcf::pow2;
 
 SO_NODE_SOURCE(ShapeHyperbolic)
@@ -24,29 +24,29 @@ ShapeHyperbolic::ShapeHyperbolic()
     SO_NODE_ADD_FIELD( aZ, (1.) );
 }
 
-Vector3D ShapeHyperbolic::getPoint(double u, double v) const
+vec3d ShapeHyperbolic::getPoint(double u, double v) const
 {
     double rX = aX.getValue();
     double rY = aY.getValue();
     double rZ = aZ.getValue();
     double s = 1. + pow2(u/rX) + pow2(v/rY);
     s = sqrt(s) - 1.;
-    return Vector3D(u, v, s*rZ);
+    return vec3d(u, v, s*rZ);
 }
 
-Vector3D ShapeHyperbolic::getNormal(double u, double v) const
+vec3d ShapeHyperbolic::getNormal(double u, double v) const
 {
     double rX = aX.getValue();
     double rY = aY.getValue();
     double rZ = aZ.getValue();
     double s = 1. + pow2(u/rX) + pow2(v/rY);
-    return Vector3D(-u/(rX*rX), -v/(rY*rY), sqrt(s)/rZ).normalized();
+    return vec3d(-u/(rX*rX), -v/(rY*rY), sqrt(s)/rZ).normalized();
 }
 
 Box3D ShapeHyperbolic::getBox(ProfileRT* profile) const
 {  
     Box3D box = profile->getBox();
-    Vector3D v = box.absMax();
+    vec3d v = box.absMax();
     double rX = aX.getValue();
     double rY = aY.getValue();
     double rZ = aZ.getValue();
@@ -59,9 +59,9 @@ Box3D ShapeHyperbolic::getBox(ProfileRT* profile) const
 bool ShapeHyperbolic::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
 {
     double rZ = aZ.getValue();
-    Vector3D g(1./aX.getValue(), 1./aY.getValue(), 1./rZ);
-    Vector3D rayO = (ray.origin + Vector3D(0., 0., rZ))*g;
-    Vector3D rayD = ray.direction()*g;
+    vec3d g(1./aX.getValue(), 1./aY.getValue(), 1./rZ);
+    vec3d rayO = (ray.origin + vec3d(0., 0., rZ))*g;
+    vec3d rayD = ray.direction()*g;
 
     double A = pow2(rayD.x) + pow2(rayD.y) - pow2(rayD.z);
     double B = 2.*(rayD.x*rayO.x + rayD.y*rayO.y - rayD.z*rayO.z);
@@ -74,7 +74,7 @@ bool ShapeHyperbolic::intersect(const Ray& ray, double* tHit, DifferentialGeomet
         double t = ts[i];
         if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
 
-        Vector3D pHit = ray.point(t);
+        vec3d pHit = ray.point(t);
         if (pHit.z < 0.) continue; // discard lower branch
         if (!profile->isInside(pHit.x, pHit.y)) continue;
 
@@ -88,9 +88,9 @@ bool ShapeHyperbolic::intersect(const Ray& ray, double* tHit, DifferentialGeomet
         dg->u = pHit.x;
         dg->v = pHit.y;
         double s = 1. + pHit.z/rZ;
-        dg->dpdu = Vector3D(1., 0., pHit.x/s*g.x*g.x*rZ);
-        dg->dpdv = Vector3D(0., 1., pHit.y/s*g.y*g.y*rZ);
-        dg->normal = Vector3D(-dg->dpdu.z, -dg->dpdv.z, 1.).normalized();
+        dg->dpdu = vec3d(1., 0., pHit.x/s*g.x*g.x*rZ);
+        dg->dpdv = vec3d(0., 1., pHit.y/s*g.y*g.y*rZ);
+        dg->normal = vec3d(-dg->dpdu.z, -dg->dpdv.z, 1.).normalized();
         dg->shape = this;
         dg->isFront = dot(dg->normal, ray.direction()) <= 0.;
         return true;
@@ -103,8 +103,8 @@ void ShapeHyperbolic::updateShapeGL(TShapeKit* parent)
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
 
     Box3D box = profile->getBox();
-    Vector3D q = box.absMin();
-    Vector3D s = box.extent();
+    vec3d q = box.absMin();
+    vec3d s = box.extent();
 
     double cx = aX.getValue()*aX.getValue()/std::abs(aZ.getValue());
     double cy = aY.getValue()*aY.getValue()/std::abs(aZ.getValue());

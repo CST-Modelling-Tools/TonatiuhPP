@@ -25,11 +25,11 @@
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunAperture.h"
-#include "libraries/math/Transform.h"
+#include "libraries/math/3D/Transform.h"
 #include "libraries/math/gcf.h"
 #include "kernel/air/AirVacuum.h"
 #include "kernel/profiles/ProfileRT.h"
-#include "libraries/math/Matrix2D.h"
+#include "libraries/math/2D/Matrix2D.h"
 
 
 
@@ -172,8 +172,8 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool
     if (!box.isEmpty() )
     {
         Box3D sceneBox(
-            Vector3D(box.getMin()[0], box.getMin()[1], box.getMin()[2]),
-            Vector3D(box.getMax()[0], box.getMax()[1], box.getMax()[2])
+            vec3d(box.getMin()[0], box.getMin()[1], box.getMin()[2]),
+            vec3d(box.getMax()[0], box.getMax()[1], box.getMax()[2])
         );
         if (sunKit) sunKit->setBox(sceneBox);
     }
@@ -342,8 +342,8 @@ void FluxAnalysis::fillBins()
     {
         if (photon.side != activeSideID) continue;
         photonsTotal++;
-        Vector3D p = toObject.transformPoint(photon.pos);
-        Vector2D uv = shape->getUV(p);
+        vec3d p = toObject.transformPoint(photon.pos);
+        vec2d uv = shape->getUV(p);
         int row = floor((uv.y - m_vMin)/(m_vMax - m_vMin)*m_bins.rows());
         int col = floor((uv.x - m_uMin)/(m_uMax - m_uMin)*m_bins.cols());
 

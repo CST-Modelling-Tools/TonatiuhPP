@@ -156,7 +156,7 @@ void PhotonsFile::ExportAllPhotonsAllData(QString filename, const std::vector<Ph
 
 
 			//m_saveCoordinates
-            Vector3D scenePos = m_transform.transformPoint(photon.pos);
+            vec3d scenePos = m_transform.transformPoint(photon.pos);
             out << scenePos.x << scenePos.y << scenePos.z;
 
 			//m_saveSide
@@ -210,7 +210,7 @@ void PhotonsFile::ExportAllPhotonsAllData(QString filename, const std::vector<Ph
 				}
 			}
 
-            Vector3D localPos = worldToObject.transformPoint(photon.pos);
+            vec3d localPos = worldToObject.transformPoint(photon.pos);
             out << localPos.x << localPos.y << localPos.z;
 
             double side = double(photon.side);
@@ -262,7 +262,7 @@ void PhotonsFile::ExportAllPhotonsNotNextPrevID(QString filename, const std::vec
             out << double(++m_exportedPhotons);
 
 			//m_saveCoordinates
-            Vector3D scenePos = m_transform.transformPoint(photon.pos);
+            vec3d scenePos = m_transform.transformPoint(photon.pos);
             out << scenePos.x << scenePos.y << scenePos.z;
             //out<<photon.pos.x << photon.pos.y << photon.pos.z;
 
@@ -304,7 +304,7 @@ void PhotonsFile::ExportAllPhotonsNotNextPrevID(QString filename, const std::vec
 			}
 			out<<double( ++m_exportedPhotons );
 
-            Vector3D localPos = worldToObject.transformPoint(photon.pos);
+            vec3d localPos = worldToObject.transformPoint(photon.pos);
 			out<<localPos.x << localPos.y << localPos.z;
 
             out << double(photon.side);
@@ -361,7 +361,7 @@ void PhotonsFile::ExportAllPhotonsSelectedData(QString filename, const std::vect
         if( m_saveCoordinates && m_saveCoordinatesInGlobal )	out<<photon.pos.x << photon.pos.y << photon.pos.z;
 		else if( m_saveCoordinates && !m_saveCoordinatesInGlobal )
 		{
-            Vector3D localPos = worldToObject.transformPoint(photon.pos);
+            vec3d localPos = worldToObject.transformPoint(photon.pos);
             out << localPos.x << localPos.y << localPos.z;
 		}
 
@@ -423,7 +423,7 @@ void PhotonsFile::ExportSelectedPhotonsAllData(QString filename, const std::vect
             if( photon.id < 1 )	previousPhotonID = 0;
 
 			//m_saveCoordinates
-            Vector3D scenePos = m_transform.transformPoint(photon.pos);
+            vec3d scenePos = m_transform.transformPoint(photon.pos);
 			out<<scenePos.x << scenePos.y << scenePos.z;
             //out<<photon.pos.x << photon.pos.y << photon.pos.z;
 
@@ -480,7 +480,7 @@ void PhotonsFile::ExportSelectedPhotonsAllData(QString filename, const std::vect
             if (photon.id < 1)	previousPhotonID = 0;
 
 			//m_saveCoordinates
-            Vector3D localPos = worldToObject.transformPoint(photon.pos);
+            vec3d localPos = worldToObject.transformPoint(photon.pos);
             out << localPos.x << localPos.y << localPos.z;
 
 			//m_saveSide
@@ -538,7 +538,7 @@ void PhotonsFile::ExportSelectedPhotonsNotNextPrevID( QString filename, const st
 			out<<double( ++m_exportedPhotons );
 
 			//m_saveCoordinates
-            Vector3D scenePos = m_transform.transformPoint(photon.pos);
+            vec3d scenePos = m_transform.transformPoint(photon.pos);
 			out<<scenePos.x << scenePos.y << scenePos.z;
             //out<<photon.pos.x << photon.pos.y << photon.pos.z;
 
@@ -583,7 +583,7 @@ void PhotonsFile::ExportSelectedPhotonsNotNextPrevID( QString filename, const st
 			out<<double( ++m_exportedPhotons );
 
 			//m_saveCoordinates
-            Vector3D localPos = worldToObject.transformPoint(photon.pos);
+            vec3d localPos = worldToObject.transformPoint(photon.pos);
 			out<<localPos.x << localPos.y << localPos.z;
 
             out << double(photon.side);
@@ -643,13 +643,13 @@ void PhotonsFile::ExportSelectedPhotonsSelectedData( QString filename, const std
 		if( m_saveCoordinates && m_saveCoordinatesInGlobal )
 		{
 
-            Vector3D scenePos = m_transform.transformPoint(photon.pos);
+            vec3d scenePos = m_transform.transformPoint(photon.pos);
 			out<<scenePos.x << scenePos.y << scenePos.z;
             //out<<photon.pos.x << photon.pos.y << photon.pos.z;
 		}
 		else if( m_saveCoordinates && !m_saveCoordinatesInGlobal )
 		{
-            Vector3D localPos = worldToObject.transformPoint(photon.pos);
+            vec3d localPos = worldToObject.transformPoint(photon.pos);
             out << localPos.x << localPos.y << localPos.z;
 		}
 

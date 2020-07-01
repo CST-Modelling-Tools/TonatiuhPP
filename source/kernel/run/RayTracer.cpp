@@ -2,7 +2,7 @@
 
 #include "shape/DifferentialGeometry.h"
 #include "random/RandomParallel.h"
-#include "libraries/math/Ray.h"
+#include "libraries/math/3D/Ray.h"
 #include "RayTracer.h"
 #include "kernel/photons/Photons.h"
 #include "sun/SunAperture.h"
@@ -106,8 +106,8 @@ bool RayTracer::NewPrimitiveRay(Ray* ray, RandomParallel& rand)
     int index = int(rand.RandomDouble()*m_sunCells.size());
     QPair<int, int> cell = m_sunCells[index];
 
-    Vector3D origin = m_sunAperture->Sample(rand.RandomDouble(), rand.RandomDouble(), cell.first, cell.second);
-    Vector3D direction = m_sunShape->generateRay(rand);
+    vec3d origin = m_sunAperture->Sample(rand.RandomDouble(), rand.RandomDouble(), cell.first, cell.second);
+    vec3d direction = m_sunShape->generateRay(rand);
     *ray = m_sunTransform(Ray(origin, direction));
     return true;
 }

@@ -49,8 +49,8 @@ Box3D ProfileCircular::getBox() const
     yMin *= yMin > 0. ? rMinV : rMaxV;
 
     return Box3D(
-        Vector3D(xMin, yMin, 0.),
-        Vector3D(xMax, yMax, 0.)
+        vec3d(xMin, yMin, 0.),
+        vec3d(xMax, yMax, 0.)
     );
 }
 
@@ -65,21 +65,21 @@ bool ProfileCircular::isInside(double u, double v) const
     return true;
 }
 
-QVector<Vector2D> ProfileCircular::makeMesh(QSize& dims) const
+QVector<vec2d> ProfileCircular::makeMesh(QSize& dims) const
 {
     double s = (phiMax.getValue() - phiMin.getValue())/gcf::TwoPi;
     int iMax = 1 + ceil(48*s);
     int jMax = std::max(dims.width(), dims.height());
     dims = QSize(iMax, jMax);
 
-    QVector<Vector2D> ans;
+    QVector<vec2d> ans;
     for (int i = 0; i < iMax; ++i) {
         double un = i/double(iMax - 1);
         double u = (1. - un)*phiMin.getValue() + un*phiMax.getValue();
         for (int j = 0; j < jMax; ++j) {
             double vn = j/double(jMax - 1);
             double v = (1. - vn)*rMin.getValue() + vn*rMax.getValue();
-            ans << v*Vector2D(cos(u), sin(u));
+            ans << v*vec2d(cos(u), sin(u));
         }
     }
     return ans;

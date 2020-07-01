@@ -9,7 +9,7 @@
 #include "kernel/material/MaterialAbsorber.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "kernel/shape/ShapePlanar.h"
-#include "libraries/math/Ray.h"
+#include "libraries/math/3D/Ray.h"
 
 
 SO_KIT_SOURCE(TShapeKit)

@@ -1,6 +1,6 @@
 #include "Matrix4x4.h"
 
-#include "gcf.h"
+#include "math/gcf.h"
 
 
 Matrix4x4::Matrix4x4()

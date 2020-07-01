@@ -5,8 +5,8 @@
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/math/Box3D.h"
-#include "libraries/math/Ray.h"
+#include "libraries/math/3D/Box3D.h"
+#include "libraries/math/3D/Ray.h"
 
 SO_NODE_SOURCE(ShapeCube)
 
@@ -29,8 +29,8 @@ Box3D ShapeCube::getBox(ProfileRT* aperture) const
 
 bool ShapeCube::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const
 {
-    const Vector3D& rayO = ray.origin;
-    const Vector3D& rayI = ray.invDirection();
+    const vec3d& rayO = ray.origin;
+    const vec3d& rayI = ray.invDirection();
     double tMin, tMax, tyMin, tyMax, tzMin, tzMax;
     double h = 0.5;
 
@@ -81,7 +81,7 @@ bool ShapeCube::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
         double t = ts[i];
         if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
 
-        Vector3D pHit = ray.point(t);
+        vec3d pHit = ray.point(t);
         Q_UNUSED(aperture)
 
         if (tHit == 0 && dg == 0)
@@ -93,37 +93,37 @@ bool ShapeCube::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
         if (s == 0)
         {
             if (pHit[s] > 0.) {
-                dg->dpdu = Vector3D::UnitY;
-                dg->dpdv = Vector3D::UnitZ;
-                dg->normal = Vector3D::UnitX;
+                dg->dpdu = vec3d::UnitY;
+                dg->dpdv = vec3d::UnitZ;
+                dg->normal = vec3d::UnitX;
             } else {
-                dg->dpdu = Vector3D::UnitZ;
-                dg->dpdv = Vector3D::UnitY;
-                dg->normal = -Vector3D::UnitX;
+                dg->dpdu = vec3d::UnitZ;
+                dg->dpdv = vec3d::UnitY;
+                dg->normal = -vec3d::UnitX;
             }
         }
         else if (s == 1)
         {
             if (pHit[s] > 0.) {
-                dg->dpdu = Vector3D::UnitZ;
-                dg->dpdv = Vector3D::UnitX;
-                dg->normal = Vector3D::UnitY;
+                dg->dpdu = vec3d::UnitZ;
+                dg->dpdv = vec3d::UnitX;
+                dg->normal = vec3d::UnitY;
             } else {
-                dg->dpdu = Vector3D::UnitX;
-                dg->dpdv = Vector3D::UnitZ;
-                dg->normal = -Vector3D::UnitY;
+                dg->dpdu = vec3d::UnitX;
+                dg->dpdv = vec3d::UnitZ;
+                dg->normal = -vec3d::UnitY;
             }
         }
         else
         {
             if (pHit[s] > 0.) {
-                dg->dpdu = Vector3D::UnitX;
-                dg->dpdv = Vector3D::UnitY;
-                dg->normal = Vector3D::UnitZ;
+                dg->dpdu = vec3d::UnitX;
+                dg->dpdv = vec3d::UnitY;
+                dg->normal = vec3d::UnitZ;
             } else {
-                dg->dpdu = Vector3D::UnitY;
-                dg->dpdv = Vector3D::UnitX;
-                dg->normal = -Vector3D::UnitZ;
+                dg->dpdu = vec3d::UnitY;
+                dg->dpdv = vec3d::UnitX;
+                dg->normal = -vec3d::UnitZ;
             }
         }
 

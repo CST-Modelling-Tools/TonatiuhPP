@@ -17,9 +17,9 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
 #include "CelestialWidget.h"
-#include "libraries/math/Ray.h"
+#include "libraries/math/3D/Ray.h"
 #include "libraries/math/gcf.h"
-#include "libraries/math/Vector3D.h"
+#include "libraries/math/3D/vec3d.h"
 
 
 CelestialWidget::CelestialWidget(QWidget* parent):
@@ -171,7 +171,7 @@ SoSeparator* CelestialWidget::Declination()
     curve->addChild(curveMaterial);
 
     float curvePoints[270][3];
-    Vector3D center(0, 0, 0);
+    vec3d center(0, 0, 0);
 
     int numPoints = 0;
     int indexes[360];
@@ -438,7 +438,7 @@ SoSeparator* CelestialWidget::RightAscension()
     curve->addChild( curveMaterial );
 
     float curvePoints[270][3];
-    Vector3D center( 0, 0, 0 );
+    vec3d center( 0, 0, 0 );
 
     int numPoints = 0;
     int indexes[360];

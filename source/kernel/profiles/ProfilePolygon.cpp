@@ -35,8 +35,8 @@ Box3D ProfilePolygon::getBox() const
 {
     QRectF rect = m_polygon.boundingRect();
     Box3D box(
-        Vector3D(rect.left(), rect.top(), 0.),
-        Vector3D(rect.right(), rect.bottom(), 0.)
+        vec3d(rect.left(), rect.top(), 0.),
+        vec3d(rect.right(), rect.bottom(), 0.)
     );
     double zMax = 0.01*box.extent().max();
     box.pMin.z = -zMax;
@@ -50,20 +50,20 @@ bool ProfilePolygon::isInside(double u, double v) const
 }
 
 // use profile field of Coin ShapeKit
-QVector<Vector2D> ProfilePolygon::makeMesh(QSize& dims) const
+QVector<vec2d> ProfilePolygon::makeMesh(QSize& dims) const
 {
     const int iMax = dims.width();
     const int jMax = dims.height();
-    QVector<Vector2D> ans;
+    QVector<vec2d> ans;
 
     QRectF rect = m_polygon.boundingRect();
-    Vector2D v0(rect.left(), rect.top());
-    Vector2D dv(rect.width(), rect.height());
+    vec2d v0(rect.left(), rect.top());
+    vec2d dv(rect.width(), rect.height());
     for (int i = 0; i < iMax; ++i) {
         double un = i/double(iMax - 1);
         for (int j = 0; j < jMax; ++j) {
             double vn = j/double(jMax - 1);
-            ans << v0 + Vector2D(un, vn)*dv;
+            ans << v0 + vec2d(un, vn)*dv;
         }
     }
     return ans;

@@ -92,9 +92,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.5375001"
-     inkscape:cx="419.61531"
-     inkscape:cy="215.4914"
+     inkscape:zoom="0.92340094"
+     inkscape:cx="-824.72865"
+     inkscape:cy="446.7997"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -739,6 +739,44 @@
        inkscape:export-filename="C:\Users\v.grigoriev\Desktop\ProfilePolygon.png"
        inkscape:export-xdpi="50.685406"
        inkscape:export-ydpi="50.685406" />
+    <rect
+       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\bitmap.png"
+       style="opacity:1;fill:#34871b;fill-opacity:0.00392157;stroke:none;stroke-width:0.0656594;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       id="rect892"
+       width="34.774704"
+       height="34.774704"
+       x="-68.737122"
+       y="135.48825"
+       inkscape:export-xdpi="46.746624"
+       inkscape:export-ydpi="46.746624" />
+    <rect
+       inkscape:export-ydpi="46.746624"
+       inkscape:export-xdpi="46.746624"
+       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\bitmap.png"
+       y="140.07309"
+       x="-64.868469"
+       height="25.598896"
+       width="27.689816"
+       id="rect894"
+       style="fill:#a5abbd;fill-opacity:0.96862745;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:66.3714447;stroke-opacity:0.99607843" />
+    <rect
+       inkscape:export-ydpi="46.746624"
+       inkscape:export-xdpi="46.746624"
+       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\bitmap.png"
+       y="159.58499"
+       x="-64.876648"
+       height="6.0335321"
+       width="27.669617"
+       id="rect896"
+       style="fill:#656f8a;fill-opacity:0.96862745;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:66.3714447;stroke-opacity:0.99607843" />
+    <path
+       inkscape:export-ydpi="46.746624"
+       inkscape:export-xdpi="46.746624"
+       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\bitmap.png"
+       inkscape:connector-curvature="0"
+       id="path902"
+       d="m -50.980142,146.42328 -0.157661,13.19323"
+       style="fill:#566883;fill-opacity:0.99215686;stroke:#4e4e56;stroke-width:1.60000002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:17.56077957;stroke-opacity:0.99607843" />
   </g>
   <g
      inkscape:groupmode="layer"

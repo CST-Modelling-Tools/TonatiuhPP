@@ -27,9 +27,9 @@ ProfileTriangle::ProfileTriangle()
 Box3D ProfileTriangle::getBox() const
 {
     Box3D box;
-    box << Vector3D(tgf::makeVector2D(a.getValue()));
-    box << Vector3D(tgf::makeVector2D(b.getValue()));
-    box << Vector3D(tgf::makeVector2D(c.getValue()));
+    box << vec3d(tgf::makeVector2D(a.getValue()));
+    box << vec3d(tgf::makeVector2D(b.getValue()));
+    box << vec3d(tgf::makeVector2D(c.getValue()));
     return box;
 }
 
@@ -37,7 +37,7 @@ bool ProfileTriangle::isInside(double u, double v) const
 {
     if (gcf::eqz(m_det)) return false;
 
-    Vector2D p(u, v);
+    vec2d p(u, v);
     p -= m_pC;
     double alpha = cross(p, m_pBC)/m_det;
     if (alpha < 0.) return false;
@@ -47,11 +47,11 @@ bool ProfileTriangle::isInside(double u, double v) const
     return true;
 }
 
-QVector<Vector2D> ProfileTriangle::makeMesh(QSize& dims) const
+QVector<vec2d> ProfileTriangle::makeMesh(QSize& dims) const
 {
     const int iMax = dims.width();
     const int jMax = dims.height();
-    QVector<Vector2D> ans;
+    QVector<vec2d> ans;
 
     for (int i = 0; i < iMax; ++i) {
         double un = i/double(iMax - 1);
@@ -72,9 +72,9 @@ void ProfileTriangle::onSensor(void* data, SoSensor*)
 {
     ProfileTriangle* profile = (ProfileTriangle*) data;
 
-    Vector2D pAC = tgf::makeVector2D(profile->a.getValue());
-    Vector2D pBC = tgf::makeVector2D(profile->b.getValue());
-    Vector2D pC = tgf::makeVector2D(profile->c.getValue());
+    vec2d pAC = tgf::makeVector2D(profile->a.getValue());
+    vec2d pBC = tgf::makeVector2D(profile->b.getValue());
+    vec2d pC = tgf::makeVector2D(profile->c.getValue());
     pAC -= pC;
     pBC -= pC;
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "kernel/profiles/ProfileRT.h"
-#include "libraries/math/Vector2D.h"
+#include "libraries/math/2D/vec2d.h"
 #include "libraries/Coin3D/MFVec2.h"
 
 
@@ -18,7 +18,7 @@ public:
 
     Box3D getBox() const;
     bool isInside(double u, double v) const;
-    QVector<Vector2D> makeMesh(QSize& dims) const;
+    QVector<vec2d> makeMesh(QSize& dims) const;
 
     NAME_ICON_FUNCTIONS("Polygon", ":/images/ProfilePolygon.png")
 

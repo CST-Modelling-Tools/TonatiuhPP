@@ -13,11 +13,11 @@
 #include <Inventor/nodes/SoTransform.h>
 
 #include "run/InstanceNode.h"
-#include "libraries/math/Matrix4x4.h"
+#include "libraries/math/3D/Matrix4x4.h"
 #include "photons/Photon.h"
 #include "photons/Photons.h"
 #include "random/Random.h"
-#include "libraries/math/Ray.h"
+#include "libraries/math/3D/Ray.h"
 #include "TonatiuhFunctions.h"
 #include "sun/SunKit.h"
 #include "trf.h"
@@ -32,7 +32,7 @@ SoSeparator* trf::DrawPhotons(const Photons& map)
     uint n = 0;
     for (const Photon& photon : map.getPhotons())
     {
-        const Vector3D& pos = photon.pos;
+        const vec3d& pos = photon.pos;
         coordinates->point.set1Value(n++, pos.x, pos.y, pos.z);
     }
     ans->addChild(coordinates);
@@ -65,7 +65,7 @@ SoSeparator* trf::DrawRays(const Photons& map, ulong /*numberOfRays*/)
             rayLengths << s;
             s = 0;
         }
-        const Vector3D& pos = photon.pos;
+        const vec3d& pos = photon.pos;
         points->point.set1Value(n++, pos.x, pos.y, pos.z);
         s++;
     }

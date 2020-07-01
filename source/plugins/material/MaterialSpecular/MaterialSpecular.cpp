@@ -3,8 +3,8 @@
 #include <Inventor/sensors/SoNodeSensor.h>
 
 #include "libraries/math/gcf.h"
-#include "libraries/math/Ray.h"
-#include "libraries/math/Transform.h"
+#include "libraries/math/3D/Ray.h"
+#include "libraries/math/3D/Transform.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "kernel/random/Random.h"
 #include "kernel/TonatiuhFunctions.h"
@@ -46,7 +46,7 @@ bool MaterialSpecular::OutputRay(const Ray& rayIn, const DifferentialGeometry& d
 
     rayOut.origin = dg.point;
 
-    Vector3D normal;
+    vec3d normal;
     double sigma = slope.getValue();
     if (sigma > 0.) {
         if (distribution.getValue() == Distribution::pillbox)
@@ -72,16 +72,16 @@ bool MaterialSpecular::OutputRay(const Ray& rayIn, const DifferentialGeometry& d
             normal.y = s*v;
             normal.z = 1.;
         }
-        Vector3D vx = dg.dpdu.normalized();
-        Vector3D vy = dg.dpdv.normalized();
+        vec3d vx = dg.dpdu.normalized();
+        vec3d vy = dg.dpdv.normalized();
 //        Vector3D vz = dg.normal;
-        Vector3D vz = dg.normal.normalized();
+        vec3d vz = dg.normal.normalized();
         normal = (vx*normal.x + vy*normal.y + vz*normal.z).normalized();
     } else
 //        normal = dg.normal;
         normal = dg.normal.normalized();
 
-    Vector3D d = rayIn.direction() - 2.*normal*dot(normal, rayIn.direction());
+    vec3d d = rayIn.direction() - 2.*normal*dot(normal, rayIn.direction());
     rayOut.setDirection(d); // double sided
     return true;
 }

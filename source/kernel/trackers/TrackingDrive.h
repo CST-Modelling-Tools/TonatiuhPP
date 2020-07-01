@@ -2,18 +2,18 @@
 
 #include "kernel/TonatiuhKernel.h"
 
-#include "libraries/math/Vector2D.h"
-#include "libraries/math/Vector3D.h"
-#include "libraries/math/Transform.h"
-#include "libraries/math/Interval.h"
+#include "libraries/math/2D/vec2d.h"
+#include "libraries/math/3D/vec3d.h"
+#include "libraries/math/3D/Transform.h"
+#include "libraries/math/1D/Interval.h"
 
 
 struct TONATIUH_KERNEL TrackingDrive
 {
-    TrackingDrive(const Vector3D& shift, const Vector3D& axis, const IntervalAngular& angles);
+    TrackingDrive(const vec3d& shift, const vec3d& axis, const IntervalAngular& angles);
 
-    Vector3D shift;
-    Vector3D axis;
+    vec3d shift;
+    vec3d axis;
     IntervalAngular angles;
 
     Transform getTransform(double angle) const;
@@ -22,8 +22,8 @@ struct TONATIUH_KERNEL TrackingDrive
 
 struct TONATIUH_KERNEL TrackingVertex
 {
-    TrackingVertex(const Vector3D& shift, const Vector3D& normal);
+    TrackingVertex(const vec3d& shift, const vec3d& normal);
 
-    Vector3D shift;
-    Vector3D normal;
+    vec3d shift;
+    vec3d normal;
 };

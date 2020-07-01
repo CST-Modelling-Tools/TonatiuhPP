@@ -22,8 +22,8 @@ Box3D ProfileRegular::getBox() const
     double rV = r.getValue();
 
     return Box3D(
-        Vector3D(-rV, -rV, 0.),
-        Vector3D(rV, rV, 0.)
+        vec3d(-rV, -rV, 0.),
+        vec3d(rV, rV, 0.)
     );
 }
 
@@ -43,7 +43,7 @@ bool ProfileRegular::isInside(double u, double v) const
     return sqrt(r2)*cos(phi) < rMin;
 }
 
-QVector<Vector2D> ProfileRegular::makeMesh(QSize& dims) const
+QVector<vec2d> ProfileRegular::makeMesh(QSize& dims) const
 {
     int nV = n.getValue();
     double phiStep = gcf::TwoPi/nV;
@@ -51,13 +51,13 @@ QVector<Vector2D> ProfileRegular::makeMesh(QSize& dims) const
     int jMax = std::max(dims.width(), dims.height());
     dims = QSize(iMax, jMax);
 
-    QVector<Vector2D> ans;
+    QVector<vec2d> ans;
     for (int i = 0; i <= iMax; ++i) {
         double u = i*phiStep - phiStep/2. - 90.*gcf::degree;
         for (int j = 0; j < jMax; ++j) {
             double vn = j/double(jMax - 1);
             double v = vn*r.getValue();
-            ans << v*Vector2D(cos(u), sin(u));
+            ans << v*vec2d(cos(u), sin(u));
         }
     }
     return ans;

@@ -1,7 +1,7 @@
 #include "TrackingDrive.h"
 
 
-TrackingDrive::TrackingDrive(const Vector3D& shift, const Vector3D& axis, const IntervalAngular& angles):
+TrackingDrive::TrackingDrive(const vec3d& shift, const vec3d& axis, const IntervalAngular& angles):
     shift(shift),
     axis(axis.normalized()),
     angles(angles)
@@ -15,7 +15,7 @@ Transform TrackingDrive::getTransform(double angle) const
 }
 
 
-TrackingVertex::TrackingVertex(const Vector3D& point, const Vector3D& normal):
+TrackingVertex::TrackingVertex(const vec3d& point, const vec3d& normal):
     shift(point),
     normal(normal.normalized())
 {

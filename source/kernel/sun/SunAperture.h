@@ -11,7 +11,7 @@
 
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/TonatiuhTypes.h"
-#include "libraries/math/Vector3D.h"
+#include "libraries/math/3D/vec3d.h"
 
 class Transform;
 class TShapeKit;
@@ -28,7 +28,7 @@ public:
     double getArea() const;
     const std::vector< QPair<int, int> >& getCells() const {return m_cells;}
 
-    Vector3D Sample(double u, double v, int w, int h) const;
+    vec3d Sample(double u, double v, int w, int h) const;
 
     void setSize(double xMin, double xMax, double yMin, double yMax, double delta);
     void findTexture(int widthDivisions, int heightDivisions, QVector< QPair<TShapeKit*, Transform> > surfaces, SunKit* sunKit);

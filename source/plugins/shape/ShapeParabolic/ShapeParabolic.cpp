@@ -3,8 +3,8 @@
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/math/Box3D.h"
-#include "libraries/math/Ray.h"
+#include "libraries/math/3D/Box3D.h"
+#include "libraries/math/3D/Ray.h"
 using gcf::pow2;
 
 SO_NODE_SOURCE(ShapeParabolic)
@@ -23,18 +23,18 @@ ShapeParabolic::ShapeParabolic()
     SO_NODE_ADD_FIELD( fY, (1.) );
 }
 
-Vector3D ShapeParabolic::getPoint(double u, double v) const
+vec3d ShapeParabolic::getPoint(double u, double v) const
 {
-    return Vector3D(
+    return vec3d(
         u,
         v,
         (u*u/fX.getValue() + v*v/fY.getValue())/4.
     );
 }
 
-Vector3D ShapeParabolic::getNormal(double u, double v) const
+vec3d ShapeParabolic::getNormal(double u, double v) const
 {
-    return Vector3D(
+    return vec3d(
         -u/fX.getValue(),
         -v/fY.getValue(),
         2.
@@ -44,7 +44,7 @@ Vector3D ShapeParabolic::getNormal(double u, double v) const
 Box3D ShapeParabolic::getBox(ProfileRT* profile) const
 {  
     Box3D box = profile->getBox();
-    Vector3D v = box.absMax();
+    vec3d v = box.absMax();
     double zX = v.x*v.x/(4.*fX.getValue());
     double zY = v.y*v.y/(4.*fY.getValue());
     if (zX >= 0.) {
@@ -68,8 +68,8 @@ Box3D ShapeParabolic::getBox(ProfileRT* profile) const
 // r = r0 + d*t
 bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
 {
-    const Vector3D& rayO = ray.origin;
-    const Vector3D& rayD = ray.direction();
+    const vec3d& rayO = ray.origin;
+    const vec3d& rayD = ray.direction();
     double gX = 1./fX.getValue();
     double gY = 1./fY.getValue();
 
@@ -84,7 +84,7 @@ bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometr
         double t = ts[i];
         if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
 
-        Vector3D pHit = ray.point(t);
+        vec3d pHit = ray.point(t);
         if (!profile->isInside(pHit.x, pHit.y)) continue;
 
         if (tHit == 0 && dg == 0)
@@ -96,9 +96,9 @@ bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometr
         dg->point = pHit;
         dg->u = pHit.x;
         dg->v = pHit.y;
-        dg->dpdu = Vector3D(1., 0., pHit.x*gX/2.);
-        dg->dpdv = Vector3D(0., 1., pHit.y*gY/2.);
-        dg->normal = Vector3D(-dg->dpdu.z, -dg->dpdv.z, 1.).normalized();
+        dg->dpdu = vec3d(1., 0., pHit.x*gX/2.);
+        dg->dpdv = vec3d(0., 1., pHit.y*gY/2.);
+        dg->normal = vec3d(-dg->dpdu.z, -dg->dpdv.z, 1.).normalized();
         dg->shape = this;
         dg->isFront = dot(dg->normal, rayD) <= 0.;
         return true;
@@ -110,8 +110,8 @@ void ShapeParabolic::updateShapeGL(TShapeKit* parent)
 {
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
     Box3D box = profile->getBox();
-    Vector3D q = box.absMin();
-    Vector3D s = box.extent();
+    vec3d q = box.absMin();
+    vec3d s = box.extent();
 
     double cx = 2.*std::abs(fX.getValue());
     double cy = 2.*std::abs(fY.getValue());

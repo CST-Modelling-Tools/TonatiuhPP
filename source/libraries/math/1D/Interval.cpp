@@ -1,6 +1,6 @@
 #include "Interval.h"
 #include <cassert>
-#include "gcf.h"
+#include "math/gcf.h"
 
 
 Interval::Interval(double a, double b)

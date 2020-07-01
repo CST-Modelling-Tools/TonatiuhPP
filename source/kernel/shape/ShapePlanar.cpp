@@ -3,8 +3,8 @@
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/math/Box3D.h"
-#include "libraries/math/Ray.h"
+#include "libraries/math/3D/Box3D.h"
+#include "libraries/math/3D/Ray.h"
 
 SO_NODE_SOURCE(ShapePlanar)
 
@@ -27,7 +27,7 @@ bool ShapePlanar::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
 
     if (t < ray.tMin + 1e-5 || t > ray.tMax) return false;
 
-    Vector3D pHit = ray.point(t);
+    vec3d pHit = ray.point(t);
     if (!profile->isInside(pHit.x, pHit.y)) return false;
 
     if (tHit == 0 && dg == 0)
@@ -39,9 +39,9 @@ bool ShapePlanar::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
     dg->point = pHit;
     dg->u = pHit.x;
     dg->v = pHit.y;
-    dg->dpdu = Vector3D(1., 0., 0.);
-    dg->dpdv = Vector3D(0., 1., 0.);
-    dg->normal = Vector3D(0., 0., 1.);
+    dg->dpdu = vec3d(1., 0., 0.);
+    dg->dpdv = vec3d(0., 1., 0.);
+    dg->normal = vec3d(0., 0., 1.);
     dg->shape = this;
     dg->isFront = dot(dg->normal, ray.direction()) <= 0.;
     return true;

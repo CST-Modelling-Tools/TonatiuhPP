@@ -2,7 +2,7 @@
 
 #include "kernel/scene/TAbstract.h"
 #include "kernel/random/Random.h"
-#include "libraries/math/Vector3D.h"
+#include "libraries/math/3D/vec3d.h"
 
 #include <Inventor/nodes/SoSubNode.h>
 
@@ -15,7 +15,7 @@ class TONATIUH_KERNEL SunShape: public SoNode
 public:
     static void initClass();
 
-    virtual Vector3D generateRay(Random& rand) const = 0;
+    virtual vec3d generateRay(Random& rand) const = 0;
     virtual double getThetaMax() const = 0;
 
     NAME_ICON_FUNCTIONS("X", ":/SunX.png")

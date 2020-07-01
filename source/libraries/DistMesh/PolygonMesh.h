@@ -1,7 +1,7 @@
 #pragma once
 
 #include "libraries/TonatiuhLibraries.h"
-#include "libraries/math/Vector2D.h"
+#include "libraries/math/2D/vec2d.h"
 
 #include <QPolygonF>
 
@@ -18,11 +18,11 @@ public:
 
     bool makeMesh(double step);
 
-    const QVector<Vector2D>& getPoints() const {return m_points;}
+    const QVector<vec2d>& getPoints() const {return m_points;}
     const QVector<Triangle>& getTriangles() const {return m_triangles;}
 
 protected:
     QPolygonF m_polygon;
-    QVector<Vector2D> m_points;
+    QVector<vec2d> m_points;
     QVector<Triangle> m_triangles;
 };

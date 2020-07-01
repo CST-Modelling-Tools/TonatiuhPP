@@ -1,7 +1,7 @@
 #pragma once
 
 #include "kernel/profiles/ProfileRT.h"
-#include "libraries/math/Vector2D.h"
+#include "libraries/math/2D/vec2d.h"
 
 
 class TONATIUH_KERNEL ProfileTriangle: public ProfileRT
@@ -18,16 +18,16 @@ public:
 
     Box3D getBox() const;
     bool isInside(double u, double v) const;
-    QVector<Vector2D> makeMesh(QSize& dims) const;
+    QVector<vec2d> makeMesh(QSize& dims) const;
 
     NAME_ICON_FUNCTIONS("Triangle", ":/images/ProfileTriangle.png")
 
 protected:
     ~ProfileTriangle();
 
-    Vector2D m_pAC;
-    Vector2D m_pBC;
-    Vector2D m_pC;
+    vec2d m_pAC;
+    vec2d m_pBC;
+    vec2d m_pC;
     double m_det;
 
     SoNodeSensor* m_sensor;

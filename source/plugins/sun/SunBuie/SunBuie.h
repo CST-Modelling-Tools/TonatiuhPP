@@ -12,7 +12,7 @@ public:
     SunBuie();
     SoNode* copy(SbBool copyConnections) const;
 
-    Vector3D generateRay(Random& rand) const;
+    vec3d generateRay(Random& rand) const;
     double getThetaMax() const;
 
     SoSFDouble csr;

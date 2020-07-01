@@ -4,8 +4,8 @@
 
 #include <Inventor/nodes/SoShape.h>
 
-struct Vector2D;
-struct Vector3D;
+struct vec2d;
+struct vec3d;
 struct Box3D;
 class Ray;
 struct DifferentialGeometry;
@@ -21,9 +21,9 @@ class TONATIUH_KERNEL ShapeRT: public SoNode
 public:
     static void initClass();
 
-    virtual Vector3D getPoint(double u, double v) const;
-    virtual Vector3D getNormal(double u, double v) const;
-    virtual Vector2D getUV(const Vector3D& p) const;
+    virtual vec3d getPoint(double u, double v) const;
+    virtual vec3d getNormal(double u, double v) const;
+    virtual vec2d getUV(const vec3d& p) const;
     virtual Box3D getBox(ProfileRT* profile) const;
 
     // with computing dg, ray in local coordinates

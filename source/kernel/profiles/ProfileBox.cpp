@@ -17,7 +17,7 @@ ProfileBox::ProfileBox()
 
 Box3D ProfileBox::getBox() const
 {
-    Vector3D v(uSize.getValue()/2., vSize.getValue()/2., 0.);
+    vec3d v(uSize.getValue()/2., vSize.getValue()/2., 0.);
     return Box3D(-v, v);
 }
 
@@ -27,11 +27,11 @@ bool ProfileBox::isInside(double u, double v) const
            2.*std::abs(v) <= vSize.getValue();
 }
 
-QVector<Vector2D> ProfileBox::makeMesh(QSize& dims) const
+QVector<vec2d> ProfileBox::makeMesh(QSize& dims) const
 {
     const int iMax = dims.width();
     const int jMax = dims.height();
-    QVector<Vector2D> ans;
+    QVector<vec2d> ans;
 
     for (int i = 0; i < iMax; ++i) {
         double un = i/double(iMax - 1);
@@ -39,7 +39,7 @@ QVector<Vector2D> ProfileBox::makeMesh(QSize& dims) const
         for (int j = 0; j < jMax; ++j) {
             double vn = j/double(jMax - 1);
             double v = (vn - 0.5)*vSize.getValue();
-            ans << Vector2D(u, v);
+            ans << vec2d(u, v);
         }
     }
     return ans;

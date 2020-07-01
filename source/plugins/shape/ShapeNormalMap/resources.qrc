@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/" >
+        <file>ShapeNormalMap.png</file>
+    </qresource>
+</RCC>

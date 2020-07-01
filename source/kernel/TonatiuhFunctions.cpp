@@ -5,9 +5,9 @@
 
 #include "kernel/random/Random.h"
 #include "TonatiuhFunctions.h"
-#include "libraries/math/Transform.h"
-#include "libraries/math/Vector3D.h"
-#include "libraries/math/Vector2D.h"
+#include "libraries/math/3D/Transform.h"
+#include "libraries/math/3D/vec3d.h"
+#include "libraries/math/2D/vec2d.h"
 
 
 SbMatrix tgf::makeSbMatrix(const Transform& transform)
@@ -57,14 +57,14 @@ SbMatrix tgf::makeSbMatrix(SoTransform* t)
     return ans;
 }
 
-Vector2D tgf::makeVector2D(const SbVec2f& v)
+vec2d tgf::makeVector2D(const SbVec2f& v)
 {
-    return Vector2D(v[0], v[1]);
+    return vec2d(v[0], v[1]);
 }
 
-Vector3D tgf::makeVector3D(const SbVec3f& v)
+vec3d tgf::makeVector3D(const SbVec3f& v)
 {
-    return Vector3D(v[0], v[1], v[2]);
+    return vec3d(v[0], v[1], v[2]);
 }
 
 Transform tgf::makeTransform(const SbMatrix& m)

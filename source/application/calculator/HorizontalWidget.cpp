@@ -19,8 +19,8 @@
 #include "libraries/math/gcf.h"
 
 #include "HorizontalWidget.h"
-#include "libraries/math/Ray.h"
-#include "libraries/math/Vector3D.h"
+#include "libraries/math/3D/Ray.h"
+#include "libraries/math/3D/vec3d.h"
 
 
 HorizontalWidget::HorizontalWidget( QWidget* parent )
@@ -143,7 +143,7 @@ SoSeparator* HorizontalWidget::AzimuthLine()
       curve->addChild( curveMaterial );
 
       float curvePoints[270][3];
-      Vector3D center( 0, 0, 0 );
+      vec3d center( 0, 0, 0 );
 
     int numPoints = 0;
     int indexes[360];
@@ -384,7 +384,7 @@ SoSeparator* HorizontalWidget::ZenithLine()
       zenith->addChild( curve );
 
       float curvePoints[270][3];
-      Vector3D center( 0, 0, 0 );
+      vec3d center( 0, 0, 0 );
 
     int numPoints = 0;
     int indexes[360];

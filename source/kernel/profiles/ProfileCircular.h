@@ -18,7 +18,7 @@ public:
 
     Box3D getBox() const;
     bool isInside(double u, double v) const;
-    QVector<Vector2D> makeMesh(QSize& dims) const;
+    QVector<vec2d> makeMesh(QSize& dims) const;
 
     NAME_ICON_FUNCTIONS("Circular", ":/images/ProfileCircular.png")
 

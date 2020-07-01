@@ -27,7 +27,7 @@ bool PolygonMesh::makeMesh(double step)
 
     m_points.clear();
     for (int n = 0; n < points.rows(); ++n)
-        m_points << Vector2D(points(n, 0), points(n, 1));
+        m_points << vec2d(points(n, 0), points(n, 1));
 
     m_triangles.clear();
     for (int n = 0; n < elements.rows(); ++n)

@@ -58,7 +58,7 @@ SunBuie::~SunBuie()
     delete m_sensor;
 }
 
-Vector3D SunBuie::generateRay(Random& rand) const
+vec3d SunBuie::generateRay(Random& rand) const
 {
     double phi = gcf::TwoPi*rand.RandomDouble();
     double theta = zenithAngle(rand);
@@ -67,7 +67,7 @@ Vector3D SunBuie::generateRay(Random& rand) const
     double cosPhi = cos(phi);
     double sinPhi = sin(phi);
 
-    return Vector3D(
+    return vec3d(
         sinTheta*cosPhi,
         sinTheta*sinPhi,
         cosTheta
