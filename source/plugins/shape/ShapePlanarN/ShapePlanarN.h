@@ -1,32 +1,36 @@
 #pragma once
 
 #include "kernel/shape/ShapeRT.h"
+#include <Inventor/fields/SoSFVec2i32.h>
 
 
-class ShapeNormalMap: public ShapeRT
+class ShapePlanarN: public ShapeRT
 {
-    SO_NODE_HEADER(ShapeNormalMap);
+    SO_NODE_HEADER(ShapePlanarN);
 
 public:
     static void initClass();
-    ShapeNormalMap();
+    ShapePlanarN();
 
-    vec3d getPoint(double u, double v) const;
     vec3d getNormal(double u, double v) const;
-    Box3D getBox(ProfileRT* profile) const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
+
+    SoSFVec2f xLimits;
+    SoSFVec2f yLimits;
+    SoSFVec2i32 dims;
+    SoMFVec3f normals;
 
     SoSFDouble fX;
     SoSFDouble fY;
 
-    NAME_ICON_FUNCTIONS("NormalMap", ":/ShapeNormalMap.png")
+    NAME_ICON_FUNCTIONS("PlanarN", ":/ShapePlanarN.png")
     void updateShapeGL(TShapeKit* parent);
 };
 
 
 
-class ShapeNormalMapFactory:
-    public QObject, public ShapeFactoryT<ShapeNormalMap>
+class ShapePlanarNFactory:
+    public QObject, public ShapeFactoryT<ShapePlanarN>
 {
     Q_OBJECT
     Q_INTERFACES(ShapeFactory)

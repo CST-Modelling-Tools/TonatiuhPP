@@ -133,6 +133,7 @@ struct TONATIUH_LIBRARIES vec3d
     }
 
     vec3d reflected(const vec3d& n) const;
+    vec3d reflect(const vec3d& v) const;
 
     double min() const {return std::min(std::min(x, y), z);}
     double max() const {return std::max(std::max(x, y), z);}
@@ -166,7 +167,12 @@ inline vec3d cross(const vec3d& a, const vec3d& b)
 
 inline vec3d vec3d::reflected(const vec3d& n) const
 {
-    return *this - 2.*dot(*this, n)*n;
+    return *this - n*(2.*dot(*this, n));
+}
+
+inline vec3d vec3d::reflect(const vec3d& v) const
+{
+    return v - (*this)*(2.*dot(*this, v)/norm2());
 }
 
 inline vec3d min(const vec3d& a, const vec3d& b)

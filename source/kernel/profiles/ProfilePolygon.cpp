@@ -16,15 +16,17 @@ ProfilePolygon::ProfilePolygon()
 {
     SO_NODE_CONSTRUCTOR(ProfilePolygon);
 
-    SO_NODE_ADD_FIELD( points, (0., 0.) );
-    SbVec2f vs[] = {
-        SbVec2f(1., 0.),
-        SbVec2f(0., 1.),
-        SbVec2f(-1., 0.),
-        SbVec2f(0., -1.)
+//    SO_NODE_ADD_FIELD( points, (0., 0.) ); // single value only
+    float vs[][2] = {
+        {1., 0.},
+        {0., 1.},
+        {-1., 0.},
+        {0., -1.}
     };
     points.setValues(0, 4, vs);
-//    points.setNames({"x", "y"});
+    points.setContainer(this);
+    fieldData->addField(this, "points", &points);
+//    points.setNames({"x", "y"}); // for UserField
 
     m_sensor = new SoNodeSensor(onSensor, this);
     m_sensor->attach(this);

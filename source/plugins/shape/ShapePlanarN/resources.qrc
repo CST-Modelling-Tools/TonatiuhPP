@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/" >
-        <file>ShapeNormalMap.png</file>
+        <file>ShapePlanarN.png</file>
     </qresource>
 </RCC>

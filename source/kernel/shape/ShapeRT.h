@@ -27,7 +27,7 @@ public:
     virtual Box3D getBox(ProfileRT* profile) const;
 
     // with computing dg, ray in local coordinates
-    virtual bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const = 0;
+    virtual bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const;
     // without computing dg
     virtual bool intersectP(const Ray& ray, ProfileRT* profile) const {return intersect(ray, 0, 0, profile);}
 

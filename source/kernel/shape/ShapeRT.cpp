@@ -9,9 +9,11 @@
 #include <Inventor/nodes/SoIndexedFaceSet.h>
 
 #include "kernel/scene/TShapeKit.h"
+#include "kernel/shape/DifferentialGeometry.h"
 #include "kernel/profiles/ProfileRT.h"
 #include "libraries/math/3D/vec3d.h"
 #include "libraries/math/3D/Box3D.h"
+#include "libraries/math/3D/Ray.h"
 #include "kernel/profiles/ProfilePolygon.h"
 #include "libraries/DistMesh/PolygonMesh.h"
 
@@ -47,6 +49,33 @@ Box3D ShapeRT::getBox(ProfileRT* profile) const
     box.pMin.z = -zMax;
     box.pMax.z = zMax;
     return box;
+}
+
+bool ShapeRT::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
+{
+    // r0_z + d_z*t = 0
+    double t = -ray.origin.z*ray.invDirection().z;
+
+    if (t < ray.tMin + 1e-5 || t > ray.tMax) return false;
+
+    vec3d pHit = ray.point(t);
+    if (!profile->isInside(pHit.x, pHit.y)) return false;
+
+    if (tHit == 0 && dg == 0)
+        return true;
+    else if (tHit == 0 || dg == 0)
+        gcf::SevereError("ShapePlanar::intersect");
+
+    *tHit = t;
+    dg->point = pHit;
+    dg->u = pHit.x;
+    dg->v = pHit.y;
+    dg->dpdu = vec3d(1., 0., 0.);
+    dg->dpdv = vec3d(0., 1., 0.);
+    dg->normal = vec3d(0., 0., 1.);
+    dg->shape = this;
+    dg->isFront = dot(dg->normal, ray.direction()) <= 0.;
+    return true;
 }
 
 void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals, bool reverseClock)

@@ -94,12 +94,12 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isShapeFront,
     {
         ShapeRT* shape = (ShapeRT*) children[IndexShapeRT]->m_node;
         if (!shape) return false;
-        ProfileRT* aperture = (ProfileRT*) children[IndexProfileRT]->m_node;
+        ProfileRT* profile = (ProfileRT*) children[IndexProfileRT]->m_node;
 
         Ray rayLocal = m_transform.transformInverse(rayIn);
         double thit = 0.;
         DifferentialGeometry dg;
-        if (!shape->intersect(rayLocal, &thit, &dg, aperture)) return false;
+        if (!shape->intersect(rayLocal, &thit, &dg, profile)) return false;
         rayIn.tMax = thit;
         isShapeFront = dg.isFront;
         shapeNode = this;
@@ -111,13 +111,7 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isShapeFront,
 
         MaterialRT* material = (MaterialRT*) children[IndexMaterialRT]->m_node;
         if (!material) return false;
-        Ray ray;
-        if (material->OutputRay(rayIn, dg, rand, rayOut))
-//        if (material->OutputRay(rayLocal, dg, rand, ray))
-        {
-//            rayOut = m_transform.transformDirect(ray);
-            return true;
-        }
+        return material->OutputRay(rayIn, dg, rand, rayOut);
     }
     else
     {

@@ -11,8 +11,6 @@ public:
     static void initClass();
     ShapePlanar();
 
-    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const;
-
     NAME_ICON_FUNCTIONS("Planar", ":/images/ShapePlanar.png")
     void updateShapeGL(TShapeKit* parent);
 };

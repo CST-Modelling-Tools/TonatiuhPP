@@ -74,14 +74,12 @@ bool MaterialSpecular::OutputRay(const Ray& rayIn, const DifferentialGeometry& d
         }
         vec3d vx = dg.dpdu.normalized();
         vec3d vy = dg.dpdv.normalized();
-//        Vector3D vz = dg.normal;
-        vec3d vz = dg.normal.normalized();
-        normal = (vx*normal.x + vy*normal.y + vz*normal.z).normalized();
+        vec3d vz = dg.normal.normalized(); // always normalized?
+        normal = vx*normal.x + vy*normal.y + vz*normal.z;
     } else
-//        normal = dg.normal;
-        normal = dg.normal.normalized();
+        normal = dg.normal;
 
-    vec3d d = rayIn.direction() - 2.*normal*dot(normal, rayIn.direction());
+    vec3d d = normal.reflect(rayIn.direction());
     rayOut.setDirection(d); // double sided
     return true;
 }

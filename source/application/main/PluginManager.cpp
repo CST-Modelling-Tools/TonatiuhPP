@@ -207,7 +207,7 @@ void PluginManager::sort()
         "Cylinder",
         "Cone",
         "",
-        "NormalMap",
+        "PlanarN",
         "Mesh"
     };
     sortFactories(shapeNames, m_shapeFactories);

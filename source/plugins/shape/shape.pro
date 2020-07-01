@@ -8,7 +8,7 @@ SUBDIRS += ShapeSphere
 SUBDIRS += ShapeCylinder
 SUBDIRS += ShapeCone
 
-SUBDIRS += ShapeNormalMap
+SUBDIRS += ShapePlanarN
 SUBDIRS += ShapeMesh
 
 #SUBDIRS += ShapeBezierSurface
