@@ -39,6 +39,12 @@ QVariant ParametersItem::data(int role) const
     if (role == Qt::DisplayRole)
     {
         QString text = QStandardItem::data(role).toString();
+
+        // discard multilines
+        if (text.indexOf('\n') >= 0)
+            return QString("...");
+
+        // correct precision
         QStringList list = text.split(" ");
         QString ans;
         for (int n = 0; n < list.size(); ++n) {

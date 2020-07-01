@@ -20,6 +20,7 @@
 #include "ParametersDelegate.h"
 #include "ParametersItem.h"
 #include "ParametersModel.h"
+#include "ParametersEditor.h"
 
 
 /**
@@ -116,8 +117,10 @@ void ParametersView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEdit
     }
     else
     {
-        QLineEdit* w = static_cast<QLineEdit*>(editor);
-        value = w->text();
+        if (QLineEdit* w = dynamic_cast<QLineEdit*>(editor) )
+            value = w->text();
+        else if (ParametersEditor* w = dynamic_cast<ParametersEditor*>(editor) )
+            value = w->getText();
     }
 
     if (!value.isEmpty())

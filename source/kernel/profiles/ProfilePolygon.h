@@ -3,7 +3,7 @@
 #include "kernel/profiles/ProfileRT.h"
 #include "libraries/math/2D/vec2d.h"
 #include "libraries/Coin3D/MFVec2.h"
-
+#include <Inventor/fields/SoMFVec2f.h>
 
 class TONATIUH_KERNEL ProfilePolygon: public ProfileRT
 {
@@ -13,7 +13,7 @@ public:
     static void initClass();
     ProfilePolygon();
 
-    MFVec2 points;
+    SoMFVec2f points;
     const QPolygonF& getPolygon() const {return m_polygon;}
 
     Box3D getBox() const;

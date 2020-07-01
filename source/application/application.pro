@@ -36,6 +36,7 @@ FORMS += \
     $$files(calculator/*.ui) \
     $$files(run/*.ui) \
     $$files(main/*.ui) \
+    $$files(parameters/*.ui) \
     $$files(script/*.ui) \
     $$files(widgets/*.ui)
 

@@ -8,6 +8,7 @@
 
 #include "ParametersModel.h"
 #include "ParametersItem.h"
+#include "ParametersEditor.h"
 
 #include "libraries/Coin3D/FieldEditor.h"
 #include "libraries/Coin3D/UserSField.h"
@@ -73,11 +74,28 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
     }
     else
     {
-        QLineEdit* editor = new QLineEdit(parent);
-        QString s = model->data(index, Qt::DisplayRole).toString();
-        editor->setText(s);
-        return editor;
+        SbString fieldValue = "null";
+        field->get(fieldValue);
+        QString text = fieldValue.getString();
+//        QString s = model->data(index, Qt::DisplayRole).toString();
+
+        if (text.indexOf('\n') >= 0) {
+            text = text.trimmed();
+            ParametersEditor* editor = new ParametersEditor;
+            editor->setText(text);
+            return editor;
+        } else {
+            QLineEdit* editor = new QLineEdit(parent);
+            editor->setText(text);
+            return editor;
+        }
     }
+}
+
+void ParametersDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    if (!dynamic_cast<ParametersEditor*>(editor))
+        QStyledItemDelegate::updateEditorGeometry(editor, option, index);
 }
 
 //void ParametersDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const

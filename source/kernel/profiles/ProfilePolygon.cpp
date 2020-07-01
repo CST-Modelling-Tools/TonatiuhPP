@@ -24,7 +24,7 @@ ProfilePolygon::ProfilePolygon()
         SbVec2f(0., -1.)
     };
     points.setValues(0, 4, vs);
-    points.setNames({"x", "y"});
+//    points.setNames({"x", "y"});
 
     m_sensor = new SoNodeSensor(onSensor, this);
     m_sensor->attach(this);
@@ -77,7 +77,7 @@ ProfilePolygon::~ProfilePolygon()
 void ProfilePolygon::onSensor(void* data, SoSensor*)
 {
     ProfilePolygon* profile = (ProfilePolygon*) data;
-    MFVec2& points = profile->points;
+    SoMFVec2f& points = profile->points;
     QPolygonF& polygon = profile->m_polygon;
 
     polygon.clear();
