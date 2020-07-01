@@ -1,7 +1,7 @@
 #pragma once
 
 #include "libraries/TonatiuhLibraries.h"
-#include "libraries/geometry/Vector2D.h"
+#include "libraries/math/Vector2D.h"
 
 #include <QPolygonF>
 

@@ -1,6 +1,6 @@
 #include "TrackerSingleSolver.h"
 
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 
 
 // rotation around a from m to v

@@ -2,7 +2,7 @@
 
 #include <Inventor/nodekits/SoSceneKit.h>
 
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 #include "tree/SceneModel.h"
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/sun/SunKit.h"

@@ -5,7 +5,7 @@
 #include <Inventor/nodekits/SoSceneKit.h>
 
 #include "tree/SceneModel.h"
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/trackers/Tracker.h"

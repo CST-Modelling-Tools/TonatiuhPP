@@ -40,10 +40,10 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodekits/SoSceneKit.h>
 
-#include "libraries/geometry/gcf.h"
-#include "libraries/geometry/gcf.h"
-#include "libraries/geometry/Ray.h"
-#include "libraries/geometry/Transform.h"
+#include "libraries/math/gcf.h"
+#include "libraries/math/gcf.h"
+#include "libraries/math/Ray.h"
+#include "libraries/math/Transform.h"
 
 #include "commands/ActionInsert.h"
 #include "commands/CmdChangeNodeName.h"

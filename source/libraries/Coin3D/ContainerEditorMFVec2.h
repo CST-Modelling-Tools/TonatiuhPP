@@ -4,7 +4,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 
-#include "libraries/fields/FieldEditor.h"
+#include "libraries/Coin3D/FieldEditor.h"
 
 
 

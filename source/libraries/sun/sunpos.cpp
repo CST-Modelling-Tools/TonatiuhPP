@@ -1,7 +1,7 @@
 #include <cmath>
 
 #include "sunpos.h"
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 
 using namespace std;
 

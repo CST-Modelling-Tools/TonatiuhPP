@@ -3,7 +3,7 @@
 #include "ui_containerviewermfvec2.h"
 #include "DoubleValuesDelegate.h"
 #include <QMessageBox>
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 
 /*!
  * Creates an dialog object

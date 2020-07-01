@@ -1,6 +1,6 @@
 #include "TrackerDualSolver.h"
 
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 
 #include <QVector>
 

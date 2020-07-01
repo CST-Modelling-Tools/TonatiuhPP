@@ -1,7 +1,7 @@
 #pragma once
 
 #include "kernel/TonatiuhKernel.h"
-#include "libraries/geometry/Vector3D.h"
+#include "libraries/math/Vector3D.h"
 
 class ShapeRT;
 

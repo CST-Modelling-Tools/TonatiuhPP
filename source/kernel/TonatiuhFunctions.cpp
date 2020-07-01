@@ -5,9 +5,9 @@
 
 #include "kernel/random/Random.h"
 #include "TonatiuhFunctions.h"
-#include "libraries/geometry/Transform.h"
-#include "libraries/geometry/Vector3D.h"
-#include "libraries/geometry/Vector2D.h"
+#include "libraries/math/Transform.h"
+#include "libraries/math/Vector3D.h"
+#include "libraries/math/Vector2D.h"
 
 
 SbMatrix tgf::makeSbMatrix(const Transform& transform)

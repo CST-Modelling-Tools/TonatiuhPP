@@ -1,7 +1,7 @@
 #include "SunBuie.h"
 
 #include <Inventor/sensors/SoNodeSensor.h>
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 
 
 const double SunBuie::s_csrMin = 0.000001;

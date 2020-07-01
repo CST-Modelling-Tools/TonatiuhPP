@@ -12,7 +12,7 @@
 
 #include <Inventor/nodes/SoNode.h>
 
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 #include "kernel/run/InstanceNode.h"
 #include "tree/SceneModel.h"
 

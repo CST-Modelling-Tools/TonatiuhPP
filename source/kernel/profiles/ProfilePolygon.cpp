@@ -1,6 +1,6 @@
 #include "ProfilePolygon.h"
 #include "kernel/TonatiuhFunctions.h"
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 
 #include <Inventor/sensors/SoNodeSensor.h>
 

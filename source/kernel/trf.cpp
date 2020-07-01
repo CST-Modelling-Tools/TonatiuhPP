@@ -13,11 +13,11 @@
 #include <Inventor/nodes/SoTransform.h>
 
 #include "run/InstanceNode.h"
-#include "libraries/geometry/Matrix4x4.h"
+#include "libraries/math/Matrix4x4.h"
 #include "photons/Photon.h"
 #include "photons/Photons.h"
 #include "random/Random.h"
-#include "libraries/geometry/Ray.h"
+#include "libraries/math/Ray.h"
 #include "TonatiuhFunctions.h"
 #include "sun/SunKit.h"
 #include "trf.h"

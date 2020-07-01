@@ -176,7 +176,7 @@ SoSeparator* SkyBackground::makeLabels()
     return ans;
 }
 
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 void SkyBackground::makeLabelAE(SoSeparator* parent, double azimuth, double elevation, const QString& text)
 {
     SoSeparator* ans = new SoSeparator;

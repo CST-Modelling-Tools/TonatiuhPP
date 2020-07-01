@@ -1,6 +1,6 @@
 #pragma once
 
-#include "libraries/geometry/Vector3D.h"
+#include "libraries/math/Vector3D.h"
 class Ray;
 
 

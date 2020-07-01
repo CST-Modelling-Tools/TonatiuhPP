@@ -16,8 +16,8 @@
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/sun/SunShape.h"
 #include "kernel/TonatiuhFunctions.h"
-#include "libraries/geometry/Ray.h"
-#include "libraries/geometry/Transform.h"
+#include "libraries/math/Ray.h"
+#include "libraries/math/Transform.h"
 
 class InstanceNode;
 class Random;

@@ -29,10 +29,10 @@
 #include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunPillbox.h"
 #include "kernel/trackers/Tracker.h"
-#include "libraries/fields/UserMField.h"
-#include "libraries/fields/UserSField.h"
-#include "libraries/fields/MFVec2.h"
-#include "libraries/geometry/gcf.h"
+#include "libraries/Coin3D/UserMField.h"
+#include "libraries/Coin3D/UserSField.h"
+#include "libraries/Coin3D/MFVec2.h"
+#include "libraries/math/gcf.h"
 #include "view/SkyBackground.h"
 
 

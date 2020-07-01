@@ -8,7 +8,7 @@
 #include <QToolTip>
 #include <QVBoxLayout>
 
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 
 #include "Image.h"
 #include "WorldMap.h"

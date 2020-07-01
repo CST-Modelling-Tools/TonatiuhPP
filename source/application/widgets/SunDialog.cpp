@@ -12,7 +12,7 @@
 #include "kernel/sun/SunAperture.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/scene/TSceneKit.h"
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 #include "parameters/ParametersView.h"
 
 /**

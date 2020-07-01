@@ -3,9 +3,9 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoGroup.h>
 
-#include "libraries/geometry/gcf.h"
-#include "libraries/geometry/Transform.h"
-#include "libraries/geometry/Vector3D.h"
+#include "libraries/math/gcf.h"
+#include "libraries/math/Transform.h"
+#include "libraries/math/Vector3D.h"
 
 #include "kernel/air/AirVacuum.h"
 #include "kernel/trackers/Tracker.h"

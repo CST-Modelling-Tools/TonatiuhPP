@@ -2,7 +2,7 @@
 
 #include "kernel/scene/TAbstract.h"
 #include "kernel/random/Random.h"
-#include "libraries/geometry/Vector3D.h"
+#include "libraries/math/Vector3D.h"
 
 #include <Inventor/nodes/SoSubNode.h>
 

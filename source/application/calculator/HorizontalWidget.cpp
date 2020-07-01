@@ -16,11 +16,11 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 
 #include "HorizontalWidget.h"
-#include "libraries/geometry/Ray.h"
-#include "libraries/geometry/Vector3D.h"
+#include "libraries/math/Ray.h"
+#include "libraries/math/Vector3D.h"
 
 
 HorizontalWidget::HorizontalWidget( QWidget* parent )

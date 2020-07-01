@@ -2,7 +2,7 @@
 
 #include <Inventor/nodekits/SoBaseKit.h>
 
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/run/InstanceNode.h"
 #include "tree/SceneModel.h"

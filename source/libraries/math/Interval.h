@@ -8,11 +8,11 @@ class TONATIUH_LIBRARIES Interval
 public:
     Interval(double a, double b);
 
-    double getMin() const {return m_a;}
-    double getMax() const {return m_b;}
+    double min() const {return m_a;}
+    double max() const {return m_b;}
     bool isInside(double x) const {return m_a <= x && x <= m_b;}
     double length() const {return m_b - m_a;}
-    double middle() const {return (m_a + m_b)/2.;}
+    double mid() const {return (m_a + m_b)/2.;}
 
     double toNormalized(double x) const {return (x - m_a)/(m_b - m_a);}
     double fromNormalized(double u) const {return (1. - u)*m_a + u*m_b;}

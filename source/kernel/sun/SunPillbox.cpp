@@ -2,7 +2,7 @@
 
 #include <Inventor/sensors/SoNodeSensor.h>
 
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 
 SO_NODE_SOURCE(SunPillbox)
 

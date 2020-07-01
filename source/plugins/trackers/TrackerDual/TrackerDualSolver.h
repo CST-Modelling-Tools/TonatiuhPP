@@ -1,7 +1,7 @@
 #pragma once
 
 #include "kernel/trackers/TrackingDrive.h"
-#include "libraries/geometry/Vector2D.h"
+#include "libraries/math/Vector2D.h"
 
 typedef Vector2D Angles;
 

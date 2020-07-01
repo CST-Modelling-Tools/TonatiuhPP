@@ -10,8 +10,8 @@
 
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/profiles/ProfileRT.h"
-#include "libraries/geometry/Vector3D.h"
-#include "libraries/geometry/Box3D.h"
+#include "libraries/math/Vector3D.h"
+#include "libraries/math/Box3D.h"
 #include "kernel/profiles/ProfilePolygon.h"
 #include "libraries/DistMesh/PolygonMesh.h"
 

@@ -2,9 +2,9 @@
 
 #include <Inventor/sensors/SoNodeSensor.h>
 
-#include "libraries/geometry/gcf.h"
-#include "libraries/geometry/Ray.h"
-#include "libraries/geometry/Transform.h"
+#include "libraries/math/gcf.h"
+#include "libraries/math/Ray.h"
+#include "libraries/math/Transform.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "kernel/random/Random.h"
 #include "kernel/TonatiuhFunctions.h"

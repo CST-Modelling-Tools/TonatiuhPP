@@ -13,10 +13,10 @@
 #include "SunPillbox.h"
 #include "kernel/TonatiuhFunctions.h"
 #include "kernel/run/InstanceNode.h"
-#include "libraries/geometry/Box3D.h"
-#include "libraries/geometry/Matrix4x4.h"
-#include "libraries/geometry/Transform.h"
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/Box3D.h"
+#include "libraries/math/Matrix4x4.h"
+#include "libraries/math/Transform.h"
+#include "libraries/math/gcf.h"
 #include "scene/TShapeKit.h"
 
 SO_KIT_SOURCE(SunKit)

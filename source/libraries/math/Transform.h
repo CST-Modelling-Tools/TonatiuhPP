@@ -1,7 +1,7 @@
 #pragma once
 
-#include "libraries/geometry/Vector3D.h"
-#include "libraries/geometry/Matrix4x4.h"
+#include "libraries/math/Vector3D.h"
+#include "libraries/math/Matrix4x4.h"
 
 class Ray;
 struct Box3D;

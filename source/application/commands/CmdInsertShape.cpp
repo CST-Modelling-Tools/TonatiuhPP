@@ -4,7 +4,7 @@
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/material/MaterialRT.h"
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 #include "tree/SceneModel.h"
 
 /**

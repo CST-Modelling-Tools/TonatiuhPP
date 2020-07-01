@@ -1,6 +1,6 @@
 #pragma once
 
-#include "libraries/geometry/Vector2D.h"
+#include "libraries/math/Vector2D.h"
 
 
 struct TONATIUH_LIBRARIES Vector3D

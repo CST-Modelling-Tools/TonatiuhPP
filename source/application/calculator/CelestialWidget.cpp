@@ -17,9 +17,9 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
 #include "CelestialWidget.h"
-#include "libraries/geometry/Ray.h"
-#include "libraries/geometry/gcf.h"
-#include "libraries/geometry/Vector3D.h"
+#include "libraries/math/Ray.h"
+#include "libraries/math/gcf.h"
+#include "libraries/math/Vector3D.h"
 
 
 CelestialWidget::CelestialWidget(QWidget* parent):

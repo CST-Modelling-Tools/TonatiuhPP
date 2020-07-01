@@ -2,8 +2,8 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTransform.h>
 
-#include "libraries/geometry/gcf.h"
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
+#include "libraries/math/gcf.h"
 
 #include "GraphicRoot.h"
 //#include "kernel/trackers/GraphicRootTracker.h"

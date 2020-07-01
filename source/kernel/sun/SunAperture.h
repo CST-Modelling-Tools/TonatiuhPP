@@ -11,7 +11,7 @@
 
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/TonatiuhTypes.h"
-#include "libraries/geometry/Vector3D.h"
+#include "libraries/math/Vector3D.h"
 
 class Transform;
 class TShapeKit;

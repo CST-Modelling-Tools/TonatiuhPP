@@ -1,7 +1,7 @@
 #include "CmdLightPositionModified.h"
 
 #include "kernel/sun/SunKit.h"
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 
 /**
  * Creates a new lightKit position command that represents a \a light move with \a parent parent.

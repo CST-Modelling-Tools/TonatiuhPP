@@ -1,7 +1,7 @@
 #pragma once
 
 #include "kernel/profiles/ProfileRT.h"
-#include "libraries/geometry/Vector2D.h"
+#include "libraries/math/Vector2D.h"
 
 
 class TONATIUH_KERNEL ProfileTriangle: public ProfileRT

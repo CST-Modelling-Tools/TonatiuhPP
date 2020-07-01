@@ -9,9 +9,9 @@
 #include "ParametersModel.h"
 #include "ParametersItem.h"
 
-#include "libraries/fields/FieldEditor.h"
-#include "libraries/fields/UserSField.h"
-#include "libraries/fields/UserMField.h"
+#include "libraries/Coin3D/FieldEditor.h"
+#include "libraries/Coin3D/UserSField.h"
+#include "libraries/Coin3D/UserMField.h"
 
 
 ParametersDelegate::ParametersDelegate(QObject* parent):

@@ -9,8 +9,8 @@
 #include <Inventor/SbBox3f.h>
 #include <Inventor/SbMatrix.h>
 
-#include "libraries/geometry/Box3D.h"
-#include "libraries/geometry/Transform.h"
+#include "libraries/math/Box3D.h"
+#include "libraries/math/Transform.h"
 
 class Random;
 class Ray;

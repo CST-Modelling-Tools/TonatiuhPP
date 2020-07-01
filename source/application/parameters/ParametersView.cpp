@@ -13,9 +13,9 @@
 #include <Inventor/lists/SoFieldList.h>
 #include <Inventor/nodes/SoNode.h>
 
-#include "libraries/fields/FieldEditor.h"
-#include "libraries/fields/UserSField.h"
-#include "libraries/fields/UserMField.h"
+#include "libraries/Coin3D/FieldEditor.h"
+#include "libraries/Coin3D/UserSField.h"
+#include "libraries/Coin3D/UserMField.h"
 
 #include "ParametersDelegate.h"
 #include "ParametersItem.h"

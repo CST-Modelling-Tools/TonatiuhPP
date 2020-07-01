@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Inventor/SbVec2f.h>
-#include "libraries/fields/UserMField.h"
+#include "libraries/Coin3D/UserMField.h"
 
 
 class TONATIUH_LIBRARIES MFVec2: public UserMField

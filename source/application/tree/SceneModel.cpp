@@ -19,7 +19,7 @@
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/trackers/Tracker.h"
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 #include "tree/SoPathVariant.h"
 
 /*!

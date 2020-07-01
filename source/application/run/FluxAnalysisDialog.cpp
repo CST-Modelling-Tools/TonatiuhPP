@@ -28,8 +28,8 @@
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunAperture.h"
-#include "libraries/geometry/Transform.h"
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/Transform.h"
+#include "libraries/math/gcf.h"
 
 
 

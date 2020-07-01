@@ -3,8 +3,8 @@
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "libraries/geometry/Box3D.h"
-#include "libraries/geometry/Ray.h"
+#include "libraries/math/Box3D.h"
+#include "libraries/math/Ray.h"
 using gcf::pow2;
 
 SO_NODE_SOURCE(ShapeParabolic)

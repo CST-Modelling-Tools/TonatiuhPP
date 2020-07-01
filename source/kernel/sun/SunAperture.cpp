@@ -15,11 +15,11 @@
 #include <Inventor/elements/SoMaterialBindingElement.h>
 
 #include <math.h>
-#include "libraries/geometry/Box3D.h"
-#include "libraries/geometry/Ray.h"
-#include "libraries/geometry/Transform.h"
-#include "libraries/geometry/Vector3D.h"
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/Box3D.h"
+#include "libraries/math/Ray.h"
+#include "libraries/math/Transform.h"
+#include "libraries/math/Vector3D.h"
+#include "libraries/math/gcf.h"
 #include "scene/TShapeKit.h"
 #include "shape/DifferentialGeometry.h"
 #include "SunKit.h"

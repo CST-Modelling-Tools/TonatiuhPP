@@ -2,7 +2,7 @@
 
 #include "shape/DifferentialGeometry.h"
 #include "random/RandomParallel.h"
-#include "libraries/geometry/Ray.h"
+#include "libraries/math/Ray.h"
 #include "RayTracer.h"
 #include "kernel/photons/Photons.h"
 #include "sun/SunAperture.h"

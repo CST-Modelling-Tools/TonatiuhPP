@@ -10,7 +10,7 @@
 #include <Inventor/fields/SoField.h>
 #include <Inventor/nodes/SoNode.h>
 
-#include "libraries/geometry/gcf.h"
+#include "libraries/math/gcf.h"
 
 #include "CmdModifyParameter.h"
 #include "kernel/run/InstanceNode.h"

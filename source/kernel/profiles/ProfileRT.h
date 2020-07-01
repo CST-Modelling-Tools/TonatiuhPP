@@ -6,8 +6,8 @@
 #include <Inventor/nodes/SoSubNode.h>
 
 #include "kernel/scene/TAbstract.h"
-#include "libraries/geometry/Vector2D.h"
-#include "libraries/geometry/Box3D.h"
+#include "libraries/math/Vector2D.h"
+#include "libraries/math/Box3D.h"
 
 struct DifferentialGeometry;
 class Random;

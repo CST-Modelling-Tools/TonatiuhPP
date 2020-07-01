@@ -3,7 +3,7 @@
 #include "kernel/TonatiuhKernel.h"
 
 #include "kernel/run/InstanceNode.h"
-#include "libraries/geometry/Vector3D.h"
+#include "libraries/math/Vector3D.h"
 
 
 struct TONATIUH_KERNEL Photon
