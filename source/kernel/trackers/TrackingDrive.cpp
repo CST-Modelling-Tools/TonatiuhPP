@@ -1,7 +1,7 @@
 #include "TrackingDrive.h"
 
 
-TrackingDrive::TrackingDrive(const vec3d& shift, const vec3d& axis, const IntervalAngular& angles):
+TrackingDrive::TrackingDrive(const vec3d& shift, const vec3d& axis, const IntervalPeriodic& angles):
     shift(shift),
     axis(axis.normalized()),
     angles(angles)

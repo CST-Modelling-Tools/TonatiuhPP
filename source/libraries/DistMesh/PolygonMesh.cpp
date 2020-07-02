@@ -32,4 +32,6 @@ bool PolygonMesh::makeMesh(double step)
     m_triangles.clear();
     for (int n = 0; n < elements.rows(); ++n)
         m_triangles << Triangle(elements(n, 0), elements(n, 1), elements(n, 2));
+
+    return true;
 }

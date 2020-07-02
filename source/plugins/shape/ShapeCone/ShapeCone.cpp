@@ -47,9 +47,9 @@ vec2d ShapeCone::getUV(const vec3d& p) const
 
 Box3D ShapeCone::getBox(ProfileRT* aperture) const
 {
-    Box3D box = aperture->getBox();
-    double zMin = box.pMin.y;
-    double zMax = box.pMax.y;
+    Box2D box = aperture->getBox();
+    double zMin = box.min().y;
+    double zMax = box.max().y;
     double drV = dr.getValue();
     double rMin = std::abs(1. + drV*zMin);
     double rMax = std::abs(1. + drV*zMax);
@@ -111,9 +111,9 @@ bool ShapeCone::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
 
 void ShapeCone::updateShapeGL(TShapeKit* parent)
 {
-    ProfileRT* aperture = (ProfileRT*) parent->profileRT.getValue();
-    Box3D box = aperture->getBox();
-    vec3d v = box.extent();
+    ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
+    Box2D box = profile->getBox();
+    vec2d v = box.size();
 
     double s = v.x;
     if (s > 1.) s = 1.;

@@ -83,12 +83,12 @@ struct TONATIUH_LIBRARIES vec2d
 
     bool operator==(const vec2d& v) const;
     bool operator!=(const vec2d& v) const;
-    bool operator<=(const vec2d& v) const;
+    bool operator<=(const vec2d& v) const {return x <= v.x && y <= v.y;}
 
     double operator[](int i) const
     {
         if (i == 0) return x;
-        if (i == 1) return y;
+        return y;
     }
 
     double& operator[](int i)
@@ -123,10 +123,31 @@ struct TONATIUH_LIBRARIES vec2d
         return false;
     }
 
-    vec2d reflected(const vec2d& n) const;
+//    vec2d reflected(const vec2d& n) const;
 
     double x;
     double y;
+
+    double min() const {return std::min(x, y);}
+    double max() const {return std::max(x, y);}
+    vec2d abs() const {return vec2d(std::abs(x), std::abs(y));}
+    int maxDimension() const {return x > y ? 0 : 1;}
+
+    static vec2d min(const vec2d& a, const vec2d& b)
+    {
+        return vec2d(
+            std::min(a.x, b.x),
+            std::min(a.y, b.y)
+        );
+    }
+
+    static vec2d max(const vec2d& a, const vec2d& b)
+    {
+        return vec2d(
+            std::max(a.x, b.x),
+            std::max(a.y, b.y)
+        );
+    }
 };
 
 
@@ -145,20 +166,5 @@ inline double cross(const vec2d& a, const vec2d& b)
     return a.x*b.y - a.y*b.x;
 }
 
-inline vec2d min(const vec2d& a, const vec2d& b)
-{
-    return vec2d(
-        std::min(a.x, b.x),
-        std::min(a.y, b.y)
-    );
-}
-
-inline vec2d max(const vec2d& a, const vec2d& b)
-{
-    return vec2d(
-        std::max(a.x, b.x),
-        std::max(a.y, b.y)
-    );
-}
 
 TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const vec2d& vector);

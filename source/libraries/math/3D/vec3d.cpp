@@ -21,11 +21,6 @@ bool vec3d::operator!=(const vec3d& v) const
     return !(*this == v);
 }
 
-bool vec3d::operator<=(const vec3d& v) const
-{
-    return x <= v.x && y <= v.y && z < v.z;
-}
-
 int vec3d::maxDimension() const
 {
     if (x > y && x > z)

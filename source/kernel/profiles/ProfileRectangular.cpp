@@ -17,11 +17,11 @@ ProfileRectangular::ProfileRectangular()
     SO_NODE_ADD_FIELD( vMax, (0.5) );
 }
 
-Box3D ProfileRectangular::getBox() const
+Box2D ProfileRectangular::getBox() const
 {
-    return Box3D(
-        vec3d(uMin.getValue(), vMin.getValue(), 0.),
-        vec3d(uMax.getValue(), vMax.getValue(), 0.)
+    return Box2D(
+        vec2d(uMin.getValue(), vMin.getValue()),
+        vec2d(uMax.getValue(), vMax.getValue())
     );
 }
 

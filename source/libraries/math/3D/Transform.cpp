@@ -249,28 +249,32 @@ void Transform::operator()(const Ray& r, Ray& ans) const
 Box3D Transform::operator()(const Box3D& b) const
 {
     Box3D ans;
-    ans << transformPoint(vec3d(b.pMin.x, b.pMin.y, b.pMin.z));
-    ans << transformPoint(vec3d(b.pMin.x, b.pMin.y, b.pMax.z));
-    ans << transformPoint(vec3d(b.pMin.x, b.pMax.y, b.pMin.z));
-    ans << transformPoint(vec3d(b.pMin.x, b.pMax.y, b.pMax.z));
-    ans << transformPoint(vec3d(b.pMax.x, b.pMin.y, b.pMin.z));
-    ans << transformPoint(vec3d(b.pMax.x, b.pMin.y, b.pMax.z));
-    ans << transformPoint(vec3d(b.pMax.x, b.pMax.y, b.pMin.z));
-    ans << transformPoint(vec3d(b.pMax.x, b.pMax.y, b.pMax.z));
+    const vec3d& vA = b.min();
+    const vec3d& vB = b.max();
+    ans << transformPoint(vec3d(vA.x, vA.y, vA.z));
+    ans << transformPoint(vec3d(vA.x, vA.y, vB.z));
+    ans << transformPoint(vec3d(vA.x, vB.y, vA.z));
+    ans << transformPoint(vec3d(vA.x, vB.y, vB.z));
+    ans << transformPoint(vec3d(vB.x, vA.y, vA.z));
+    ans << transformPoint(vec3d(vB.x, vA.y, vB.z));
+    ans << transformPoint(vec3d(vB.x, vB.y, vA.z));
+    ans << transformPoint(vec3d(vB.x, vB.y, vB.z));
     return ans;
 }
 
 void Transform::operator()(const Box3D& b, Box3D& ans) const
 {
     ans = Box3D();
-    ans << transformPoint(vec3d(b.pMin.x, b.pMin.y, b.pMin.z));
-    ans << transformPoint(vec3d(b.pMin.x, b.pMin.y, b.pMax.z));
-    ans << transformPoint(vec3d(b.pMin.x, b.pMax.y, b.pMin.z));
-    ans << transformPoint(vec3d(b.pMin.x, b.pMax.y, b.pMax.z));
-    ans << transformPoint(vec3d(b.pMax.x, b.pMin.y, b.pMin.z));
-    ans << transformPoint(vec3d(b.pMax.x, b.pMin.y, b.pMax.z));
-    ans << transformPoint(vec3d(b.pMax.x, b.pMax.y, b.pMin.z));
-    ans << transformPoint(vec3d(b.pMax.x, b.pMax.y, b.pMax.z));
+    const vec3d& vA = b.min();
+    const vec3d& vB = b.max();
+    ans << transformPoint(vec3d(vA.x, vA.y, vA.z));
+    ans << transformPoint(vec3d(vA.x, vA.y, vB.z));
+    ans << transformPoint(vec3d(vA.x, vB.y, vA.z));
+    ans << transformPoint(vec3d(vA.x, vB.y, vB.z));
+    ans << transformPoint(vec3d(vB.x, vA.y, vA.z));
+    ans << transformPoint(vec3d(vB.x, vA.y, vB.z));
+    ans << transformPoint(vec3d(vB.x, vB.y, vA.z));
+    ans << transformPoint(vec3d(vB.x, vB.y, vB.z));
 }
 
 bool Transform::operator==(const Transform& t) const

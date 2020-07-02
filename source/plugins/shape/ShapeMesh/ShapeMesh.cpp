@@ -41,28 +41,28 @@ vec3d ShapeMesh::getNormal(double u, double v) const
     ).normalized();
 }
 
-Box3D ShapeMesh::getBox(ProfileRT* profile) const
-{  
-    Box3D box = profile->getBox();
-    vec3d v = box.absMax();
-    double zX = v.x*v.x/(4.*fX.getValue());
-    double zY = v.y*v.y/(4.*fY.getValue());
-    if (zX >= 0.) {
-        if (zY >= 0.)
-            box.pMax.z = zX + zY;
-        else {
-            box.pMax.z = zX;
-            box.pMin.z = zY;
-        }
-    } else {
-        if (zY >= 0.) {
-            box.pMax.z = zY;
-            box.pMin.z = zX;
-        } else
-            box.pMin.z = zX + zY;
-    }
-    return box;
-}
+//Box3D ShapeMesh::getBox(ProfileRT* profile) const
+//{
+//    Box3D box = profile->getBox();
+//    vec3d v = box.absMax();
+//    double zX = v.x*v.x/(4.*fX.getValue());
+//    double zY = v.y*v.y/(4.*fY.getValue());
+//    if (zX >= 0.) {
+//        if (zY >= 0.)
+//            box.pMax.z = zX + zY;
+//        else {
+//            box.pMax.z = zX;
+//            box.pMin.z = zY;
+//        }
+//    } else {
+//        if (zY >= 0.) {
+//            box.pMax.z = zY;
+//            box.pMin.z = zX;
+//        } else
+//            box.pMin.z = zX + zY;
+//    }
+//    return box;
+//}
 
 // x^2*gx + y^2*gy = 4z
 // r = r0 + d*t
@@ -109,9 +109,9 @@ bool ShapeMesh::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
 void ShapeMesh::updateShapeGL(TShapeKit* parent)
 {
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
-    Box3D box = profile->getBox();
-    vec3d q = box.absMin();
-    vec3d s = box.extent();
+    Box2D box = profile->getBox();
+    vec2d q = profile->getAbsMin(box);
+    vec2d s = box.size();
 
     double cx = 2.*std::abs(fX.getValue());
     double cy = 2.*std::abs(fY.getValue());

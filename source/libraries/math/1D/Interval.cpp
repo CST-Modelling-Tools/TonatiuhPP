@@ -1,6 +1,4 @@
 #include "Interval.h"
-#include <cassert>
-#include "math/gcf.h"
 
 
 Interval::Interval(double a, double b)
@@ -14,8 +12,21 @@ Interval::Interval(double a, double b)
     }
 }
 
-
-double IntervalAngular::normalizeAngle(double alpha) const
+void Interval::addMargin(double delta)
 {
-    return gcf::normalizeAngle(alpha, m_a);
+    m_a -= delta;
+    m_b += delta;
 }
+
+void Interval::expand(double x)
+{
+    m_a = std::min(m_a, x);
+    m_b = std::max(m_b, x);
+}
+
+void Interval::expand(const Interval& b)
+{
+    m_a = std::min(m_a, b.m_a);
+    m_b = std::max(m_b, b.m_b);
+}
+

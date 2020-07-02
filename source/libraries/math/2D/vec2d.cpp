@@ -20,11 +20,6 @@ bool vec2d::operator!=(const vec2d& v) const
     return !(*this == v);
 }
 
-bool vec2d::operator<=(const vec2d& v) const
-{
-    return x <= v.x && y <= v.y;
-}
-
 std::ostream& operator<<(std::ostream& os, const vec2d& v)
 {
     os << v.x << ", " << v.y;

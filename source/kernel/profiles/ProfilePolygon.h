@@ -16,7 +16,7 @@ public:
     SoMFVec2f points;
     const QPolygonF& getPolygon() const {return m_polygon;}
 
-    Box3D getBox() const;
+    Box2D getBox() const;
     bool isInside(double u, double v) const;
     QVector<vec2d> makeMesh(QSize& dims) const;
 

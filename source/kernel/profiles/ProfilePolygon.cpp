@@ -33,16 +33,13 @@ ProfilePolygon::ProfilePolygon()
     onSensor(this, 0);
 }
 
-Box3D ProfilePolygon::getBox() const
+Box2D ProfilePolygon::getBox() const
 {
     QRectF rect = m_polygon.boundingRect();
-    Box3D box(
-        vec3d(rect.left(), rect.top(), 0.),
-        vec3d(rect.right(), rect.bottom(), 0.)
+    Box2D box(
+        vec2d(rect.left(), rect.top()),
+        vec2d(rect.right(), rect.bottom())
     );
-    double zMax = 0.01*box.extent().max();
-    box.pMin.z = -zMax;
-    box.pMax.z = zMax;
     return box;
 }
 

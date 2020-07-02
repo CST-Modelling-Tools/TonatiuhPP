@@ -44,11 +44,11 @@ vec2d ShapeSphere::getUV(const vec3d& p) const
 
 Box3D ShapeSphere::getBox(ProfileRT* profile) const
 {
-    Box3D box = profile->getBox();
-    double phiMin = gcf::TwoPi*box.pMin.x;
-    double phiMax = gcf::TwoPi*box.pMax.x;
-    double alphaMin = gcf::pi*gcf::clamp(box.pMin.y, -0.5, 0.5);
-    double alphaMax = gcf::pi*gcf::clamp(box.pMax.y, -0.5, 0.5);
+    Box2D box = profile->getBox();
+    double phiMin = gcf::TwoPi*box.min().x;
+    double phiMax = gcf::TwoPi*box.max().x;
+    double alphaMin = gcf::pi*gcf::clamp(box.min().y, -0.5, 0.5);
+    double alphaMax = gcf::pi*gcf::clamp(box.max().y, -0.5, 0.5);
 
     double rMin = cos(alphaMin);
     double rMax = cos(alphaMax);
@@ -133,8 +133,8 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
 void ShapeSphere::updateShapeGL(TShapeKit* parent)
 {
     ProfileRT* aperture = (ProfileRT*) parent->profileRT.getValue();
-    Box3D box = aperture->getBox();
-    vec3d v = box.extent();
+    Box2D box = aperture->getBox();
+    vec2d v = box.size();
 
     double s = v.x;
     if (s > 1.) s = 1.;

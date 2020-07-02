@@ -39,11 +39,11 @@ vec2d ShapeCylinder::getUV(const vec3d& p) const
 
 Box3D ShapeCylinder::getBox(ProfileRT* profile) const
 {
-    Box3D box = profile->getBox();
-    double phiMin = gcf::TwoPi*box.pMin.x;
-    double phiMax = gcf::TwoPi*box.pMax.x;
-    double zMin = box.pMin.y;
-    double zMax = box.pMax.y;
+    Box2D box = profile->getBox();
+    double phiMin = gcf::TwoPi*box.min().x;
+    double phiMax = gcf::TwoPi*box.max().x;
+    double zMin = box.min().y;
+    double zMax = box.max().y;
 
     double xMin = cos(phiMin);
     double xMax = cos(phiMax);
@@ -111,9 +111,9 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
 
 void ShapeCylinder::updateShapeGL(TShapeKit* parent)
 {
-    ProfileRT* aperture = (ProfileRT*) parent->profileRT.getValue();
-    Box3D box = aperture->getBox();
-    vec3d v = box.extent();
+    ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
+    Box2D box = profile->getBox();
+    vec2d v = box.size();
 
     double s = v.x;
     if (s > 1.) s = 1.;

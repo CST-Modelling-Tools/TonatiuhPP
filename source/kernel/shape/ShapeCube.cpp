@@ -24,7 +24,7 @@ ShapeCube::ShapeCube()
 Box3D ShapeCube::getBox(ProfileRT* aperture) const
 {
     Q_UNUSED(aperture)
-    return Box3D::UnitCube;
+    return Box3D::UnitCentered;
 }
 
 bool ShapeCube::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const

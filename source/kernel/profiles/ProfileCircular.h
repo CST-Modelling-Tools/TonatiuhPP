@@ -16,7 +16,7 @@ public:
     SoSFDouble phiMin;
     SoSFDouble phiMax;
 
-    Box3D getBox() const;
+    Box2D getBox() const;
     bool isInside(double u, double v) const;
     QVector<vec2d> makeMesh(QSize& dims) const;
 

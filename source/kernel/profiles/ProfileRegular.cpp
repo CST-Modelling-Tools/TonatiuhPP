@@ -17,13 +17,12 @@ ProfileRegular::ProfileRegular()
     SO_NODE_ADD_FIELD( r, (1.) );
 }
 
-Box3D ProfileRegular::getBox() const
+Box2D ProfileRegular::getBox() const
 {
     double rV = r.getValue();
-
-    return Box3D(
-        vec3d(-rV, -rV, 0.),
-        vec3d(rV, rV, 0.)
+    return Box2D(
+        vec2d(-rV, -rV),
+        vec2d(rV, rV)
     );
 }
 

@@ -121,15 +121,17 @@ void SunAperture::findTexture(int xPixels, int yPixels, QVector<QPair<TShapeKit*
         if (!aperture) continue;
         Box3D box = shape->getBox(aperture);
 
+        const vec3d& vA = box.min();
+        const vec3d& vB = box.max();
         QVector<vec3d> ps;
-        ps << vec3d(box.pMin.x, box.pMin.y, box.pMin.z);
-        ps << vec3d(box.pMin.x, box.pMin.y, box.pMax.z);
-        ps << vec3d(box.pMin.x, box.pMax.y, box.pMin.z);
-        ps << vec3d(box.pMin.x, box.pMax.y, box.pMax.z);
-        ps << vec3d(box.pMax.x, box.pMin.y, box.pMin.z);
-        ps << vec3d(box.pMax.x, box.pMin.y, box.pMax.z);
-        ps << vec3d(box.pMax.x, box.pMax.y, box.pMin.z);
-        ps << vec3d(box.pMax.x, box.pMax.y, box.pMax.z);
+        ps << vec3d(vA.x, vA.y, vA.z);
+        ps << vec3d(vA.x, vA.y, vB.z);
+        ps << vec3d(vA.x, vB.y, vA.z);
+        ps << vec3d(vA.x, vB.y, vB.z);
+        ps << vec3d(vB.x, vA.y, vA.z);
+        ps << vec3d(vB.x, vA.y, vB.z);
+        ps << vec3d(vB.x, vB.y, vA.z);
+        ps << vec3d(vB.x, vB.y, vB.z);
 
         QVector<QPointF> qps;
         for (vec3d& p : ps) {

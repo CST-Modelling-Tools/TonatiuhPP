@@ -15,10 +15,10 @@ ProfileBox::ProfileBox()
     SO_NODE_ADD_FIELD( vSize, (1.) );
 }
 
-Box3D ProfileBox::getBox() const
+Box2D ProfileBox::getBox() const
 {
-    vec3d v(uSize.getValue()/2., vSize.getValue()/2., 0.);
-    return Box3D(-v, v);
+    vec2d v(uSize.getValue()/2., vSize.getValue()/2.);
+    return Box2D(-v, v);
 }
 
 bool ProfileBox::isInside(double u, double v) const

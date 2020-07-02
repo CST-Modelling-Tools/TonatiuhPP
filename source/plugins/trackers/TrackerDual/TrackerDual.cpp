@@ -93,12 +93,12 @@ void TrackerDual::onModified(void* data, SoSensor*)
         TrackingDrive(
             tgf::makeVector3D(tracker->primaryShift.getValue()),
             tgf::makeVector3D(tracker->primaryAxis.getValue()),
-            IntervalAngular(pa.x, pa.y)
+            IntervalPeriodic(pa.x, pa.y)
         ),
         TrackingDrive(
             tgf::makeVector3D(tracker->secondaryShift.getValue()),
             tgf::makeVector3D(tracker->secondaryAxis.getValue()),
-            IntervalAngular(pb.x, pb.y)
+            IntervalPeriodic(pb.x, pb.y)
         ),
         TrackingVertex(
             tgf::makeVector3D(tracker->facetShift.getValue()),

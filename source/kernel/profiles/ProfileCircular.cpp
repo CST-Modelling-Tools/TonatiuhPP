@@ -19,7 +19,7 @@ ProfileCircular::ProfileCircular()
     SO_NODE_ADD_FIELD( phiMax, (gcf::pi) );
 }
 
-Box3D ProfileCircular::getBox() const
+Box2D ProfileCircular::getBox() const
 {
     double rMinV = rMin.getValue();
     double rMaxV = rMax.getValue();
@@ -48,9 +48,9 @@ Box3D ProfileCircular::getBox() const
     yMax *= yMax > 0. ? rMaxV : rMinV;
     yMin *= yMin > 0. ? rMinV : rMaxV;
 
-    return Box3D(
-        vec3d(xMin, yMin, 0.),
-        vec3d(xMax, yMax, 0.)
+    return Box2D(
+        vec2d(xMin, yMin),
+        vec2d(xMax, yMax)
     );
 }
 

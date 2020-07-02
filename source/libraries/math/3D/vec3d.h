@@ -89,7 +89,7 @@ struct TONATIUH_LIBRARIES vec3d
 
     bool operator==(const vec3d& v) const;
     bool operator!=(const vec3d& v) const;
-    bool operator<=(const vec3d& v) const;
+    bool operator<=(const vec3d& v) const {return x <= v.x && y <= v.y && z < v.z;}
 
     double operator[](int i) const
     {
@@ -143,6 +143,24 @@ struct TONATIUH_LIBRARIES vec3d
     double x;
     double y;
     double z;
+
+    static vec3d min(const vec3d& a, const vec3d& b)
+    {
+        return vec3d(
+            std::min(a.x, b.x),
+            std::min(a.y, b.y),
+            std::min(a.z, b.z)
+        );
+    }
+
+    static vec3d max(const vec3d& a, const vec3d& b)
+    {
+        return vec3d(
+            std::max(a.x, b.x),
+            std::max(a.y, b.y),
+            std::max(a.z, b.z)
+        );
+    }
 };
 
 
@@ -175,22 +193,5 @@ inline vec3d vec3d::reflect(const vec3d& v) const
     return v - (*this)*(2.*dot(*this, v)/norm2());
 }
 
-inline vec3d min(const vec3d& a, const vec3d& b)
-{
-    return vec3d(
-        std::min(a.x, b.x),
-        std::min(a.y, b.y),
-        std::min(a.z, b.z)
-    );
-}
-
-inline vec3d max(const vec3d& a, const vec3d& b)
-{
-    return vec3d(
-        std::max(a.x, b.x),
-        std::max(a.y, b.y),
-        std::max(a.z, b.z)
-    );
-}
 
 TONATIUH_LIBRARIES std::ostream& operator<<(std::ostream& os, const vec3d& vector);

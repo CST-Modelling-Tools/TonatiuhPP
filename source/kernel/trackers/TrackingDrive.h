@@ -6,15 +6,16 @@
 #include "libraries/math/3D/vec3d.h"
 #include "libraries/math/3D/Transform.h"
 #include "libraries/math/1D/Interval.h"
+#include "libraries/math/1D/IntervalPeriodic.h"
 
 
 struct TONATIUH_KERNEL TrackingDrive
 {
-    TrackingDrive(const vec3d& shift, const vec3d& axis, const IntervalAngular& angles);
+    TrackingDrive(const vec3d& shift, const vec3d& axis, const IntervalPeriodic& angles);
 
     vec3d shift;
     vec3d axis;
-    IntervalAngular angles;
+    IntervalPeriodic angles;
 
     Transform getTransform(double angle) const;
 };

@@ -42,26 +42,33 @@ vec3d ShapeParabolic::getNormal(double u, double v) const
 }
 
 Box3D ShapeParabolic::getBox(ProfileRT* profile) const
-{  
-    Box3D box = profile->getBox();
-    vec3d v = box.absMax();
+{
+    Box2D box = profile->getBox();
+    vec2d v = profile->getAbsMax(box);
     double zX = v.x*v.x/(4.*fX.getValue());
     double zY = v.y*v.y/(4.*fY.getValue());
+    double zMin, zMax;
     if (zX >= 0.) {
-        if (zY >= 0.)
-            box.pMax.z = zX + zY;
-        else {
-            box.pMax.z = zX;
-            box.pMin.z = zY;
+        if (zY >= 0.) {
+            zMin = 0.;
+            zMax = zX + zY;
+        } else {
+            zMin = zY;
+            zMax = zX;
         }
     } else {
         if (zY >= 0.) {
-            box.pMax.z = zY;
-            box.pMin.z = zX;
-        } else
-            box.pMin.z = zX + zY;
+            zMin = zX;
+            zMax = zY;
+        } else {
+            zMin = zX + zY;
+            zMax = 0.;
+        }
     }
-    return box;
+    return Box3D(
+        vec3d(box.min(), zMin),
+        vec3d(box.max(), zMax)
+    );
 }
 
 // x^2*gx + y^2*gy = 4z
@@ -109,9 +116,9 @@ bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometr
 void ShapeParabolic::updateShapeGL(TShapeKit* parent)
 {
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
-    Box3D box = profile->getBox();
-    vec3d q = box.absMin();
-    vec3d s = box.extent();
+    Box2D box = profile->getBox();
+    vec2d q = profile->getAbsMin(box);
+    vec2d s = box.size();
 
     double cx = 2.*std::abs(fX.getValue());
     double cy = 2.*std::abs(fY.getValue());

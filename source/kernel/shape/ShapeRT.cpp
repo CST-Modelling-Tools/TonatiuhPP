@@ -44,11 +44,12 @@ vec2d ShapeRT::getUV(const vec3d& p) const
 
 Box3D ShapeRT::getBox(ProfileRT* profile) const
 {
-    Box3D box = profile->getBox();
-    double zMax = 0.01*box.extent().max();
-    box.pMin.z = -zMax;
-    box.pMax.z = zMax;
-    return box;
+    Box2D box = profile->getBox();
+    double zMax = 0.01*box.size().max();
+    return Box3D(
+        vec3d(box.min(), -zMax),
+        vec3d(box.max(), zMax)
+    );
 }
 
 bool ShapeRT::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
@@ -78,7 +79,7 @@ bool ShapeRT::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, 
     return true;
 }
 
-void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals, bool reverseClock)
+void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals, bool /*reverseClock*/)
 {
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
     if (ProfilePolygon* profilePolygon = dynamic_cast<ProfilePolygon*>(profile))

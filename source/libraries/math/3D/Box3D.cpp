@@ -5,86 +5,62 @@
 #include "math/gcf.h"
 #include "vec3d.h"
 
-const Box3D Box3D::UnitCube(
-    -vec3d(0.5, 0.5, 0.5),
-    vec3d(0.5, 0.5, 0.5)
+const Box3D Box3D::UnitPositive(
+    vec3d::Zero,
+    vec3d::One
 );
 
+const Box3D Box3D::UnitCentered(
+    -vec3d::One/2,
+    vec3d::One/2
+);
+
+
 Box3D::Box3D():
-    pMin(gcf::infinity, gcf::infinity, gcf::infinity),
-    pMax(-gcf::infinity, -gcf::infinity, -gcf::infinity)
+    m_a(gcf::infinity, gcf::infinity, gcf::infinity),
+    m_b(-gcf::infinity, -gcf::infinity, -gcf::infinity)
 {
 }
 
 Box3D::Box3D(const vec3d& p):
-    pMin(p), pMax(p)
+    m_a(p), m_b(p)
 {
 }
 
 Box3D::Box3D(const vec3d& pA, const vec3d& pB)
 {
-    pMin = min(pA, pB);
-    pMax = max(pA, pB);
-}
-
-
-
-int Box3D::maxDimension() const
-{
-    vec3d d = pMax - pMin;
-    if (d.x > d.y && d.x > d.z)
-        return 0;
-    else if (d.y > d.z)
-        return 1;
-    return 2;
+    m_a = vec3d::min(pA, pB);
+    m_b = vec3d::max(pA, pB);
 }
 
 double Box3D::volume() const
 {
-    vec3d d = pMax - pMin;
+    vec3d d = m_b - m_a;
     return d.x*d.y*d.z;
 }
 
-vec3d Box3D::absMin() const
-{
-    vec3d ans = min(pMin.abs(), pMax.abs());
-    if ((pMin.x > 0.) != (pMax.x > 0.)) ans.x = 0.;
-    if ((pMin.y > 0.) != (pMax.y > 0.)) ans.y = 0.;
-    if ((pMin.z > 0.) != (pMax.z > 0.)) ans.z = 0.;
-    return ans;
-}
-
-void Box3D::expand(double delta)
+void Box3D::addMargin(double delta)
 {
     vec3d v(delta, delta, delta);
-    pMin -= v;
-    pMax += v;
+    m_a -= v;
+    m_b += v;
 }
 
 void Box3D::expand(const vec3d& p)
 {
-    pMin = min(pMin, p);
-    pMax = max(pMax, p);
+    m_a = vec3d::min(m_a, p);
+    m_b = vec3d::max(m_b, p);
 }
 
 void Box3D::expand(const Box3D& b)
 {
-    pMin = min(pMin, b.pMin);
-    pMax = max(pMax, b.pMax);
-}
-
-bool Box3D::intersect(const vec3d& p) const
-{
-    return pMin.x <= p.x && p.x <= pMax.x &&
-           pMin.y <= p.y && p.y <= pMax.y &&
-           pMin.z <= p.z && p.z <= pMax.z;
+    m_a = vec3d::min(m_a, b.m_a);
+    m_b = vec3d::max(m_b, b.m_b);
 }
 
 bool Box3D::intersect(const Box3D& b) const
 {
-    return pMin.x <= b.pMax.x && b.pMin.x <= pMax.x &&
-           pMin.y <= b.pMax.y && b.pMin.y <= pMax.y &&
-           pMin.z <= b.pMax.z && b.pMin.z <= pMax.z;
+    return m_a <= b.m_b && b.m_a <= m_b;
 }
 
 bool Box3D::intersect(const Ray& ray, double* t0, double* t1) const
@@ -97,24 +73,24 @@ bool Box3D::intersect(const Ray& ray, double* t0, double* t1) const
 
     if (rayI.x >= 0.)
     {
-        tMin = (pMin.x - rayO.x)*rayI.x;
-        tMax = (pMax.x - rayO.x)*rayI.x;
+        tMin = (m_a.x - rayO.x)*rayI.x;
+        tMax = (m_b.x - rayO.x)*rayI.x;
     }
     else
     {
-        tMin = (pMax.x - rayO.x)*rayI.x;
-        tMax = (pMin.x - rayO.x)*rayI.x;
+        tMin = (m_b.x - rayO.x)*rayI.x;
+        tMax = (m_a.x - rayO.x)*rayI.x;
     }
 
     if (rayI.y >= 0.)
     {
-        tyMin = (pMin.y - rayO.y)*rayI.y;
-        tyMax = (pMax.y - rayO.y)*rayI.y;
+        tyMin = (m_a.y - rayO.y)*rayI.y;
+        tyMax = (m_b.y - rayO.y)*rayI.y;
     }
     else
     {
-        tyMin = (pMax.y - rayO.y)*rayI.y;
-        tyMax = (pMin.y - rayO.y)*rayI.y;
+        tyMin = (m_b.y - rayO.y)*rayI.y;
+        tyMax = (m_a.y - rayO.y)*rayI.y;
     }
     if (tyMin > tMax || tyMax < tMin) return false;
     if (tyMin > tMin) tMin = tyMin;
@@ -122,13 +98,13 @@ bool Box3D::intersect(const Ray& ray, double* t0, double* t1) const
 
     if (rayI.z >= 0.)
     {
-        tzMin = (pMin.z - rayO.z)*rayI.z;
-        tzMax = (pMax.z - rayO.z)*rayI.z;
+        tzMin = (m_a.z - rayO.z)*rayI.z;
+        tzMax = (m_b.z - rayO.z)*rayI.z;
     }
     else
     {
-        tzMin = (pMax.z - rayO.z)*rayI.z;
-        tzMax = (pMin.z - rayO.z)*rayI.z;
+        tzMin = (m_b.z - rayO.z)*rayI.z;
+        tzMax = (m_a.z - rayO.z)*rayI.z;
     }
     if (tzMin > tMax || tzMax < tMin) return false;
     if (tzMin > tMin) tMin = tzMin;
@@ -143,25 +119,9 @@ bool Box3D::intersect(const Ray& ray, double* t0, double* t1) const
     return true;
 }
 
-Box3D Union(const Box3D& b, const vec3d& p)
-{
-    return Box3D(
-        min(b.pMin, p),
-        max(b.pMax, p)
-    );
-}
-
-Box3D Union(const Box3D& bA, const Box3D& bB)
-{
-    return Box3D(
-        min(bA.pMin, bB.pMin),
-        max(bA.pMax, bB.pMax)
-    );
-}
-
 std::ostream& operator<<(std::ostream& os, const Box3D& b)
 {
-    os << "pMin: " << b.pMin << std::endl;
-    os << "pMax: " << b.pMax << std::endl;
+    os << "pMin: " << b.min() << std::endl;
+    os << "pMax: " << b.max() << std::endl;
     return os;
 }

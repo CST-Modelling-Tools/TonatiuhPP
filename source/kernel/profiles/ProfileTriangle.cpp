@@ -24,12 +24,12 @@ ProfileTriangle::ProfileTriangle()
     onSensor(this, 0);
 }
 
-Box3D ProfileTriangle::getBox() const
+Box2D ProfileTriangle::getBox() const
 {
-    Box3D box;
-    box << vec3d(tgf::makeVector2D(a.getValue()));
-    box << vec3d(tgf::makeVector2D(b.getValue()));
-    box << vec3d(tgf::makeVector2D(c.getValue()));
+    Box2D box;
+    box << tgf::makeVector2D(a.getValue());
+    box << tgf::makeVector2D(b.getValue());
+    box << tgf::makeVector2D(c.getValue());
     return box;
 }
 

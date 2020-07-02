@@ -12,16 +12,12 @@ public:
     static void initClass();
     ShapePlanarN();
 
-    vec3d getNormal(double u, double v) const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
 
     SoSFVec2f xLimits;
     SoSFVec2f yLimits;
     SoSFVec2i32 dims;
     SoMFVec3f normals;
-
-    SoSFDouble fX;
-    SoSFDouble fY;
 
     NAME_ICON_FUNCTIONS("PlanarN", ":/ShapePlanarN.png")
     void updateShapeGL(TShapeKit* parent);

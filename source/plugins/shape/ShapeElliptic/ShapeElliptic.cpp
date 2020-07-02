@@ -45,15 +45,18 @@ vec3d ShapeElliptic::getNormal(double u, double v) const
 
 Box3D ShapeElliptic::getBox(ProfileRT* profile) const
 {  
-    Box3D box = profile->getBox();
-    vec3d v = box.absMax();
+    Box2D box = profile->getBox();
+    vec2d v = profile->getAbsMax(box);
     double rX = aX.getValue();
     double rY = aY.getValue();
     double rZ = aZ.getValue();
     double s = 1. - pow2(v.x/rX) - pow2(v.y/rY);
     s = 1. - sqrt(s);
-    box.pMax.z = s*rZ;
-    return box;
+    double zMax = s*rZ;
+    return Box3D(
+        vec3d(box.min(), 0.),
+        vec3d(box.max(), zMax)
+    );
 }
 
 bool ShapeElliptic::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
@@ -102,9 +105,9 @@ void ShapeElliptic::updateShapeGL(TShapeKit* parent)
 {
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
 
-    Box3D box = profile->getBox();
-    vec3d q = box.absMin();
-    vec3d s = box.extent();
+    Box2D box = profile->getBox();
+    vec2d q = profile->getAbsMin(box);
+    vec2d s = box.size();
 
     double cx = aX.getValue()*aX.getValue()/std::abs(aZ.getValue());
     double cy = aY.getValue()*aY.getValue()/std::abs(aZ.getValue());

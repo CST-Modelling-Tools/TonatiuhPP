@@ -35,9 +35,10 @@ HEADERS += \
     DistMesh/utils.h \
     math/1D/Grid.h \
     math/1D/Interval.h \
+    math/1D/IntervalPeriodic.h \
     math/1D/MatrixGrid.h \
+    math/2D/Box2D.h \
     math/2D/Grid2D.h \
-    math/2D/Interval2D.h \
     math/2D/Matrix2D.h \
     math/2D/MatrixGrid2D.h \
     math/2D/vec2d.h \
@@ -68,9 +69,10 @@ SOURCES += \
     DistMesh/utils.cpp \
     math/1D/Grid.cpp \
     math/1D/Interval.cpp \
+    math/1D/IntervalPeriodic.cpp \
     math/1D/MatrixGrid.cpp \
+    math/2D/Box2D.cpp \
     math/2D/Grid2D.cpp \
-    math/2D/Interval2D.cpp \
     math/2D/MatrixGrid2D.cpp \
     math/2D/vec2d.cpp \
     math/2D/vec2i.cpp \

@@ -325,11 +325,11 @@ void FluxAnalysis::fillBins()
     ShapeRT* shape = (ShapeRT*) shapeKit->shapeRT.getValue();
     if (!shape) return;
     ProfileRT* profile = (ProfileRT*) shapeKit->profileRT.getValue();
-    Box3D box = profile->getBox();
-    m_uMin = box.pMin.x;
-    m_uMax = box.pMax.x;
-    m_vMin = box.pMin.y;
-    m_vMax = box.pMax.y;
+    Box2D box = profile->getBox();
+    m_uMin = box.min().x;
+    m_vMin = box.min().y;
+    m_uMax = box.max().x;
+    m_vMax = box.max().y;
 
     int activeSideID = m_surfaceSide == "back" ? 0 : 1;
     Transform toObject = instance->getTransform().inversed();

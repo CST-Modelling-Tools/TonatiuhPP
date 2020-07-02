@@ -103,20 +103,17 @@ void SunKit::setBox(Box3D box)
     box = tr(box);
 
     //box is global
-    double xMin = box.pMin.x;
-    double xMax = box.pMax.x;
-    double yMin = box.pMin.y;
-    double yMax = box.pMax.y;
-
-    double distMax = box.pMax.z + 10. - box.pMin.z;
-    double back = box.pMin.z - 10.;
+    vec3d vA = box.min();
+    vec3d vB = box.max();
+    double distMax = vB.z + 10. - vA.z;
+    double back = vA.z - 10.;
 
     if (-gcf::infinity == box.volume() )
     {
-        xMin = 0.;
-        xMax = 0.;
-        yMin = 0.;
-        yMax = 0.;
+        vA.x = 0.;
+        vB.x = 0.;
+        vA.y = 0.;
+        vB.y = 0.;
         distMax = 0.;
     }
 
@@ -129,7 +126,7 @@ void SunKit::setBox(Box3D box)
 
     SunAperture* shape = static_cast<SunAperture*>(getPart("icon", false));
     if (!shape) return;
-    shape->setSize(xMin, xMax, yMin, yMax, delta);
+    shape->setSize(vA.x, vB.x, vA.y, vB.y, delta);
 
     if (!transform) return;
     SbVec3f res;

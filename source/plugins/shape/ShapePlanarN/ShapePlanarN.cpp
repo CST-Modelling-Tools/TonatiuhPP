@@ -32,19 +32,6 @@ ShapePlanarN::ShapePlanarN()
     normals.setValues(0, 4, ns);
     normals.setContainer(this);
     fieldData->addField(this, "normals", &normals);
-
-    SO_NODE_ADD_FIELD( fX, (1.) );
-    SO_NODE_ADD_FIELD( fY, (1.) );
-}
-
-// interpolation normals
-vec3d ShapePlanarN::getNormal(double u, double v) const
-{
-    return vec3d(
-        -u/fX.getValue(),
-        -v/fY.getValue(),
-        2.
-    ).normalized();
 }
 
 bool ShapePlanarN::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
