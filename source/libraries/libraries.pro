@@ -36,11 +36,9 @@ HEADERS += \
     math/1D/Grid.h \
     math/1D/Interval.h \
     math/1D/IntervalPeriodic.h \
-    math/1D/MatrixGrid.h \
     math/2D/Box2D.h \
-    math/2D/Grid2D.h \
+    math/2D/Interpolation2D.h \
     math/2D/Matrix2D.h \
-    math/2D/MatrixGrid2D.h \
     math/2D/vec2d.h \
     math/2D/vec2i.h \
     math/3D/Box3D.h \
@@ -70,10 +68,7 @@ SOURCES += \
     math/1D/Grid.cpp \
     math/1D/Interval.cpp \
     math/1D/IntervalPeriodic.cpp \
-    math/1D/MatrixGrid.cpp \
     math/2D/Box2D.cpp \
-    math/2D/Grid2D.cpp \
-    math/2D/MatrixGrid2D.cpp \
     math/2D/vec2d.cpp \
     math/2D/vec2i.cpp \
     math/3D/Box3D.cpp \

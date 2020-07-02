@@ -1,8 +1,9 @@
 #include "ProfilePolygon.h"
-#include "kernel/TonatiuhFunctions.h"
-#include "libraries/math/gcf.h"
 
 #include <Inventor/sensors/SoNodeSensor.h>
+
+#include "kernel/TonatiuhFunctions.h"
+#include "libraries/math/gcf.h"
 
 
 SO_NODE_SOURCE(ProfilePolygon)
@@ -28,7 +29,7 @@ ProfilePolygon::ProfilePolygon()
     fieldData->addField(this, "points", &points);
 //    points.setNames({"x", "y"}); // for UserField
 
-    m_sensor = new SoNodeSensor(onSensor, this);
+    m_sensor = QSharedPointer<SoNodeSensor>::create(onSensor, this);
     m_sensor->attach(this);
     onSensor(this, 0);
 }
@@ -48,8 +49,7 @@ bool ProfilePolygon::isInside(double u, double v) const
     return m_polygon.containsPoint(QPointF(u, v), Qt::OddEvenFill);
 }
 
-// use profile field of Coin ShapeKit
-QVector<vec2d> ProfilePolygon::makeMesh(QSize& dims) const
+QVector<vec2d> ProfilePolygon::makeMesh(QSize& dims) const //?
 {
     const int iMax = dims.width();
     const int jMax = dims.height();
@@ -66,11 +66,6 @@ QVector<vec2d> ProfilePolygon::makeMesh(QSize& dims) const
         }
     }
     return ans;
-}
-
-ProfilePolygon::~ProfilePolygon()
-{
-    delete m_sensor;
 }
 
 void ProfilePolygon::onSensor(void* data, SoSensor*)

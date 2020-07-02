@@ -16,7 +16,7 @@ struct TONATIUH_LIBRARIES Box3D
     vec3d center() const {return (m_a + m_b)/2.;}
     double volume() const;
 
-    void addMargin(double delta);
+    void expandLimits(double delta);
     void expand(const vec3d& p);
     void expand(const Box3D& b);
     void operator<<(const vec3d& p) {expand(p);}

@@ -15,7 +15,7 @@ public:
     vec2d center() const {return (m_a + m_b)/2.;}
     double area() const;
 
-    void addMargin(double delta);
+    void expandLimits(double delta);
     void expand(const vec2d& p);
     void expand(const Box2D& b);
     void operator<<(const vec2d& p) {expand(p);}

@@ -18,8 +18,8 @@ class Matrix2D
 {
 public:
     // constructors
-    Matrix2D() {}
-    Matrix2D(int rows, int cols);
+    Matrix2D(): m_rows(0), m_cols(0) {}
+    Matrix2D(int rows, int cols) {resize(rows, cols);}
 
     // components
     int rows() const {return m_rows;}
@@ -35,6 +35,7 @@ public:
     const T& operator()(int r, int c) const {return m_data[index(r, c)];}
 
     // functions
+    bool isEmpty() const {return m_data.isEmpty();}
     void fill(const T& value) {m_data.fill(value);}
 
     Matrix2D<T>& operator+=(const Matrix2D<T>& other);
@@ -49,16 +50,10 @@ protected:
 
 
 template<class T>
-Matrix2D<T>::Matrix2D(int rows, int cols)
-{
-    resize(rows, cols);
-}
-
-template<class T>
 void Matrix2D<T>::resize(int rows, int cols)
 {
-    Q_ASSERT(rows > 0);
-    Q_ASSERT(cols > 0);
+    Q_ASSERT(rows >= 0);
+    Q_ASSERT(cols >= 0);
     m_rows = rows;
     m_cols = cols;
     m_data.resize(rows*cols);

@@ -1,5 +1,6 @@
 #include "Box2D.h"
 
+
 const Box2D Box2D::UnitPositive(
     vec2d::Zero,
     vec2d::One
@@ -22,7 +23,7 @@ double Box2D::area() const
     return d.x*d.y;
 }
 
-void Box2D::addMargin(double delta)
+void Box2D::expandLimits(double delta)
 {
     vec2d v(delta, delta);
     m_a -= v;

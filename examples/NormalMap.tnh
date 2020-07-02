@@ -1,0 +1,126 @@
+#Inventor V2.1 ascii
+
+
+TSceneKit {
+  fields [ SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode group, SFNode air, SFNode topSeparator ]
+  lightList 
+  NodeKitListPart {
+    childTypeNames "LightKit"
+    containerNode 
+    Group {
+
+      DEF Sun SunKit {
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
+        transform 
+        Transform {
+          translation 0 -8.7422779e-007 10
+          rotation 1 0 0  3.1415927
+
+        }
+        light 
+        DirectionalLight {
+          direction 0 0 1
+
+        }
+        icon 
+        SunAperture {
+          fields [ SFString disabledNodes ]
+          disabledNodes ""
+
+        }
+        iconMaterial 
+        Material {
+          transparency 0.75
+
+        }
+        iconTexture 
+        Texture2 {
+          image 10 10 1
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+          0xff 0xff 0xff 0xff 
+          model BLEND
+          blendColor 1 1 1
+
+        }
+        tsunshape 
+        SunPillbox {
+          fields [ SFDouble thetaMax ]
+
+        }
+
+      }
+    }
+
+  }
+  group 
+  Group {
+
+    DEF Layout TSeparatorKit {
+      transform 
+      Transform {
+
+      }
+      group 
+      Group {
+
+        DEF Shape TShapeKit {
+          shapeRT 
+          DEF PlanarN ShapePlanarN {
+            fields [ SFVec2f xLimits, SFVec2f yLimits, SFVec2i32 dims, MFVec3f normals ]
+            xLimits -0.5 0.5
+            yLimits -0.5 0.5
+            dims 3 3
+            normals [ 0.23570228 0.23570228 0.9428091,
+                0.24253564 -0 0.97014254,
+                0.23570228 -0.23570228 0.9428091,
+                -0 0.24253564 0.97014254,
+                -0 -0 1,
+                -0 -0.24253564 0.97014254,
+                -0.23570228 0.23570228 0.9428091,
+                -0.24253564 -0 0.97014254,
+                -0.23570228 -0.23570228 0.9428091 ]
+
+          }
+          profileRT 
+          DEF Box ProfileBox {
+            fields [ SFDouble uSize, SFDouble vSize ]
+
+          }
+          materialRT 
+          DEF Specular MaterialSpecular {
+            fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+            slope 0
+
+          }
+          appearance 
+          AppearanceKit {
+            material 
+            DEF MaterialGL Material {
+
+            }
+
+          }
+
+        }
+      }
+
+    }
+  }
+  air 
+  AirVacuum {
+    fields [  ]
+
+  }
+
+}

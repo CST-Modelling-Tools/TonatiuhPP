@@ -39,7 +39,7 @@ double Box3D::volume() const
     return d.x*d.y*d.z;
 }
 
-void Box3D::addMargin(double delta)
+void Box3D::expandLimits(double delta)
 {
     vec3d v(delta, delta, delta);
     m_a -= v;

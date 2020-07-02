@@ -1,8 +1,12 @@
 #include "ShapePlanarN.h"
 
+#include <Inventor/sensors/SoNodeSensor.h>
+
+#include "kernel/TonatiuhFunctions.h"
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
+#include "libraries/math/2D/Interpolation2D.h"
 #include "libraries/math/3D/Box3D.h"
 #include "libraries/math/3D/Ray.h"
 
@@ -32,6 +36,10 @@ ShapePlanarN::ShapePlanarN()
     normals.setValues(0, 4, ns);
     normals.setContainer(this);
     fieldData->addField(this, "normals", &normals);
+
+    m_sensor = QSharedPointer<SoNodeSensor>::create(onSensor, this);
+    m_sensor->attach(this);
+    onSensor(this, 0);
 }
 
 bool ShapePlanarN::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
@@ -49,19 +57,24 @@ bool ShapePlanarN::intersect(const Ray& ray, double* tHit, DifferentialGeometry*
     else if (tHit == 0 || dg == 0)
         gcf::SevereError("ShapePlanar::intersect");
 
-//    vec3d vN(0.1, 0.2, 1.);
-//    vN.normalize();
-//    vec3d vU(vN.z, 0., -vN.x);
-//    vU.normalize();
-//    vec3d vV = cross(vN, vU);
+    vec2d p(
+        m_gridX.toNormalized(pHit.x),
+        m_gridY.toNormalized(pHit.y)
+    );
+    vec3d vN = interpolateLinear<vec3d>(m_matrixNormals, p);
+    vN.normalize();
+
+    vec3d vU(vN.z, 0., -vN.x);
+    vU.normalize();
+    vec3d vV = cross(vN, vU);
 
     *tHit = t;
     dg->point = pHit;
     dg->u = pHit.x;
     dg->v = pHit.y;
-    dg->dpdu = vec3d(1., 0., 0.);
-    dg->dpdv = vec3d(0., 1., 0.);
-    dg->normal = vec3d(0., 0., 1.); // interpolate
+    dg->dpdu = vU;
+    dg->dpdv = vV;
+    dg->normal = vN;
     dg->shape = this;
     dg->isFront = dot(dg->normal, ray.direction()) <= 0.;
     return true;
@@ -70,4 +83,25 @@ bool ShapePlanarN::intersect(const Ray& ray, double* tHit, DifferentialGeometry*
 void ShapePlanarN::updateShapeGL(TShapeKit* parent)
 {
     makeQuadMesh(parent, QSize(2, 2));
+}
+
+void ShapePlanarN::onSensor(void* data, SoSensor*)
+{
+    ShapePlanarN* shape = (ShapePlanarN*) data;
+
+    shape->m_gridX = Grid(Interval(
+        shape->xLimits.getValue()[0],
+        shape->xLimits.getValue()[1]
+    ), shape->dims.getValue()[0] - 1);
+
+    shape->m_gridY = Grid(Interval(
+        shape->yLimits.getValue()[0],
+        shape->yLimits.getValue()[1]
+    ), shape->dims.getValue()[1] - 1);
+
+    Matrix2D<vec3d>& matrix = shape->m_matrixNormals;
+    matrix.resize(shape->m_gridX.divisions() + 1, shape->m_gridY.divisions() + 1);
+    SoMFVec3f& normals = shape->normals;
+    for (int n = 0; n < normals.getNum(); ++n)
+        matrix.data()[n] = tgf::makeVector3D(*normals.getValues(n));
 }

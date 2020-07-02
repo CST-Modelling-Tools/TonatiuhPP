@@ -1,7 +1,11 @@
 #include "Interval.h"
 
 
-Interval::Interval(double a, double b)
+const Interval Interval::UnitPositive(0., 1.);
+const Interval Interval::UnitCentered(-0.5, 0.5);
+
+
+void Interval::setLimits(double a, double b)
 {
     if (a <= b) {
         m_a = a;
@@ -12,8 +16,9 @@ Interval::Interval(double a, double b)
     }
 }
 
-void Interval::addMargin(double delta)
+void Interval::expandLimits(double delta)
 {
+    if (delta < 0.) return;
     m_a -= delta;
     m_b += delta;
 }

@@ -1,9 +1,12 @@
 #pragma once
 
+#include <QSharedPointer>
+#include <Inventor/fields/SoMFVec2f.h>
+
 #include "kernel/profiles/ProfileRT.h"
 #include "libraries/math/2D/vec2d.h"
 #include "libraries/Coin3D/MFVec2.h"
-#include <Inventor/fields/SoMFVec2f.h>
+
 
 class TONATIUH_KERNEL ProfilePolygon: public ProfileRT
 {
@@ -23,10 +26,8 @@ public:
     NAME_ICON_FUNCTIONS("Polygon", ":/images/ProfilePolygon.png")
 
 protected:
-    ~ProfilePolygon();
-
     QPolygonF m_polygon;
 
-    SoNodeSensor* m_sensor;
+    QSharedPointer<SoNodeSensor> m_sensor;
     static void onSensor(void* data, SoSensor*);
 };
