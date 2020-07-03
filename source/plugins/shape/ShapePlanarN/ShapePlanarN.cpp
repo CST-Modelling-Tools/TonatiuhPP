@@ -18,7 +18,6 @@ void ShapePlanarN::initClass()
     SO_NODE_INIT_CLASS(ShapePlanarN, ShapeRT, "ShapeRT");
 }
 
-// https://en.wikipedia.org/wiki/Normal_mapping
 ShapePlanarN::ShapePlanarN()
 {
     SO_NODE_CONSTRUCTOR(ShapePlanarN);

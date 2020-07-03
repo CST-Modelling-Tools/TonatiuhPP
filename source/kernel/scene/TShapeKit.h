@@ -33,7 +33,7 @@ protected:
 
     void setDefaultOnNonWritingFields();
 
-    SoFieldSensor* m_sensorS;
-    SoFieldSensor* m_sensorA;
+    SoFieldSensor* m_sensorShape;
+    SoFieldSensor* m_sensorProfile;
     static void onSensor(void* data, SoSensor*);
 };

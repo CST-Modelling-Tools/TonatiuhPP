@@ -45,3 +45,5 @@ class ShapePlanarNFactory:
     Q_INTERFACES(ShapeFactory)
     Q_PLUGIN_METADATA(IID "tonatiuh.ShapeFactory")
 };
+
+// https://en.wikipedia.org/wiki/Normal_mapping

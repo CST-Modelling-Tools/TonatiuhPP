@@ -107,12 +107,12 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNor
             normals << SbVec3f(normal.x, normal.y, normal.z);
         }
 
-        QVector<int> indices;
+        QVector<int> faces;
         for (const auto& tri : polygonMesh.getTriangles()) {
-            indices << tri.a;
-            indices << tri.b;
-            indices << tri.c;
-            indices << SO_END_FACE_INDEX;
+            faces << tri.a;
+            faces << tri.b;
+            faces << tri.c;
+            faces << SO_END_FACE_INDEX;
         }
 
         SoCoordinate3* sVertices = new SoCoordinate3;
@@ -125,7 +125,7 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNor
 
 
         SoIndexedFaceSet* sMesh = new SoIndexedFaceSet;
-        sMesh->coordIndex.setValues(0, indices.size(), indices.data());
+        sMesh->coordIndex.setValues(0, faces.size(), faces.data());
 
         parent->setPart("shape", sMesh);
     }

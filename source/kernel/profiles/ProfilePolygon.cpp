@@ -36,12 +36,7 @@ ProfilePolygon::ProfilePolygon()
 
 Box2D ProfilePolygon::getBox() const
 {
-    QRectF rect = m_polygon.boundingRect();
-    Box2D box(
-        vec2d(rect.left(), rect.top()),
-        vec2d(rect.right(), rect.bottom())
-    );
-    return box;
+    return m_box;
 }
 
 bool ProfilePolygon::isInside(double u, double v) const
@@ -75,8 +70,10 @@ void ProfilePolygon::onSensor(void* data, SoSensor*)
     QPolygonF& polygon = profile->m_polygon;
 
     polygon.clear();
+    profile->m_box = Box2D();
     for (int n = 0; n < points.getNum(); ++n) {
        const SbVec2f& v = *points.getValues(n);
-        polygon << QPointF(v[0], v[1]);
+       polygon << QPointF(v[0], v[1]);
+       profile->m_box << vec2d(v[0], v[1]);
     }
 }

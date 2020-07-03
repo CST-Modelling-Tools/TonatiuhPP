@@ -32,8 +32,8 @@ TShapeKit::TShapeKit()
     SO_NODE_ADD_FIELD( materialRT, (0) );
     SO_KIT_INIT_INSTANCE();
 
-    m_sensorS = new SoFieldSensor(onSensor, this);
-    m_sensorS->attach(&shapeRT);
+    m_sensorShape = new SoFieldSensor(onSensor, this);
+    m_sensorShape->attach(&shapeRT);
 
     ShapeRT* sRT = new ShapePlanar;
     sRT->setName(sRT->getTypeName());
@@ -51,14 +51,14 @@ TShapeKit::TShapeKit()
     materialGL->setName("MaterialGL");
     setPart("material", materialGL);
 
-    m_sensorA = new SoFieldSensor(onSensor, this);
-    m_sensorA->attach(&profileRT);
+    m_sensorProfile = new SoFieldSensor(onSensor, this);
+    m_sensorProfile->attach(&profileRT);
 }
 
 TShapeKit::~TShapeKit()
 {
-    delete m_sensorS;
-    delete m_sensorA;
+    delete m_sensorShape;
+    delete m_sensorProfile;
 }
 
 void TShapeKit::setDefaultOnNonWritingFields()

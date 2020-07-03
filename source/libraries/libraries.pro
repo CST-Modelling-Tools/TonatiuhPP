@@ -16,6 +16,7 @@ INCLUDEPATH += $$PWD/../../libraries/eigen-3.3.7
 
 HEADERS += \
     TonatiuhLibraries.h \
+    auxiliary/tiny_obj_loader.h \
     auxiliary/Trace.h \
     Coin3D/ContainerEditorMFVec2.h \
     Coin3D/ContainerViewerMFVec2.h \
@@ -53,6 +54,7 @@ HEADERS += \
 
 SOURCES += \
     auxiliary/Trace.cpp \
+    auxiliary/tiny_obj_loader.cpp \
     Coin3D/ContainerEditorMFVec2.cpp \
     Coin3D/ContainerViewerMFVec2.cpp \
     Coin3D/DoubleValuesDelegate.cpp \

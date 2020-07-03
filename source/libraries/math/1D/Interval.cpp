@@ -1,9 +1,16 @@
 #include "Interval.h"
 
+#include "math/gcf.h"
 
 const Interval Interval::UnitPositive(0., 1.);
 const Interval Interval::UnitCentered(-0.5, 0.5);
 
+
+Interval::Interval():
+    m_a(gcf::infinity),
+    m_b(-gcf::infinity)
+{
+}
 
 void Interval::setLimits(double a, double b)
 {

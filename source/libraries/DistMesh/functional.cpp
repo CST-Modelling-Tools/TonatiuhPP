@@ -116,88 +116,90 @@ distmesh::Functional& distmesh::Functional::operator/=(
     return *this;
 }
 
-distmesh::Functional distmesh::operator+(
+namespace distmesh {
+Functional operator+(
     Functional const& lhs, Functional const& rhs) {
     return DISTMESH_FUNCTIONAL({
         return lhs(points) + rhs(points);
     });
 }
 
-distmesh::Functional distmesh::operator+(
+Functional operator+(
     Functional const& lhs, double const rhs) {
     return DISTMESH_FUNCTIONAL({
         return lhs(points) + rhs;
     });
 }
 
-distmesh::Functional distmesh::operator+(
+Functional operator+(
     double const lhs, Functional const& rhs) {
     return DISTMESH_FUNCTIONAL({
         return lhs + rhs(points);
     });
 }
 
-distmesh::Functional distmesh::operator-(
+Functional operator-(
     Functional const& lhs, Functional const& rhs) {
     return DISTMESH_FUNCTIONAL({
         return lhs(points) - rhs(points);
     });
 }
 
-distmesh::Functional distmesh::operator-(
+Functional operator-(
     Functional const& lhs, double const rhs) {
     return DISTMESH_FUNCTIONAL({
         return lhs(points) - rhs;
     });
 }
 
-distmesh::Functional distmesh::operator-(
+Functional operator-(
     double const lhs, Functional const& rhs) {
     return DISTMESH_FUNCTIONAL({
         return lhs - rhs(points);
     });
 }
 
-distmesh::Functional distmesh::operator*(
+Functional operator*(
     Functional const& lhs, Functional const& rhs) {
     return DISTMESH_FUNCTIONAL({
         return lhs(points) * rhs(points);
     });
 }
 
-distmesh::Functional distmesh::operator*(
+Functional operator*(
     Functional const& lhs, double const rhs) {
     return DISTMESH_FUNCTIONAL({
         return lhs(points) * rhs;
     });
 }
 
-distmesh::Functional distmesh::operator*(
+Functional operator*(
     double const lhs, Functional const& rhs) {
     return DISTMESH_FUNCTIONAL({
         return lhs * rhs(points);
     });
 }
 
-distmesh::Functional distmesh::operator/(
+Functional operator/(
     Functional const& lhs, Functional const& rhs) {
     return DISTMESH_FUNCTIONAL({
         return lhs(points) / rhs(points);
     });
 }
 
-distmesh::Functional distmesh::operator/(
+Functional operator/(
     Functional const& lhs, double const rhs) {
     return DISTMESH_FUNCTIONAL({
         return lhs(points) / rhs;
     });
 }
 
-distmesh::Functional distmesh::operator/(
+Functional operator/(
     double const lhs, Functional const& rhs) {
     return DISTMESH_FUNCTIONAL({
         return lhs / rhs(points);
     });
+}
 }
 
 distmesh::Functional distmesh::Functional::min(

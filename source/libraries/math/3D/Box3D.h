@@ -7,8 +7,9 @@ class Ray;
 struct TONATIUH_LIBRARIES Box3D
 {
     Box3D();
-    explicit Box3D(const vec3d& p);
-    Box3D(const vec3d& pA, const vec3d& pB);
+    Box3D(const vec3d& a, const vec3d& b) {setLimits(a, b);}
+    void setLimits(const vec3d& a, const vec3d& b);
+    bool isValid() const {return m_a <= m_b;}
 
     const vec3d& min() const {return m_a;}
     const vec3d& max() const {return m_b;}
@@ -22,8 +23,8 @@ struct TONATIUH_LIBRARIES Box3D
     void operator<<(const vec3d& p) {expand(p);}
     void operator<<(const Box3D& b) {expand(b);}
 
-    bool intersect(const vec3d& p) const {return m_a <= p && p <= m_b;}
-    bool intersect(const Box3D& b) const;
+    bool isInside(const vec3d& p) const {return m_a <= p && p <= m_b;}
+    bool intersect(const Box3D& b) const {return m_a <= b.m_b && b.m_a <= m_b;}
     bool intersect(const Ray& ray, double* t0 = 0, double* t1 = 0) const;
 
     static const Box3D UnitPositive;

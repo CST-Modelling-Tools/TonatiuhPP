@@ -178,8 +178,15 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
     if (splash) splash->showMessage("Opening file", splashAlignment);
     if (!tonatiuhFile.isEmpty() )
         StartOver(tonatiuhFile);
-    else
+    else {
         SetCurrentFile("");
+        ui->actionViewGrid->trigger();
+        SoCamera* camera = m_graphicView[0]->getCamera();
+        camera->focalDistance = 10.;
+        SbVec3f target(0., 0., 0.);
+        camera->position = target + SbVec3f(0, 0, camera->focalDistance.getValue());
+        camera->pointAt(target, SbVec3f(0., 1., 0.) );
+    }
 
     SelectNode("//Layout");
 
@@ -3196,7 +3203,7 @@ bool MainWindow::StartOver(const QString& fileName)
     ChangeModelScene();
     ui->sceneModelView->expandToDepth(0);
     SelectNode("//Layout");
-    on_actionViewAll_triggered();
+    on_actionViewAll_triggered(); // discard sun
     return true;
 }
 

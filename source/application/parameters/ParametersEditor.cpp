@@ -1,5 +1,5 @@
 #include "ParametersEditor.h"
-#include "ui_ParameterTextEditor.h"
+#include "ui_ParametersEditor.h"
 
 
 ParametersEditor::ParametersEditor(QWidget* parent):

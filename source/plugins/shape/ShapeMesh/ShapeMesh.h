@@ -1,7 +1,10 @@
 #pragma once
 
-#include "kernel/shape/ShapeRT.h"
+#include <QSharedPointer>
+#include <Inventor/fields/SoMFInt32.h>
 
+#include "kernel/shape/ShapeRT.h"
+#include "libraries/math/3D/Box3D.h"
 
 class ShapeMesh: public ShapeRT
 {
@@ -11,16 +14,23 @@ public:
     static void initClass();
     ShapeMesh();
 
-    vec3d getPoint(double u, double v) const;
-    vec3d getNormal(double u, double v) const;
-//    Box3D getBox(ProfileRT* profile) const;
-    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
+    Box3D getBox(ProfileRT* profile) const;
+    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const;
 
-    SoSFDouble fX;
-    SoSFDouble fY;
+    SoMFVec3f vertices;
+    SoMFVec3f normals;
+    SoMFInt32 facesVertices;
+    SoMFInt32 facesNormals;
+
+    SoSFString file;
 
     NAME_ICON_FUNCTIONS("Mesh", ":/ShapeMesh.png")
     void updateShapeGL(TShapeKit* parent);
+
+protected:
+    Box3D m_box;
+    QSharedPointer<SoFieldSensor> m_sensor;
+    static void onSensor(void* data, SoSensor*);
 };
 
 
@@ -32,3 +42,5 @@ class ShapeMeshFactory:
     Q_INTERFACES(ShapeFactory)
     Q_PLUGIN_METADATA(IID "tonatiuh.ShapeFactory")
 };
+
+// https://en.wikipedia.org/wiki/Wavefront_.obj_file

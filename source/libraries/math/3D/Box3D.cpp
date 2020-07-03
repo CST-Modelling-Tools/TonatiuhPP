@@ -1,9 +1,8 @@
 #include "Box3D.h"
 
 #include <cmath>
-#include "Ray.h"
 #include "math/gcf.h"
-#include "vec3d.h"
+#include "Ray.h"
 
 const Box3D Box3D::UnitPositive(
     vec3d::Zero,
@@ -22,15 +21,10 @@ Box3D::Box3D():
 {
 }
 
-Box3D::Box3D(const vec3d& p):
-    m_a(p), m_b(p)
+void Box3D::setLimits(const vec3d& a, const vec3d& b)
 {
-}
-
-Box3D::Box3D(const vec3d& pA, const vec3d& pB)
-{
-    m_a = vec3d::min(pA, pB);
-    m_b = vec3d::max(pA, pB);
+    m_a = vec3d::min(a, b);
+    m_b = vec3d::max(a, b);
 }
 
 double Box3D::volume() const
@@ -58,11 +52,6 @@ void Box3D::expand(const Box3D& b)
     m_b = vec3d::max(m_b, b.m_b);
 }
 
-bool Box3D::intersect(const Box3D& b) const
-{
-    return m_a <= b.m_b && b.m_a <= m_b;
-}
-
 bool Box3D::intersect(const Ray& ray, double* t0, double* t1) const
 {
     const vec3d& rayO = ray.origin;
@@ -71,40 +60,34 @@ bool Box3D::intersect(const Ray& ray, double* t0, double* t1) const
     double trMax = ray.tMax;
     double tMin, tMax, tyMin, tyMax, tzMin, tzMax;
 
-    if (rayI.x >= 0.)
-    {
-        tMin = (m_a.x - rayO.x)*rayI.x;
-        tMax = (m_b.x - rayO.x)*rayI.x;
-    }
-    else
-    {
-        tMin = (m_b.x - rayO.x)*rayI.x;
-        tMax = (m_a.x - rayO.x)*rayI.x;
+    vec3d a = (m_a - rayO)*rayI;
+    vec3d b = (m_b - rayO)*rayI;
+
+    if (rayI.x >= 0.) {
+        tMin = a.x;
+        tMax = b.x;
+    } else {
+        tMin = b.x;
+        tMax = a.x;
     }
 
-    if (rayI.y >= 0.)
-    {
-        tyMin = (m_a.y - rayO.y)*rayI.y;
-        tyMax = (m_b.y - rayO.y)*rayI.y;
-    }
-    else
-    {
-        tyMin = (m_b.y - rayO.y)*rayI.y;
-        tyMax = (m_a.y - rayO.y)*rayI.y;
+    if (rayI.y >= 0.) {
+        tyMin = a.y;
+        tyMax = b.y;
+    } else {
+        tyMin = b.y;
+        tyMax = a.y;
     }
     if (tyMin > tMax || tyMax < tMin) return false;
     if (tyMin > tMin) tMin = tyMin;
     if (tyMax < tMax) tMax = tyMax;
 
-    if (rayI.z >= 0.)
-    {
-        tzMin = (m_a.z - rayO.z)*rayI.z;
-        tzMax = (m_b.z - rayO.z)*rayI.z;
-    }
-    else
-    {
-        tzMin = (m_b.z - rayO.z)*rayI.z;
-        tzMax = (m_a.z - rayO.z)*rayI.z;
+    if (rayI.z >= 0.) {
+        tzMin = a.z;
+        tzMax = b.z;
+    } else {
+        tzMin = b.z;
+        tzMax = a.z;
     }
     if (tzMin > tMax || tzMax < tMin) return false;
     if (tzMin > tMin) tMin = tzMin;

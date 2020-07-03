@@ -1,10 +1,18 @@
 #include "ShapeMesh.h"
 
+#include <Inventor/sensors/SoFieldSensor.h>
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoNormal.h>
+#include <Inventor/nodes/SoIndexedFaceSet.h>
+#include <QFileInfo>
+
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/math/3D/Box3D.h"
 #include "libraries/math/3D/Ray.h"
+#include "libraries/auxiliary/tiny_obj_loader.h"
+#include "kernel/TonatiuhFunctions.h"
 using gcf::pow2;
 
 SO_NODE_SOURCE(ShapeMesh)
@@ -19,106 +27,149 @@ ShapeMesh::ShapeMesh()
 {
     SO_NODE_CONSTRUCTOR(ShapeMesh);
 
-    SO_NODE_ADD_FIELD( fX, (1.) );
-    SO_NODE_ADD_FIELD( fY, (1.) );
+    float vs[][3] = {
+        {1., 0., 0.},
+        {0., 1., 0.},
+        {0., 0., 0.}
+    };
+    vertices.setValues(0, 3, vs);
+    vertices.setContainer(this);
+    fieldData->addField(this, "vertices", &vertices);
+
+    float ns[][3] = {
+        {0., 0., 1.},
+        {0., 0., 1.},
+        {0., 0., 1.}
+    };
+    normals.setValues(0, 3, ns);
+    normals.setContainer(this);
+    fieldData->addField(this, "normals", &normals);
+
+    int fvs[] = {
+        0, 1, 2, -1
+    };
+    facesVertices.setValues(0, 4, fvs);
+    facesVertices.setContainer(this);
+    fieldData->addField(this, "facesVertices", &facesVertices);
+
+    int fns[] = {
+        0, 1, 2, -1
+    };
+    facesNormals.setValues(0, 4, fvs);
+    facesNormals.setContainer(this);
+    fieldData->addField(this, "facesNormals", &facesNormals);
+
+    SO_NODE_ADD_FIELD( file, ("") );
+
+    m_sensor = QSharedPointer<SoFieldSensor>::create(onSensor, this);
+    m_sensor->attach(&file);
+    onSensor(this, 0);
 }
 
-vec3d ShapeMesh::getPoint(double u, double v) const
+Box3D ShapeMesh::getBox(ProfileRT* profile) const
 {
-    return vec3d(
-        u,
-        v,
-        (u*u/fX.getValue() + v*v/fY.getValue())/4.
-    );
+    Q_UNUSED(profile)
+    return m_box;
 }
 
-vec3d ShapeMesh::getNormal(double u, double v) const
-{
-    return vec3d(
-        -u/fX.getValue(),
-        -v/fY.getValue(),
-        2.
-    ).normalized();
-}
-
-//Box3D ShapeMesh::getBox(ProfileRT* profile) const
-//{
-//    Box3D box = profile->getBox();
-//    vec3d v = box.absMax();
-//    double zX = v.x*v.x/(4.*fX.getValue());
-//    double zY = v.y*v.y/(4.*fY.getValue());
-//    if (zX >= 0.) {
-//        if (zY >= 0.)
-//            box.pMax.z = zX + zY;
-//        else {
-//            box.pMax.z = zX;
-//            box.pMin.z = zY;
-//        }
-//    } else {
-//        if (zY >= 0.) {
-//            box.pMax.z = zY;
-//            box.pMin.z = zX;
-//        } else
-//            box.pMin.z = zX + zY;
-//    }
-//    return box;
-//}
-
-// x^2*gx + y^2*gy = 4z
-// r = r0 + d*t
 bool ShapeMesh::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
 {
-    const vec3d& rayO = ray.origin;
-    const vec3d& rayD = ray.direction();
-    double gX = 1./fX.getValue();
-    double gY = 1./fY.getValue();
+    // r0_z + d_z*t = 0
+    double t = -ray.origin.z*ray.invDirection().z;
 
-    double A = pow2(rayD.x)*gX + pow2(rayD.y)*gY;
-    double B = 2.*(rayD.x*rayO.x*gX + rayD.y*rayO.y*gY) - 4.*rayD.z;
-    double C = pow2(rayO.x)*gX + pow2(rayO.y)*gY - 4.*rayO.z;
-    double ts[2];
-    if (!gcf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
+    if (t < ray.tMin + 1e-5 || t > ray.tMax) return false;
 
-    for (int i = 0; i < 2; ++i)
-    {
-        double t = ts[i];
-        if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
+    vec3d pHit = ray.point(t);
+    if (!profile->isInside(pHit.x, pHit.y)) return false;
 
-        vec3d pHit = ray.point(t);
-        if (!profile->isInside(pHit.x, pHit.y)) continue;
-
-        if (tHit == 0 && dg == 0)
-            return true;
-        else if (tHit == 0 || dg == 0)
-            gcf::SevereError("ShapeMesh::intersect");
-
-        *tHit = t;
-        dg->point = pHit;
-        dg->u = pHit.x;
-        dg->v = pHit.y;
-        dg->dpdu = vec3d(1., 0., pHit.x*gX/2.);
-        dg->dpdv = vec3d(0., 1., pHit.y*gY/2.);
-        dg->normal = vec3d(-dg->dpdu.z, -dg->dpdv.z, 1.).normalized();
-        dg->shape = this;
-        dg->isFront = dot(dg->normal, rayD) <= 0.;
+    if (tHit == 0 && dg == 0)
         return true;
-    }
-    return false;
+    else if (tHit == 0 || dg == 0)
+        gcf::SevereError("ShapePlanar::intersect");
+
+    *tHit = t;
+    dg->point = pHit;
+    dg->u = pHit.x;
+    dg->v = pHit.y;
+    dg->dpdu = vec3d(1., 0., 0.);
+    dg->dpdv = vec3d(0., 1., 0.);
+    dg->normal = vec3d(0., 0., 1.);
+    dg->shape = this;
+    dg->isFront = dot(dg->normal, ray.direction()) <= 0.;
+    return true;
 }
 
 void ShapeMesh::updateShapeGL(TShapeKit* parent)
 {
-    ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
-    Box2D box = profile->getBox();
-    vec2d q = profile->getAbsMin(box);
-    vec2d s = box.size();
+    SoCoordinate3* sVertices = new SoCoordinate3;
+    sVertices->point.setValues(0, vertices.getNum(), vertices.getValues(0));
+    parent->setPart("coordinate3", sVertices);
 
-    double cx = 2.*std::abs(fX.getValue());
-    double cy = 2.*std::abs(fY.getValue());
-    double sx = 0.1*cx*(1. + pow2(q.x/cx));
-    double sy = 0.1*cy*(1. + pow2(q.y/cy));
-    int rows = 1 + ceil(s.x/sx);
-    int columns = 1 + ceil(s.y/sy);
+    SoNormal* sNormals = new SoNormal;
+    sNormals->vector.setValues(0, normals.getNum(), normals.getValues(0));
+    parent->setPart("normal", sNormals);
 
-    makeQuadMesh(parent, QSize(rows, columns));
+    SoIndexedFaceSet* sMesh = new SoIndexedFaceSet;
+    sMesh->coordIndex.setValues(0, facesVertices.getNum(), facesVertices.getValues(0));
+    sMesh->normalIndex.setValues(0, facesNormals.getNum(), facesNormals.getValues(0));
+
+    parent->setPart("shape", sMesh);
+
+    m_box = Box3D();
+    for (int n = 0; n < vertices.getNum(); ++n) {
+       const SbVec3f& v = *vertices.getValues(n);
+        m_box << tgf::makeVector3D(v);
+    }
+}
+
+void ShapeMesh::onSensor(void* data, SoSensor*)
+{
+    ShapeMesh* shapeMesh = (ShapeMesh*) data;
+    QString fileName = shapeMesh->file.getValue().getString();
+
+    if (fileName.isEmpty()) return;
+    QFileInfo info(fileName);
+    if (info.suffix() != "obj") return;
+
+    std::string inputfile = fileName.toStdString();
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+
+    std::string warn;
+    std::string err;
+
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputfile.c_str());
+    if (!ret) return;
+    if (shapes.empty()) return;
+    tinyobj::mesh_t& mesh = shapes[0].mesh;
+
+    int nMax = attrib.vertices.size()/3;
+    shapeMesh->vertices.setNum(nMax);
+    for (int n = 0, m = 0; n < nMax; n++, m += 3)
+        shapeMesh->vertices.set1Value(n, &attrib.vertices[m]);
+
+    nMax = attrib.normals.size()/3;
+    shapeMesh->normals.setNum(nMax);
+    for (int n = 0, m = 0; n < nMax; n++, m += 3)
+        shapeMesh->normals.set1Value(n, &attrib.normals[m]);
+
+    nMax = mesh.num_face_vertices.size()*4;
+    shapeMesh->facesVertices.setNum(nMax);
+    shapeMesh->facesNormals.setNum(nMax);
+    int m = 0;
+    size_t v0 = 0;
+    for (size_t f = 0; f < mesh.num_face_vertices.size(); f++) {
+        int vMax = mesh.num_face_vertices[f];
+        for (size_t v = 0; v < vMax; v++) {
+            tinyobj::index_t idx = mesh.indices[v0 + v];
+            shapeMesh->facesVertices.set1Value(m, idx.vertex_index);
+            shapeMesh->facesNormals.set1Value(m, idx.normal_index);
+            m++;
+        }
+        shapeMesh->facesVertices.set1Value(m, -1);
+        shapeMesh->facesNormals.set1Value(m, -1);
+        m++;
+        v0 += vMax;
+    }
 }

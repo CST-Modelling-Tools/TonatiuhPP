@@ -1,5 +1,6 @@
 #include "Box2D.h"
 
+#include "math/gcf.h"
 
 const Box2D Box2D::UnitPositive(
     vec2d::Zero,
@@ -11,7 +12,13 @@ const Box2D Box2D::UnitCentered(
 );
 
 
-Box2D::Box2D(const vec2d& a, const vec2d& b)
+Box2D::Box2D():
+    m_a(gcf::infinity, gcf::infinity),
+    m_b(-gcf::infinity, -gcf::infinity)
+{
+}
+
+void Box2D::setLimits(const vec2d& a, const vec2d& b)
 {
    m_a = vec2d::min(a, b);
    m_b = vec2d::max(a, b);
