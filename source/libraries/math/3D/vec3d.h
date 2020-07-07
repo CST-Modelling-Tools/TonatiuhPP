@@ -11,6 +11,12 @@ struct TONATIUH_LIBRARIES vec3d
     vec3d(const vec2d& v, double z = 0.):
         x(v.x), y(v.y), z(z) {}
 
+    vec3d(float* p):
+        x(*p), y(*(p + 1)), z(*(p + 2)) {}
+
+    vec3d(double* p):
+        x(*p), y(*(p + 1)), z(*(p + 2)) {}
+
     // constants
     static const vec3d Zero;
     static const vec3d One;
@@ -140,6 +146,8 @@ struct TONATIUH_LIBRARIES vec3d
     vec3d abs() const {return vec3d(std::abs(x), std::abs(y), std::abs(z));}
     int maxDimension() const;
 
+    vec3d findOrthogonal() const;
+
     double x;
     double y;
     double z;
@@ -191,6 +199,14 @@ inline vec3d vec3d::reflected(const vec3d& n) const
 inline vec3d vec3d::reflect(const vec3d& v) const
 {
     return v - (*this)*(2.*dot(*this, v)/norm2());
+}
+
+inline vec3d vec3d::findOrthogonal() const
+{
+    if (std::abs(z) > std::abs(x) && std::abs(z) > std::abs(y))
+        return vec3d(z, 0., -x);
+    else
+        return vec3d(y, -x, 0.);
 }
 
 

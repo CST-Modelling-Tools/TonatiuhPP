@@ -9,6 +9,7 @@
 #include <Inventor/nodekits/SoNodeKitListPart.h>
 #include <Inventor/nodekits/SoSceneKit.h>
 #include <Inventor/nodes/SoSelection.h>
+#include <Inventor/nodes/SoMaterial.h>
 
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/material/MaterialRT.h"
@@ -278,6 +279,10 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
         {
             MaterialRT* material = static_cast<MaterialRT*>(node);
             return QIcon(material->getTypeIcon());
+        }
+        else if (node->getTypeId().isDerivedFrom(SoMaterial::getClassTypeId()))
+        {
+            return QIcon(":/images/scene/nodeMaterialGL.png");
         }
         else if (node->getTypeId().isDerivedFrom(Tracker::getClassTypeId()))
         {

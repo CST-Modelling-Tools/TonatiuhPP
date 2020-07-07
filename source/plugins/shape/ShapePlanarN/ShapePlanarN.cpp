@@ -62,9 +62,7 @@ bool ShapePlanarN::intersect(const Ray& ray, double* tHit, DifferentialGeometry*
     );
     vec3d vN = interpolateLinear<vec3d>(m_matrixNormals, p);
     vN.normalize();
-
-    vec3d vU(vN.z, 0., -vN.x);
-    vU.normalize();
+    vec3d vU = vN.findOrthogonal().normalize();
     vec3d vV = cross(vN, vU);
 
     *tHit = t;
@@ -75,7 +73,7 @@ bool ShapePlanarN::intersect(const Ray& ray, double* tHit, DifferentialGeometry*
     dg->dpdv = vV;
     dg->normal = vN;
     dg->shape = this;
-    dg->isFront = dot(dg->normal, ray.direction()) <= 0.;
+    dg->isFront = dot(vN, ray.direction()) <= 0.;
     return true;
 }
 

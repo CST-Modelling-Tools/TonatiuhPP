@@ -24,7 +24,8 @@ void ShapeMesh::initClass()
 }
 
 ShapeMesh::ShapeMesh()
-{
+{  
+    m_bvh = 0;
     SO_NODE_CONSTRUCTOR(ShapeMesh);
 
     float vs[][3] = {
@@ -69,33 +70,23 @@ ShapeMesh::ShapeMesh()
 Box3D ShapeMesh::getBox(ProfileRT* profile) const
 {
     Q_UNUSED(profile)
-    return m_box;
+    if (m_bvh) return m_bvh->box();
+    return Box3D();
 }
 
 bool ShapeMesh::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
-{
-    // r0_z + d_z*t = 0
-    double t = -ray.origin.z*ray.invDirection().z;
+{  
+    if (!m_bvh) return false;
+    double tHitT = ray.tMax;
+    DifferentialGeometry dgT;
+    if (!m_bvh->intersect(ray, &tHitT, &dgT)) return false;
 
-    if (t < ray.tMin + 1e-5 || t > ray.tMax) return false;
+    if (tHit == 0 && dg == 0) return true;
+    if (tHit == 0 || dg == 0) gcf::SevereError( "ShapeMesh::intersect");
 
-    vec3d pHit = ray.point(t);
-    if (!profile->isInside(pHit.x, pHit.y)) return false;
-
-    if (tHit == 0 && dg == 0)
-        return true;
-    else if (tHit == 0 || dg == 0)
-        gcf::SevereError("ShapePlanar::intersect");
-
-    *tHit = t;
-    dg->point = pHit;
-    dg->u = pHit.x;
-    dg->v = pHit.y;
-    dg->dpdu = vec3d(1., 0., 0.);
-    dg->dpdv = vec3d(0., 1., 0.);
-    dg->normal = vec3d(0., 0., 1.);
+    *tHit = tHitT;
+    *dg = dgT;
     dg->shape = this;
-    dg->isFront = dot(dg->normal, ray.direction()) <= 0.;
     return true;
 }
 
@@ -114,23 +105,25 @@ void ShapeMesh::updateShapeGL(TShapeKit* parent)
     sMesh->normalIndex.setValues(0, facesNormals.getNum(), facesNormals.getValues(0));
 
     parent->setPart("shape", sMesh);
+}
 
-    m_box = Box3D();
-    for (int n = 0; n < vertices.getNum(); ++n) {
-       const SbVec3f& v = *vertices.getValues(n);
-        m_box << tgf::makeVector3D(v);
-    }
+ShapeMesh::~ShapeMesh()
+{
+    delete m_bvh;
+    for (Triangle* t : m_triangles)
+        delete t;
 }
 
 void ShapeMesh::onSensor(void* data, SoSensor*)
 {
-    ShapeMesh* shapeMesh = (ShapeMesh*) data;
-    QString fileName = shapeMesh->file.getValue().getString();
+    ShapeMesh* shape = (ShapeMesh*) data;
+    QString fileName = shape->file.getValue().getString();
 
     if (fileName.isEmpty()) return;
     QFileInfo info(fileName);
     if (info.suffix() != "obj") return;
 
+    // import
     std::string inputfile = fileName.toStdString();
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
@@ -144,32 +137,59 @@ void ShapeMesh::onSensor(void* data, SoSensor*)
     if (shapes.empty()) return;
     tinyobj::mesh_t& mesh = shapes[0].mesh;
 
+    // conversion
     int nMax = attrib.vertices.size()/3;
-    shapeMesh->vertices.setNum(nMax);
+    shape->vertices.setNum(nMax);
     for (int n = 0, m = 0; n < nMax; n++, m += 3)
-        shapeMesh->vertices.set1Value(n, &attrib.vertices[m]);
+        shape->vertices.set1Value(n, &attrib.vertices[m]);
 
     nMax = attrib.normals.size()/3;
-    shapeMesh->normals.setNum(nMax);
+    shape->normals.setNum(nMax);
     for (int n = 0, m = 0; n < nMax; n++, m += 3)
-        shapeMesh->normals.set1Value(n, &attrib.normals[m]);
+        shape->normals.set1Value(n, &attrib.normals[m]);
 
     nMax = mesh.num_face_vertices.size()*4;
-    shapeMesh->facesVertices.setNum(nMax);
-    shapeMesh->facesNormals.setNum(nMax);
-    int m = 0;
+    shape->facesVertices.setNum(nMax);
+    shape->facesNormals.setNum(nMax);
+    int n = 0;
     size_t v0 = 0;
     for (size_t f = 0; f < mesh.num_face_vertices.size(); f++) {
-        int vMax = mesh.num_face_vertices[f];
+        int vMax = mesh.num_face_vertices[f]; // 3?
         for (size_t v = 0; v < vMax; v++) {
-            tinyobj::index_t idx = mesh.indices[v0 + v];
-            shapeMesh->facesVertices.set1Value(m, idx.vertex_index);
-            shapeMesh->facesNormals.set1Value(m, idx.normal_index);
-            m++;
+            const tinyobj::index_t& index = mesh.indices[v0 + v];
+            shape->facesVertices.set1Value(n, index.vertex_index);
+            shape->facesNormals.set1Value(n, index.normal_index);
+            n++;
         }
-        shapeMesh->facesVertices.set1Value(m, -1);
-        shapeMesh->facesNormals.set1Value(m, -1);
-        m++;
+        shape->facesVertices.set1Value(n, -1);
+        shape->facesNormals.set1Value(n, -1);
+        n++;
         v0 += vMax;
     }
+
+
+    for (Triangle* t : shape->m_triangles)
+        delete t;
+    shape->m_triangles.clear();
+
+    v0 = 0;
+    for (size_t f = 0; f < mesh.num_face_vertices.size(); f++) {
+        int vMax = mesh.num_face_vertices[f];
+        const tinyobj::index_t& i0 = mesh.indices[v0];
+        const tinyobj::index_t& i1 = mesh.indices[v0 + 1];
+        const tinyobj::index_t& i2 = mesh.indices[v0 + 2];
+
+        vec3d vA(&attrib.vertices[3*i0.vertex_index]);
+        vec3d vB(&attrib.vertices[3*i1.vertex_index]);
+        vec3d vC(&attrib.vertices[3*i2.vertex_index]);
+        vec3d nA(&attrib.normals[3*i0.normal_index]);
+        vec3d nB(&attrib.normals[3*i1.normal_index]);
+        vec3d nC(&attrib.normals[3*i2.normal_index]);
+        Triangle* triangle = new Triangle(vA, vB, vC, nA, nB, nC);
+        shape->m_triangles.push_back(triangle);
+        v0 += vMax;
+    }
+
+    if (shape->m_bvh) delete shape->m_bvh;
+    shape->m_bvh = new BVH(&shape->m_triangles, 1);
 }

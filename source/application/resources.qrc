@@ -43,5 +43,6 @@
         <file>images/scene/nodeTracker.png</file>
         <file>images/view/ViewTop.png</file>
         <file>images/scene/nodeProfile.png</file>
+        <file>images/scene/nodeMaterialGL.png</file>
     </qresource>
 </RCC>

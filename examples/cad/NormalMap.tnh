@@ -93,8 +93,10 @@ TSceneKit {
 
           }
           profileRT 
-          DEF Box ProfileBox {
-            fields [ SFDouble uSize, SFDouble vSize ]
+          DEF Regular ProfileRegular {
+            fields [ SFInt32 n, SFDouble r ]
+            n 5
+            r 0.5
 
           }
           materialRT 

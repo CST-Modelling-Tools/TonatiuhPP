@@ -5,6 +5,8 @@
 
 #include "kernel/shape/ShapeRT.h"
 #include "libraries/math/3D/Box3D.h"
+#include "BVH.h"
+
 
 class ShapeMesh: public ShapeRT
 {
@@ -28,7 +30,11 @@ public:
     void updateShapeGL(TShapeKit* parent);
 
 protected:
-    Box3D m_box;
+    ~ShapeMesh();
+
+    std::vector<Triangle*> m_triangles;
+    BVH* m_bvh;
+
     QSharedPointer<SoFieldSensor> m_sensor;
     static void onSensor(void* data, SoSensor*);
 };

@@ -176,7 +176,7 @@ struct texture_option_t {
                            // value. Usually `sRGB` or `linear` (default empty).
 };
 
-struct TONATIUH_LIBRARIES material_t {
+struct material_t {
   std::string name;
 
   real_t ambient[3];
@@ -364,7 +364,7 @@ struct points_t {
   std::vector<index_t> indices;  // indices for points
 };
 
-struct TONATIUH_LIBRARIES shape_t {
+struct shape_t {
   std::string name;
   mesh_t mesh;
   lines_t lines;
