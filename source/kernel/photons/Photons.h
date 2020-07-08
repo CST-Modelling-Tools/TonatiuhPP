@@ -15,7 +15,7 @@ public:
     void setBufferSize(ulong size) {m_bufferSize = size;}
     void setTransform(Transform concentratorToWorld);
 
-    void addPhotons(std::vector<Photon>& photons);
+    void addPhotons(const std::vector<Photon>& photons);
     const std::vector<Photon>& getPhotons() const {return m_photons;}
     void endExport(double wPhoton);
 
@@ -23,6 +23,6 @@ private:
     PhotonsAbstract* m_exporter;
     ulong m_bufferSize;
     Transform m_transform;
-    std::vector<Photon> m_photons; // buffer
+    std::vector<Photon> m_photons; // buffer, std is faster than QVector
     ulong m_photonsTotal;
 };

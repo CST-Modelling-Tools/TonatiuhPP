@@ -83,11 +83,11 @@ SoSeparator* trf::DrawRays(const Photons& map, ulong /*numberOfRays*/)
     return ans;
 }
 
-void trf::CreatePhotonMap(Photons*& photonMap, QPair<Photons*, std::vector<Photon> > photonsList)
-{
-    if (!photonMap) photonMap = photonsList.first;
-    photonMap->addPhotons(photonsList.second);
-}
+//void trf::CreatePhotonMap(Photons*& photonMap, QPair<Photons*, std::vector<Photon> > photonsList)
+//{
+//    if (!photonMap) photonMap = photonsList.first;
+//    photonMap->addPhotons(photonsList.second);
+//}
 
 Transform trf::GetObjectToWorld(SoPath* nodePath)
 {

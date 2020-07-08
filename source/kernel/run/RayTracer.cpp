@@ -44,6 +44,7 @@ void RayTracer::operator()(ulong nRays)
     bool bExportLight = bExportAll ? true : m_exportSuraceList.contains(m_instanceSun);
 
     std::vector<Photon> photons;
+    photons.reserve(2*nRays);
     // Photon(Point3D pos, int side, double id = 0, InstanceNode* intersectedSurface = 0, int absorbedPhoton = 0);
     RandomParallel rand(m_rand, m_mutexRand);
 

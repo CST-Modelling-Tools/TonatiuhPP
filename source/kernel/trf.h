@@ -28,6 +28,6 @@ namespace trf
     TONATIUH_KERNEL SoSeparator* DrawPhotons(const Photons& map);
     TONATIUH_KERNEL SoSeparator* DrawRays(const Photons& map, ulong numberOfRays);
 
-    TONATIUH_KERNEL void CreatePhotonMap(Photons*& photonMap, QPair<Photons*, std::vector<Photon> > photonsList);
+//    TONATIUH_KERNEL void CreatePhotonMap(Photons*& photonMap, QPair<Photons*, std::vector<Photon> > photonsList);
     TONATIUH_KERNEL Transform GetObjectToWorld(SoPath* nodePath);
 }

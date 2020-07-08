@@ -32,7 +32,7 @@ void Photons::setTransform(Transform concentratorToWorld)
     if (m_exporter) m_exporter->SetConcentratorToWorld(m_transform);
 }
 
-void Photons::addPhotons(std::vector<Photon>& photons)
+void Photons::addPhotons(const std::vector<Photon>& photons)
 {
     uint nMax = photons.size();
     if (m_photons.size() > 0 && m_photons.size() + nMax > m_bufferSize)
@@ -44,8 +44,10 @@ void Photons::addPhotons(std::vector<Photon>& photons)
     }
 
 //    uint nMax = std::min(uint(m_bufferSize), raysListSize);
-    for (uint n = 0; n < nMax; n++)
-        m_photons.push_back(photons[n]);
+//    for (uint n = 0; n < nMax; n++)
+//        m_photons.push_back(photons[n]);
+//        m_photons.append(photons);
+    m_photons.insert(m_photons.end(), photons.begin(), photons.end());
 
     m_photonsTotal += nMax;
 }
