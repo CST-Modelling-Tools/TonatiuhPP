@@ -12,47 +12,34 @@ class PhotonsFile: public PhotonsAbstract
 
 public:
     PhotonsFile();
-    ~PhotonsFile() {}
 
-    bool StartExport();
-	void EndExport();
-    void SavePhotonMap(const std::vector<Photon>& photons);
-    void SetPowerPerPhoton(double wPhoton) {m_powerPerPhoton = wPhoton;}
+    static QStringList getParameterNames() {return {"ExportDirectory", "ExportFile", "FileSize"};}
+    void setParameter(QString name, QString value);
 
-    static QStringList GetParameterNames() {return {"ExportDirectory", "ExportFile", "FileSize"};}
-    void SetSaveParameterValue(QString parameterName, QString parameterValue);
+    bool startExport();
+    void savePhotons(const std::vector<Photon>& photons);
+    void setPhotonPower(double p) {m_photonPower = p;}
+    void endExport();
 
     NAME_ICON_FUNCTIONS("File", ":/PhotonsFile.png")
 
 private:
-    void ExportAllPhotonsAllData(QString filename, const std::vector<Photon>& raysLists);
-    void ExportAllPhotonsNotNextPrevID(QString filename, const std::vector<Photon>& raysLists);
-    void ExportAllPhotonsSelectedData(QString filename, const std::vector<Photon>& raysLists);
-    void ExportSelectedPhotonsAllData(QString filename, const std::vector<Photon>& raysLists,
-                                      ulong startIndex, ulong numberOfPhotons);
-    void ExportSelectedPhotonsNotNextPrevID(QString filename, const std::vector<Photon>&,
-                                            ulong startIndex, ulong numberOfPhotons);
-    void ExportSelectedPhotonsSelectedData(QString filename, const std::vector<Photon>&,
-                                           ulong startIndex, ulong numberOfPhotons);
+    void writePhotons(QString fileName, const std::vector<Photon>& photon, ulong nBegin, ulong nEnd);
 
-    void RemoveExistingFiles();
-    void SaveToVariousFiles(const std::vector<Photon>& raysLists);
-    void WriteFileFormat(QString exportFilename);
-
-	QString m_photonsFilename;
-	double m_powerPerPhoton;
-	QVector<InstanceNode*> m_surfaceIdentfier;
-	QVector<Transform> m_surfaceWorldToObject;
-	int m_currentFile;
-    QString m_exportDirectoryName;
-    ulong m_exportedPhotons;
+    QString m_dirName;
+    QString m_fileName;
+    bool m_oneFile;
     ulong m_nPhotonsPerFile;
-	bool m_oneFile;
+
+    int m_fileCurrent;
+    ulong m_exportedPhotons;
+    double m_photonPower;
+    QVector<InstanceNode*> m_surfaces; //? map
+	QVector<Transform> m_surfaceWorldToObject;
 };
 
 
 
-//#include "kernel/photons/PhotonsFactory.h"
 #include "PhotonsFileWidget.h"
 
 class PhotonsFileFactory:

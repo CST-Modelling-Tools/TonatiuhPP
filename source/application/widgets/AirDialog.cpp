@@ -1,5 +1,5 @@
 #include "AirDialog.h"
-#include "ui_airdialog.h"
+#include "ui_AirDialog.h"
 
 #include <Inventor/fields/SoField.h>
 #include "kernel/air/Air.h"

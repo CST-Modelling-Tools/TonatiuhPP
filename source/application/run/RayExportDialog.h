@@ -5,29 +5,33 @@
 
 #include "kernel/photons/PhotonsAbstract.h"
 
-#include "ui_RayExportDialog.h"
-
 class SceneModel;
 class PhotonsWidget;
 struct PhotonsSettings;
 
-class RayExportDialog: public QDialog, private Ui::RayExportDialog
+
+namespace Ui {
+class RayExportDialog;
+}
+
+class RayExportDialog: public QDialog
 {
     Q_OBJECT
 
 public:
-    RayExportDialog(SceneModel& scene, QVector<PhotonsFactory*> typeList, QWidget* parent = 0);
-    ~RayExportDialog() {}
+    RayExportDialog(SceneModel& scene, QVector<PhotonsFactory*> factories, QWidget* parent = 0);
+    ~RayExportDialog();
 
     PhotonsSettings GetExportPhotonMapSettings() const;
 
 private slots:
-    void ChangeCurrentStoreTypeParameters();
-    void AddSurface();
-    void DeleteSurface();
+    void storageChanged();
+    void surfaceAdd();
+    void surfaceDelete();
 
 private:
+    Ui::RayExportDialog* ui;
     SceneModel* m_scene;
     QStringList m_surfaces;
-    QVector<PhotonsWidget*> m_parameters;
+    QVector<PhotonsWidget*> m_widgets;
 };

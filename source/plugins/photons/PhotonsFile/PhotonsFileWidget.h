@@ -1,26 +1,26 @@
 #pragma once
 
-#include <QWidget>
-
 #include "kernel/photons/PhotonsWidget.h"
 
-#include "ui_PhotonsFilewidget.h"
 
+namespace Ui {
+class PhotonsFileWidget;
+}
 
-class PhotonsFileWidget: public PhotonsWidget, private Ui::PhotonsFileWidget
+class PhotonsFileWidget: public PhotonsWidget
 {
     Q_OBJECT
 
 public:
     PhotonsFileWidget(QWidget* parent = 0);
-    ~PhotonsFileWidget() {}
+    ~PhotonsFileWidget();
 
-    QStringList GetParameterNames() const;
-    QString GetParameterValue(QString parameter) const;
+    QStringList getParameterNames() const;
+    QString getParameterValue(QString name) const;
 
 private slots:
-    void SelectSaveDirectory();
+    void selectDirectory();
 
 private:
-    void SetupTriggers();
+    Ui::PhotonsFileWidget* ui;
 };

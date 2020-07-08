@@ -19,8 +19,8 @@ bool Photons::setExporter(PhotonsAbstract* exporter)
 {
     if (!exporter) return false;
     m_exporter = exporter;
-    m_exporter->SetConcentratorToWorld(m_transform);
-    return m_exporter->StartExport();
+    m_exporter->setTransform(m_transform);
+    return m_exporter->startExport();
 }
 
 /*!
@@ -29,7 +29,7 @@ bool Photons::setExporter(PhotonsAbstract* exporter)
 void Photons::setTransform(Transform concentratorToWorld)
 {
     m_transform = concentratorToWorld;
-    if (m_exporter) m_exporter->SetConcentratorToWorld(m_transform);
+    if (m_exporter) m_exporter->setTransform(m_transform);
 }
 
 void Photons::addPhotons(const std::vector<Photon>& photons)
@@ -38,7 +38,7 @@ void Photons::addPhotons(const std::vector<Photon>& photons)
     if (m_photons.size() > 0 && m_photons.size() + nMax > m_bufferSize)
     {
         if (m_exporter)
-            m_exporter->SavePhotonMap(m_photons);
+            m_exporter->savePhotons(m_photons);
 
         m_photons.clear();
     }
@@ -59,13 +59,13 @@ void Photons::endExport(double wPhoton)
     if (m_photons.size() > 0)
     {
         if (m_exporter)
-            m_exporter->SavePhotonMap(m_photons);
+            m_exporter->savePhotons(m_photons);
 
         m_photons.clear();
     }
     if (m_exporter)
     {
-        m_exporter->SetPowerPerPhoton(wPhoton);
-        m_exporter->EndExport();
+        m_exporter->setPhotonPower(wPhoton);
+        m_exporter->endExport();
     }
 }

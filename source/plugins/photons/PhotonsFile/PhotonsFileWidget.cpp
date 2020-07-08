@@ -1,81 +1,63 @@
+#include "PhotonsFileWidget.h"
+#include "ui_PhotonsFileWidget.h"
+
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QSettings>
 
 #include "PhotonsFile.h"
-#include "PhotonsFileWidget.h"
 
-/*!
- * Creates a widget for the plugin parameters.
- */
+
 PhotonsFileWidget::PhotonsFileWidget(QWidget* parent):
-    PhotonsWidget(parent)
+    PhotonsWidget(parent),
+    ui(new Ui::PhotonsFileWidget)
 {
-    setupUi(this);
-	SetupTriggers();
+    ui->setupUi(this);
+    connect(ui->directoryButton, SIGNAL(clicked()), this, SLOT(selectDirectory()));
 }
 
-/*!
- * Returns the plugin parameters names.
- */
-QStringList PhotonsFileWidget::GetParameterNames() const
+PhotonsFileWidget::~PhotonsFileWidget()
 {
-    return PhotonsFile::GetParameterNames();
+    delete ui;
 }
 
-/*!
- * Return the value of
- */
-QString PhotonsFileWidget::GetParameterValue( QString parameter ) const
+QStringList PhotonsFileWidget::getParameterNames() const
 {
-	QStringList parametersName = GetParameterNames();
+    return PhotonsFile::getParameterNames();
+}
 
-    if( parameter == parametersName[0] ) //Directory name
-		return saveDirectoryLine->text();
-    else if (parameter == parametersName[1]) //File name.
-		return filenameLine->text();
+QString PhotonsFileWidget::getParameterValue(QString name) const
+{
+    QStringList names = getParameterNames();
 
-
-	//Maximum number of photons that a file can store.
-	else if( parameter == parametersName[2] )
-	{
-		if( !photonsPerFileCheck->isChecked() )	return QString::number( -1 );
-		else	return QString::number( nOfPhotonsSpin->value() );
+    if (name == names[0])
+        return ui->directoryEdit->text();
+    else if (name == names[1])
+        return ui->fileEdit->text();
+    else if (name == names[2])
+    {
+        if (!ui->photonsCheck->isChecked())
+            return QString::number(-1);
+        else
+            return QString::number(ui->photonsSpin->value());
 	}
-
 	return QString();
 }
 
-/*!
- * Select existing directory to save the data exported from the photon.
- */
-void PhotonsFileWidget::SelectSaveDirectory()
+void PhotonsFileWidget::selectDirectory()
 {
     QSettings settings("CyI", "Tonatiuh");
-    QString lastUsedDirectory = settings.value( "PhotonsFileWidget.directoryToExport",
-            ".").toString();
+    QString dirName = settings.value("PhotonsFileWidget.directory", ".").toString();
+    dirName = QFileDialog::getExistingDirectory(this, "Save Directory", dirName);
+    if (dirName.isEmpty()) return;
 
-
-	QString directoryToExport = QFileDialog::getExistingDirectory ( this, tr( "Save Direcotry" ), lastUsedDirectory );
-	if( directoryToExport.isEmpty() )	return;
-
-
-	QDir dirToExport( directoryToExport );
-	if( !dirToExport.exists() )
+    QDir dir(dirName);
+    if (!dir.exists())
 	{
-        QMessageBox::information( this, "Tonatiuh", tr( "Selected directory is not valid." ), 1 );
+        QMessageBox::information(this, "Tonatiuh", "Selected directory is not valid", 1);
 		return;
-
 	}
 
-    settings.setValue("PhotonsFileWidget.directoryToExport", directoryToExport );
-	saveDirectoryLine->setText( directoryToExport );
-}
-
-/*!
- * Setups triggers for the buttons.
- */
-void PhotonsFileWidget::SetupTriggers()
-{
-	connect( selectDirectoryButton, SIGNAL( clicked() ), this, SLOT( SelectSaveDirectory() ) );
+    settings.setValue("PhotonsFileWidget.directory", dirName);
+    ui->directoryEdit->setText(dirName);
 }

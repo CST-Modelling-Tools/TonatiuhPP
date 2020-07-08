@@ -1,13 +1,9 @@
 #pragma once
 
-#include <vector>
-
 #include <QStringList>
 
 #include "kernel/scene/TAbstract.h"
 #include "Photon.h"
-
-class SceneModel;
 
 
 class TONATIUH_KERNEL PhotonsAbstract
@@ -16,39 +12,39 @@ public:
     PhotonsAbstract();
     virtual ~PhotonsAbstract() {}
 
-    virtual bool StartExport() {return true;}
-    virtual void EndExport() {}
-    virtual void SavePhotonMap(const std::vector<Photon>& /*raysLists*/) {}
-    virtual void SetPowerPerPhoton(double /*wPhoton*/) {}
+    virtual bool startExport() {return true;}
+    virtual void endExport() {}
+    virtual void savePhotons(const std::vector<Photon>& /*raysLists*/) {}
+    virtual void setPhotonPower(double /*p*/) {}
 
-    void SetSceneModel(SceneModel& sceneModel) {m_sceneModel = &sceneModel;}
-    void SetConcentratorToWorld(Transform transform) {m_transform = transform;}
+    void setSceneModel(SceneModel& sceneModel) {m_sceneModel = &sceneModel;}
+    void setTransform(Transform transform) {m_transform = transform;}
+    void SetSaveAllPhotonsEnabled() {m_surfaces.clear();}
+    void setSurfaces(QStringList surfaces) {m_surfaces = surfaces;}
 
-    void SetSaveAllPhotonsEnabled();
-    void SetSaveSurfacesURLList(QStringList surfaces);
+    void setSaveCoordinates(bool enabled) {m_saveCoordinates = enabled;}
+    void setSaveCoordinatesGlobal(bool enabled) {m_saveCoordinatesGlobal = enabled;}
+    void setSaveSurfacesID(bool enabled) {m_saveSurfaceID = enabled;}
+    void setSaveSurfaceSide(bool enabled) {m_saveSurfaceSide = enabled;}
+    void setSavePhotonsID(bool enabled) {m_savePhotonsID = enabled;}
 
-    void SetSaveCoordinates(bool enabled);
-    void SetSaveCoordinatesInGlobalSystem(bool enabled);
-    void SetSavePreviousNextPhotonsID(bool enabled);
-    void SetSaveSide(bool enabled);
-    void SetSaveSurfacesID(bool enabled);
-
-    static QStringList GetParameterNames() {return QStringList();}
-    virtual void SetSaveParameterValue(QString /*name*/, QString /*value*/) {}
+    static QStringList getParameterNames() {return QStringList();}
+    virtual void setParameter(QString /*name*/, QString /*value*/) {}
 
     NAME_ICON_FUNCTIONS("No export", ":/images/PhotonsDefault.png")
 
 protected:
     SceneModel* m_sceneModel;
     Transform m_transform;
+
     bool m_saveAllPhotonsData;
+    QStringList m_surfaces;
+
     bool m_saveCoordinates;
-    bool m_saveCoordinatesInGlobal;
-    bool m_savePowerPerPhoton;
-    bool m_savePrevNextID;
-    bool m_saveSide;
+    bool m_saveCoordinatesGlobal;
     bool m_saveSurfaceID;
-    QStringList m_saveSurfaces;
+    bool m_saveSurfaceSide;
+    bool m_savePhotonsID;
 };
 
 

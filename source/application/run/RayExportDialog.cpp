@@ -1,4 +1,5 @@
 #include "RayExportDialog.h"
+#include "ui_RayExportDialog.h"
 
 #include <iostream>
 #include <QMessageBox>
@@ -10,35 +11,31 @@
 /*!
  * Creates a new dialog object to define the export settings. The available export mode types are listed into \a typeList.
  */
-RayExportDialog::RayExportDialog(
-    SceneModel& scene,
-    QVector<PhotonsFactory*> typeList,
-    QWidget* parent):
+RayExportDialog::RayExportDialog(SceneModel& scene, QVector<PhotonsFactory*> factories, QWidget* parent):
     QDialog(parent),
+    ui(new Ui::RayExportDialog),
     m_scene(&scene)
 {
-    setupUi(this);
+    ui->setupUi(this);
 
-    for (int index = 0; index < typeList.size(); index++)
+    for (PhotonsFactory* f : factories)
     {
-        storeTypeCombo->addItem(typeList[index]->icon(), typeList[index]->name() );
-        PhotonsWidget* widget = typeList[index]->createWidget();
-        if (widget)
-        {
-            m_parameters << widget;
-            parametersWidget->addWidget(widget);
-        }
-        else
-        {
-            m_parameters << 0;
-            parametersWidget->addWidget(new QWidget);
-        }
+        ui->storeTypeCombo->addItem(f->icon(), f->name());
+        PhotonsWidget* widget = f->createWidget();
+        m_widgets << widget;
+        if (!widget) widget = new PhotonsWidget;
+        ui->parametersWidget->addWidget(widget);
     }
-    ChangeCurrentStoreTypeParameters();
+    storageChanged();
 
-    connect(storeTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeCurrentStoreTypeParameters()) );
-    connect(addSurfaceButton, SIGNAL(clicked()), this, SLOT(AddSurface()) );
-    connect(deleteSurfaceButton, SIGNAL(clicked()), this, SLOT(DeleteSurface()) );
+    connect(ui->storeTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(storageChanged()) );
+    connect(ui->surfaceAddButton, SIGNAL(clicked()), this, SLOT(surfaceAdd()) );
+    connect(ui->surfaceDeleteButton, SIGNAL(clicked()), this, SLOT(surfaceDelete()) );
+}
+
+RayExportDialog::~RayExportDialog()
+{
+    delete ui;
 }
 
 /*!
@@ -47,65 +44,64 @@ RayExportDialog::RayExportDialog(
 PhotonsSettings RayExportDialog::GetExportPhotonMapSettings() const
 {
     PhotonsSettings settings;
-    settings.modeTypeName = storeTypeCombo->currentText();
-    //settings.exportAllPhotonMap = ( exportAllPhotonsRadio->isEnabled() && exportAllPhotonsRadio->isChecked() );
-    settings.exportCoordinates = (coordCheck->isEnabled() && coordCheck->isChecked() );
-    settings.exportIntersectionSurfaceSide = (sideBox->isEnabled() && sideBox->isChecked() );
-    settings.exportInGlobalCoordinates = (globalCoordinatesRadio->isEnabled() && globalCoordinatesRadio->isChecked() );
-    settings.exportPreviousNextPhotonID = (nextPreviousCheck->isEnabled() && nextPreviousCheck->isChecked() );
-    settings.exportSurfaceID = (surfaceIdenfierCheck->isEnabled() && surfaceIdenfierCheck->isChecked() );
-    if (exportAllSurfacesRadio->isEnabled() && exportAllSurfacesRadio->isChecked() )
-        settings.exportSurfaceNodeList.clear();
+    settings.name = ui->storeTypeCombo->currentText();
+
+    settings.saveCoordinates = ui->saveCoordinatesCheck->isEnabled() && ui->saveCoordinatesCheck->isChecked();
+    settings.saveCoordinatesGlobal = ui->saveGlobalRadio->isEnabled() && ui->saveGlobalRadio->isChecked();
+    settings.saveSurfaceID = ui->saveSurfaceCheck->isEnabled() && ui->saveSurfaceCheck->isChecked();
+    settings.saveSurfaceSide = ui->saveSideCheck->isEnabled() && ui->saveSideCheck->isChecked();
+    settings.savePhotonsID = ui->savePhotonsCheck->isEnabled() && ui->savePhotonsCheck->isChecked();
+
+    if (ui->surfaceAllRadio->isEnabled() && ui->surfaceAllRadio->isChecked())
+        settings.surfaces.clear();
     else
-        settings.exportSurfaceNodeList = m_surfaces;
+        settings.surfaces = m_surfaces;
 
-    PhotonsWidget* exportTypeWidget = m_parameters[storeTypeCombo->currentIndex()];
-    if (!exportTypeWidget) return settings;
-
-    QStringList exportTypeParametersName = exportTypeWidget->GetParameterNames();
-    for (int p = 0; p < exportTypeParametersName.size(); p++) {
-        QString parameterName = exportTypeParametersName[p];
-        settings.AddParameter(parameterName, exportTypeWidget->GetParameterValue(parameterName) );
+    PhotonsWidget* widget = m_widgets[ui->storeTypeCombo->currentIndex()];
+    if (widget) {
+        for (QString name : widget->getParameterNames())
+            settings.parameters.insert(name, widget->getParameterValue(name));
     }
+
     return settings;
 }
 
 /*!
  * Changes the widget of the store type settings to current selected store widget.
  */
-void RayExportDialog::ChangeCurrentStoreTypeParameters()
+void RayExportDialog::storageChanged()
 {
-    parametersWidget->setCurrentIndex(storeTypeCombo->currentIndex() );
+    ui->parametersWidget->setCurrentIndex(ui->storeTypeCombo->currentIndex());
 }
 
 /*!
  * Adds a surface to export surface list.
  */
-void RayExportDialog::AddSurface()
+void RayExportDialog::surfaceAdd()
 {
     SelectSurfaceDialog selectSurfaceDialog(*m_scene, true);
-    if (!selectSurfaceDialog.exec() ) return;
+    if (!selectSurfaceDialog.exec()) return;
 
     QString surface = selectSurfaceDialog.GetSelectedSurfaceURL();
-    if (surface.isEmpty() ) return;
+    if (surface.isEmpty()) return;
 
     if (m_surfaces.contains(surface) ) {
-        QMessageBox::information(this, "Tonatiuh", tr("Selected node has already been added."), 1);
+        QMessageBox::information(this, "Tonatiuh", "Selected node has already been added", 1);
         return;
     }
 
     m_surfaces << surface;
-    surfacesListWidget->addItem(surface);
+    ui->surfacesListWidget->addItem(surface);
 }
 
 /*!
  * Deletes current selected surface from export surface list.
  */
-void RayExportDialog::DeleteSurface()
+void RayExportDialog::surfaceDelete()
 {
-    if (!surfacesListWidget->currentItem()) return;
-    int n = m_surfaces.indexOf(surfacesListWidget->currentItem()->text());
+    if (!ui->surfacesListWidget->currentItem()) return;
+    int n = m_surfaces.indexOf(ui->surfacesListWidget->currentItem()->text());
     if (n < 0) return;
     m_surfaces.removeAt(n);
-    delete surfacesListWidget->item(n);
+    delete ui->surfacesListWidget->item(n);
 }

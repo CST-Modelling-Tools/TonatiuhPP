@@ -19,6 +19,7 @@
 #include <QUndoView>
 #include <QSplashScreen>
 #include <QElapsedTimer>
+#include <QPushButton>
 
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
 #include <Inventor/actions/SoGetMatrixAction.h>
@@ -1190,7 +1191,7 @@ void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& name)
 void MainWindow::AddExportSurfaceURL(QString nodeURL)
 {
     if (!m_photonsSettings) return;
-    m_photonsSettings->exportSurfaceNodeList.push_back(nodeURL);
+    m_photonsSettings->surfaces.push_back(nodeURL);
 }
 
 /*!
@@ -1777,7 +1778,7 @@ void MainWindow::Run()
         }
 
         QVector<InstanceNode*> exportSuraceList;
-        for (QString s : m_photonsSettings->exportSurfaceNodeList)
+        for (QString s : m_photonsSettings->surfaces)
         {
             m_sceneModel->IndexFromUrl(s);
             InstanceNode* node = m_sceneModel->getInstance(m_sceneModel->IndexFromUrl(s));
@@ -1929,7 +1930,7 @@ void MainWindow::SelectNode(QString url)
 void MainWindow::SetExportAllPhotonMap()
 {
     if (!m_photonsSettings) return;
-    m_photonsSettings->exportSurfaceNodeList.clear();
+    m_photonsSettings->surfaces.clear();
 }
 
 /*!
@@ -1939,8 +1940,8 @@ void MainWindow::SetExportAllPhotonMap()
 void MainWindow::SetExportCoordinates(bool enabled, bool global)
 {
     if (!m_photonsSettings) return;
-    m_photonsSettings->exportCoordinates = enabled;
-    m_photonsSettings->exportInGlobalCoordinates = global;
+    m_photonsSettings->saveCoordinates = enabled;
+    m_photonsSettings->saveCoordinatesGlobal = global;
 }
 
 /*!
@@ -1950,7 +1951,7 @@ void MainWindow::SetExportCoordinates(bool enabled, bool global)
 void MainWindow::SetExportIntersectionSurface(bool enabled)
 {
     if (!m_photonsSettings) return;
-    m_photonsSettings->exportSurfaceID = enabled;
+    m_photonsSettings->saveSurfaceID = enabled;
 }
 
 /*!
@@ -1960,7 +1961,7 @@ void MainWindow::SetExportIntersectionSurface(bool enabled)
 void MainWindow::SetExportIntersectionSurfaceSide(bool enabled)
 {
     if (!m_photonsSettings) return;
-    m_photonsSettings->exportIntersectionSurfaceSide = enabled;
+    m_photonsSettings->saveSurfaceSide = enabled;
 }
 
 /*!
@@ -1984,7 +1985,7 @@ void MainWindow::SetExportPhotonMapType(QString name)
     if (!m_photonsSettings)
         m_photonsSettings = new PhotonsSettings;
 
-    m_photonsSettings->modeTypeName = name;
+    m_photonsSettings->name = name;
 }
 
 /*!
@@ -1994,16 +1995,16 @@ void MainWindow::SetExportPhotonMapType(QString name)
 void MainWindow::SetExportPreviousNextPhotonID(bool enabled)
 {
     if (!m_photonsSettings) return;
-    m_photonsSettings->exportPreviousNextPhotonID = enabled;
+    m_photonsSettings->savePhotonsID = enabled;
 }
 
 /*!
  * Sets to selected export type parameter named \a parameterName the value \a parameterValue.
  */
-void MainWindow::SetExportTypeParameterValue(QString parameterName, QString parameterValue)
+void MainWindow::SetExportTypeParameterValue(QString name, QString value)
 {
     if (!m_photonsSettings) return;
-    m_photonsSettings->AddParameter(parameterName, parameterValue);
+    m_photonsSettings->parameters.insert(name, value);
 }
 
 /*!
@@ -2721,7 +2722,7 @@ PhotonsAbstract* MainWindow::CreatePhotonMapExport() const
     for (int i = 0; i < factoryList.size(); i++)
         exportPMModeNames << factoryList[i]->name();
 
-    int exportModeFactoryIndex = exportPMModeNames.indexOf(m_photonsSettings->modeTypeName);
+    int exportModeFactoryIndex = exportPMModeNames.indexOf(m_photonsSettings->name);
     if (exportModeFactoryIndex < 0) return 0;
 
     PhotonsFactory* pExportModeFactory = factoryList[exportModeFactoryIndex];
@@ -2730,27 +2731,27 @@ PhotonsAbstract* MainWindow::CreatePhotonMapExport() const
     PhotonsAbstract* pExportMode = pExportModeFactory->create();
     if (!pExportMode) return 0;
 
-    pExportMode->SetSaveCoordinates(m_photonsSettings->exportCoordinates);
-    pExportMode->SetSaveCoordinatesInGlobalSystem(m_photonsSettings->exportInGlobalCoordinates);
-    pExportMode->SetSavePreviousNextPhotonsID(m_photonsSettings->exportPreviousNextPhotonID);
-    pExportMode->SetSaveSide(m_photonsSettings->exportIntersectionSurfaceSide);
-    pExportMode->SetSaveSurfacesID(m_photonsSettings->exportSurfaceID);
+    pExportMode->setSaveCoordinates(m_photonsSettings->saveCoordinates);
+    pExportMode->setSaveCoordinatesGlobal(m_photonsSettings->saveCoordinatesGlobal);
+    pExportMode->setSavePhotonsID(m_photonsSettings->savePhotonsID);
+    pExportMode->setSaveSurfaceSide(m_photonsSettings->saveSurfaceSide);
+    pExportMode->setSaveSurfacesID(m_photonsSettings->saveSurfaceID);
 
 
-    if (m_photonsSettings->exportSurfaceNodeList.count() > 0)
+    if (m_photonsSettings->surfaces.count() > 0)
         pExportMode->SetSaveAllPhotonsEnabled();
     else
-        pExportMode->SetSaveSurfacesURLList(m_photonsSettings->exportSurfaceNodeList);
+        pExportMode->setSurfaces(m_photonsSettings->surfaces);
 
-    QMap< QString, QString > exportTypeParameters = m_photonsSettings->modeTypeParameters;
+    QMap< QString, QString > exportTypeParameters = m_photonsSettings->parameters;
     QMap< QString, QString >::const_iterator i = exportTypeParameters.constBegin();
     while (i != exportTypeParameters.constEnd() )
     {
-        pExportMode->SetSaveParameterValue(i.key(), i.value() );
+        pExportMode->setParameter(i.key(), i.value() );
         ++i;
     }
 
-    pExportMode->SetSceneModel(*m_sceneModel);
+    pExportMode->setSceneModel(*m_sceneModel);
 
     return pExportMode;
 }

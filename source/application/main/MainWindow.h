@@ -104,7 +104,7 @@ public slots:
     void SetExportIntersectionSurfaceSide(bool enabled);
     void SetExportPhotonMapType(QString name);
     void SetExportPreviousNextPhotonID(bool enabled);
-    void SetExportTypeParameterValue(QString parameterName, QString parameterValue);
+    void SetExportTypeParameterValue(QString parameterName, QString value);
     void SetIncreasePhotonMap(bool increase);
     void SetNodeName(QString name);
     void SetPhotonMapBufferSize(uint nPhotons);

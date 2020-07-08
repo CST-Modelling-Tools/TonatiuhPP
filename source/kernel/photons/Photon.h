@@ -20,7 +20,7 @@ struct TONATIUH_KERNEL Photon
     // intersected surface
     // light source for start
     // 0 for air
-    InstanceNode* intersectedSurface;
+    InstanceNode* surface;
 
     // front side of intersected surface
     // front (true) for light source
