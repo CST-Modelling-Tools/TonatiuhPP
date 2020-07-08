@@ -46,7 +46,6 @@ void Photons::addPhotons(const std::vector<Photon>& photons)
 //    uint nMax = std::min(uint(m_bufferSize), raysListSize);
 //    for (uint n = 0; n < nMax; n++)
 //        m_photons.push_back(photons[n]);
-//        m_photons.append(photons);
     m_photons.insert(m_photons.end(), photons.begin(), photons.end());
 
     m_photonsTotal += nMax;

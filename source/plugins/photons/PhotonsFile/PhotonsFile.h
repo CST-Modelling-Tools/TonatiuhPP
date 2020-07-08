@@ -14,17 +14,15 @@ public:
     PhotonsFile();
     ~PhotonsFile() {}
 
-	static QStringList GetParameterNames();
-
+    bool StartExport();
 	void EndExport();
     void SavePhotonMap(const std::vector<Photon>& photons);
     void SetPowerPerPhoton(double wPhoton) {m_powerPerPhoton = wPhoton;}
-    void SetSaveParameterValue(QString parameterName, QString parameterValue);
-	bool StartExport();
 
-    static const char* getClassName() {return "File";}
-    static const char* getClassIcon() {return ":/PhotonsFile.png";}
-    const char* getIcon() const {return getClassIcon();}
+    static QStringList GetParameterNames() {return {"ExportDirectory", "ExportFile", "FileSize"};}
+    void SetSaveParameterValue(QString parameterName, QString parameterValue);
+
+    NAME_ICON_FUNCTIONS("File", ":/PhotonsFile.png")
 
 private:
     void ExportAllPhotonsAllData(QString filename, const std::vector<Photon>& raysLists);
@@ -54,7 +52,7 @@ private:
 
 
 
-#include "kernel/photons/PhotonsFactory.h"
+//#include "kernel/photons/PhotonsFactory.h"
 #include "PhotonsFileWidget.h"
 
 class PhotonsFileFactory:

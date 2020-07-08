@@ -10,8 +10,7 @@
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/material/MaterialAbsorber.h"
 #include "kernel/material/MaterialVirtual.h"
-#include "kernel/photons/PhotonsDefault.h"
-#include "kernel/photons/PhotonsFactory.h"
+#include "kernel/photons/PhotonsAbstract.h"
 #include "kernel/photons/PhotonsWidget.h"
 #include "kernel/profiles/ProfileBox.h"
 #include "kernel/profiles/ProfileCircular.h"
@@ -93,7 +92,7 @@ void PluginManager::load(QDir dir)
     loadPlugin(new MaterialFactoryT<MaterialAbsorber>);
     loadPlugin(new MaterialFactoryT<MaterialVirtual>);
     loadPlugin(new RandomFactoryT<RandomSTL>);
-    loadPlugin(new PhotonsFactoryT<PhotonsDefault, PhotonsWidget>);
+    loadPlugin(new PhotonsFactoryT<PhotonsAbstract, PhotonsWidget>);
 
     sort();
 }

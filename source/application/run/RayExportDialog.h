@@ -3,7 +3,7 @@
 #include <QDialog>
 #include <QVector>
 
-#include "kernel/photons/PhotonsFactory.h"
+#include "kernel/photons/PhotonsAbstract.h"
 
 #include "ui_RayExportDialog.h"
 

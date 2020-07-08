@@ -28,11 +28,12 @@ PhotonsFile::PhotonsFile():
 }
 
 /*!
- * Returns the plugin parameters names.
+ * Deletes the files that can be uset to export.
  */
-QStringList PhotonsFile::GetParameterNames()
+bool PhotonsFile::StartExport()
 {
-    return {"ExportDirectory", "ExportFile", "FileSize"};
+    if (m_exportedPhotons < 1) RemoveExistingFiles();
+    return true;
 }
 
 /*!
@@ -111,14 +112,7 @@ void PhotonsFile::SetSaveParameterValue(QString parameterName, QString parameter
 	}
 }
 
-/*!
- * Deletes the files that can be uset to export.
- */
-bool PhotonsFile::StartExport()
-{
-    if (m_exportedPhotons < 1) RemoveExistingFiles();
-	return 1;
-}
+
 
 /*!
  * Export \a a raysList all data to file \a filename.

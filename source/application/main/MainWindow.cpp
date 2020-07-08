@@ -70,7 +70,6 @@
 #include "kernel/material/MaterialRT.h"
 #include "kernel/photons/Photons.h"
 #include "kernel/photons/PhotonsAbstract.h"
-#include "kernel/photons/PhotonsFactory.h"
 #include "kernel/photons/PhotonsSettings.h"
 #include "kernel/random/Random.h"
 #include "kernel/run/InstanceNode.h"
