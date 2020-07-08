@@ -56,7 +56,7 @@ void RayTracer::operator()(ulong nRays)
         int rayLength = 0;
         InstanceNode* intersectedSurface = m_instanceSun;
         if (bExportLight)
-            photons.push_back(Photon(ray.origin, isFront, rayLength, m_instanceSun) );
+            photons.push_back(Photon(rayLength, ray.origin, m_instanceSun, isFront));
 
         // Part 2: middle photon points (intersection with shapes)
         bool isReflected = true;
@@ -80,7 +80,7 @@ void RayTracer::operator()(ulong nRays)
             if (!isReflected) break;
             ++rayLength;
             if (bExportAll || m_exportSuraceList.contains(intersectedSurface))
-                photons.push_back(Photon(ray.point(ray.tMax), isFront, rayLength, intersectedSurface, 1) );
+                photons.push_back(Photon(rayLength, ray.point(ray.tMax), intersectedSurface, isFront, 1));
             ray = rayReflected;
         }
 
@@ -93,7 +93,7 @@ void RayTracer::operator()(ulong nRays)
             ray.tMax = 1.;
             isFront = 0; // ? back for air
         }
-        photons.push_back(Photon(ray.point(ray.tMax), isFront, ++rayLength, intersectedSurface) );
+        photons.push_back(Photon(++rayLength, ray.point(ray.tMax), intersectedSurface, isFront));
     }
 
     m_mutexPhotons->lock();

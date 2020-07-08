@@ -5,8 +5,8 @@
  * Creates a photon map
  */
 Photons::Photons():
-    m_bufferSize(0),
     m_exporter(0),
+    m_bufferSize(0),
     m_photonsTotal(0)
 {
 

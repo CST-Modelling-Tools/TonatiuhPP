@@ -47,8 +47,8 @@ private:
 	QVector<Transform> m_surfaceWorldToObject;
 	int m_currentFile;
     QString m_exportDirectoryName;
-	unsigned long m_exportedPhotons;
-	unsigned long m_nPhotonsPerFile;
+    ulong m_exportedPhotons;
+    ulong m_nPhotonsPerFile;
 	bool m_oneFile;
 };
 

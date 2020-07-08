@@ -2731,11 +2731,11 @@ PhotonsAbstract* MainWindow::CreatePhotonMapExport() const
     PhotonsAbstract* pExportMode = pExportModeFactory->create();
     if (!pExportMode) return 0;
 
-    pExportMode->SetSaveCoordinatesEnabled(m_photonsSettings->exportCoordinates);
-    pExportMode->SetSaveCoordinatesInGlobalSystemEnabled(m_photonsSettings->exportInGlobalCoordinates);
+    pExportMode->SetSaveCoordinates(m_photonsSettings->exportCoordinates);
+    pExportMode->SetSaveCoordinatesInGlobalSystem(m_photonsSettings->exportInGlobalCoordinates);
     pExportMode->SetSavePreviousNextPhotonsID(m_photonsSettings->exportPreviousNextPhotonID);
-    pExportMode->SetSaveSideEnabled(m_photonsSettings->exportIntersectionSurfaceSide);
-    pExportMode->SetSaveSurfacesIDEnabled(m_photonsSettings->exportSurfaceID);
+    pExportMode->SetSaveSide(m_photonsSettings->exportIntersectionSurfaceSide);
+    pExportMode->SetSaveSurfacesID(m_photonsSettings->exportSurfaceID);
 
 
     if (m_photonsSettings->exportSurfaceNodeList.count() > 0)

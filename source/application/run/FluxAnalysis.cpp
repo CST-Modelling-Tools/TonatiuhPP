@@ -340,7 +340,7 @@ void FluxAnalysis::fillBins()
     int photonsTotal = 0;
     for (const Photon& photon : m_photons->getPhotons())
     {
-        if (photon.side != activeSideID) continue;
+        if (photon.isFront != activeSideID) continue;
         photonsTotal++;
         vec3d p = toObject.transformPoint(photon.pos);
         vec2d uv = shape->getUV(p);

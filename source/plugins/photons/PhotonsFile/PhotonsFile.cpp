@@ -70,9 +70,9 @@ void PhotonsFile::SavePhotonMap(const std::vector<Photon>& photons)
 		QString filename = m_photonsFilename;
         QString exportFilename = exportDirectory.absoluteFilePath(filename.append(".dat") );
 
-        if (m_saveCoordinates && m_saveSide && m_savePrevNexID && m_saveSurfaceID)
+        if (m_saveCoordinates && m_saveSide && m_savePrevNextID && m_saveSurfaceID)
             ExportAllPhotonsAllData(exportFilename, photons);
-        else if (m_saveCoordinates && m_saveSide && !m_savePrevNexID && m_saveSurfaceID)
+        else if (m_saveCoordinates && m_saveSide && !m_savePrevNextID && m_saveSurfaceID)
             ExportAllPhotonsNotNextPrevID(exportFilename, photons);
 		else
             ExportAllPhotonsSelectedData(exportFilename, photons);
@@ -160,7 +160,7 @@ void PhotonsFile::ExportAllPhotonsAllData(QString filename, const std::vector<Ph
             out << scenePos.x << scenePos.y << scenePos.z;
 
 			//m_saveSide
-            double side = double(photon.side);
+            double side = double(photon.isFront);
             out << side;
 
 			//m_savePrevNexID
@@ -213,7 +213,7 @@ void PhotonsFile::ExportAllPhotonsAllData(QString filename, const std::vector<Ph
             vec3d localPos = worldToObject.transformPoint(photon.pos);
             out << localPos.x << localPos.y << localPos.z;
 
-            double side = double(photon.side);
+            double side = double(photon.isFront);
             out << side;
 
 			out<<previousPhotonID;
@@ -267,7 +267,7 @@ void PhotonsFile::ExportAllPhotonsNotNextPrevID(QString filename, const std::vec
             //out<<photon.pos.x << photon.pos.y << photon.pos.z;
 
 			//m_saveSide
-            out << double(photon.side);
+            out << double(photon.isFront);
 
 			//m_saveSurfaceID
             out << double(urlId);
@@ -307,7 +307,7 @@ void PhotonsFile::ExportAllPhotonsNotNextPrevID(QString filename, const std::vec
             vec3d localPos = worldToObject.transformPoint(photon.pos);
 			out<<localPos.x << localPos.y << localPos.z;
 
-            out << double(photon.side);
+            out << double(photon.isFront);
 
             out << double(urlId);
 		}
@@ -367,10 +367,10 @@ void PhotonsFile::ExportAllPhotonsSelectedData(QString filename, const std::vect
 
 		if(  m_saveSide )
 		{
-            double side = double( photon.side );
+            double side = double( photon.isFront );
 			out<<side;
 		}
-		if( m_savePrevNexID )
+        if( m_savePrevNextID )
 		{
 			out<<previousPhotonID;
             if (i < nPhotons - 1 && raysLists[i+1].id > 0)	out << double( m_exportedPhotons +1 );
@@ -428,7 +428,7 @@ void PhotonsFile::ExportSelectedPhotonsAllData(QString filename, const std::vect
             //out<<photon.pos.x << photon.pos.y << photon.pos.z;
 
 			//m_saveSide
-            double side = double( photon.side );
+            double side = double( photon.isFront );
 			out<<side;
 
 			//m_savePrevNexID
@@ -484,7 +484,7 @@ void PhotonsFile::ExportSelectedPhotonsAllData(QString filename, const std::vect
             out << localPos.x << localPos.y << localPos.z;
 
 			//m_saveSide
-            double side = double( photon.side );
+            double side = double( photon.isFront );
 			out<<side;
 
 			//m_savePrevNexID
@@ -543,7 +543,7 @@ void PhotonsFile::ExportSelectedPhotonsNotNextPrevID( QString filename, const st
             //out<<photon.pos.x << photon.pos.y << photon.pos.z;
 
 			//m_saveSide
-            double side = double( photon.side );
+            double side = double( photon.isFront );
 			out<<side;
 
 			//m_saveSurfaceID
@@ -586,7 +586,7 @@ void PhotonsFile::ExportSelectedPhotonsNotNextPrevID( QString filename, const st
             vec3d localPos = worldToObject.transformPoint(photon.pos);
 			out<<localPos.x << localPos.y << localPos.z;
 
-            out << double(photon.side);
+            out << double(photon.isFront);
 
             out << double(urlId);
 
@@ -655,10 +655,10 @@ void PhotonsFile::ExportSelectedPhotonsSelectedData( QString filename, const std
 
 		if(  m_saveSide )
 		{
-            double side = double( photon.side );
+            double side = double( photon.isFront );
 			out<<side;
 		}
-		if( m_savePrevNexID )
+        if( m_savePrevNextID )
 		{
 			out<<previousPhotonID;
 			if( ( ( startIndex + exportedPhotonsToFile ) < nPhotonElements )
@@ -736,9 +736,9 @@ void PhotonsFile::SaveToVariousFiles(const std::vector<Photon>& raysLists)
 
 			QString currentFileName = exportDirectory.absoluteFilePath( newName );
 
-			if( m_saveCoordinates && m_saveSide && m_savePrevNexID && m_saveSurfaceID )
+            if( m_saveCoordinates && m_saveSide && m_savePrevNextID && m_saveSurfaceID )
 				ExportSelectedPhotonsAllData( currentFileName, raysLists, startIndex, nPhotonsToExport );
-			else if( m_saveCoordinates && m_saveSide && !m_savePrevNexID && m_saveSurfaceID )
+            else if( m_saveCoordinates && m_saveSide && !m_savePrevNextID && m_saveSurfaceID )
 				ExportSelectedPhotonsNotNextPrevID( currentFileName, raysLists, startIndex, nPhotonsToExport );
 			else
 				ExportSelectedPhotonsSelectedData( currentFileName, raysLists, startIndex, nPhotonsToExport );
@@ -760,9 +760,9 @@ void PhotonsFile::SaveToVariousFiles(const std::vector<Photon>& raysLists)
 
         QString currentFileName = exportDirectory.absoluteFilePath(newName);
 
-        if (m_saveCoordinates && m_saveSide && m_savePrevNexID && m_saveSurfaceID)
+        if (m_saveCoordinates && m_saveSide && m_savePrevNextID && m_saveSurfaceID)
             ExportSelectedPhotonsAllData(currentFileName, raysLists, startIndex, nPhotonsToExport);
-        else if (m_saveCoordinates && m_saveSide && !m_savePrevNexID && m_saveSurfaceID)
+        else if (m_saveCoordinates && m_saveSide && !m_savePrevNextID && m_saveSurfaceID)
             ExportSelectedPhotonsNotNextPrevID(currentFileName, raysLists, startIndex, nPhotonsToExport);
         else
             ExportSelectedPhotonsSelectedData(currentFileName, raysLists, startIndex, nPhotonsToExport);
@@ -787,7 +787,7 @@ void PhotonsFile::WriteFileFormat(QString exportFilename)
 	}
     if (m_saveSide)
         out << "side\n";
-    if (m_savePrevNexID) {
+    if (m_savePrevNextID) {
         out << "previous ID\n";
         out << "next ID\n";
 	}

@@ -8,41 +8,45 @@
 
 class SceneModel;
 
+
 class TONATIUH_KERNEL PhotonsAbstract
 {
 public:
     PhotonsAbstract();
     virtual ~PhotonsAbstract() {}
 
+    virtual bool StartExport() = 0;
     virtual void EndExport() {}
     virtual void SavePhotonMap(const std::vector<Photon>& /*raysLists*/) {}
-    void SetConcentratorToWorld(Transform concentratorToWorld);
-    virtual void SetPowerPerPhoton(double /*wPhoton*/) {}
+
+    void SetSceneModel(SceneModel& sceneModel) {m_sceneModel = &sceneModel;}
+    void SetConcentratorToWorld(Transform transform) {m_transform = transform;}
 
     void SetSaveAllPhotonsEnabled();
-    void SetSaveCoordinatesEnabled(bool enabled);
-    void SetSaveCoordinatesInGlobalSystemEnabled(bool enabled);
-    virtual void SetSaveParameterValue(QString parameterName, QString parameterValue) = 0;
+    void SetSaveSurfacesURLList(QStringList surfaces);
+
+    void SetSaveCoordinates(bool enabled);
+    void SetSaveCoordinatesInGlobalSystem(bool enabled);
     void SetSavePreviousNextPhotonsID(bool enabled);
-    void SetSaveSideEnabled(bool enabled);
-    void SetSaveSurfacesIDEnabled(bool enabled);
-    void SetSaveSurfacesURLList(QStringList surfacesURLList);
-    void SetSceneModel(SceneModel& sceneModel);
-    virtual bool StartExport() = 0;
+    void SetSaveSide(bool enabled);
+    void SetSaveSurfacesID(bool enabled);
+
+    virtual void SetPowerPerPhoton(double /*wPhoton*/) {}
+    virtual void SetSaveParameterValue(QString name, QString value) = 0;
 
     static const char* getClassName() {return "PhotonMapExport";}
     static const char* getClassIcon() {return ":/PhotonMapExport.png";}
     const char* getIcon() const {return getClassIcon();}
 
 protected:
+    SceneModel* m_sceneModel;
     Transform m_transform;
-    SceneModel* m_pSceneModel;
     bool m_saveAllPhotonsData;
     bool m_saveCoordinates;
     bool m_saveCoordinatesInGlobal;
     bool m_savePowerPerPhoton;
-    bool m_savePrevNexID;
+    bool m_savePrevNextID;
     bool m_saveSide;
     bool m_saveSurfaceID;
-    QStringList m_saveSurfacesURLList;
+    QStringList m_saveSurfaces;
 };
