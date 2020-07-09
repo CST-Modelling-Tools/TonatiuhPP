@@ -76,9 +76,11 @@ void PluginManager::load(QDir dir)
     }
 
     loadPlugin(new SunFactoryT<SunPillbox>);
+
     loadPlugin(new AirFactoryT<AirVacuum>);
     loadPlugin(new AirFactoryT<AirExponential>);
     loadPlugin(new AirFactoryT<AirPolynomial>);
+
     loadPlugin(new ShapeFactoryT<ShapePlanar>);
     loadPlugin(new ShapeFactoryT<ShapeCube>);
 
@@ -91,7 +93,9 @@ void PluginManager::load(QDir dir)
 
     loadPlugin(new MaterialFactoryT<MaterialAbsorber>);
     loadPlugin(new MaterialFactoryT<MaterialVirtual>);
+
     loadPlugin(new RandomFactoryT<RandomSTL>);
+
     loadPlugin(new PhotonsFactoryT<PhotonsAbstract, PhotonsWidget>);
 
     sort();
@@ -130,6 +134,7 @@ void PluginManager::loadPlugin(TFactory* p)
     else if (auto f = dynamic_cast<PhotonsFactory*>(p))
     {
         m_exportFactories << f;
+        m_exportMap[f->name()] = f;
     }
     else if (auto f = dynamic_cast<MaterialFactory*>(p))
     {

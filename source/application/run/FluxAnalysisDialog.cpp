@@ -33,13 +33,13 @@
 
 
 
-FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* sceneKit, SceneModel& sceneModel,
+FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* sceneKit, SceneModel* sceneModel,
                                        InstanceNode* rootInstance,
                                        int sunWidthDivisions, int sunHeightDivisions,
                                        Random* randomDeviate,  QWidget* parent):
     QDialog(parent),
     ui(new Ui::FluxAnalysisDialog),
-    m_sceneModel(&sceneModel),
+    m_sceneModel(sceneModel),
     m_fluxLabel("Flux, W/m^2")
 {
     ui->setupUi(this);

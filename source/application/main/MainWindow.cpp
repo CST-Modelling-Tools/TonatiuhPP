@@ -134,7 +134,7 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
     m_sceneModel(0),
     m_selectionModel(0),
     m_rand(0),
-    m_selectedRandomDeviate(-1),
+    m_selectedRandomDeviate(0),
     m_bufferPhotons(1'000'000),
     m_increasePhotonMap(false),
     m_photonsSettings(0),
@@ -146,7 +146,7 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
     m_coinNode_Buffer(0),
     m_manipulators_Buffer(0),
     m_raysTracedTotal(0),
-    m_raysTraced(10000),
+    m_raysTraced(10'000),
     m_widthDivisions(200),
     m_heightDivisions(200),
     m_drawPhotons(false),
@@ -466,7 +466,7 @@ void MainWindow::SetupTriggers()
 
     // run
     connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(RunCompleteRayTracer()) );
-    connect(ui->actionRunFluxAnalysis, SIGNAL(triggered()), this, SLOT(RunFluxAnalysisRayTracer()) );
+    connect(ui->actionRunFluxAnalysis, SIGNAL(triggered()), this, SLOT(RunFluxAnalysisDialog()) );
     connect(ui->actionRayTraceOptions, SIGNAL(triggered()), this, SLOT(onRayOptionsDialog())  );
 
     // view
@@ -755,16 +755,16 @@ void MainWindow::Undo()
  */
 void MainWindow::RunCompleteRayTracer()
 {
-    InstanceNode* rootSeparatorInstance = 0;
-    InstanceNode* lightInstance = 0;
+    InstanceNode* instanceRoot = 0;
+    InstanceNode* instanceSun = 0;
     SunShape* sunShape = 0;
     SunAperture* sunAperture = 0;
-    Air* transmissivity = 0;
+    Air* air = 0;
 
 //    QElapsedTimer timer;
 //    timer.start();
 
-    if (!ReadyForRaytracing(rootSeparatorInstance, lightInstance, sunShape, sunAperture, transmissivity) )
+    if (!ReadyForRaytracing(instanceRoot, instanceSun, sunShape, sunAperture, air) )
         return;
 
 //    std::cout << "Elapsed time (ReadyForRaytracing): " << timer.elapsed() << std::endl;
@@ -777,7 +777,7 @@ void MainWindow::RunCompleteRayTracer()
 /*!
  * Runs the ray tracer for the analysis of the surface. A dialog will be opened to set the surface and flux calculation parameters.
  */
-void MainWindow::RunFluxAnalysisRayTracer()
+void MainWindow::RunFluxAnalysisDialog()
 {
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
@@ -785,22 +785,20 @@ void MainWindow::RunFluxAnalysisRayTracer()
     SunKit* sunKit = (SunKit*) sceneKit->getPart("lightList[0]", false);
     if (!sunKit) return;
 
-    InstanceNode* rootSeparatorInstance = m_sceneModel->getInstance(QModelIndex());
-    if (!rootSeparatorInstance) return;
-    rootSeparatorInstance = rootSeparatorInstance->children[1];
+    InstanceNode* instanceRoot = m_sceneModel->getInstance(QModelIndex());
+    if (!instanceRoot) return;
+    instanceRoot = instanceRoot->children[1];
 
-    QVector<RandomFactory*> randomDeviateFactoryList = m_pluginManager->getRandomFactories();
-    //Check if there is a random generator selected;
+    QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
     if (m_selectedRandomDeviate == -1)
     {
-        if (randomDeviateFactoryList.size() > 0) m_selectedRandomDeviate = 0;
+        if (randomFactories.size() > 0) m_selectedRandomDeviate = 0;
         else return;
     }
 
-    //Create the random generator
-    Random* pRandomDeviate = randomDeviateFactoryList[m_selectedRandomDeviate]->create();
+    Random* rand = randomFactories[m_selectedRandomDeviate]->create();
 
-    FluxAnalysisDialog dialog(sceneKit, *m_sceneModel, rootSeparatorInstance, m_widthDivisions, m_heightDivisions, pRandomDeviate, this);
+    FluxAnalysisDialog dialog(sceneKit, m_sceneModel, instanceRoot, m_widthDivisions, m_heightDivisions, rand, this);
     dialog.exec();
 }
 
@@ -1051,21 +1049,23 @@ void MainWindow::ShowMenu(const QModelIndex& index)
  */
 void MainWindow::onRayOptionsDialog()
 {
-    QVector<RandomFactory*> randomDeviateFactoryList = m_pluginManager->getRandomFactories();
-    RayOptionsDialog* options = new RayOptionsDialog(
+    QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
+    RayOptionsDialog dialog(
         m_raysTraced,
-        randomDeviateFactoryList, m_selectedRandomDeviate,
+        randomFactories, m_selectedRandomDeviate,
         m_widthDivisions, m_heightDivisions,
         m_drawRays, m_drawPhotons,
         m_bufferPhotons, m_increasePhotonMap, this);
-    options->exec();
+    dialog.exec();
 
-    SetRaysPerIteration(options->GetNumRays());
-    SetRandomDeviateType(randomDeviateFactoryList[options->GetRandomFactoryIndex()]->name() );
-    SetRayCastingGrid(options->GetWidthDivisions(), options->GetHeightDivisions() );
-    SetRaysDrawingOptions(options->DrawRays(), options->DrawPhotons() );
-    SetPhotonMapBufferSize(options->GetPhotonMapBufferSize() );
-    SetIncreasePhotonMap(options->IncreasePhotonMap() );
+    SetRaysPerIteration(dialog.raysNumber());
+    SetRandomDeviateType(randomFactories[dialog.raysRandomFactory()]->name());
+    SetRayCastingGrid(dialog.rayPlaneWidth(), dialog.rayPlaneHeight() );
+
+    SetRaysDrawingOptions(dialog.drawRays(), dialog.drawPhotons());
+
+    SetPhotonMapBufferSize(dialog.photonBufferSize());
+    SetIncreasePhotonMap(dialog.photonBufferAppend());
 }
 
 void MainWindow::ShowWarning(QString message)
@@ -1867,32 +1867,29 @@ void MainWindow::Run()
  * The map will be calculated with the parameters \a nOfRays, \a heightDivisions and \a heightDivisions.
  * The results will save in a file \a directory \a QString fileName, the coordinates of the cells depending on the variable \a saveCoord.
  */
-void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned int nOfRays, int heightDivisions, int widthDivisions, QString directory, QString file, bool saveCoords)
+void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, uint nOfRays, int heightDivisions, int widthDivisions, QString dirName, QString fileName, bool saveCoords)
 {
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
 
-    SunKit* lightKit = (SunKit*) sceneKit->getPart("lightList[0]", false);
-    if (!lightKit) return;
+    SunKit* sunKit = (SunKit*) sceneKit->getPart("lightList[0]", false);
+    if (!sunKit) return;
 
-    InstanceNode* rootSeparatorInstance = m_sceneModel->getInstance(QModelIndex());
-    if (!rootSeparatorInstance) return;
-    rootSeparatorInstance = rootSeparatorInstance->children[1];
+    InstanceNode* instanceRoot = m_sceneModel->getInstance(QModelIndex());
+    if (!instanceRoot) return;
+    instanceRoot = instanceRoot->children[1];
 
-    QVector<RandomFactory*> randomDeviateFactoryList = m_pluginManager->getRandomFactories();
-    //Check if there is a random generator selected;
+    QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
     if (m_selectedRandomDeviate == -1)
     {
-        if (randomDeviateFactoryList.size() > 0) m_selectedRandomDeviate = 0;
+        if (randomFactories.size() > 0) m_selectedRandomDeviate = 0;
         else return;
     }
+    if (!m_rand) m_rand = randomFactories[m_selectedRandomDeviate]->create();
 
-    //Create the random generator
-    if (!m_rand) m_rand =  randomDeviateFactoryList[m_selectedRandomDeviate]->create();
-
-    FluxAnalysis fluxAnalysis(sceneKit, *m_sceneModel, rootSeparatorInstance, m_widthDivisions, m_heightDivisions, m_rand);
-    fluxAnalysis.run(nodeURL, surfaceSide, nOfRays, false, heightDivisions, widthDivisions);
-    fluxAnalysis.write(directory, file, saveCoords);
+    FluxAnalysis fluxAnalysis(sceneKit, m_sceneModel, instanceRoot, m_widthDivisions, m_heightDivisions, m_rand);
+    fluxAnalysis.run(nodeURL, surfaceSide, nOfRays, false, heightDivisions, widthDivisions); //?
+    fluxAnalysis.write(dirName, fileName, saveCoords);
 }
 
 /*!
@@ -2715,45 +2712,14 @@ SoSeparator* MainWindow::CreateGrid()
  */
 PhotonsAbstract* MainWindow::CreatePhotonMapExport() const
 {
-    QVector<PhotonsFactory*> factoryList = m_pluginManager->getExportFactories();
-    if (factoryList.size() == 0) return 0;
+    PhotonsFactory* f = m_pluginManager->getExportMap().value(m_photonsSettings->name, 0);
+    if (!f) return 0;
+    PhotonsAbstract* photonExport = f->create();
+    if (!photonExport) return 0;
 
-    QVector< QString > exportPMModeNames;
-    for (int i = 0; i < factoryList.size(); i++)
-        exportPMModeNames << factoryList[i]->name();
-
-    int exportModeFactoryIndex = exportPMModeNames.indexOf(m_photonsSettings->name);
-    if (exportModeFactoryIndex < 0) return 0;
-
-    PhotonsFactory* pExportModeFactory = factoryList[exportModeFactoryIndex];
-    if (!pExportModeFactory) return 0;
-
-    PhotonsAbstract* pExportMode = pExportModeFactory->create();
-    if (!pExportMode) return 0;
-
-    pExportMode->setSaveCoordinates(m_photonsSettings->saveCoordinates);
-    pExportMode->setSaveCoordinatesGlobal(m_photonsSettings->saveCoordinatesGlobal);
-    pExportMode->setSavePhotonsID(m_photonsSettings->savePhotonsID);
-    pExportMode->setSaveSurfaceSide(m_photonsSettings->saveSurfaceSide);
-    pExportMode->setSaveSurfacesID(m_photonsSettings->saveSurfaceID);
-
-
-    if (m_photonsSettings->surfaces.count() > 0)
-        pExportMode->SetSaveAllPhotonsEnabled();
-    else
-        pExportMode->setSurfaces(m_photonsSettings->surfaces);
-
-    QMap< QString, QString > exportTypeParameters = m_photonsSettings->parameters;
-    QMap< QString, QString >::const_iterator i = exportTypeParameters.constBegin();
-    while (i != exportTypeParameters.constEnd() )
-    {
-        pExportMode->setParameter(i.key(), i.value() );
-        ++i;
-    }
-
-    pExportMode->setSceneModel(*m_sceneModel);
-
-    return pExportMode;
+    photonExport->setSceneModel(*m_sceneModel);
+    photonExport->setPhotonSettings(m_photonsSettings);
+    return photonExport;
 }
 
 /*!
@@ -2947,14 +2913,13 @@ void MainWindow::SetCurrentFile(const QString& fileName)
  */
 bool MainWindow::SetPhotonMapExportSettings()
 {
-    QVector<PhotonsFactory*> exportPhotonMapModeList = m_pluginManager->getExportFactories();
-    RayExportDialog dialog(*m_sceneModel, exportPhotonMapModeList);
-    if (!dialog.exec() ) return false;
+    QVector<PhotonsFactory*> exportFactories = m_pluginManager->getExportFactories();
+    RayExportDialog dialog(m_sceneModel, exportFactories);
+    if (!dialog.exec()) return false;
 
     if (m_photonsSettings) delete m_photonsSettings;
-
     m_photonsSettings = new PhotonsSettings;
-    *m_photonsSettings = dialog.GetExportPhotonMapSettings();
+    *m_photonsSettings = dialog.getPhotonSettings();
     return true;
 }
 

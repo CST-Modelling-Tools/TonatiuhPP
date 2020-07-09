@@ -111,7 +111,7 @@ public slots:
     void SetRandomDeviateType(QString name);
     void SetRayCastingGrid(int widthDivisions, int heightDivisions);
     void SetRaysDrawingOptions(bool drawRays, bool drawPhotons);
-    void SetRaysPerIteration(unsigned int rays);
+    void SetRaysPerIteration(uint rays);
     void SetSunshape(QString name);
     void SetSunshapeParameter(QString parameter, QString value);
     void SetAir(QString name);
@@ -143,7 +143,7 @@ private slots:
     void OpenRecentFile();
     void Redo();
     void RunCompleteRayTracer();
-    void RunFluxAnalysisRayTracer();
+    void RunFluxAnalysisDialog();
     bool SaveAs();
     bool SaveComponent();
     void SelectionFinish(SoSelection* selection);

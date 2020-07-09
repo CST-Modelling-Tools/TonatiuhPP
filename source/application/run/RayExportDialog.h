@@ -19,10 +19,10 @@ class RayExportDialog: public QDialog
     Q_OBJECT
 
 public:
-    RayExportDialog(SceneModel& scene, QVector<PhotonsFactory*> factories, QWidget* parent = 0);
+    RayExportDialog(SceneModel* scene, QVector<PhotonsFactory*> factories, QWidget* parent = 0);
     ~RayExportDialog();
 
-    PhotonsSettings GetExportPhotonMapSettings() const;
+    PhotonsSettings getPhotonSettings() const;
 
 private slots:
     void storageChanged();

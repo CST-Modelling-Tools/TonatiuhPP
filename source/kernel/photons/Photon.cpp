@@ -14,10 +14,9 @@ Photon::Photon():
 Photon::Photon(double id, const vec3d& pos, InstanceNode* surface, int isFront, int isAbsorbed):
     id(id),
     pos(pos),
-    isFront(isFront),
     surface(surface),
+    isFront(isFront),
     isAbsorbed(isAbsorbed)
 {
 
 }
-

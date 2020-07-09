@@ -1,91 +1,48 @@
 #include "RayOptionsDialog.h"
-
-#include <QAbstractButton>
-#include <QFileDialog>
-#include <QDir>
+#include <ui_RayOptionsDialog.h>
 
 #include "kernel/random/Random.h"
 
-/**
- * Creates a dialog to ray tracer options with the given \a parent and \a f flags.
- *
- * The variables take the default values.
- */
-RayOptionsDialog::RayOptionsDialog(QWidget* parent, Qt::WindowFlags f):
-    QDialog(parent, f),
-    m_numRays(0),
-    m_selectedRandomFactory(-1),
-    m_widthDivisions(200),
-    m_heightDivisions(200),
-    m_drawRays(false),
-    m_drawPhotons(false),
-    m_photonMapBufferSize(1000000),
-    m_increasePhotonMap(false)
-{
-    setupUi(this);
-    connect(this, SIGNAL(accepted()), this, SLOT(saveChanges()) );
-}
 
-/**
- * Creates a dialog to ray tracer options with the given \a parent and \a f flags.
- *
- * The variables take the values specified by \a numRats, \a faction, \a drawPhotons and \a increasePhotonMap.
- */
 RayOptionsDialog::RayOptionsDialog(
-    int numRays,
-    QVector<RandomFactory*> randomFactoryList, int selectedRandomFactory,
-    int widthDivisions, int heightDivisions,
+    int raysNumber,
+    QVector<RandomFactory*> randomFactories, int raysRandomFactory,
+    int raysPlaneWidth, int raysPlaneHeight,
     bool drawRays, bool drawPhotons,
-    int photonMapSize, bool increasePhotonMap,
+    int photonBufferSize, bool photonBufferAppend,
     QWidget* parent, Qt::WindowFlags f
 ):
     QDialog(parent, f),
-    m_numRays(numRays),
-    m_selectedRandomFactory(selectedRandomFactory),
-    m_widthDivisions(widthDivisions),
-    m_heightDivisions(heightDivisions),
-    m_drawRays(drawRays),
-    m_drawPhotons(drawPhotons),
-    m_photonMapBufferSize(photonMapSize),
-    m_increasePhotonMap(increasePhotonMap)
+    ui(new Ui::RayOptionsDialog)
 {
-    setupUi(this);
-    raysSpinBox->setValue(m_numRays);
-    for (int index = 0; index < randomFactoryList.size(); ++index)
-        randomCombo->addItem(randomFactoryList[index]->icon(), randomFactoryList[index]->name() );
+    ui->setupUi(this);
 
-    if (m_selectedRandomFactory < 0 && randomFactoryList.size() > 0)
-        m_selectedRandomFactory = 0;
-    randomCombo->setCurrentIndex(m_selectedRandomFactory);
+    ui->raysNumberSpin->setValue(raysNumber);
+    for (RandomFactory* f : randomFactories)
+        ui->raysRandomFactoryCombo->addItem(f->icon(), f->name());
+    ui->raysRandomFactoryCombo->setCurrentIndex(raysRandomFactory);
+    ui->raysPlaneWidthSpin->setValue(raysPlaneWidth);
+    ui->raysPlaneHeightSpin->setValue(raysPlaneHeight);
 
-    widthDivisionsSpinBox->setValue(m_widthDivisions);
-    heightDivisionsSpinBox->setValue(m_heightDivisions);
+    ui->drawRaysCheck->setChecked(drawRays);
+    ui->drawPhotonsCheck->setChecked(drawPhotons);
 
-    showRaysCheck->setChecked(m_drawRays);
-    showPhotonsCheck->setChecked(m_drawPhotons);
-
-    bufferSizeSpin->setValue(m_photonMapBufferSize);
-    if (m_increasePhotonMap)
-        increaseMapRadio->setChecked(true);
-    else
-        newMapRadio->setChecked(true);
-
-    connect(this, SIGNAL(accepted()), this, SLOT(saveChanges()));
+    ui->photonBufferSizeSpin->setValue(photonBufferSize);
+    ui->photonBufferAppendRadio->setChecked(photonBufferAppend);
 }
 
-/**
- * Saves the values of the dialog.
- */
-void RayOptionsDialog::saveChanges()
+RayOptionsDialog::~RayOptionsDialog()
 {
-    m_numRays = raysSpinBox->value();
-    m_selectedRandomFactory = randomCombo->currentIndex();
-    m_widthDivisions = widthDivisionsSpinBox->value();
-    m_heightDivisions = heightDivisionsSpinBox->value();
-
-    m_drawRays = showRaysCheck->isChecked();
-    m_drawPhotons = showPhotonsCheck->isChecked();
-
-    m_photonMapBufferSize = bufferSizeSpin->value();
-    m_increasePhotonMap = !newMapRadio->isChecked();
+    delete ui;
 }
+
+int RayOptionsDialog::raysNumber() const {return ui->raysNumberSpin->value();}
+int RayOptionsDialog::raysRandomFactory() const {return ui->raysRandomFactoryCombo->currentIndex();}
+int RayOptionsDialog::rayPlaneWidth() const {return ui->raysPlaneWidthSpin->value();}
+int RayOptionsDialog::rayPlaneHeight() const {return ui->raysPlaneHeightSpin->value();}
+
+bool RayOptionsDialog::drawRays() const {return ui->drawRaysCheck->isChecked();}
+bool RayOptionsDialog::drawPhotons() const {return ui->drawPhotonsCheck->isChecked();}
+
+int RayOptionsDialog::photonBufferSize() const {return ui->photonBufferSizeSpin->value();}
+bool RayOptionsDialog::photonBufferAppend() const {return ui->photonBufferAppendRadio->isChecked();}

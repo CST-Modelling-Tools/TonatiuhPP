@@ -11,10 +11,10 @@
 /*!
  * Creates a new dialog object to define the export settings. The available export mode types are listed into \a typeList.
  */
-RayExportDialog::RayExportDialog(SceneModel& scene, QVector<PhotonsFactory*> factories, QWidget* parent):
+RayExportDialog::RayExportDialog(SceneModel* scene, QVector<PhotonsFactory*> factories, QWidget* parent):
     QDialog(parent),
     ui(new Ui::RayExportDialog),
-    m_scene(&scene)
+    m_scene(scene)
 {
     ui->setupUi(this);
 
@@ -41,7 +41,7 @@ RayExportDialog::~RayExportDialog()
 /*!
  *    Returns defined settings into settings class object.
  */
-PhotonsSettings RayExportDialog::GetExportPhotonMapSettings() const
+PhotonsSettings RayExportDialog::getPhotonSettings() const
 {
     PhotonsSettings settings;
     settings.name = ui->storeTypeCombo->currentText();
@@ -58,10 +58,9 @@ PhotonsSettings RayExportDialog::GetExportPhotonMapSettings() const
         settings.surfaces = m_surfaces;
 
     PhotonsWidget* widget = m_widgets[ui->storeTypeCombo->currentIndex()];
-    if (widget) {
+    if (widget)
         for (QString name : widget->getParameterNames())
             settings.parameters.insert(name, widget->getParameterValue(name));
-    }
 
     return settings;
 }
@@ -85,7 +84,7 @@ void RayExportDialog::surfaceAdd()
     QString surface = selectSurfaceDialog.GetSelectedSurfaceURL();
     if (surface.isEmpty()) return;
 
-    if (m_surfaces.contains(surface) ) {
+    if (m_surfaces.contains(surface)) {
         QMessageBox::information(this, "Tonatiuh", "Selected node has already been added", 1);
         return;
     }

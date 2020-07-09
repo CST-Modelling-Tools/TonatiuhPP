@@ -5,6 +5,7 @@
 #include "kernel/scene/TAbstract.h"
 #include "Photon.h"
 
+struct PhotonsSettings;
 
 class TONATIUH_KERNEL PhotonsAbstract
 {
@@ -13,20 +14,13 @@ public:
     virtual ~PhotonsAbstract() {}
 
     virtual bool startExport() {return true;}
-    virtual void endExport() {}
-    virtual void savePhotons(const std::vector<Photon>& /*raysLists*/) {}
+    virtual void savePhotons(const std::vector<Photon>& /*photons*/) {}
     virtual void setPhotonPower(double /*p*/) {}
+    virtual void endExport() {}
 
     void setSceneModel(SceneModel& sceneModel) {m_sceneModel = &sceneModel;}
     void setTransform(Transform transform) {m_transform = transform;}
-    void SetSaveAllPhotonsEnabled() {m_surfaces.clear();}
-    void setSurfaces(QStringList surfaces) {m_surfaces = surfaces;}
-
-    void setSaveCoordinates(bool enabled) {m_saveCoordinates = enabled;}
-    void setSaveCoordinatesGlobal(bool enabled) {m_saveCoordinatesGlobal = enabled;}
-    void setSaveSurfacesID(bool enabled) {m_saveSurfaceID = enabled;}
-    void setSaveSurfaceSide(bool enabled) {m_saveSurfaceSide = enabled;}
-    void setSavePhotonsID(bool enabled) {m_savePhotonsID = enabled;}
+    void setPhotonSettings(PhotonsSettings* ps);
 
     static QStringList getParameterNames() {return QStringList();}
     virtual void setParameter(QString /*name*/, QString /*value*/) {}

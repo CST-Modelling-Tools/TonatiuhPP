@@ -1,54 +1,41 @@
 #pragma once
 
-#include <ui_RayOptionsDialog.h>
-
 #include <QDialog>
-#include <QString>
-#include <QVector>
 
 class RandomFactory;
 
-//!  RayTraceDialog class is the dialog to set ray trace options.
-/*!
-  RayTraceDialog allow to the user modify ray tracer default options.
-  The user can modify the number of ray to trace, draw and photon map options.
-*/
 
-class RayOptionsDialog: public QDialog, private Ui::RayOptionsDialog
+namespace Ui {
+class RayOptionsDialog;
+}
+
+
+class RayOptionsDialog: public QDialog
 {
     Q_OBJECT
 
 public:
-    RayOptionsDialog(QWidget* parent = 0, Qt::WindowFlags f = 0);
     RayOptionsDialog(
-        int numRays,
-        QVector<RandomFactory*> randomFactoryList, int selectedRandomFactory = 0,
-        int widthDivisions = 200, int heightDivisions = 200,
+        int raysNumber,
+        QVector<RandomFactory*> randomFactories, int raysRandomFactory = 0,
+        int raysPlaneWidth = 200, int raysPlaneHeight = 200,
         bool drawRays = true, bool drawPhotons = false,
-        int photonMapSize = 1'000'000, bool increasePhotonMap = false,
+        int photonBufferSize = 1'000'000, bool photonBufferAppend = false,
         QWidget* parent = 0, Qt::WindowFlags f = 0
     );
-    ~RayOptionsDialog() {}
+    ~RayOptionsDialog();
 
-    bool DrawPhotons() const {return m_drawPhotons;}
-    bool DrawRays() const {return m_drawRays;}
-    int GetNumRays() const {return m_numRays;}
-    int GetWidthDivisions() const {return m_widthDivisions;}
-    int GetHeightDivisions() const {return m_heightDivisions;}
-    int GetPhotonMapBufferSize() const {return m_photonMapBufferSize;}
-    int GetRandomFactoryIndex() const {return m_selectedRandomFactory;}
-    bool IncreasePhotonMap() const {return m_increasePhotonMap;}
+    int raysNumber() const;
+    int raysRandomFactory() const;
+    int rayPlaneWidth() const;
+    int rayPlaneHeight() const;
 
-public slots:
-    void saveChanges();
+    bool drawRays() const;
+    bool drawPhotons() const;
+
+    int photonBufferSize() const;
+    bool photonBufferAppend() const;
 
 private:
-    int m_numRays; /*!< Number of rays to trace. */
-    int m_selectedRandomFactory; /*!< The index of factory selected from TPhotonMapFactory list. */
-    int m_widthDivisions; /*number of width divisions in the sun*/
-    int m_heightDivisions; /*!<number of height divisions in the sun*/
-    bool m_drawRays;  /*!<This property holds whether rays are going to be drawn. */
-    bool m_drawPhotons;  /*!<This property holds whether photons are going to be drawn. */
-    int m_photonMapBufferSize; /*!< Maximum number of photons int the PhotonMap. */
-    bool m_increasePhotonMap; /*!<This property holds whether traced phtons are going to added to the old photon map. */
+    Ui::RayOptionsDialog* ui;
 };

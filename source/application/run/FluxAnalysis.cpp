@@ -34,14 +34,14 @@
 
 
 FluxAnalysis::FluxAnalysis(TSceneKit* sceneKit,
-    SceneModel& sceneModel,
+    SceneModel* sceneModel,
     InstanceNode* instanceRoot,
     int sunWidthDivisions,
     int sunHeightDivisions,
     Random* randomDeviate
 ):
     m_sceneKit(sceneKit),
-    m_sceneModel(&sceneModel),
+    m_sceneModel(sceneModel),
     m_instanceRoot(instanceRoot),
     m_sunWidthDivisions(sunWidthDivisions),
     m_sunHeightDivisions(sunHeightDivisions),
@@ -121,13 +121,13 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool
     if (!instanceSun) return;
 
     if (!sunKit->getPart("tsunshape", false) ) return;
-    SunShape* sunShape = static_cast< SunShape* >(sunKit->getPart("tsunshape", false) );
+    SunShape* sunShape = static_cast<SunShape*>(sunKit->getPart("tsunshape", false) );
 
     if (!sunKit->getPart("icon", false) ) return;
-    SunAperture* sunAperture = static_cast< SunAperture* >(sunKit->getPart("icon", false) );
+    SunAperture* sunAperture = static_cast<SunAperture*>(sunKit->getPart("icon", false) );
 
     if (!sunKit->getPart("transform", false) ) return;
-    SoTransform* lightTransform = static_cast< SoTransform* >(sunKit->getPart("transform",false) );
+    SoTransform* lightTransform = static_cast<SoTransform*>(sunKit->getPart("transform",false) );
 
     //Check if there is a random generator is defined.
     if (!m_rand) return;
