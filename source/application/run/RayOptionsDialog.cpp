@@ -38,8 +38,8 @@ RayOptionsDialog::~RayOptionsDialog()
 
 int RayOptionsDialog::raysNumber() const {return ui->raysNumberSpin->value();}
 int RayOptionsDialog::raysRandomFactory() const {return ui->raysRandomFactoryCombo->currentIndex();}
-int RayOptionsDialog::rayPlaneWidth() const {return ui->raysPlaneWidthSpin->value();}
-int RayOptionsDialog::rayPlaneHeight() const {return ui->raysPlaneHeightSpin->value();}
+int RayOptionsDialog::rayGridWidth() const {return ui->raysPlaneWidthSpin->value();}
+int RayOptionsDialog::rayGridHeight() const {return ui->raysPlaneHeightSpin->value();}
 
 bool RayOptionsDialog::drawRays() const {return ui->drawRaysCheck->isChecked();}
 bool RayOptionsDialog::drawPhotons() const {return ui->drawPhotonsCheck->isChecked();}

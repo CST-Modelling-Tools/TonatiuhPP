@@ -6,7 +6,7 @@ namespace Ui {
 class FluxAnalysisDialog;
 }
 
-#include "kernel/photons/Photons.h"
+#include "kernel/photons/PhotonsBuffer.h"
 #include "libraries/math/2D/Matrix2D.h"
 
 class InstanceNode;

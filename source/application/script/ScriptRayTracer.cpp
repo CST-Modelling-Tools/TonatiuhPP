@@ -19,7 +19,7 @@
 #include "kernel/TonatiuhFunctions.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunAperture.h"
-#include "kernel/photons/Photons.h"
+#include "kernel/photons/PhotonsBuffer.h"
 #include "kernel/trf.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/shape/ShapeRT.h"

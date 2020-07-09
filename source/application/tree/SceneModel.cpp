@@ -560,7 +560,7 @@ void SceneModel::removeCoinNode(int row, SoBaseKit* parent)
 
 void SceneModel::replaceCoinNode(TShapeKit* parent, SoNode* node)
 {
-    int row;
+    int row = 0;
     if (dynamic_cast<ShapeRT*>(node))
     {
         row = InstanceNode::IndexShapeRT;

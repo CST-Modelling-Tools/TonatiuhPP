@@ -14,7 +14,7 @@
    viewBox="0 0 210 297"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="materials.svg"
    inkscape:export-filename="C:\Neo\Programming\Qt\Projects\TonatiuhProject\images\MetaShapes\MaterialVirtual.png"
    inkscape:export-xdpi="14.66079"
@@ -591,16 +591,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.7657607"
-     inkscape:cx="417.62202"
-     inkscape:cy="723.31758"
+     inkscape:zoom="5.095328"
+     inkscape:cx="686.80676"
+     inkscape:cy="729.00978"
      inkscape:document-units="mm"
      inkscape:current-layer="svg8"
      showgrid="false"
-     inkscape:window-width="3000"
-     inkscape:window-height="1875"
-     inkscape:window-x="-13"
-     inkscape:window-y="-13"
+     inkscape:window-width="2560"
+     inkscape:window-height="1377"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:snap-global="false"
      inkscape:snap-bbox="true"
@@ -643,6 +643,25 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
+  <rect
+     style="opacity:1;fill:#805d5d;fill-opacity:0.00392157;stroke:none;stroke-width:1.16848326;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.79527664;stroke-opacity:1;paint-order:markers fill stroke"
+     id="rect4637"
+     width="25.604984"
+     height="25.599998"
+     x="152.34453"
+     y="87.108292"
+     inkscape:export-xdpi="63.500031"
+     inkscape:export-ydpi="63.500031"
+     inkscape:export-filename="C:\Users\v.grigoriev\Desktop\material.png" />
+  <path
+     style="fill:none;fill-opacity:1;stroke:#bababa;stroke-width:1.60463929;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="m 166.94802,91.823429 9.97957,-0.0093 -0.009,7.06382 -12.28012,0.05309 -0.0255,12.547241"
+     id="path4635"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccccc"
+     inkscape:export-filename="C:\Users\v.grigoriev\Desktop\material.png"
+     inkscape:export-xdpi="63.500031"
+     inkscape:export-ydpi="63.500031" />
   <g
      inkscape:groupmode="layer"
      id="layer2"
@@ -909,4 +928,27 @@
      cx="91.68808"
      cy="32.310326"
      r="2.3963547" />
+  <rect
+     style="opacity:1;fill:#94a6b6;fill-opacity:1;stroke:none;stroke-width:0.55270594;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+     id="rect4623"
+     width="21.287109"
+     height="8.8433723"
+     x="153.3501"
+     y="87.39772"
+     ry="1.4769002"
+     rx="1.292758"
+     inkscape:export-filename="C:\Users\v.grigoriev\Desktop\material.png"
+     inkscape:export-xdpi="63.500031"
+     inkscape:export-ydpi="63.500031" />
+  <rect
+     y="-166.68047"
+     x="103.06755"
+     height="4.1346583"
+     width="9.5884228"
+     id="rect4625"
+     style="opacity:1;fill:#6c6c6c;fill-opacity:1;stroke:none;stroke-width:0.35775432;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+     transform="rotate(90)"
+     inkscape:export-filename="C:\Users\v.grigoriev\Desktop\material.png"
+     inkscape:export-xdpi="63.500031"
+     inkscape:export-ydpi="63.500031" />
 </svg>

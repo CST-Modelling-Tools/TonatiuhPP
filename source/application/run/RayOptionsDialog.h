@@ -27,8 +27,8 @@ public:
 
     int raysNumber() const;
     int raysRandomFactory() const;
-    int rayPlaneWidth() const;
-    int rayPlaneHeight() const;
+    int rayGridWidth() const;
+    int rayGridHeight() const;
 
     bool drawRays() const;
     bool drawPhotons() const;

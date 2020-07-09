@@ -97,6 +97,7 @@
     <addaction name="actionViewGrid"/>
     <addaction name="actionGridSettings"/>
     <addaction name="actionViewRays"/>
+    <addaction name="actionViewPhotons"/>
     <addaction name="separator"/>
     <addaction name="actionViewAll"/>
     <addaction name="actionViewSelected"/>
@@ -752,6 +753,14 @@
   <action name="actionter">
    <property name="text">
     <string>ter</string>
+   </property>
+  </action>
+  <action name="actionViewPhotons">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Photons</string>
    </property>
   </action>
  </widget>

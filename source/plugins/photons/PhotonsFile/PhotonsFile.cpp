@@ -156,9 +156,7 @@ void PhotonsFile::writePhotons(QString fileName, const std::vector<Photon>& phot
 
         if (m_saveCoordinates) {
             vec3d pos = photon.pos;
-            if (m_saveCoordinatesGlobal)
-                pos = m_transform.transformPoint(pos);
-            else if (urlId > 0)
+            if (!m_saveCoordinatesGlobal && urlId > 0)
                 pos = m_surfaceWorldToObject[urlId - 1].transformPoint(pos);
             out << pos.x << pos.y << pos.z;
         }

@@ -56,7 +56,7 @@ ShapeMesh::ShapeMesh()
     int fns[] = {
         0, 1, 2, -1
     };
-    facesNormals.setValues(0, 4, fvs);
+    facesNormals.setValues(0, 4, fns);
     facesNormals.setContainer(this);
     fieldData->addField(this, "facesNormals", &facesNormals);
 
@@ -76,6 +76,7 @@ Box3D ShapeMesh::getBox(ProfileRT* profile) const
 
 bool ShapeMesh::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
 {  
+    Q_UNUSED(profile)
     if (!m_bvh) return false;
     double tHitT = ray.tMax;
     DifferentialGeometry dgT;
@@ -154,7 +155,7 @@ void ShapeMesh::onSensor(void* data, SoSensor*)
     int n = 0;
     size_t v0 = 0;
     for (size_t f = 0; f < mesh.num_face_vertices.size(); f++) {
-        int vMax = mesh.num_face_vertices[f]; // 3?
+        uchar vMax = mesh.num_face_vertices[f]; // 3?
         for (size_t v = 0; v < vMax; v++) {
             const tinyobj::index_t& index = mesh.indices[v0 + v];
             shape->facesVertices.set1Value(n, index.vertex_index);

@@ -7,7 +7,7 @@ class TSceneKit;
 class SceneModel;
 class InstanceNode;
 class Random;
-class Photons;
+class PhotonsBuffer;
 
 class FluxAnalysis
 {
@@ -45,7 +45,7 @@ private:
     int m_sunHeightDivisions;
     Random* m_rand;
 
-    Photons* m_photons;
+    PhotonsBuffer* m_photons;
 
     QString m_surfaceURL;
     QString m_surfaceSide;

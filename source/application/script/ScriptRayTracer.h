@@ -13,7 +13,7 @@ class Random;
 class RandomFactory;
 class QScriptContext;
 class SceneModel;
-class Photons;
+class PhotonsBuffer;
 class Transform;
 
 
@@ -71,7 +71,7 @@ private:
 
     ulong m_numberOfRays;
 
-    Photons* m_photonMap;
+    PhotonsBuffer* m_photonMap;
     bool m_photonMapToFile;
 
     QVector<RandomFactory*> m_RandomFactoryList;

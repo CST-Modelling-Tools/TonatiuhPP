@@ -69,7 +69,7 @@
 #include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/material/MaterialRT.h"
-#include "kernel/photons/Photons.h"
+#include "kernel/photons/PhotonsBuffer.h"
 #include "kernel/photons/PhotonsAbstract.h"
 #include "kernel/photons/PhotonsSettings.h"
 #include "kernel/random/Random.h"
@@ -135,10 +135,10 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
     m_selectionModel(0),
     m_rand(0),
     m_selectedRandomDeviate(0),
-    m_bufferPhotons(1'000'000),
-    m_increasePhotonMap(false),
     m_photonsSettings(0),
-    m_photons(0),
+    m_photonsBuffer(0),
+    m_photonBufferSize(1'000'000),
+    m_photonBufferAppend(false),
     m_lastExportFileName(""),
     m_lastExportSurfaceUrl(""),
     m_lastExportInGlobal(true),
@@ -240,7 +240,7 @@ MainWindow::~MainWindow()
     delete m_document;
     delete m_commandStack;
     delete m_rand;
-    delete m_photons;
+    delete m_photonsBuffer;
 }
 
 /*!
@@ -470,7 +470,8 @@ void MainWindow::SetupTriggers()
     connect(ui->actionRayTraceOptions, SIGNAL(triggered()), this, SLOT(onRayOptionsDialog())  );
 
     // view
-    connect(ui->actionViewRays, SIGNAL(toggled(bool)), this, SLOT(DisplayRays(bool)) );
+    connect(ui->actionViewRays, SIGNAL(toggled(bool)), this, SLOT(ShowRays(bool)) );
+    connect(ui->actionViewPhotons, SIGNAL(toggled(bool)), this, SLOT(ShowPhotons(bool)) );
     connect(ui->actionViewGrid, SIGNAL(triggered()), this, SLOT(ShowGrid())  );
     connect(ui->actionGridSettings, SIGNAL(triggered()), this, SLOT(ChangeGridSettings())  );
     connect(ui->actionViewBackground, SIGNAL(triggered()), this, SLOT(ShowBackground())  );
@@ -482,7 +483,7 @@ void MainWindow::SetupTriggers()
 void MainWindow::FinishManipulation()
 {
     QModelIndex currentIndex = ui->sceneModelView->currentIndex();
-    SoBaseKit* coinNode = static_cast< SoBaseKit* >(m_sceneModel->getInstance(currentIndex)->getNode() );
+    SoBaseKit* coinNode = static_cast<SoBaseKit*>(m_sceneModel->getInstance(currentIndex)->getNode() );
 
     SoTransform* nodeTransform = static_cast< SoTransform* >(coinNode->getPart("transform", true) );
 
@@ -610,13 +611,32 @@ void MainWindow::onAirDialog()
 /*!
  * If actionDisplay_rays is checked the 3D view shows rays representation. Otherwise the representation is hidden.
  */
-void MainWindow::DisplayRays(bool display)
+void MainWindow::ShowRays(bool on)
 {
-    m_graphicsRoot->ShowRays(display);
+    if (on) {
+        SoSeparator* separator = new SoSeparator;
+        separator->setName("Rays");
+        SoSeparator* rays = trf::DrawRays(*m_photonsBuffer, m_raysTracedTotal);
+        separator->addChild(rays);
+        m_graphicsRoot->AddRays(separator);
+    }
+
+//    m_graphicsRoot->ShowRays(display);
     /*if( display && ( m_pRays ) )
             m_graphicsRoot->insertChild( m_pRays, 0 );
            else if( !display )
             if ( m_pRays->getRefCount( ) > 0 )    m_graphicsRoot->removeChild( 0 );*/
+}
+
+void MainWindow::ShowPhotons(bool on)
+{
+    if (on) {
+        SoSeparator* separator = new SoSeparator;
+        separator->setName("Rays");
+        SoSeparator* photons = trf::DrawPhotons(*m_photonsBuffer);
+        separator->addChild(photons);
+        m_graphicsRoot->AddRays(separator);
+    }
 }
 
 /*!
@@ -764,12 +784,20 @@ void MainWindow::RunCompleteRayTracer()
 //    QElapsedTimer timer;
 //    timer.start();
 
-    if (!ReadyForRaytracing(instanceRoot, instanceSun, sunShape, sunAperture, air) )
+    if (!ReadyForRaytracing(instanceRoot, instanceSun, sunShape, sunAperture, air) ) // ? 2 times
         return;
 
 //    std::cout << "Elapsed time (ReadyForRaytracing): " << timer.elapsed() << std::endl;
 
-    if (!m_photons->getExporter() && !SetPhotonMapExportSettings() ) return;
+    if (!m_photonsBuffer->getExporter()) {
+        QVector<PhotonsFactory*> exportFactories = m_pluginManager->getExportFactories();
+        RayExportDialog dialog(m_sceneModel, exportFactories);
+        if (!dialog.exec()) return;
+
+        if (m_photonsSettings) delete m_photonsSettings;
+        m_photonsSettings = new PhotonsSettings;
+        *m_photonsSettings = dialog.getPhotonSettings();
+    }
 
     Run();
 }
@@ -1055,17 +1083,17 @@ void MainWindow::onRayOptionsDialog()
         randomFactories, m_selectedRandomDeviate,
         m_widthDivisions, m_heightDivisions,
         m_drawRays, m_drawPhotons,
-        m_bufferPhotons, m_increasePhotonMap, this);
+        m_photonBufferSize, m_photonBufferAppend, this);
     dialog.exec();
 
-    SetRaysPerIteration(dialog.raysNumber());
-    SetRandomDeviateType(randomFactories[dialog.raysRandomFactory()]->name());
-    SetRayCastingGrid(dialog.rayPlaneWidth(), dialog.rayPlaneHeight() );
+    SetRaysNumber(dialog.raysNumber());
+    SetRaysRandomFactory(randomFactories[dialog.raysRandomFactory()]->name());
+    SetRayGrid(dialog.rayGridWidth(), dialog.rayGridHeight());
 
-    SetRaysDrawingOptions(dialog.drawRays(), dialog.drawPhotons());
+    SetRaysDrawing(dialog.drawRays(), dialog.drawPhotons());
 
-    SetPhotonMapBufferSize(dialog.photonBufferSize());
-    SetIncreasePhotonMap(dialog.photonBufferAppend());
+    SetPhotonBufferSize(dialog.photonBufferSize());
+    SetPhotonBufferAppend(dialog.photonBufferAppend());
 }
 
 void MainWindow::ShowWarning(QString message)
@@ -1760,21 +1788,21 @@ void MainWindow::Run()
     InstanceNode* instanceSun = 0;
     SunShape* sunShape = 0;
     SunAperture* sunAperture = 0;
-    Air* transmissivity = 0;
+    Air* air = 0;
 
     QElapsedTimer timer;
     timer.start();
 
     UpdateLightSize();
 
-    if (ReadyForRaytracing(instanceRoot, instanceSun, sunShape, sunAperture, transmissivity) )
+    if (ReadyForRaytracing(instanceRoot, instanceSun, sunShape, sunAperture, air) )
     {
-        if (!m_photons->getExporter() )
+        if (!m_photonsBuffer->getExporter() )
         {
             if (!m_photonsSettings) return;
             PhotonsAbstract* photonsExporter = CreatePhotonMapExport();
             if (!photonsExporter) return;
-            if (!m_photons->setExporter(photonsExporter)) return;
+            if (!m_photonsBuffer->setExporter(photonsExporter)) return;
         }
 
         QVector<InstanceNode*> exportSuraceList;
@@ -1788,13 +1816,11 @@ void MainWindow::Run()
         // compute bounding boxes and world to object transforms
         instanceRoot->updateTree(Transform::Identity);
 
-        m_photons->setTransform(instanceRoot->getTransform().inversed() ); //?
-
         SunKit* sunKit = static_cast<SunKit*> (instanceSun->getNode() );
         if (!sunKit->findTexture(m_widthDivisions, m_heightDivisions, instanceRoot))
         {
             emit Abort(tr("There are no surfaces defined for ray tracing") );
-            ShowRaysIn3DView();
+            ShowRaysIn3DView(); // cleaning?
             return;
         }
 
@@ -1829,13 +1855,13 @@ void MainWindow::Run()
         QMutex mutexPhotonMap;
         QFuture<void> photonMap;
         Air* airTemp = 0;
-        if (!dynamic_cast<AirVacuum*>(transmissivity))
-            airTemp = transmissivity;
+        if (!dynamic_cast<AirVacuum*>(air))
+            airTemp = air;
 
         photonMap = QtConcurrent::map(raysPerThread, RayTracer(instanceRoot,
             instanceSun, sunAperture, sunShape, airTemp,
             *m_rand,
-            &mutex, m_photons, &mutexPhotonMap,
+            &mutex, m_photonsBuffer, &mutexPhotonMap,
             exportSuraceList) );
         futureWatcher.setFuture(photonMap);
 
@@ -1846,8 +1872,8 @@ void MainWindow::Run()
 
         m_raysTracedTotal += m_raysTraced;
 
-        if (exportSuraceList.count() < 1)
-            ShowRaysIn3DView();
+        if (exportSuraceList.empty())
+            ShowRaysIn3DView(); // all photons must be stored
         else {
             ui->actionViewRays->setEnabled(false);
             ui->actionViewRays->setChecked(false);
@@ -1856,7 +1882,7 @@ void MainWindow::Run()
         double area = sunAperture->getArea();
         double irradiance = sunKit->irradiance.getValue();
         double power = area*irradiance/m_raysTracedTotal;
-        m_photons->endExport(power);
+        m_photonsBuffer->endExport(power);
     }
 
     std::cout << "Elapsed time (Run): " << timer.elapsed() << std::endl;
@@ -2007,9 +2033,9 @@ void MainWindow::SetExportTypeParameterValue(QString name, QString value)
 /*!
  * If \a increase is false, starts with a new photon map every ray tracer. Otherwise, the photon map increases.
  */
-void MainWindow::SetIncreasePhotonMap(bool increase)
+void MainWindow::SetPhotonBufferAppend(bool on)
 {
-    m_increasePhotonMap = increase;
+    m_photonBufferAppend = on;
 }
 
 /*!
@@ -2035,15 +2061,15 @@ void MainWindow::SetNodeName(QString name)
 /*!
  * Sets the number of photons that the photon map can store to \a nPhotons.
  */
-void MainWindow::SetPhotonMapBufferSize(uint nPhotons)
+void MainWindow::SetPhotonBufferSize(uint size)
 {
-    m_bufferPhotons = nPhotons;
+    m_photonBufferSize = size;
 }
 
 /*!
  * Sets the random number generator type, \a typeName, for ray tracing.
  */
-void MainWindow::SetRandomDeviateType(QString name)
+void MainWindow::SetRaysRandomFactory(QString name)
 {
     QVector<RandomFactory*> factoryList = m_pluginManager->getRandomFactories();
     if (factoryList.size() == 0) return;
@@ -2070,7 +2096,7 @@ void MainWindow::SetRandomDeviateType(QString name)
 /*!
  * Sets the ray casting surface grid elemets to \a widthDivisions x \a heightDivisions.
  */
-void MainWindow::SetRayCastingGrid(int widthDivisions, int heightDivisions)
+void MainWindow::SetRayGrid(int widthDivisions, int heightDivisions)
 {
     m_widthDivisions = widthDivisions;
     m_heightDivisions = heightDivisions;
@@ -2081,7 +2107,7 @@ void MainWindow::SetRayCastingGrid(int widthDivisions, int heightDivisions)
  * Tonatiuh draws the \a raysFaction faction of traced rays. If \a drawPhotons is true all photons are represented.
  *
  */
-void MainWindow::SetRaysDrawingOptions(bool drawRays, bool drawPhotons)
+void MainWindow::SetRaysDrawing(bool drawRays, bool drawPhotons)
 {
     m_drawRays = drawRays;
     m_drawPhotons = drawPhotons;
@@ -2090,7 +2116,7 @@ void MainWindow::SetRaysDrawingOptions(bool drawRays, bool drawPhotons)
 /*!
  *    Sets \a rays as the number of rays to trace for each run action.
  */
-void MainWindow::SetRaysPerIteration(uint rays)
+void MainWindow::SetRaysNumber(uint rays)
 {
     m_raysTraced = rays;
 }
@@ -2852,18 +2878,16 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
 
 
     //Create the photon map where photons are going to be stored
-    if (!m_increasePhotonMap)
+    if (!m_photonBufferAppend)
     {
-        delete m_photons;
-        m_photons = new Photons();
-        m_photons->setBufferSize(m_bufferPhotons);
+        delete m_photonsBuffer;
+        m_photonsBuffer = new PhotonsBuffer(m_photonBufferSize);
         m_raysTracedTotal = 0;
     }
 
-    if (!m_photons)
+    if (!m_photonsBuffer)
     {
-        m_photons = new Photons();
-        m_photons->setBufferSize(m_bufferPhotons);
+        m_photonsBuffer = new PhotonsBuffer(m_photonBufferSize);
         m_raysTracedTotal = 0;
     }
 
@@ -2906,21 +2930,6 @@ void MainWindow::SetCurrentFile(const QString& fileName)
     }
 
     setWindowTitle(tr("%1[*] - Tonatiuh").arg(title));
-}
-
-/*!
- * Defines the settings to save or export and save photon map.
- */
-bool MainWindow::SetPhotonMapExportSettings()
-{
-    QVector<PhotonsFactory*> exportFactories = m_pluginManager->getExportFactories();
-    RayExportDialog dialog(m_sceneModel, exportFactories);
-    if (!dialog.exec()) return false;
-
-    if (m_photonsSettings) delete m_photonsSettings;
-    m_photonsSettings = new PhotonsSettings;
-    *m_photonsSettings = dialog.getPhotonSettings();
-    return true;
 }
 
 void MainWindow::SetupActionsInsertComponent()
@@ -3110,21 +3119,22 @@ void MainWindow::ShowRaysIn3DView()
 
     if (m_drawRays || m_drawPhotons)
     {
-        SoSeparator* rays = new SoSeparator;
-        rays->setName("Rays");
+//        SoSeparator* separator = new SoSeparator;
+//        separator->setName("Rays");
 
-        if (m_drawPhotons)
-        {
-            SoSeparator* points = trf::DrawPhotons(*m_photons);
-            rays->addChild(points);
-        }
+//        if (m_drawPhotons)
+//        {
+//            SoSeparator* photons = trf::DrawPhotons(*m_photonsBuffer);
+//            separator->addChild(photons);
+//        }
 
-        if (m_drawRays)
-        {
-            SoSeparator* currentRays = trf::DrawRays(*m_photons, m_raysTracedTotal);
-            if (currentRays) rays->addChild(currentRays);
-        }
-        m_graphicsRoot->AddRays(rays);
+//        if (m_drawRays)
+//        {
+//            SoSeparator* rays = trf::DrawRays(*m_photonsBuffer, m_raysTracedTotal);
+//            if (rays) separator->addChild(rays);
+//        }
+
+//        m_graphicsRoot->AddRays(separator);
 
         ui->actionViewRays->setEnabled(true);
         ui->actionViewRays->setChecked(true);

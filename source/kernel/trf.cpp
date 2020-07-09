@@ -15,7 +15,7 @@
 #include "run/InstanceNode.h"
 #include "libraries/math/3D/Matrix4x4.h"
 #include "photons/Photon.h"
-#include "photons/Photons.h"
+#include "photons/PhotonsBuffer.h"
 #include "random/Random.h"
 #include "libraries/math/3D/Ray.h"
 #include "TonatiuhFunctions.h"
@@ -24,7 +24,7 @@
 #include "scene/TShapeKit.h"
 
 
-SoSeparator* trf::DrawPhotons(const Photons& map)
+SoSeparator* trf::DrawPhotons(const PhotonsBuffer& map)
 {
     SoSeparator* ans = new SoSeparator;
 
@@ -51,7 +51,7 @@ SoSeparator* trf::DrawPhotons(const Photons& map)
     return ans;
 }
 
-SoSeparator* trf::DrawRays(const Photons& map, ulong /*numberOfRays*/)
+SoSeparator* trf::DrawRays(const PhotonsBuffer& map, ulong /*numberOfRays*/)
 {
     SoSeparator* ans = new SoSeparator;
 

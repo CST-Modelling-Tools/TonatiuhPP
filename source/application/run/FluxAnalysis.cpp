@@ -16,7 +16,7 @@
 #include "tree/SceneModel.h"
 #include "kernel/air/Air.h"
 #include "kernel/run/InstanceNode.h"
-#include "kernel/photons/Photons.h"
+#include "kernel/photons/PhotonsBuffer.h"
 #include "kernel/random//Random.h"
 #include "kernel/run/RayTracer.h"
 #include "kernel/scene/TSceneKit.h"
@@ -127,7 +127,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool
     SunAperture* sunAperture = static_cast<SunAperture*>(sunKit->getPart("icon", false) );
 
     if (!sunKit->getPart("transform", false) ) return;
-    SoTransform* lightTransform = static_cast<SoTransform*>(sunKit->getPart("transform",false) );
+    SoTransform* lightTransform = static_cast<SoTransform*>(sunKit->getPart("transform", false) );
 
     //Check if there is a random generator is defined.
     if (!m_rand) return;
@@ -145,8 +145,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool
     {
         if (m_photons) m_photons->endExport(-1);
         delete m_photons;
-        m_photons = new Photons();
-        m_photons->setBufferSize(HUGE_VAL);
+        m_photons = new PhotonsBuffer(std::numeric_limits<uint>::max());
         m_tracedRays = 0;
         m_powerPhoton = 0;
         m_powerTotal = 0;
@@ -182,9 +181,6 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool
 
     //Compute bounding boxes and world to object transforms
     m_instanceRoot->updateTree(Transform::Identity);
-
-    m_photons->setTransform(m_instanceRoot->getTransform().inversed() );
-
 
     if (!sunKit->findTexture(m_sunWidthDivisions, m_sunHeightDivisions, m_instanceRoot)) return;
 

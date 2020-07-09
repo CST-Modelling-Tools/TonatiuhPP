@@ -43,14 +43,14 @@ Eigen::ArrayXXd distmesh::utils::createInitialPoints(
 
     // initially distribute points evenly in complete bounding box
     Eigen::ArrayXi pointsPerDimension(dimension);
-    for (int dim = 0; dim < dimension; ++dim) {
+    for (uint dim = 0; dim < dimension; ++dim) {
         pointsPerDimension(dim) = ceil((boundingBox(1, dim) - boundingBox(0, dim)) /
             (initialPointDistance * (dim == 0 ? 1.0 : sqrt(3.0) / 2.0)));
     }
 
     Eigen::ArrayXXd points(pointsPerDimension.prod(), dimension);
     for (int point = 0; point < points.rows(); ++point)
-    for (int dim = 0; dim < dimension; ++dim) {
+    for (uint dim = 0; dim < dimension; ++dim) {
         int const pointIndex = (point / std::max(pointsPerDimension.topRows(dim).prod(), 1)) %
             pointsPerDimension(dim);
 

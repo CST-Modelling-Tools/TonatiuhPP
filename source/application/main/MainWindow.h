@@ -30,7 +30,7 @@ class SoTransform;
 class ComponentFactory;
 class SunAperture;
 class MaterialFactory;
-class Photons;
+class PhotonsBuffer;
 class PhotonToMemory;
 class ShapeFactory;
 class SunShape;
@@ -105,13 +105,13 @@ public slots:
     void SetExportPhotonMapType(QString name);
     void SetExportPreviousNextPhotonID(bool enabled);
     void SetExportTypeParameterValue(QString parameterName, QString value);
-    void SetIncreasePhotonMap(bool increase);
+    void SetPhotonBufferAppend(bool on);
     void SetNodeName(QString name);
-    void SetPhotonMapBufferSize(uint nPhotons);
-    void SetRandomDeviateType(QString name);
-    void SetRayCastingGrid(int widthDivisions, int heightDivisions);
-    void SetRaysDrawingOptions(bool drawRays, bool drawPhotons);
-    void SetRaysPerIteration(uint rays);
+    void SetPhotonBufferSize(uint size);
+    void SetRaysRandomFactory(QString name);
+    void SetRayGrid(int widthDivisions, int heightDivisions);
+    void SetRaysDrawing(bool drawRays, bool drawPhotons);
+    void SetRaysNumber(uint rays);
     void SetSunshape(QString name);
     void SetSunshapeParameter(QString parameter, QString value);
     void SetAir(QString name);
@@ -135,7 +135,8 @@ private slots:
     void CreateTracker(TrackerFactory* factory);
     void onSunDialog();
     void onAirDialog();
-    void DisplayRays(bool display);
+    void ShowRays(bool on);
+    void ShowPhotons(bool on);
     void InsertUserDefinedComponent();
     void ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex& node);
     void ItemDragAndDropCopy(const QModelIndex& newParent, const QModelIndex& node);
@@ -207,7 +208,6 @@ private:
                             Air*& air);
     bool SaveFile(const QString& fileName);
     void SetCurrentFile(const QString& fileName);
-    bool SetPhotonMapExportSettings();
 
     void SetupActions();
     void SetupDocument();
@@ -258,10 +258,10 @@ private:
     Random* m_rand;
     int m_selectedRandomDeviate;
 
-    ulong m_bufferPhotons;
-    bool m_increasePhotonMap;
     PhotonsSettings* m_photonsSettings;
-    Photons* m_photons;
+    PhotonsBuffer* m_photonsBuffer;
+    ulong m_photonBufferSize;
+    bool m_photonBufferAppend;
 
     QString m_lastExportFileName;
     QString m_lastExportSurfaceUrl;

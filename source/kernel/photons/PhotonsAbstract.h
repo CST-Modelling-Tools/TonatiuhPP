@@ -19,7 +19,6 @@ public:
     virtual void endExport() {}
 
     void setSceneModel(SceneModel& sceneModel) {m_sceneModel = &sceneModel;}
-    void setTransform(Transform transform) {m_transform = transform;}
     void setPhotonSettings(PhotonsSettings* ps);
 
     static QStringList getParameterNames() {return QStringList();}
@@ -29,7 +28,6 @@ public:
 
 protected:
     SceneModel* m_sceneModel;
-    Transform m_transform;
 
     bool m_saveAllPhotonsData;
     QStringList m_surfaces;

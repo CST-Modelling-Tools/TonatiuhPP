@@ -4,7 +4,7 @@
 #include "random/RandomParallel.h"
 #include "libraries/math/3D/Ray.h"
 #include "RayTracer.h"
-#include "kernel/photons/Photons.h"
+#include "kernel/photons/PhotonsBuffer.h"
 #include "sun/SunAperture.h"
 #include "sun/SunShape.h"
 #include "air/Air.h"
@@ -17,7 +17,7 @@ RayTracer::RayTracer(InstanceNode* instanceRoot,
     Air* air,
     Random& rand,
     QMutex* mutexRand,
-    Photons* photons,
+    PhotonsBuffer* photonBuffer,
     QMutex* mutexPhotons,
     QVector<InstanceNode*> exportSuraceList
 ):
@@ -29,8 +29,8 @@ RayTracer::RayTracer(InstanceNode* instanceRoot,
     m_air(air),
     m_rand(&rand),
     m_mutexRand(mutexRand),
-    m_photons(photons),
-    m_mutexPhotons(mutexPhotons),
+    m_photonBuffer(photonBuffer),
+    m_mutexPhotonsBuffer(mutexPhotons),
     m_exportSuraceList(exportSuraceList),
     m_sunCells(sunAperture->getCells())
 {   
@@ -97,9 +97,9 @@ void RayTracer::operator()(ulong nRays)
         photons.push_back(Photon(++rayLength, ray.point(ray.tMax), intersectedSurface, isFront));
     }
 
-    m_mutexPhotons->lock();
-    m_photons->addPhotons(photons);
-    m_mutexPhotons->unlock();
+    m_mutexPhotonsBuffer->lock();
+    m_photonBuffer->addPhotons(photons);
+    m_mutexPhotonsBuffer->unlock();
 }
 
 bool RayTracer::NewPrimitiveRay(Ray* ray, RandomParallel& rand)

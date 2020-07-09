@@ -213,7 +213,7 @@ void GraphicRoot::ShowRays(bool view)
     if (view && m_pRays)
         m_pSceneSeparator->addChild(m_pRays);
     else if (!view)
-        if (m_pRays->getRefCount( ) > 0)
+        if (m_pRays->getRefCount() > 0)
             m_pSceneSeparator->removeChild(m_pRays);
 }
 

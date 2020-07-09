@@ -17,7 +17,7 @@ class Random;
 struct RayTracerPhoton;
 class QMutex;
 class QPoint;
-class Photons;
+class PhotonsBuffer;
 class SunAperture;
 class SunShape;
 class Air;
@@ -34,7 +34,7 @@ public:
               Air* air,
               Random& rand,
               QMutex* mutexRand,
-              Photons* photons,
+              PhotonsBuffer* photonBuffer,
               QMutex* mutexPhotons,
               QVector<InstanceNode*> exportSuraceList);
 
@@ -53,8 +53,8 @@ private:
     Air* m_air;
     Random* m_rand;
     QMutex* m_mutexRand;
-    Photons* m_photons;
-    QMutex* m_mutexPhotons;
+    PhotonsBuffer* m_photonBuffer;
+    QMutex* m_mutexPhotonsBuffer;
     QVector<InstanceNode*> m_exportSuraceList;
 
     const std::vector< QPair<int, int> >&  m_sunCells;
