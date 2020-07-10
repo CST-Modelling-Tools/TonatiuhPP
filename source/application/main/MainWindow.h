@@ -156,7 +156,6 @@ private slots:
     void ShowCommandView();
     void ShowGrid();
     void ShowMenu(const QModelIndex& index);
-    void onRayOptionsDialog();
     void ShowWarning(QString message);
     void Undo();
 

@@ -88,8 +88,7 @@
 #include "main/Document.h"
 #include "run/FluxAnalysis.h"
 #include "run/FluxAnalysisDialog.h"
-#include "run/RayExportDialog.h"
-#include "run/RayOptionsDialog.h"
+#include "run/RayTracingDialog.h"
 #include "script/ScriptEditorDialog.h"
 #include "tree/SceneModel.h"
 #include "view/GraphicRoot.h"
@@ -472,7 +471,6 @@ void MainWindow::SetupTriggers()
     // run
     connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(RunCompleteRayTracer()) );
     connect(ui->actionRunFluxAnalysis, SIGNAL(triggered()), this, SLOT(RunFluxAnalysisDialog()) );
-    connect(ui->actionRayTraceOptions, SIGNAL(triggered()), this, SLOT(onRayOptionsDialog())  );
 
     // view
     connect(ui->actionViewRays, SIGNAL(toggled(bool)), this, SLOT(ShowRays(bool)) );
@@ -776,11 +774,26 @@ void MainWindow::RunCompleteRayTracer()
 
 //    std::cout << "Elapsed time (ReadyForRaytracing): " << timer.elapsed() << std::endl;
 
-    if (!m_photonsBuffer->getExporter()) {
+
         QVector<PhotonsFactory*> exportFactories = m_pluginManager->getExportFactories();
-        RayExportDialog dialog(m_sceneModel, exportFactories);
+        QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
+
+        RayTracingDialog dialog;
+        dialog.setParameters(m_raysNumber, m_raysScreen,
+                             randomFactories, m_raysRandomFactoryIndex,
+                             m_raysGridWidth, m_raysGridHeight,
+                             m_photonBufferSize, m_photonBufferAppend);
+        dialog.setPhotonSettings(m_sceneModel, exportFactories, m_photonsSettings);
         if (!dialog.exec()) return;
 
+        SetRaysNumber(dialog.raysNumber());
+        SetRaysScreen(dialog.raysScreen());
+        SetRaysRandomFactory(randomFactories[dialog.raysRandomFactory()]->name());
+        SetRaysGrid(dialog.raysGridWidth(), dialog.raysGridHeight());
+        SetPhotonBufferSize(dialog.photonBufferSize());
+        SetPhotonBufferAppend(dialog.photonBufferAppend());
+
+    if (!m_photonsBuffer->getExporter()) {
         if (m_photonsSettings) delete m_photonsSettings;
         m_photonsSettings = new PhotonsSettings;
         *m_photonsSettings = dialog.getPhotonSettings();
@@ -1051,27 +1064,6 @@ void MainWindow::ShowMenu(const QModelIndex& index)
     }
 
     popupmenu.exec(QCursor::pos());
-}
-
-/*!
- * Shows a dialog with ray tracer options and modifies the ray tracer parameters if changes are done.
- */
-void MainWindow::onRayOptionsDialog()
-{
-    QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
-    RayOptionsDialog dialog(
-        m_raysNumber, m_raysScreen,
-        randomFactories, m_raysRandomFactoryIndex,
-        m_raysGridWidth, m_raysGridHeight,
-        m_photonBufferSize, m_photonBufferAppend, this);
-    dialog.exec();
-
-    SetRaysNumber(dialog.raysNumber());
-    SetRaysScreen(dialog.raysScreen());
-    SetRaysRandomFactory(randomFactories[dialog.raysRandomFactory()]->name());
-    SetRaysGrid(dialog.raysGridWidth(), dialog.raysGridHeight());
-    SetPhotonBufferSize(dialog.photonBufferSize());
-    SetPhotonBufferAppend(dialog.photonBufferAppend());
 }
 
 void MainWindow::ShowWarning(QString message)

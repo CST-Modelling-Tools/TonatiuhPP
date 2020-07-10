@@ -138,7 +138,7 @@ void PluginManager::loadPlugin(TFactory* p)
     }
     else if (auto f = dynamic_cast<MaterialFactory*>(p))
     {
-        f->init();
+        f->init();\
         m_materialFactories << f;
         m_materialMap[f->name()] = f;
     }

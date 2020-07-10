@@ -17,6 +17,7 @@ public:
 
     QStringList getParameterNames() const;
     QString getParameterValue(QString name) const;
+    void setParameterValue(QString /*name*/, QString /*value*/) {}// add setters
 
 private slots:
     void selectDirectory();

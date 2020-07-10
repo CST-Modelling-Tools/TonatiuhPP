@@ -102,7 +102,6 @@
      <addaction name="actionLookSouth"/>
      <addaction name="actionLookWest"/>
     </widget>
-    <addaction name="actionViewAxes"/>
     <addaction name="actionViewBackground"/>
     <addaction name="actionViewGrid"/>
     <addaction name="separator"/>
@@ -183,10 +182,7 @@
      <addaction name="actionTestC"/>
     </widget>
     <addaction name="actionRun"/>
-    <addaction name="actionRayTraceOptions"/>
-    <addaction name="separator"/>
     <addaction name="actionRunFluxAnalysis"/>
-    <addaction name="separator"/>
     <addaction name="actionOpenScriptEditor"/>
     <addaction name="menuTest"/>
    </widget>
@@ -341,7 +337,7 @@
     <string>Save &amp;As...</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
+    <string>Ctrl+Alt+S</string>
    </property>
   </action>
   <action name="actionClose">
@@ -515,7 +511,7 @@
     <string>Grid</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+G</string>
+    <string>Ctrl+Shift+G</string>
    </property>
   </action>
   <action name="actionGridSettings">
@@ -620,6 +616,9 @@
    </property>
    <property name="text">
     <string>Sun...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
    </property>
   </action>
   <action name="actionCalculateSunPosition">

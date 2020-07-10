@@ -7,7 +7,7 @@
 
 struct TONATIUH_KERNEL PhotonsSettings
 {
-    QString name;
+    QString name; // output
 
     bool saveCoordinates;
     bool saveCoordinatesGlobal;
