@@ -148,8 +148,6 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
 
     m_raysTracedTotal(0),
     m_rand(0),
-    m_drawPhotons(false),
-    m_drawRays(true),
 
     m_photonsBuffer(0),
     m_photonBufferSize(1'000'000),
@@ -2063,17 +2061,6 @@ void MainWindow::SetRaysGrid(int width, int height)
 {
     m_raysGridWidth = width;
     m_raysGridHeight = height;
-}
-
-/*!
- * Sets the parameters to represent the ray tracer results.
- * Tonatiuh draws the \a raysFaction faction of traced rays. If \a drawPhotons is true all photons are represented.
- *
- */
-void MainWindow::SetRaysDrawing(bool drawRays, bool drawPhotons)
-{
-    m_drawRays = drawRays;
-    m_drawPhotons = drawPhotons;
 }
 
 /*!

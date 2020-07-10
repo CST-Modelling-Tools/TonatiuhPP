@@ -110,7 +110,6 @@ public slots:
     void SetRaysScreen(uint rays) {m_raysScreen = rays;}
     void SetRaysRandomFactory(QString name);
     void SetRaysGrid(int width, int height);
-    void SetRaysDrawing(bool drawRays, bool drawPhotons);
     void SetPhotonBufferSize(uint size) {m_photonBufferSize = size;}
     void SetPhotonBufferAppend(bool on) { m_photonBufferAppend = on;}
 
@@ -274,8 +273,6 @@ private:
 
     ulong m_raysTracedTotal;
     Random* m_rand;
-    bool m_drawPhotons;
-    bool m_drawRays;
 
     PhotonsBuffer* m_photonsBuffer;
     ulong m_photonBufferSize;

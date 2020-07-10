@@ -1,5 +1,5 @@
 #include "SunDialog.h"
-#include "ui_sundialog.h"
+#include "ui_SunDialog.h"
 
 #include <QItemSelectionModel>
 #include <QMessageBox>
