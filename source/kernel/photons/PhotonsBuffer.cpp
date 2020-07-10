@@ -2,8 +2,7 @@
 #include "PhotonsAbstract.h"
 
 PhotonsBuffer::PhotonsBuffer(ulong size):
-    m_bufferSize(size),
-    m_photonsTotal(0),
+    m_photonsMax(size),
     m_exporter(0)
 {
     m_photons.reserve(size);
@@ -12,14 +11,13 @@ PhotonsBuffer::PhotonsBuffer(ulong size):
 void PhotonsBuffer::addPhotons(const std::vector<Photon>& photons)
 {
     uint nMax = photons.size();
-    if (m_photons.size() > 0 && m_photons.size() + nMax > m_bufferSize)
+    if (m_photons.size() > 0 && m_photons.size() + nMax > m_photonsMax)
     {
         if (m_exporter) m_exporter->savePhotons(m_photons);
         m_photons.clear();
     }
 
     m_photons.insert(m_photons.end(), photons.begin(), photons.end());
-    m_photonsTotal += nMax;
 }
 
 void PhotonsBuffer::endExport(double p)

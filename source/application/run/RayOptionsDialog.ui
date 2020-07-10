@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>276</width>
-    <height>388</height>
+    <height>315</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,13 +20,6 @@
       <string>Rays</string>
      </property>
      <layout class="QGridLayout" name="settingsLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="raysNumberLabel">
-        <property name="text">
-         <string>Number of rays</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QSpinBox" name="raysNumberSpin">
         <property name="alignment">
@@ -56,11 +49,8 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QComboBox" name="raysRandomFactoryCombo"/>
-      </item>
-      <item row="6" column="1">
-       <widget class="QSpinBox" name="raysPlaneHeightSpin">
+      <item row="5" column="1">
+       <widget class="QSpinBox" name="raysPlaneWidthSpin">
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
@@ -81,12 +71,26 @@
       <item row="6" column="0">
        <widget class="QLabel" name="raysPlaneHeightLabel">
         <property name="text">
-         <string>Height divisions</string>
+         <string>Grid height</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="1">
-       <widget class="QSpinBox" name="raysPlaneWidthSpin">
+      <item row="5" column="0">
+       <widget class="QLabel" name="raysPlaneWidthLabel">
+        <property name="text">
+         <string>Grid width</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="raysNumberLabel">
+        <property name="text">
+         <string>Number of rays</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QSpinBox" name="raysPlaneHeightSpin">
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
@@ -104,36 +108,29 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="raysPlaneWidthLabel">
-        <property name="text">
-         <string>Width divisions</string>
-        </property>
-       </widget>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="raysRandomFactoryCombo"/>
       </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="drawGroup">
-     <property name="title">
-      <string>Draw</string>
-     </property>
-     <layout class="QGridLayout" name="drawLayout">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="drawRaysCheck">
-        <property name="text">
-         <string>rays</string>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="raysScreenSpin">
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-        <property name="checked">
+        <property name="showGroupSeparator" stdset="0">
          <bool>true</bool>
+        </property>
+        <property name="maximum">
+         <number>1000000</number>
+        </property>
+        <property name="value">
+         <number>1000</number>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QCheckBox" name="drawPhotonsCheck">
+       <widget class="QLabel" name="raysScreenLabel">
         <property name="text">
-         <string>photons</string>
+         <string>Screen rays</string>
         </property>
        </widget>
       </item>
@@ -188,42 +185,32 @@
       <item row="0" column="0">
        <widget class="QLabel" name="photonBufferSizeLabel">
         <property name="text">
-         <string>Export buffer size</string>
+         <string>Buffer size</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="photonBufferLabel">
         <property name="text">
-         <string>Contruction</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="photonDisplayLabel">
-        <property name="text">
-         <string>Screen buffer size</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QSpinBox" name="photonDisplaySpin">
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="showGroupSeparator" stdset="0">
-         <bool>true</bool>
-        </property>
-        <property name="maximum">
-         <number>100000</number>
-        </property>
-        <property name="value">
-         <number>10</number>
+         <string>Construction</string>
         </property>
        </widget>
       </item>
      </layout>
     </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
@@ -239,8 +226,6 @@
   <tabstop>raysRandomFactoryCombo</tabstop>
   <tabstop>raysPlaneWidthSpin</tabstop>
   <tabstop>raysPlaneHeightSpin</tabstop>
-  <tabstop>drawRaysCheck</tabstop>
-  <tabstop>drawPhotonsCheck</tabstop>
   <tabstop>photonBufferSizeSpin</tabstop>
   <tabstop>photonBufferNewRadio</tabstop>
   <tabstop>photonBufferAppendRadio</tabstop>

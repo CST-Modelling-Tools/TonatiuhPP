@@ -16,22 +16,19 @@ class RayOptionsDialog: public QDialog
 
 public:
     RayOptionsDialog(
-        int raysNumber,
+        int raysNumber, int raysScreen,
         QVector<RandomFactory*> randomFactories, int raysRandomFactory = 0,
-        int raysPlaneWidth = 200, int raysPlaneHeight = 200,
-        bool drawRays = true, bool drawPhotons = false,
+        int raysGridWidth = 200, int raysGridHeight = 200,
         int photonBufferSize = 1'000'000, bool photonBufferAppend = false,
         QWidget* parent = 0, Qt::WindowFlags f = 0
     );
     ~RayOptionsDialog();
 
     int raysNumber() const;
+    int raysScreen() const;
     int raysRandomFactory() const;
-    int rayGridWidth() const;
-    int rayGridHeight() const;
-
-    bool drawRays() const;
-    bool drawPhotons() const;
+    int raysGridWidth() const;
+    int raysGridHeight() const;
 
     int photonBufferSize() const;
     bool photonBufferAppend() const;

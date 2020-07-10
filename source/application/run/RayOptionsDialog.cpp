@@ -4,11 +4,9 @@
 #include "kernel/random/Random.h"
 
 
-RayOptionsDialog::RayOptionsDialog(
-    int raysNumber,
+RayOptionsDialog::RayOptionsDialog(int raysNumber, int raysScreen,
     QVector<RandomFactory*> randomFactories, int raysRandomFactory,
-    int raysPlaneWidth, int raysPlaneHeight,
-    bool drawRays, bool drawPhotons,
+    int raysGridWidth, int raysGridHeight,
     int photonBufferSize, bool photonBufferAppend,
     QWidget* parent, Qt::WindowFlags f
 ):
@@ -18,14 +16,12 @@ RayOptionsDialog::RayOptionsDialog(
     ui->setupUi(this);
 
     ui->raysNumberSpin->setValue(raysNumber);
+    ui->raysScreenSpin->setValue(raysScreen);
     for (RandomFactory* f : randomFactories)
         ui->raysRandomFactoryCombo->addItem(f->icon(), f->name());
     ui->raysRandomFactoryCombo->setCurrentIndex(raysRandomFactory);
-    ui->raysPlaneWidthSpin->setValue(raysPlaneWidth);
-    ui->raysPlaneHeightSpin->setValue(raysPlaneHeight);
-
-    ui->drawRaysCheck->setChecked(drawRays);
-    ui->drawPhotonsCheck->setChecked(drawPhotons);
+    ui->raysPlaneWidthSpin->setValue(raysGridWidth);
+    ui->raysPlaneHeightSpin->setValue(raysGridHeight);
 
     ui->photonBufferSizeSpin->setValue(photonBufferSize);
     ui->photonBufferAppendRadio->setChecked(photonBufferAppend);
@@ -37,12 +33,10 @@ RayOptionsDialog::~RayOptionsDialog()
 }
 
 int RayOptionsDialog::raysNumber() const {return ui->raysNumberSpin->value();}
+int RayOptionsDialog::raysScreen() const {return ui->raysScreenSpin->value();}
 int RayOptionsDialog::raysRandomFactory() const {return ui->raysRandomFactoryCombo->currentIndex();}
-int RayOptionsDialog::rayGridWidth() const {return ui->raysPlaneWidthSpin->value();}
-int RayOptionsDialog::rayGridHeight() const {return ui->raysPlaneHeightSpin->value();}
-
-bool RayOptionsDialog::drawRays() const {return ui->drawRaysCheck->isChecked();}
-bool RayOptionsDialog::drawPhotons() const {return ui->drawPhotonsCheck->isChecked();}
+int RayOptionsDialog::raysGridWidth() const {return ui->raysPlaneWidthSpin->value();}
+int RayOptionsDialog::raysGridHeight() const {return ui->raysPlaneHeightSpin->value();}
 
 int RayOptionsDialog::photonBufferSize() const {return ui->photonBufferSizeSpin->value();}
 bool RayOptionsDialog::photonBufferAppend() const {return ui->photonBufferAppendRadio->isChecked();}

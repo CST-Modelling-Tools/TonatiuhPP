@@ -105,13 +105,16 @@ public slots:
     void SetExportPhotonMapType(QString name);
     void SetExportPreviousNextPhotonID(bool enabled);
     void SetExportTypeParameterValue(QString parameterName, QString value);
-    void SetPhotonBufferAppend(bool on);
-    void SetNodeName(QString name);
-    void SetPhotonBufferSize(uint size);
+
+    void SetRaysNumber(uint rays) {m_raysNumber = rays;}
+    void SetRaysScreen(uint rays) {m_raysScreen = rays;}
     void SetRaysRandomFactory(QString name);
-    void SetRayGrid(int widthDivisions, int heightDivisions);
+    void SetRaysGrid(int width, int height);
     void SetRaysDrawing(bool drawRays, bool drawPhotons);
-    void SetRaysNumber(uint rays);
+    void SetPhotonBufferSize(uint size) {m_photonBufferSize = size;}
+    void SetPhotonBufferAppend(bool on) { m_photonBufferAppend = on;}
+
+    void SetNodeName(QString name);
     void SetSunshape(QString name);
     void SetSunshapeParameter(QString parameter, QString value);
     void SetAir(QString name);
@@ -186,10 +189,10 @@ private slots:
     void on_actionQuadView_toggled();
 
 
-    //Automation menu actions
+    // automation menu actions
     void on_actionOpenScriptEditor_triggered();
 
-    //Help menu actions
+    // help menu actions
     void on_actionAbout_triggered();
     //void on_actionCheckForUpdates_triggered();
 
@@ -255,14 +258,6 @@ private:
     SceneModel* m_sceneModel;
     QItemSelectionModel* m_selectionModel;
 
-    Random* m_rand;
-    int m_selectedRandomDeviate;
-
-    PhotonsSettings* m_photonsSettings;
-    PhotonsBuffer* m_photonsBuffer;
-    ulong m_photonBufferSize;
-    bool m_photonBufferAppend;
-
     QString m_lastExportFileName;
     QString m_lastExportSurfaceUrl;
     bool m_lastExportInGlobal;
@@ -271,13 +266,21 @@ private:
     SoNode* m_coinNode_Buffer;
     QStringList* m_manipulators_Buffer;
 
-    ulong m_raysTracedTotal;
-    ulong m_raysTraced;
-    int m_widthDivisions; // for sun
-    int m_heightDivisions;
+    ulong m_raysNumber;
+    ulong m_raysScreen;
+    int m_raysRandomFactoryIndex;
+    int m_raysGridWidth;
+    int m_raysGridHeight;
 
+    ulong m_raysTracedTotal;
+    Random* m_rand;
     bool m_drawPhotons;
     bool m_drawRays;
+
+    PhotonsBuffer* m_photonsBuffer;
+    ulong m_photonBufferSize;
+    bool m_photonBufferAppend;
+    PhotonsSettings* m_photonsSettings;
 
     QVector<GraphicView*> m_graphicView;
     int m_focusView;

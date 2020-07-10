@@ -5,6 +5,7 @@
 #include <QTextStream>
 
 #include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoSwitch.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/nodes/SoLineSet.h>
 #include <Inventor/nodes/SoMaterial.h>
@@ -24,36 +25,9 @@
 #include "scene/TShapeKit.h"
 
 
-SoSeparator* trf::DrawPhotons(const PhotonsBuffer& map)
+void trf::DrawRays(SoSeparator* parent, const PhotonsBuffer& map, long raysLimit)
 {
-    SoSeparator* ans = new SoSeparator;
-
-    SoCoordinate3* coordinates = new SoCoordinate3;
-    uint n = 0;
-    for (const Photon& photon : map.getPhotons())
-    {
-        const vec3d& pos = photon.pos;
-        coordinates->point.set1Value(n++, pos.x, pos.y, pos.z);
-    }
-    ans->addChild(coordinates);
-
-    SoMaterial* material = new SoMaterial;
-    material->diffuseColor.setValue(1.f, 1.f, 0.f);
-    ans->addChild(material);
-
-    SoDrawStyle* style = new SoDrawStyle;
-    style->pointSize = 3;
-    ans->addChild(style);
-
-    SoPointSet* points = new SoPointSet;
-    ans->addChild(points);
-
-    return ans;
-}
-
-SoSeparator* trf::DrawRays(const PhotonsBuffer& map, ulong /*numberOfRays*/)
-{
-    SoSeparator* ans = new SoSeparator;
+    parent->removeAllChildren();
 
     SoCoordinate3* points = new SoCoordinate3;
     QVector<int> rayLengths;
@@ -64,23 +38,44 @@ SoSeparator* trf::DrawRays(const PhotonsBuffer& map, ulong /*numberOfRays*/)
         if (photon.id == 0 && s > 0) {
             rayLengths << s;
             s = 0;
+            if (rayLengths.size() >= raysLimit) break;
         }
         const vec3d& pos = photon.pos;
         points->point.set1Value(n++, pos.x, pos.y, pos.z);
         s++;
     }
-    rayLengths << s;
-    ans->addChild(points);
+    if (s > 0) rayLengths << s;
+    parent->addChild(points);
 
-    SoMaterial* material = new SoMaterial;
-    material->diffuseColor.setValue(1.0f, 1.0f, 0.8f);
-    ans->addChild(material);
+    SoDrawStyle* style = new SoDrawStyle;
+    style->lineWidth = 1.;
+    style->pointSize = 3.;
+    parent->addChild(style);
 
-    SoLineSet* lineset = new SoLineSet;
-    lineset->numVertices.setValues(0, rayLengths.size(), rayLengths.data());
-    ans->addChild(lineset);
+    // rays
+    SoSwitch* sRays = new SoSwitch;
+    sRays->setName("rays");
+    parent->addChild(sRays);
 
-    return ans;
+    SoMaterial* materialRays = new SoMaterial;
+    materialRays->diffuseColor.setValue(1.0f, 1.0f, 0.8f);
+    sRays->addChild(materialRays);
+
+    SoLineSet* lineSet = new SoLineSet;
+    lineSet->numVertices.setValues(0, rayLengths.size(), rayLengths.data());
+    sRays->addChild(lineSet);
+
+    // points
+    SoSwitch* sPhotons = new SoSwitch;
+    sPhotons->setName("photons");
+    parent->addChild(sPhotons);
+
+    SoMaterial* materialPhotons = new SoMaterial;
+    materialPhotons->diffuseColor.setValue(1.f, 1.f, 0.f);
+    sPhotons->addChild(materialPhotons);
+
+    SoPointSet* pointSet = new SoPointSet;
+    sPhotons->addChild(pointSet);
 }
 
 //void trf::CreatePhotonMap(Photons*& photonMap, QPair<Photons*, std::vector<Photon> > photonsList)

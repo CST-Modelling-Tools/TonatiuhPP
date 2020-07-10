@@ -1,6 +1,8 @@
 #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoSwitch.h>
 #include <Inventor/nodes/SoTransform.h>
+#include <Inventor/actions/SoSearchAction.h>
 
 #include "libraries/math/gcf.h"
 #include "libraries/math/gcf.h"
@@ -23,8 +25,7 @@ void selectionFinishCallback(void* userData, SoSelection* selection)
 m_nodeRoot SoSeparator
     nodeSky SkyBackground
     m_pSceneSeparator SoSeparator
-        m_pRootTransform SoTransform
-            m_pTracker GraphicRootTracker(TSceneKit)
+        m_pRays
         m_pSelectionNode SoSelection
             TSceneKit(azel, from TSceneTracker)
 
@@ -38,12 +39,7 @@ m_nodeRoot SoSeparator
 */
 
 GraphicRoot::GraphicRoot():
-    m_nodeRoot(0),
-    m_pGrid(0),
-    m_pRays(0),
-    m_pRootTransform(0),
-    m_pSceneSeparator(0),
-    m_pSelectionNode(0)
+    m_pGrid(0)
 {
     m_nodeRoot = new SoSeparator;
     m_nodeRoot->ref();
@@ -54,14 +50,13 @@ GraphicRoot::GraphicRoot():
     m_pSceneSeparator = new SoSeparator;
     m_nodeRoot->addChild(m_pSceneSeparator);
 
-    m_pRootTransform = new SoTransform;
-    m_pRootTransform->ref();
-    m_pSceneSeparator->addChild(m_pRootTransform);
+    m_rays = new SoSeparator;
+    m_pSceneSeparator->addChild(m_rays);
 
     m_pSelectionNode = new SoSelection;
     m_pSelectionNode->ref();
     m_pSelectionNode->policy = SoSelection::SINGLE;
-    m_pSelectionNode->addFinishCallback( selectionFinishCallback, static_cast< void*>( this ) );
+    m_pSelectionNode->addFinishCallback( selectionFinishCallback, static_cast<void*>(this));
     m_pSceneSeparator->addChild(m_pSelectionNode);
 }
 
@@ -71,20 +66,10 @@ GraphicRoot::~GraphicRoot()
         while (m_pGrid->getRefCount( ) > 1)    m_pGrid->unref();
         m_pGrid = 0;
     }
-    if (m_pRays)
-    {
-        while (m_pRays->getRefCount( ) > 1)    m_pRays->unref();
-        m_pRays = 0;
-    }
     if( m_pSelectionNode)
     {
         while ( m_pSelectionNode->getRefCount( ) > 1 )    m_pSelectionNode->unref();
         m_pSelectionNode = 0;
-    }
-    if( m_pRootTransform)
-    {
-        while ( m_pRootTransform->getRefCount( ) > 1 )    m_pRootTransform->unref();
-        m_pRootTransform = 0;
     }
     if( m_nodeRoot)
     {
@@ -97,13 +82,6 @@ void GraphicRoot::AddGrid(SoSeparator* grid)
 {
     m_pGrid = grid;
     grid->ref();
-}
-
-void GraphicRoot::AddRays(SoSeparator* rays)
-{
-    RemoveRays();
-    m_pRays = rays;
-    m_pRays->ref();
 }
 
 void GraphicRoot::AddModel(TSceneKit* sceneKit)
@@ -128,7 +106,7 @@ void GraphicRoot::RemoveGrid()
 {
     if( m_pGrid )
     {
-        ShowGrid( false );
+        ShowGrid(false);
         m_pGrid->removeAllChildren();
         while(m_pGrid->getRefCount() > 1) m_pGrid->unref();
         if (m_pGrid->getRefCount() > 1)
@@ -138,26 +116,15 @@ void GraphicRoot::RemoveGrid()
     }
 }
 
-void GraphicRoot::RemoveRays()
+void GraphicRoot::removeRays()
 {
-    if (m_pRays) {
-        m_pRays->removeAllChildren();
-        if (m_pRays->getRefCount() > 1)
-            gcf::SevereError( "RemoveRays: m_pRays referenced in excess");
-        m_pRays->unref();
-        m_pRays = 0;
-    }
+    m_rays->removeAllChildren();
 }
 
 void GraphicRoot::RemoveModel()
 {
     if (m_pSelectionNode->getNumChildren() > 0)
-    {
-//        m_pTracker->SetSceneKit(0);
-//        m_pTracker->Disconnect();
-
         m_pSelectionNode->removeAllChildren();
-    }
 }
 
 void GraphicRoot::Select(const SoPath* path)
@@ -208,12 +175,26 @@ void GraphicRoot::ShowGrid(bool view)
             m_nodeRoot->removeChild(m_pGrid);
 }
 
-void GraphicRoot::ShowRays(bool view)
+#include <QDebug>
+void GraphicRoot::showRays(bool on)
 {
-    if (view && m_pRays)
-        m_pSceneSeparator->addChild(m_pRays);
-    else if (!view)
-        if (m_pRays->getRefCount() > 0)
-            m_pSceneSeparator->removeChild(m_pRays);
+    SoSearchAction search;
+    search.setName("rays");
+    search.apply(m_rays);
+    SoPath* path = search.getPath();
+    if (!path) return;
+    SoSwitch* group = (SoSwitch*) path->getTail();
+    group->whichChild = on ? SO_SWITCH_ALL : SO_SWITCH_NONE;
 }
 
+void GraphicRoot::showPhotons(bool on)
+{
+    SoSearchAction search;
+//    search.setType(SoSwitch::getClassTypeId());
+    search.setName("photons");
+    search.apply(m_rays);
+    SoPath* path = search.getPath();
+    if (!path) return;
+    SoSwitch* group = (SoSwitch*) path->getTail();
+    group->whichChild = on ? SO_SWITCH_ALL : SO_SWITCH_NONE;
+}

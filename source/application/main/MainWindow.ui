@@ -92,25 +92,30 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
+    <widget class="QMenu" name="menuCamera">
+     <property name="title">
+      <string>Camera</string>
+     </property>
+     <addaction name="separator"/>
+     <addaction name="actionLookNorth"/>
+     <addaction name="actionLookEast"/>
+     <addaction name="actionLookSouth"/>
+     <addaction name="actionLookWest"/>
+    </widget>
     <addaction name="actionViewAxes"/>
     <addaction name="actionViewBackground"/>
     <addaction name="actionViewGrid"/>
-    <addaction name="actionGridSettings"/>
+    <addaction name="separator"/>
     <addaction name="actionViewRays"/>
     <addaction name="actionViewPhotons"/>
     <addaction name="separator"/>
     <addaction name="actionViewAll"/>
     <addaction name="actionViewSelected"/>
-    <addaction name="separator"/>
     <addaction name="actionViewTop"/>
-    <addaction name="actionLookNorth"/>
-    <addaction name="actionLookEast"/>
-    <addaction name="actionLookSouth"/>
-    <addaction name="actionLookWest"/>
     <addaction name="actionViewSun"/>
+    <addaction name="menuCamera"/>
     <addaction name="separator"/>
     <addaction name="actionQuadView"/>
-    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuInsert">
     <property name="title">
@@ -158,8 +163,8 @@
     </property>
     <addaction name="actionDefineSunLight"/>
     <addaction name="actionCalculateSunPosition"/>
-    <addaction name="separator"/>
     <addaction name="actionDefineTransmissivity"/>
+    <addaction name="actionGridSettings"/>
     <addaction name="separator"/>
     <addaction name="actionUserComponent"/>
     <addaction name="actionSaveComponent"/>
@@ -274,7 +279,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionViewGrid"/>
    <addaction name="actionViewTop"/>
    <addaction name="actionViewSun"/>
   </widget>
@@ -505,14 +509,7 @@
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>false</bool>
-   </property>
-   <property name="enabled">
     <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/images/view/viewGrid.png</normaloff>:/images/view/viewGrid.png</iconset>
    </property>
    <property name="text">
     <string>Grid</string>
@@ -522,25 +519,26 @@
    </property>
   </action>
   <action name="actionGridSettings">
-   <property name="enabled">
-    <bool>false</bool>
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/view/viewGrid.png</normaloff>:/images/view/viewGrid.png</iconset>
    </property>
    <property name="text">
-    <string>Grid Settings...</string>
+    <string>Grid...</string>
    </property>
   </action>
   <action name="actionViewRays">
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="enabled">
-    <bool>false</bool>
+   <property name="checked">
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Rays</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+R</string>
+    <string>Ctrl+Shift+R</string>
    </property>
   </action>
   <action name="actionViewAll">
@@ -658,15 +656,12 @@
     <string>&amp;Ray Tracing...</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+T</string>
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="actionRayTraceOptions">
    <property name="text">
     <string>Ray Tracing Options...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+T</string>
    </property>
   </action>
   <action name="actionRunFluxAnalysis">
@@ -750,17 +745,15 @@
     <string>C</string>
    </property>
   </action>
-  <action name="actionter">
-   <property name="text">
-    <string>ter</string>
-   </property>
-  </action>
   <action name="actionViewPhotons">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
     <string>Photons</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+P</string>
    </property>
   </action>
  </widget>

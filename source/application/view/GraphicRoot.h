@@ -17,24 +17,24 @@ public:
     GraphicRoot();
     ~GraphicRoot();
 
-    void AddGrid(SoSeparator* grid);
-    void AddRays(SoSeparator* rays);
     void AddModel(TSceneKit* sceneKit);
-
-    void DeselectAll();
-
-    SoSeparator* GetNode() const;
-
-    void RemoveGrid();
-    void RemoveRays();
     void RemoveModel();
 
+    void ShowBackground(bool view);
+
+    void AddGrid(SoSeparator* grid);
+    void ShowGrid(bool view);
+    void RemoveGrid();
+
+    SoSeparator* rays() {return m_rays;}
+    void removeRays();
+    void showRays(bool on);
+    void showPhotons(bool on);
+
+    void DeselectAll();
+    SoSeparator* GetNode() const;
     void Select(const SoPath* path);
     void SelectionChanged(SoSelection* selection);
-
-    void ShowBackground(bool view);
-    void ShowGrid(bool view);
-    void ShowRays(bool view);
 
 signals:
     void ChangeSelection(SoSelection* selection);
@@ -44,7 +44,7 @@ private:
 
     SoSeparator* m_nodeRoot;
     SoSeparator* m_pGrid;
-    SoSeparator* m_pRays;
+    SoSeparator* m_rays;
     SoTransform* m_pRootTransform;
     SoSeparator* m_pSceneSeparator;
     SoSelection* m_pSelectionNode;

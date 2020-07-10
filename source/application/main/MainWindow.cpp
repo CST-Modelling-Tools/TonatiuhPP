@@ -133,24 +133,29 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
     m_document(0),
     m_sceneModel(0),
     m_selectionModel(0),
-    m_rand(0),
-    m_selectedRandomDeviate(0),
-    m_photonsSettings(0),
-    m_photonsBuffer(0),
-    m_photonBufferSize(1'000'000),
-    m_photonBufferAppend(false),
     m_lastExportFileName(""),
     m_lastExportSurfaceUrl(""),
     m_lastExportInGlobal(true),
     m_graphicsRoot(0),
     m_coinNode_Buffer(0),
     m_manipulators_Buffer(0),
+
+    m_raysNumber(10'000),
+    m_raysScreen(1'000),
+    m_raysRandomFactoryIndex(0),
+    m_raysGridWidth(200),
+    m_raysGridHeight(200),
+
     m_raysTracedTotal(0),
-    m_raysTraced(10'000),
-    m_widthDivisions(200),
-    m_heightDivisions(200),
+    m_rand(0),
     m_drawPhotons(false),
     m_drawRays(true),
+
+    m_photonsBuffer(0),
+    m_photonBufferSize(1'000'000),
+    m_photonBufferAppend(false),
+    m_photonsSettings(0),
+
     m_graphicView(0),
     m_focusView(0)
 {
@@ -180,7 +185,9 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
         StartOver(tonatiuhFile);
     else {
         SetCurrentFile("");
-        ui->actionViewGrid->trigger();
+//        ui->actionViewGrid->trigger();
+//        ui->actionViewGrid->setChecked(true);
+        ShowGrid();
         SoCamera* camera = m_graphicView[0]->getCamera();
         camera->focalDistance = 10.;
         SbVec3f target(0., 0., 0.);
@@ -584,8 +591,8 @@ void MainWindow::onSunDialog()
     ui->parametersTabs->UpdateView();
     setDocumentModified(true);
 
-    ui->actionViewRays->setEnabled(false);
-    ui->actionViewRays->setChecked(false);
+//    ui->actionViewRays->setEnabled(false);
+//    ui->actionViewRays->setChecked(false);
 }
 
 /*!
@@ -613,30 +620,12 @@ void MainWindow::onAirDialog()
  */
 void MainWindow::ShowRays(bool on)
 {
-    if (on) {
-        SoSeparator* separator = new SoSeparator;
-        separator->setName("Rays");
-        SoSeparator* rays = trf::DrawRays(*m_photonsBuffer, m_raysTracedTotal);
-        separator->addChild(rays);
-        m_graphicsRoot->AddRays(separator);
-    }
-
-//    m_graphicsRoot->ShowRays(display);
-    /*if( display && ( m_pRays ) )
-            m_graphicsRoot->insertChild( m_pRays, 0 );
-           else if( !display )
-            if ( m_pRays->getRefCount( ) > 0 )    m_graphicsRoot->removeChild( 0 );*/
+    m_graphicsRoot->showRays(on);
 }
 
 void MainWindow::ShowPhotons(bool on)
 {
-    if (on) {
-        SoSeparator* separator = new SoSeparator;
-        separator->setName("Rays");
-        SoSeparator* photons = trf::DrawPhotons(*m_photonsBuffer);
-        separator->addChild(photons);
-        m_graphicsRoot->AddRays(separator);
-    }
+    m_graphicsRoot->showPhotons(on);
 }
 
 /*!
@@ -818,15 +807,9 @@ void MainWindow::RunFluxAnalysisDialog()
     instanceRoot = instanceRoot->children[1];
 
     QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
-    if (m_selectedRandomDeviate == -1)
-    {
-        if (randomFactories.size() > 0) m_selectedRandomDeviate = 0;
-        else return;
-    }
+    Random* rand = randomFactories[m_raysRandomFactoryIndex]->create();
 
-    Random* rand = randomFactories[m_selectedRandomDeviate]->create();
-
-    FluxAnalysisDialog dialog(sceneKit, m_sceneModel, instanceRoot, m_widthDivisions, m_heightDivisions, rand, this);
+    FluxAnalysisDialog dialog(sceneKit, m_sceneModel, instanceRoot, m_raysGridWidth, m_raysGridHeight, rand, this);
     dialog.exec();
 }
 
@@ -1079,19 +1062,16 @@ void MainWindow::onRayOptionsDialog()
 {
     QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
     RayOptionsDialog dialog(
-        m_raysTraced,
-        randomFactories, m_selectedRandomDeviate,
-        m_widthDivisions, m_heightDivisions,
-        m_drawRays, m_drawPhotons,
+        m_raysNumber, m_raysScreen,
+        randomFactories, m_raysRandomFactoryIndex,
+        m_raysGridWidth, m_raysGridHeight,
         m_photonBufferSize, m_photonBufferAppend, this);
     dialog.exec();
 
     SetRaysNumber(dialog.raysNumber());
+    SetRaysScreen(dialog.raysScreen());
     SetRaysRandomFactory(randomFactories[dialog.raysRandomFactory()]->name());
-    SetRayGrid(dialog.rayGridWidth(), dialog.rayGridHeight());
-
-    SetRaysDrawing(dialog.drawRays(), dialog.drawPhotons());
-
+    SetRaysGrid(dialog.raysGridWidth(), dialog.raysGridHeight());
     SetPhotonBufferSize(dialog.photonBufferSize());
     SetPhotonBufferAppend(dialog.photonBufferAppend());
 }
@@ -1242,8 +1222,8 @@ void MainWindow::ChangeSunPosition(double azimuth, double elevation)
     UpdateLightSize();
     setDocumentModified(true);
 
-    ui->actionViewRays->setEnabled(false);
-    ui->actionViewRays->setChecked(false);
+//    ui->actionViewRays->setEnabled(false);
+//    ui->actionViewRays->setChecked(false);
 }
 
 /*!
@@ -1271,8 +1251,8 @@ void MainWindow::ChangeSunPosition(int year, int month, int day, double hours, d
     sunpos(myTime, myLocation, &results);
     ChangeSunPosition(results.dAzimuth, (90 - results.dZenithAngle) );
 
-    ui->actionViewRays->setEnabled(false);
-    ui->actionViewRays->setChecked(false);
+//    ui->actionViewRays->setEnabled(false);
+//    ui->actionViewRays->setChecked(false);
 }
 
 /*!
@@ -1817,7 +1797,7 @@ void MainWindow::Run()
         instanceRoot->updateTree(Transform::Identity);
 
         SunKit* sunKit = static_cast<SunKit*> (instanceSun->getNode() );
-        if (!sunKit->findTexture(m_widthDivisions, m_heightDivisions, instanceRoot))
+        if (!sunKit->findTexture(m_raysGridWidth, m_raysGridHeight, instanceRoot))
         {
             emit Abort(tr("There are no surfaces defined for ray tracing") );
             ShowRaysIn3DView(); // cleaning?
@@ -1826,12 +1806,12 @@ void MainWindow::Run()
 
         QVector<long> raysPerThread;
         int progressMax = 100;
-        ulong t1 = m_raysTraced/progressMax;
+        ulong t1 = m_raysNumber/progressMax;
         for (int progress = 0; progress < progressMax; ++progress)
             raysPerThread << t1;
 
-        if (t1*progressMax < m_raysTraced)
-            raysPerThread << m_raysTraced - t1*progressMax;
+        if (t1*progressMax < m_raysNumber)
+            raysPerThread << m_raysNumber - t1*progressMax;
 
 
 
@@ -1870,13 +1850,13 @@ void MainWindow::Run()
         futureWatcher.waitForFinished();
         std::cout << "QtConcurrent finished: " << timer.elapsed() << std::endl;
 
-        m_raysTracedTotal += m_raysTraced;
+        m_raysTracedTotal += m_raysNumber;
 
         if (exportSuraceList.empty())
             ShowRaysIn3DView(); // all photons must be stored
         else {
-            ui->actionViewRays->setEnabled(false);
-            ui->actionViewRays->setChecked(false);
+//            ui->actionViewRays->setEnabled(false);
+//            ui->actionViewRays->setChecked(false);
         }
 
         double area = sunAperture->getArea();
@@ -1906,14 +1886,9 @@ void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, uint nOfR
     instanceRoot = instanceRoot->children[1];
 
     QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
-    if (m_selectedRandomDeviate == -1)
-    {
-        if (randomFactories.size() > 0) m_selectedRandomDeviate = 0;
-        else return;
-    }
-    if (!m_rand) m_rand = randomFactories[m_selectedRandomDeviate]->create();
+    if (!m_rand) m_rand = randomFactories[m_raysRandomFactoryIndex]->create();
 
-    FluxAnalysis fluxAnalysis(sceneKit, m_sceneModel, instanceRoot, m_widthDivisions, m_heightDivisions, m_rand);
+    FluxAnalysis fluxAnalysis(sceneKit, m_sceneModel, instanceRoot, m_raysGridWidth, m_raysGridHeight, m_rand);
     fluxAnalysis.run(nodeURL, surfaceSide, nOfRays, false, heightDivisions, widthDivisions); //?
     fluxAnalysis.write(dirName, fileName, saveCoords);
 }
@@ -2031,14 +2006,6 @@ void MainWindow::SetExportTypeParameterValue(QString name, QString value)
 }
 
 /*!
- * If \a increase is false, starts with a new photon map every ray tracer. Otherwise, the photon map increases.
- */
-void MainWindow::SetPhotonBufferAppend(bool on)
-{
-    m_photonBufferAppend = on;
-}
-
-/*!
  * Sets \a nodeName as the current node name.
  */
 void MainWindow::SetNodeName(QString name)
@@ -2058,35 +2025,31 @@ void MainWindow::SetNodeName(QString name)
     ChangeNodeName(m_selectionModel->currentIndex(), name);
 }
 
-/*!
- * Sets the number of photons that the photon map can store to \a nPhotons.
- */
-void MainWindow::SetPhotonBufferSize(uint size)
-{
-    m_photonBufferSize = size;
-}
 
 /*!
  * Sets the random number generator type, \a typeName, for ray tracing.
  */
 void MainWindow::SetRaysRandomFactory(QString name)
 {
-    QVector<RandomFactory*> factoryList = m_pluginManager->getRandomFactories();
-    if (factoryList.size() == 0) return;
+//    RandomFactory* f = m_pluginManager->getRandomMap().value(name, 0);
+//    if (!f) return;
+
+    QVector<RandomFactory*> factories = m_pluginManager->getRandomFactories();
+    if (factories.size() == 0) return;
 
     QVector< QString > randomNames;
-    for (int i = 0; i < factoryList.size(); i++)
-        randomNames << factoryList[i]->name();
+    for (int i = 0; i < factories.size(); i++)
+        randomNames << factories[i]->name();
 
-    int oldSelectedRandomDeviate = m_selectedRandomDeviate;
+    int oldSelectedRandomDeviate = m_raysRandomFactoryIndex;
 
     if (randomNames.indexOf(name) < 0)
     {
         emit Abort(tr("SetRandomDeviateType: Defined random generator is not valid type.") );
         return;
     }
-    m_selectedRandomDeviate = randomNames.indexOf(name);
-    if (oldSelectedRandomDeviate != m_selectedRandomDeviate)
+    m_raysRandomFactoryIndex = randomNames.indexOf(name);
+    if (oldSelectedRandomDeviate != m_raysRandomFactoryIndex)
     {
         delete m_rand;
         m_rand = 0;
@@ -2096,10 +2059,10 @@ void MainWindow::SetRaysRandomFactory(QString name)
 /*!
  * Sets the ray casting surface grid elemets to \a widthDivisions x \a heightDivisions.
  */
-void MainWindow::SetRayGrid(int widthDivisions, int heightDivisions)
+void MainWindow::SetRaysGrid(int width, int height)
 {
-    m_widthDivisions = widthDivisions;
-    m_heightDivisions = heightDivisions;
+    m_raysGridWidth = width;
+    m_raysGridHeight = height;
 }
 
 /*!
@@ -2111,14 +2074,6 @@ void MainWindow::SetRaysDrawing(bool drawRays, bool drawPhotons)
 {
     m_drawRays = drawRays;
     m_drawPhotons = drawPhotons;
-}
-
-/*!
- *    Sets \a rays as the number of rays to trace for each run action.
- */
-void MainWindow::SetRaysNumber(uint rays)
-{
-    m_raysTraced = rays;
 }
 
 /*!
@@ -2866,15 +2821,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
     instanceSun->setTransform(tgf::makeTransform(sunTransform));
 
     QVector<RandomFactory*> randomDeviateFactoryList = m_pluginManager->getRandomFactories();
-    //Check if there is a random generator selected;
-    if (m_selectedRandomDeviate == -1)
-    {
-        if (randomDeviateFactoryList.size() > 0) m_selectedRandomDeviate = 0;
-        else return false;
-    }
-
-    //Create the random generator
-    if (!m_rand) m_rand = randomDeviateFactoryList[m_selectedRandomDeviate]->create();
+    if (!m_rand) m_rand = randomDeviateFactoryList[m_raysRandomFactoryIndex]->create();
 
 
     //Create the photon map where photons are going to be stored
@@ -3114,30 +3061,13 @@ void MainWindow::ShowGrid()
  */
 void MainWindow::ShowRaysIn3DView()
 {
-    ui->actionViewRays->setEnabled(false);
-    ui->actionViewRays->setChecked(false);
-
-    if (m_drawRays || m_drawPhotons)
+    if (ui->actionViewRays->isChecked() || ui->actionViewPhotons->isChecked())
     {
-//        SoSeparator* separator = new SoSeparator;
-//        separator->setName("Rays");
-
-//        if (m_drawPhotons)
-//        {
-//            SoSeparator* photons = trf::DrawPhotons(*m_photonsBuffer);
-//            separator->addChild(photons);
-//        }
-
-//        if (m_drawRays)
-//        {
-//            SoSeparator* rays = trf::DrawRays(*m_photonsBuffer, m_raysTracedTotal);
-//            if (rays) separator->addChild(rays);
-//        }
-
-//        m_graphicsRoot->AddRays(separator);
-
-        ui->actionViewRays->setEnabled(true);
-        ui->actionViewRays->setChecked(true);
+        trf::DrawRays(m_graphicsRoot->rays(), *m_photonsBuffer, m_raysScreen);
+        m_graphicsRoot->showRays(ui->actionViewRays->isChecked());
+        m_graphicsRoot->showPhotons(ui->actionViewPhotons->isChecked());
+    } else {
+        m_graphicsRoot->removeRays();
     }
 }
 
@@ -3152,10 +3082,10 @@ bool MainWindow::StartOver(const QString& fileName)
     InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
     m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromUrl(concentratorRoot->getURL() ), QItemSelectionModel::ClearAndSelect);
 
-    ui->actionViewRays->setEnabled(false);
-    ui->actionViewRays->setChecked(false);
+//    ui->actionViewRays->setEnabled(false);
+//    ui->actionViewRays->setChecked(false);
 
-    m_graphicsRoot->RemoveRays();
+    m_graphicsRoot->removeRays();
     m_graphicsRoot->RemoveModel();
 
     m_commandStack->clear();
