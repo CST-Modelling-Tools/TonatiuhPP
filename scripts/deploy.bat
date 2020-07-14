@@ -40,7 +40,7 @@ COPY %QT%\plugins\styles\qwindowsvistastyle.dll %DATA%\bin\styles\qwindowsvistas
 
 
 MD %DATA%\examples
-COPY %PROJECT%\examples\* %DATA%\examples
+XCOPY %PROJECT%\examples %DATA%\examples /E
 
 
 
