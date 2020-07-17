@@ -810,17 +810,9 @@ void MainWindow::RunFluxAnalysisDialog()
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
 
-    SunKit* sunKit = (SunKit*) sceneKit->getPart("lightList[0]", false);
-    if (!sunKit) return;
+    Random* rand = m_pluginManager->getRandomFactories()[m_raysRandomFactoryIndex]->create();
 
-    InstanceNode* instanceRoot = m_sceneModel->getInstance(QModelIndex());
-    if (!instanceRoot) return;
-    instanceRoot = instanceRoot->children[1];
-
-    QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
-    Random* rand = randomFactories[m_raysRandomFactoryIndex]->create();
-
-    FluxAnalysisDialog dialog(sceneKit, m_sceneModel, instanceRoot, m_raysGridWidth, m_raysGridHeight, rand, this);
+    FluxAnalysisDialog dialog(sceneKit, m_sceneModel, m_raysGridWidth, m_raysGridHeight, rand, this);
     dialog.exec();
 }
 
@@ -1868,19 +1860,11 @@ void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, uint nOfR
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
 
-    SunKit* sunKit = (SunKit*) sceneKit->getPart("lightList[0]", false);
-    if (!sunKit) return;
+    if (!m_rand) m_rand = m_pluginManager->getRandomFactories()[m_raysRandomFactoryIndex]->create();
 
-    InstanceNode* instanceRoot = m_sceneModel->getInstance(QModelIndex());
-    if (!instanceRoot) return;
-    instanceRoot = instanceRoot->children[1];
-
-    QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
-    if (!m_rand) m_rand = randomFactories[m_raysRandomFactoryIndex]->create();
-
-    FluxAnalysis fluxAnalysis(sceneKit, m_sceneModel, instanceRoot, m_raysGridWidth, m_raysGridHeight, m_rand);
-    fluxAnalysis.run(nodeURL, surfaceSide, nOfRays, false, heightDivisions, widthDivisions); //?
-    fluxAnalysis.write(dirName, fileName, saveCoords);
+    FluxAnalysis fa(sceneKit, m_sceneModel, m_raysGridWidth, m_raysGridHeight, m_rand);
+    fa.run(nodeURL, surfaceSide, nOfRays, false, heightDivisions, widthDivisions); //?
+    fa.write(dirName, fileName, saveCoords);
 }
 
 /*!
@@ -2770,37 +2754,33 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return false;
 
-    if (!sceneKit->getPart("air", false))
-        air = 0;
-    else
-        air = static_cast<Air*>(sceneKit->getPart("air", false));
+    air = dynamic_cast<Air*>(sceneKit->getPart("air", false));
 
-    InstanceNode* sceneInstance = m_sceneModel->getInstance(QModelIndex());
-    if (!sceneInstance) return false;
+    InstanceNode* instanceScene = m_sceneModel->getInstance(QModelIndex());
+    if (!instanceScene) return false;
 
-    instanceSun = sceneInstance->children[0];
+    instanceSun = instanceScene->children[0];
     if (!instanceSun) return false;
 
-    instanceLayout = sceneInstance->children[1];
+    instanceLayout = instanceScene->children[1];
     if (!instanceLayout) return false;
 
-    //Check if there is a light and is properly configured
-    if (!sceneKit->getPart("lightList[0]", false) ) return false;
-    SunKit* sunKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
+    if (!sceneKit->getPart("lightList[0]", false)) return false;
+    SunKit* sunKit = (SunKit*) sceneKit->getPart("lightList[0]", false);
 //    sunKit->updateTransform();
 
     if (!sunKit->getPart("tsunshape", false)) return false;
-    sunShape = static_cast<SunShape*>(sunKit->getPart("tsunshape", false));
+    sunShape = (SunShape*) sunKit->getPart("tsunshape", false);
 
     if (!sunKit->getPart("icon", false)) return false;
-    sunAperture = static_cast<SunAperture*>(sunKit->getPart("icon", false));
+    sunAperture = (SunAperture*) sunKit->getPart("icon", false);
 
     if (!sunKit->getPart("transform", false)) return false;
-    SoTransform* sunTransform = static_cast<SoTransform*>(sunKit->getPart("transform", false));
+    SoTransform* sunTransform = (SoTransform*) sunKit->getPart("transform", false);
     instanceSun->setTransform(tgf::makeTransform(sunTransform));
 
-    QVector<RandomFactory*> randomDeviateFactoryList = m_pluginManager->getRandomFactories();
-    if (!m_rand) m_rand = randomDeviateFactoryList[m_raysRandomFactoryIndex]->create();
+    QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
+    if (!m_rand) m_rand = randomFactories[m_raysRandomFactoryIndex]->create();
 
 
     //Create the photon map where photons are going to be stored
@@ -3102,29 +3082,11 @@ void MainWindow::setDocumentModified(bool value)
  */
 void MainWindow::UpdateLightSize()
 {
-    SoSceneKit* sceneKit = m_document->getSceneKit();
-
-    SunKit* sunKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
+    TSceneKit* sceneKit = m_document->getSceneKit();
+    SunKit* sunKit = (SunKit*) sceneKit->getPart("lightList[0]", false);
     if (!sunKit) return;
 
-    SoGroup* separatorKit = static_cast<SoGroup*>(sceneKit->getPart("group", false) );
-    if (!separatorKit) return;
-
-    SoGetBoundingBoxAction* action = new SoGetBoundingBoxAction(SbViewportRegion() );
-    separatorKit->getBoundingBox(action);
-    SbBox3f box = action->getBoundingBox();
-    delete action;
-
-    if (!box.isEmpty())
-    {
-        Box3D sceneBox(
-            vec3d(box.getMin()[0], box.getMin()[1], box.getMin()[2]),
-            vec3d(box.getMax()[0], box.getMax()[1], box.getMax()[2])
-        );
-
-        if (sunKit) sunKit->setBox(sceneBox);
-    }
-
+    sunKit->setBox(sceneKit);
     m_sceneModel->UpdateSceneModel();
 }
 

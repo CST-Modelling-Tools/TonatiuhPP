@@ -1,6 +1,7 @@
 #include "FluxAnalysis.h"
 
 #include <cmath>
+#include <vector>
 
 #include <QFileDialog>
 #include <QFutureWatcher>
@@ -30,19 +31,17 @@
 #include "kernel/air/AirVacuum.h"
 #include "kernel/profiles/ProfileRT.h"
 #include "libraries/math/2D/Matrix2D.h"
-
+#include "kernel/photons/Photon.h"
 
 
 FluxAnalysis::FluxAnalysis(TSceneKit* sceneKit,
     SceneModel* sceneModel,
-    InstanceNode* instanceRoot,
     int sunWidthDivisions,
     int sunHeightDivisions,
     Random* randomDeviate
 ):
     m_sceneKit(sceneKit),
     m_sceneModel(sceneModel),
-    m_instanceRoot(instanceRoot),
     m_sunWidthDivisions(sunWidthDivisions),
     m_sunHeightDivisions(sunHeightDivisions),
     m_rand(randomDeviate),
@@ -60,7 +59,8 @@ FluxAnalysis::FluxAnalysis(TSceneKit* sceneKit,
     m_photonsMaxCol(0),
     m_photonsError(0)
 {
-
+    m_instanceLayout = m_sceneModel->getInstance(QModelIndex());
+    m_instanceLayout = m_instanceLayout->children[1];
 }
 
 FluxAnalysis::~FluxAnalysis()
@@ -91,7 +91,7 @@ QString FluxAnalysis::getShapeType(QString nodeURL)
 /*
  * Fun flux analysis
  */
-void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool increasePhotonMap, int rows, int cols)
+void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool photonBufferAppend, int rows, int cols)
 {
     m_surfaceURL = nodeURL;
     m_surfaceSide = surfaceSide;
@@ -100,36 +100,27 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool
 
     if (!m_sceneKit) return;
 
-    //Check if there is a transmissivity defined
-    Air* air = 0;
-    if (!m_sceneKit->getPart("air", false) )
-        air = 0;
-    else
-        air = static_cast<Air*> (m_sceneKit->getPart("air", false) );
+    Air* air = dynamic_cast<Air*>(m_sceneKit->getPart("air", false));
 
-    //Check if there is a rootSeparator InstanceNode
-    if (!m_instanceRoot) return;
+    if (!m_instanceLayout) return;
+    InstanceNode* instanceScene = m_instanceLayout->getParent();
+    if (!instanceScene) return;
 
-    InstanceNode* sceneInstance = m_instanceRoot->getParent();
-    if (!sceneInstance) return;
+    if (!m_sceneKit->getPart("lightList[0]", false)) return;
+    SunKit* sunKit = static_cast<SunKit*>(m_sceneKit->getPart("lightList[0]", false));
 
-    //Check if there is a light and is properly configured
-    if (!m_sceneKit->getPart("lightList[0]", false) ) return;
-    SunKit* sunKit = static_cast<SunKit*>(m_sceneKit->getPart("lightList[0]", false) );
-
-    InstanceNode* instanceSun = sceneInstance->children[0];
+    InstanceNode* instanceSun = instanceScene->children[0];
     if (!instanceSun) return;
 
-    if (!sunKit->getPart("tsunshape", false) ) return;
-    SunShape* sunShape = static_cast<SunShape*>(sunKit->getPart("tsunshape", false) );
+    if (!sunKit->getPart("tsunshape", false)) return;
+    SunShape* sunShape = (SunShape*) sunKit->getPart("tsunshape", false);
 
-    if (!sunKit->getPart("icon", false) ) return;
-    SunAperture* sunAperture = static_cast<SunAperture*>(sunKit->getPart("icon", false) );
+    if (!sunKit->getPart("icon", false)) return;
+    SunAperture* sunAperture = (SunAperture*) sunKit->getPart("icon", false);
 
-    if (!sunKit->getPart("transform", false) ) return;
-    SoTransform* lightTransform = static_cast<SoTransform*>(sunKit->getPart("transform", false) );
+    if (!sunKit->getPart("transform", false)) return;
+    SoTransform* sunTransform = (SoTransform*) sunKit->getPart("transform", false);
 
-    //Check if there is a random generator is defined.
     if (!m_rand) return;
 
     //Check if the surface and the surface side defined is suitable
@@ -141,11 +132,12 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool
 //        return;
 
     //Create the photon map where photons are going to be stored
-    if (!m_photons || !increasePhotonMap)
+    if (!m_photons || !photonBufferAppend)
     {
         if (m_photons) m_photons->endExport(-1);
         delete m_photons;
-        m_photons = new PhotonsBuffer(std::numeric_limits<uint>::max());
+//        long q = std::vector<Photon>::max_size();
+        m_photons = new PhotonsBuffer(std::numeric_limits<int>::max());
         m_tracedRays = 0;
         m_powerPhoton = 0;
         m_powerTotal = 0;
@@ -154,35 +146,18 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool
     QVector<InstanceNode*> exportSuraceList;
     QModelIndex nodeIndex = m_sceneModel->IndexFromUrl(m_surfaceURL);
     if (!nodeIndex.isValid()) return;
-
-    InstanceNode* surfaceNode = m_sceneModel->getInstance(nodeIndex);
-    if (!surfaceNode || surfaceNode == 0) return;
-    exportSuraceList << surfaceNode;
+    InstanceNode* instanceNode = m_sceneModel->getInstance(nodeIndex);
+    if (!instanceNode) return;
+    exportSuraceList << instanceNode;
 
     //UpdateLightSize(); from MainWindow
-    SoGroup* separatorKit = static_cast<SoGroup*>(m_sceneKit->getPart("group", false) );
-    if (!separatorKit) return;
-
-    SoGetBoundingBoxAction* action = new SoGetBoundingBoxAction(SbViewportRegion() );
-    separatorKit->getBoundingBox(action);
-    SbBox3f box = action->getBoundingBox();
-    delete action;
-
-    if (!box.isEmpty() )
-    {
-        Box3D sceneBox(
-            vec3d(box.getMin()[0], box.getMin()[1], box.getMin()[2]),
-            vec3d(box.getMax()[0], box.getMax()[1], box.getMax()[2])
-        );
-        if (sunKit) sunKit->setBox(sceneBox);
-    }
-
+    sunKit->setBox(m_sceneKit);
     m_sceneModel->UpdateSceneModel();
 
     //Compute bounding boxes and world to object transforms
-    m_instanceRoot->updateTree(Transform::Identity);
+    m_instanceLayout->updateTree(Transform::Identity);
 
-    if (!sunKit->findTexture(m_sunWidthDivisions, m_sunHeightDivisions, m_instanceRoot)) return;
+    if (!sunKit->findTexture(m_sunWidthDivisions, m_sunHeightDivisions, m_instanceLayout)) return;
 
     QVector<long> raysPerThread;
     int maximumValueProgressScale = 100;
@@ -194,7 +169,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool
     if (t1*maximumValueProgressScale < nOfRays)
         raysPerThread << nOfRays - t1*maximumValueProgressScale;
 
-    Transform lightToWorld = tgf::makeTransform(lightTransform);
+    Transform lightToWorld = tgf::makeTransform(sunTransform);
     instanceSun->setTransform(lightToWorld);
 
     // Create a progress dialog.
@@ -216,7 +191,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool
         airTemp = air;
 
     photonMap = QtConcurrent::map(raysPerThread, RayTracer(
-        m_instanceRoot,
+        m_instanceLayout,
         instanceSun, sunAperture, sunShape, airTemp,
         *m_rand, &mutex, m_photons, &mutexPhotonMap, exportSuraceList
     ));

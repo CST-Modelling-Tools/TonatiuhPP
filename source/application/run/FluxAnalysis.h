@@ -13,7 +13,7 @@ class FluxAnalysis
 {
 
 public:
-    FluxAnalysis(TSceneKit* sceneKit, SceneModel* sceneModel, InstanceNode* instanceRoot,
+    FluxAnalysis(TSceneKit* sceneKit, SceneModel* sceneModel,
                  int sunWidthDivisions, int sunHeightDivisions, Random* randomDeviate);
     ~FluxAnalysis();
 
@@ -40,7 +40,7 @@ private:
 
     TSceneKit* m_sceneKit;
     SceneModel* m_sceneModel;
-    InstanceNode* m_instanceRoot;
+    InstanceNode* m_instanceLayout;
     int m_sunWidthDivisions;
     int m_sunHeightDivisions;
     Random* m_rand;

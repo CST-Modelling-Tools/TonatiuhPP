@@ -34,7 +34,6 @@
 
 
 FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* sceneKit, SceneModel* sceneModel,
-                                       InstanceNode* rootInstance,
                                        int sunWidthDivisions, int sunHeightDivisions,
                                        Random* randomDeviate,  QWidget* parent):
     QDialog(parent),
@@ -44,7 +43,7 @@ FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* sceneKit, SceneModel* sceneMod
 {
     ui->setupUi(this);
 
-    m_fluxAnalysis = new FluxAnalysis(sceneKit, sceneModel, rootInstance, sunWidthDivisions, sunHeightDivisions, randomDeviate);
+    m_fluxAnalysis = new FluxAnalysis(sceneKit, sceneModel, sunWidthDivisions, sunHeightDivisions, randomDeviate);
 
     connect(ui->surfaceButton, SIGNAL(clicked()), this, SLOT(SurfaceSelected()));
     connect(ui->surfaceEdit, SIGNAL(editingFinished()), this, SLOT(SurfaceChanged()));
@@ -225,16 +224,15 @@ void FluxAnalysisDialog::run()
     QElapsedTimer timer;
     timer.start();
 
-    if (m_fluxSurfaceURL.isEmpty() )
+    if (m_fluxSurfaceURL.isEmpty())
     {
         QMessageBox::warning(this, "Tonatiuh", "Select a valid surface.");
         return;
     }
-
     QString surfaceSide = ui->surfaceSideCombo->currentText();
-    bool increasePhotonMap = (ui->raysAppendCheck->isEnabled() && ui->raysAppendCheck->isChecked());
-    m_fluxAnalysis->run(m_fluxSurfaceURL, surfaceSide, ui->raysSpin->value(), increasePhotonMap, ui->surfaceYSpin->value(), ui->surfaceXSpin->value());
+    bool increasePhotonMap = ui->raysAppendCheck->isEnabled() && ui->raysAppendCheck->isChecked();
 
+    m_fluxAnalysis->run(m_fluxSurfaceURL, surfaceSide, ui->raysSpin->value(), increasePhotonMap, ui->surfaceYSpin->value(), ui->surfaceXSpin->value());
     UpdateAnalysis();
     ui->raysAppendCheck->setEnabled(true);
 
@@ -303,21 +301,21 @@ void FluxAnalysisDialog::Export()
     const Matrix2D<int>& photonCounts = m_fluxAnalysis->getBins();
     if (photonCounts.data().isEmpty())
     {
-        QString message = QString(tr("Nothing available to export, first run the simulation") );
-        QMessageBox::warning(this,  "Tonatiuh", message);
+        QString message = QString("Nothing available to export, first run the simulation");
+        QMessageBox::warning(this, "Tonatiuh", message);
         return;
     }
 
     if (ui->exportDirEdit->text().isEmpty())
     {
-        QString message = QString(tr("Directory not valid"));
+        QString message("Directory not valid");
         QMessageBox::warning(this, "Tonatiuh", message);
         return;
     }
 
     if (ui->exportFileEdit->text().isEmpty())
     {
-        QString message = QString(tr("File name not valid"));
+        QString message("File name not valid");
         QMessageBox::warning(this, "Tonatiuh", message);
         return;
     }
@@ -352,7 +350,7 @@ void FluxAnalysisDialog::Export()
         exportFile.close();
     }
 
-    QString message = QString("Export done successfully");
+    QString message("Export done successfully");
     QMessageBox::information(this, "Tonatiuh", message);
 }
 
@@ -373,10 +371,10 @@ void FluxAnalysisDialog::UpdateSectorPlotSlot()
     QString heightValue = ui->surfaceYSpin->text();
     int widthDivisions = widthValue.toInt();
     int heightDivisions = heightValue.toInt();
-    double widthCell = (xmax - xmin) / widthDivisions;
-    double heightCell = (ymax - ymin) / heightDivisions;
-    double areaCell = widthCell * heightCell;
-    double maximumFlux = (m_fluxAnalysis->photonsMax() * wPhoton) / areaCell;
+    double widthCell = (xmax - xmin)/widthDivisions;
+    double heightCell = (ymax - ymin)/heightDivisions;
+    double areaCell = widthCell*heightCell;
+    double maximumFlux = (m_fluxAnalysis->photonsMax()*wPhoton)/areaCell;
     UpdateSectorPlots(photonCounts, wPhoton, widthDivisions, heightDivisions, xmin, ymin, xmax, ymax, maximumFlux);
 }
 

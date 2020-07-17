@@ -1,5 +1,6 @@
 #include "SunKit.h"
 
+#include <Inventor/actions/SoGetBoundingBoxAction.h>
 #include <Inventor/nodes/SoDirectionalLight.h>
 #include <Inventor/nodes/SoLabel.h>
 #include <Inventor/nodes/SoMaterial.h>
@@ -12,6 +13,7 @@
 #include "SunAperture.h"
 #include "SunPillbox.h"
 #include "kernel/TonatiuhFunctions.h"
+#include "scene/TSceneKit.h"
 #include "kernel/run/InstanceNode.h"
 #include "libraries/math/3D/Box3D.h"
 #include "libraries/math/3D/Matrix4x4.h"
@@ -132,6 +134,26 @@ void SunKit::setBox(Box3D box)
     SbVec3f res;
     mr.multVecMatrix(SbVec3f(0., 0., back), res);
     transform->translation = res;
+}
+
+void SunKit::setBox(TSceneKit* scene)
+{
+    SoGroup* separatorKit = static_cast<SoGroup*>(scene->getPart("group", false) );
+    if (!separatorKit) return;
+
+    SoGetBoundingBoxAction* action = new SoGetBoundingBoxAction(SbViewportRegion() );
+    separatorKit->getBoundingBox(action);
+    SbBox3f box = action->getBoundingBox();
+    delete action;
+
+    if (!box.isEmpty() )
+    {
+        Box3D sceneBox(
+            vec3d(box.getMin()[0], box.getMin()[1], box.getMin()[2]),
+            vec3d(box.getMax()[0], box.getMax()[1], box.getMax()[2])
+        );
+        setBox(sceneBox);
+    }
 }
 
 bool SunKit::findTexture(int sizeX, int sizeY, InstanceNode* instanceRoot)

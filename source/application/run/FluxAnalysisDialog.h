@@ -22,8 +22,7 @@ class FluxAnalysisDialog: public QDialog
     Q_OBJECT
 
 public:
-    FluxAnalysisDialog(TSceneKit* sceneKit, SceneModel* sceneModel, InstanceNode* rootInstance,
-                       int sunWidthDivisions, int sunHeightDivisions,
+    FluxAnalysisDialog(TSceneKit* sceneKit, SceneModel* sceneModel, int sunWidthDivisions, int sunHeightDivisions,
                        Random* randomDeviate, QWidget* parent = 0);
     ~FluxAnalysisDialog();
 

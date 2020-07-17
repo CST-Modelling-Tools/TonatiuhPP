@@ -10,7 +10,7 @@
 
 struct Box3D;
 class InstanceNode;
-
+class TSceneKit;
 /*!
   \class SunKit SunKit.h SunKit.h
   \brief The SunKit class provides a kit with a transform, a light, a shape and a sunshape to represents the sun light.
@@ -57,6 +57,7 @@ public:
 
     void updateTransform();
     void setBox(Box3D box);
+    void setBox(TSceneKit* scene);
     bool findTexture(int sizeX, int sizeY, InstanceNode* instanceRoot);
 
     SoSFDouble azimuth;  // in radians
