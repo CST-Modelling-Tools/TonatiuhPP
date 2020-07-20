@@ -1,11 +1,12 @@
 #include "PhotonsBuffer.h"
 #include "PhotonsAbstract.h"
 
-PhotonsBuffer::PhotonsBuffer(ulong size):
+PhotonsBuffer::PhotonsBuffer(ulong size, ulong sizeReserve):
     m_photonsMax(size),
     m_exporter(0)
 {
-    m_photons.reserve(size);
+    if (sizeReserve > 0)
+        m_photons.reserve(sizeReserve);
 }
 
 void PhotonsBuffer::addPhotons(const std::vector<Photon>& photons)

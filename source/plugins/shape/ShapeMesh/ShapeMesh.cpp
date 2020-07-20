@@ -146,8 +146,12 @@ void ShapeMesh::onSensor(void* data, SoSensor*)
 
     nMax = attrib.normals.size()/3;
     shape->normals.setNum(nMax);
-    for (int n = 0, m = 0; n < nMax; n++, m += 3)
-        shape->normals.set1Value(n, &attrib.normals[m]);
+    for (int n = 0, m = 0; n < nMax; n++, m += 3) {
+//        shape->normals.set1Value(n, &attrib.normals[m]);
+        SbVec3f nv(&attrib.normals[m]);
+        nv.normalize();
+        shape->normals.set1Value(n, nv);
+    }
 
     nMax = mesh.num_face_vertices.size()*4;
     shape->facesVertices.setNum(nMax);

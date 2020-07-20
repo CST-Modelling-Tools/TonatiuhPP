@@ -137,7 +137,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
         if (m_photons) m_photons->endExport(-1);
         delete m_photons;
 //        long q = std::vector<Photon>::max_size();
-        m_photons = new PhotonsBuffer(std::numeric_limits<int>::max());
+        m_photons = new PhotonsBuffer(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()/16);
         m_tracedRays = 0;
         m_powerPhoton = 0;
         m_powerTotal = 0;

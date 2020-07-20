@@ -8,7 +8,7 @@ class PhotonsAbstract;
 class TONATIUH_KERNEL PhotonsBuffer
 {
 public:
-    PhotonsBuffer(ulong size);
+    PhotonsBuffer(ulong size, ulong sizeReserve = 0);
 
     void addPhotons(const std::vector<Photon>& photons);
     const std::vector<Photon>& getPhotons() const {return m_photons;} // for flux and screen

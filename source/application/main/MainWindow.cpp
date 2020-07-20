@@ -2787,13 +2787,13 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
     if (!m_photonBufferAppend)
     {
         delete m_photonsBuffer;
-        m_photonsBuffer = new PhotonsBuffer(m_photonBufferSize);
+        m_photonsBuffer = new PhotonsBuffer(m_photonBufferSize, m_photonBufferSize);
         m_raysTracedTotal = 0;
     }
 
     if (!m_photonsBuffer)
     {
-        m_photonsBuffer = new PhotonsBuffer(m_photonBufferSize);
+        m_photonsBuffer = new PhotonsBuffer(m_photonBufferSize, m_photonBufferSize);
         m_raysTracedTotal = 0;
     }
 
