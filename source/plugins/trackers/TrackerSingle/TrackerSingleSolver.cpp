@@ -53,7 +53,7 @@ double TrackerSingleSolver::solveReflectionGlobal(const vec3d& vSun, const vec3d
     v.normalize();
 
     int iMax = 5; // max iterations
-    double deltaMin = 0.01; // accuracy in meters
+    double deltaMin = 0.001; // accuracy in meters
 
     double ans;
     vec3d rFacet = findFacetPoint(angle0);

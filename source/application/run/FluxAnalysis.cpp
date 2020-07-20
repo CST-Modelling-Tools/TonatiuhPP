@@ -91,12 +91,12 @@ QString FluxAnalysis::getShapeType(QString nodeURL)
 /*
  * Fun flux analysis
  */
-void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool photonBufferAppend, int rows, int cols)
+void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool photonBufferAppend, int uDivs, int vDivs)
 {
     m_surfaceURL = nodeURL;
     m_surfaceSide = surfaceSide;
 
-    m_bins.resize(rows, cols);
+    m_bins.resize(uDivs, vDivs);
 
     if (!m_sceneKit) return;
 
@@ -162,12 +162,12 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool
     QVector<long> raysPerThread;
     int maximumValueProgressScale = 100;
 
-    ulong t1 = nOfRays / maximumValueProgressScale;
+    ulong t1 = nRays / maximumValueProgressScale;
     for (int progressCount = 0; progressCount < maximumValueProgressScale; ++progressCount)
         raysPerThread << t1;
 
-    if (t1*maximumValueProgressScale < nOfRays)
-        raysPerThread << nOfRays - t1*maximumValueProgressScale;
+    if (t1*maximumValueProgressScale < nRays)
+        raysPerThread << nRays - t1*maximumValueProgressScale;
 
     Transform lightToWorld = tgf::makeTransform(sunTransform);
     instanceSun->setTransform(lightToWorld);
@@ -202,7 +202,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool
     dialog.exec();
     watcher.waitForFinished();
 
-    m_tracedRays += nOfRays;
+    m_tracedRays += nRays;
 
     double irradiance = sunKit->irradiance.getValue();
     double area = sunAperture->getArea();
@@ -244,14 +244,14 @@ void FluxAnalysis::write(QString directory, QString file, bool withCoords)
     if (withCoords)
     {
         out << "x(m)\ty(m)\tFlux(W/m2)\n";
-        for (int r = 0; r < m_bins.rows(); r++) {
-            for (int c = 0; c < m_bins.cols(); c++)
-                out << m_uMin + uStep*(c + 0.5)  << "\t" << m_vMin + vStep*(r + 0.5) << "\t" << m_bins(r, c)*coeff << "\n";
+        for (int r = 0; r < m_bins.rows(); ++r) {
+            for (int c = 0; c < m_bins.cols(); ++c)
+                out << m_uMin + uStep*(r + 0.5)  << "\t" << m_vMin + vStep*(c + 0.5) << "\t" << m_bins(r, c)*coeff << "\n";
         }
     }
     else
     {
-        for (int r = m_bins.rows() - 1; r >= 0; r--) {
+        for (int r = 0; r < m_bins.rows(); ++r) {
             for (int c = 0; c < m_bins.cols(); c++)
                 out << m_bins(r, c)*coeff << "\t";
             out << "\n";
@@ -315,21 +315,21 @@ void FluxAnalysis::fillBins()
         photonsTotal++;
         vec3d p = toObject.transformPoint(photon.pos);
         vec2d uv = shape->getUV(p);
-        int row = floor((uv.y - m_vMin)/(m_vMax - m_vMin)*m_bins.rows());
-        int col = floor((uv.x - m_uMin)/(m_uMax - m_uMin)*m_bins.cols());
+        int r = floor((uv.x - m_uMin)/(m_uMax - m_uMin)*m_bins.rows());
+        int c = floor((uv.y - m_vMin)/(m_vMax - m_vMin)*m_bins.cols());
 
-        int& bin = m_bins(row, col);
+        int& bin = m_bins(r, c);
         bin++;
         if (m_photonsMax < bin)
         {
             m_photonsMax = bin;
-            m_photonsMaxRow = row;
-            m_photonsMaxCol = col;
+            m_photonsMaxRow = r;
+            m_photonsMaxCol = c;
         }
 
-        int rowE = floor((uv.y - m_vMin)/(m_vMax - m_vMin)*binErrors.rows());
-        int colE = floor((uv.x - m_uMin)/(m_uMax - m_uMin)*binErrors.cols());
-        int& binE = binErrors(rowE, colE);
+        int rE = floor((uv.x - m_uMin)/(m_uMax - m_uMin)*binErrors.rows());
+        int cE = floor((uv.y - m_vMin)/(m_vMax - m_vMin)*binErrors.cols());
+        int& binE = binErrors(rE, cE);
         binE++;
         if (m_photonsError < binE)
             m_photonsError = binE;

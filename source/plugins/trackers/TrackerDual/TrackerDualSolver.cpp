@@ -76,7 +76,7 @@ QVector<Angles> TrackerDualSolver::solveReflectionGlobal(const vec3d& vSun, cons
 {
     QVector<Angles> ans;
     int iMax = 5; // max iterations
-    double deltaMin = 0.01; // accuracy in meters
+    double deltaMin = 0.001; // accuracy in meters
 
     for (int s = 0; s < 2; ++s) // solutions
     {

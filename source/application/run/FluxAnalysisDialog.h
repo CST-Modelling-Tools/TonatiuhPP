@@ -47,7 +47,7 @@ private:
                           double fluxMaxU, double fluxMaxV, double error, double uniformity, double gravityX, double gravityY);
     void UpdateFluxMapPlot(const Matrix2D<int>& photonCounts, double powerPhoton, int widthDivisions, int heightDivisions, double xmin, double ymin, double xmax, double ymax);
     void CreateSectorPlots(double xMin, double yMin, double xMax, double yMax);
-    void UpdateSectorPlots(const Matrix2D<int>& photonCounts, double wPhoton, int widthDivisions, int heightDivisions, double xmin, double ymin, double xmax, double ymax, double maximumFlux);
+    void UpdateSectorPlots(const Matrix2D<int>& photonCounts, double wPhoton, int xDivs, int yDivs, double xMin, double yMin, double xMax, double yMax, double fluxMax);
 
 private:
     Ui::FluxAnalysisDialog* ui;

@@ -101,8 +101,9 @@ void SunDialog::makeSunShapeTab()
         ui->sunshapeCombo->addItem(f->icon(), f->name());
 
     m_currentSunShapeIndex = 0;
-    if (m_sunShape) {
-        QString name(m_sunShape->getTypeName());
+    SunShape* sunShape = (SunShape*) m_sunKit->getPart("tsunshape", false);
+    if (sunShape) {
+        QString name(sunShape->getTypeName());
         m_currentSunShapeIndex = ui->sunshapeCombo->findText(name);
     }
 

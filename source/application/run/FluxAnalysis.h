@@ -13,12 +13,11 @@ class FluxAnalysis
 {
 
 public:
-    FluxAnalysis(TSceneKit* sceneKit, SceneModel* sceneModel,
-                 int sunWidthDivisions, int sunHeightDivisions, Random* randomDeviate);
+    FluxAnalysis(TSceneKit* sceneKit, SceneModel* sceneModel, int sunWidthDivisions, int sunHeightDivisions, Random* randomDeviate);
     ~FluxAnalysis();
 
     QString getShapeType(QString nodeURL);
-    void run(QString nodeURL, QString surfaceSide, ulong nOfRays, bool increasePhotonMap, int rows, int cols);
+    void run(QString nodeURL, QString surfaceSide, ulong nRays, bool increasePhotonMap, int uDivs, int vDivs);
     void setBins(int rows, int cols);
     void write(QString directory, QString file, bool withCoords);
     void clear();
