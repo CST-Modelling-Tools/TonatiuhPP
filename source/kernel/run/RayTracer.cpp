@@ -81,7 +81,7 @@ void RayTracer::operator()(ulong nRays)
             if (!isReflected) break;
             ++rayLength;
             if (bExportAll || m_exportSuraceList.contains(intersectedSurface))
-                photons.push_back(Photon(rayLength, ray.point(ray.tMax), intersectedSurface, isFront, 1));
+                photons.push_back(Photon(rayLength, ray.point(ray.tMax), intersectedSurface, isFront, true));
             ray = rayReflected;
         }
 

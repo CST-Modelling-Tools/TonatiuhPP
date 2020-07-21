@@ -1775,7 +1775,6 @@ void MainWindow::Run()
             exportSuraceList << node;
         }
 
-        // compute bounding boxes and world to object transforms
         instanceRoot->updateTree(Transform::Identity);
 
         SunKit* sunKit = static_cast<SunKit*> (instanceSun->getNode() );

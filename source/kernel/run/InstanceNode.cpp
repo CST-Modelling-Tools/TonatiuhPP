@@ -85,9 +85,15 @@ void InstanceNode::Print(int level) const
         child->Print(level++);
 }
 
-bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isShapeFront, InstanceNode*& shapeNode, Ray& rayOut)
+bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isFront, InstanceNode*& instance, Ray& rayOut)
 {
     if (!m_box.intersect(rayIn)) return false;
+
+    InstanceNode* instance1 = this;
+    while (instance1->children.size() == 1)
+        instance1 = instance1->children[0];
+    if (instance1 != this)
+        return instance1->intersect(rayIn, rand, isFront, instance, rayOut);
 
 //    if (TShapeKit* kit = dynamic_cast<TShapeKit*>(m_node)) // slower
     if (m_node->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId())) // faster
@@ -97,12 +103,12 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isShapeFront,
         ProfileRT* profile = (ProfileRT*) children[IndexProfileRT]->m_node;
 
         Ray rayLocal = m_transform.transformInverse(rayIn);
-        double thit = 0.;
+        double tHit = 0.;
         DifferentialGeometry dg;
-        if (!shape->intersect(rayLocal, &thit, &dg, profile)) return false;
-        rayIn.tMax = thit;
-        isShapeFront = dg.isFront;
-        shapeNode = this;
+        if (!shape->intersect(rayLocal, &tHit, &dg, profile)) return false;
+        rayIn.tMax = tHit;
+        isFront = dg.isFront;
+        instance = this;
 
         dg.point = m_transform.transformPoint(dg.point);
         dg.dpdu = m_transform.transformVector(dg.dpdu);
@@ -113,29 +119,27 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isShapeFront,
         if (!material) return false;
         return material->OutputRay(rayIn, dg, rand, rayOut);
     }
-    else
+    else // SeparatorKit
     {
         bool hasRayOut = false;
         double t = rayIn.tMax;
-        for (InstanceNode* child : children)
+        for (InstanceNode* instanceChild : children)
         {
-            Ray childRayOut;
-            bool childShapeFront = true;
-            bool isChildOutputRay = child->intersect(rayIn, rand, childShapeFront, child, childRayOut);
+            Ray rayOutChild;
+            bool isFrontChild = true;
+            bool hasRayOutChild = instanceChild->intersect(rayIn, rand, isFrontChild, instanceChild, rayOutChild);
 
             if (rayIn.tMax < t) // tMax mutable
             {
                 t = rayIn.tMax;
-                isShapeFront = childShapeFront;
-                shapeNode = child;
-
-                rayOut = childRayOut;
-                hasRayOut = isChildOutputRay;
+                isFront = isFrontChild;
+                instance = instanceChild;
+                hasRayOut = hasRayOutChild;
+                rayOut = rayOutChild;
             }
         }
         return hasRayOut;
     }
-    return false;
 }
 
 void InstanceNode::extendBoxForLight(SbBox3f* extendedBox)
@@ -174,8 +178,8 @@ void InstanceNode::updateTree(const Transform& tParent)
             m_transform = tParent;
 
         ShapeRT* shape = (ShapeRT*) children[IndexShapeRT]->m_node;
-        ProfileRT* aperture = (ProfileRT*) children[IndexProfileRT]->m_node;
-        m_box = m_transform(shape->getBox(aperture));
+        ProfileRT* profile = (ProfileRT*) children[IndexProfileRT]->m_node;
+        m_box = m_transform(shape->getBox(profile));
     }
 }
 

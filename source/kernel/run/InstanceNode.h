@@ -58,7 +58,7 @@ public:
     QString getURL() const;
     void Print(int level) const;
 
-    bool intersect(const Ray& rayIn, Random& rand, bool& isShapeFront, InstanceNode*& modelNode, Ray& rayOut);
+    bool intersect(const Ray& rayIn, Random& rand, bool& isFront, InstanceNode*& instance, Ray& rayOut);
 
     void extendBoxForLight(SbBox3f* extendedBox);
 

@@ -8,11 +8,11 @@
 
 struct TONATIUH_KERNEL Photon
 {
-    Photon();
-    Photon(double id, const vec3d& pos, InstanceNode* surface, int isFront, int isAbsorbed = 0);
+    Photon() {}
+    Photon(int id, const vec3d& pos, InstanceNode* surface, bool isFront, bool isAbsorbed = false);
 
     // number of point along ray path, from 0
-    double id; //? int
+    int id;
 
     // point along ray path
     vec3d pos;
@@ -25,9 +25,9 @@ struct TONATIUH_KERNEL Photon
     // front side of intersected surface
     // front (true) for light source
     // back (false) for air
-    int isFront;
+    bool isFront;
 
     // 1 for reflected?
     // 0 otherwise
-    int isAbsorbed;
+    bool isAbsorbed;
 };
