@@ -12,10 +12,10 @@ public:
     {
     }
 
-    Ray(const vec3d& orig, const vec3d& direc, double start = gcf::Epsilon, double end = gcf::infinity):
-        origin(orig), tMin(start), tMax(end)
+    Ray(const vec3d& origin, const vec3d& direction, double start = gcf::Epsilon, double end = gcf::infinity):
+        origin(origin), tMin(start), tMax(end)
     {
-        setDirection(direc);
+        setDirection(direction);
     }
 
     vec3d point(double t) const {return origin + m_direction*t;}

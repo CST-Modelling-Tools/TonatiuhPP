@@ -41,7 +41,7 @@ protected slots:
     void currentChanged(const QModelIndex& current, const QModelIndex& previous);
 
 protected:
-    virtual void setSelection (const QRect& rect, QItemSelectionModel::SelectionFlags flags);
+    virtual void setSelection(const QRect& rect, QItemSelectionModel::SelectionFlags flags);
     virtual int horizontalOffset() const;
     virtual int verticalOffset() const;
     virtual bool isIndexHidden (const QModelIndex& index) const;

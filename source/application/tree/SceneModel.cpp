@@ -240,6 +240,7 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
         action.apply(m_nodeScene);
 
         int count = action.getPaths().getLength();
+//        count = node->getRefCount(); //
         if (count > 1)
             name = QString("%1 [%2]").arg(name).arg(count);
 

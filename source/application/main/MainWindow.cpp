@@ -415,7 +415,7 @@ void MainWindow::SetupParametersView()
     );
 
     connect(
-        m_selectionModel, SIGNAL(currentChanged (const QModelIndex&,const QModelIndex&)),
+        m_selectionModel, SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)),
         this, SLOT(ChangeSelection(const QModelIndex&))
     );
 }
