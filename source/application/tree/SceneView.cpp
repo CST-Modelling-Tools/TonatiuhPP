@@ -17,8 +17,7 @@
  * Creates a new view for a model. This
  */
 SceneView::SceneView(QWidget* parent):
-    QTreeView(parent),
-    m_currentIndex()
+    QTreeView(parent)
 {
     header()->setFont(font()); // Qt bug
 
@@ -28,21 +27,13 @@ SceneView::SceneView(QWidget* parent):
 //    setAnimated(false);
 }
 
-SceneView::~SceneView()
-{
-
-}
-
 void SceneView::mousePressEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton)
-    {
         m_startPos = event->pos();
-    }
     else if (event->button() == Qt::RightButton)
-    {
         emit showMenu(indexAt(event->pos()));
-    }
+
     QTreeView::mousePressEvent(event);
 }
 
@@ -118,7 +109,6 @@ void SceneView::dropEvent(QDropEvent* event)
         {
             if (event->keyboardModifiers () == Qt::ControlModifier)
                  emit dragAndDropCopy(newParent, nodeIndex);
-                 
              else
                  emit dragAndDrop(newParent, nodeIndex);
              
@@ -128,21 +118,12 @@ void SceneView::dropEvent(QDropEvent* event)
     }
 }
 
-/*!
- * Sets \a current as the view current element index.
- */
-void SceneView::currentChanged(const QModelIndex& current, const QModelIndex& previous)
-{
-    m_currentIndex = current;
-    QTreeView::currentChanged(current, previous);
-}
-
 void SceneView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint)
 {
     QLineEdit* textEdit = qobject_cast<QLineEdit*>(editor);
-    QString newValue = textEdit->text();
+    QString name = textEdit->text();
 
-    emit nodeNameModificated(m_currentIndex, newValue);
+    emit nodeNameModificated(currentIndex(), name);
     QTreeView::closeEditor(editor, hint);
 }
 

@@ -44,5 +44,7 @@
         <file>images/view/ViewTop.png</file>
         <file>images/scene/nodeProfile.png</file>
         <file>images/scene/nodeMaterialGL.png</file>
+        <file>images/about/SplashScreenCy.png</file>
+        <file>images/about/TonatiuhCy.ico</file>
     </qresource>
 </RCC>

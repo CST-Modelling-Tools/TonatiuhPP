@@ -24,7 +24,7 @@
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <widget class="SceneView" name="sceneModelView">
+       <widget class="SceneView" name="sceneView">
         <property name="acceptDrops">
          <bool>true</bool>
         </property>

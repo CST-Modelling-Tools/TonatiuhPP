@@ -9,6 +9,7 @@
 #include <Inventor/nodes/SoCoordinate3.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/nodes/SoFont.h>
+#include <Inventor/nodes/SoSwitch.h>
 #include <Inventor/nodes/SoText2.h>
 #include <Inventor/nodes/SoText3.h>
 #include <Inventor/nodes/SoCylinder.h>
@@ -23,13 +24,14 @@ GroundGrid::GroundGrid()
 
 }
 
-SoSeparator* GroundGrid::makeGrid(
+SoGroup* GroundGrid::makeGrid(
     double step, int divs,
     double xMin, double xMax,
     double yMin, double yMax
 )
 {
-    SoSeparator* ans = new SoSeparator;
+    SoSwitch* ans = new SoSwitch;
+    ans->setName("grid");
 
     double dx = step;
 
@@ -111,7 +113,7 @@ SoSeparator* GroundGrid::makeGrid(
     return ans;
 }
 
-SoSeparator* GroundGrid::makeAxes(double xMin, double xMax, double yMin, double yMax)
+SoGroup* GroundGrid::makeAxes(double xMin, double xMax, double yMin, double yMax)
 {
     SoSeparator* ans = new SoSeparator;
 

@@ -2,12 +2,11 @@
 
 #include <QObject>
 
-//class GraphicRootTracker;
-class SoPath;
-class SoSelection;
 class SoSeparator;
-class SoTransform;
+class SoSelection;
+class SoPath;
 class TSceneKit;
+
 
 class GraphicRoot: public QObject
 {
@@ -17,35 +16,27 @@ public:
     GraphicRoot();
     ~GraphicRoot();
 
-    void AddModel(TSceneKit* sceneKit);
-    void RemoveModel();
+    SoSeparator* getRoot() const {return m_root;}
+    void addScene(TSceneKit* sceneKit);
+    void removeScene();
 
-    void ShowBackground(bool view);
-
-    void AddGrid(SoSeparator* grid);
-    void ShowGrid(bool view);
-    void RemoveGrid();
+    SoSeparator* grid() {return m_grid;}
+    void showGrid(bool on);
 
     SoSeparator* rays() {return m_rays;}
-    void removeRays();
     void showRays(bool on);
     void showPhotons(bool on);
 
-    void DeselectAll();
-    SoSeparator* GetNode() const;
-    void Select(const SoPath* path);
-    void SelectionChanged(SoSelection* selection);
+    void select(const SoPath* path);
+    void deselectAll();
+    void onSelectionChanged(SoSelection* selection);
 
 signals:
-    void ChangeSelection(SoSelection* selection);
+    void selectionChanged(SoSelection* selection);
 
 private:
-    SoSeparator* CreateGrid(int xDimension, int zDimension, double xSpacing, double zSpacing);
-
-    SoSeparator* m_nodeRoot;
-    SoSeparator* m_pGrid;
+    SoSeparator* m_root;
+    SoSeparator* m_grid;
     SoSeparator* m_rays;
-    SoTransform* m_pRootTransform;
-    SoSeparator* m_pSceneSeparator;
-    SoSelection* m_pSelectionNode;
+    SoSelection* m_selection;
 };

@@ -8,174 +8,65 @@
 #include "libraries/math/gcf.h"
 
 #include "GraphicRoot.h"
-//#include "kernel/trackers/GraphicRootTracker.h"
 #include "kernel/scene/TSceneKit.h"
+#include "SkyBackground.h"
 
 
 void selectionFinishCallback(void* userData, SoSelection* selection)
 {
-    GraphicRoot* root = static_cast<GraphicRoot*>(userData);
-    if (root) root->SelectionChanged(selection);
+    GraphicRoot* root = (GraphicRoot*) userData;
+    if (root) root->onSelectionChanged(selection);
 }
 
 
-#include "SkyBackground.h"
-
-/*
-m_nodeRoot SoSeparator
-    nodeSky SkyBackground
-    m_pSceneSeparator SoSeparator
-        m_pRays
-        m_pSelectionNode SoSelection
-            TSceneKit(azel, from TSceneTracker)
-
-            lightlist
-                tlightkit (azel dialog)
-            childList
-                SunNode
-                   TSceneTracker(lightKit)
-                    Layout
-
-*/
-
-GraphicRoot::GraphicRoot():
-    m_pGrid(0)
+GraphicRoot::GraphicRoot()
 {
-    m_nodeRoot = new SoSeparator;
-    m_nodeRoot->ref();
+    m_root = new SoSeparator;
+    m_root->ref();
 
-    SkyBackground* nodeSky = new SkyBackground;
-    m_nodeRoot->addChild(nodeSky);
+    SkyBackground* sky = new SkyBackground;
+    m_root->addChild(sky);
 
-    m_pSceneSeparator = new SoSeparator;
-    m_nodeRoot->addChild(m_pSceneSeparator);
+    m_grid = new SoSeparator;
+    m_root->addChild(m_grid);
 
     m_rays = new SoSeparator;
-    m_pSceneSeparator->addChild(m_rays);
+    m_root->addChild(m_rays);
 
-    m_pSelectionNode = new SoSelection;
-    m_pSelectionNode->ref();
-    m_pSelectionNode->policy = SoSelection::SINGLE;
-    m_pSelectionNode->addFinishCallback( selectionFinishCallback, static_cast<void*>(this));
-    m_pSceneSeparator->addChild(m_pSelectionNode);
+    m_selection = new SoSelection;
+    m_selection->policy = SoSelection::SINGLE;
+    m_selection->addFinishCallback(selectionFinishCallback, (void*) this);
+    m_root->addChild(m_selection);
 }
 
 GraphicRoot::~GraphicRoot()
 {
-    if (m_pGrid) {
-        while (m_pGrid->getRefCount( ) > 1)    m_pGrid->unref();
-        m_pGrid = 0;
-    }
-    if( m_pSelectionNode)
-    {
-        while ( m_pSelectionNode->getRefCount( ) > 1 )    m_pSelectionNode->unref();
-        m_pSelectionNode = 0;
-    }
-    if( m_nodeRoot)
-    {
-        while ( m_nodeRoot->getRefCount( ) > 1 )    m_nodeRoot->unref();
-        m_nodeRoot = 0;
-    }
+    m_root->unref();
 }
 
-void GraphicRoot::AddGrid(SoSeparator* grid)
-{
-    m_pGrid = grid;
-    grid->ref();
-}
-
-void GraphicRoot::AddModel(TSceneKit* sceneKit)
+void GraphicRoot::addScene(TSceneKit* sceneKit)
 {
     if (!sceneKit) return;
-    m_pSelectionNode->addChild(sceneKit);
-    sceneKit->m_root = m_nodeRoot; // cycle?
+    m_selection->addChild(sceneKit);
+    sceneKit->m_root = m_root; // cycle?
 }
 
-
-void GraphicRoot::DeselectAll()
+void GraphicRoot::removeScene()
 {
-    m_pSelectionNode->deselectAll();
+    m_selection->removeAllChildren();
 }
 
-SoSeparator* GraphicRoot::GetNode() const
+void GraphicRoot::showGrid(bool on)
 {
-    return m_nodeRoot;
+    SoSearchAction search;
+    search.setName("grid");
+    search.apply(m_grid);
+    SoPath* path = search.getPath();
+    if (!path) return;
+    SoSwitch* group = (SoSwitch*) path->getTail();
+    group->whichChild = on ? SO_SWITCH_ALL : SO_SWITCH_NONE;
 }
 
-void GraphicRoot::RemoveGrid()
-{
-    if( m_pGrid )
-    {
-        ShowGrid(false);
-        m_pGrid->removeAllChildren();
-        while(m_pGrid->getRefCount() > 1) m_pGrid->unref();
-        if (m_pGrid->getRefCount() > 1)
-            gcf::SevereError( "RemoveGrid: m_pGrid referenced in excess ");
-        m_pGrid->unref();
-        m_pGrid = 0;
-    }
-}
-
-void GraphicRoot::removeRays()
-{
-    m_rays->removeAllChildren();
-}
-
-void GraphicRoot::RemoveModel()
-{
-    if (m_pSelectionNode->getNumChildren() > 0)
-        m_pSelectionNode->removeAllChildren();
-}
-
-void GraphicRoot::Select(const SoPath* path)
-{
-    m_pSelectionNode->select(path);
-    m_pSelectionNode->touch();
-}
-
-void GraphicRoot::SelectionChanged(SoSelection* selection)
-{
-    emit ChangeSelection(selection);
-}
-
-void GraphicRoot::ShowBackground( bool /*view*/ ) //?
-{
-//    SoVRMLBackground* vrmlBackground = static_cast< SoVRMLBackground* > ( m_nodeRoot->getChild( 0 ) );
-
-//    if( view )
-//    {
-//        //float gcolor[][3] = { {0.9843f, 0.8862f, 0.6745f}, {0.7843f, 0.6157f, 0.4785f} };
-//        float gcolor[][3] = { {0.7, 0.42, 0.15f},{ 0.7f, 0.42f, 0.15f } };
-//        float gangle= 1.570f;
-
-//        vrmlBackground->groundColor.setValues( 0, 6, gcolor );
-//        vrmlBackground->groundAngle.setValue( gangle );
-//        float scolor[][3] = { {0.0157f, 0.0235f, 0.4509f}, {0.5569f, 0.6157f, 0.8471f} };
-//        float sangle= 1.570f;
-//        vrmlBackground->skyColor.setValues( 0,6,scolor );
-//        vrmlBackground->skyAngle.setValue( sangle );
-//    }
-//    else
-//    {
-//        float color[][3] = { {0.1f, 0.1f, 0.1f}, {0.1f, 0.1f, 0.1f} };
-//        float angle= 1.570f;
-//        vrmlBackground->groundColor.setValues( 0, 6, color );
-//        vrmlBackground->groundAngle.setValue( angle );
-//        vrmlBackground->skyColor.setValues( 0,6,color );
-//        vrmlBackground->skyAngle.setValue( angle );
-//    }
-}
-
-void GraphicRoot::ShowGrid(bool view)
-{
-    if (view && m_pGrid)
-        m_nodeRoot->addChild(m_pGrid);
-    else if (!view)
-        if (m_pGrid->getRefCount() > 0)
-            m_nodeRoot->removeChild(m_pGrid);
-}
-
-#include <QDebug>
 void GraphicRoot::showRays(bool on)
 {
     SoSearchAction search;
@@ -190,11 +81,26 @@ void GraphicRoot::showRays(bool on)
 void GraphicRoot::showPhotons(bool on)
 {
     SoSearchAction search;
-//    search.setType(SoSwitch::getClassTypeId());
     search.setName("photons");
     search.apply(m_rays);
     SoPath* path = search.getPath();
     if (!path) return;
     SoSwitch* group = (SoSwitch*) path->getTail();
     group->whichChild = on ? SO_SWITCH_ALL : SO_SWITCH_NONE;
+}
+
+void GraphicRoot::select(const SoPath* path)
+{
+    m_selection->select(path);
+    m_selection->touch();
+}
+
+void GraphicRoot::deselectAll()
+{
+    m_selection->deselectAll();
+}
+
+void GraphicRoot::onSelectionChanged(SoSelection* selection)
+{
+    emit selectionChanged(selection);
 }

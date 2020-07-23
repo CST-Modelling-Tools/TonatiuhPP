@@ -240,7 +240,7 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
         action.apply(m_nodeScene);
 
         int count = action.getPaths().getLength();
-//        count = node->getRefCount(); //
+        count = node->getRefCount(); //
         if (count > 1)
             name = QString("%1 [%2]").arg(name).arg(count);
 
@@ -248,13 +248,9 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
     }
     if (role == Qt::UserRole)
     {
-        SoNodeKitPath* coinKitPath = PathFromIndex(index);
-        if (coinKitPath)
-        {
-            SoPathVariant pathWrapper(coinKitPath);
-            return QVariant::fromValue(pathWrapper);
-        }
-        coinKitPath->unref();
+        SoNodeKitPath* path = PathFromIndex(index);
+        SoPathVariant pathWrapper(path);
+        return QVariant::fromValue(pathWrapper);
     }
     if (role == Qt::DecorationRole)
     {
@@ -427,39 +423,35 @@ QModelIndex SceneModel::IndexFromPath(const SoNodeKitPath& path) const
 
 SoNodeKitPath* SceneModel::PathFromIndex(const QModelIndex& index) const
 {
-    SoNode* coinNode = getInstance(index)->getNode();
-    if (!coinNode->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId()))
-    {
-        QModelIndex indexParent = parent(index);
-        return PathFromIndex(indexParent);
-    }
+    // search for kits only
+    SoNode* node = getInstance(index)->getNode();
+    if (!node->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId()))
+        return PathFromIndex(parent(index));
 
+    // find first
     SoSearchAction action;
-    action.setNode(m_nodeScene);
+    action.setNode(node);
     action.setInterest(SoSearchAction::FIRST);
     action.apply(m_nodeRoot);
 
-    SoPath* pathScene = action.getPath();
-    if (!pathScene) gcf::SevereError("PathFromIndex Null coinScenePath.");
-
-    SoNodeKitPath* path = static_cast<SoNodeKitPath*>(pathScene);
-    if (!path) gcf::SevereError( "PathFromIndex Null nodePath.");
+    SoNodeKitPath* path = (SoNodeKitPath*) action.getPath();
+    if (!path) gcf::SevereError("PathFromIndex Null nodePath.");
     path->ref();
 
-    InstanceNode* instance = getInstance(index);
+    //
+//    SoNodeList nodeList;
+//    InstanceNode* instance = getInstance(index);
+//    while (instance->getParent())
+//    {
+//        nodeList.append(instance->getNode());
+//        instance = instance->getParent();
+//    }
 
-    SoNodeList nodeList;
-    while (instance->getParent())
-    {
-        nodeList.append(instance->getNode());
-        instance = instance->getParent();
-    }
-
-    for (int i = nodeList.getLength() - 1; i >= 0; --i)
-    {
-        SoBaseKit* coinNode = static_cast<SoBaseKit*>(nodeList[i]);
-        if (coinNode) path->append(coinNode);
-    }
+//    for (int i = nodeList.getLength() - 1; i >= 0; --i)
+//    {
+//        SoBaseKit* coinNode = static_cast<SoBaseKit*>(nodeList[i]);
+//        if (coinNode) path->append(coinNode);
+//    }
 
     return path;
 }

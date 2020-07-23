@@ -1,6 +1,5 @@
 TARGET = Tonatiuh
 DESTDIR = ..
-
 include(../config.pri)
 
 QT += concurrent # for multithreading
@@ -44,6 +43,7 @@ RESOURCES += resources.qrc
 
 win32 { # icon for windows explorer
     RC_ICONS = images/about/Tonatiuh.ico
+    CYE: RC_ICONS = images/about/TonatiuhCy.ico
 }
 
 #DISTFILES += \

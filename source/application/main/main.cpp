@@ -48,7 +48,12 @@ int main(int argc, char** argv)
 
     if (fileInfo.completeSuffix() != "tnhs")
     {
+#ifdef CYE
+        QPixmap pixmap(":/images/about/SplashScreenCy.png");
+#else
         QPixmap pixmap(":/images/about/SplashScreen.png");
+        pixmap = pixmap.scaledToHeight(256, Qt::SmoothTransformation);
+#endif
         QSplashScreen splash(pixmap);
         int splashAlignment = Qt::AlignLeft | Qt::AlignBottom;
         splash.show();

@@ -8,8 +8,10 @@ class SoPath;
 class SoPathVariant
 {
 public:
-    SoPathVariant(SoPath* path = 0);
-    SoPath* GetPath() const {return m_path;}
+    SoPathVariant(SoPath* path = 0):
+        m_path(path) {}
+
+    SoPath* getPath() const {return m_path;}
     
 private:
     SoPath* m_path;

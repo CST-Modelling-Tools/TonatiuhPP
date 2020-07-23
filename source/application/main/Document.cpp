@@ -26,7 +26,7 @@ void Document::New()
 {
     if (m_scene) ClearScene();
     m_scene = new TSceneKit;
-    m_scene->ref();
+//    m_scene->ref();
     m_scene->setSearchingChildren(true);
     m_isModified = false;
 }

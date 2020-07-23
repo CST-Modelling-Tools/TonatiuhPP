@@ -32,3 +32,6 @@ CONFIG -= debug_and_release # separate folders for debug and release
 CONFIG += skip_target_version_ext # do not append the dll names with version number
 
 QT += widgets
+
+DEFINES += CYE
+CONFIG += CYE

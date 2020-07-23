@@ -8,10 +8,6 @@ class SoSeparator;
 class TSceneKit;
 class TShapeKit;
 
-//!  Document class stores the application scene.
-/*!
- * This class is not yet documented.
- */
 
 class Document: public QObject
 {

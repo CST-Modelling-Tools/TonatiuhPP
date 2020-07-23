@@ -39,7 +39,7 @@ void GraphicView::SetSceneGraph(GraphicRoot* sceneGraphRoot)
     m_viewer->setGLRenderAction(highlighter);
 
     m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
-    m_viewer->setSceneGraph(m_sceneGraphRoot->GetNode() );
+    m_viewer->setSceneGraph(m_sceneGraphRoot->getRoot() );
 
 //    SoPerspectiveCamera* camera = dynamic_cast<SoPerspectiveCamera*>(m_myRenderArea->getCamera());
 //    camera->scaleHeight(-1.); // left-handed to right-handed
@@ -136,26 +136,27 @@ QRegion GraphicView::visualRegionForSelection(const QItemSelection& /*selection*
 #include "kernel/scene/TSeparatorKit.h"
 void GraphicView::currentChanged(const QModelIndex& current, const QModelIndex& /*previous*/)
 {
-    if (m_sceneGraphRoot)
+    if (!m_sceneGraphRoot) return;
+    m_sceneGraphRoot->deselectAll();
+
+    QVariant variant = current.data(Qt::UserRole);
+     if (!variant.canConvert<SoPathVariant>()) return;
+    SoPath* path = variant.value<SoPathVariant>().getPath();
     {
-        m_sceneGraphRoot->DeselectAll();
-
-        SoFullPath* path;
-        QVariant variant = current.data(Qt::UserRole);
-
-        if (variant.canConvert<SoPathVariant>() )
+        SceneModel* model = (SceneModel*) current.model();
+        if (!model) return;
+        InstanceNode* instance = model->getInstance(current);
+        if (!instance) return;
+        SoNode* node = instance->getNode();
+//        if (!node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId())) return;
+        if (!node->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId()))
         {
-            SceneModel* model = (SceneModel*) current.model();
-            if (!model) return;
-            InstanceNode* inst = model->getInstance(current);
-            if (!inst) return;
-            SoNode* node = inst->getNode();
-            if (!node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId())) return;
-
-            path = static_cast< SoFullPath*>(variant.value< SoPathVariant >().GetPath() );
-            m_sceneGraphRoot->Select(path);
+            path->unref();
+            return;
         }
-
-        //m_sceneGraphRoot->touch();
+        m_sceneGraphRoot->select(path);
+        path->unref();
     }
+
+//    m_sceneGraphRoot->touch();
 }

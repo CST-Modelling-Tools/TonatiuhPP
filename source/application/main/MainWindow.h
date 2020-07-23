@@ -37,6 +37,7 @@ class SunShape;
 class TrackerFactory;
 class Air;
 class SoCamera;
+class SoGroup;
 class SceneModel;
 struct PhotonsSettings;
 class ProfileFactory;
@@ -152,7 +153,6 @@ private slots:
     void SelectionFinish(SoSelection* selection);
     void SetParameterValue(SoNode* node, QString paramenterName, QString value);
     void SetSunPositionCalculatorEnabled(int enabled);
-    void ShowBackground();
     void ShowCommandView();
     void ShowGrid();
     void ShowMenu(const QModelIndex& index);
@@ -196,7 +196,7 @@ private slots:
 
 private:
     void ChangeModelScene();
-    SoSeparator* CreateGrid();
+    SoGroup* CreateGrid();
     PhotonsAbstract* CreatePhotonMapExport() const;
     bool Delete(QModelIndex index);
     bool OkToContinue();
