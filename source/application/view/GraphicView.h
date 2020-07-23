@@ -49,6 +49,6 @@ protected:
     virtual QRegion visualRegionForSelection(const QItemSelection& selection) const;
 
 private:
-    GraphicRoot* m_sceneGraphRoot;
+    GraphicRoot* m_graphicRoot;
     SoQtExaminerViewer* m_viewer;
 };

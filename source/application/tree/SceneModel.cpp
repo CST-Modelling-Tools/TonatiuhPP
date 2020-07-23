@@ -248,7 +248,7 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
     }
     if (role == Qt::UserRole)
     {
-        SoNodeKitPath* path = PathFromIndex(index);
+        SoNodeKitPath* path = pathFromIndex(index);
         SoPathVariant pathWrapper(path);
         return QVariant::fromValue(pathWrapper);
     }
@@ -388,7 +388,7 @@ QModelIndex SceneModel::IndexFromUrl(QString url) const
  *
  * \sa IndexFromNodeUrl, NodeFromIndex, PathFromIndex.
 **/
-QModelIndex SceneModel::IndexFromPath(const SoNodeKitPath& path) const
+QModelIndex SceneModel::indexFromPath(const SoNodeKitPath& path) const
 {
     SoBaseKit* coinNode = static_cast<SoBaseKit*>(path.getTail());
     if (!coinNode) gcf::SevereError("IndexFromPath Null coinNode.");
@@ -415,18 +415,21 @@ QModelIndex SceneModel::IndexFromPath(const SoNodeKitPath& path) const
     int row = coinPartList->findChild(coinNode);
     if (coinParent->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
         if (coinParent->getPart("tracker", false)) row++;
+
     SoNodeKitPath* pathParent = static_cast<SoNodeKitPath*>(path.copy());
+    pathParent->ref();
     pathParent->truncate(pathParent->getLength() - 1);
-    QModelIndex indexParent = IndexFromPath(*pathParent);
+    QModelIndex indexParent = indexFromPath(*pathParent);
+    pathParent->unref();
     return index(row, 0, indexParent);
 }
 
-SoNodeKitPath* SceneModel::PathFromIndex(const QModelIndex& index) const
+SoNodeKitPath* SceneModel::pathFromIndex(const QModelIndex& index) const
 {
     // search for kits only
     SoNode* node = getInstance(index)->getNode();
     if (!node->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId()))
-        return PathFromIndex(parent(index));
+        return pathFromIndex(parent(index));
 
     // find first
     SoSearchAction action;
@@ -436,7 +439,7 @@ SoNodeKitPath* SceneModel::PathFromIndex(const QModelIndex& index) const
 
     SoNodeKitPath* path = (SoNodeKitPath*) action.getPath();
     if (!path) gcf::SevereError("PathFromIndex Null nodePath.");
-    path->ref();
+    path->ref(); // otherwise destroyed with action
 
     //
 //    SoNodeList nodeList;
@@ -453,7 +456,7 @@ SoNodeKitPath* SceneModel::PathFromIndex(const QModelIndex& index) const
 //        if (coinNode) path->append(coinNode);
 //    }
 
-    return path;
+    return path; // make unref later
 }
 
 /*!

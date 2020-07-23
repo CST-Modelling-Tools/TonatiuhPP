@@ -16,7 +16,7 @@
  */
 GraphicView::GraphicView(QWidget* parent):
     QAbstractItemView(parent),
-    m_sceneGraphRoot(0),
+    m_graphicRoot(0),
     m_viewer(0)
 {
 
@@ -30,7 +30,7 @@ GraphicView::~GraphicView()
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 void GraphicView::SetSceneGraph(GraphicRoot* sceneGraphRoot)
 {
-    m_sceneGraphRoot = sceneGraphRoot;
+    m_graphicRoot = sceneGraphRoot;
     m_viewer = new SoQtExaminerViewer(this);
 
     SoBoxHighlightRenderAction* highlighter = new SoBoxHighlightRenderAction();
@@ -39,7 +39,7 @@ void GraphicView::SetSceneGraph(GraphicRoot* sceneGraphRoot)
     m_viewer->setGLRenderAction(highlighter);
 
     m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
-    m_viewer->setSceneGraph(m_sceneGraphRoot->getRoot() );
+    m_viewer->setSceneGraph(m_graphicRoot->getRoot() );
 
 //    SoPerspectiveCamera* camera = dynamic_cast<SoPerspectiveCamera*>(m_myRenderArea->getCamera());
 //    camera->scaleHeight(-1.); // left-handed to right-handed
@@ -136,8 +136,8 @@ QRegion GraphicView::visualRegionForSelection(const QItemSelection& /*selection*
 #include "kernel/scene/TSeparatorKit.h"
 void GraphicView::currentChanged(const QModelIndex& current, const QModelIndex& /*previous*/)
 {
-    if (!m_sceneGraphRoot) return;
-    m_sceneGraphRoot->deselectAll();
+    if (!m_graphicRoot) return;
+    m_graphicRoot->deselectAll();
 
     QVariant variant = current.data(Qt::UserRole);
      if (!variant.canConvert<SoPathVariant>()) return;
@@ -154,7 +154,7 @@ void GraphicView::currentChanged(const QModelIndex& current, const QModelIndex& 
             path->unref();
             return;
         }
-        m_sceneGraphRoot->select(path);
+        m_graphicRoot->select(path);
         path->unref();
     }
 

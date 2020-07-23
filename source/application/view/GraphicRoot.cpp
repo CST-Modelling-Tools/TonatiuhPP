@@ -11,7 +11,24 @@
 #include "kernel/scene/TSceneKit.h"
 #include "SkyBackground.h"
 
+/*
+SoSelection
+selectionFinishCallback
+GraphicRoot::onSelectionChanged
+emit selectionChanged(SoSelection* selection);
+MainWindow
+    connect(
+        m_graphicsRoot, SIGNAL(selectionChanged(SoSelection*)),
+        this, SLOT(SelectionFinish(SoSelection*))
+    );
+    SelectionFinish::
+     m_selectionModel->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
 
+     ---
+   GraphicView
+      void currentChanged(const QModelIndex& current, const QModelIndex& previous);
+
+*/
 void selectionFinishCallback(void* userData, SoSelection* selection)
 {
     GraphicRoot* root = (GraphicRoot*) userData;

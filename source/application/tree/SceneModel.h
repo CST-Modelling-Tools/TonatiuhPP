@@ -43,8 +43,8 @@ public:
     InstanceNode* getInstance(const QModelIndex& index) const;
     bool SetNodeName(SoNode* node, QString name);
     QModelIndex IndexFromUrl(QString url) const;
-    QModelIndex IndexFromPath(const SoNodeKitPath& path) const;
-    SoNodeKitPath* PathFromIndex(const QModelIndex& index) const;
+    QModelIndex indexFromPath(const SoNodeKitPath& path) const;
+    SoNodeKitPath* pathFromIndex(const QModelIndex& index) const;
 
     void insertSunNode(SunKit* lightKit);
     void removeSunNode(SunKit* sunKit);

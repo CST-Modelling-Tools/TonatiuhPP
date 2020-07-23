@@ -539,7 +539,7 @@ void MainWindow::StartManipulation(SoDragger* dragger)
     nodePath->truncate(nodePath->getLength() - 1);
     SoBaseKit* coinNode = static_cast<SoBaseKit*> (nodePath->getTail() );
 
-    QModelIndex nodeIndex = m_sceneModel->IndexFromPath(*nodePath);
+    QModelIndex nodeIndex = m_sceneModel->indexFromPath(*nodePath);
     m_selectionModel->setCurrentIndex(nodeIndex, QItemSelectionModel::ClearAndSelect);
 
     SoNode* manipulator = coinNode->getPart("transform", true);
@@ -967,7 +967,7 @@ void MainWindow::SelectionFinish(SoSelection* selection)
     if (nodeKitPath->getTail()->getTypeId().isDerivedFrom(SoDragger::getClassTypeId() ) )
         return;
 
-    QModelIndex index = m_sceneModel->IndexFromPath(*nodeKitPath);
+    QModelIndex index = m_sceneModel->indexFromPath(*nodeKitPath);
     if (!index.isValid()) return;
     m_selectionModel->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
 //    m_selectionModel->select(index, QItemSelectionModel::ClearAndSelect);
