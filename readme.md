@@ -1,9 +1,7 @@
 # News #
 
 
-## Tonatiuh 2020 is under development! ##
-
-Work in progress
+## Tonatiuh++ is under development! ##
 
 ![Logo](./documentation/SplashScreen.png)
 
