@@ -1,7 +1,7 @@
 # News #
 
 
-## Tonatiuh 2020 is under development! ##
+## Tonatiuh ++ is under development! ##
 
 Work in progress
 
