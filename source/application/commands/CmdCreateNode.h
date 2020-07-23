@@ -11,16 +11,16 @@ class SceneModel;
 /*!
    CmdInsertSeparatorKit represents a single TSeparatorKit insertion action on a scene, insert a new TSeparatorKit node to the scene.
  */
-class CmdInsertSeparatorKit: public QUndoCommand
+class CmdCreateNode: public QUndoCommand
 {
 public:
-    CmdInsertSeparatorKit(
+    CmdCreateNode(
         TSeparatorKit* separatorKit,
         const QModelIndex& parentIndex,
         SceneModel* model,
         QUndoCommand* parent = 0
     );
-    ~CmdInsertSeparatorKit();
+    ~CmdCreateNode();
 
     void undo();
     void redo();

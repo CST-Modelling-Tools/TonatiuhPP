@@ -11,16 +11,16 @@ class SceneModel;
   CmdInsertShapeKit represents a single tshapekit insertion action on a scene, insert a new tshapekit node to the scene.
 */
 
-class CmdInsertShapeKit: public QUndoCommand
+class CmdCreateShape: public QUndoCommand
 {
 public:
-    CmdInsertShapeKit(
+    CmdCreateShape(
         TShapeKit* node,
         const QModelIndex& parentIndex,
         SceneModel* model,
         QUndoCommand* parent = 0
      );
-    ~CmdInsertShapeKit();
+    ~CmdCreateShape();
 
     void undo();
     void redo();

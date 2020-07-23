@@ -52,7 +52,7 @@
 #include "commands/CmdCut.h"
 #include "commands/CmdDelete.h"
 #include "commands/CmdDeleteTracker.h"
-#include "commands/CmdInsertSeparatorKit.h"
+#include "commands/CmdCreateNode.h"
 #include "commands/CmdInsertShape.h"
 #include "commands/CmdInsertShapeKit.h"
 #include "commands/CmdInsertTracker.h"
@@ -98,6 +98,7 @@
 #include "widgets/GridDialog.h"
 #include "widgets/NetworkConnectionsDialog.h"
 #include "widgets/SunDialog.h"
+#include "UndoView.h"
 
 /*!
  * Returns the \a fullFileName files name, without path.
@@ -126,8 +127,8 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
     QMainWindow(parent, flags),
     ui(new Ui::MainWindow),
     m_recentFiles(""),
-    m_commandStack(0),
-    m_commandView(0),
+    m_undoStack(0),
+    m_undoView(0),
     m_currentFile(""),
     m_document(0),
     m_sceneModel(0),
@@ -192,7 +193,7 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
         camera->pointAt(target, SbVec3f(0., 1., 0.) );
     }
 
-    SelectNode("//Layout");
+    Select("//Layout");
 
     ui->fileToolBar->hide();
     ui->editToolBar->hide();
@@ -238,11 +239,11 @@ border-width: 0 0 1 0;
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete m_commandView;
+    delete m_undoView;
     delete m_pluginManager;
     delete m_sceneModel;
     delete m_document;
-    delete m_commandStack;
+    delete m_undoStack;
     delete m_rand;
     delete m_photonsBuffer;
 }
@@ -309,7 +310,7 @@ void MainWindow::SetupModels()
  */
 void MainWindow::SetupViews()
 {
-    SetupCommandView();
+    SetupUndoView();
     SetupGraphicView();
     SetupTreeView();
     SetupParametersView();
@@ -318,19 +319,20 @@ void MainWindow::SetupViews()
 /*!
  * Creates a view for visualize user done last actions.
  */
-void MainWindow::SetupCommandView()
+void MainWindow::SetupUndoView()
 {
-    m_commandStack = new QUndoStack(this);
+    m_undoStack = new QUndoStack(this);
+    m_undoStack->setUndoLimit(10);
 
-    m_commandView = new QUndoView(m_commandStack);
-    m_commandView->setWindowTitle("Command List");
-    m_commandView->setAttribute(Qt::WA_QuitOnClose, false);
+    m_undoView = new UndoView(m_undoStack);
+    m_undoView->setWindowTitle("Undo List");
+    m_undoView->setAttribute(Qt::WA_QuitOnClose, false);
     int q = fontMetrics().height();
-    m_commandView->resize(24*q, 16*q);
+    m_undoView->resize(24*q, 16*q);
 
-    connect(m_commandStack, SIGNAL(canRedoChanged(bool)),
+    connect(m_undoStack, SIGNAL(canRedoChanged(bool)),
             ui->actionRedo, SLOT(setEnabled(bool)) );
-    connect(m_commandStack, SIGNAL(canUndoChanged(bool)),
+    connect(m_undoStack, SIGNAL(canUndoChanged(bool)),
             ui->actionUndo, SLOT(setEnabled(bool)) );
 }
 
@@ -392,7 +394,7 @@ void MainWindow::SetupTreeView()
 {
     ui->sceneView->setModel(m_sceneModel);
     ui->sceneView->setSelectionModel(m_selectionModel);
-    ui->sceneView->setRootIndex(m_sceneModel->IndexFromUrl(""));
+    ui->sceneView->setRootIndex(m_sceneModel->indexFromUrl(""));
 
     connect(ui->sceneView, SIGNAL(dragAndDrop(const QModelIndex&,const QModelIndex&)),
             this, SLOT(ItemDragAndDrop(const QModelIndex&,const QModelIndex&)) );
@@ -459,8 +461,8 @@ void MainWindow::SetupTriggers()
     connect(ui->actionDelete, SIGNAL(triggered()), this, SLOT(Delete()) );
 
     // insert
-    connect(ui->actionNode, SIGNAL(triggered()), this, SLOT(CreateGroupNode()) );
-    connect(ui->actionSurfaceNode, SIGNAL(triggered()), this, SLOT(CreateSurfaceNode()) );
+    connect(ui->actionNode, SIGNAL(triggered()), this, SLOT(CreateNode()) );
+    connect(ui->actionShape, SIGNAL(triggered()), this, SLOT(CreateShape()) );
     connect(ui->actionUserComponent, SIGNAL(triggered()), this, SLOT(InsertUserDefinedComponent()) );
 
     // scene
@@ -498,7 +500,7 @@ void MainWindow::FinishManipulation()
         QString::number(nodeTransform->translation.getValue()[2])
     );
     new CmdModifyParameter(nodeTransform, "translation", translationValue, m_sceneModel, command);
-    m_commandStack->push(command);
+    m_undoStack->push(command);
 
     UpdateLightSize();
     setDocumentModified(true);
@@ -579,7 +581,7 @@ void MainWindow::onSunDialog()
     if (!sunKit) return;
 
     CmdSunKitModified* cmd = new CmdSunKitModified(sunKit, sceneKit, m_sceneModel);
-    m_commandStack->push(cmd);
+    m_undoStack->push(cmd);
 
     sceneKit->updateTrackers();
     UpdateLightSize();
@@ -608,7 +610,7 @@ void MainWindow::onAirDialog()
 
     Air* air = dialog.getModel();
     CmdAirModified* cmd = new CmdAirModified(air, sceneKit);
-    if (m_commandStack) m_commandStack->push(cmd);
+    if (m_undoStack) m_undoStack->push(cmd);
     setDocumentModified(true);
 }
 
@@ -675,7 +677,7 @@ void MainWindow::ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex
         new CmdCut(node, m_coinNode_Buffer, m_sceneModel, dragAndDrop);
 
         new CmdPaste(tgc::Copied, newParent, coinNode, *m_sceneModel, dragAndDrop);
-        m_commandStack->push(dragAndDrop);
+        m_undoStack->push(dragAndDrop);
 
         UpdateLightSize();
         setDocumentModified(true);
@@ -695,7 +697,7 @@ void MainWindow::ItemDragAndDropCopy(const QModelIndex& newParent, const QModelI
     dragAndDropCopy->setText("Drag and Drop Copy");
     new CmdCopy(node, m_coinNode_Buffer, m_sceneModel);
     new CmdPaste(tgc::Shared, newParent, coinNode, *m_sceneModel, dragAndDropCopy);
-    m_commandStack->push(dragAndDropCopy);
+    m_undoStack->push(dragAndDropCopy);
 
     UpdateLightSize();
     setDocumentModified(true);
@@ -743,7 +745,7 @@ void MainWindow::OpenRecentFile()
  */
 void MainWindow::Redo()
 {
-    m_commandStack->redo();
+    m_undoStack->redo();
     UpdateLightSize();
 }
 
@@ -752,7 +754,7 @@ void MainWindow::Redo()
  */
 void MainWindow::Undo()
 {
-    m_commandStack->undo();
+    m_undoStack->undo();
     UpdateLightSize();
 }
 
@@ -979,7 +981,7 @@ void MainWindow::SelectionFinish(SoSelection* selection)
 void MainWindow::SetParameterValue(SoNode* node, QString name, QString value)
 {
     CmdModifyParameter* cmd = new CmdModifyParameter(node, name, value, m_sceneModel);
-    if (m_commandStack) m_commandStack->push(cmd);
+    if (m_undoStack) m_undoStack->push(cmd);
 //    UpdateLightSize();
     setDocumentModified(true);
 }
@@ -1001,7 +1003,7 @@ void MainWindow::SetSunPositionCalculatorEnabled(int enabled)
  */
 void MainWindow::ShowCommandView()
 {
-    m_commandView->show();
+    m_undoView->show();
 }
 
 /*!
@@ -1099,9 +1101,12 @@ SbVec3f MainWindow::getTarget(SoCamera* camera)
 
 void MainWindow::on_actionOpenScriptEditor_triggered()
 {
-    QVector<RandomFactory*> randomDeviateFactoryList = m_pluginManager->getRandomFactories();
-    ScriptEditorDialog editor(randomDeviateFactoryList, this);
-    editor.exec();
+//    m_undoStack->setActive(false);
+    m_undoStack->beginMacro("Script");
+    ScriptEditorDialog dialog(m_pluginManager->getRandomFactories(), this);
+    dialog.exec();
+//    m_undoStack->setActive(true);
+    m_undoStack->endMacro();
 }
 
 void MainWindow::on_actionAbout_triggered()
@@ -1168,7 +1173,7 @@ void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& name)
     if (!instance->getNode()) return;
 
     CmdChangeNodeName* cmd = new CmdChangeNodeName(index, name, m_sceneModel);
-    m_commandStack->push(cmd);
+    m_undoStack->push(cmd);
 
     setDocumentModified(true);
 }
@@ -1196,7 +1201,7 @@ void MainWindow::ChangeSunPosition(double azimuth, double elevation)
         return;
     }
     CmdLightPositionModified* command = new CmdLightPositionModified(lightKit, azimuth * gcf::degree, (90 - elevation) * gcf::degree);
-    m_commandStack->push(command);
+    m_undoStack->push(command);
 
     //UpdateLightDimensions();
     UpdateLightSize();
@@ -1266,7 +1271,7 @@ void MainWindow::Copy()
     }
 
     CmdCopy* command = new CmdCopy(m_selectionModel->currentIndex(), m_coinNode_Buffer, m_sceneModel);
-    m_commandStack->push(command);
+    m_undoStack->push(command);
 
     setDocumentModified(true);
 }
@@ -1278,7 +1283,7 @@ void MainWindow::Copy()
  */
 void MainWindow::Copy(QString nodeURL)
 {
-    QModelIndex nodeIndex = m_sceneModel->IndexFromUrl(nodeURL);
+    QModelIndex nodeIndex = m_sceneModel->indexFromUrl(nodeURL);
 
     if (!nodeIndex.isValid() )
     {
@@ -1292,15 +1297,194 @@ void MainWindow::Copy(QString nodeURL)
     }
 
     CmdCopy* command = new CmdCopy(nodeIndex, m_coinNode_Buffer, m_sceneModel);
-    m_commandStack->push(command);
+    m_undoStack->push(command);
 
     setDocumentModified(true);
 }
 
 /*!
+ * If there is a node selected and this node is not the root node, cuts current selected node from the model. Otherwise, nothing is done.
+ */
+void MainWindow::Cut()
+{
+    int validNode = 1;
+    if (!m_selectionModel->hasSelection() ) validNode = 0;
+    if (m_selectionModel->currentIndex() == ui->sceneView->rootIndex() ) validNode = 0;
+    if (m_selectionModel->currentIndex().parent() == ui->sceneView->rootIndex() ) validNode = 0;
+    if (!validNode)
+    {
+        emit Abort(tr("Cut: No valid node selected to cut.") );
+        return;
+    }
+    CmdCut* cmd = new CmdCut(m_selectionModel->currentIndex(), m_coinNode_Buffer, m_sceneModel);
+    m_undoStack->push(cmd);
+
+    UpdateLightSize();
+    setDocumentModified(true);
+}
+
+/*!
+ * If there \a nodeURL is a valid node url and this node is not the root node, cuts current selected node from the model. Otherwise, nothing is done.
+ */
+void MainWindow::Cut(QString nodeURL)
+{
+    if (nodeURL.isEmpty() )
+    {
+        emit Abort(tr("Cut: There is no node with defined url.") );
+        return;
+    }
+
+    QModelIndex nodeIndex = m_sceneModel->indexFromUrl(nodeURL);
+
+    if (!nodeIndex.isValid() )
+    {
+        emit Abort(tr("Cut: There is no node with defined url.") );
+        return;
+    }
+
+    if (nodeIndex == ui->sceneView->rootIndex() )
+    {
+        emit Abort(tr("Cut: Selected node is not valid node to cut.") );
+        return;
+    }
+    if (nodeIndex.parent() == ui->sceneView->rootIndex() )
+    {
+        emit Abort(tr("Cut: Selected node is not valid node to cut.") );
+        return;
+    }
+
+    CmdCut* command = new CmdCut(nodeIndex, m_coinNode_Buffer, m_sceneModel);
+    m_undoStack->push(command);
+
+    UpdateLightSize();
+    setDocumentModified(true);
+}
+
+/*!
+ * * Deletes selected node if there is a valid node to delete.
+ */
+void MainWindow::Delete()
+{
+    if (!m_selectionModel->hasSelection() )
+    {
+        emit Abort("Delete: There is no node selected to delete");
+        return;
+    }
+
+    QModelIndex index = m_selectionModel->currentIndex();
+    m_selectionModel->clearSelection();
+
+    InstanceNode* instance = m_sceneModel->getInstance(index);
+    m_selectionModel->setCurrentIndex(m_sceneModel->indexFromUrl(instance->getParent()->getURL()), QItemSelectionModel::ClearAndSelect);
+
+    Delete(index);
+}
+
+/*!
+ * Creates a new delete command, where the node with the \a nodeURL was deleted.
+ *
+ * If \a nodeURL is not a valid node url, nothing is done.
+ */
+void MainWindow::Delete(QString nodeURL)
+{
+    QModelIndex index = m_sceneModel->indexFromUrl(nodeURL);
+    if (!index.isValid())
+    {
+        emit Abort(tr("Delete: There is no node with defined url.") );
+        return;
+    }
+
+    Delete(index);
+    if (m_selectionModel->isSelected(index)) m_selectionModel->clearSelection();
+}
+
+/*!
+ * Creates a new delete command, where the \a index node was deleted.
+ *
+ * Returns \a true if the node was successfully deleted, otherwise returns \a false.
+ */
+bool MainWindow::Delete(QModelIndex index)
+{
+    if (!index.isValid()) return false;
+    if (index == ui->sceneView->rootIndex() ) return false;
+    if (index.parent() == ui->sceneView->rootIndex() ) return false;
+
+    InstanceNode* instance = m_sceneModel->getInstance(index);
+    SoNode* node = instance->getNode();
+
+    if (node->getTypeId().isDerivedFrom(Tracker::getClassTypeId()))
+    {
+        CmdDeleteTracker* cmd = new CmdDeleteTracker(index, m_document->getSceneKit(), *m_sceneModel);
+        m_undoStack->push(cmd);
+    }
+    else if (node->getTypeId().isDerivedFrom(SunKit::getClassTypeId()))
+        return false;
+    else
+    {
+        CmdDelete* cmd = new CmdDelete(index, m_sceneModel);
+        m_undoStack->push(cmd);
+    }
+
+//    UpdateLightSize();
+    setDocumentModified(true);
+    return true;
+}
+
+/*!
+ * Inserts a new node as a \a nodeURL node child. The new node is a copy to node saved into the clipboard.
+ * The \a pasteType take "Shared" or "Copied" values.
+ */
+void MainWindow::Paste(QString nodeURL, QString pasteType)
+{
+    if (!m_coinNode_Buffer)
+    {
+        emit Abort(tr("Paste: There is not node copied.") );
+        return;
+    }
+
+    QModelIndex nodeIndex = m_sceneModel->indexFromUrl(nodeURL);
+    if (!nodeIndex.isValid() )
+    {
+        emit Abort(tr("Paste: The node url is not valid.") );
+        return;
+    }
+
+    if (pasteType == "Shared")
+        Paste(nodeIndex, tgc::Shared);
+    else
+        Paste(nodeIndex, tgc::Copied);
+}
+
+/*!
+ * Inserts a new node as a current node child. The new node is a copy to node saved into the clipboard.
+ */
+void MainWindow::PasteCopy()
+{
+    if (!m_selectionModel->hasSelection())
+    {
+        emit Abort("PasteCopy: There is not node copied.");
+        return;
+    }
+    Paste(m_selectionModel->currentIndex(), tgc::Copied);
+}
+
+/*!
+ * Inserts a new node as a current node child. The new node is a link to node saved into the clipboard.
+ */
+void MainWindow::PasteLink()
+{
+    if (!m_selectionModel->hasSelection())
+    {
+        emit Abort("PasteCopy: There is not node copied.");
+        return;
+    }
+    Paste(m_selectionModel->currentIndex(), tgc::Shared);
+}
+
+/*!
  * Creates a new group node as a selected node child.
  */
-void MainWindow::CreateGroupNode()
+void MainWindow::CreateNode()
 {
     QModelIndex index = ui->sceneView->currentIndex();
     if (!index.isValid()) return;
@@ -1322,8 +1506,8 @@ void MainWindow::CreateGroupNode()
         return;
 
     TSeparatorKit* kit = new TSeparatorKit();
-    CmdInsertSeparatorKit* cmd = new CmdInsertSeparatorKit(kit, QPersistentModelIndex(index), m_sceneModel);
-    m_commandStack->push(cmd);
+    CmdCreateNode* cmd = new CmdCreateNode(kit, QPersistentModelIndex(index), m_sceneModel);
+    m_undoStack->push(cmd);
 
     QString name("Node");
     int count = 0;
@@ -1336,7 +1520,7 @@ void MainWindow::CreateGroupNode()
 /*!
  * Creates a surface node as selected node child.
  */
-void MainWindow::CreateSurfaceNode()
+void MainWindow::CreateShape()
 {
     QModelIndex index = ui->sceneView->currentIndex();
     if (!index.isValid()) return;
@@ -1350,16 +1534,76 @@ void MainWindow::CreateSurfaceNode()
         return;
 
     TShapeKit* kit = new TShapeKit;
-    CmdInsertShapeKit* cmd = new CmdInsertShapeKit(kit, index, m_sceneModel);
-    m_commandStack->push(cmd);
+    CmdCreateShape* cmd = new CmdCreateShape(kit, index, m_sceneModel);
+    m_undoStack->push(cmd);
 
     QString name("Shape");
     int count = 0;
     while (!m_sceneModel->SetNodeName(kit, name))
         name = QString("Shape_%1").arg(++count);
 
-    SelectNode(instance->getURL() + "/" + name);
+    Select(instance->getURL() + "/" + name);
     setDocumentModified(true);
+}
+
+/*!
+ * Creates a \a shapeType shape node from the as current selected node child.
+ *
+ * If the current node is not a valid parent node or \a shapeType is not a valid type, the shape node will not be created.
+ *
+ */
+void MainWindow::CreateSurface(QString name)
+{
+    ShapeFactory* f = m_pluginManager->getShapeMap().value(name, 0);
+    if (f)
+        CreateSurface(f);
+    else
+        emit Abort("CreateShape: Shape not found");
+}
+
+/*!
+ * Creates a \a shapeType shape node from the as current selected node child with the parameters defined in \a parametersList. \a numberOfParameters is the
+ * number of parametners in the vector \a numberOfParameters
+ *
+ * If the current node is not a valid parent node or \a shapeType is not a valid type, the shape node will not be created.
+ *
+ */
+void MainWindow::CreateSurface(QString name, int numberOfParameters, QVector<QVariant> parametersList)
+{
+    ShapeFactory* f = m_pluginManager->getShapeMap().value(name, 0);
+    if (f)
+        CreateSurface(f, numberOfParameters, parametersList);
+    else
+        emit Abort("CreateShape: Selected shape type is not valid.");
+}
+
+/*!
+ * Creates a \a materialType material node from the as current selected node child.
+ *
+ * If the current node is not a surface type node or \a materialType is not a valid type, the material node will not be created.
+ */
+void MainWindow::CreateMaterial(QString name)
+{
+    MaterialFactory* f = m_pluginManager->getMaterialMap().value(name, 0);
+    if (f)
+        CreateMaterial(f);
+    else
+        emit Abort("CreateMaterial: Material not found");
+}
+
+/*!
+ * Creates a \a trackerType shape node from the as current selected node child.
+ *
+ * If the current node is not a valid parent node or \a trackerType is not a valid type, the shape node will not be created.
+ *
+ */
+void MainWindow::CreateTracker(QString name)
+{
+    TrackerFactory* f = m_pluginManager->getTrackerMap().value(name, 0);
+    if (f)
+        CreateTracker(f);
+    else
+        emit Abort("CreateTracker: Selected tracker type is not valid.");
 }
 
 /*!
@@ -1400,201 +1644,13 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
 //    QString typeName = pComponentFactory->name();
     componentLayout->setName(nodeName.toStdString().c_str() );
 
-    CmdInsertSeparatorKit* cmd = new CmdInsertSeparatorKit(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
+    CmdCreateNode* cmd = new CmdCreateNode(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
     QString commandText = QString("Create Component: %1").arg(pComponentFactory->name().toLatin1().constData() );
     cmd->setText(commandText);
-    m_commandStack->push(cmd);
+    m_undoStack->push(cmd);
 
     UpdateLightSize();
     setDocumentModified(true);
-}
-
-/*!
- * Creates a \a materialType material node from the as current selected node child.
- *
- * If the current node is not a surface type node or \a materialType is not a valid type, the material node will not be created.
- */
-void MainWindow::CreateMaterial(QString name)
-{
-    MaterialFactory* f = m_pluginManager->getMaterialMap().value(name, 0);
-    if (f)
-        CreateMaterial(f);
-    else
-        emit Abort("CreateMaterial: Material not found");
-}
-
-/*!
- * Creates a \a shapeType shape node from the as current selected node child.
- *
- * If the current node is not a valid parent node or \a shapeType is not a valid type, the shape node will not be created.
- *
- */
-void MainWindow::CreateShape(QString name)
-{
-    ShapeFactory* f = m_pluginManager->getShapeMap().value(name, 0);
-    if (f)
-        CreateShape(f);
-    else
-        emit Abort("CreateShape: Shape not found");
-}
-
-/*!
- * Creates a \a shapeType shape node from the as current selected node child with the parameters defined in \a parametersList. \a numberOfParameters is the
- * number of parametners in the vector \a numberOfParameters
- *
- * If the current node is not a valid parent node or \a shapeType is not a valid type, the shape node will not be created.
- *
- */
-void MainWindow::CreateShape(QString name, int numberOfParameters, QVector<QVariant> parametersList)
-{
-    ShapeFactory* f = m_pluginManager->getShapeMap().value(name, 0);
-    if (f)
-        CreateShape(f, numberOfParameters, parametersList);
-    else
-        emit Abort("CreateShape: Selected shape type is not valid.");
-}
-
-/*!
- * Creates a \a trackerType shape node from the as current selected node child.
- *
- * If the current node is not a valid parent node or \a trackerType is not a valid type, the shape node will not be created.
- *
- */
-void MainWindow::CreateTracker(QString name)
-{
-    TrackerFactory* f = m_pluginManager->getTrackerMap().value(name, 0);
-    if (f)
-        CreateTracker(f);
-    else
-        emit Abort("CreateTracker: Selected tracker type is not valid.");
-}
-
-/*!
- * If there is a node selected and this node is not the root node, cuts current selected node from the model. Otherwise, nothing is done.
- */
-void MainWindow::Cut()
-{
-    int validNode = 1;
-    if (!m_selectionModel->hasSelection() ) validNode = 0;
-    if (m_selectionModel->currentIndex() == ui->sceneView->rootIndex() ) validNode = 0;
-    if (m_selectionModel->currentIndex().parent() == ui->sceneView->rootIndex() ) validNode = 0;
-    if (!validNode)
-    {
-        emit Abort(tr("Cut: No valid node selected to cut.") );
-        return;
-    }
-    CmdCut* cmd = new CmdCut(m_selectionModel->currentIndex(), m_coinNode_Buffer, m_sceneModel);
-    m_commandStack->push(cmd);
-
-    UpdateLightSize();
-    setDocumentModified(true);
-}
-
-/*!
- * If there \a nodeURL is a valid node url and this node is not the root node, cuts current selected node from the model. Otherwise, nothing is done.
- */
-void MainWindow::Cut(QString nodeURL)
-{
-    if (nodeURL.isEmpty() )
-    {
-        emit Abort(tr("Cut: There is no node with defined url.") );
-        return;
-    }
-
-    QModelIndex nodeIndex = m_sceneModel->IndexFromUrl(nodeURL);
-
-    if (!nodeIndex.isValid() )
-    {
-        emit Abort(tr("Cut: There is no node with defined url.") );
-        return;
-    }
-
-    if (nodeIndex == ui->sceneView->rootIndex() )
-    {
-        emit Abort(tr("Cut: Selected node is not valid node to cut.") );
-        return;
-    }
-    if (nodeIndex.parent() == ui->sceneView->rootIndex() )
-    {
-        emit Abort(tr("Cut: Selected node is not valid node to cut.") );
-        return;
-    }
-
-    CmdCut* command = new CmdCut(nodeIndex, m_coinNode_Buffer, m_sceneModel);
-    m_commandStack->push(command);
-
-    UpdateLightSize();
-    setDocumentModified(true);
-}
-
-/*!
- * * Deletes selected node if there is a valid node to delete.
- */
-void MainWindow::Delete()
-{
-    if (!m_selectionModel->hasSelection() )
-    {
-        emit Abort("Delete: There is no node selected to delete");
-        return;
-    }
-
-    QModelIndex index = m_selectionModel->currentIndex();
-    m_selectionModel->clearSelection();
-
-    InstanceNode* instance = m_sceneModel->getInstance(index);
-    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromUrl(instance->getParent()->getURL()), QItemSelectionModel::ClearAndSelect);
-
-    Delete(index);
-}
-
-/*!
- * Creates a new delete command, where the node with the \a nodeURL was deleted.
- *
- * If \a nodeURL is not a valid node url, nothing is done.
- */
-void MainWindow::Delete(QString nodeURL)
-{
-    QModelIndex index = m_sceneModel->IndexFromUrl(nodeURL);
-    if (!index.isValid())
-    {
-        emit Abort(tr("Delete: There is no node with defined url.") );
-        return;
-    }
-
-    Delete(index);
-    if (m_selectionModel->isSelected(index)) m_selectionModel->clearSelection();
-}
-
-/*!
- * Creates a new delete command, where the \a index node was deleted.
- *
- * Returns \a true if the node was successfully deleted, otherwise returns \a false.
- */
-bool MainWindow::Delete(QModelIndex index)
-{
-    if (!index.isValid()) return false;
-    if (index == ui->sceneView->rootIndex() ) return false;
-    if (index.parent() == ui->sceneView->rootIndex() ) return false;
-
-    InstanceNode* instance = m_sceneModel->getInstance(index);
-    SoNode* node = instance->getNode();
-
-    if (node->getTypeId().isDerivedFrom(Tracker::getClassTypeId()))
-    {
-        CmdDeleteTracker* cmd = new CmdDeleteTracker(index, m_document->getSceneKit(), *m_sceneModel);
-        m_commandStack->push(cmd);
-    }
-    else if (node->getTypeId().isDerivedFrom(SunKit::getClassTypeId()))
-        return false;
-    else
-    {
-        CmdDelete* cmd = new CmdDelete(index, m_sceneModel);
-        m_commandStack->push(cmd);
-    }
-
-//    UpdateLightSize();
-    setDocumentModified(true);
-    return true;
 }
 
 /*!
@@ -1642,12 +1698,87 @@ void MainWindow::InsertFileComponent(QString componentFileName)
 
     TSeparatorKit* componentLayout = static_cast< TSeparatorKit* >(componentSeparator->getChild(0) );
 
-    CmdInsertSeparatorKit* cmdInsertSeparatorKit = new CmdInsertSeparatorKit(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
+    CmdCreateNode* cmdInsertSeparatorKit = new CmdCreateNode(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
     cmdInsertSeparatorKit->setText("Insert SeparatorKit node");
-    m_commandStack->push(cmdInsertSeparatorKit);
+    m_undoStack->push(cmdInsertSeparatorKit);
 
     UpdateLightSize();
     setDocumentModified(true);
+}
+
+/*!
+ * Changes selected node to the node with \a nodeUrl. If model does not contains a node with defined url,
+ * the selection will be null.
+ */
+void MainWindow::Select(QString url)
+{
+    QModelIndex index = m_sceneModel->indexFromUrl(url);
+    m_selectionModel->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
+}
+
+/*!
+ * Sets \a nodeName as the current node name.
+ */
+void MainWindow::SetName(QString name)
+{
+    if (!m_selectionModel->hasSelection())
+    {
+        emit Abort(tr("SetNodeName: No node selected.") );
+        return;
+    }
+
+    if (m_selectionModel->currentIndex() == ui->sceneView->rootIndex())
+    {
+        emit Abort(tr("SetNodeName: Cannot change the name of the current selected node cannot.") );
+        return;
+    }
+
+    ChangeNodeName(m_selectionModel->currentIndex(), name);
+}
+
+/*!
+ * Sets to the \a parameter of the node \a nodeUrl the value defined at \a value.
+ */
+void MainWindow::SetValue(QString url, QString parameter, QString value)
+{
+    if (url.isEmpty() || parameter.isEmpty() || value.isEmpty() )
+    {
+        emit Abort(tr("SetValue: You must define a node url, a parameter name and a value.") );
+        return;
+    }
+
+    QModelIndex nodeIndex = m_sceneModel->indexFromUrl(url);
+    if (!nodeIndex.isValid() )
+    {
+        emit Abort(tr("SetValue: Defined node url is not a valid url.") );
+        return;
+    }
+
+    InstanceNode* nodeInstance = m_sceneModel->getInstance(nodeIndex);
+    if (!nodeInstance)
+    {
+        emit Abort(tr("SetValue: Defined node url is not a valid url.") );
+        return;
+    }
+
+    SoNode* node = nodeInstance->getNode();
+    if (!node) return;
+    if (node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
+    {
+        TSeparatorKit* separatorNode = static_cast< TSeparatorKit* >(node);
+        SoTransform* nodeTransform = static_cast< SoTransform* >(separatorNode->getPart("transform", true) );
+        node = nodeTransform;
+    }
+
+    SoField* parameterField = node->getField(parameter.toStdString().c_str() );
+    if (!parameterField)
+    {
+        QMessageBox::information(this, "Tonatiuh",
+            QString("Defined node has not contains the parameter %1.").arg(parameter), 1);
+        return;
+    }
+
+    SetParameterValue(node, parameter, value);
 }
 
 /*!
@@ -1689,57 +1820,6 @@ void MainWindow::Open(QString fileName)
 }
 
 /*!
- * Inserts a new node as a \a nodeURL node child. The new node is a copy to node saved into the clipboard.
- * The \a pasteType take "Shared" or "Copied" values.
- */
-void MainWindow::Paste(QString nodeURL, QString pasteType)
-{
-    if (!m_coinNode_Buffer)
-    {
-        emit Abort(tr("Paste: There is not node copied.") );
-        return;
-    }
-
-    QModelIndex nodeIndex = m_sceneModel->IndexFromUrl(nodeURL);
-    if (!nodeIndex.isValid() )
-    {
-        emit Abort(tr("Paste: The node url is not valid.") );
-        return;
-    }
-
-    if (pasteType == "Shared")
-        Paste(nodeIndex, tgc::Shared);
-    else
-        Paste(nodeIndex, tgc::Copied);
-}
-
-/*!
- * Inserts a new node as a current node child. The new node is a copy to node saved into the clipboard.
- */
-void MainWindow::PasteCopy()
-{
-    if (!m_selectionModel->hasSelection())
-    {
-        emit Abort("PasteCopy: There is not node copied.");
-        return;
-    }
-    Paste(m_selectionModel->currentIndex(), tgc::Copied);
-}
-
-/*!
- * Inserts a new node as a current node child. The new node is a link to node saved into the clipboard.
- */
-void MainWindow::PasteLink()
-{
-    if (!m_selectionModel->hasSelection())
-    {
-        emit Abort("PasteCopy: There is not node copied.");
-        return;
-    }
-    Paste(m_selectionModel->currentIndex(), tgc::Shared);
-}
-
-/*!
  * Runs ray tracer to defined model and paramenters.
  */
 void MainWindow::Run()
@@ -1768,8 +1848,8 @@ void MainWindow::Run()
         QVector<InstanceNode*> exportSuraceList;
         for (QString s : m_photonsSettings->surfaces)
         {
-            m_sceneModel->IndexFromUrl(s);
-            InstanceNode* node = m_sceneModel->getInstance(m_sceneModel->IndexFromUrl(s));
+            m_sceneModel->indexFromUrl(s);
+            InstanceNode* node = m_sceneModel->getInstance(m_sceneModel->indexFromUrl(s));
             exportSuraceList << node;
         }
 
@@ -1884,16 +1964,6 @@ void MainWindow::SaveAs(QString fileName)
 }
 
 /*!
- * Changes selected node to the node with \a nodeUrl. If model does not contains a node with defined url,
- * the selection will be null.
- */
-void MainWindow::SelectNode(QString url)
-{
-    QModelIndex index = m_sceneModel->IndexFromUrl(url);
-    m_selectionModel->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
-}
-
-/*!
  * Sets to export all surfaces photons.
  */
 void MainWindow::SetExportAllPhotonMap()
@@ -1977,27 +2047,6 @@ void MainWindow::SetExportTypeParameterValue(QString name, QString value)
 }
 
 /*!
- * Sets \a nodeName as the current node name.
- */
-void MainWindow::SetNodeName(QString name)
-{
-    if (!m_selectionModel->hasSelection() )
-    {
-        emit Abort(tr("SetNodeName: No node selected.") );
-        return;
-    }
-
-    if (m_selectionModel->currentIndex() == ui->sceneView->rootIndex())
-    {
-        emit Abort(tr("SetNodeName: Cannot change the name of the current selected node cannot.") );
-        return;
-    }
-
-    ChangeNodeName(m_selectionModel->currentIndex(), name);
-}
-
-
-/*!
  * Sets the random number generator type, \a typeName, for ray tracing.
  */
 void MainWindow::SetRaysRandomFactory(QString name)
@@ -2060,7 +2109,7 @@ void MainWindow::SetSunshape(QString name)
     sunKit->setPart("tsunshape", f->create() );
 
     CmdSunKitModified* command = new CmdSunKitModified(sunKit, sceneKit, m_sceneModel);
-    m_commandStack->push(command);
+    m_undoStack->push(command);
 
     //UpdateLightDimensions();
     UpdateLightSize();
@@ -2092,7 +2141,7 @@ void MainWindow::SetSunshapeParameter(QString parameter, QString value)
     }
 
     CmdModifyParameter* cmd = new CmdModifyParameter(sunshape, parameter, value, m_sceneModel);
-    if (m_commandStack) m_commandStack->push(cmd);
+    if (m_undoStack) m_undoStack->push(cmd);
     setDocumentModified(true);
 }
 
@@ -2113,7 +2162,7 @@ void MainWindow::SetAir(QString name)
     TSceneKit* sceneKit = m_document->getSceneKit();
 
     CmdAirModified* cmd = new CmdAirModified(air, sceneKit);
-    m_commandStack->push(cmd);
+    m_undoStack->push(cmd);
     setDocumentModified(true);
 }
 
@@ -2131,55 +2180,9 @@ void MainWindow::SetAirParameter(QString parameter, QString value)
     }
 
     CmdModifyParameter* cmd = new CmdModifyParameter(air, parameter, value, m_sceneModel);
-    if (m_commandStack) m_commandStack->push(cmd);
+    if (m_undoStack) m_undoStack->push(cmd);
     setDocumentModified(true);
 }
-
-/*!
- * Sets to the \a parameter of the node \a nodeUrl the value defined at \a value.
- */
-void MainWindow::SetValue(QString nodeUrl, QString parameter, QString value)
-{
-    if (nodeUrl.isEmpty() || parameter.isEmpty() || value.isEmpty() )
-    {
-        emit Abort(tr("SetValue: You must define a node url, a parameter name and a value.") );
-        return;
-    }
-
-    QModelIndex nodeIndex = m_sceneModel->IndexFromUrl(nodeUrl);
-    if (!nodeIndex.isValid() )
-    {
-        emit Abort(tr("SetValue: Defined node url is not a valid url.") );
-        return;
-    }
-
-    InstanceNode* nodeInstance = m_sceneModel->getInstance(nodeIndex);
-    if (!nodeInstance)
-    {
-        emit Abort(tr("SetValue: Defined node url is not a valid url.") );
-        return;
-    }
-
-    SoNode* node = nodeInstance->getNode();
-    if (!node) return;
-    if (node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
-    {
-        TSeparatorKit* separatorNode = static_cast< TSeparatorKit* >(node);
-        SoTransform* nodeTransform = static_cast< SoTransform* >(separatorNode->getPart("transform", true) );
-        node = nodeTransform;
-    }
-
-    SoField* parameterField = node->getField(parameter.toStdString().c_str() );
-    if (!parameterField)
-    {
-        QMessageBox::information(this, "Tonatiuh",
-            QString("Defined node has not contains the parameter %1.").arg(parameter), 1);
-        return;
-    }
-
-    SetParameterValue(node, parameter, value);
-}
-
 
 //Manipulators actions
 void MainWindow::SoTransform_to_SoCenterballManip()
@@ -2417,10 +2420,10 @@ void MainWindow::CreateComponent(ComponentFactory* factory)
     QString typeName = factory->name();
     componentLayout->setName(typeName.toStdString().c_str() );
 
-    CmdInsertSeparatorKit* cmd = new CmdInsertSeparatorKit(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
+    CmdCreateNode* cmd = new CmdCreateNode(componentLayout, QPersistentModelIndex(parentIndex), m_sceneModel);
     QString text = QString("Create Component: %1").arg(factory->name().toLatin1().constData() );
     cmd->setText(text);
-    m_commandStack->push(cmd);
+    m_undoStack->push(cmd);
 
     UpdateLightSize();
     setDocumentModified(true);
@@ -2446,7 +2449,7 @@ void MainWindow::CreateMaterial(MaterialFactory* factory)
     material->setName(factory->name().toStdString().c_str());
 
     CmdInsertShape* cmd = new CmdInsertShape(kit, material, m_sceneModel);
-    m_commandStack->push(cmd);
+    m_undoStack->push(cmd);
 
     setDocumentModified(true);
 }
@@ -2456,7 +2459,7 @@ void MainWindow::CreateMaterial(MaterialFactory* factory)
  *
  * If the current node is not a surface type node, the shape node will not be created.
  */
-void MainWindow::CreateShape(ShapeFactory* factory)
+void MainWindow::CreateSurface(ShapeFactory* factory)
 {
     QModelIndex index = ui->sceneView->currentIndex();
     if (!index.isValid()) return;
@@ -2471,7 +2474,7 @@ void MainWindow::CreateShape(ShapeFactory* factory)
     shape->setName(factory->name().toStdString().c_str());
 
     CmdInsertShape* cmd = new CmdInsertShape(kit, shape, m_sceneModel);
-    m_commandStack->push(cmd);
+    m_undoStack->push(cmd);
 
 //    UpdateLightSize();
     setDocumentModified(true);
@@ -2482,7 +2485,7 @@ void MainWindow::CreateShape(ShapeFactory* factory)
  *
  * If the current node is not a surface type node, the shape node will not be created.
  */
-void MainWindow::CreateShape(ShapeFactory* factory, int /*numberofParameters*/, QVector<QVariant> parametersList)
+void MainWindow::CreateSurface(ShapeFactory* factory, int /*numberofParameters*/, QVector<QVariant> parametersList)
 {
     QModelIndex index = ui->sceneView->currentIndex();
     if (!index.isValid()) return;
@@ -2496,7 +2499,7 @@ void MainWindow::CreateShape(ShapeFactory* factory, int /*numberofParameters*/, 
     shape->setName(factory->name().toStdString().c_str() );
 
     CmdInsertShape* cmd = new CmdInsertShape(kit, shape, m_sceneModel);
-    m_commandStack->push(cmd);
+    m_undoStack->push(cmd);
 
 //    UpdateLightSize();
     setDocumentModified(true);
@@ -2517,7 +2520,7 @@ void MainWindow::CreateProfile(ProfileFactory* factory)
     profile->setName(factory->name().toStdString().c_str());
 
     CmdInsertShape* cmd = new CmdInsertShape(kit, profile, m_sceneModel);
-    m_commandStack->push(cmd);
+    m_undoStack->push(cmd);
 
 //    UpdateLightSize();
     setDocumentModified(true);
@@ -2547,7 +2550,7 @@ void MainWindow::CreateTracker(TrackerFactory* factory)
     tracker->setName(factory->name().toStdString().c_str());
 
     CmdInsertTracker* cmd = new CmdInsertTracker(tracker, parentIndex, m_sceneModel);
-    m_commandStack->push(cmd);
+    m_undoStack->push(cmd);
 
     setDocumentModified(true);
 }
@@ -2609,13 +2612,13 @@ void MainWindow::ChangeModelScene()
     m_sceneModel->setSceneKit(*coinScene);
     m_graphicsRoot->addScene(coinScene);
 
-    QModelIndex viewLayoutIndex = m_sceneModel->IndexFromUrl("");
+    QModelIndex viewLayoutIndex = m_sceneModel->indexFromUrl("");
     InstanceNode* viewLayout = m_sceneModel->getInstance(viewLayoutIndex);
     ui->sceneView->setRootIndex(viewLayoutIndex);
 
     InstanceNode* concentratorRoot = viewLayout->children[0];
 
-    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromUrl(concentratorRoot->getURL() ), QItemSelectionModel::ClearAndSelect);
+    m_selectionModel->setCurrentIndex(m_sceneModel->indexFromUrl(concentratorRoot->getURL() ), QItemSelectionModel::ClearAndSelect);
 }
 
 /*!
@@ -2710,7 +2713,7 @@ bool MainWindow::Paste(QModelIndex nodeIndex, tgc::PasteType type)
     }
 
     CmdPaste* commandPaste = new CmdPaste(type, m_selectionModel->currentIndex(), m_coinNode_Buffer, *m_sceneModel);
-    m_commandStack->push(commandPaste);
+    m_undoStack->push(commandPaste);
 
     UpdateLightSize();
     setDocumentModified(true);
@@ -2902,8 +2905,8 @@ void MainWindow::SetupActionsInsertShape()
             menu->addAction(a);
 //            toolbar->addAction(a);
             connect(
-                a, SIGNAL(CreateShape(ShapeFactory*)),
-                this, SLOT(CreateShape(ShapeFactory*))
+                a, SIGNAL(CreateSurface(ShapeFactory*)),
+                this, SLOT(CreateSurface(ShapeFactory*))
             );
         } else {
             menu->addSeparator();
@@ -3027,7 +3030,7 @@ bool MainWindow::StartOver(const QString& fileName)
     InstanceNode* sceneInstance = m_sceneModel->getInstance(ui->sceneView->rootIndex() );
 
     InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
-    m_selectionModel->setCurrentIndex(m_sceneModel->IndexFromUrl(concentratorRoot->getURL() ), QItemSelectionModel::ClearAndSelect);
+    m_selectionModel->setCurrentIndex(m_sceneModel->indexFromUrl(concentratorRoot->getURL() ), QItemSelectionModel::ClearAndSelect);
 
 //    ui->actionViewRays->setEnabled(false);
 //    ui->actionViewRays->setChecked(false);
@@ -3035,7 +3038,7 @@ bool MainWindow::StartOver(const QString& fileName)
     m_graphicsRoot->rays()->removeAllChildren();
     m_graphicsRoot->removeScene();
 
-    m_commandStack->clear();
+    m_undoStack->clear();
     m_sceneModel->Clear();
 
 //    SetSunPositionCalculatorEnabled(0);
@@ -3054,7 +3057,7 @@ bool MainWindow::StartOver(const QString& fileName)
 
     ChangeModelScene();
     ui->sceneView->expandToDepth(0);
-    SelectNode("//Layout");
+    Select("//Layout");
     on_actionViewAll_triggered(); // discard sun
     return true;
 }

@@ -42,7 +42,7 @@ public:
 
     InstanceNode* getInstance(const QModelIndex& index) const;
     bool SetNodeName(SoNode* node, QString name);
-    QModelIndex IndexFromUrl(QString url) const;
+    QModelIndex indexFromUrl(QString url) const;
     QModelIndex indexFromPath(const SoNodeKitPath& path) const;
     SoNodeKitPath* pathFromIndex(const QModelIndex& index) const;
 

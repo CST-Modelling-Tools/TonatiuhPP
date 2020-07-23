@@ -96,7 +96,7 @@ bool ScriptRayTracer::IsValidSurface(QString surfaceName)
 {
     if (!m_sceneModel) return false;
 
-    QModelIndex surfaceIndex = m_sceneModel->IndexFromUrl(surfaceName);
+    QModelIndex surfaceIndex = m_sceneModel->indexFromUrl(surfaceName);
     InstanceNode* selectedSurface = m_sceneModel->getInstance(surfaceIndex);
     if (!selectedSurface) return false;
 

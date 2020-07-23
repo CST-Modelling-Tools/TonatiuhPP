@@ -18,13 +18,10 @@ CodeEditorWidget::CodeEditorWidget(QWidget* parent, Qt::WindowFlags f):
     setupUi(this);
 
     SetupToolbar();
-    lineNumberWidget->SetCodeEditor( codeEditor );
+    lineNumberWidget->SetCodeEditor(codeEditor);
     connect( codeEditor, SIGNAL( updateRequest( QRect, int ) ), lineNumberWidget, SLOT( UpdateLineNumberArea( QRect, int ) ) );
 }
 
-/*!
- * Destroys editor.
- */
 CodeEditorWidget::~CodeEditorWidget()
 {
 

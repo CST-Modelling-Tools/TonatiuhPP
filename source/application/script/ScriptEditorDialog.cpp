@@ -41,6 +41,7 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory
 
     QScriptValue tonatiuh = m_interpreter->newQObject(parent);
     m_interpreter->globalObject().setProperty("tonatiuh", tonatiuh);
+    m_interpreter->globalObject().setProperty("tn", tonatiuh);
 
     QScriptValue logConsoleObject = m_interpreter->newQObject(ui->logWidget);
     m_interpreter->globalObject().setProperty("console", logConsoleObject);
@@ -104,13 +105,14 @@ void ScriptEditorDialog::closeEvent(QCloseEvent* event)
 void  ScriptEditorDialog::RunScript()
 {
     QDateTime start = QDateTime::currentDateTime();
-    QString message = QString("[%1]\t Start running script.\n").arg(start.toString());
+    QString tf("hh:mm:ss");
+    QString message = QString("[%1]  Script started.").arg(start.toString(tf));
     WriteMessage(message);
 
     int initialized = tonatiuh_script::init(m_interpreter);
     if (!initialized)
     {
-        message = QString("[%1]\t Script Execution Error.\n").arg(QDateTime::currentDateTime().toString() );
+        message = QString("[%1]  Script error.").arg(QDateTime::currentDateTime().toString(tf));
         WriteMessage(message);
         std::cerr << message.toStdString() << std::endl;
         return;
@@ -126,8 +128,7 @@ void  ScriptEditorDialog::RunScript()
     QScriptSyntaxCheckResult checkResult = m_interpreter->checkSyntax(program);
     if (checkResult.state() != QScriptSyntaxCheckResult::Valid)
     {
-        message = QString("[%1]\t Script Execution Error.\n"
-                                     "\t Line: %2. %3\n").arg(QDateTime::currentDateTime().toString(), QString::number(checkResult.errorLineNumber() ), checkResult.errorMessage () );
+        message = QString("[%1]  Script error in line: %2. %3").arg(QDateTime::currentDateTime().toString(tf), QString::number(checkResult.errorLineNumber() ), checkResult.errorMessage () );
         WriteMessage(message);
         std::cerr << message.toStdString() << std::endl;
         return;
@@ -136,7 +137,7 @@ void  ScriptEditorDialog::RunScript()
     QScriptValue result = m_interpreter->evaluate(document->toPlainText());
     if (result.isError())
     {
-        message = QString("[%1]\t Script Execution Error. %2\n").arg(QDateTime::currentDateTime().toString(), result.toString() );
+        message = QString("[%1]  Script error. %2").arg(QDateTime::currentDateTime().toString(tf), result.toString() );
         WriteMessage(message);
         //std::cerr<<logmessage.toStdString()<<std::endl;
     }
@@ -152,7 +153,7 @@ void  ScriptEditorDialog::RunScript()
            WriteMessage( logmessage );
          *
          */
-        message = QString("[%1]\t The script execution is successfully finished.\n").arg(QDateTime::currentDateTime().toString());
+        message = QString("[%1]  Script finished.").arg(QDateTime::currentDateTime().toString(tf));
         WriteMessage(message);
     }
 }

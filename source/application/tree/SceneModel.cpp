@@ -356,7 +356,7 @@ bool SceneModel::SetNodeName(SoNode* node, QString name)
  *
  * \sa IndexFromNodeUrl, NodeFromIndex, PathFromIndex.
 **/
-QModelIndex SceneModel::IndexFromUrl(QString url) const
+QModelIndex SceneModel::indexFromUrl(QString url) const
 {
     QStringList path = url.split("/", QString::SkipEmptyParts);
 
@@ -366,7 +366,7 @@ QModelIndex SceneModel::IndexFromUrl(QString url) const
     QString nodeName = path.last();
     path.removeLast();
     QString parentURL = QString("//") + path.join("/");
-    QModelIndex parentIndex = IndexFromUrl(parentURL);
+    QModelIndex parentIndex = indexFromUrl(parentURL);
     InstanceNode* instanceParent = getInstance(parentIndex);
 
     int row = 0;

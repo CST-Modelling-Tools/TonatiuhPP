@@ -1,4 +1,4 @@
-#include "CmdInsertSeparatorKit.h"
+#include "CmdCreateNode.h"
 
 #include <Inventor/nodekits/SoBaseKit.h>
 
@@ -12,7 +12,7 @@
  *
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
-CmdInsertSeparatorKit::CmdInsertSeparatorKit(
+CmdCreateNode::CmdCreateNode(
     TSeparatorKit* node,
     const QModelIndex& parentIndex,
     SceneModel* model,
@@ -39,7 +39,7 @@ CmdInsertSeparatorKit::CmdInsertSeparatorKit(
 /*!
  * Destroys the CmdInsertSeparatorKit object.
  */
-CmdInsertSeparatorKit::~CmdInsertSeparatorKit()
+CmdCreateNode::~CmdCreateNode()
 {
     m_node->unref();
 }
@@ -48,7 +48,7 @@ CmdInsertSeparatorKit::~CmdInsertSeparatorKit()
  * Reverts model state. After undo() is called, the node with the parentIndex will not contain a separatorKit node.
  * \sa redo().
  */
-void CmdInsertSeparatorKit::undo()
+void CmdCreateNode::undo()
 {
     m_model->removeCoinNode(m_row, m_nodeParent);
 }
@@ -57,7 +57,7 @@ void CmdInsertSeparatorKit::undo()
  * Applies a change to the model. After redo() the model will contain new group node.
  * \sa undo().
  */
-void CmdInsertSeparatorKit::redo()
+void CmdCreateNode::redo()
 {
     m_row = m_model->insertCoinNode(m_node, m_nodeParent);
 }

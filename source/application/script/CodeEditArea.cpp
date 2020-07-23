@@ -30,13 +30,10 @@ int CodeEditArea::BlockHeight(const QTextBlock& block) const
 {
     QList<QTextEdit::ExtraSelection> extraSelections;
 
-    if( !isReadOnly() )
+    if (!isReadOnly())
     {
         QTextEdit::ExtraSelection selection;
-
-        QColor lineColor = QColor(Qt::yellow).lighter(160);
-
-        selection.format.setBackground(lineColor);
+        selection.format.setBackground(QColor("#C8DBE5"));
         selection.format.setProperty(QTextFormat::FullWidthSelection, true);
         selection.cursor = textCursor();
         selection.cursor.clearSelection();

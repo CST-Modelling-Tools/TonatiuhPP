@@ -147,7 +147,7 @@
      </property>
     </widget>
     <addaction name="actionNode"/>
-    <addaction name="actionSurfaceNode"/>
+    <addaction name="actionShape"/>
     <addaction name="separator"/>
     <addaction name="menuShape"/>
     <addaction name="menuProfile"/>
@@ -263,7 +263,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionNode"/>
-   <addaction name="actionSurfaceNode"/>
+   <addaction name="actionShape"/>
   </widget>
   <widget class="QToolBar" name="viewToolBar">
    <property name="windowTitle">
@@ -462,14 +462,22 @@
    <property name="text">
     <string>Node</string>
    </property>
+   <property name="toolTip">
+    <string>Node
+CreateNode()</string>
+   </property>
   </action>
-  <action name="actionSurfaceNode">
+  <action name="actionShape">
    <property name="icon">
     <iconset resource="../resources.qrc">
      <normaloff>:/images/scene/nodeShape.png</normaloff>:/images/scene/nodeShape.png</iconset>
    </property>
    <property name="text">
     <string>Shape</string>
+   </property>
+   <property name="toolTip">
+    <string>Shape
+CreateShape()</string>
    </property>
   </action>
   <action name="actionViewAxes">

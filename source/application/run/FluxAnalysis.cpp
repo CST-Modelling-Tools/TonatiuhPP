@@ -73,7 +73,7 @@ FluxAnalysis::~FluxAnalysis()
  */
 QString FluxAnalysis::getShapeType(QString nodeURL)
 {
-    QModelIndex index = m_sceneModel->IndexFromUrl(nodeURL);
+    QModelIndex index = m_sceneModel->indexFromUrl(nodeURL);
     if (!index.isValid()) return "";
 
     InstanceNode* instance = m_sceneModel->getInstance(index);
@@ -144,7 +144,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
     }
 
     QVector<InstanceNode*> exportSuraceList;
-    QModelIndex nodeIndex = m_sceneModel->IndexFromUrl(m_surfaceURL);
+    QModelIndex nodeIndex = m_sceneModel->indexFromUrl(m_surfaceURL);
     if (!nodeIndex.isValid()) return;
     InstanceNode* instanceNode = m_sceneModel->getInstance(nodeIndex);
     if (!instanceNode) return;
@@ -288,7 +288,7 @@ void FluxAnalysis::fillBins()
     m_photonsError = 0;
 
     QString shapeType = getShapeType(m_surfaceURL);
-    QModelIndex index = m_sceneModel->IndexFromUrl(m_surfaceURL);
+    QModelIndex index = m_sceneModel->indexFromUrl(m_surfaceURL);
     InstanceNode* instance = m_sceneModel->getInstance(index);
     if (!instance) return;
     TShapeKit* shapeKit = static_cast<TShapeKit*>(instance->getNode());

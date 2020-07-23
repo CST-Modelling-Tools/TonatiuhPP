@@ -41,6 +41,7 @@ class SoGroup;
 class SceneModel;
 struct PhotonsSettings;
 class ProfileFactory;
+class UndoView;
 
 //!  Main window class.
 /*!
@@ -65,40 +66,46 @@ public:
     void StartManipulation(SoDragger* dragger);
     void ExecuteScriptFile(QString tonatiuhScriptFile);
 
-signals:
-    void Abort(QString error);
-
 public slots:
-    void onAbort(QString error);
-    void AddExportSurfaceURL(QString nodeURL);
-    void ChangeSunPosition(double azimuth, double elevation);
-    void ChangeSunPosition(int year, int month, int day, double hours, double minutes, double seconds, double latitude, double longitude);
+    void New();
+    void Open(QString fileName);
+    bool Save();
+    void SaveAs(QString fileName);
+    void SaveComponent(QString componentFileName);
     void Clear();
+
     void Copy();
     void Copy(QString nodeURL);
-    void CreateGroupNode();
-    void CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector< QVariant > parametersList);
-    void CreateMaterial(QString name);
-    void CreateShape(QString name);
-    void CreateShape(QString shapeType, int numberOfParameters, QVector< QVariant > parametersList);
-    void CreateSurfaceNode();
-    void CreateTracker(QString name);
     void Cut();
     void Cut(QString nodeURL);
     void Delete();
     void Delete(QString nodeURL);
-    void InsertFileComponent(QString componentFileName = "");
-    void New();
-    void Open(QString fileName);
     void Paste(QString nodeURL, QString pasteType = "Shared");
     void PasteCopy();
     void PasteLink();
+
+    void CreateNode();
+    void CreateShape();
+    void CreateSurface(QString name);
+    void CreateSurface(QString shapeType, int numberOfParameters, QVector< QVariant > parametersList);
+    void CreateMaterial(QString name);
+    void CreateTracker(QString name);
+    void CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector< QVariant > parametersList);
+    void InsertFileComponent(QString componentFileName = "");
+
+    void Select(QString url);
+    void SetName(QString name);
+    void SetValue(QString url, QString parameter, QString value);
+
+    void ChangeSunPosition(double azimuth, double elevation);
+    void ChangeSunPosition(int year, int month, int day, double hours, double minutes, double seconds, double latitude, double longitude);
+    void SetSunshape(QString name);
+    void SetSunshapeParameter(QString parameter, QString value);
+    void SetAir(QString name);
+    void SetAirParameter(QString parameter, QString value);
+
     void Run();
     void RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned int nOfRays, int heightDivisions, int widthDivisions, QString directory, QString file, bool saveCoords);
-    bool Save();
-    void SaveComponent(QString componentFileName);
-    void SaveAs(QString fileName);
-    void SelectNode(QString url);
     void SetExportAllPhotonMap();
     void SetExportCoordinates(bool enabled, bool global);
     void SetExportIntersectionSurface(bool enabled);
@@ -106,7 +113,7 @@ public slots:
     void SetExportPhotonMapType(QString name);
     void SetExportPreviousNextPhotonID(bool enabled);
     void SetExportTypeParameterValue(QString parameterName, QString value);
-
+    void AddExportSurfaceURL(QString nodeURL);
     void SetRaysNumber(uint rays) {m_raysNumber = rays;}
     void SetRaysScreen(uint rays) {m_raysScreen = rays;}
     void SetRaysRandomFactory(QString name);
@@ -114,26 +121,16 @@ public slots:
     void SetPhotonBufferSize(uint size) {m_photonBufferSize = size;}
     void SetPhotonBufferAppend(bool on) { m_photonBufferAppend = on;}
 
-    void SetNodeName(QString name);
-    void SetSunshape(QString name);
-    void SetSunshapeParameter(QString parameter, QString value);
-    void SetAir(QString name);
-    void SetAirParameter(QString parameter, QString value);
-    void SetValue(QString nodeUrl, QString parameter, QString value);
-
-protected:
-    void closeEvent(QCloseEvent* event);
-    void mousePressEvent(QMouseEvent* e);
-
 private slots:
+    void onAbort(QString error);
     void CalculateSunPosition();
     void ChangeGridSettings();
     void ChangeNodeName(const QModelIndex& index, const QString& name);
     void ChangeSelection(const QModelIndex& index);
     void CreateComponent(ComponentFactory* factory);
     void CreateMaterial(MaterialFactory* factory);
-    void CreateShape(ShapeFactory* factory);
-    void CreateShape(ShapeFactory* factory, int numberOfParameters, QVector<QVariant> parametersList);
+    void CreateSurface(ShapeFactory* factory);
+    void CreateSurface(ShapeFactory* factory, int numberOfParameters, QVector<QVariant> parametersList);
     void CreateProfile(ProfileFactory* factory);
     void CreateTracker(TrackerFactory* factory);
     void onSunDialog();
@@ -194,6 +191,13 @@ private slots:
     void on_actionAbout_triggered();
     //void on_actionCheckForUpdates_triggered();
 
+signals:
+    void Abort(QString error);
+
+protected:
+    void closeEvent(QCloseEvent* event);
+    void mousePressEvent(QMouseEvent* e);
+
 private:
     void ChangeModelScene();
     SoGroup* CreateGrid();
@@ -216,7 +220,7 @@ private:
     void SetupModels();
 
     void SetupViews();
-    void SetupCommandView();
+    void SetupUndoView();
     void SetupGraphicView();
     void SetupTreeView();
     void SetupParametersView();
@@ -247,8 +251,8 @@ private:
     QStringList m_recentFiles;
     QVector<QAction*> m_recentFileActions;
 
-    QUndoStack* m_commandStack;
-    QUndoView* m_commandView;
+    QUndoStack* m_undoStack;
+    UndoView* m_undoView;
 
     QString m_currentFile;
     Document* m_document;

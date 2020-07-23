@@ -25,7 +25,7 @@ public slots:
     void onTriggered();
 
 signals:
-    void CreateShape(ShapeFactory* factory);
+    void CreateSurface(ShapeFactory* factory);
     void CreateProfile(ProfileFactory* factory);
     void CreateMaterial(MaterialFactory* factory);
     void CreateTracker(TrackerFactory* factory);

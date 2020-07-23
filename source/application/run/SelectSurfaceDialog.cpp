@@ -31,7 +31,7 @@ SelectSurfaceDialog::SelectSurfaceDialog(SceneModel& model, bool enableLight, QW
     m_filter->setSourceModel(m_model);
     ui->sceneModelView->setModel(m_filter);
 
-    QModelIndex viewLayoutIndex = model.IndexFromUrl("//");
+    QModelIndex viewLayoutIndex = model.indexFromUrl("//");
     ui->sceneModelView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->sceneModelView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->sceneModelView->setSelectionMode(QAbstractItemView::SingleSelection);

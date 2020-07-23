@@ -1,17 +1,17 @@
 function makeNode(path, name)
 {
-	tonatiuh.SelectNode(path);
-	tonatiuh.CreateGroupNode();
-	tonatiuh.SelectNode(path +"/Node");  
-	tonatiuh.SetNodeName(name); 
+	tonatiuh.Select(path);
+	tonatiuh.CreateNode();
+	tonatiuh.Select(path +"/Node");  
+	tonatiuh.SetName(name); 
 	return path + "/" + name;
 }
 
 function makeShape(path)
 {
-	tonatiuh.CreateSurfaceNode();  
+	tonatiuh.CreateShape();  
 	path = path + "/Shape";
-	tonatiuh.SelectNode(path); 
+	tonatiuh.Select(path); 
 	return path;
 }
 
@@ -32,17 +32,17 @@ function makeHeliostat(path, name, position)
 	path = makeShape(path);
 
 	temp = "Parabolic"
-	tonatiuh.CreateShape(temp);
+	tonatiuh.CreateSurface(temp);
 	shape = path + "/" + temp; 
-	tonatiuh.SetValue(shape, "sizeX", 2);
-	tonatiuh.SetValue(shape, "sizeY", 2);
+	//tonatiuh.SetValue(shape, "sizeX", 2);
+	//tonatiuh.SetValue(shape, "sizeY", 2);
 	tonatiuh.SetValue(shape, "focusX", focus);
 	tonatiuh.SetValue(shape, "focusY", focus);
 
-	temp = "Specular"
-	tonatiuh.CreateMaterial("Specular");
-	material = path + "/" + temp; 
-	tonatiuh.SetValue(material, "slope", 3);
+	//temp = "Specular"
+	//tonatiuh.CreateMaterial("Specular");
+	//material = path + "/" + temp; 
+	//tonatiuh.SetValue(material, "slope", 3);
 }
 
 var path;
@@ -51,13 +51,13 @@ path = "//Layout";
 path = makeNode(path, "Receiver");
 tonatiuh.SetValue(path, "translation", "0 0 8");
 path = makeShape(path);
-temp = "Plane"
-tonatiuh.CreateShape(temp);
-shape = path + "/" + temp; 
-tonatiuh.SetValue(shape, "sizeX", 3);
-tonatiuh.SetValue(shape, "sizeY", 3);
+//temp = "Plane"
+//tonatiuh.CreateShape(temp);
+//shape = path + "/" + temp; 
+//tonatiuh.SetValue(shape, "sizeX", 3);
+//tonatiuh.SetValue(shape, "sizeY", 3);
 
-path = "//SunNode/Layout";
+path = "//Sun/Layout";
 path = makeNode(path, "Heliostats");
 count = 1;
 for (i = -1; i <= 1; i++)

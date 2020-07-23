@@ -12,7 +12,7 @@
  *
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
-CmdInsertShapeKit::CmdInsertShapeKit(
+CmdCreateShape::CmdCreateShape(
     TShapeKit* node,
     const QModelIndex& parentIndex,
     SceneModel* model,
@@ -39,7 +39,7 @@ CmdInsertShapeKit::CmdInsertShapeKit(
 /*!
  * Destroys the CmdInsertShapeKit object.
  */
-CmdInsertShapeKit::~CmdInsertShapeKit()
+CmdCreateShape::~CmdCreateShape()
 {
     m_node->unref();
 }
@@ -48,7 +48,7 @@ CmdInsertShapeKit::~CmdInsertShapeKit()
  * Reverts model state. After undo() is called, the \a shapekit node will be removed from the parent node.
  * \sa redo().
  */
-void CmdInsertShapeKit::undo()
+void CmdCreateShape::undo()
 {
     m_model->removeCoinNode(m_row, m_nodeParent);
 }
@@ -57,7 +57,7 @@ void CmdInsertShapeKit::undo()
  * Applies a change to the model. After redo() the model will contain new \a shapekit node.
  * \sa undo().
  */
-void CmdInsertShapeKit::redo()
+void CmdCreateShape::redo()
 {
     m_row = m_model->insertCoinNode(m_node, m_nodeParent);
 }
