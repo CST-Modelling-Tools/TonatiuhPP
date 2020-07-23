@@ -1,7 +1,7 @@
 # News #
 
 
-## Tonatiuh ++ is under development! ##
+## Tonatiuh++ is under development! ##
 
 ![Logo](./documentation/SplashScreen.png)
 
