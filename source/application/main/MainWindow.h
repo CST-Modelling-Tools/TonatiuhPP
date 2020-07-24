@@ -42,6 +42,8 @@ class SceneModel;
 struct PhotonsSettings;
 class ProfileFactory;
 class UndoView;
+class NodeObject;
+#include <QScriptValue>
 
 //!  Main window class.
 /*!
@@ -64,34 +66,36 @@ public:
 
     void FinishManipulation();
     void StartManipulation(SoDragger* dragger);
-    void ExecuteScriptFile(QString tonatiuhScriptFile);
+    void ExecuteScriptFile(QString fileName);
 
 public slots:
-    void New();
-    void Open(QString fileName);
-    bool Save();
-    void SaveAs(QString fileName);
-    void SaveComponent(QString componentFileName);
+    void FileNew();
+    void FileOpen(QString fileName);
+    bool FileSave();
+    void FileSaveAs(QString fileName);
+    void SaveComponent(QString fileName);
     void Clear();
 
     void Copy();
-    void Copy(QString nodeURL);
+    void Copy(QString url);
     void Cut();
-    void Cut(QString nodeURL);
+    void Cut(QString url);
     void Delete();
-    void Delete(QString nodeURL);
-    void Paste(QString nodeURL, QString pasteType = "Shared");
+    void Delete(QString url);
+    void Paste(QString url, QString pasteType = "Shared");
     void PasteCopy();
     void PasteLink();
 
-    void CreateNode();
-    void CreateShape();
-    void CreateSurface(QString name);
-    void CreateSurface(QString shapeType, int numberOfParameters, QVector< QVariant > parametersList);
-    void CreateMaterial(QString name);
-    void CreateTracker(QString name);
-    void CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector< QVariant > parametersList);
+    void InsertNode();
+    void InsertShape();
+    void InsertSurface(QString name);
+    void InsertSurface(QString shapeType, int numberOfParameters, QVector<QVariant> parametersList);
+    void InsertProfile(QString name);
+    void InsertMaterial(QString name);
+    void InsertTracker(QString name);
+    void CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector<QVariant> parametersList);
     void InsertFileComponent(QString componentFileName = "");
+    void InsertScene(QScriptValue v);
 
     void Select(QString url);
     void SetName(QString name);
@@ -105,7 +109,7 @@ public slots:
     void SetAirParameter(QString parameter, QString value);
 
     void Run();
-    void RunFluxAnalysis(QString nodeURL, QString surfaceSide, unsigned int nOfRays, int heightDivisions, int widthDivisions, QString directory, QString file, bool saveCoords);
+    void RunFluxAnalysis(QString nodeURL, QString surfaceSide, uint nOfRays, int heightDivisions, int widthDivisions, QString directory, QString file, bool saveCoords);
     void SetExportAllPhotonMap();
     void SetExportCoordinates(bool enabled, bool global);
     void SetExportIntersectionSurface(bool enabled);
@@ -119,42 +123,52 @@ public slots:
     void SetRaysRandomFactory(QString name);
     void SetRaysGrid(int width, int height);
     void SetPhotonBufferSize(uint size) {m_photonBufferSize = size;}
-    void SetPhotonBufferAppend(bool on) { m_photonBufferAppend = on;}
+    void SetPhotonBufferAppend(bool on) {m_photonBufferAppend = on;}
 
 private slots:
     void onAbort(QString error);
-    void CalculateSunPosition();
-    void ChangeGridSettings();
+    void FileOpen();
+    void FileOpenRecent();
+    bool FileSaveAs();
+
     void ChangeNodeName(const QModelIndex& index, const QString& name);
     void ChangeSelection(const QModelIndex& index);
     void CreateComponent(ComponentFactory* factory);
-    void CreateMaterial(MaterialFactory* factory);
-    void CreateSurface(ShapeFactory* factory);
-    void CreateSurface(ShapeFactory* factory, int numberOfParameters, QVector<QVariant> parametersList);
-    void CreateProfile(ProfileFactory* factory);
-    void CreateTracker(TrackerFactory* factory);
+
+    void InsertMaterial(MaterialFactory* factory);
+    void InsertSurface(ShapeFactory* factory);
+    void InsertSurface(ShapeFactory* factory, int numberOfParameters, QVector<QVariant> parametersList);
+    void InsertProfile(ProfileFactory* factory);
+    void InsertTracker(TrackerFactory* factory);
+
     void onSunDialog();
     void onAirDialog();
-    void ShowRays(bool on);
-    void ShowPhotons(bool on);
+    void CalculateSunPosition();
+    void ChangeGridSettings();
+
     void InsertUserDefinedComponent();
     void ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex& node);
     void ItemDragAndDropCopy(const QModelIndex& newParent, const QModelIndex& node);
-    void Open();
-    void OpenRecentFile();
+
+    void Undo();
     void Redo();
+    void ShowCommandView();
+
     void RunCompleteRayTracer();
     void RunFluxAnalysisDialog();
-    bool SaveAs();
+
     bool SaveComponent();
     void SelectionFinish(SoSelection* selection);
     void SetParameterValue(SoNode* node, QString paramenterName, QString value);
     void SetSunPositionCalculatorEnabled(int enabled);
-    void ShowCommandView();
+
     void ShowGrid();
+    void ShowRays(bool on);
+    void ShowPhotons(bool on);
+
     void ShowMenu(const QModelIndex& index);
     void ShowWarning(QString message);
-    void Undo();
+
 
     SbVec3f getTarget(SoCamera* camera);
 
@@ -170,10 +184,8 @@ private slots:
 
     // view actions
     void on_actionViewAxes_toggled();
-
     void on_actionViewAll_triggered();
     void on_actionViewSelected_triggered();
-
     void on_actionViewTop_triggered();
     void on_actionLookNorth_triggered();
     void on_actionLookEast_triggered();
@@ -183,9 +195,8 @@ private slots:
 
     void on_actionQuadView_toggled();
 
-
     // automation menu actions
-    void on_actionOpenScriptEditor_triggered();
+    void on_actionRunScript_triggered();
 
     // help menu actions
     void on_actionAbout_triggered();
@@ -204,7 +215,7 @@ private:
     PhotonsAbstract* CreatePhotonMapExport() const;
     bool Delete(QModelIndex index);
     bool OkToContinue();
-    bool Paste(QModelIndex nodeIndex, tgc::PasteType type);
+    bool Paste(QModelIndex index, tgc::PasteType type);
 
     bool ReadyForRaytracing(InstanceNode*& instanceLayout,
                             InstanceNode*& instanceSun,

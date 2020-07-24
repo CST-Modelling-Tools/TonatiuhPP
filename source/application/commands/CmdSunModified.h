@@ -12,16 +12,16 @@ class SunKit;
   a modificaiton of the light position on the scene or change on the sun shape parameters value.
    \sa CmdLightPositionModified
 */
-class CmdSunKitModified: public QUndoCommand
+class CmdSunModified: public QUndoCommand
 {
 public:
-    CmdSunKitModified(
+    CmdSunModified(
         SunKit* sunKit,
         TSceneKit* sceneKit,
         SceneModel* model,
         QUndoCommand* parent = 0
      );
-    ~CmdSunKitModified();
+    ~CmdSunModified();
 
      void undo();
      void redo();

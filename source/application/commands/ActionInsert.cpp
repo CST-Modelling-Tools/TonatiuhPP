@@ -23,13 +23,13 @@ ActionInsert::ActionInsert(TFactory* factory, QObject* parent):
 void ActionInsert::onTriggered()
 {
     if (ShapeFactory* shape = dynamic_cast<ShapeFactory*>(m_factory))
-        emit CreateSurface(shape);
+        emit InsertSurface(shape);
     else if (ProfileFactory* profile = dynamic_cast<ProfileFactory*>(m_factory))
-        emit CreateProfile(profile);
+        emit InsertProfile(profile);
     else if (MaterialFactory* material = dynamic_cast<MaterialFactory*>(m_factory))
-        emit CreateMaterial(material);
+        emit InsertMaterial(material);
     else if (TrackerFactory* tracker = dynamic_cast<TrackerFactory*>(m_factory))
-        emit CreateTracker(tracker);
+        emit InsertTracker(tracker);
     else if (ComponentFactory* component = dynamic_cast<ComponentFactory*>(m_factory))
-        emit CreateComponent(component);
+        emit InsertComponent(component);
 }

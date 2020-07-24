@@ -1,4 +1,4 @@
-#include "CmdLightKitModified.h"
+#include "CmdSunModified.h"
 
 #include <Inventor/nodekits/SoSceneKit.h>
 
@@ -12,7 +12,7 @@
  *
  * If the model has not previous light a light node is added to \a sceneModel.
  */
-CmdSunKitModified::CmdSunKitModified(SunKit* sunKit,
+CmdSunModified::CmdSunModified(SunKit* sunKit,
     TSceneKit* sceneKit,
     SceneModel* model,
     QUndoCommand* parent
@@ -35,7 +35,7 @@ CmdSunKitModified::CmdSunKitModified(SunKit* sunKit,
     }
 }
 
-CmdSunKitModified::~CmdSunKitModified()
+CmdSunModified::~CmdSunModified()
 {
     m_sunKitOld->unref();
     m_sunKit->unref();
@@ -45,7 +45,7 @@ CmdSunKitModified::~CmdSunKitModified()
  * Reverts to the previous light. After undo() is called, the state of the scene will be the same as before redo() was called.
  *  * \sa redo().
  */
-void CmdSunKitModified::undo()
+void CmdSunModified::undo()
 {
     m_model->insertSunNode(m_sunKitOld);
 }
@@ -54,7 +54,7 @@ void CmdSunKitModified::undo()
  * Applies a change to the light. After redo() scene will contain the light with the new definition.
  * \sa undo().
  */
-void CmdSunKitModified::redo()
+void CmdSunModified::redo()
 {
     m_model->insertSunNode(m_sunKit);
 }

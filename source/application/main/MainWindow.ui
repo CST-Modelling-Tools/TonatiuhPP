@@ -60,15 +60,15 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <addaction name="actionUndo"/>
-    <addaction name="actionRedo"/>
-    <addaction name="actionUndoView"/>
+    <addaction name="actionEditUndo"/>
+    <addaction name="actionEditRedo"/>
+    <addaction name="actionEditUndoView"/>
     <addaction name="separator"/>
-    <addaction name="actionCut"/>
-    <addaction name="actionCopy"/>
-    <addaction name="actionPasteCopy"/>
-    <addaction name="actionPasteLink"/>
-    <addaction name="actionDelete"/>
+    <addaction name="actionEditCut"/>
+    <addaction name="actionEditCopy"/>
+    <addaction name="actionEditPaste"/>
+    <addaction name="actionEditPasteLink"/>
+    <addaction name="actionEditDelete"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -79,14 +79,14 @@
       <string>&amp;Recent</string>
      </property>
     </widget>
-    <addaction name="actionNew"/>
-    <addaction name="actionOpen"/>
+    <addaction name="actionFileNew"/>
+    <addaction name="actionFileOpen"/>
     <addaction name="menuRecent"/>
     <addaction name="separator"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionSaveAs"/>
+    <addaction name="actionFileSave"/>
+    <addaction name="actionFileSaveAs"/>
     <addaction name="separator"/>
-    <addaction name="actionClose"/>
+    <addaction name="actionFileExit"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -102,9 +102,7 @@
      <addaction name="actionLookSouth"/>
      <addaction name="actionLookWest"/>
     </widget>
-    <addaction name="actionViewBackground"/>
     <addaction name="actionViewGrid"/>
-    <addaction name="separator"/>
     <addaction name="actionViewRays"/>
     <addaction name="actionViewPhotons"/>
     <addaction name="separator"/>
@@ -146,8 +144,8 @@
       <string>Profile</string>
      </property>
     </widget>
-    <addaction name="actionNode"/>
-    <addaction name="actionShape"/>
+    <addaction name="actionInsertNode"/>
+    <addaction name="actionInsertShape"/>
     <addaction name="separator"/>
     <addaction name="menuShape"/>
     <addaction name="menuProfile"/>
@@ -160,10 +158,10 @@
     <property name="title">
      <string>&amp;Scene</string>
     </property>
-    <addaction name="actionDefineSunLight"/>
-    <addaction name="actionCalculateSunPosition"/>
-    <addaction name="actionDefineTransmissivity"/>
-    <addaction name="actionGridSettings"/>
+    <addaction name="actionSceneSun"/>
+    <addaction name="actionSceneSunCalculator"/>
+    <addaction name="actionSceneAir"/>
+    <addaction name="actionSceneGrid"/>
     <addaction name="separator"/>
     <addaction name="actionUserComponent"/>
     <addaction name="actionSaveComponent"/>
@@ -177,13 +175,13 @@
      <property name="title">
       <string>Test</string>
      </property>
-     <addaction name="actionTestA"/>
-     <addaction name="actionTestB"/>
-     <addaction name="actionTestC"/>
+     <addaction name="actionRunTestA"/>
+     <addaction name="actionRunTestB"/>
+     <addaction name="actionRunTestC"/>
     </widget>
     <addaction name="actionRun"/>
-    <addaction name="actionRunFluxAnalysis"/>
-    <addaction name="actionOpenScriptEditor"/>
+    <addaction name="actionRunFlux"/>
+    <addaction name="actionRunScript"/>
     <addaction name="menuTest"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -211,10 +209,10 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionNew"/>
-   <addaction name="actionOpen"/>
-   <addaction name="actionSave"/>
-   <addaction name="actionSaveAs"/>
+   <addaction name="actionFileNew"/>
+   <addaction name="actionFileOpen"/>
+   <addaction name="actionFileSave"/>
+   <addaction name="actionFileSaveAs"/>
   </widget>
   <widget class="QToolBar" name="editToolBar">
    <property name="windowTitle">
@@ -229,15 +227,15 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionUndo"/>
-   <addaction name="actionRedo"/>
-   <addaction name="actionUndoView"/>
+   <addaction name="actionEditUndo"/>
+   <addaction name="actionEditRedo"/>
+   <addaction name="actionEditUndoView"/>
    <addaction name="separator"/>
-   <addaction name="actionCut"/>
-   <addaction name="actionCopy"/>
-   <addaction name="actionPasteCopy"/>
-   <addaction name="actionPasteLink"/>
-   <addaction name="actionDelete"/>
+   <addaction name="actionEditCut"/>
+   <addaction name="actionEditCopy"/>
+   <addaction name="actionEditPaste"/>
+   <addaction name="actionEditPasteLink"/>
+   <addaction name="actionEditDelete"/>
   </widget>
   <widget class="QToolBar" name="sceneToolBar">
    <property name="windowTitle">
@@ -249,8 +247,8 @@
    <attribute name="toolBarBreak">
     <bool>true</bool>
    </attribute>
-   <addaction name="actionDefineSunLight"/>
-   <addaction name="actionDefineTransmissivity"/>
+   <addaction name="actionSceneSun"/>
+   <addaction name="actionSceneAir"/>
   </widget>
   <widget class="QToolBar" name="insertToolBar">
    <property name="windowTitle">
@@ -262,8 +260,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionNode"/>
-   <addaction name="actionShape"/>
+   <addaction name="actionInsertNode"/>
+   <addaction name="actionInsertShape"/>
   </widget>
   <widget class="QToolBar" name="viewToolBar">
    <property name="windowTitle">
@@ -289,10 +287,10 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionRun"/>
-   <addaction name="actionRunFluxAnalysis"/>
-   <addaction name="actionOpenScriptEditor"/>
+   <addaction name="actionRunFlux"/>
+   <addaction name="actionRunScript"/>
   </widget>
-  <action name="actionNew">
+  <action name="actionFileNew">
    <property name="icon">
     <iconset resource="../resources.qrc">
      <normaloff>:/images/file/new.png</normaloff>:/images/file/new.png</iconset>
@@ -304,7 +302,7 @@
     <string>Ctrl+N</string>
    </property>
   </action>
-  <action name="actionOpen">
+  <action name="actionFileOpen">
    <property name="icon">
     <iconset resource="../resources.qrc">
      <normaloff>:/images/file/open.png</normaloff>:/images/file/open.png</iconset>
@@ -316,7 +314,7 @@
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="actionSave">
+  <action name="actionFileSave">
    <property name="icon">
     <iconset resource="../resources.qrc">
      <normaloff>:/images/file/save.png</normaloff>:/images/file/save.png</iconset>
@@ -328,7 +326,7 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="actionSaveAs">
+  <action name="actionFileSaveAs">
    <property name="icon">
     <iconset resource="../resources.qrc">
      <normaloff>:/images/file/saveas.png</normaloff>:/images/file/saveas.png</iconset>
@@ -340,7 +338,7 @@
     <string>Ctrl+Alt+S</string>
    </property>
   </action>
-  <action name="actionClose">
+  <action name="actionFileExit">
    <property name="icon">
     <iconset resource="../resources.qrc">
      <normaloff>:/images/file/close.png</normaloff>:/images/file/close.png</iconset>
@@ -349,7 +347,7 @@
     <string>E&amp;xit</string>
    </property>
   </action>
-  <action name="actionUndo">
+  <action name="actionEditUndo">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -364,7 +362,7 @@
     <string>Ctrl+Z</string>
    </property>
   </action>
-  <action name="actionRedo">
+  <action name="actionEditRedo">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -379,7 +377,16 @@
     <string>Ctrl+Shift+Z</string>
    </property>
   </action>
-  <action name="actionCut">
+  <action name="actionEditUndoView">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/edit/undoList.png</normaloff>:/images/edit/undoList.png</iconset>
+   </property>
+   <property name="text">
+    <string>Undo List...</string>
+   </property>
+  </action>
+  <action name="actionEditCut">
    <property name="icon">
     <iconset resource="../resources.qrc">
      <normaloff>:/images/edit/cut.png</normaloff>:/images/edit/cut.png</iconset>
@@ -391,7 +398,7 @@
     <string>Ctrl+X</string>
    </property>
   </action>
-  <action name="actionCopy">
+  <action name="actionEditCopy">
    <property name="icon">
     <iconset resource="../resources.qrc">
      <normaloff>:/images/edit/copy.png</normaloff>:/images/edit/copy.png</iconset>
@@ -403,7 +410,7 @@
     <string>Ctrl+C</string>
    </property>
   </action>
-  <action name="actionPasteCopy">
+  <action name="actionEditPaste">
    <property name="icon">
     <iconset resource="../resources.qrc">
      <normaloff>:/images/edit/paste.png</normaloff>:/images/edit/paste.png</iconset>
@@ -418,7 +425,7 @@
     <string>Ctrl+V</string>
    </property>
   </action>
-  <action name="actionPasteLink">
+  <action name="actionEditPasteLink">
    <property name="icon">
     <iconset resource="../resources.qrc">
      <normaloff>:/images/edit/pasteLink.png</normaloff>:/images/edit/pasteLink.png</iconset>
@@ -433,7 +440,7 @@
     <string>Ctrl+Shift+V</string>
    </property>
   </action>
-  <action name="actionDelete">
+  <action name="actionEditDelete">
    <property name="icon">
     <iconset resource="../resources.qrc">
      <normaloff>:/images/edit/delete.png</normaloff>:/images/edit/delete.png</iconset>
@@ -445,16 +452,45 @@
     <string>Del</string>
    </property>
   </action>
-  <action name="actionUndoView">
+  <action name="actionSceneSun">
    <property name="icon">
     <iconset resource="../resources.qrc">
-     <normaloff>:/images/edit/undoList.png</normaloff>:/images/edit/undoList.png</iconset>
+     <normaloff>:/images/scene/environmentSun.png</normaloff>:/images/scene/environmentSun.png</iconset>
    </property>
    <property name="text">
-    <string>Undo...</string>
+    <string>Sun...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
    </property>
   </action>
-  <action name="actionNode">
+  <action name="actionSceneSunCalculator">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Sun Calculator...</string>
+   </property>
+  </action>
+  <action name="actionSceneAir">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/scene/environmentAir.png</normaloff>:/images/scene/environmentAir.png</iconset>
+   </property>
+   <property name="text">
+    <string>Air...</string>
+   </property>
+  </action>
+  <action name="actionSceneGrid">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/view/viewGrid.png</normaloff>:/images/view/viewGrid.png</iconset>
+   </property>
+   <property name="text">
+    <string>Grid...</string>
+   </property>
+  </action>
+  <action name="actionInsertNode">
    <property name="icon">
     <iconset resource="../resources.qrc">
      <normaloff>:/images/scene/nodeGroup.png</normaloff>:/images/scene/nodeGroup.png</iconset>
@@ -463,11 +499,10 @@
     <string>Node</string>
    </property>
    <property name="toolTip">
-    <string>Node
-CreateNode()</string>
+    <string>Node</string>
    </property>
   </action>
-  <action name="actionShape">
+  <action name="actionInsertShape">
    <property name="icon">
     <iconset resource="../resources.qrc">
      <normaloff>:/images/scene/nodeShape.png</normaloff>:/images/scene/nodeShape.png</iconset>
@@ -476,8 +511,7 @@ CreateNode()</string>
     <string>Shape</string>
    </property>
    <property name="toolTip">
-    <string>Shape
-CreateShape()</string>
+    <string>Shape</string>
    </property>
   </action>
   <action name="actionViewAxes">
@@ -497,17 +531,6 @@ CreateShape()</string>
     <string>Draw Shape Local Axis</string>
    </property>
   </action>
-  <action name="actionViewBackground">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Background</string>
-   </property>
-  </action>
   <action name="actionViewGrid">
    <property name="checkable">
     <bool>true</bool>
@@ -522,15 +545,6 @@ CreateShape()</string>
     <string>Ctrl+Shift+G</string>
    </property>
   </action>
-  <action name="actionGridSettings">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/images/view/viewGrid.png</normaloff>:/images/view/viewGrid.png</iconset>
-   </property>
-   <property name="text">
-    <string>Grid...</string>
-   </property>
-  </action>
   <action name="actionViewRays">
    <property name="checkable">
     <bool>true</bool>
@@ -543,6 +557,17 @@ CreateShape()</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+R</string>
+   </property>
+  </action>
+  <action name="actionViewPhotons">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Photons</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+P</string>
    </property>
   </action>
   <action name="actionViewAll">
@@ -617,35 +642,6 @@ CreateShape()</string>
     <string>Ctrl+0</string>
    </property>
   </action>
-  <action name="actionDefineSunLight">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/images/scene/environmentSun.png</normaloff>:/images/scene/environmentSun.png</iconset>
-   </property>
-   <property name="text">
-    <string>Sun...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+L</string>
-   </property>
-  </action>
-  <action name="actionCalculateSunPosition">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Sun Calculator...</string>
-   </property>
-  </action>
-  <action name="actionDefineTransmissivity">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/images/scene/environmentAir.png</normaloff>:/images/scene/environmentAir.png</iconset>
-   </property>
-   <property name="text">
-    <string>Air...</string>
-   </property>
-  </action>
   <action name="actionQuadView">
    <property name="checkable">
     <bool>true</bool>
@@ -666,27 +662,13 @@ CreateShape()</string>
     <string>Ctrl+R</string>
    </property>
   </action>
-  <action name="actionRayTraceOptions">
-   <property name="text">
-    <string>Ray Tracing Options...</string>
-   </property>
-  </action>
-  <action name="actionRunFluxAnalysis">
+  <action name="actionRunFlux">
    <property name="icon">
     <iconset resource="../resources.qrc">
      <normaloff>:/images/run/runFluxAnalysis.png</normaloff>:/images/run/runFluxAnalysis.png</iconset>
    </property>
    <property name="text">
     <string>Flux Analysis...</string>
-   </property>
-  </action>
-  <action name="actionExportPhotonMap">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/images/export.png</normaloff>:/images/export.png</iconset>
-   </property>
-   <property name="text">
-    <string>Export PhotonMap</string>
    </property>
   </action>
   <action name="actionUserComponent">
@@ -704,7 +686,7 @@ CreateShape()</string>
     <string>About...</string>
    </property>
   </action>
-  <action name="actionOpenScriptEditor">
+  <action name="actionRunScript">
    <property name="icon">
     <iconset resource="../resources.qrc">
      <normaloff>:/images/run/runScript.png</normaloff>:/images/run/runScript.png</iconset>
@@ -737,30 +719,19 @@ CreateShape()</string>
     <string>Network Connections...</string>
    </property>
   </action>
-  <action name="actionTestA">
+  <action name="actionRunTestA">
    <property name="text">
     <string>A</string>
    </property>
   </action>
-  <action name="actionTestB">
+  <action name="actionRunTestB">
    <property name="text">
     <string>B</string>
    </property>
   </action>
-  <action name="actionTestC">
+  <action name="actionRunTestC">
    <property name="text">
     <string>C</string>
-   </property>
-  </action>
-  <action name="actionViewPhotons">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Photons</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+P</string>
    </property>
   </action>
  </widget>
@@ -785,7 +756,7 @@ CreateShape()</string>
   <connection>
    <sender>actionViewGrid</sender>
    <signal>toggled(bool)</signal>
-   <receiver>actionGridSettings</receiver>
+   <receiver>actionSceneGrid</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">

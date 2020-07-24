@@ -1,5 +1,5 @@
 #include "ScriptEditorDialog.h"
-#include "ui_scripteditordialog.h"
+#include "ui_ScriptEditorDialog.h"
 
 #include <iostream>
 #include <stdio.h>
@@ -12,8 +12,10 @@
 #include "ScriptRayTracer.h"
 #include "tonatiuh_script.h"
 
-
 Q_DECLARE_METATYPE(QVector<QVariant>)
+
+#include "NodeObject.h"
+Q_SCRIPT_DECLARE_QMETAOBJECT(NodeObject, QObject*)
 
 /**
  * Creates a dialog to edit scripts and run them. The list \a listRandomFactory is
@@ -63,11 +65,12 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory
     connect(ui->runButton, SIGNAL(clicked(bool)), this, SLOT(RunScript()) );
     connect(ui->closeButton, SIGNAL(clicked(bool)), this, SLOT(close()) );
     connect(parent, SIGNAL(Abort(QString)), this, SLOT(AbortEvaluation(QString)) );
+
+
+    QScriptValue nodeObjectClass = m_interpreter->scriptValueFromQMetaObject<NodeObject>();
+    m_interpreter->globalObject().setProperty("NodeObject", nodeObjectClass);
 }
 
-/**
- * Destroys the file dialog.
- */
 ScriptEditorDialog::~ScriptEditorDialog()
 {
     delete ui;

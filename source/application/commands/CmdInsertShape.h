@@ -1,32 +1,33 @@
 #pragma once
-
 #include <QUndoCommand>
 
-class SceneModel;
 class TShapeKit;
-class SoNode;
+class QModelIndex;
+class SoBaseKit;
+class SceneModel;
 
-//!  CmdInsertShape class is the insert command for shapes stored in the command stack.
+//!  CmdInsertShapeKit class is the insert command for tshapekit nodes  stored in the command stack.
 /*!
-   CmdInsertShape represents a single shape insertion action on a scene, insert a new shape node to the scene.
- */
+  CmdInsertShapeKit represents a single tshapekit insertion action on a scene, insert a new tshapekit node to the scene.
+*/
 
 class CmdInsertShape: public QUndoCommand
 {
 public:
-    CmdInsertShape(TShapeKit* kit,
-        SoNode* node,
+    CmdInsertShape(
+        TShapeKit* node,
+        const QModelIndex& parentIndex,
         SceneModel* model,
         QUndoCommand* parent = 0
-    );
+     );
     ~CmdInsertShape();
 
     void undo();
     void redo();
 
 private:
-    TShapeKit* m_kit;
-    SoNode* m_nodeOld;
-    SoNode* m_node;
+    TShapeKit* m_node;
+    SoBaseKit* m_nodeParent;
     SceneModel* m_model;
+    int m_row;
 };

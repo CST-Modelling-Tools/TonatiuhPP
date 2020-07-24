@@ -33,6 +33,10 @@ SoGroup* GroundGrid::makeGrid(
     SoSwitch* ans = new SoSwitch;
     ans->setName("grid");
 
+    SoTransform* transform = new SoTransform;
+    transform->translation.setValue(0., 0., -0.001);
+    ans->addChild(transform);
+
     double dx = step;
 
     int nxMin = floor(xMin/dx);
