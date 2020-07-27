@@ -30,6 +30,8 @@ TSceneKit::TSceneKit()
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(air, Air, AirVacuum, TRUE, topSeparator, "", TRUE);
     SO_KIT_INIT_INSTANCE();
 
+    setSearchingChildren(true); //?
+
     SunKit* sunKit = new SunKit;
     setPart("lightList[0]", sunKit);
     setPart("air", new AirVacuum);

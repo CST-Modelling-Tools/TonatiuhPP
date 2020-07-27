@@ -26,8 +26,6 @@ void Document::New()
 {
     if (m_scene) ClearScene();
     m_scene = new TSceneKit;
-//    m_scene->ref();
-    m_scene->setSearchingChildren(true);
     m_isModified = false;
 }
 
@@ -38,7 +36,7 @@ bool Document::ReadFile(const QString& fileName)
 {
     SoInput input;
 
-    if (!input.openFile(fileName.toLatin1().constData() ) )
+    if (!input.openFile(fileName.toLatin1().data()))
     {
         QString message = QString("Cannot open file %1.").arg(fileName);
         emit Warning(message);
@@ -52,22 +50,21 @@ bool Document::ReadFile(const QString& fileName)
         return false;
     }
 
-    SoSeparator* spearator = SoDB::readAll(&input);
+    SoSeparator* separator = SoDB::readAll(&input);
     input.closeFile();
 
-    if (!spearator)
+    if (!separator)
     {
         QString message = QString("Error reading file %1.\n").arg(fileName);
         emit Warning(message);
         return false;
     }
 
-    TSceneKit* scene = dynamic_cast<TSceneKit*>(spearator->getChild(0));
+    TSceneKit* scene = dynamic_cast<TSceneKit*>(separator->getChild(0));
     if (!scene) return false;
 
     if (m_scene) ClearScene();
     m_scene = scene;
-    m_scene->setSearchingChildren(true);
     m_isModified = false;
     return true;
 }
@@ -93,7 +90,7 @@ bool Document::WriteFile(const QString& fileName)
     if (fileName.endsWith(".tnh")) // normal
         action.apply(m_scene);
     else if (fileName.endsWith(".tnhd")) // debug
-        action.apply(m_scene->m_root);
+        action.apply(m_root);
 
     action.getOutput()->closeFile();
     QApplication::restoreOverrideCursor();
@@ -107,10 +104,8 @@ bool Document::WriteFile(const QString& fileName)
  */
 void Document::ClearScene()
 {
-    if (m_scene)
-        while (m_scene->getRefCount() > 1)
-            m_scene->unref();
-
-    m_scene = 0;
+    while (m_scene->getRefCount() > 1) //? >=
+        m_scene->unref();
+//    m_scene = 0;
 }
 

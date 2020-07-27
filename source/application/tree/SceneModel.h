@@ -14,7 +14,7 @@ class SunKit;
 class TSeparatorKit;
 class TSceneKit;
 class TShapeKit;
-
+class Document;
 
 class SceneModel: public QAbstractItemModel
 {
@@ -24,10 +24,9 @@ public:
     SceneModel(QObject* parent = 0);
     ~SceneModel();
 
-    void Clear();
+    void clear();
 
-    void setSceneRoot(SoSeparator& coinRoot);
-    void setSceneKit(TSceneKit& coinScene);
+    void setDocument(Document* document);
     TSceneKit* getSceneKit() const {return m_nodeScene;}
 
     QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const;

@@ -28,10 +28,12 @@ GraphicView::~GraphicView()
 }
 
 #include <Inventor/nodes/SoPerspectiveCamera.h>
-void GraphicView::SetSceneGraph(GraphicRoot* sceneGraphRoot)
+void GraphicView::setSceneGraph(GraphicRoot* sceneGraphRoot)
 {
-    m_graphicRoot = sceneGraphRoot;
     m_viewer = new SoQtExaminerViewer(this);
+
+    m_graphicRoot = sceneGraphRoot;
+    m_viewer->setSceneGraph(m_graphicRoot->getRoot());
 
     SoBoxHighlightRenderAction* highlighter = new SoBoxHighlightRenderAction();
     highlighter->setColor(SbColor(100/255., 180/255., 120/255.));
@@ -39,15 +41,13 @@ void GraphicView::SetSceneGraph(GraphicRoot* sceneGraphRoot)
     m_viewer->setGLRenderAction(highlighter);
 
     m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
-    m_viewer->setSceneGraph(m_graphicRoot->getRoot() );
 
 //    SoPerspectiveCamera* camera = dynamic_cast<SoPerspectiveCamera*>(m_myRenderArea->getCamera());
 //    camera->scaleHeight(-1.); // left-handed to right-handed
 
-    ViewCoordinateSystem(true);
+    showAxes(true);
     m_viewer->setHeadlight(false);
     m_viewer->setAntialiasing(true, 1); // disable if slow
-
 //    m_viewer->
 }
 
@@ -71,19 +71,19 @@ void GraphicView::scrollTo(const QModelIndex& /*index*/, ScrollHint /*hint*/)
 
 }
 
-QRect GraphicView::visualRect (const QModelIndex& /*index*/) const
+QRect GraphicView::visualRect(const QModelIndex& /*index*/) const
 {
     return QRect();
 }
 
-void GraphicView::ViewCoordinateSystem(bool view)
+void GraphicView::showAxes(bool on)
 {
-    m_viewer->setFeedbackVisibility(view);
+    m_viewer->setFeedbackVisibility(on);
 }
 
-void GraphicView::ViewDecoration(bool view)
+void GraphicView::showDecoration(bool on)
 {
-    m_viewer->setDecoration(view);
+    m_viewer->setDecoration(on);
 }
 
 void GraphicView::dataChanged(const QModelIndex& /*topLeft*/, const QModelIndex& /*bottomRight*/)

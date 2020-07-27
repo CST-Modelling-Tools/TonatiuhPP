@@ -9,6 +9,7 @@
 
 #include "GraphicRoot.h"
 #include "kernel/scene/TSceneKit.h"
+#include "main/Document.h"
 #include "SkyBackground.h"
 
 /*
@@ -61,15 +62,16 @@ GraphicRoot::~GraphicRoot()
     m_root->unref();
 }
 
-void GraphicRoot::addScene(TSceneKit* sceneKit)
+void GraphicRoot::setDocument(Document* document)
 {
-    if (!sceneKit) return;
-    m_selection->addChild(sceneKit);
-    sceneKit->m_root = m_root; // cycle?
+    if (!document->getSceneKit()) return;
+    m_selection->addChild(document->getSceneKit());
+    document->m_root = m_root;
 }
 
 void GraphicRoot::removeScene()
 {
+    m_rays->removeAllChildren();
     m_selection->removeAllChildren();
 }
 

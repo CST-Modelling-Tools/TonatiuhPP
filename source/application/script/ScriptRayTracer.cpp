@@ -222,7 +222,7 @@ int ScriptRayTracer::SetTonatiuhModelFile(QString filename)
 
     delete m_sceneModel;
     m_sceneModel = new SceneModel;
-    m_sceneModel->setSceneKit(*m_document->getSceneKit());
+    m_sceneModel->setDocument(m_document);
 
     return 1;
 }

@@ -228,8 +228,6 @@ private:
 
     void SetupActions();
     void SetupDocument();
-    void SetupGraphicsRoot();
-    void SetupModels();
 
     void SetupViews();
     void SetupUndoView();
@@ -261,22 +259,21 @@ private:
 
     static const int m_maxRecentFiles = 7;
     QStringList m_recentFiles;
-    QVector<QAction*> m_recentFileActions;
+    QList<QAction*> m_recentFileActions;
+    QString m_currentFile;
 
     QUndoStack* m_undoStack;
     UndoView* m_undoView;
 
-    QString m_currentFile;
     Document* m_document;
-
-    SceneModel* m_sceneModel;
-    QItemSelectionModel* m_selectionModel;
+    GraphicRoot* m_graphicsRoot;
+    SceneModel* m_modelScene;
+    QItemSelectionModel* m_modelSelection;
 
     QString m_lastExportFileName;
     QString m_lastExportSurfaceUrl;
     bool m_lastExportInGlobal;
 
-    GraphicRoot* m_graphicsRoot;
     SoNode* m_coinNode_Buffer;
     QStringList* m_manipulators_Buffer;
 

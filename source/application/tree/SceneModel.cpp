@@ -22,6 +22,7 @@
 #include "kernel/trackers/Tracker.h"
 #include "libraries/math/gcf.h"
 #include "tree/SoPathVariant.h"
+#include "main/Document.h"
 
 /*!
  * Creates an empty model.
@@ -35,12 +36,9 @@ SceneModel::SceneModel(QObject* parent):
 
 }
 
-/*!
- * Destroys the model.
- */
 SceneModel::~SceneModel()
 {
-    Clear();
+    clear();
 }
 
 /*!
@@ -48,7 +46,7 @@ SceneModel::~SceneModel()
  *
  * Clears nodes from the model.
  */
-void SceneModel::Clear()
+void SceneModel::clear()
 {
     deleteInstanceTree(m_instanceScene);
 
@@ -57,25 +55,18 @@ void SceneModel::Clear()
 }
 
 /*!
- * Sets \a coinRoot as the model root.
- */
-void SceneModel::setSceneRoot(SoSeparator& coinRoot)
-{
-    m_nodeRoot = &coinRoot;
-}
-
-/*!
  * Sets the model scene to the given \a coinScene.
  *
  * Creates nodes for the model to the scene subnodes.
  */
-void SceneModel::setSceneKit(TSceneKit& coinScene)
+void SceneModel::setDocument(Document* document)
 {
     beginResetModel();
 
-    m_nodeScene = &coinScene;
+    m_nodeRoot = document->m_root;
+    m_nodeScene = document->getSceneKit();
     m_mapCoinQt.clear();
-    if (m_instanceScene) Clear();
+    if (m_instanceScene) clear();
     initScene();
 
     endResetModel();
@@ -89,18 +80,18 @@ void SceneModel::initScene()
     if (SunKit* sunKit = static_cast<SunKit*>(m_nodeScene->getPart("lightList[0]", false)))
         insertSunNode(sunKit);
 
-    SoGroup* coinPartList = (SoGroup*) m_nodeScene->getPart("group", true);
-    if (coinPartList->getNumChildren() == 0)
+    SoGroup* group = (SoGroup*) m_nodeScene->getPart("group", true);
+    if (group->getNumChildren() == 0)
     {
-        TSeparatorKit* nodeLayout = new TSeparatorKit();
+        TSeparatorKit* nodeLayout = new TSeparatorKit;
         nodeLayout->setName("Layout");
-        nodeLayout->setSearchingChildren(true);
-        coinPartList->addChild(nodeLayout);
+//        nodeLayout->setSearchingChildren(true);
+        group->addChild(nodeLayout);
         m_instanceLayout = addInstanceNode(m_instanceScene, nodeLayout);
     }
     else
     {
-        TSeparatorKit* nodeLayout = static_cast<TSeparatorKit*>(coinPartList->getChild(0));
+        TSeparatorKit* nodeLayout = static_cast<TSeparatorKit*>(group->getChild(0));
         if (!nodeLayout) return;
         m_instanceLayout = addInstanceNode(m_instanceScene, nodeLayout);
         generateInstanceTree(m_instanceLayout);

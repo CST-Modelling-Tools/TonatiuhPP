@@ -24,8 +24,6 @@ public:
 
     void updateTrackers();
 
-    SoSeparator* m_root; // graphicRoot
-
 protected:
     ~TSceneKit() {}
     void updateTrackers(TSeparatorKit* parent, Transform t, const vec3d& vSun);

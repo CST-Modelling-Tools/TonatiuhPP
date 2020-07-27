@@ -23,7 +23,7 @@ public:
     GraphicView(QWidget* parent = 0);
     ~GraphicView();
 
-    void SetSceneGraph(GraphicRoot* sceneGraphRoot);
+    void setSceneGraph(GraphicRoot* sceneGraphRoot);
 
     SbViewportRegion GetViewportRegion() const;
     SoCamera* getCamera() const;
@@ -31,8 +31,8 @@ public:
     virtual void scrollTo(const QModelIndex& index, ScrollHint hint = EnsureVisible);
     virtual QRect visualRect(const QModelIndex& index) const;
 
-    void ViewDecoration(bool view);
-    void ViewCoordinateSystem(bool view);
+    void showDecoration(bool on);
+    void showAxes(bool on);
 
 protected slots:
     void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);

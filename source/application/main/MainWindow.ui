@@ -74,14 +74,14 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <widget class="QMenu" name="menuRecent">
+    <widget class="QMenu" name="menuFileRecent">
      <property name="title">
       <string>&amp;Recent</string>
      </property>
     </widget>
     <addaction name="actionFileNew"/>
     <addaction name="actionFileOpen"/>
-    <addaction name="menuRecent"/>
+    <addaction name="menuFileRecent"/>
     <addaction name="separator"/>
     <addaction name="actionFileSave"/>
     <addaction name="actionFileSaveAs"/>
@@ -199,7 +199,7 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QToolBar" name="fileToolBar">
+  <widget class="QToolBar" name="toolbarFile">
    <property name="windowTitle">
     <string>File</string>
    </property>
@@ -214,7 +214,7 @@
    <addaction name="actionFileSave"/>
    <addaction name="actionFileSaveAs"/>
   </widget>
-  <widget class="QToolBar" name="editToolBar">
+  <widget class="QToolBar" name="toolbarEdit">
    <property name="windowTitle">
     <string>Edit</string>
    </property>

@@ -6,7 +6,7 @@ class QString;
 class SoSelection;
 class SoSeparator;
 class TSceneKit;
-class TShapeKit;
+class GraphicRoot;
 
 
 class Document: public QObject
@@ -34,5 +34,8 @@ private:
 
     TSceneKit* m_scene;
     bool m_isModified;
+
+public:
+    SoSeparator* m_root;
 };
 

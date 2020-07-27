@@ -5,7 +5,7 @@
 class SoSeparator;
 class SoSelection;
 class SoPath;
-class TSceneKit;
+class Document;
 
 
 class GraphicRoot: public QObject
@@ -17,7 +17,7 @@ public:
     ~GraphicRoot();
 
     SoSeparator* getRoot() const {return m_root;}
-    void addScene(TSceneKit* sceneKit);
+    void setDocument(Document* document);
     void removeScene();
 
     SoSeparator* grid() {return m_grid;}
