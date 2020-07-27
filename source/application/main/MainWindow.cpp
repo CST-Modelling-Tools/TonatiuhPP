@@ -182,14 +182,11 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
     if (splash) splash->showMessage("Opening file", splashAlignment);
 //    qDebug() << "layout " << m_modelScene->getInstance(m_modelScene->indexFromUrl("//Layout"))->getNode()->getRefCount();
     qDebug() << "counter " << m_document->getSceneKit()->getRefCount();
-    qDebug() << "counter2 " << m_document->getSceneKit()->getRefCount();
 
     if (!tonatiuhFile.isEmpty()) {
         StartOver(tonatiuhFile);
     } else {
-            qDebug() << "counter3 " << m_document->getSceneKit()->getRefCount();
         SetCurrentFile("");
-            qDebug() << "counter4 " << m_document->getSceneKit()->getRefCount();
 //        ui->actionViewGrid->trigger();
 //        ui->actionViewGrid->setChecked(true);
         ShowGrid();
@@ -205,11 +202,11 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
 
     Select("//Layout");
 
-        qDebug() << "layout " << m_modelScene->getInstance(m_modelScene->indexFromUrl("//Layout"))->getNode()->getRefCount();
+    qDebug() << "layout " << m_modelScene->getInstance(m_modelScene->indexFromUrl("//Layout"))->getNode()->getRefCount();
 
-//        m_graphicsRoot->deselectAll();
-         qDebug() << "counter " << m_document->getSceneKit()->getRefCount();
-        qDebug() << "layout " << m_modelScene->getInstance(m_modelScene->indexFromUrl("//Layout"))->getNode()->getRefCount();
+//    m_graphicsRoot->deselectAll();
+    qDebug() << "counter " << m_document->getSceneKit()->getRefCount();
+    qDebug() << "layout " << m_modelScene->getInstance(m_modelScene->indexFromUrl("//Layout"))->getNode()->getRefCount();
 
     ui->toolbarFile->hide();
     ui->toolbarEdit->hide();
@@ -2640,8 +2637,8 @@ void MainWindow::mousePressEvent(QMouseEvent* e)
  */
 void MainWindow::ChangeModelScene()
 {
-    m_modelScene->setDocument(m_document);
     m_graphicsRoot->setDocument(m_document);
+    m_modelScene->setDocument(m_document);
 
     QModelIndex viewLayoutIndex = m_modelScene->indexFromUrl("");
     InstanceNode* viewLayout = m_modelScene->getInstance(viewLayoutIndex);
