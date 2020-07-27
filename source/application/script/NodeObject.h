@@ -5,6 +5,8 @@
 #include <QScriptValue>
 #include <Inventor/nodes/SoNode.h>
 
+class PluginManager;
+
 
 class NodeObject: public QObject, protected QScriptable
 {
@@ -15,13 +17,22 @@ public:
 
     SoNode* getNode() const {return m_node;}
 
+    static void setPlugins(PluginManager* plugins) {m_plugins = plugins;}
+
 public slots:
-    QScriptValue createNode();
+    QScriptValue createNode(const QString& name = "");
     QScriptValue createShape();
+
+    QScriptValue insertSurface(const QString& name = "");
+    QScriptValue insertProfile(const QString& name = "");
+    QScriptValue insertMaterial(const QString& name = "");
+    QScriptValue insertTracker(const QString& name = "");
+
     void setName(const QString& name);
     void setParameter(const QString& name, const QString& value);
 
 private:
     SoNode* m_node;
+    static PluginManager* m_plugins;
 };
 

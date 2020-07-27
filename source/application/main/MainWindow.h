@@ -64,6 +64,7 @@ public:
     MainWindow(QString tonatiuhFile = 0, QSplashScreen* splash = 0, QWidget* parent = 0, Qt::WindowFlags flags = 0);
     ~MainWindow();
 
+    PluginManager* getPlugins() {return m_pluginManager;}
     void FinishManipulation();
     void StartManipulation(SoDragger* dragger);
     void ExecuteScriptFile(QString fileName);

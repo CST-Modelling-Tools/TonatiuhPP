@@ -30,6 +30,7 @@ public:
 
     static QScriptValue ImportExtension(QScriptContext* context, QScriptEngine* engine);
     static QScriptValue PrintMessage(QScriptContext* context, QScriptEngine* engine);
+    static QScriptValue PrintTime(QScriptContext* context, QScriptEngine* engine);
 
 public slots:
     void AbortEvaluation(QString error);

@@ -15,7 +15,17 @@
 Q_DECLARE_METATYPE(QVector<QVariant>)
 
 #include "NodeObject.h"
+#include "main/MainWindow.h"
+
 Q_SCRIPT_DECLARE_QMETAOBJECT(NodeObject, QObject*)
+
+void prependTime(QString& s)
+{
+    QString tf("hh:mm:ss");
+    s = QString("[%1]  %2")
+            .arg(QDateTime::currentDateTime().toString(tf))
+            .arg(s);
+}
 
 /**
  * Creates a dialog to edit scripts and run them. The list \a listRandomFactory is
@@ -44,6 +54,7 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory
     QScriptValue tonatiuh = m_interpreter->newQObject(parent);
     m_interpreter->globalObject().setProperty("tonatiuh", tonatiuh);
     m_interpreter->globalObject().setProperty("tn", tonatiuh);
+    NodeObject::setPlugins(static_cast<MainWindow*>(parent)->getPlugins());
 
     QScriptValue logConsoleObject = m_interpreter->newQObject(ui->logWidget);
     m_interpreter->globalObject().setProperty("console", logConsoleObject);
@@ -55,6 +66,9 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory
     QScriptValue printFunction = m_interpreter->newFunction(ScriptEditorDialog::PrintMessage);
     m_interpreter->globalObject().setProperty("print", printFunction);
     //m_interpreter->globalObject().setProperty( "print", m_interpreter->newFunction( ScriptEditorDialog::WriteMessage ) );
+
+    QScriptValue printTime = m_interpreter->newFunction(ScriptEditorDialog::PrintTime);
+    m_interpreter->globalObject().setProperty("printTime", printTime);
 
     QScriptValue import = m_interpreter->newFunction(ScriptEditorDialog::ImportExtension);
     m_interpreter->globalObject().setProperty("Import", import, QScriptValue::ReadOnly);
@@ -107,15 +121,15 @@ void ScriptEditorDialog::closeEvent(QCloseEvent* event)
  */
 void  ScriptEditorDialog::RunScript()
 {
-    QDateTime start = QDateTime::currentDateTime();
-    QString tf("hh:mm:ss");
-    QString message = QString("[%1]  Script started.").arg(start.toString(tf));
+    QString message = "Script started.";
+    prependTime(message);
     WriteMessage(message);
 
     int initialized = tonatiuh_script::init(m_interpreter);
     if (!initialized)
     {
-        message = QString("[%1]  Script error.").arg(QDateTime::currentDateTime().toString(tf));
+        message = "Script error.";
+        prependTime(message);
         WriteMessage(message);
         std::cerr << message.toStdString() << std::endl;
         return;
@@ -131,7 +145,8 @@ void  ScriptEditorDialog::RunScript()
     QScriptSyntaxCheckResult checkResult = m_interpreter->checkSyntax(program);
     if (checkResult.state() != QScriptSyntaxCheckResult::Valid)
     {
-        message = QString("[%1]  Script error in line: %2. %3").arg(QDateTime::currentDateTime().toString(tf), QString::number(checkResult.errorLineNumber() ), checkResult.errorMessage () );
+        message = QString("Script error in line: %2. %3").arg(QString::number(checkResult.errorLineNumber()), checkResult.errorMessage());
+        prependTime(message);
         WriteMessage(message);
         std::cerr << message.toStdString() << std::endl;
         return;
@@ -140,7 +155,8 @@ void  ScriptEditorDialog::RunScript()
     QScriptValue result = m_interpreter->evaluate(document->toPlainText());
     if (result.isError())
     {
-        message = QString("[%1]  Script error. %2").arg(QDateTime::currentDateTime().toString(tf), result.toString() );
+        message = QString("Script error. %2").arg(result.toString());
+        prependTime(message);
         WriteMessage(message);
         //std::cerr<<logmessage.toStdString()<<std::endl;
     }
@@ -156,7 +172,8 @@ void  ScriptEditorDialog::RunScript()
            WriteMessage( logmessage );
          *
          */
-        message = QString("[%1]  Script finished.").arg(QDateTime::currentDateTime().toString(tf));
+        QString message = "Script finished.";
+        prependTime(message);
         WriteMessage(message);
     }
 }
@@ -218,6 +235,22 @@ QScriptValue ScriptEditorDialog::PrintMessage(QScriptContext* context, QScriptEn
     if (!context->argument(0).isString()) return 0;
 
     QString message = context->argument(0).toString();
+    console->insertPlainText(message);
+
+    return 1;
+}
+
+QScriptValue ScriptEditorDialog::PrintTime(QScriptContext* context, QScriptEngine* engine)
+{
+    QScriptValue object = engine->globalObject().property("console");
+    QPlainTextEdit* console = (QPlainTextEdit*) object.toQObject();
+    if (!console) return 0;
+
+    if (context->argumentCount() < 1) return 0;
+    if (!context->argument(0).isString()) return 0;
+
+    QString message = context->argument(0).toString();
+    prependTime(message);
     console->insertPlainText(message);
 
     return 1;
