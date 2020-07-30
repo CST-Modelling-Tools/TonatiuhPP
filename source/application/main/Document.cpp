@@ -87,7 +87,7 @@ bool Document::WriteFile(const QString& fileName)
     QApplication::setOverrideCursor(Qt::WaitCursor);
     action.getOutput()->setBinary(false);
 
-    if (fileName.endsWith(".tnh")) // normal
+    if (fileName.endsWith(".tnh") || fileName.endsWith(".tnpp")) // normal
         action.apply(m_scene);
     else if (fileName.endsWith(".tnhd")) // debug
         action.apply(m_root);

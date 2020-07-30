@@ -48,13 +48,13 @@ GraphicRoot::GraphicRoot()
     m_grid = new SoSeparator;
     m_root->addChild(m_grid);
 
-    m_rays = new SoSeparator;
-    m_root->addChild(m_rays);
-
     m_selection = new SoSelection;
     m_selection->policy = SoSelection::SINGLE;
     m_selection->addFinishCallback(selectionFinishCallback, (void*) this);
     m_root->addChild(m_selection);
+
+    m_rays = new SoSeparator; // order important for antialiasing
+    m_root->addChild(m_rays);
 }
 
 GraphicRoot::~GraphicRoot()

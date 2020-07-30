@@ -703,7 +703,7 @@ void MainWindow::FileOpen()
 
     QString file = QFileDialog::getOpenFileName(
                 this, "Open", dir,
-                "Tonatiuh files (*.tnh)"
+                "Tonatiuh++ files (*.tnpp);;Tonatiuh files (*.tnh)"
     );
     if (file.isEmpty()) return;
 
@@ -874,7 +874,7 @@ bool MainWindow::FileSaveAs()
 
     QString file = QFileDialog::getSaveFileName(
         this, "Save", dir,
-        "Tonatiuh files (*.tnh);; Tonatiuh debug (*.tnhd)"
+        "Tonatiuh++ files (*.tnpp);;Tonatiuh files (*.tnh);;Tonatiuh debug (*.tnhd)"
     );
     if (file.isEmpty() ) return false;
 
@@ -1976,13 +1976,13 @@ void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, uint nOfR
  */
 void MainWindow::FileSaveAs(QString fileName)
 {
-    if (fileName.isEmpty() )
+    if (fileName.isEmpty())
     {
-        emit Abort(tr("SaveAs: There is no file defined.") );
+        emit Abort(tr("SaveAs: There is no file defined."));
         return;
     }
     QFileInfo fileInfo (fileName);
-    if (fileInfo.completeSuffix() != QLatin1String("tnh") )
+    if (fileInfo.completeSuffix() != "tnh" || fileInfo.completeSuffix() != "tnpp")
     {
         emit Abort(tr("SaveAs: The file defined is not a tonatiuh file. The suffix must be tnh.") );
         return;
