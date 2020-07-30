@@ -26,6 +26,9 @@ SO_KIT_SOURCE(SunKit)
 void SunKit::initClass()
 {
     SO_KIT_INIT_CLASS(SunKit, SoLightKit, "LightKit");
+
+    SunShape::initClass();
+    SunAperture::initClass();
 }
 
 SunKit::SunKit()
@@ -43,7 +46,7 @@ SunKit::SunKit()
     SO_KIT_INIT_INSTANCE();
 
     SoDirectionalLight* light = static_cast<SoDirectionalLight*>(getPart("light", true) );
-    light->direction.setValue(SbVec3f(0, 0, 1) );
+    light->direction.setValue(SbVec3f(0, 0, 1));
 
     // temp
     updateTransform();

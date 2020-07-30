@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Inventor/nodekits/SoSceneKit.h>
-//#include <Inventor/actions/SoSearchAction.h>
 
 #include "kernel/TonatiuhKernel.h"
 #include "kernel/TonatiuhTypes.h"
@@ -15,8 +14,12 @@ class TSeparatorKit;
 class TONATIUH_KERNEL TSceneKit: public SoSceneKit
 {
     SO_KIT_HEADER(TSceneKit);
-    SO_KIT_CATALOG_ENTRY_HEADER(group);
-    SO_KIT_CATALOG_ENTRY_HEADER(air);
+
+    SoSFString version;
+    SO_KIT_CATALOG_ENTRY_HEADER(world);
+    SO_KIT_CATALOG_ENTRY_HEADER(air); // environment
+
+    SO_KIT_CATALOG_ENTRY_HEADER(group); // scene
 
 public:
     static void initClass();

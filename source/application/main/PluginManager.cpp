@@ -41,21 +41,7 @@ PluginManager::PluginManager()
     UserSField::initClass();
     MFVec2::initClass();
 
-    Tracker::initClass();
-
     TSceneKit::initClass();
-    TSeparatorKit::initClass();
-
-    SunShape::initClass();
-    SunAperture::initClass();
-    SunKit::initClass();
-    Air::initClass();
-
-    TShapeKit::initClass();
-    ShapeRT::initClass();
-    ProfileRT::initClass();
-    MaterialRT::initClass();
-
     SkyBackground::initClass();
 }
 

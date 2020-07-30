@@ -13,24 +13,42 @@
 #include "kernel/sun/SunPillbox.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/scene/TSeparatorKit.h"
-
+#include "kernel/scene/TShapeKit.h"
+#include "WorldKit.h"
 
 SO_KIT_SOURCE(TSceneKit)
+
 
 void TSceneKit::initClass()
 {
     SO_KIT_INIT_CLASS(TSceneKit, SoSceneKit, "SceneKit");
+
+    WorldKit::initClass();
+    SunKit::initClass();
+    Air::initClass();
+
+    TSeparatorKit::initClass();
+    TShapeKit::initClass();
 }
 
 TSceneKit::TSceneKit()
 {
     SO_KIT_CONSTRUCTOR(TSceneKit);
-//    SO_KIT_CHANGE_ENTRY_TYPE(childList, SoGroup, SoGroup);
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(group, SoGroup, SoGroup, TRUE, topSeparator, "", TRUE);
+
+    SO_NODE_ADD_FIELD(version, ("") );
+    version.setValue("2019");
+
+    SO_KIT_ADD_CATALOG_ENTRY(world, WorldKit, FALSE, this, "", TRUE);
+
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(air, Air, AirVacuum, TRUE, topSeparator, "", TRUE);
+
+
+    SO_KIT_ADD_CATALOG_ENTRY(group, SoGroup, FALSE, this, "", TRUE);
+
     SO_KIT_INIT_INSTANCE();
 
-    setSearchingChildren(true); //?
+//    SO_KIT_CHANGE_ENTRY_TYPE(childList, SoGroup, SoGroup);
+    setSearchingChildren(true); // for lightList[0]
 
     SunKit* sunKit = new SunKit;
     setPart("lightList[0]", sunKit);

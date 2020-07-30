@@ -20,6 +20,10 @@ SO_KIT_SOURCE(TShapeKit)
 void TShapeKit::initClass()
 {
     SO_KIT_INIT_CLASS(TShapeKit, SoShapeKit, "ShapeKit");
+
+    ShapeRT::initClass();
+    ProfileRT::initClass();
+    MaterialRT::initClass();
 }
 
 TShapeKit::TShapeKit()

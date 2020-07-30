@@ -12,6 +12,8 @@ SO_KIT_SOURCE(TSeparatorKit)
 void TSeparatorKit::initClass()
 {
     SO_KIT_INIT_CLASS(TSeparatorKit, SoSeparatorKit, "SeparatorKit");
+
+    Tracker::initClass();
 }
 
 TSeparatorKit::TSeparatorKit()
