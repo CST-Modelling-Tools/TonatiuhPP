@@ -1,10 +1,12 @@
 #include <QApplication>
-#include <QFileInfo>
+#include <QStyleFactory>
+#include <QCommandLineParser>
 #include <QSplashScreen>
+#include <QDebug>
+
+#include <QFileInfo>
 #include <QScriptEngine>
 #include <QTextStream>
-#include <QStyleFactory>
-#include <QDebug>
 
 #include <Inventor/Qt/SoQt.h>
 
@@ -21,39 +23,64 @@ QTextStream cerr(stderr);
    <li>To achieve operating system independence at source level, and run on all major platforms with none, or minor, modifications to its source code.</li>
    <li>To provide the users with an advanced and easy-of-use Graphic User Interface (GUI).</li>
    </ol>
-
-   <b>IMPORTANT NOTE: the online documentation for the Tonatiuh is still a work-in-progress.</b>
- */
-
-
-//!  Application entry point.
-/*!
-   Tonatiuh's main() function. It starts SoQt and Coin3D. It also initializes the
-   application specific Coin3D extension subclasses, and the application loop.
  */
 
 int main(int argc, char** argv)
-{
-//    QApplication::setColorSpec(QApplication::CustomColor);
-//    QApplication::setAttribute(Qt::AA_DisableHighDpiScaling);
+{  
+    // application
+    QApplication app(argc, argv);
+    app.setApplicationName("Tonatiuh");
+    app.setApplicationVersion(APP_VERSION);
 
-    QApplication a(argc, argv);
-    a.setApplicationVersion(APP_VERSION);
+    //    QApplication::setColorSpec(QApplication::CustomColor);
+    //    QApplication::setAttribute(Qt::AA_DisableHighDpiScaling);
+    //    qDebug() << QStyleFactory::keys();
+    //    app.setStyle(QStyleFactory::create("Fusion"));
 
-//    qDebug() << QStyleFactory::keys();
-//    a.setStyle(QStyleFactory::create("Fusion"));
+    // parser
+    QCommandLineParser parser;
+    parser.setApplicationDescription("Description");
+    parser.addHelpOption(); // -h
+    parser.addVersionOption(); // -v
 
-    QString fileName = argc > 1 ? argv[1] : "";
+    // options
+    QCommandLineOption optionInput( // -i=input.xml
+        "i", "File with input parameters", // option name and description
+        "file", "" // value type and default
+    );
+    parser.addOption(optionInput);
+
+    QCommandLineOption optionTest( // -t
+        "t", "Test mode"
+    );
+    parser.addOption(optionTest);
+
+    QCommandLineOption optionEdition( // --cy
+        "cy", "Edition"
+    );
+    parser.addOption(optionEdition);
+
+    // processing
+    parser.process(app);
+
+    bool isCy = parser.isSet(optionEdition);
+    QString fileIcon;
+    QString filePixmap;
+    if (isCy) {
+        fileIcon = ":/images/about/TonatiuhCy.ico";
+        filePixmap = ":/images/about/SplashScreenCy.png";
+    } else {
+        fileIcon = ":/images/about/Tonatiuh.ico";
+        filePixmap = ":/images/about/SplashScreen.png";
+    }
+    app.setWindowIcon(QIcon(fileIcon));
+
+    QString fileName = parser.value(optionInput);
     QFileInfo fileInfo(fileName);
-
     if (fileInfo.completeSuffix() != "tnhs")
     {
-#ifdef CYE
-        QPixmap pixmap(":/images/about/SplashScreenCy.png");
-#else
-        QPixmap pixmap(":/images/about/SplashScreen.png");
+        QPixmap pixmap(filePixmap);
         pixmap = pixmap.scaledToHeight(256, Qt::SmoothTransformation);
-#endif
         QSplashScreen splash(pixmap);
         int splashAlignment = Qt::AlignLeft | Qt::AlignBottom;
         splash.show();
@@ -66,7 +93,7 @@ int main(int argc, char** argv)
         mw.show();
         splash.finish(&mw);
 
-        return a.exec();
+        return app.exec();
     }
     else
     {
@@ -75,9 +102,8 @@ int main(int argc, char** argv)
         QScriptEngine* interpreter = new QScriptEngine;
         qScriptRegisterSequenceMetaType<QVector<QVariant> >(interpreter);
 
-        MainWindow* mw = new MainWindow("");
-//        mw->SetPluginManager(&pluginManager);
-        QScriptValue tonatiuh = interpreter->newQObject(mw);
+        MainWindow mw("");
+        QScriptValue tonatiuh = interpreter->newQObject(&mw);
         interpreter->globalObject().setProperty("tonatiuh", tonatiuh);
 
         QFile scriptFile(fileName);
@@ -113,7 +139,6 @@ int main(int argc, char** argv)
             return -1;
         }
 
-        delete mw;
         delete interpreter;
         return 0;
     }

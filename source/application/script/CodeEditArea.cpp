@@ -14,6 +14,13 @@ CodeEditArea::CodeEditArea(QWidget* parent):
 */
     //UpdateCodeEditAreaWidth(0);
     UpdateCurrentLine();
+
+
+    QFont font("Consolas", 10);
+//    if (font.exactMatch())
+    setFont(font);
+
+    setTabStopDistance(4*fontMetrics().horizontalAdvance(" "));
 }
 
 int CodeEditArea::BlockTop(const QTextBlock& block) const

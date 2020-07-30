@@ -55,6 +55,16 @@ QScriptValue NodeObject::createShape()
     return engine()->newQObject(ans);
 }
 
+QScriptValue NodeObject::getPart(const QString& name)
+{
+    if (!m_node->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId())) return 0;
+
+    SoBaseKit* parent = (SoBaseKit*)(m_node);
+    SoNode* node = parent->getPart(name.toLatin1().data(), true);
+    NodeObject* ans = new NodeObject(node);
+    return engine()->newQObject(ans);
+}
+
 QScriptValue NodeObject::insertSurface(const QString& name)
 {
     if (m_node->getTypeId() != TShapeKit::getClassTypeId()) return 0;
@@ -131,62 +141,3 @@ void NodeObject::setParameter(const QString& name, const QString& value)
     SoField* field = node->getField(name.toLatin1().data());
     if (field) field->set(value.toLatin1().data());
 }
-
-/*
-
-function makeHeliostat(parent, name, position, focus)
-{
-    n = parent.createNode(name);
-    n.setParameter("translation", position);
-
-    t = n.insertTracker("Dual");
-    t.setParameter("aimingPoint", "0 0 8");
-
-    n = n.createNode("primary");
-    n = n.createNode("secondary");
-    n = n.createNode("facet");
-    s = n.createShape();
-
-    q = s.insertSurface("Parabolic");
-    q.setParameter("fX", focus);
-    q.setParameter("fY", focus);
-
-    p = s.insertProfile("Box");
-    p.setParameter("uSize", "2");
-    p.setParameter("vSize", "2");
-
-    m = s.insertMaterial("Specular");
-    m.setParameter("slope", "3");
-}
-
-nodeRoot = NodeObject();
-nodeRoot.setName("Script");
-
-n = nodeRoot.createNode("Receiver");
-n.setParameter("translation", "0 0 8");
-s = n.createShape();
-p = s.insertProfile("Box");
-p.setParameter("uSize", "3");
-p.setParameter("vSize", "3");
-
-print("\n");
-nodeHeliostats = nodeRoot.createNode("Heliostats");
-iMax = 50;
-count = 1;
-for (i = -iMax; i <= iMax; i++) {
-    printTime(i + "\n");
-    nodeTemp = nodeHeliostats.createNode("Row" + i);
-    for (j = -iMax; j <= iMax; j++) {
-        name = "H_" + count;
-        position = "" + 5*i + " " + 5*j + " 0";
-        focus = 10.;
-        makeHeliostat(nodeTemp, name, position, focus);
-        count++;
-    }
-}
-
-printTime("nodes created\n");
-tn.InsertScene(nodeRoot);
-printTime("nodes inserted\n");
-
-*/

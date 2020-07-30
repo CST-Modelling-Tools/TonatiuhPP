@@ -9,18 +9,18 @@ class CmdLightPositionModified : public QUndoCommand
 {
 
 public:
-    CmdLightPositionModified(SunKit* light, double azimuth, double zenith, QUndoCommand* parent = 0 );
+    CmdLightPositionModified(SunKit* light, double azimuth, double zenith, QUndoCommand* parent = 0);
     ~CmdLightPositionModified();
 
     void undo();
     void redo();
 
 private:
-    SunKit* lightKit;
+    SunKit* sunKit;
 
-    double m_newAzimuth;
-    double m_newZenith;
+    double m_azimuth;
+    double m_elevation;
 
-    double m_oldAzimuth;
-    double m_oldZenith;
+    double m_azimuthOld;
+    double m_elevationOld;
 };

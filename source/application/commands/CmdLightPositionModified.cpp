@@ -9,7 +9,7 @@
  * The new position is defined by \a azimuth and \a zenith in radians.
  */
 CmdLightPositionModified::CmdLightPositionModified(SunKit* light, double azimuth, double zenith, QUndoCommand* parent):
-    QUndoCommand("Sun position changed", parent), lightKit(light), m_newAzimuth(azimuth), m_newZenith(zenith)
+    QUndoCommand("Sun position changed", parent), sunKit(light), m_azimuth(azimuth), m_elevation(zenith)
 {
     if (light == 0) gcf::SevereError("CmdLinghtPositionModified called with NULL SunKit");
 
@@ -17,9 +17,6 @@ CmdLightPositionModified::CmdLightPositionModified(SunKit* light, double azimuth
 //    m_oldZenith = light->zenith.getValue();
 }
 
-/*!
- * Destroys the CmdLightPositionModified object.
- */
 CmdLightPositionModified::~CmdLightPositionModified()
 {
 }
@@ -31,9 +28,9 @@ CmdLightPositionModified::~CmdLightPositionModified()
  */
 void CmdLightPositionModified::undo()
 {
-    lightKit->azimuth.setValue(m_oldAzimuth);
-    lightKit->elevation.setValue(m_oldZenith);
-    lightKit->updateTransform();
+    sunKit->azimuth.setValue(m_azimuthOld);
+    sunKit->elevation.setValue(m_elevationOld);
+    sunKit->updateTransform();
 }
 
 /*!
@@ -42,5 +39,7 @@ void CmdLightPositionModified::undo()
  */
 void CmdLightPositionModified::redo()
 {
-    lightKit->updateTransform();
+    sunKit->azimuth.setValue(m_azimuth);
+    sunKit->elevation.setValue(m_elevation);
+    sunKit->updateTransform();
 }

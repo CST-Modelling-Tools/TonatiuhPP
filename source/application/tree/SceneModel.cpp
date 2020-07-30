@@ -134,11 +134,11 @@ void SceneModel::generateInstanceTree(InstanceNode* instance)
         if (tracker)
             addInstanceNode(instance, tracker);
 
-        SoGroup* childList = (SoGroup*) separatorKit->getPart("group", false);
-        if (!childList) return;
-        for (int n = 0; n < childList->getNumChildren(); ++n)
+        SoGroup* group = (SoGroup*) separatorKit->getPart("group", false);
+        if (!group) return;
+        for (int n = 0; n < group->getNumChildren(); ++n)
         {
-            SoBaseKit* coinChild = (SoBaseKit*) childList->getChild(n);
+            SoBaseKit* coinChild = (SoBaseKit*) group->getChild(n);
             InstanceNode* instanceChild = addInstanceNode(instance, coinChild);
             generateInstanceTree(instanceChild);
         }
@@ -231,7 +231,7 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
         action.apply(m_nodeScene);
 
         int count = action.getPaths().getLength();
-        count = node->getRefCount(); //
+//        count = node->getRefCount();
         if (count > 1)
             name = QString("%1 [%2]").arg(name).arg(count);
 
@@ -493,15 +493,15 @@ int SceneModel::insertCoinNode(SoNode* node, SoBaseKit* parent)
         }
         else // separatorKits and shapeKits
         {
-            SoGroup* childList = (SoGroup*) parent->getPart("group", true);
+            SoGroup* group = (SoGroup*) parent->getPart("group", true);
 
-            row = childList->getNumChildren();
+            row = group->getNumChildren();
             if (parent->getPart("tracker", false)) row++;
 
             if (SoBaseKit* kit = dynamic_cast<SoBaseKit*>(node))
             {
-                kit->setSearchingChildren(true);
-                childList->addChild(kit);
+//                kit->setSearchingChildren(true);
+                group->addChild(kit);
             }
         }
     }

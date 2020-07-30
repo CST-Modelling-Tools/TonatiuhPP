@@ -19,12 +19,9 @@ Q_DECLARE_METATYPE(QVector<QVariant>)
 
 Q_SCRIPT_DECLARE_QMETAOBJECT(NodeObject, QObject*)
 
-void prependTime(QString& s)
+QString timeString()
 {
-    QString tf("hh:mm:ss");
-    s = QString("[%1]  %2")
-            .arg(QDateTime::currentDateTime().toString(tf))
-            .arg(s);
+    return QString("[%1] ").arg(QDateTime::currentDateTime().toString("hh:mm:ss"));
 }
 
 /**
@@ -121,15 +118,13 @@ void ScriptEditorDialog::closeEvent(QCloseEvent* event)
  */
 void  ScriptEditorDialog::RunScript()
 {
-    QString message = "Script started.";
-    prependTime(message);
+    QString message = timeString() + "Script started.";
     WriteMessage(message);
 
     int initialized = tonatiuh_script::init(m_interpreter);
     if (!initialized)
     {
-        message = "Script error.";
-        prependTime(message);
+        message = timeString() + "Script error.";
         WriteMessage(message);
         std::cerr << message.toStdString() << std::endl;
         return;
@@ -145,8 +140,7 @@ void  ScriptEditorDialog::RunScript()
     QScriptSyntaxCheckResult checkResult = m_interpreter->checkSyntax(program);
     if (checkResult.state() != QScriptSyntaxCheckResult::Valid)
     {
-        message = QString("Script error in line: %2. %3").arg(QString::number(checkResult.errorLineNumber()), checkResult.errorMessage());
-        prependTime(message);
+        message = timeString() + QString("Script error in line: %2. %3").arg(QString::number(checkResult.errorLineNumber()), checkResult.errorMessage());
         WriteMessage(message);
         std::cerr << message.toStdString() << std::endl;
         return;
@@ -155,8 +149,7 @@ void  ScriptEditorDialog::RunScript()
     QScriptValue result = m_interpreter->evaluate(document->toPlainText());
     if (result.isError())
     {
-        message = QString("Script error. %2").arg(result.toString());
-        prependTime(message);
+        message = timeString()+ QString("Script error. %2").arg(result.toString());
         WriteMessage(message);
         //std::cerr<<logmessage.toStdString()<<std::endl;
     }
@@ -172,8 +165,7 @@ void  ScriptEditorDialog::RunScript()
            WriteMessage( logmessage );
          *
          */
-        QString message = "Script finished.";
-        prependTime(message);
+        QString message = timeString() + "Script finished.";
         WriteMessage(message);
     }
 }
@@ -188,12 +180,12 @@ void ScriptEditorDialog::SetCurrentFile(QString fileName)
     m_currentScritFileName = fileName;
 
     QString title = "Untitled";
-    if ( !m_currentScritFileName.isEmpty() )
+    if (!fileName.isEmpty())
         title = QFileInfo(fileName).fileName();
+
     setWindowTitle(tr("%1[*] - Tonatiuh").arg(title));
 
-    QString time = QDateTime::currentDateTime().toString();
-    QString message = QString("[%1]\t Current script file: '%2'").arg(time, m_currentScritFileName);
+    QString message = timeString() + QString("Current script file: '%2'.").arg(fileName);
     WriteMessage(message);
 }
 
@@ -230,13 +222,11 @@ QScriptValue ScriptEditorDialog::PrintMessage(QScriptContext* context, QScriptEn
     QScriptValue object = engine->globalObject().property("console");
     QPlainTextEdit* console = (QPlainTextEdit*) object.toQObject();
     if (!console) return 0;
-
     if (context->argumentCount() < 1) return 0;
     if (!context->argument(0).isString()) return 0;
 
     QString message = context->argument(0).toString();
-    console->insertPlainText(message);
-
+    console->appendPlainText(message);
     return 1;
 }
 
@@ -245,13 +235,10 @@ QScriptValue ScriptEditorDialog::PrintTime(QScriptContext* context, QScriptEngin
     QScriptValue object = engine->globalObject().property("console");
     QPlainTextEdit* console = (QPlainTextEdit*) object.toQObject();
     if (!console) return 0;
-
     if (context->argumentCount() < 1) return 0;
     if (!context->argument(0).isString()) return 0;
 
-    QString message = context->argument(0).toString();
-    prependTime(message);
-    console->insertPlainText(message);
-
+    QString message = timeString() + context->argument(0).toString();
+    console->appendPlainText(message);
     return 1;
 }

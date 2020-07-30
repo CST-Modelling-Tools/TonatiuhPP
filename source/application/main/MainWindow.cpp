@@ -177,11 +177,7 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
 
     ReadSettings();
 
-
-    qDebug() << "counter " << m_document->getSceneKit()->getRefCount();
     if (splash) splash->showMessage("Opening file", splashAlignment);
-//    qDebug() << "layout " << m_modelScene->getInstance(m_modelScene->indexFromUrl("//Layout"))->getNode()->getRefCount();
-    qDebug() << "counter " << m_document->getSceneKit()->getRefCount();
 
     if (!tonatiuhFile.isEmpty()) {
         StartOver(tonatiuhFile);
@@ -197,16 +193,11 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
         camera->pointAt(target, SbVec3f(0., 1., 0.));
     }
 
-    qDebug() << "counter " << m_document->getSceneKit()->getRefCount();
-    qDebug() << "layout " << m_modelScene->getInstance(m_modelScene->indexFromUrl("//Layout"))->getNode()->getRefCount();
-
     Select("//Layout");
 
-    qDebug() << "layout " << m_modelScene->getInstance(m_modelScene->indexFromUrl("//Layout"))->getNode()->getRefCount();
-
 //    m_graphicsRoot->deselectAll();
-    qDebug() << "counter " << m_document->getSceneKit()->getRefCount();
-    qDebug() << "layout " << m_modelScene->getInstance(m_modelScene->indexFromUrl("//Layout"))->getNode()->getRefCount();
+//    qDebug() << "counter " << m_document->getSceneKit()->getRefCount();
+//    qDebug() << "layout " << m_modelScene->getInstance(m_modelScene->indexFromUrl("//Layout"))->getNode()->getRefCount();
 
     ui->toolbarFile->hide();
     ui->toolbarEdit->hide();
@@ -1189,17 +1180,19 @@ void MainWindow::AddExportSurfaceURL(QString nodeURL)
  */
 void MainWindow::ChangeSunPosition(double azimuth, double elevation)
 {
-    SoSceneKit* coinScene = m_document->getSceneKit();
-    SunKit* lightKit = static_cast<SunKit*>(coinScene->getPart("lightList[0]", false) );
-    if (!lightKit)
+    TSceneKit* sceneKit = m_document->getSceneKit();
+    SunKit* sunKit = (SunKit*) sceneKit->getPart("lightList[0]", false);
+    if (!sunKit)
     {
         QMessageBox::warning(this, "Tonatiuh warning", tr("ChangeSunPosition:: Sun not defined in scene") );
         return;
     }
-    CmdLightPositionModified* command = new CmdLightPositionModified(lightKit, azimuth * gcf::degree, (90 - elevation) * gcf::degree);
+
+    CmdLightPositionModified* command = new CmdLightPositionModified(sunKit, azimuth*gcf::degree, elevation*gcf::degree);
     m_undoStack->push(command);
 
     //UpdateLightDimensions();
+    sceneKit->updateTrackers();
     UpdateLightSize();
     setDocumentModified(true);
 
@@ -1477,6 +1470,7 @@ void MainWindow::PasteLink()
     Paste(m_modelSelection->currentIndex(), tgc::Shared);
 }
 
+#include <QDebug>
 /*!
  * Creates a new group node as a selected node child.
  */
@@ -1489,21 +1483,23 @@ void MainWindow::InsertNode()
     InstanceNode* instance = m_modelScene->getInstance(index);
     if (!instance)
     {
-        emit Abort(tr("CreateGroupNode: Error creating new group node.") );
+        emit Abort("CreateGroupNode: Error creating new group node.");
         return;
     }
     SoNode* node = instance->getNode();
     if (!node)
     {
-        emit Abort(tr("CreateGroupNode: Error creating new group node.") );
+        emit Abort("CreateGroupNode: Error creating new group node.");
         return;
     }
-    if (!node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
+    if (node->getTypeId() != TSeparatorKit::getClassTypeId())
         return;
 
     TSeparatorKit* kit = new TSeparatorKit;
+    qDebug() << "dsfg " << kit->getRefCount();
     CmdInsertNode* cmd = new CmdInsertNode(kit, QPersistentModelIndex(index), m_modelScene);
     m_undoStack->push(cmd);
+    qDebug() << "dsfg as " << kit->getRefCount();
 
     QString name("Node");
     int count = 0;
@@ -1728,9 +1724,10 @@ void MainWindow::InsertScene(QScriptValue v)
         return;
     }
     NodeObject* no = (NodeObject*)v.toQObject();
-    CmdInsertNode* cmdInsertSeparatorKit = new CmdInsertNode((TSeparatorKit*)no->getNode(), QPersistentModelIndex(parentIndex), m_modelScene);
-    cmdInsertSeparatorKit->setText("Insert SeparatorKit node");
-    m_undoStack->push(cmdInsertSeparatorKit);
+    TSeparatorKit* kit = (TSeparatorKit*)no->getNode();
+    CmdInsertNode* cmd = new CmdInsertNode(kit, QPersistentModelIndex(parentIndex), m_modelScene);
+    cmd->setText("Insert SeparatorKit node");
+    m_undoStack->push(cmd);
 
     UpdateLightSize();
     setDocumentModified(true);
@@ -3039,7 +3036,7 @@ void MainWindow::ShowGrid()
  */
 void MainWindow::ShowRaysIn3DView()
 {
-    if (ui->actionViewRays->isChecked() || ui->actionViewPhotons->isChecked())
+    if (true || ui->actionViewRays->isChecked() || ui->actionViewPhotons->isChecked())
     {
         trf::DrawRays(m_graphicsRoot->rays(), *m_photonsBuffer, m_raysScreen);
         m_graphicsRoot->showRays(ui->actionViewRays->isChecked());

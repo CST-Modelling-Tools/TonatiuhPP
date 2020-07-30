@@ -41,9 +41,9 @@ FORMS += \
 
 RESOURCES += resources.qrc
 
-win32 { # icon for windows explorer
+win32 { # icons for windows explorer
     RC_ICONS = images/about/Tonatiuh.ico
-    CYE: RC_ICONS = images/about/TonatiuhCy.ico
+    RC_ICONS += images/about/TonatiuhCy.ico
 }
 
 #DISTFILES += \

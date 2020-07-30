@@ -7,6 +7,8 @@
 #include "libraries/math/gcf.h"
 #include "tree/SceneModel.h"
 
+#include <Inventor/nodes/SoMaterial.h>
+
 /**
  * Creates a new shape insert command that adds a \a shape to \a shapekit node in the \a model.
  *
@@ -41,6 +43,12 @@ CmdInsertSurface::CmdInsertSurface(
     {
         m_nodeOld = m_kit->materialRT.getValue();
         text = QString("Create Material: %1").arg(material->getTypeName());
+        if (material->getTypeName() == QString("Specular")) {
+            SoMaterial* mg = (SoMaterial*) m_kit->getPart("material", true);
+            mg->diffuseColor = SbVec3f(0.6, 0.7, 0.9);
+            mg->specularColor = SbVec3f(0.3, 0.3, 0.3);
+            mg->shininess = 0.8;
+        }
     }
 
     m_nodeOld->ref();

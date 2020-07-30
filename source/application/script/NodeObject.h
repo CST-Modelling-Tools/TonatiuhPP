@@ -22,6 +22,7 @@ public:
 public slots:
     QScriptValue createNode(const QString& name = "");
     QScriptValue createShape();
+    QScriptValue getPart(const QString& name = "");
 
     QScriptValue insertSurface(const QString& name = "");
     QScriptValue insertProfile(const QString& name = "");

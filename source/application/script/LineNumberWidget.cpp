@@ -11,7 +11,9 @@ LineNumberWidget::LineNumberWidget(QWidget* parent, Qt::WindowFlags f):
     QWidget(parent, f),
     m_codeEditArea(0)
 {
-
+    QFont font("Consolas", 10);
+//    if (font.exactMatch())
+    setFont(font);
 }
 
 LineNumberWidget::~LineNumberWidget()
@@ -39,7 +41,7 @@ int LineNumberWidget::LineNumberAreaWidth() const
         ++digits;
     }
 
-    int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
+    int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('0')) * digits;
 
     return space;
 }
@@ -58,7 +60,7 @@ void LineNumberWidget::UpdateLineNumberArea(const QRect& rect, int dy)
 void  LineNumberWidget::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
-    painter.fillRect(event->rect(), Qt::lightGray);
+    painter.fillRect(event->rect(), QColor("#F0F0F0"));
 
     QTextBlock block = m_codeEditArea->document()->begin();
     int blockNumber = block.blockNumber();
@@ -66,13 +68,13 @@ void  LineNumberWidget::paintEvent(QPaintEvent* event)
     int top = m_codeEditArea->BlockTop(block);
     int bottom = top + m_codeEditArea->BlockHeight(block);
 
-    while (block.isValid() && top <= (event->rect().bottom() ) )
+    while (block.isValid() && top <= event->rect().bottom())
     {
-        if (block.isVisible() && (bottom >= event->rect().top() ) )
+        if (block.isVisible() && bottom >= event->rect().top())
         {
-            QString number = QString::number(blockNumber + 1);
+            QString number = QString::number(blockNumber + 1) + " ";
             painter.setPen(Qt::black);
-            painter.drawText(0, top,width(), fontMetrics().height(), Qt::AlignRight, number);
+            painter.drawText(0, top, width(), fontMetrics().height(), Qt::AlignRight, number);
         }
 
         block = block.next();
