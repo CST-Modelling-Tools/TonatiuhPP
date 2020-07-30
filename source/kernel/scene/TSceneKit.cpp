@@ -15,6 +15,7 @@
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
 #include "WorldKit.h"
+#include "LocationNode.h"
 
 SO_KIT_SOURCE(TSceneKit)
 
@@ -43,7 +44,7 @@ TSceneKit::TSceneKit()
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(air, Air, AirVacuum, TRUE, topSeparator, "", TRUE);
 
 
-    SO_KIT_ADD_CATALOG_ENTRY(group, SoGroup, FALSE, this, "", TRUE);
+    SO_KIT_ADD_CATALOG_ENTRY(group, SoGroup, FALSE, topSeparator, "", TRUE); // topsep important
 
     SO_KIT_INIT_INSTANCE();
 
@@ -53,6 +54,9 @@ TSceneKit::TSceneKit()
     SunKit* sunKit = new SunKit;
     setPart("lightList[0]", sunKit);
     setPart("air", new AirVacuum);
+
+    LocationNode* loc = (LocationNode*) getPart("world.location", true);
+    loc->name = "unknown";
 }
 
 void TSceneKit::updateTrackers()

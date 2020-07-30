@@ -16,7 +16,7 @@ WorldKit::WorldKit()
 {
     SO_KIT_CONSTRUCTOR(WorldKit);
 
-    SO_KIT_ADD_CATALOG_ENTRY(location, LocationNode, TRUE, this, "", TRUE);
+    SO_KIT_ADD_CATALOG_ENTRY(location, LocationNode, FALSE, this, "", TRUE);
 
     SO_KIT_INIT_INSTANCE();
 
