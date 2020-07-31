@@ -1,23 +1,23 @@
 #include "CmdAirModified.h"
 
 #include "kernel/scene/TSceneKit.h"
-#include "kernel/air/Air.h"
+#include "kernel/air/AirTransmission.h"
 
 
-CmdAirModified::CmdAirModified(Air* air, TSceneKit* sceneKit, QUndoCommand* parent):
+CmdAirModified::CmdAirModified(AirTransmission* air, TSceneKit* sceneKit, QUndoCommand* parent):
     QUndoCommand("Air modified", parent),
     m_airOld(0),
     m_air(0),
     m_sceneKit(sceneKit)
 {
-    Air* airOld = dynamic_cast<Air*>(m_sceneKit->getPart("air", false));
+    AirTransmission* airOld = dynamic_cast<AirTransmission*>(m_sceneKit->getPart("world.air.transmission", false));
     if (airOld) {
         m_airOld = airOld;
         m_airOld->ref();
     }
 
     if (air) {
-        m_air = static_cast<Air*>(air->copy(true));
+        m_air = static_cast<AirTransmission*>(air->copy(true));
         m_air->ref();
     }
 }
@@ -35,7 +35,7 @@ CmdAirModified::~CmdAirModified()
  */
 void CmdAirModified::undo()
 {
-    m_sceneKit->setPart("air", m_airOld);
+    m_sceneKit->setPart("world.air.transmission", m_airOld);
 }
 
 /*!
@@ -44,5 +44,5 @@ void CmdAirModified::undo()
  */
 void CmdAirModified::redo()
 {
-    m_sceneKit->setPart("air", m_air);
+    m_sceneKit->setPart("world.air.transmission", m_air);
 }

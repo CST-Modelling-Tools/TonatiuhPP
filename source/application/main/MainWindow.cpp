@@ -65,8 +65,7 @@
 #include "PluginManager.h"
 #include "calculator/SunCalculatorDialog.h"
 #include "kernel/TonatiuhFunctions.h"
-#include "kernel/air/Air.h"
-#include "kernel/air/AirVacuum.h"
+#include "kernel/air/AirTransmission.h"
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/material/MaterialRT.h"
 #include "kernel/photons/PhotonsBuffer.h"
@@ -100,6 +99,7 @@
 #include "widgets/SunDialog.h"
 #include "UndoView.h"
 #include <QDebug>
+#include "kernel/scene/GridNode.h"
 
 /*!
  * Returns the \a fullFileName files name, without path.
@@ -280,7 +280,9 @@ void MainWindow::SetupDocument()
     // graphic root
     m_graphicsRoot = new GraphicRoot;
     m_graphicsRoot->setDocument(m_document);
-    m_graphicsRoot->grid()->addChild(CreateGrid());
+
+    GridNode* gridNode = (GridNode*) m_document->getSceneKit()->getPart("world.terrain.grid", true);
+    m_graphicsRoot->grid()->addChild(gridNode->getRoot());
 
     connect(
         m_graphicsRoot, SIGNAL(selectionChanged(SoSelection*)),
@@ -590,12 +592,12 @@ void MainWindow::onAirDialog()
 
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
-    Air* airOld = static_cast<Air*>(sceneKit->getPart("air", false));
+    AirTransmission* airOld = static_cast<AirTransmission*>(sceneKit->getPart("world.air.transmission", false));
     if (airOld) dialog.setModel(airOld);
 
     if (!dialog.exec()) return;
 
-    Air* air = dialog.getModel();
+    AirTransmission* air = dialog.getModel();
     CmdAirModified* cmd = new CmdAirModified(air, sceneKit);
     if (m_undoStack) m_undoStack->push(cmd);
     setDocumentModified(true);
@@ -754,7 +756,7 @@ void MainWindow::RunCompleteRayTracer()
     InstanceNode* instanceSun = 0;
     SunShape* sunShape = 0;
     SunAperture* sunAperture = 0;
-    Air* air = 0;
+    AirTransmission* air = 0;
 
 //    QElapsedTimer timer;
 //    timer.start();
@@ -1855,7 +1857,7 @@ void MainWindow::Run()
     InstanceNode* instanceSun = 0;
     SunShape* sunShape = 0;
     SunAperture* sunAperture = 0;
-    Air* air = 0;
+    AirTransmission* air = 0;
 
     QElapsedTimer timer;
     timer.start();
@@ -1920,8 +1922,8 @@ void MainWindow::Run()
         QMutex mutex;
         QMutex mutexPhotonMap;
         QFuture<void> photonMap;
-        Air* airTemp = 0;
-        if (!dynamic_cast<AirVacuum*>(air))
+        AirTransmission* airTemp = 0;
+        if (air->getTypeId() != AirTransmission::getClassTypeId())
             airTemp = air;
 
         photonMap = QtConcurrent::map(raysPerThread, RayTracer(instanceRoot,
@@ -2184,7 +2186,7 @@ void MainWindow::SetAir(QString name)
         return;
     }
 
-    Air* air = f->create();
+    AirTransmission* air = f->create();
 
     TSceneKit* sceneKit = m_document->getSceneKit();
 
@@ -2199,7 +2201,7 @@ void MainWindow::SetAir(QString name)
 void MainWindow::SetAirParameter(QString parameter, QString value)
 {
     TSceneKit* sceneKit = m_document->getSceneKit();
-    Air* air = static_cast<Air*>(sceneKit->getPart("air", false));
+    AirTransmission* air = static_cast<AirTransmission*>(sceneKit->getPart("world.air.transmission", false));
     if (!air)
     {
         emit Abort("SetTransmissivity: No transmissivity type defined.");
@@ -2665,18 +2667,6 @@ void MainWindow::CalculateSunPosition()
 }
 
 /*!
- * Creates a \a xDimension by \a zDimension grid and shows in the 3D view. Each grid cell is a \a xSpacing x \a zSpacing.
- */
-#include "view/GroundGrid.h"
-SoGroup* MainWindow::CreateGrid()
-{
-    GroundGrid grid;
-// todo
-    return grid.makeGrid();
-}
-
-
-/*!
  * Creates a export mode object form export mode settings.
  */
 PhotonsAbstract* MainWindow::CreatePhotonMapExport() const
@@ -2774,12 +2764,12 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
                                     InstanceNode*& instanceSun,
                                     SunShape*& sunShape,
                                     SunAperture*& sunAperture,
-                                    Air*& air)
+                                    AirTransmission*& air)
 {
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return false;
 
-    air = dynamic_cast<Air*>(sceneKit->getPart("air", false));
+    air = dynamic_cast<AirTransmission*>(sceneKit->getPart("world.air.transmission", false));
 
     InstanceNode* instanceScene = m_modelScene->getInstance(QModelIndex());
     if (!instanceScene) return false;

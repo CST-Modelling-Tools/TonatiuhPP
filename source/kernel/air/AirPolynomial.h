@@ -1,9 +1,9 @@
 #pragma once
 
-#include "kernel/air/Air.h"
+#include "kernel/air/AirTransmission.h"
 
 
-class TONATIUH_KERNEL AirPolynomial: public Air
+class TONATIUH_KERNEL AirPolynomial: public AirTransmission
 {
     SO_NODE_HEADER(AirPolynomial);
 

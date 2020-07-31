@@ -1,12 +1,11 @@
 #include "AirExponential.h"
 
-
 SO_NODE_SOURCE(AirExponential)
 
 
 void AirExponential::initClass()
 {
-    SO_NODE_INIT_CLASS(AirExponential, Air, "Air");
+    SO_NODE_INIT_CLASS(AirExponential, AirTransmission, "Air");
 }
 
 AirExponential::AirExponential()

@@ -6,7 +6,6 @@
 
 #include "kernel/air/AirExponential.h"
 #include "kernel/air/AirPolynomial.h"
-#include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/material/MaterialAbsorber.h"
 #include "kernel/material/MaterialVirtual.h"
@@ -51,19 +50,9 @@ PluginManager::PluginManager()
  */
 void PluginManager::load(QDir dir)
 {
-    QStringList files;
-    findFiles(dir, files);
-
-    for (QString file: files) {
-        QPluginLoader loader(file);
-        QObject* p = loader.instance();
-        TFactory* f = dynamic_cast<TFactory*>(p);
-        loadPlugin(f);
-    }
-
     loadPlugin(new SunFactoryT<SunPillbox>);
 
-    loadPlugin(new AirFactoryT<AirVacuum>);
+    loadPlugin(new AirFactoryT<AirTransmission>);
     loadPlugin(new AirFactoryT<AirExponential>);
     loadPlugin(new AirFactoryT<AirPolynomial>);
 
@@ -83,6 +72,16 @@ void PluginManager::load(QDir dir)
     loadPlugin(new RandomFactoryT<RandomSTL>);
 
     loadPlugin(new PhotonsFactoryT<PhotonsAbstract, PhotonsWidget>);
+
+    QStringList files;
+    findFiles(dir, files);
+
+    for (QString file: files) {
+        QPluginLoader loader(file);
+        QObject* p = loader.instance();
+        TFactory* f = dynamic_cast<TFactory*>(p);
+        loadPlugin(f);
+    }
 
     sort();
 }

@@ -20,7 +20,7 @@ class QPoint;
 class PhotonsBuffer;
 class SunAperture;
 class SunShape;
-class Air;
+class AirTransmission;
 
 
 class TONATIUH_KERNEL RayTracer
@@ -31,7 +31,7 @@ public:
               InstanceNode* instanceSun,
               SunAperture* sunAperture,
               SunShape* const sunShape,
-              Air* air,
+              AirTransmission* air,
               Random& rand,
               QMutex* mutexRand,
               PhotonsBuffer* photonBuffer,
@@ -50,7 +50,7 @@ private:
     SunAperture* m_sunAperture;
     const SunShape* m_sunShape;
     Transform m_sunTransform;
-    Air* m_air;
+    AirTransmission* m_air;
     Random* m_rand;
     QMutex* m_mutexRand;
     PhotonsBuffer* m_photonBuffer;

@@ -7,7 +7,7 @@ SO_NODE_SOURCE(AirPolynomial)
 
 void AirPolynomial::initClass()
 {
-    SO_NODE_INIT_CLASS(AirPolynomial, Air, "Air");
+    SO_NODE_INIT_CLASS(AirPolynomial, AirTransmission, "Air");
 }
 
 AirPolynomial::AirPolynomial()

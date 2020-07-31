@@ -17,8 +17,6 @@ class TONATIUH_KERNEL TSceneKit: public SoSceneKit
 
     SoSFString version;
     SO_KIT_CATALOG_ENTRY_HEADER(world);
-    SO_KIT_CATALOG_ENTRY_HEADER(air); // environment
-
     SO_KIT_CATALOG_ENTRY_HEADER(group); // scene
 
 public:

@@ -4,20 +4,17 @@
 #include <Inventor/nodes/SoSubNode.h>
 
 
-class TONATIUH_KERNEL Air: public SoNode
+class TONATIUH_KERNEL AirTransmission: public SoNode
 {
-    SO_NODE_ABSTRACT_HEADER(Air);
+    SO_NODE_HEADER(AirTransmission);
 
 public:
     static void initClass();
+    AirTransmission();
 
-    virtual double transmission(double /*distance*/) const = 0;
+    virtual double transmission(double /*distance*/) const {return 1.;}
 
-    NAME_ICON_FUNCTIONS("X", ":/images/AirAbstract.png")
-
-protected:
-    Air() {}
-    ~Air() {}
+    NAME_ICON_FUNCTIONS("Vacuum", ":/images/AirVacuum.png")
 };
 
 
@@ -27,7 +24,7 @@ protected:
 class AirFactory: public TFactory
 {
 public:
-    virtual Air* create() const = 0;
+    virtual AirTransmission* create() const = 0;
 };
 
 Q_DECLARE_INTERFACE(AirFactory, "tonatiuh.AirFactory")

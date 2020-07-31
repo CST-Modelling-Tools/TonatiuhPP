@@ -15,7 +15,7 @@
 #include <Inventor/nodes/SoGroup.h>
 
 #include "tree/SceneModel.h"
-#include "kernel/air/Air.h"
+#include "kernel/air/AirTransmission.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/photons/PhotonsBuffer.h"
 #include "kernel/random//Random.h"
@@ -28,7 +28,6 @@
 #include "kernel/sun/SunAperture.h"
 #include "libraries/math/3D/Transform.h"
 #include "libraries/math/gcf.h"
-#include "kernel/air/AirVacuum.h"
 #include "kernel/profiles/ProfileRT.h"
 #include "libraries/math/2D/Matrix2D.h"
 #include "kernel/photons/Photon.h"
@@ -100,7 +99,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
 
     if (!m_sceneKit) return;
 
-    Air* air = dynamic_cast<Air*>(m_sceneKit->getPart("air", false));
+    AirTransmission* air = dynamic_cast<AirTransmission*>(m_sceneKit->getPart("world.air.transmission", false));
 
     if (!m_instanceLayout) return;
     InstanceNode* instanceScene = m_instanceLayout->getParent();
@@ -186,8 +185,8 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
     QMutex mutex;
     QMutex mutexPhotonMap;
     QFuture<void> photonMap;
-    Air* airTemp = 0;
-    if (!dynamic_cast<AirVacuum*>(air))
+    AirTransmission* airTemp = 0;
+    if (air->getTypeId() != AirTransmission::getClassTypeId())
         airTemp = air;
 
     photonMap = QtConcurrent::map(raysPerThread, RayTracer(

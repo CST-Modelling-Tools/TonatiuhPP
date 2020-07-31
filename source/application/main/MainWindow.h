@@ -35,7 +35,7 @@ class PhotonToMemory;
 class ShapeFactory;
 class SunShape;
 class TrackerFactory;
-class Air;
+class AirTransmission;
 class SoCamera;
 class SoGroup;
 class SceneModel;
@@ -212,7 +212,6 @@ protected:
 
 private:
     void ChangeModelScene();
-    SoGroup* CreateGrid();
     PhotonsAbstract* CreatePhotonMapExport() const;
     bool Delete(QModelIndex index);
     bool OkToContinue();
@@ -222,7 +221,7 @@ private:
                             InstanceNode*& instanceSun,
                             SunShape*& sunShape,
                             SunAperture*& shape,
-                            Air*& air);
+                            AirTransmission*& air);
     bool SaveFile(const QString& fileName);
     void SetCurrentFile(const QString& fileName);
 

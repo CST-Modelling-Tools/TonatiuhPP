@@ -7,14 +7,14 @@
 #include "kernel/photons/PhotonsBuffer.h"
 #include "sun/SunAperture.h"
 #include "sun/SunShape.h"
-#include "air/Air.h"
+#include "air/AirTransmission.h"
 
 
 RayTracer::RayTracer(InstanceNode* instanceRoot,
     InstanceNode* instanceSun,
     SunAperture* sunAperture,
     SunShape* const sunShape,
-    Air* air,
+    AirTransmission* air,
     Random& rand,
     QMutex* mutexRand,
     PhotonsBuffer* photonBuffer,

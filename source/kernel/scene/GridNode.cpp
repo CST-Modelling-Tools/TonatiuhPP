@@ -1,53 +1,75 @@
-#include "GroundGrid.h"
-
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/nodes/SoTransform.h>
-#include <Inventor/nodes/SoTranslation.h>
-#include <Inventor/nodes/SoRotation.h>
-#include <Inventor/nodes/SoMaterial.h>
-#include <Inventor/nodes/SoLineSet.h>
-#include <Inventor/nodes/SoCoordinate3.h>
-#include <Inventor/nodes/SoDrawStyle.h>
-#include <Inventor/nodes/SoFont.h>
-#include <Inventor/nodes/SoSwitch.h>
-#include <Inventor/nodes/SoText2.h>
-#include <Inventor/nodes/SoText3.h>
-#include <Inventor/nodes/SoCylinder.h>
-#include <Inventor/actions/SoGetBoundingBoxAction.h>
-#include <Inventor/sensors/SoNodeSensor.h>
+#include "GridNode.h"
 
 #include <QVector>
 
+#include <Inventor/sensors/SoNodeSensor.h>
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoSwitch.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoDrawStyle.h>
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoLineSet.h>
 
-GroundGrid::GroundGrid()
+SO_NODE_SOURCE(GridNode);
+
+
+void GridNode::initClass()
 {
-
+    SO_NODE_INIT_CLASS(GridNode, SoNode, "Node");
 }
 
-SoGroup* GroundGrid::makeGrid(
-    double step, int divs,
-    double xMin, double xMax,
-    double yMin, double yMax
-)
+GridNode::GridNode()
 {
-    SoSwitch* ans = new SoSwitch;
-    ans->setName("grid");
+    SO_NODE_CONSTRUCTOR(GridNode);
 
-    SoTransform* transform = new SoTransform;
-    transform->translation.setValue(0., 0., -0.001);
-    ans->addChild(transform);
+    SO_NODE_ADD_FIELD(show, (TRUE) );
+    SO_NODE_ADD_FIELD(step, (1.) );
+    SO_NODE_ADD_FIELD(divisions, (5) );
+    SO_NODE_ADD_FIELD(xRange, (SbVec2d(-10., 10.)) );
+    SO_NODE_ADD_FIELD(yRange, (SbVec2d(-10., 10.)) );
 
-    double dx = step;
+    setName("Grid");
 
+    m_sensor = new SoNodeSensor(update, this);
+    m_sensor->attach(this);
+
+    m_root = new SoSwitch;
+    m_root->setName("grid");
+    m_root->ref();
+    create();
+}
+
+GridNode::~GridNode()
+{
+    delete m_sensor;
+    m_root->unref();
+}
+
+void GridNode::create()
+{
+    m_root->removeAllChildren();
+
+    double dx = step.getValue();
+    int divs = divisions.getValue();
+
+    double xMin = xRange.getValue()[0];
+    double xMax = xRange.getValue()[1];
     int nxMin = floor(xMin/dx);
     int nxMax = ceil(xMax/dx);
     xMin = nxMin*dx;
     xMax = nxMax*dx;
 
+    double yMin = yRange.getValue()[0];
+    double yMax = yRange.getValue()[1];
     int nyMin = floor(yMin/dx);
     int nyMax = ceil(yMax/dx);
     yMin = nyMin*dx;
     yMax = nyMax*dx;
+
+    SoTransform* transform = new SoTransform;
+    transform->translation.setValue(0., 0., -0.01);
+    m_root->addChild(transform);
 
     // points
     QVector<SbVec3f> pointsMajor;
@@ -87,37 +109,35 @@ SoGroup* GroundGrid::makeGrid(
     SoMaterial* sMaterial = new SoMaterial;
     sMaterial->diffuseColor.setValue(0., 0., 0.);
     sMaterial->transparency = 0.8;
-    ans->addChild(sMaterial);
+    m_root->addChild(sMaterial);
 
     SoCoordinate3* sPoints = new SoCoordinate3;
     sPoints->point.setValues(0, pointsMajor.size(), pointsMajor.data());
-    ans->addChild(sPoints);
+    m_root->addChild(sPoints);
 
     SoLineSet* sLines = new SoLineSet;
     sLines->numVertices.setValues(0, sizesMajor.size(), sizesMajor.data());
-    ans->addChild(sLines);
+    m_root->addChild(sLines);
 
     // minor grid
     sMaterial = new SoMaterial;
     sMaterial->diffuseColor.setValue(0., 0., 0.);
     sMaterial->transparency = 0.95;
-    ans->addChild(sMaterial);
+    m_root->addChild(sMaterial);
 
     sPoints = new SoCoordinate3;
     sPoints->point.setValues(0, pointsMinor.size(), pointsMinor.data());
-    ans->addChild(sPoints);
+    m_root->addChild(sPoints);
 
     sLines = new SoLineSet;
     sLines->numVertices.setValues(0, sizesMinor.size(), sizesMinor.data());
-    ans->addChild(sLines);
+    m_root->addChild(sLines);
 
     // axes
-    ans->addChild( makeAxes(xMin - dx, xMax + dx, yMin - dx, yMax + dx) );
-
-    return ans;
+    m_root->addChild(makeAxes(xMin - dx, xMax + dx, yMin - dx, yMax + dx));
 }
 
-SoGroup* GroundGrid::makeAxes(double xMin, double xMax, double yMin, double yMax)
+SoSeparator* GridNode::makeAxes(double xMin, double xMax, double yMin, double yMax)
 {
     SoSeparator* ans = new SoSeparator;
 
@@ -151,4 +171,10 @@ SoGroup* GroundGrid::makeAxes(double xMin, double xMax, double yMin, double yMax
     ans->addChild(sLines);
 
     return ans;
+}
+
+void GridNode::update(void* data, SoSensor*)
+{
+    GridNode* node = (GridNode*) data;
+    node->create();
 }

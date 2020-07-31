@@ -7,9 +7,8 @@
 #include "libraries/math/3D/Transform.h"
 #include "libraries/math/3D/vec3d.h"
 
-#include "kernel/air/AirVacuum.h"
 #include "kernel/trackers/Tracker.h"
-#include "kernel/air/Air.h"
+#include "kernel/air/AirTransmission.h"
 #include "kernel/sun/SunPillbox.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/scene/TSeparatorKit.h"
@@ -26,7 +25,6 @@ void TSceneKit::initClass()
 
     WorldKit::initClass();
     SunKit::initClass();
-    Air::initClass();
 
     TSeparatorKit::initClass();
     TShapeKit::initClass();
@@ -41,9 +39,6 @@ TSceneKit::TSceneKit()
 
     SO_KIT_ADD_CATALOG_ENTRY(world, WorldKit, FALSE, this, "", TRUE);
 
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(air, Air, AirVacuum, TRUE, topSeparator, "", TRUE);
-
-
     SO_KIT_ADD_CATALOG_ENTRY(group, SoGroup, FALSE, topSeparator, "", TRUE); // topsep important
 
     SO_KIT_INIT_INSTANCE();
@@ -53,10 +48,9 @@ TSceneKit::TSceneKit()
 
     SunKit* sunKit = new SunKit;
     setPart("lightList[0]", sunKit);
-    setPart("air", new AirVacuum);
 
-    LocationNode* loc = (LocationNode*) getPart("world.location", true);
-    loc->name = "unknown";
+//    LocationNode* loc = (LocationNode*) getPart("world.location", true);
+//    loc->name = "unknown";
 }
 
 void TSceneKit::updateTrackers()

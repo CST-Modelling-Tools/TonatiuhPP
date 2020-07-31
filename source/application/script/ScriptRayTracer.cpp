@@ -24,7 +24,7 @@
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/sun/SunShape.h"
-#include "kernel/air/Air.h"
+#include "kernel/air/AirTransmission.h"
 
 
 ScriptRayTracer::ScriptRayTracer(QVector<RandomFactory*> listRandomFactory):

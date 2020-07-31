@@ -18,7 +18,7 @@
 #include "FluxAnalysis.h"
 #include "SelectSurfaceDialog.h"
 #include "tree/SceneModel.h"
-#include "kernel/air/Air.h"
+#include "kernel/air/AirTransmission.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/random/Random.h"
 #include "kernel/run/RayTracer.h"
