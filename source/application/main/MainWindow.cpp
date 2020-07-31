@@ -169,7 +169,6 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
     m_pluginManager->load(dir);
 
     if (splash) splash->showMessage("Creating views", splashAlignment);
-    SetupActions();
     SetupDocument();
     SetupViews();
     SetupPluginsManager();
@@ -247,23 +246,6 @@ MainWindow::~MainWindow()
     delete m_undoStack;
     delete m_rand;
     delete m_photonsBuffer;
-}
-
-/*!
- * Creates actions form recent files.
- */
-void MainWindow::SetupActions()
-{
-    for (int i = 0; i < m_maxRecentFiles; ++i) {
-        QAction* a = new QAction;
-        a->setVisible(false);
-        connect(
-            a, SIGNAL(triggered()),
-            this, SLOT(FileOpenRecent())
-        );
-        m_recentFileActions << a;
-    }
-    ui->menuFileRecent->addActions(m_recentFileActions);
 }
 
 /*!
@@ -2754,7 +2736,50 @@ void MainWindow::ReadSettings()
 
     m_recentFiles = settings.value("recentFiles").toStringList();
 
+    SetupRecentFiles();
     UpdateRecentFileActions();
+}
+
+/*!
+ * Creates actions form recent files.
+ */
+void MainWindow::SetupRecentFiles()
+{
+    for (int i = 0; i < m_maxRecentFiles; ++i) {
+        QAction* a = new QAction;
+        a->setVisible(false);
+        connect(
+            a, SIGNAL(triggered()),
+            this, SLOT(FileOpenRecent())
+        );
+        ui->menuFileRecent->addAction(a);
+    }
+}
+
+/*!
+ * Updates the recently opened files actions list.
+ */
+void MainWindow::UpdateRecentFileActions()
+{
+    QMutableStringListIterator iterator(m_recentFiles);
+    while (iterator.hasNext())
+        if (!QFile::exists(iterator.next()))
+            iterator.remove();
+
+    QList<QAction*> actions = ui->menuFileRecent->actions();
+    for (int n = 0; n < m_maxRecentFiles; ++n) {
+        if (n < m_recentFiles.count()) {
+            QString text = tr("&%1 |   %2")
+                    .arg(n + 1)
+                    .arg(StrippedName(m_recentFiles[n]));
+            actions[n]->setText(text);
+//            actions[n]->setToolTip(m_recentFiles[n]);
+            actions[n]->setStatusTip(m_recentFiles[n]);
+            actions[n]->setData(m_recentFiles[n]);
+            actions[n]->setVisible(true);
+        } else
+            actions[n]->setVisible(false);
+    }
 }
 
 /*!
@@ -3092,31 +3117,6 @@ void MainWindow::UpdateLightSize()
 
     sunKit->setBox(sceneKit);
     m_modelScene->UpdateSceneModel();
-}
-
-/*!
- * Updates the recently opened files actions list.
- */
-void MainWindow::UpdateRecentFileActions()
-{
-    QMutableStringListIterator iterator(m_recentFiles);
-    while (iterator.hasNext())
-    {
-        if (!QFile::exists(iterator.next()))
-            iterator.remove();
-    }
-
-    for (int n = 0; n < m_maxRecentFiles; ++n) {
-        if (n < m_recentFiles.count()) {
-            QString text = tr("&%1 |   %2")
-                    .arg(n + 1)
-                    .arg(StrippedName(m_recentFiles[n]));
-            m_recentFileActions[n]->setText(text);
-            m_recentFileActions[n]->setData(m_recentFiles[n]);
-            m_recentFileActions[n]->setVisible(true);
-        } else
-            m_recentFileActions[n]->setVisible(false);
-    }
 }
 
 /*!

@@ -225,7 +225,7 @@ private:
     bool SaveFile(const QString& fileName);
     void SetCurrentFile(const QString& fileName);
 
-    void SetupActions();
+
     void SetupDocument();
 
     void SetupViews();
@@ -243,6 +243,7 @@ private:
     void SetupTriggers();
 
     void ReadSettings();
+    void SetupRecentFiles();
     void UpdateRecentFileActions();
     void WriteSettings();
 
@@ -258,7 +259,6 @@ private:
 
     static const int m_maxRecentFiles = 7;
     QStringList m_recentFiles;
-    QList<QAction*> m_recentFileActions;
     QString m_currentFile;
 
     QUndoStack* m_undoStack;
