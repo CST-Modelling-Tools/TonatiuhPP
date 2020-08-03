@@ -102,7 +102,7 @@ int main(int argc, char** argv)
         QScriptEngine* interpreter = new QScriptEngine;
         qScriptRegisterSequenceMetaType<QVector<QVariant> >(interpreter);
 
-        MainWindow mw("");
+        MainWindow mw;
         QScriptValue tonatiuh = interpreter->newQObject(&mw);
         interpreter->globalObject().setProperty("tonatiuh", tonatiuh);
 

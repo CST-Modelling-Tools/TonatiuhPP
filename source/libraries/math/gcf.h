@@ -43,7 +43,7 @@ namespace gcf
     }
 
     template<class T, class U>
-    bool lerp(T a, T b, U u)
+    T lerp(T a, T b, U u)
     {
         return (U(1) - u)*a + u*b;
     }

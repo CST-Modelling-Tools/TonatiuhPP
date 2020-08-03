@@ -58,7 +58,6 @@ public:
     void UpdateSceneModel();
 
 private:
-    void initScene();
     InstanceNode* addInstanceNode(InstanceNode* parent, SoNode* node);
     void generateInstanceTree(InstanceNode* instance);
     void deleteInstanceTree(InstanceNode* instance);

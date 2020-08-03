@@ -16,11 +16,11 @@ public:
     static void initClass();
     SkyBackground();
 
+    void GLRender(SoGLRenderAction* action);
+
+protected:
     SoSeparator* m_root;
     SoPerspectiveCamera* m_camera;
-    SoSeparator* m_sky;
-
-    void GLRender(SoGLRenderAction* action);
 
 protected:
     ~SkyBackground();

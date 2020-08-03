@@ -108,7 +108,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
     if (!m_sceneKit->getPart("lightList[0]", false)) return;
     SunKit* sunKit = static_cast<SunKit*>(m_sceneKit->getPart("lightList[0]", false));
 
-    InstanceNode* instanceSun = instanceScene->children[0];
+    InstanceNode* instanceSun = instanceScene->children[0]->children[0];
     if (!instanceSun) return;
 
     if (!sunKit->getPart("tsunshape", false)) return;

@@ -2,7 +2,8 @@
 
 
 TSceneKit {
-  fields [ SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode group, SFNode air, SFNode topSeparator ]
+  fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
+  version "2020"
   lightList 
   NodeKitListPart {
     childTypeNames "LightKit"
@@ -118,11 +119,6 @@ TSceneKit {
       }
 
     }
-  }
-  air 
-  AirVacuum {
-    fields [  ]
-
   }
 
 }

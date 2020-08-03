@@ -26,6 +26,7 @@ void Document::New()
 {
     if (m_scene) ClearScene();
     m_scene = new TSceneKit;
+    m_scene->ref();
     m_isModified = false;
 }
 
@@ -65,6 +66,7 @@ bool Document::ReadFile(const QString& fileName)
 
     if (m_scene) ClearScene();
     m_scene = scene;
+    m_scene->ref();
     m_isModified = false;
     return true;
 }
@@ -106,6 +108,5 @@ void Document::ClearScene()
 {
     while (m_scene->getRefCount() > 1) //? >=
         m_scene->unref();
-//    m_scene = 0;
 }
 

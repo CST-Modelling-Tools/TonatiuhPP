@@ -46,5 +46,7 @@
         <file>images/scene/nodeMaterialGL.png</file>
         <file>images/about/SplashScreenCy.png</file>
         <file>images/about/TonatiuhCy.ico</file>
+        <file>images/scene/nodeFolder.png</file>
+        <file>images/scene/nodeTerrain.png</file>
     </qresource>
 </RCC>

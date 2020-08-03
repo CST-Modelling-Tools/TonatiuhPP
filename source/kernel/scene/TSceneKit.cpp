@@ -35,7 +35,7 @@ TSceneKit::TSceneKit()
     SO_KIT_CONSTRUCTOR(TSceneKit);
 
     SO_NODE_ADD_FIELD(version, ("") );
-    version.setValue("2019");
+    version.setValue("2020");
 
     SO_KIT_ADD_CATALOG_ENTRY(world, WorldKit, FALSE, this, "", TRUE);
 
@@ -51,6 +51,12 @@ TSceneKit::TSceneKit()
 
 //    LocationNode* loc = (LocationNode*) getPart("world.location", true);
 //    loc->name = "unknown";
+
+    SoGroup* g = (SoGroup*) getPart("group", true);
+    TSeparatorKit* nodeLayout = new TSeparatorKit;
+    nodeLayout->setName("Layout");
+//        nodeLayout->setSearchingChildren(true);
+    g->addChild(nodeLayout);
 }
 
 void TSceneKit::updateTrackers()

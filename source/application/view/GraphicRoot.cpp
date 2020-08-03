@@ -1,6 +1,7 @@
 #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoSwitch.h>
+#include <Inventor/nodes/SoPointSet.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/actions/SoSearchAction.h>
 
@@ -46,6 +47,7 @@ GraphicRoot::GraphicRoot()
     m_root->addChild(sky);
 
     m_grid = new SoSeparator;
+    m_grid->addChild(new SoPointSet); // empty scene hides sky
     m_root->addChild(m_grid);
 
     m_selection = new SoSelection;

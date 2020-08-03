@@ -2,7 +2,8 @@
 
 
 TSceneKit {
-  fields [ SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode group, SFNode air, SFNode topSeparator ]
+  fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
+  version "2020"
   lightList 
   NodeKitListPart {
     childTypeNames "LightKit"
@@ -17,7 +18,7 @@ TSceneKit {
         transform 
         Transform {
           translation -7.1665797 0 12.412879
-          rotation 0.69474655 0.69474655 0.18615681  2.7734926
+          rotation 0.69474661 0.69474661 0.18615682  2.7734926
 
         }
         light 
@@ -223,7 +224,7 @@ TSceneKit {
           transform 
           Transform {
             translation -0.1666 0 -0.866
-            rotation -0 -0.99999976 -0  0.52359891
+            rotation -0 -1 -0  0.52359891
 
           }
           group 
@@ -323,11 +324,6 @@ TSceneKit {
       }
 
     }
-  }
-  air 
-  AirVacuum {
-    fields [  ]
-
   }
 
 }

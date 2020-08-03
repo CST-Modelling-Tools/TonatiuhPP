@@ -1,9 +1,7 @@
 #include "SceneDelegate.h"
 
 #include <QLineEdit>
-#include <QMessageBox>
 #include <QModelIndex>
-#include <QObject>
 
 #include <Inventor/SbName.h>
 #include <Inventor/nodekits/SoBaseKit.h>
@@ -11,9 +9,7 @@
 #include "kernel/run/InstanceNode.h"
 #include "tree/SceneModel.h"
 
-/**
- * Creates a new delegate to facilitate editing node names.
- */
+
 SceneDelegate::SceneDelegate(QObject* parent):
     QStyledItemDelegate(parent)
 {
@@ -27,10 +23,13 @@ SceneDelegate::SceneDelegate(QObject* parent):
 QWidget* SceneDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& /*option*/, const QModelIndex& /*index*/) const
 {
     QLineEdit* editor = new QLineEdit(parent);
-    QRegExp rx("[a-zA-Z]\\S*"); // exclude white spaces
+    QRegExp rx("[a-zA-Z]\\S*"); // \\S matches a non-whitespace character
     QValidator* validator = new QRegExpValidator(rx);
     editor->setValidator(validator);
     return editor;
+
+
+    // check Sun and air, run their dialog via main?
 }
 
 /**

@@ -160,7 +160,7 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
 {
     ui->setupUi(this);
 
-    int splashAlignment = Qt::AlignLeft | Qt::AlignBottom;
+    int splashAlignment = Qt::AlignLeft | Qt::AlignBottom; // make a custom splash
 
     if (splash) splash->showMessage("Loading plugins", splashAlignment);
     m_pluginManager = new PluginManager;
@@ -171,25 +171,21 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
     if (splash) splash->showMessage("Creating views", splashAlignment);
     SetupDocument();
     SetupViews();
-    SetupPluginsManager();
+    SetupPluginManager();
     SetupTriggers();
-
     ReadSettings();
 
     if (splash) splash->showMessage("Opening file", splashAlignment);
-
     if (!tonatiuhFile.isEmpty()) {
         StartOver(tonatiuhFile);
     } else {
         SetCurrentFile("");
-//        ui->actionViewGrid->trigger();
-//        ui->actionViewGrid->setChecked(true);
-        ShowGrid();
         SoCamera* camera = m_graphicView[0]->getCamera();
         camera->focalDistance = 10.;
         SbVec3f target(0., 0., 0.);
         camera->position = target + SbVec3f(0, 0, camera->focalDistance.getValue());
         camera->pointAt(target, SbVec3f(0., 1., 0.));
+        ui->sceneView->expandToDepth(1);
     }
 
     Select("//Layout");
@@ -265,6 +261,7 @@ void MainWindow::SetupDocument()
 
     GridNode* gridNode = (GridNode*) m_document->getSceneKit()->getPart("world.terrain.grid", true);
     m_graphicsRoot->grid()->addChild(gridNode->getRoot());
+    ShowGrid();
 
     connect(
         m_graphicsRoot, SIGNAL(selectionChanged(SoSelection*)),
@@ -398,7 +395,7 @@ void MainWindow::SetupParametersView()
 /*!
  * Initializes plugin manager and load available plugins.
  */
-void MainWindow::SetupPluginsManager()
+void MainWindow::SetupPluginManager()
 {
     if (!m_pluginManager) return;
     SetupActionsInsertComponent();
@@ -687,7 +684,8 @@ void MainWindow::FileOpen()
 
     QString file = QFileDialog::getOpenFileName(
                 this, "Open", dir,
-                "Tonatiuh++ files (*.tnpp);;Tonatiuh files (*.tnh)"
+                "Tonatiuh files (*.tnh *.tnpp)"
+//                "Tonatiuh++ files (*.tnpp);;Tonatiuh files (*.tnh)"
     );
     if (file.isEmpty()) return;
 
@@ -2625,7 +2623,7 @@ void MainWindow::ChangeModelScene()
     InstanceNode* viewLayout = m_modelScene->getInstance(viewLayoutIndex);
     ui->sceneView->setRootIndex(viewLayoutIndex);
 
-    InstanceNode* concentratorRoot = viewLayout->children[0];
+    InstanceNode* concentratorRoot = viewLayout->children[1];
 
     m_modelSelection->setCurrentIndex(m_modelScene->indexFromUrl(concentratorRoot->getURL() ), QItemSelectionModel::ClearAndSelect);
 }
@@ -2799,7 +2797,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
     InstanceNode* instanceScene = m_modelScene->getInstance(QModelIndex());
     if (!instanceScene) return false;
 
-    instanceSun = instanceScene->children[0];
+    instanceSun = instanceScene->children[0]->children[0];
     if (!instanceSun) return false;
 
     instanceLayout = instanceScene->children[1];
@@ -3006,44 +3004,6 @@ void MainWindow::SetupActionsInsertTracker()
 void MainWindow::ShowGrid()
 {
     m_graphicsRoot->showGrid(ui->actionViewGrid->isChecked());
-
-    /*if( ui->actionViewGrid->isChecked() )
-           {
-            InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex( ui->sceneView->rootIndex() );
-            if ( !sceneInstance )  return;
-            SoNode* rootNode = sceneInstance->GetNode();
-            SoPath* nodePath = new SoPath( rootNode );
-            nodePath->ref();
-
-            SbViewportRegion region = m_graphicView[m_focusView]->GetViewportRegion();
-            SoGetBoundingBoxAction* bbAction = new SoGetBoundingBoxAction( region ) ;
-            if(nodePath)    bbAction->apply(nodePath);
-
-            SbXfBox3f box= bbAction->getXfBoundingBox();
-            delete bbAction;
-            nodePath->unref();
-
-            m_gridXElements = 10;
-            m_gridZElements = 10;
-            m_gridXSpacing = 10;
-            m_gridZSpacing = 10;
-
-            if( !box.isEmpty() )
-            {
-                SbVec3f min, max;
-                box.getBounds(min, max);
-
-                m_gridXSpacing = ( 2 *  std::max( fabs( max[0] ), fabs( min[0] ) ) + 5  ) / m_gridXElements;
-                m_gridZSpacing = ( 2 *  std::max( fabs( max[2] ), fabs( min[2] ) ) + 5 ) / m_gridZElements;
-
-            }
-
-            m_pGrid->addChild( CreateGrid( m_gridXElements, m_gridZElements, m_gridXSpacing, m_gridZSpacing ) );
-
-           }
-           else
-            m_pGrid->removeAllChildren();*/
-
 }
 
 /*!
@@ -3067,17 +3027,17 @@ void MainWindow::ShowRaysIn3DView()
  */
 bool MainWindow::StartOver(const QString& fileName)
 {
-    InstanceNode* sceneInstance = m_modelScene->getInstance(ui->sceneView->rootIndex() );
+//    InstanceNode* sceneInstance = m_modelScene->getInstance(ui->sceneView->rootIndex() );
 
-    InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
-    m_modelSelection->setCurrentIndex(m_modelScene->indexFromUrl(concentratorRoot->getURL() ), QItemSelectionModel::ClearAndSelect);
+//    InstanceNode* concentratorRoot = sceneInstance->children[sceneInstance->children.size() - 1];
+//    m_modelSelection->setCurrentIndex(m_modelScene->indexFromUrl(concentratorRoot->getURL() ), QItemSelectionModel::ClearAndSelect);
 
 //    ui->actionViewRays->setEnabled(false);
 //    ui->actionViewRays->setChecked(false);
 
-    m_graphicsRoot->removeScene();
     m_undoStack->clear();
     m_modelScene->clear();
+    m_graphicsRoot->removeScene();
 
 //    SetSunPositionCalculatorEnabled(0);
 
@@ -3094,7 +3054,7 @@ bool MainWindow::StartOver(const QString& fileName)
     }
 
     ChangeModelScene();
-    ui->sceneView->expandToDepth(0);
+    ui->sceneView->expandToDepth(1);
     Select("//Layout");
     on_actionViewAll_triggered(); // discard sun
     return true;

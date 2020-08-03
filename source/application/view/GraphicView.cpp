@@ -40,7 +40,7 @@ void GraphicView::setSceneGraph(GraphicRoot* sceneGraphRoot)
     highlighter->setLineWidth(1.);
     m_viewer->setGLRenderAction(highlighter);
 
-    m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_BLEND);
+    m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND);
 
 //    SoPerspectiveCamera* camera = dynamic_cast<SoPerspectiveCamera*>(m_myRenderArea->getCamera());
 //    camera->scaleHeight(-1.); // left-handed to right-handed
@@ -48,7 +48,6 @@ void GraphicView::setSceneGraph(GraphicRoot* sceneGraphRoot)
     showAxes(true);
     m_viewer->setHeadlight(false);
     m_viewer->setAntialiasing(true, 1); // disable if slow
-//    m_viewer->
 }
 
 SbViewportRegion GraphicView::GetViewportRegion() const

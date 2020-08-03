@@ -2,7 +2,8 @@
 
 
 TSceneKit {
-  fields [ SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode group, SFNode air, SFNode topSeparator ]
+  fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
+  version "2020"
   lightList 
   NodeKitListPart {
     childTypeNames "LightKit"
@@ -16,7 +17,7 @@ TSceneKit {
         irradiance 1000
         transform 
         Transform {
-          translation 13.199068 2.3273525 7.7380481
+          translation 13.564232 2.3917408 7.9521279
           rotation 0.71818328 -0.60262728 -0.34792697  2.3554611
 
         }
@@ -108,14 +109,12 @@ TSceneKit {
                     DEF Shape TShapeKit {
                       shapeRT 
                       DEF Cylinder ShapeCylinder {
-                        fields [ ]
-          
+                        fields [  ]
 
                       }
                       profileRT 
                       DEF Box ProfileBox {
                         fields [ SFDouble uSize, SFDouble vSize ]
-                   
 
                       }
                       materialRT 
@@ -276,11 +275,6 @@ TSceneKit {
       }
 
     }
-  }
-  air 
-  AirVacuum {
-    fields [  ]
-
   }
 
 }

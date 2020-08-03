@@ -17,8 +17,11 @@
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
+#include "kernel/scene/WorldKit.h"
+#include "kernel/scene/TerrainKit.h"
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/sun/SunKit.h"
+#include "kernel/air/AirKit.h"
 #include "kernel/trackers/Tracker.h"
 #include "libraries/math/gcf.h"
 #include "tree/SoPathVariant.h"
@@ -67,35 +70,29 @@ void SceneModel::setDocument(Document* document)
     m_nodeScene = document->getSceneKit();
     m_mapCoinQt.clear();
     if (m_instanceScene) clear();
-    initScene();
 
-    endResetModel();
-}
-
-void SceneModel::initScene()
-{
     m_instanceScene = new InstanceNode(m_nodeScene);
     m_mapCoinQt[m_nodeScene].append(m_instanceScene);
+
+    SoNode* worldKit = m_nodeScene->getPart("world", true);
+    InstanceNode* instanceW = addInstanceNode(m_instanceScene, worldKit);
 
     if (SunKit* sunKit = static_cast<SunKit*>(m_nodeScene->getPart("lightList[0]", false)))
         insertSunNode(sunKit);
 
+    SoNode* airKit = m_nodeScene->getPart("world.air", true);
+    addInstanceNode(instanceW, airKit);
+
+    SoNode* terrainKit = m_nodeScene->getPart("world.terrain", true);
+    addInstanceNode(instanceW, terrainKit);
+
     SoGroup* group = (SoGroup*) m_nodeScene->getPart("group", true);
-    if (group->getNumChildren() == 0)
-    {
-        TSeparatorKit* nodeLayout = new TSeparatorKit;
-        nodeLayout->setName("Layout");
-//        nodeLayout->setSearchingChildren(true);
-        group->addChild(nodeLayout);
-        m_instanceLayout = addInstanceNode(m_instanceScene, nodeLayout);
-    }
-    else
-    {
-        TSeparatorKit* nodeLayout = static_cast<TSeparatorKit*>(group->getChild(0));
-        if (!nodeLayout) return;
-        m_instanceLayout = addInstanceNode(m_instanceScene, nodeLayout);
-        generateInstanceTree(m_instanceLayout);
-    }
+    TSeparatorKit* nodeLayout = static_cast<TSeparatorKit*>(group->getChild(0));
+    if (!nodeLayout) return;
+    m_instanceLayout = addInstanceNode(m_instanceScene, nodeLayout);
+    generateInstanceTree(m_instanceLayout);
+
+    endResetModel();
 }
 
 InstanceNode* SceneModel::addInstanceNode(InstanceNode* parent, SoNode* node)
@@ -277,9 +274,21 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
             Tracker* tracker = static_cast<Tracker*>(node);
             return QIcon(tracker->getTypeIcon());
         }
+        else if (node->getTypeId().isDerivedFrom(WorldKit::getClassTypeId()))
+        {
+            return QIcon(":/images/scene/nodeFolder.png");
+        }
         else if (node->getTypeId().isDerivedFrom(SunKit::getClassTypeId()))
         {
             return QIcon(":/images/scene/environmentSun.png");
+        }
+        else if (node->getTypeId().isDerivedFrom(AirKit::getClassTypeId()))
+        {
+            return QIcon(":/images/scene/environmentAir.png");
+        }
+        else if (node->getTypeId().isDerivedFrom(TerrainKit::getClassTypeId()))
+        {
+            return QIcon(":/images/scene/nodeTerrain.png");
         }
     }
 
@@ -459,14 +468,15 @@ void SceneModel::insertSunNode(SunKit* sunKit)
     SoNodeKitListPart* lightList =
         static_cast<SoNodeKitListPart*>(m_nodeScene->getPart("lightList", true));
 
+    InstanceNode* instW = m_instanceScene->children[0];
     if (lightList->getNumChildren() > 0)
-        if (m_instanceScene->children.size() > 0)
-            m_instanceScene->children.remove(0);
+        if (instW->children.size() > 0)
+            instW->children.remove(0);
 
     m_nodeScene->setPart("lightList[0]", sunKit);
 
     InstanceNode* instance = new InstanceNode(sunKit);
-    m_instanceScene->insertChild(0, instance);
+    instW->insertChild(0, instance);
 
     emit layoutChanged();
 }
@@ -476,7 +486,9 @@ void SceneModel::removeSunNode(SunKit* sunKit)
     SoNodeKitListPart* lightList =
         static_cast<SoNodeKitListPart*>(m_nodeScene->getPart("lightList", true));
     if (lightList) lightList->removeChild(sunKit);
-    m_instanceScene->children.remove(0);
+
+    InstanceNode* instW = m_instanceScene->children[0];
+    instW->children.remove(0);
 
     emit layoutChanged();
 }

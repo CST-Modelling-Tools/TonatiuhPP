@@ -17,7 +17,7 @@
 
 #include <QColor>
 #include <QVector3D>
-
+#include "libraries/math/gcf.h"
 
 SO_NODE_SOURCE(SkyBackground)
 
@@ -25,9 +25,9 @@ SO_NODE_SOURCE(SkyBackground)
 // based on Preetham model
 struct SkyGradient
 {
-   QColor cH;
-   QColor cZ;
-   QVector3D g;
+   QColor cH; // horizon
+   QColor cZ; // zenith
+   QVector3D g; // transition
 
    QVector3D mix(double alpha)
    {
@@ -45,9 +45,9 @@ struct SkyGradient
 
    QColor find(double theta) {
        QVector3D m = mix(theta);
-       int r = m.x()*cZ.red() + (1. - m.x())*cH.red();
-       int g = m.y()*cZ.green() + (1. - m.y())*cH.green();
-       int b = m.z()*cZ.blue() + (1. - m.z())*cH.blue();
+       int r = gcf::lerp(cH.red(), cZ.red(), m.x());
+       int g = gcf::lerp(cH.green(), cZ.green(), m.y());
+       int b = gcf::lerp(cH.blue(), cZ.blue(), m.z());
        return QColor(r, g, b);
    }
 };
@@ -67,9 +67,10 @@ SkyBackground::SkyBackground(void)
 
     m_camera = new SoPerspectiveCamera;
     m_camera->position = SbVec3f(0., 0., 0.);
-    m_camera->nearDistance = 0.1f;
+//    m_camera->focalDistance = 0.5f;
+    m_camera->nearDistance = 0.1;
     m_camera->farDistance = 10.f;
-    m_camera->heightAngle = 0.523599;
+    m_camera->heightAngle = 0.523599; // 30 deg
     m_camera->enableNotify(FALSE);
     m_root->addChild(m_camera);
 
@@ -77,8 +78,7 @@ SkyBackground::SkyBackground(void)
     lightmodel->model.setValue(SoLightModel::BASE_COLOR);
     m_root->addChild(lightmodel);
 
-    m_sky = makeSky();
-    m_root->addChild(m_sky);
+    m_root->addChild(makeSky());
     m_root->addChild(makeLabels());
 }
 
@@ -90,6 +90,7 @@ SkyBackground::~SkyBackground()
 SoSeparator* SkyBackground::makeSky()
 {
     SoSeparator* ans = new SoSeparator;
+//    ans->renderCulling = SoSeparator::OFF;
 
     SkyGradient grSky;
     grSky.cH = QColor("#b2c3d2");
@@ -176,7 +177,6 @@ SoSeparator* SkyBackground::makeLabels()
     return ans;
 }
 
-#include "libraries/math/gcf.h"
 void SkyBackground::makeLabelAE(SoSeparator* parent, double azimuth, double elevation, const QString& text)
 {
     SoSeparator* ans = new SoSeparator;
@@ -202,6 +202,7 @@ void SkyBackground::makeLabelAE(SoSeparator* parent, double azimuth, double elev
     parent->addChild(ans);
 }
 
+//#include <QDebug>
 void SkyBackground::GLRender(SoGLRenderAction* action)
 {
   SoState* state = action->getState();
@@ -209,9 +210,10 @@ void SkyBackground::GLRender(SoGLRenderAction* action)
 
   const SbMatrix& tmp = SoViewingMatrixElement::get(state);
   SbRotation rot(tmp);
+//  qDebug() << rot.toString().getString();
   m_camera->orientation = rot.inverse();
-  SoModelMatrixElement::makeIdentity(state, this);
 
+  SoModelMatrixElement::makeIdentity(state, this);
   m_root->GLRender(action);
 
   glClear(GL_DEPTH_BUFFER_BIT);

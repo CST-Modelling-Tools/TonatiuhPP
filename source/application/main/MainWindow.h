@@ -61,7 +61,7 @@ class MainWindow: public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QString tonatiuhFile = 0, QSplashScreen* splash = 0, QWidget* parent = 0, Qt::WindowFlags flags = 0);
+    MainWindow(QString tonatiuhFile = "", QSplashScreen* splash = 0, QWidget* parent = 0, Qt::WindowFlags flags = 0);
     ~MainWindow();
 
     PluginManager* getPlugins() {return m_pluginManager;}
@@ -234,7 +234,7 @@ private:
     void SetupTreeView();
     void SetupParametersView();
 
-    void SetupPluginsManager();
+    void SetupPluginManager();
     void SetupActionsInsertComponent();
     void SetupActionsInsertMaterial();
     void SetupActionsInsertShape();
