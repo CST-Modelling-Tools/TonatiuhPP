@@ -144,8 +144,6 @@ private slots:
 
     void onSunDialog();
     void onAirDialog();
-    void CalculateSunPosition();
-    void ChangeGridSettings();
 
     void InsertUserDefinedComponent();
     void ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex& node);
@@ -161,7 +159,6 @@ private slots:
     bool SaveComponent();
     void SelectionFinish(SoSelection* selection);
     void SetParameterValue(SoNode* node, QString paramenterName, QString value);
-    void SetSunPositionCalculatorEnabled(int enabled);
 
     void ShowGrid();
     void ShowRays(bool on);

@@ -1,6 +1,7 @@
 #include "ParametersDelegate.h"
 
 #include <QComboBox>
+#include <QCheckBox>
 #include <QLineEdit>
 
 #include <Inventor/fields/SoSFEnum.h>
@@ -40,10 +41,9 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
     }
     else if (SoSFBool* f = dynamic_cast<SoSFBool*>(field))
     {
-        QComboBox* editor = new QComboBox(parent);
-        editor->addItem("FALSE");
-        editor->addItem("TRUE");
-        editor->setCurrentIndex(f->getValue() ? 1 : 0);
+        return 0;
+        QCheckBox* editor = new QCheckBox(parent);
+        editor->setChecked(f->getValue());
         return editor;
     }
     else if (UserSField* f = dynamic_cast<UserSField*>(field))

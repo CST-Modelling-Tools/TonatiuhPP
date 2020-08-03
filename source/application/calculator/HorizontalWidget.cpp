@@ -23,8 +23,8 @@
 #include "libraries/math/3D/vec3d.h"
 
 
-HorizontalWidget::HorizontalWidget( QWidget* parent )
-:QWidget( parent ), sphereRadio( 120.0 ), m_azimuth( 0 ), m_zenith( 0 )
+HorizontalWidget::HorizontalWidget(QWidget* parent):
+    QWidget(parent), sphereRadio(120.), m_azimuth(0.), m_zenith(0.)
 {
     QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout( mainLayout );
@@ -43,33 +43,34 @@ HorizontalWidget::HorizontalWidget( QWidget* parent )
     m_rootNode->addChild( ZenithLine() );
     m_rootNode->addChild( Star() );
 
-    SoQtExaminerViewer* myRenderArea = new SoQtExaminerViewer( examinerWidget );
-    myRenderArea->setSceneGraph( m_rootNode );
-    SbColor col( 0.86f, 0.86f, 0.86f );
-    myRenderArea->setBackgroundColor(col);
-    myRenderArea->show(  );
+    SoQtExaminerViewer* viewer = new SoQtExaminerViewer(examinerWidget);
+    viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND);
+
+    viewer->setSceneGraph(m_rootNode);
+    viewer->setBackgroundColor(SbColor(0.86f, 0.86f, 0.86f));
+    viewer->show();
 
     QWidget* labelsWidget = new QWidget;
-    mainLayout->addWidget( labelsWidget );
+    mainLayout->addWidget(labelsWidget);
 
     QGridLayout* labelsLayout = new QGridLayout;
-    labelsWidget->setLayout( labelsLayout );
+    labelsWidget->setLayout(labelsLayout);
 
     QLabel* m_AzimuthLabel = new QLabel;
-    m_AzimuthLabel->setText( "Azimuth:" );
-    labelsLayout->addWidget( m_AzimuthLabel, 0, 0, 1, 1 );
+    m_AzimuthLabel->setText("Azimuth:");
+    labelsLayout->addWidget(m_AzimuthLabel, 0, 0, 1, 1);
 
     m_azimuthValue = new QLabel;
-    m_azimuthValue->setText( QString::number( m_azimuth ) );
-    labelsLayout->addWidget( m_azimuthValue, 0, 1, 1, 3  );
+    m_azimuthValue->setText(QString::number(m_azimuth) );
+    labelsLayout->addWidget(m_azimuthValue, 0, 1, 1, 3 );
 
     QLabel* m_zenithLabel = new QLabel;
-    m_zenithLabel->setText( "Zenith:" );
-    labelsLayout->addWidget( m_zenithLabel, 1, 0, 1, 1 );
+    m_zenithLabel->setText("Zenith:" );
+    labelsLayout->addWidget(m_zenithLabel, 1, 0, 1, 1 );
 
     m_zenithValue = new QLabel;
-    m_zenithValue->setText( QString::number( m_zenith ) );
-    labelsLayout->addWidget( m_zenithValue, 1, 1, 1, 3 );
+    m_zenithValue->setText(QString::number(m_zenith));
+    labelsLayout->addWidget(m_zenithValue, 1, 1, 1, 3 );
 
 }
 
@@ -120,7 +121,7 @@ SoSeparator* HorizontalWidget::AzimuthLine()
     {
         double grad = ( m_azimuth / 360 ) * fi;
         azimuthPoints[fi][0] = sin( grad * (gcf::pi / 180) )* sphereRadio ;
-        azimuthPoints[fi][1] =  0.0;
+        azimuthPoints[fi][1] = 0.;
         azimuthPoints[fi][2] = -cos( grad * (gcf::pi / 180) ) * sphereRadio ;
 
     }
@@ -170,9 +171,7 @@ SoSeparator* HorizontalWidget::AzimuthLine()
         numPoints++;
 
         indexes[ ( ( index -1 ) * 4  ) + 3 ] = -1;
-
       }
-
 
       SoCoordinate3 * curveCoord3 = new SoCoordinate3;
       curveCoord3->point.setValues( 0, 270, curvePoints );
@@ -187,30 +186,29 @@ SoSeparator* HorizontalWidget::AzimuthLine()
 
 SoSeparator* HorizontalWidget::Ejes() const
 {
-      SoSeparator* ejes = new SoSeparator;
+    SoSeparator* ejes = new SoSeparator;
 
-      SoMaterial *myMaterial = new SoMaterial;
-      myMaterial->diffuseColor.setValue(1.0, 0.0, 0.0);   // Red
-      ejes->addChild(myMaterial);
+    SoMaterial *myMaterial = new SoMaterial;
+    myMaterial->diffuseColor.setValue(1.0, 0.0, 0.0);   // Red
+    ejes->addChild(myMaterial);
 
     float p[6][3]={{0.0, 0.0, 0.0},
-                     { float( sphereRadio+20 ), 0.0, 0.0},
-                    {0.0, 0.0, 0.0},
-                    {0.0, float( sphereRadio+20 ), 0.0},
-                    {0.0, 0.0, 0.0},
-                    {0.0, 0.0, float( sphereRadio+20 )}};
+                   { float( sphereRadio+20 ), 0.0, 0.0},
+                   {0.0, 0.0, 0.0},
+                   {0.0, float( sphereRadio+20 ), 0.0},
+                   {0.0, 0.0, 0.0},
+                   {0.0, 0.0, float( sphereRadio+20 )}};
 
-      SoCoordinate3* coord3 = new SoCoordinate3;
-      coord3->point.setValues(0, 6, p);
-      ejes->addChild(coord3);
+    SoCoordinate3* coord3 = new SoCoordinate3;
+    coord3->point.setValues(0, 6, p);
+    ejes->addChild(coord3);
 
-      int lines[3]={2,2, 2};
-      SoLineSet* lineset=new SoLineSet;
-      lineset->numVertices.setValues(0,3,lines);
-      ejes->addChild(lineset);
+    int lines[3]={2,2, 2};
+    SoLineSet* lineset=new SoLineSet;
+    lineset->numVertices.setValues(0,3,lines);
+    ejes->addChild(lineset);
 
-      return ejes;
-
+    return ejes;
 }
 
 SoSeparator* HorizontalWidget::Horizon() const
@@ -226,60 +224,57 @@ SoSeparator* HorizontalWidget::Horizon() const
 
     int lines[1]={360};
     SoCoordinate3 * coord3 = new SoCoordinate3;
-      coord3->point.setValues(0, 360, p);
-      SoSeparator* ecuador = new SoSeparator;
-      ecuador->addChild(coord3);
+    coord3->point.setValues(0, 360, p);
+    SoSeparator* ecuador = new SoSeparator;
+    ecuador->addChild(coord3);
 
-      SoLineSet* lineset=new SoLineSet;
-      lineset->numVertices.setValues(0,1,lines);
-      ecuador->addChild(lineset);
+    SoLineSet* lineset=new SoLineSet;
+    lineset->numVertices.setValues(0,1,lines);
+    ecuador->addChild(lineset);
 
     return ecuador;
-
-
 }
 
 SoSeparator* HorizontalWidget ::Sphere() const
 {
     SoSeparator* sph = new SoSeparator;
 
-      SoMaterial *myMaterial = new SoMaterial;
-      myMaterial->diffuseColor.setValue( 0.0f, 0.0f, 1.0f );   // Blue
-      myMaterial->transparency.setValue( 0.3f );
-      sph->addChild( myMaterial );
+    SoMaterial *myMaterial = new SoMaterial;
+    myMaterial->diffuseColor.setValue( 0.0f, 0.0f, 1.0f );   // Blue
+    myMaterial->transparency.setValue( 0.3f );
+    sph->addChild( myMaterial );
 
-      SoComplexity* complexity = new SoComplexity;
-      complexity->value = 0.5;
-      sph->addChild( complexity );
+    SoComplexity* complexity = new SoComplexity;
+    complexity->value = 0.5;
+    sph->addChild( complexity );
 
     SoSphere* sphere=new SoSphere;
-       sphere->radius = sphereRadio;
-       sph->addChild(sphere);
+    sphere->radius = sphereRadio;
+    sph->addChild(sphere);
 
     return sph;
 }
 
 SoSeparator* HorizontalWidget::Star()
 {
-      //Star definition
+    //Star definition
     SoSeparator* star = new SoSeparator;
 
     SoMaterial *myMaterial = new SoMaterial;
-      myMaterial->diffuseColor.setValue(1.0, 1.0, 0.0);   // yellow
-      star->addChild(myMaterial);
+    myMaterial->diffuseColor.setValue(1.0, 1.0, 0.0);   // yellow
+    star->addChild(myMaterial);
 
-      SoTranslation* starTransform = new SoTranslation;
-      starTransform->translation.setValue( sin( m_zenith * (gcf::pi / 180) )* sin( m_azimuth * (gcf::pi / 180) ) * sphereRadio,
-          cos( m_zenith * (gcf::pi / 180) ) * sphereRadio,
-          -sin( m_zenith * (gcf::pi / 180) )* cos( m_azimuth * (gcf::pi / 180) )  * sphereRadio ) ;
-      star->addChild( starTransform);
+    SoTranslation* starTransform = new SoTranslation;
+    starTransform->translation.setValue( sin( m_zenith * (gcf::pi / 180) )* sin( m_azimuth * (gcf::pi / 180) ) * sphereRadio,
+                                         cos( m_zenith * (gcf::pi / 180) ) * sphereRadio,
+                                         -sin( m_zenith * (gcf::pi / 180) )* cos( m_azimuth * (gcf::pi / 180) )  * sphereRadio ) ;
+    star->addChild( starTransform);
 
-      SoSphere* sphere=new SoSphere;
-       sphere->radius=10;
-       star->addChild(sphere);
+    SoSphere* sphere=new SoSphere;
+    sphere->radius=10;
+    star->addChild(sphere);
 
     return star;
-
 }
 
 SoSeparator* HorizontalWidget::Text(){
@@ -287,56 +282,56 @@ SoSeparator* HorizontalWidget::Text(){
     SoSeparator* text = new SoSeparator;
 
     SoMaterial* myMaterial = new SoMaterial;
-      myMaterial->diffuseColor.setValue( 1.0, 0.0, 0.0 );   // Red
-      text->addChild( myMaterial );
+    myMaterial->diffuseColor.setValue( 1.0, 0.0, 0.0 );   // Red
+    text->addChild( myMaterial );
 
     SoSeparator* norte = new SoSeparator;
     SoTransform* norteTransf = new SoTransform;
     norteTransf->translation.setValue( SbVec3f( 0, 0, -( sphereRadio+30) ) );
     norte->addChild( norteTransf );
 
-      SoText3* northText= new SoText3();
-      northText->string.setValue("N");
-      northText->justification = SoText3::CENTER;
+    SoText3* northText= new SoText3();
+    northText->string.setValue("N");
+    northText->justification = SoText3::CENTER;
     northText->parts = SoText3::ALL;
-      norte->addChild( northText );
-      text->addChild( norte );
+    norte->addChild( northText );
+    text->addChild( norte );
 
-      SoSeparator* south = new SoSeparator;
+    SoSeparator* south = new SoSeparator;
     SoTransform* southTransf = new SoTransform;
     southTransf->translation.setValue( SbVec3f( 0, 0, ( sphereRadio+30 ) ) );
     south->addChild( southTransf );
 
-      SoText3* southText = new SoText3();
-      southText->string.setValue("S");
-      southText->justification = SoText3::CENTER;
+    SoText3* southText = new SoText3();
+    southText->string.setValue("S");
+    southText->justification = SoText3::CENTER;
     southText->parts = SoText3::ALL;
-      south->addChild( southText );
-      text->addChild( south );
+    south->addChild( southText );
+    text->addChild( south );
 
-      SoSeparator* east = new SoSeparator;
+    SoSeparator* east = new SoSeparator;
     SoTransform* eastTransf = new SoTransform;
     eastTransf->translation.setValue( SbVec3f( ( sphereRadio+30 ), 0.0, 0.0 ) );
     east->addChild( eastTransf );
 
-      SoText3* eastText = new SoText3();
-      eastText->string.setValue("E");
-      eastText->justification = SoText3::CENTER;
+    SoText3* eastText = new SoText3();
+    eastText->string.setValue("E");
+    eastText->justification = SoText3::CENTER;
     eastText->parts = SoText3::ALL;
-      east->addChild( eastText );
-      text->addChild( east );
+    east->addChild( eastText );
+    text->addChild( east );
 
-      SoSeparator* west = new SoSeparator;
+    SoSeparator* west = new SoSeparator;
     SoTransform* westTransf = new SoTransform;
     westTransf->translation.setValue( SbVec3f( -( sphereRadio+30 ), 0.0, 0.0 ) );
     west->addChild( westTransf );
 
-      SoText3* westText = new SoText3();
-      westText->string.setValue("W");
-      westText->justification = SoText3::CENTER;
+    SoText3* westText = new SoText3();
+    westText->string.setValue("W");
+    westText->justification = SoText3::CENTER;
     westText->parts = SoText3::ALL;
-      west->addChild( westText );
-      text->addChild( west );
+    west->addChild( westText );
+    text->addChild( west );
 
     return text;
 }
@@ -422,7 +417,6 @@ SoSeparator* HorizontalWidget::ZenithLine()
       SoIndexedFaceSet* facet = new SoIndexedFaceSet;
       facet->coordIndex.setValues( 0, 360, indexes );
       curve->addChild( facet );
-
 
       return zenith;
 }

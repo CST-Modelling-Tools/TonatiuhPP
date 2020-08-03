@@ -1,6 +1,8 @@
 #include "ParametersModel.h"
 #include "ParametersItem.h"
 
+#include <Inventor/SbString.h>
+#include <Inventor/nodes/SoNode.h>
 
 ParametersModel::ParametersModel(QObject* parent):
     QStandardItemModel(parent)

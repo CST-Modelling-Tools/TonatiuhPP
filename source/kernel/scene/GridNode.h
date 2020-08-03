@@ -2,14 +2,15 @@
 #include "kernel/TonatiuhKernel.h"
 
 #include <Inventor/nodes/SoSubNode.h>
+#include <Inventor/nodes/SoSwitch.h>
 #include <Inventor/fields/SoSFBool.h>
 #include <Inventor/fields/SoSFDouble.h>
 #include <Inventor/fields/SoSFInt32.h>
 #include <Inventor/fields/SoSFVec2d.h>
+#include <Inventor/fields/SoSFVec2d.h>
 
 class SoSensor;
 class SoNodeSensor;
-
 
 class TONATIUH_KERNEL GridNode: public SoNode
 {
@@ -30,7 +31,7 @@ public:
     void create();
 
 protected:
-    SoGroup* m_root;
+    SoSwitch* m_root;
     SoSeparator* makeAxes(double xMin, double xMax, double yMin, double yMax);
 
     SoNodeSensor* m_sensor;

@@ -14,6 +14,7 @@
 #include "kernel/scene/TSceneKit.h"
 #include "libraries/math/gcf.h"
 #include "parameters/ParametersView.h"
+#include "calculator/SunCalculatorDialog.h"
 
 /**
  * Creates a new dialog for the light definition.
@@ -200,4 +201,19 @@ void SunDialog::removeNode()
 
     ui->disabledNodeList->removeItemWidget(currentItem);
     delete currentItem;
+}
+
+void SunDialog::on_buttonSunCalc_clicked()
+{
+    //#ifndef NO_MARBLE
+
+    //    SoSceneKit* coinScene = m_document->getSceneKit();
+    //    if (!coinScene->getPart("lightList[0]", false) ) return;
+
+        SunCalculatorDialog sunposDialog(this);
+    //    connect(&sunposDialog, SIGNAL(changeSunLight(double,double)), this, SLOT(ChangeSunPosition(double,double)) );
+
+        sunposDialog.exec();
+
+    //#endif /* NO_MARBLE*/
 }

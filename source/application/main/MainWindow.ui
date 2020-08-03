@@ -102,7 +102,6 @@
      <addaction name="actionLookSouth"/>
      <addaction name="actionLookWest"/>
     </widget>
-    <addaction name="actionViewGrid"/>
     <addaction name="actionViewRays"/>
     <addaction name="actionViewPhotons"/>
     <addaction name="separator"/>
@@ -153,19 +152,8 @@
     <addaction name="menuTracker"/>
     <addaction name="separator"/>
     <addaction name="menuComponent"/>
-   </widget>
-   <widget class="QMenu" name="menuScene">
-    <property name="title">
-     <string>&amp;Scene</string>
-    </property>
-    <addaction name="actionSceneSun"/>
-    <addaction name="actionSceneSunCalculator"/>
-    <addaction name="actionSceneAir"/>
-    <addaction name="actionSceneGrid"/>
-    <addaction name="separator"/>
     <addaction name="actionUserComponent"/>
     <addaction name="actionSaveComponent"/>
-    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuRun">
     <property name="title">
@@ -192,7 +180,6 @@
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
-   <addaction name="menuScene"/>
    <addaction name="menuInsert"/>
    <addaction name="menuView"/>
    <addaction name="menuRun"/>
@@ -237,19 +224,6 @@
    <addaction name="actionEditPasteLink"/>
    <addaction name="actionEditDelete"/>
   </widget>
-  <widget class="QToolBar" name="sceneToolBar">
-   <property name="windowTitle">
-    <string>Scene</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>true</bool>
-   </attribute>
-   <addaction name="actionSceneSun"/>
-   <addaction name="actionSceneAir"/>
-  </widget>
   <widget class="QToolBar" name="insertToolBar">
    <property name="windowTitle">
     <string>Insert</string>
@@ -258,7 +232,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>false</bool>
+    <bool>true</bool>
    </attribute>
    <addaction name="actionInsertNode"/>
    <addaction name="actionInsertShape"/>
@@ -450,44 +424,6 @@
    </property>
    <property name="shortcut">
     <string>Del</string>
-   </property>
-  </action>
-  <action name="actionSceneSun">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/images/scene/environmentSun.png</normaloff>:/images/scene/environmentSun.png</iconset>
-   </property>
-   <property name="text">
-    <string>Sun...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+L</string>
-   </property>
-  </action>
-  <action name="actionSceneSunCalculator">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Sun Calculator...</string>
-   </property>
-  </action>
-  <action name="actionSceneAir">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/images/scene/environmentAir.png</normaloff>:/images/scene/environmentAir.png</iconset>
-   </property>
-   <property name="text">
-    <string>Air...</string>
-   </property>
-  </action>
-  <action name="actionSceneGrid">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/images/view/viewGrid.png</normaloff>:/images/view/viewGrid.png</iconset>
-   </property>
-   <property name="text">
-    <string>Grid...</string>
    </property>
   </action>
   <action name="actionInsertNode">
@@ -752,22 +688,5 @@
  <resources>
   <include location="../resources.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>actionViewGrid</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>actionSceneGrid</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

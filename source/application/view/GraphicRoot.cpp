@@ -2,6 +2,7 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoSwitch.h>
 #include <Inventor/nodes/SoPointSet.h>
+#include <Inventor/nodes/SoLineSet.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/actions/SoSearchAction.h>
 
@@ -12,6 +13,7 @@
 #include "kernel/scene/TSceneKit.h"
 #include "main/Document.h"
 #include "SkyBackground.h"
+#include "kernel/scene/GridNode.h"
 
 /*
 SoSelection
@@ -47,7 +49,7 @@ GraphicRoot::GraphicRoot()
     m_root->addChild(sky);
 
     m_grid = new SoSeparator;
-    m_grid->addChild(new SoPointSet); // empty scene hides sky
+    m_grid->addChild(new SoLineSet); // empty scene hides sky
     m_root->addChild(m_grid);
 
     m_selection = new SoSelection;
@@ -67,12 +69,18 @@ GraphicRoot::~GraphicRoot()
 void GraphicRoot::setDocument(Document* document)
 {
     if (!document->getSceneKit()) return;
+    m_selection->removeAllChildren();
     m_selection->addChild(document->getSceneKit());
+
+    GridNode* gridNode = (GridNode*) document->getSceneKit()->getPart("world.terrain.grid", true);
+    m_grid->addChild(gridNode->getRoot());
+
     document->m_root = m_root;
 }
 
 void GraphicRoot::removeScene()
 {
+    m_grid->removeAllChildren();
     m_rays->removeAllChildren();
     m_selection->removeAllChildren();
 }

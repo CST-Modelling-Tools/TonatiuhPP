@@ -46,6 +46,7 @@
 #include "libraries/math/3D/Ray.h"
 #include "libraries/math/3D/Transform.h"
 
+#include "calculator/SunCalculatorDialog.h"
 #include "commands/ActionInsert.h"
 #include "commands/CmdChangeNodeName.h"
 #include "commands/CmdCopy.h"
@@ -63,7 +64,6 @@
 #include "commands/CmdAirModified.h"
 
 #include "PluginManager.h"
-#include "calculator/SunCalculatorDialog.h"
 #include "kernel/TonatiuhFunctions.h"
 #include "kernel/air/AirTransmission.h"
 #include "kernel/component/ComponentFactory.h"
@@ -259,8 +259,7 @@ void MainWindow::SetupDocument()
     m_graphicsRoot = new GraphicRoot;
     m_graphicsRoot->setDocument(m_document);
 
-    GridNode* gridNode = (GridNode*) m_document->getSceneKit()->getPart("world.terrain.grid", true);
-    m_graphicsRoot->grid()->addChild(gridNode->getRoot());
+
     ShowGrid();
 
     connect(
@@ -386,6 +385,7 @@ void MainWindow::SetupParametersView()
         this, SLOT(SetParameterValue(SoNode*, QString, QString))
     );
 
+
     connect(
         m_modelSelection, SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)),
         this, SLOT(ChangeSelection(const QModelIndex&))
@@ -436,10 +436,8 @@ void MainWindow::SetupTriggers()
     connect(ui->actionUserComponent, SIGNAL(triggered()), this, SLOT(InsertUserDefinedComponent()) );
 
     // scene
-    connect(ui->actionSceneSun, SIGNAL(triggered()), this, SLOT(onSunDialog()) );
-    connect(ui->actionSceneSunCalculator, SIGNAL(triggered()), this, SLOT(CalculateSunPosition()) );
-    connect(ui->actionSceneAir, SIGNAL(triggered()), this, SLOT(onAirDialog()) );
-    connect(ui->actionSceneGrid, SIGNAL(triggered()), this, SLOT(ChangeGridSettings())  );
+    connect(m_modelScene, SIGNAL(modifySun()), this, SLOT(onSunDialog()) );
+    connect(m_modelScene, SIGNAL(modifyAir()), this, SLOT(onAirDialog()) );
 
     // run
     connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(RunCompleteRayTracer()) );
@@ -579,6 +577,8 @@ void MainWindow::onAirDialog()
     AirTransmission* air = dialog.getModel();
     CmdAirModified* cmd = new CmdAirModified(air, sceneKit);
     if (m_undoStack) m_undoStack->push(cmd);
+
+    ui->parametersTabs->UpdateView();
     setDocumentModified(true);
 }
 
@@ -956,16 +956,6 @@ void MainWindow::SetParameterValue(SoNode* node, QString name, QString value)
 }
 
 /*!
- * This property holds whether the SunPositionCalculator action is enabled.
- * If the action is disabled, it does not disappear from menu, but it is displayed
- * in a way which indicates that they are unavailable.
- */
-void MainWindow::SetSunPositionCalculatorEnabled(int enabled)
-{
-    ui->actionSceneSunCalculator->setEnabled(enabled);
-}
-
-/*!
  * Shows a windows with the applied commands.
  * The most recently executed command is always selected.
  * When a different command is selected the model returns to the state after selected command was applied.
@@ -1082,55 +1072,6 @@ void MainWindow::on_actionAbout_triggered()
 {
     AboutDialog dialog;
     dialog.exec();
-}
-
-/*!
- * Changes the number of the grid cells and grid cell dimensions.
- */
-void MainWindow::ChangeGridSettings()
-{
-//    GridDialog dialog();
-//    if (!dialog.exec()) return;
-
-//    m_graphicsRoot->RemoveGrid();
-
-//    m_gridXElements = dialog.GetXDimension();
-//    m_gridZElements = dialog.GetZDimension();
-
-//    if (dialog.IsSizeDefined() )
-//    {
-//        m_gridXSpacing = dialog.GetXSpacing();
-//        m_gridZSpacing = dialog.GetZSpacing();
-//    }
-//    else
-//    {
-//        InstanceNode* sceneInstance = m_sceneModel->NodeFromIndex(ui->sceneView->rootIndex() );
-//        if (!sceneInstance) return;
-//        InstanceNode* rootInstance = sceneInstance->children[sceneInstance->children.size() - 1 ];
-//        if (!rootInstance) return;
-
-//        SoGetBoundingBoxAction* bbAction = new SoGetBoundingBoxAction(SbViewportRegion() );
-//        rootInstance->GetNode()->getBoundingBox(bbAction);
-
-//        SbBox3f box = bbAction->getXfBoundingBox().project();
-//        delete bbAction;
-
-//        m_gridXSpacing = 10;
-//        m_gridZSpacing = 10;
-
-//        if (!box.isEmpty() )
-//        {
-//            SbVec3f min, max;
-//            box.getBounds(min, max);
-
-//            m_gridXSpacing = (2 *  std::max(fabs(max[0]), fabs(min[0]) ) + 5) / m_gridXElements;
-//            m_gridZSpacing = (2 *  std::max(fabs(max[2]), fabs(min[2]) ) + 5) / m_gridZElements;
-//        }
-//    }
-
-////    m_graphicsRoot->AddGrid(CreateGrid(m_gridXElements, m_gridZElements, m_gridXSpacing, m_gridZSpacing) );
-//    m_graphicsRoot->AddGrid(CreateGrid() );
-//    m_graphicsRoot->ShowGrid(true);
 }
 
 void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& name)
@@ -2125,8 +2066,6 @@ void MainWindow::SetSunshape(QString name)
 
     ui->parametersTabs->UpdateView();
     setDocumentModified(true);
-
-    ui->actionSceneSunCalculator->setEnabled(true);
 }
 
 /*!
@@ -2629,24 +2568,6 @@ void MainWindow::ChangeModelScene()
 }
 
 /*!
- * Shows a dialog to allow define current light position with a position calculator.
- */
-void MainWindow::CalculateSunPosition()
-{
-#ifndef NO_MARBLE
-
-    SoSceneKit* coinScene = m_document->getSceneKit();
-    if (!coinScene->getPart("lightList[0]", false) ) return;
-
-    SunCalculatorDialog sunposDialog;
-    connect(&sunposDialog, SIGNAL(changeSunLight(double,double)), this, SLOT(ChangeSunPosition(double,double)) );
-
-    sunposDialog.exec();
-
-#endif /* NO_MARBLE*/
-}
-
-/*!
  * Creates a export mode object form export mode settings.
  */
 PhotonsAbstract* MainWindow::CreatePhotonMapExport() const
@@ -3003,11 +2924,12 @@ void MainWindow::SetupActionsInsertTracker()
  */
 void MainWindow::ShowGrid()
 {
-    m_graphicsRoot->showGrid(ui->actionViewGrid->isChecked());
+    GridNode* node = (GridNode*) m_document->getSceneKit()->getPart("world.terrain.grid", false);
+    if (node) node->show = ui->actionViewGrid->isChecked();
 }
 
 /*!
- * Shows the rays and photons stored at the photon map in the 3D view.
+->* Shows the rays and photons stored at the photon map in the 3D view.
  */
 void MainWindow::ShowRaysIn3DView()
 {
@@ -3057,6 +2979,10 @@ bool MainWindow::StartOver(const QString& fileName)
     ui->sceneView->expandToDepth(1);
     Select("//Layout");
     on_actionViewAll_triggered(); // discard sun
+
+
+    GridNode* node = (GridNode*) m_document->getSceneKit()->getPart("world.terrain.grid", true);
+    if (node) ui->actionViewGrid->setChecked(node->show.getValue());
     return true;
 }
 

@@ -4,7 +4,6 @@
 
 class ParametersItem;
 
-
 class ParametersModel: public QStandardItemModel
 {
 

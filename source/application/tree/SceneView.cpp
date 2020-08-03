@@ -13,13 +13,11 @@
 #include "kernel/scene/TShapeKit.h"
 #include <QHeaderView>
 
-/**
- * Creates a new view for a model. This
- */
+
 SceneView::SceneView(QWidget* parent):
     QTreeView(parent)
 {
-    header()->setFont(font()); // Qt bug
+    header()->setFont(font()); // resolves Qt bug
 
     setItemDelegate(new SceneDelegate(this));
 
@@ -120,6 +118,8 @@ void SceneView::dropEvent(QDropEvent* event)
 
 void SceneView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint)
 {
+    if (!editor) return;
+
     QLineEdit* textEdit = qobject_cast<QLineEdit*>(editor);
     QString name = textEdit->text();
 

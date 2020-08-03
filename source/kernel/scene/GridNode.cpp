@@ -135,6 +135,8 @@ void GridNode::create()
 
     // axes
     m_root->addChild(makeAxes(xMin - dx, xMax + dx, yMin - dx, yMax + dx));
+
+    m_root->whichChild = show.getValue() ? SO_SWITCH_ALL : SO_SWITCH_NONE;
 }
 
 SoSeparator* GridNode::makeAxes(double xMin, double xMax, double yMin, double yMax)

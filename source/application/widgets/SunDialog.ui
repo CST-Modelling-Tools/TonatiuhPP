@@ -28,7 +28,21 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1">
+        <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1,0">
+         <item row="0" column="0">
+          <widget class="QLabel" name="azimuthLabel">
+           <property name="text">
+            <string>Azimuth</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Irradiance</string>
+           </property>
+          </widget>
+         </item>
          <item row="1" column="2">
           <widget class="QLabel" name="label_2">
            <property name="text">
@@ -36,16 +50,16 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QDoubleSpinBox" name="spinAzimuth">
+         <item row="2" column="1">
+          <widget class="QDoubleSpinBox" name="spinIrradiance">
            <property name="decimals">
-            <number>2</number>
-           </property>
-           <property name="minimum">
-            <double>-360.000000000000000</double>
+            <number>0</number>
            </property>
            <property name="maximum">
-            <double>360.000000000000000</double>
+            <double>1000000.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>1000.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -60,13 +74,6 @@
           <widget class="QLabel" name="label_4">
            <property name="text">
             <string>W/m^2</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="azimuthLabel">
-           <property name="text">
-            <string>Azimuth</string>
            </property>
           </widget>
          </item>
@@ -86,13 +93,6 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Irradiance</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="elevationLabel">
            <property name="text">
@@ -100,16 +100,23 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
-          <widget class="QDoubleSpinBox" name="spinIrradiance">
+         <item row="0" column="1">
+          <widget class="QDoubleSpinBox" name="spinAzimuth">
            <property name="decimals">
-            <number>0</number>
+            <number>2</number>
+           </property>
+           <property name="minimum">
+            <double>-360.000000000000000</double>
            </property>
            <property name="maximum">
-            <double>1000000.000000000000000</double>
+            <double>360.000000000000000</double>
            </property>
-           <property name="value">
-            <double>1000.000000000000000</double>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QPushButton" name="buttonSunCalc">
+           <property name="text">
+            <string>Calculator</string>
            </property>
           </widget>
          </item>

@@ -40,6 +40,9 @@ protected slots:
     void addNode();
     void removeNode();
 
+private slots:
+    void on_buttonSunCalc_clicked();
+
 private:
     Ui::SunDialog* ui;
 

@@ -1,9 +1,11 @@
 #include "ParametersView.h"
 
 #include <QComboBox>
+#include <QCheckBox>
 #include <QLineEdit>
 #include <QTreeView>
 #include <QHeaderView>
+#include <QMouseEvent>
 
 #include <Inventor/SbName.h>
 #include <Inventor/SbString.h>
@@ -39,6 +41,8 @@ ParametersView::ParametersView(QWidget* parent):
     setModel(m_model);
 
     m_node = 0;
+
+    connect(m_model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onBoolChecked(QStandardItem*)));
 }
 
 /**
@@ -90,6 +94,22 @@ void ParametersView::SetEditable(bool editable)
     m_model->SetEditable(editable);
 }
 
+//edit on single click
+void ParametersView::mousePressEvent(QMouseEvent* event)
+{
+    QTreeView::mousePressEvent(event);
+    if (event->button() == Qt::LeftButton) {
+        QModelIndex index = indexAt(event->pos());
+
+        if (index.column() == 1) { // column you want to use for one click
+            setCurrentIndex(index);
+//            if (!(m_model->flags(index) & Qt::ItemIsUserCheckable))
+                edit(index);
+        }
+    }
+
+}
+
 void ParametersView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint)
 {
     SoField* field = m_model->getData(currentIndex())->getField();
@@ -102,8 +122,8 @@ void ParametersView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEdit
     }
     else if (dynamic_cast<SoSFBool*>(field))
     {
-        QComboBox* w = qobject_cast<QComboBox*>(editor);
-        value = w->currentText();
+        QCheckBox* w = qobject_cast<QCheckBox*>(editor);
+        value = w->isChecked() ? "TRUE" : "FALSE";
     }
     else if (dynamic_cast<UserSField*>(field))
     {
@@ -131,4 +151,19 @@ void ParametersView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEdit
     }
 
     QTreeView::closeEditor(editor, hint);
+}
+
+void ParametersView::onBoolChecked(QStandardItem* item)
+{
+    if (item->isCheckable()) {
+        ParametersItem* pitem = (ParametersItem*) item;
+        SoSFBool* f = dynamic_cast<SoSFBool*>(pitem->getField());
+        if (!f) return;
+        bool on = item->checkState() == Qt::Checked;
+        if (f->getValue() == on) return;
+
+        SbName name;
+        m_node->getFieldName(f, name);
+        emit valueModified(m_node, name.getString(), on ? "TRUE" : "FALSE");
+    }
 }

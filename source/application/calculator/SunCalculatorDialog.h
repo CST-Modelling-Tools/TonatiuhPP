@@ -2,11 +2,12 @@
 
 #include <QDialog>
 
-#include "ui_suncalculatordialog.h"
+#include "ui_SunCalculatorDialog.h"
 #include "libraries/sun/sunpos.h"
 
 class QDateTime;
 class QTime;
+
 
 class SunCalculatorDialog: public QDialog, private Ui::SunPositionCalculatorDialog
 {

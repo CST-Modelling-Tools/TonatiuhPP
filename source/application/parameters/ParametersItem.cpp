@@ -7,7 +7,7 @@
 #include <Inventor/fields/SoSFString.h>
 #include <Inventor/lists/SoFieldList.h>
 #include <Inventor/sensors/SoFieldSensor.h>
-
+#include <Inventor/fields/SoSFBool.h>
 
 void ParametersItem::updateItem(void* data, SoSensor*)
 {
@@ -25,6 +25,11 @@ ParametersItem::ParametersItem(QString text, bool editable, SoField* field):
      if (editable) {
         m_sensor = new SoFieldSensor(updateItem, this);
         m_sensor->attach(m_field);
+
+        if (SoSFBool* f = dynamic_cast<SoSFBool*>(field)) {
+            setCheckable(true);
+            setCheckState(f->getValue() ? Qt::Checked : Qt::Unchecked);
+        }
      } else
          m_sensor = 0;
 }
@@ -38,6 +43,7 @@ QVariant ParametersItem::data(int role) const
 {
     if (role == Qt::DisplayRole)
     {
+        if (isEditable() && dynamic_cast<SoSFBool*>(m_field)) return "";
         QString text = QStandardItem::data(role).toString();
 
         // discard multilines
