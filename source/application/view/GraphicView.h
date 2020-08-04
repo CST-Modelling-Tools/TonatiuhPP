@@ -7,6 +7,7 @@ class QModelIndex;
 class SbViewportRegion;
 class SoCamera;
 class SoQtExaminerViewer;
+//class ConstrainedViewer;
 class TSeparatorKit;
 
 //!  GraphicView class implements a 3D representation of items from a model.

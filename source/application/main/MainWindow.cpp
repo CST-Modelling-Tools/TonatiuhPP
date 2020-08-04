@@ -1033,6 +1033,7 @@ void MainWindow::on_actionViewAxes_toggled()
 
 void MainWindow::on_actionQuadView_toggled()
 {
+    // use SoQtPlaneViewer
     if (!ui->actionQuadView->isChecked()) {
         m_graphicView[1]->hide();
         m_graphicView[2]->hide();

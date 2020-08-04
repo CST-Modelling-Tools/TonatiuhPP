@@ -43,6 +43,14 @@ ParametersView::ParametersView(QWidget* parent):
     m_node = 0;
 
     connect(m_model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onBoolChecked(QStandardItem*)));
+
+    setStyleSheet(R"(
+QLineEdit {
+padding-left: 1;
+selection-background-color: #c8dbe5;
+selection-color: black;
+}
+     )");
 }
 
 /**

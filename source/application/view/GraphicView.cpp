@@ -4,6 +4,19 @@
 #include <Inventor/actions/SoBoxHighlightRenderAction.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+//#include <Inventor/Qt/viewers/SoQtConstrainedViewer.h>
+
+
+//class ConstrainedViewer: public SoQtConstrainedViewer
+//{
+//    public:
+//    ConstrainedViewer(QWidget* parent): SoQtConstrainedViewer(parent, "", TRUE, BUILD_ALL, BROWSER, TRUE) {}
+//    ~ConstrainedViewer(){}
+//};
+
+#include "ExaminerViewer2.h"
+
+
 
 #include "GraphicRoot.h"
 #include "GraphicView.h"
@@ -31,6 +44,7 @@ GraphicView::~GraphicView()
 void GraphicView::setSceneGraph(GraphicRoot* sceneGraphRoot)
 {
     m_viewer = new SoQtExaminerViewer(this);
+//    m_viewer = new ExaminerViewer2(this);
 
     m_graphicRoot = sceneGraphRoot;
     m_viewer->setSceneGraph(m_graphicRoot->getRoot());
