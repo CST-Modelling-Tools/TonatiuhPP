@@ -16,6 +16,7 @@ public:
     static void initClass();
     SkyBackground();
 
+    SoSeparator* getRoot() {return m_root;}
     void GLRender(SoGLRenderAction* action);
 
 protected:

@@ -6,6 +6,7 @@ class SoSeparator;
 class SoSelection;
 class SoPath;
 class Document;
+class SkyBackground;
 
 
 class GraphicRoot: public QObject
@@ -36,7 +37,8 @@ signals:
 
 private:
     SoSeparator* m_root;
+    SkyBackground* m_sky;
     SoSeparator* m_grid;
-    SoSeparator* m_rays;
     SoSelection* m_selection;
+    SoSeparator* m_rays;
 };

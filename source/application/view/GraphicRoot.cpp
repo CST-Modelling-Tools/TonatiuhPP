@@ -14,6 +14,7 @@
 #include "main/Document.h"
 #include "SkyBackground.h"
 #include "kernel/scene/GridNode.h"
+#include "kernel/sun/SunPosition.h"
 
 /*
 SoSelection
@@ -45,8 +46,8 @@ GraphicRoot::GraphicRoot()
     m_root = new SoSeparator;
     m_root->ref();
 
-    SkyBackground* sky = new SkyBackground;
-    m_root->addChild(sky);
+    m_sky = new SkyBackground;
+    m_root->addChild(m_sky);
 
     m_grid = new SoSeparator;
     m_grid->addChild(new SoLineSet); // empty scene hides sky
@@ -71,6 +72,9 @@ void GraphicRoot::setDocument(Document* document)
     if (!document->getSceneKit()) return;
     m_selection->removeAllChildren();
     m_selection->addChild(document->getSceneKit());
+
+    SunPosition* sunPosition = (SunPosition*) document->getSceneKit()->getPart("world.sun.position", false);
+    m_sky->getRoot()->addChild(sunPosition->getRoot());
 
     GridNode* gridNode = (GridNode*) document->getSceneKit()->getPart("world.terrain.grid", true);
     m_grid->addChild(gridNode->getRoot());
