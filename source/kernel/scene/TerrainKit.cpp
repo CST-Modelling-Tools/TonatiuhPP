@@ -2,7 +2,7 @@
 
 #include "GridNode.h"
 
-SO_KIT_SOURCE(TerrainKit);
+SO_KIT_SOURCE(TerrainKit)
 
 
 void TerrainKit::initClass()

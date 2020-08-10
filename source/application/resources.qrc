@@ -14,8 +14,8 @@
         <file>images/edit/redo.png</file>
         <file>images/edit/undo.png</file>
         <file>images/edit/undoList.png</file>
-        <file>images/scene/environmentAir.png</file>
-        <file>images/scene/environmentSun.png</file>
+        <file>images/scene/nodeAir.png</file>
+        <file>images/scene/nodeSun.png</file>
         <file>images/export.png</file>
         <file>images/exportSurface.png</file>
         <file>images/file/close.png</file>
@@ -48,5 +48,6 @@
         <file>images/about/TonatiuhCy.ico</file>
         <file>images/scene/nodeFolder.png</file>
         <file>images/scene/nodeTerrain.png</file>
+        <file>images/scene/nodeLocation.png</file>
     </qresource>
 </RCC>

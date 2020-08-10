@@ -6,9 +6,9 @@
 #include "kernel/TonatiuhTypes.h"
 #include "kernel/TonatiuhFunctions.h"
 
+class TSeparatorKit;
 class Transform;
 struct vec3d;
-class TSeparatorKit;
 
 
 class TONATIUH_KERNEL TSceneKit: public SoSceneKit
@@ -23,6 +23,7 @@ public:
     static void initClass();
     TSceneKit();
 
+    TSeparatorKit* getLayout();
     void updateTrackers();
 
 protected:

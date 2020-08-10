@@ -60,6 +60,7 @@ public:
     void setBox(TSceneKit* scene);
     bool findTexture(int sizeX, int sizeY, InstanceNode* instanceRoot);
 
+    vec3d getSunVector();
     SoSFDouble azimuth;  // in radians
     SoSFDouble elevation;
     SoSFDouble irradiance;

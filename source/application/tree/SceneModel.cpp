@@ -18,10 +18,12 @@
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/scene/WorldKit.h"
+#include "kernel/scene/LocationNode.h"
 #include "kernel/scene/TerrainKit.h"
 #include "kernel/shape/ShapeRT.h"
-#include "kernel/sun/SunKit.h"
 #include "kernel/air/AirKit.h"
+#include "kernel/sun/SunKit.h"
+#include "kernel/sun/SunKitW.h"
 #include "kernel/trackers/Tracker.h"
 #include "libraries/math/gcf.h"
 #include "tree/SoPathVariant.h"
@@ -80,15 +82,19 @@ void SceneModel::setDocument(Document* document)
     if (SunKit* sunKit = static_cast<SunKit*>(m_nodeScene->getPart("lightList[0]", false)))
         insertSunNode(sunKit);
 
+    SoNode* location = m_nodeScene->getPart("world.location", true);
+    addInstanceNode(instanceW, location);
+
+    SoNode* sunKitW = m_nodeScene->getPart("world.sun", true);
+    addInstanceNode(instanceW, sunKitW);
+
     SoNode* airKit = m_nodeScene->getPart("world.air", true);
     addInstanceNode(instanceW, airKit);
 
     SoNode* terrainKit = m_nodeScene->getPart("world.terrain", true);
     addInstanceNode(instanceW, terrainKit);
 
-    SoGroup* group = (SoGroup*) m_nodeScene->getPart("group", true);
-    TSeparatorKit* nodeLayout = static_cast<TSeparatorKit*>(group->getChild(0));
-    if (!nodeLayout) return;
+    TSeparatorKit* nodeLayout = (TSeparatorKit*) m_nodeScene->getLayout();
     m_instanceLayout = addInstanceNode(m_instanceScene, nodeLayout);
     generateInstanceTree(m_instanceLayout);
 
@@ -242,54 +248,51 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
     }
     if (role == Qt::DecorationRole)
     {
-        if (node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
+        SoType type = node->getTypeId();
+        if (type.isDerivedFrom(TSeparatorKit::getClassTypeId()))
         {
             return QIcon(":/images/scene/nodeGroup.png");
         }
-        else if (node->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId()))
+        else if (type.isDerivedFrom(TShapeKit::getClassTypeId()))
         {
             return QIcon(":/images/scene/nodeShape.png");
         }
-        else if (node->getTypeId().isDerivedFrom(ShapeRT::getClassTypeId()))
+        else if (type.isDerivedFrom(ShapeRT::getClassTypeId()))
         {
             ShapeRT* shape = static_cast<ShapeRT*>(node);
             return QIcon(shape->getTypeIcon());
         }
-        else if (node->getTypeId().isDerivedFrom(ProfileRT::getClassTypeId()))
+        else if (type.isDerivedFrom(ProfileRT::getClassTypeId()))
         {
             ProfileRT* aperture = static_cast<ProfileRT*>(node);
             return QIcon(aperture->getTypeIcon());
         }
-        else if (node->getTypeId().isDerivedFrom(MaterialRT::getClassTypeId()))
+        else if (type.isDerivedFrom(MaterialRT::getClassTypeId()))
         {
             MaterialRT* material = static_cast<MaterialRT*>(node);
             return QIcon(material->getTypeIcon());
         }
-        else if (node->getTypeId().isDerivedFrom(SoMaterial::getClassTypeId()))
+        else if (type.isDerivedFrom(SoMaterial::getClassTypeId()))
         {
             return QIcon(":/images/scene/nodeMaterialGL.png");
         }
-        else if (node->getTypeId().isDerivedFrom(Tracker::getClassTypeId()))
+        else if (type.isDerivedFrom(Tracker::getClassTypeId()))
         {
             Tracker* tracker = static_cast<Tracker*>(node);
             return QIcon(tracker->getTypeIcon());
         }
-        else if (node->getTypeId().isDerivedFrom(WorldKit::getClassTypeId()))
-        {
+        else if (type == SunKit::getClassTypeId())
+            return QIcon(":/images/scene/nodeSun.png");
+        else if (type == WorldKit::getClassTypeId())
             return QIcon(":/images/scene/nodeFolder.png");
-        }
-        else if (node->getTypeId().isDerivedFrom(SunKit::getClassTypeId()))
-        {
-            return QIcon(":/images/scene/environmentSun.png");
-        }
-        else if (node->getTypeId().isDerivedFrom(AirKit::getClassTypeId()))
-        {
-            return QIcon(":/images/scene/environmentAir.png");
-        }
-        else if (node->getTypeId().isDerivedFrom(TerrainKit::getClassTypeId()))
-        {
+        else if (type == LocationNode::getClassTypeId())
+            return QIcon(":/images/scene/nodeLocation.png");
+        else if (type == SunKitW::getClassTypeId())
+            return QIcon(":/images/scene/nodeSun.png");
+        else if (type == AirKit::getClassTypeId())
+            return QIcon(":/images/scene/nodeAir.png");
+        else if (type == TerrainKit::getClassTypeId())
             return QIcon(":/images/scene/nodeTerrain.png");
-        }
     }
 
     return QVariant();

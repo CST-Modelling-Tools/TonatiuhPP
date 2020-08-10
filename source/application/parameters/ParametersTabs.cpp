@@ -110,6 +110,8 @@ QStringList ParametersTabs::ContainerNodeParts(SoBaseKit* kit)
         return {"shapeRT", "profileRT", "materialRT", "material"};
     else if (type == "SunKit")
         return {"tsunshape", "icon"};
+    else if (type == "SunKitW")
+        return {"position", "shape", "aperture"};
     else if (type == "AirKit")
         return {"transmission"};
     else if (type == "TerrainKit")

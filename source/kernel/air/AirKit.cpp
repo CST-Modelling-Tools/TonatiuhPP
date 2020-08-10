@@ -2,7 +2,7 @@
 
 #include "kernel/air/AirTransmission.h"
 
-SO_KIT_SOURCE(AirKit);
+SO_KIT_SOURCE(AirKit)
 
 
 void AirKit::initClass()

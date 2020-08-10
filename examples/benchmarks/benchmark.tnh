@@ -66,7 +66,43 @@ TSceneKit {
   }
   world 
   DEF World WorldKit {
-    fields [ SFNode callbackList, SFNode location, SFNode air, SFNode terrain ]
+    fields [ SFNode callbackList, SFNode location, SFNode sun, SFNode air, SFNode terrain ]
+    sun 
+    DEF SunW SunKitW {
+      fields [ SFNode callbackList, SFNode iconMaterial, SFNode iconTexture, SFNode transform, SFNode position, SFNode shape, SFNode aperture ]
+      iconMaterial 
+      Material {
+        transparency 0.75
+
+      }
+      iconTexture 
+      Texture2 {
+        image 10 10 1
+        0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+        0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+        0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+        0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+        0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+        0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+        0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+        0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+        0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+        0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+        0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+        0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
+        0xff 0xff 0xff 0xff 
+        model BLEND
+        blendColor 1 1 1
+
+      }
+      transform 
+      Transform {
+        translation 0 -8.7422779e-007 10
+        rotation 1 0 0  3.1415927
+
+      }
+
+    }
     terrain 
     DEF Terrain TerrainKit {
       fields [ SFNode callbackList, SFNode grid ]
@@ -81,45 +117,42 @@ TSceneKit {
 
   }
   group 
-  Group {
+  DEF Layout TSeparatorKit {
+    transform 
+    Transform {
 
-    DEF Layout TSeparatorKit {
-      transform 
-      Transform {
+    }
+    group 
+    Group {
 
-      }
-      group 
-      Group {
+      DEF Shape TShapeKit {
+        shapeRT 
+        DEF Sphere ShapeSphere {
+          fields [  ]
 
-        DEF Shape TShapeKit {
-          shapeRT 
-          DEF Sphere ShapeSphere {
-            fields [  ]
+        }
+        profileRT 
+        DEF Box ProfileBox {
+          fields [ SFDouble uSize, SFDouble vSize ]
 
-          }
-          profileRT 
-          DEF Box ProfileBox {
-            fields [ SFDouble uSize, SFDouble vSize ]
+        }
+        materialRT 
+        DEF Specular MaterialSpecular {
+          fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
-          }
-          materialRT 
-          DEF Specular MaterialSpecular {
-            fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
-
-          }
-          appearance 
-          AppearanceKit {
-            material 
-            DEF MaterialGL Material {
-
-            }
+        }
+        appearance 
+        AppearanceKit {
+          material 
+          DEF MaterialGL Material {
 
           }
 
         }
-      }
 
+      }
     }
+
   }
 
 }

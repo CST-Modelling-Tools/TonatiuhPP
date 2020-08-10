@@ -68,7 +68,6 @@ TSceneKit {
 
   }
   group 
-  Group {
 
     DEF Layout TSeparatorKit {
       transform 
@@ -214,6 +213,6 @@ TSceneKit {
       }
 
     }
-  }
+
 
 }

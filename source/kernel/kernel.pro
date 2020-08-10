@@ -12,6 +12,8 @@ HEADERS += \
     TonatiuhKernel.h \
     TonatiuhTypes.h \
     scene/GridNode.h \
+    sun/SunKitW.h \
+    sun/SunPosition.h \
     trf.h \
     air/AirExponential.h \
     air/AirKit.h \
@@ -61,6 +63,8 @@ HEADERS += \
 SOURCES += \
     TonatiuhFunctions.cpp \
     scene/GridNode.cpp \
+    sun/SunKitW.cpp \
+    sun/SunPosition.cpp \
     trf.cpp \
     air/AirExponential.cpp \
     air/AirKit.cpp \

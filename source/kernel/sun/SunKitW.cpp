@@ -1,4 +1,8 @@
-#include "SunKit.h"
+#include "SunKitW.h"
+
+#include "SunPosition.h"
+#include "SunPillbox.h"
+#include "SunAperture.h"
 
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
 #include <Inventor/nodes/SoDirectionalLight.h>
@@ -10,8 +14,6 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodekits/SoNodekitCatalog.h>
 
-#include "SunAperture.h"
-#include "SunPillbox.h"
 #include "kernel/TonatiuhFunctions.h"
 #include "scene/TSceneKit.h"
 #include "kernel/run/InstanceNode.h"
@@ -21,32 +23,32 @@
 #include "libraries/math/gcf.h"
 #include "scene/TShapeKit.h"
 
-SO_KIT_SOURCE(SunKit)
+SO_KIT_SOURCE(SunKitW)
 
-void SunKit::initClass()
+
+void SunKitW::initClass()
 {
-    SO_KIT_INIT_CLASS(SunKit, SoLightKit, "LightKit");
+    SO_KIT_INIT_CLASS(SunKitW, SoBaseKit, "BaseKit");
 
-    SunShape::initClass();
-    SunAperture::initClass();
+    SunPosition::initClass();
 }
 
-SunKit::SunKit()
+SunKitW::SunKitW()
 {
-    SO_KIT_CONSTRUCTOR(SunKit);
+    SO_KIT_CONSTRUCTOR(SunKitW);
 
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(iconMaterial, SoNode, SoMaterial, TRUE, iconSeparator, icon, TRUE);
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(iconTexture, SoNode, SoTexture2, TRUE, iconSeparator, iconMaterial, TRUE);
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tsunshape, SunShape, SunPillbox, TRUE, transformGroup, "", TRUE);
+    SO_KIT_ADD_CATALOG_ENTRY(iconMaterial, SoMaterial, FALSE, this, "", TRUE);
+    SO_KIT_ADD_CATALOG_ENTRY(iconTexture, SoTexture2, FALSE, this, "", TRUE);
+    SO_KIT_ADD_CATALOG_ENTRY(transform, SoTransform, FALSE, this, "", TRUE);
 
-    SO_NODE_ADD_FIELD( azimuth, (0.) );
-    SO_NODE_ADD_FIELD( elevation, (90.*gcf::degree) );
-    SO_NODE_ADD_FIELD( irradiance, (1000.) );
+    SO_KIT_ADD_CATALOG_ENTRY(position, SunPosition, FALSE, this, "", TRUE);
+    SO_KIT_ADD_CATALOG_ENTRY(shape, SunPillbox, FALSE, this, "", TRUE);
+    SO_KIT_ADD_CATALOG_ENTRY(aperture, SunAperture, FALSE, this, "", TRUE);
 
     SO_KIT_INIT_INSTANCE();
 
-    SoDirectionalLight* light = static_cast<SoDirectionalLight*>(getPart("light", true) );
-    light->direction.setValue(SbVec3f(0, 0, 1));
+//    SoDirectionalLight* light = static_cast<SoDirectionalLight*>(getPart("light", true) );
+//    light->direction.setValue(SbVec3f(0, 0, 1));
 
     // temp
     updateTransform();
@@ -72,32 +74,22 @@ SunKit::SunKit()
     texture->blendColor.setValue(1.f, 1.f, 1.f);
     setPart("iconTexture", texture);
 
-    SunAperture* aperture = new SunAperture;
-    setPart("icon", aperture);
-
-    setName("Sun");
-    setPart("tsunshape", new SunPillbox);
+//    SunAperture* aperture = new SunAperture;
+//    setPart("aperture", aperture);
+//    setPart("shape", new SunPillbox);
+    setName("SunW");
 }
 
-SunKit::~SunKit()
-{
-
-}
-
-/*!
- * Changes the light position to \a azimuth and \a zenith from the scene centre.
- * Azimuth and Zenith are in radians.
- * \sa redo().
- */
-void SunKit::updateTransform()
+void SunKitW::updateTransform()
 {
     SoTransform* transform = (SoTransform*) getPart("transform", true);
-    SbRotation elRotation(SbVec3f(1., 0., 0.), gcf::pi/2. + elevation.getValue());
-    SbRotation azRotation(SbVec3f(0., 0., -1.), azimuth.getValue());
+    SunPosition* position = (SunPosition*) getPart("position", true);
+    SbRotation elRotation(SbVec3f(1., 0., 0.), gcf::pi/2. + position->elevation.getValue());
+    SbRotation azRotation(SbVec3f(0., 0., -1.), position->azimuth.getValue());
     transform->rotation = elRotation*azRotation;
 }
 
-void SunKit::setBox(Box3D box)
+void SunKitW::setBox(Box3D box)
 {
     updateTransform();
     SoTransform* transform = (SoTransform*) getPart("transform", true);
@@ -129,7 +121,7 @@ void SunKit::setBox(Box3D box)
     if (thetaMax > 0.)
         delta = distMax*tan(thetaMax);
 
-    SunAperture* shape = static_cast<SunAperture*>(getPart("icon", false));
+    SunAperture* shape = static_cast<SunAperture*>(getPart("aperture", false));
     if (!shape) return;
     shape->setSize(vA.x, vB.x, vA.y, vB.y, delta);
 
@@ -139,7 +131,7 @@ void SunKit::setBox(Box3D box)
     transform->translation = res;
 }
 
-void SunKit::setBox(TSceneKit* scene)
+void SunKitW::setBox(TSceneKit* scene)
 {
     SoGroup* separatorKit = static_cast<SoGroup*>(scene->getPart("group", false) );
     if (!separatorKit) return;
@@ -159,9 +151,9 @@ void SunKit::setBox(TSceneKit* scene)
     }
 }
 
-bool SunKit::findTexture(int sizeX, int sizeY, InstanceNode* instanceRoot)
+bool SunKitW::findTexture(int sizeX, int sizeY, InstanceNode* instanceRoot)
 {
-    SunAperture* aperture = static_cast<SunAperture*>(getPart("icon", false));
+    SunAperture* aperture = static_cast<SunAperture*>(getPart("aperture", false));
     if (!aperture) return false;
 
     QStringList disabledList = QString(aperture->disabledNodes.getValue().getString()).split(";", QString::SkipEmptyParts);
@@ -176,18 +168,7 @@ bool SunKit::findTexture(int sizeX, int sizeY, InstanceNode* instanceRoot)
     for (auto& s : surfacesList)
         s.second = tSun*s.second;
 
-    aperture->findTexture(sizeX, sizeY, surfacesList, this);
+//    aperture->findTexture(sizeX, sizeY, surfacesList, this);
+    aperture->findTexture(sizeX, sizeY, surfacesList, (SunKit*)0);
     return true;
-}
-
-vec3d SunKit::getSunVector()
-{
-    double az = azimuth.getValue();
-    double el = elevation.getValue();
-
-    return vec3d(
-        sin(az)*cos(el),
-        cos(az)*cos(el),
-        sin(el)
-    );
 }

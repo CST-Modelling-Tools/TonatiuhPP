@@ -11,6 +11,8 @@
 #include "kernel/sun/SunKit.h"
 #include "kernel/air/AirKit.h"
 #include "kernel/scene/TerrainKit.h"
+#include "kernel/scene/TSeparatorKit.h"
+#include "kernel/scene/TShapeKit.h"
 
 SceneDelegate::SceneDelegate(QObject* parent):
     QStyledItemDelegate(parent)
@@ -27,23 +29,20 @@ QWidget* SceneDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem
     SceneModel* model = (SceneModel*) (index.model());
     SoNode* node = model->getInstance(index)->getNode();
 
-    if (node->getTypeId().isDerivedFrom(SunKit::getClassTypeId())) {
+    SoType type = node->getTypeId();
+    if (type == SunKit::getClassTypeId()) {
         model->emitModifySun();
-        return 0;
-    } else if (node->getTypeId().isDerivedFrom(AirKit::getClassTypeId())) {
+    } else if (type == AirKit::getClassTypeId()) {
         model->emitModifyAir();
-        return 0;
-    }  else if (node->getTypeId().isDerivedFrom(TerrainKit::getClassTypeId())) {
-        return 0;
+    } else if (type == TSeparatorKit::getClassTypeId() ||
+               type == TShapeKit::getClassTypeId()) {
+        QLineEdit* editor = new QLineEdit(parent);
+        QRegExp rx("[a-zA-Z]\\S*"); // \\S matches a non-whitespace character
+        QValidator* validator = new QRegExpValidator(rx);
+        editor->setValidator(validator);
+        return editor;
     }
-
-    QLineEdit* editor = new QLineEdit(parent);
-    QRegExp rx("[a-zA-Z]\\S*"); // \\S matches a non-whitespace character
-    QValidator* validator = new QRegExpValidator(rx);
-    editor->setValidator(validator);
-    return editor;
-
-    // check Sun and air, run their dialog via main?
+    return 0;
 }
 
 /**

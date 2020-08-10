@@ -39,11 +39,11 @@ TSceneKit::TSceneKit()
 
     SO_KIT_ADD_CATALOG_ENTRY(world, WorldKit, FALSE, this, "", TRUE);
 
-    SO_KIT_ADD_CATALOG_ENTRY(group, SoGroup, FALSE, topSeparator, "", TRUE); // topsep important
+    SO_KIT_ADD_CATALOG_ENTRY(group, TSeparatorKit, FALSE, topSeparator, "", TRUE); // topsep important
+//    SO_KIT_CHANGE_ENTRY_TYPE(childList, SoGroup, SoGroup);
 
     SO_KIT_INIT_INSTANCE();
 
-//    SO_KIT_CHANGE_ENTRY_TYPE(childList, SoGroup, SoGroup);
     setSearchingChildren(true); // for lightList[0]
 
     SunKit* sunKit = new SunKit;
@@ -52,31 +52,20 @@ TSceneKit::TSceneKit()
 //    LocationNode* loc = (LocationNode*) getPart("world.location", true);
 //    loc->name = "unknown";
 
-    SoGroup* g = (SoGroup*) getPart("group", true);
-    TSeparatorKit* nodeLayout = new TSeparatorKit;
+    TSeparatorKit* nodeLayout = (TSeparatorKit*) getPart("group", true);
     nodeLayout->setName("Layout");
-//        nodeLayout->setSearchingChildren(true);
-    g->addChild(nodeLayout);
+}
+
+TSeparatorKit* TSceneKit::getLayout()
+{
+    return (TSeparatorKit*) getPart("group", false);
 }
 
 void TSceneKit::updateTrackers()
 {
-    SoGroup* nodes = (SoGroup*) getPart("group", true);
-    if (!nodes->getNumChildren()) return;
-    auto node = (TSeparatorKit*) nodes->getChild(0); // Layout
-    if (!node) return;
-
     SunKit* sunKit = (SunKit*) getPart("lightList[0]", false);
-    double az = sunKit->azimuth.getValue();
-    double el = sunKit->elevation.getValue();
-
-    vec3d vSun(
-        sin(az)*cos(el),
-        cos(az)*cos(el),
-        sin(el)
-    );
-
-    updateTrackers(node, Transform::Identity, vSun);
+    vec3d vSun = sunKit->getSunVector();
+    updateTrackers(getLayout(), Transform::Identity, vSun);
 }
 
 /*!

@@ -1,7 +1,7 @@
 #include "LocationNode.h"
 
 
-SO_NODE_SOURCE(LocationNode);
+SO_NODE_SOURCE(LocationNode)
 
 
 void LocationNode::initClass()
