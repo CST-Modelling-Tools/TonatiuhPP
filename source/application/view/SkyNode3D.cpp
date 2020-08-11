@@ -1,4 +1,4 @@
-#include "SkyBackground.h"
+#include "SkyNode3D.h"
 
 #include <Inventor/SbRotation.h>
 #include <Inventor/actions/SoGLRenderAction.h>
@@ -19,7 +19,7 @@
 #include <QVector3D>
 #include "libraries/math/gcf.h"
 
-SO_NODE_SOURCE(SkyBackground)
+SO_NODE_SOURCE(SkyNode3D)
 
 
 // based on Preetham model
@@ -53,14 +53,14 @@ struct SkyGradient
 };
 
 
-void SkyBackground::initClass()
+void SkyNode3D::initClass()
 {
-    SO_NODE_INIT_CLASS(SkyBackground, SoNode, "Node");
+    SO_NODE_INIT_CLASS(SkyNode3D, SoNode, "Node");
 }
 
-SkyBackground::SkyBackground(void)
+SkyNode3D::SkyNode3D(void)
 {
-    SO_NODE_CONSTRUCTOR(SkyBackground);
+    SO_NODE_CONSTRUCTOR(SkyNode3D);
 
     m_root = new SoSeparator;
     m_root->ref();
@@ -82,12 +82,12 @@ SkyBackground::SkyBackground(void)
     m_root->addChild(makeLabels());
 }
 
-SkyBackground::~SkyBackground()
+SkyNode3D::~SkyNode3D()
 {
     m_root->unref();
 }
 
-SoSeparator* SkyBackground::makeSky()
+SoSeparator* SkyNode3D::makeSky()
 {
     SoSeparator* ans = new SoSeparator;
 //    ans->renderCulling = SoSeparator::OFF;
@@ -155,7 +155,7 @@ SoSeparator* SkyBackground::makeSky()
     return ans;
 }
 
-SoSeparator* SkyBackground::makeLabels()
+SoSeparator* SkyNode3D::makeLabels()
 {
     SoSeparator* ans = new SoSeparator;
 
@@ -177,7 +177,7 @@ SoSeparator* SkyBackground::makeLabels()
     return ans;
 }
 
-void SkyBackground::makeLabelAE(SoSeparator* parent, double azimuth, double elevation, const QString& text)
+void SkyNode3D::makeLabelAE(SoSeparator* parent, double azimuth, double elevation, const QString& text)
 {
     SoSeparator* ans = new SoSeparator;
 
@@ -203,7 +203,7 @@ void SkyBackground::makeLabelAE(SoSeparator* parent, double azimuth, double elev
 }
 
 //#include <QDebug>
-void SkyBackground::GLRender(SoGLRenderAction* action)
+void SkyNode3D::GLRender(SoGLRenderAction* action)
 {
   SoState* state = action->getState();
   state->push();

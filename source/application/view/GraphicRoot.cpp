@@ -16,7 +16,7 @@
 #include "libraries/math/gcf.h"
 #include "kernel/scene/TSceneKit.h"
 #include "main/Document.h"
-#include "SkyBackground.h"
+#include "SkyNode3D.h"
 #include "kernel/scene/GridNode.h"
 #include "kernel/sun/SunPosition.h"
 
@@ -67,11 +67,12 @@ GraphicRoot::GraphicRoot()
     m_root = new SoSeparator;
     m_root->ref();
 
-    m_sky = new SkyBackground;
+    m_sky = new SkyNode3D;
     m_root->addChild(m_sky);
 
     m_grid = new SoSeparator;
     m_grid->addChild(new SoLineSet); // empty scene hides sky
+    m_grid->addChild(m_gridNode3D.getRoot());
     m_root->addChild(m_grid);
 
     SoEnvironment* environment = new SoEnvironment;
@@ -113,14 +114,14 @@ void GraphicRoot::setDocument(Document* document)
     m_sky->getRoot()->addChild(sunPosition->getRoot());
 
     GridNode* gridNode = (GridNode*) document->getSceneKit()->getPart("world.terrain.grid", true);
-    m_grid->addChild(gridNode->getRoot());
+    m_gridNode3D.attach(gridNode);
 
     document->m_root = m_root;
 }
 
 void GraphicRoot::removeScene()
 {
-    m_grid->removeAllChildren();
+//    m_grid->removeAllChildren();
     m_rays->removeAllChildren();
     m_selection->removeAllChildren();
 }

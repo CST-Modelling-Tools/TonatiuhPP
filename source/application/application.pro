@@ -61,8 +61,9 @@ HEADERS += \
     view/ExaminerViewer2.h \
     view/GraphicRoot.h \
     view/GraphicView.h \
-    view/SkyBackground.h \
-    view/SunNode.h \
+    view/GridNode3D.h \
+    view/SkyNode3D.h \
+    view/SunNode3D.h \
     widgets/AboutDialog.h \
     widgets/AirDialog.h \
     widgets/GridDialog.h \
@@ -121,8 +122,9 @@ SOURCES += \
     view/ExaminerViewer2.cpp \
     view/GraphicRoot.cpp \
     view/GraphicView.cpp \
-    view/SkyBackground.cpp \
-    view/SunNode.cpp \
+    view/GridNode3D.cpp \
+    view/SkyNode3D.cpp \
+    view/SunNode3D.cpp \
     widgets/AboutDialog.cpp \
     widgets/AirDialog.cpp \
     widgets/GridDialog.cpp \

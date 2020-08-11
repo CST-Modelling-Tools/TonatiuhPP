@@ -1,12 +1,13 @@
 #pragma once
 
 #include <QObject>
+#include "GridNode3D.h"
 
 class SoSeparator;
 class SoSelection;
 class SoPath;
 class Document;
-class SkyBackground;
+class SkyNode3D;
 class SoTransform;
 
 
@@ -39,7 +40,8 @@ signals:
 private:
     SoSeparator* m_root;
     SoTransform* m_transformSun;
-    SkyBackground* m_sky;
+    SkyNode3D* m_sky;
+    GridNode3D m_gridNode3D;
     SoSeparator* m_grid;
     SoSelection* m_selection;
     SoSeparator* m_rays;

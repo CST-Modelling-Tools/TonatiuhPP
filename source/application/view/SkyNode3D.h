@@ -8,13 +8,13 @@ class QString;
 
 
 // a background which rotates with camera but does not move
-class SkyBackground: public SoNode
+class SkyNode3D: public SoNode
 {
-    SO_NODE_HEADER(SkyBackground);
+    SO_NODE_HEADER(SkyNode3D);
 
 public:
     static void initClass();
-    SkyBackground();
+    SkyNode3D();
 
     SoSeparator* getRoot() {return m_root;}
     void GLRender(SoGLRenderAction* action);
@@ -24,7 +24,7 @@ protected:
     SoPerspectiveCamera* m_camera;
 
 protected:
-    ~SkyBackground();
+    ~SkyNode3D();
 
     SoSeparator* makeSky();
     SoSeparator* makeLabels();

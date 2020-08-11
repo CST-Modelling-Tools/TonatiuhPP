@@ -32,7 +32,7 @@
 #include "libraries/Coin3D/UserSField.h"
 #include "libraries/Coin3D/MFVec2.h"
 #include "libraries/math/gcf.h"
-#include "view/SkyBackground.h"
+#include "view/SkyNode3D.h"
 
 
 PluginManager::PluginManager()
@@ -42,7 +42,7 @@ PluginManager::PluginManager()
     MFVec2::initClass();
 
     TSceneKit::initClass();
-    SkyBackground::initClass();
+    SkyNode3D::initClass();
 }
 
 /*!
