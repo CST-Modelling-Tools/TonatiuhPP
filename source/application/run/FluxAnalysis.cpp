@@ -25,6 +25,8 @@
 #include "kernel/trf.h"
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/sun/SunKit.h"
+#include "kernel/sun/SunKitW.h"
+#include "kernel/sun/SunPosition.h"
 #include "kernel/sun/SunAperture.h"
 #include "libraries/math/3D/Transform.h"
 #include "libraries/math/gcf.h"
@@ -105,19 +107,15 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
     InstanceNode* instanceScene = m_instanceLayout->getParent();
     if (!instanceScene) return;
 
-    if (!m_sceneKit->getPart("lightList[0]", false)) return;
-    SunKit* sunKit = static_cast<SunKit*>(m_sceneKit->getPart("lightList[0]", false));
+    SunKitW* sunKit = static_cast<SunKitW*>(m_sceneKit->getPart("world.sun", false));
 
-    InstanceNode* instanceSun = instanceScene->children[0]->children[0];
+//    InstanceNode* instanceSun = instanceScene->children[0]->children[0];
+    InstanceNode* instanceSun = instanceScene->children[0]->children[2];
     if (!instanceSun) return;
 
-    if (!sunKit->getPart("tsunshape", false)) return;
-    SunShape* sunShape = (SunShape*) sunKit->getPart("tsunshape", false);
-
-    if (!sunKit->getPart("icon", false)) return;
-    SunAperture* sunAperture = (SunAperture*) sunKit->getPart("icon", false);
-
-    if (!sunKit->getPart("transform", false)) return;
+    SunPosition* sunPosition = (SunPosition*) sunKit->getPart("position", false);
+    SunShape* sunShape = (SunShape*) sunKit->getPart("shape", false);
+    SunAperture* sunAperture = (SunAperture*) sunKit->getPart("aperture", false);
     SoTransform* sunTransform = (SoTransform*) sunKit->getPart("transform", false);
 
     if (!m_rand) return;
@@ -203,7 +201,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
 
     m_tracedRays += nRays;
 
-    double irradiance = sunKit->irradiance.getValue();
+    double irradiance = sunPosition->irradiance.getValue();
     double area = sunAperture->getArea();
     m_powerPhoton = area*irradiance/m_tracedRays;
 

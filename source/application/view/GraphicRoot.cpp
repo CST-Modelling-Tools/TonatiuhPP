@@ -89,6 +89,7 @@ GraphicRoot::GraphicRoot()
     ts->addChild(light);
     m_root->addChild(ts);
 
+    //? GLSL shader must have version, Coin bug
     SoShadowGroup* group = new SoShadowGroup;
     group->precision = 1.;
     group->quality = 1.;

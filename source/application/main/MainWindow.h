@@ -216,8 +216,6 @@ private:
 
     bool ReadyForRaytracing(InstanceNode*& instanceLayout,
                             InstanceNode*& instanceSun,
-                            SunShape*& sunShape,
-                            SunAperture*& shape,
                             AirTransmission*& air);
     bool SaveFile(const QString& fileName);
     void SetCurrentFile(const QString& fileName);

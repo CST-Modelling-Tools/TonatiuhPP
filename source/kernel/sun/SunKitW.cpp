@@ -16,6 +16,7 @@
 
 #include "kernel/TonatiuhFunctions.h"
 #include "scene/TSceneKit.h"
+#include "scene/TSeparatorKit.h"
 #include "kernel/run/InstanceNode.h"
 #include "libraries/math/3D/Box3D.h"
 #include "libraries/math/3D/Matrix4x4.h"
@@ -83,10 +84,10 @@ SunKitW::SunKitW()
 void SunKitW::updateTransform()
 {
     SoTransform* transform = (SoTransform*) getPart("transform", true);
-    SunPosition* position = (SunPosition*) getPart("position", true);
-    SbRotation elRotation(SbVec3f(1., 0., 0.), gcf::pi/2. + position->elevation.getValue());
-    SbRotation azRotation(SbVec3f(0., 0., -1.), position->azimuth.getValue());
-    transform->rotation = elRotation*azRotation;
+    SunPosition* sp = (SunPosition*) getPart("position", true);
+    transform->rotation =
+        SbRotation(SbVec3f(1., 0., 0.), (90. + sp->elevation.getValue())*gcf::degree)*
+        SbRotation(SbVec3f(0., 0., 1.), -sp->azimuth.getValue()*gcf::degree);
 }
 
 void SunKitW::setBox(Box3D box)
@@ -115,7 +116,7 @@ void SunKitW::setBox(Box3D box)
     }
 
     double delta = 0.01;
-    SunShape* sunshape = static_cast<SunShape*>(getPart("tsunshape", false));
+    SunShape* sunshape = static_cast<SunShape*>(getPart("shape", false));
     if (!sunshape) return;
     double thetaMax = sunshape->getThetaMax();
     if (thetaMax > 0.)
@@ -133,7 +134,7 @@ void SunKitW::setBox(Box3D box)
 
 void SunKitW::setBox(TSceneKit* scene)
 {
-    SoGroup* separatorKit = static_cast<SoGroup*>(scene->getPart("group", false) );
+    TSeparatorKit* separatorKit = scene->getLayout();
     if (!separatorKit) return;
 
     SoGetBoundingBoxAction* action = new SoGetBoundingBoxAction(SbViewportRegion() );

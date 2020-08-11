@@ -11,6 +11,7 @@
 #include "kernel/air/AirTransmission.h"
 #include "kernel/sun/SunPillbox.h"
 #include "kernel/sun/SunKit.h"
+#include "kernel/sun/SunPosition.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
 #include "WorldKit.h"
@@ -63,8 +64,8 @@ TSeparatorKit* TSceneKit::getLayout()
 
 void TSceneKit::updateTrackers()
 {
-    SunKit* sunKit = (SunKit*) getPart("lightList[0]", false);
-    vec3d vSun = sunKit->getSunVector();
+    SunPosition* sp = (SunPosition*) getPart("world.sun.position", false);
+    vec3d vSun = sp->getSunVector();
     updateTrackers(getLayout(), Transform::Identity, vSun);
 }
 

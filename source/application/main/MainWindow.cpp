@@ -81,7 +81,9 @@
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/sun/SunAperture.h"
 #include "kernel/sun/SunShape.h"
+#include "kernel/sun/SunPosition.h"
 #include "kernel/sun/SunKit.h"
+#include "kernel/sun/SunKitW.h"
 #include "kernel/trackers/Tracker.h"
 #include "kernel/trf.h"
 #include "main/Document.h"
@@ -734,36 +736,34 @@ void MainWindow::RunCompleteRayTracer()
 {
     InstanceNode* instanceRoot = 0;
     InstanceNode* instanceSun = 0;
-    SunShape* sunShape = 0;
-    SunAperture* sunAperture = 0;
     AirTransmission* air = 0;
 
 //    QElapsedTimer timer;
 //    timer.start();
 
-    if (!ReadyForRaytracing(instanceRoot, instanceSun, sunShape, sunAperture, air) ) // ? 2 times
+    if (!ReadyForRaytracing(instanceRoot, instanceSun, air) ) // ? 2 times
         return;
 
 //    std::cout << "Elapsed time (ReadyForRaytracing): " << timer.elapsed() << std::endl;
 
 
-        QVector<PhotonsFactory*> exportFactories = m_pluginManager->getExportFactories();
-        QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
+    QVector<PhotonsFactory*> exportFactories = m_pluginManager->getExportFactories();
+    QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
 
-        RayTracingDialog dialog;
-        dialog.setParameters(m_raysNumber, m_raysScreen,
-                             randomFactories, m_raysRandomFactoryIndex,
-                             m_raysGridWidth, m_raysGridHeight,
-                             m_photonBufferSize, m_photonBufferAppend);
-        dialog.setPhotonSettings(m_modelScene, exportFactories, m_photonsSettings);
-        if (!dialog.exec()) return;
+    RayTracingDialog dialog;
+    dialog.setParameters(m_raysNumber, m_raysScreen,
+                         randomFactories, m_raysRandomFactoryIndex,
+                         m_raysGridWidth, m_raysGridHeight,
+                         m_photonBufferSize, m_photonBufferAppend);
+    dialog.setPhotonSettings(m_modelScene, exportFactories, m_photonsSettings);
+    if (!dialog.exec()) return;
 
-        SetRaysNumber(dialog.raysNumber());
-        SetRaysScreen(dialog.raysScreen());
-        SetRaysRandomFactory(randomFactories[dialog.raysRandomFactory()]->name());
-        SetRaysGrid(dialog.raysGridWidth(), dialog.raysGridHeight());
-        SetPhotonBufferSize(dialog.photonBufferSize());
-        SetPhotonBufferAppend(dialog.photonBufferAppend());
+    SetRaysNumber(dialog.raysNumber());
+    SetRaysScreen(dialog.raysScreen());
+    SetRaysRandomFactory(randomFactories[dialog.raysRandomFactory()]->name());
+    SetRaysGrid(dialog.raysGridWidth(), dialog.raysGridHeight());
+    SetPhotonBufferSize(dialog.photonBufferSize());
+    SetPhotonBufferAppend(dialog.photonBufferAppend());
 
     if (!m_photonsBuffer->getExporter()) {
         if (m_photonsSettings) delete m_photonsSettings;
@@ -1775,10 +1775,9 @@ void MainWindow::FileOpen(QString fileName)
  */
 void MainWindow::Run()
 {
-    InstanceNode* instanceRoot = 0;
+    InstanceNode* instanceLayout = 0;
     InstanceNode* instanceSun = 0;
-    SunShape* sunShape = 0;
-    SunAperture* sunAperture = 0;
+
     AirTransmission* air = 0;
 
     QElapsedTimer timer;
@@ -1786,94 +1785,96 @@ void MainWindow::Run()
 
     UpdateLightSize();
 
-    if (ReadyForRaytracing(instanceRoot, instanceSun, sunShape, sunAperture, air) )
+    if (!ReadyForRaytracing(instanceLayout, instanceSun, air) ) return;
+
+    if (!m_photonsBuffer->getExporter() )
     {
-        if (!m_photonsBuffer->getExporter() )
-        {
-            if (!m_photonsSettings) return;
-            PhotonsAbstract* photonsExporter = CreatePhotonMapExport();
-            if (!photonsExporter) return;
-            if (!m_photonsBuffer->setExporter(photonsExporter)) return;
-        }
-
-        QVector<InstanceNode*> exportSuraceList;
-        for (QString s : m_photonsSettings->surfaces)
-        {
-            m_modelScene->indexFromUrl(s);
-            InstanceNode* node = m_modelScene->getInstance(m_modelScene->indexFromUrl(s));
-            exportSuraceList << node;
-        }
-
-        instanceRoot->updateTree(Transform::Identity);
-
-        SunKit* sunKit = static_cast<SunKit*> (instanceSun->getNode() );
-        if (!sunKit->findTexture(m_raysGridWidth, m_raysGridHeight, instanceRoot))
-        {
-            emit Abort(tr("There are no surfaces defined for ray tracing") );
-            ShowRaysIn3DView(); // cleaning?
-            return;
-        }
-
-        QVector<long> raysPerThread;
-        int progressMax = 100;
-        ulong t1 = m_raysNumber/progressMax;
-        for (int progress = 0; progress < progressMax; ++progress)
-            raysPerThread << t1;
-
-        if (t1*progressMax < m_raysNumber)
-            raysPerThread << m_raysNumber - t1*progressMax;
-
-
-
-        // single thread for gprof
-//        QThreadPool::globalInstance()->setMaxThreadCount(1);
-// change ideal
-
-        // Create a progress dialog.
-        QProgressDialog progressDialog;
-        progressDialog.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-        progressDialog.setLabelText(QString("Progressing using %1 thread(s)...").arg(QThread::idealThreadCount() ) );
-
-        QFutureWatcher<void> futureWatcher;
-        QObject::connect(&futureWatcher, SIGNAL(finished()), &progressDialog, SLOT(reset()));
-        QObject::connect(&progressDialog, SIGNAL(canceled()), &futureWatcher, SLOT(cancel()));
-        QObject::connect(&futureWatcher, SIGNAL(progressRangeChanged(int, int)), &progressDialog, SLOT(setRange(int, int)));
-        QObject::connect(&futureWatcher, SIGNAL(progressValueChanged(int)), &progressDialog, SLOT(setValue(int)));
-
-        std::cout << "QtConcurrent started: " << timer.elapsed() << std::endl;
-        QMutex mutex;
-        QMutex mutexPhotonMap;
-        QFuture<void> photonMap;
-        AirTransmission* airTemp = 0;
-        if (air->getTypeId() != AirVacuum::getClassTypeId())
-            airTemp = air;
-
-        photonMap = QtConcurrent::map(raysPerThread, RayTracer(instanceRoot,
-            instanceSun, sunAperture, sunShape, airTemp,
-            *m_rand,
-            &mutex, m_photonsBuffer, &mutexPhotonMap,
-            exportSuraceList) );
-        futureWatcher.setFuture(photonMap);
-
-        // Display the dialog and start the event loop.
-        progressDialog.exec();
-        futureWatcher.waitForFinished();
-        std::cout << "QtConcurrent finished: " << timer.elapsed() << std::endl;
-
-        m_raysTracedTotal += m_raysNumber;
-
-        if (exportSuraceList.empty())
-            ShowRaysIn3DView(); // all photons must be stored
-        else {
-//            ui->actionViewRays->setEnabled(false);
-//            ui->actionViewRays->setChecked(false);
-        }
-
-        double area = sunAperture->getArea();
-        double irradiance = sunKit->irradiance.getValue();
-        double power = area*irradiance/m_raysTracedTotal;
-        m_photonsBuffer->endExport(power);
+        if (!m_photonsSettings) return;
+        PhotonsAbstract* photonsExporter = CreatePhotonMapExport();
+        if (!photonsExporter) return;
+        if (!m_photonsBuffer->setExporter(photonsExporter)) return;
     }
+
+    QVector<InstanceNode*> exportSurfaceList;
+    for (QString s : m_photonsSettings->surfaces)
+    {
+        m_modelScene->indexFromUrl(s);
+        InstanceNode* node = m_modelScene->getInstance(m_modelScene->indexFromUrl(s));
+        exportSurfaceList << node;
+    }
+
+    instanceLayout->updateTree(Transform::Identity);
+
+    SunKitW* sunKit = (SunKitW*) instanceSun->getNode();
+    SunPosition* sunPosition = (SunPosition*) sunKit->getPart("position", false);
+    SunShape* sunShape = (SunShape*) sunKit->getPart("shape", false);
+    SunAperture* sunAperture = (SunAperture*) sunKit->getPart("aperture", false);
+    if (!sunKit->findTexture(m_raysGridWidth, m_raysGridHeight, instanceLayout))
+    {
+        emit Abort(tr("There are no surfaces defined for ray tracing") );
+        ShowRaysIn3DView(); // cleaning?
+        return;
+    }
+
+    QVector<long> raysPerThread;
+    int progressMax = 100;
+    ulong t1 = m_raysNumber/progressMax;
+    for (int progress = 0; progress < progressMax; ++progress)
+        raysPerThread << t1;
+
+    if (t1*progressMax < m_raysNumber)
+        raysPerThread << m_raysNumber - t1*progressMax;
+
+
+
+    // single thread for gprof
+    //        QThreadPool::globalInstance()->setMaxThreadCount(1);
+    // change ideal
+
+    // Create a progress dialog.
+    QProgressDialog progressDialog;
+    progressDialog.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+    progressDialog.setLabelText(QString("Progressing using %1 thread(s)...").arg(QThread::idealThreadCount() ) );
+
+    QFutureWatcher<void> futureWatcher;
+    QObject::connect(&futureWatcher, SIGNAL(finished()), &progressDialog, SLOT(reset()));
+    QObject::connect(&progressDialog, SIGNAL(canceled()), &futureWatcher, SLOT(cancel()));
+    QObject::connect(&futureWatcher, SIGNAL(progressRangeChanged(int, int)), &progressDialog, SLOT(setRange(int, int)));
+    QObject::connect(&futureWatcher, SIGNAL(progressValueChanged(int)), &progressDialog, SLOT(setValue(int)));
+
+    std::cout << "QtConcurrent started: " << timer.elapsed() << std::endl;
+    QMutex mutex;
+    QMutex mutexPhotonMap;
+    QFuture<void> photonMap;
+    AirTransmission* airTemp = 0;
+    if (air->getTypeId() != AirVacuum::getClassTypeId())
+        airTemp = air;
+
+    photonMap = QtConcurrent::map(raysPerThread, RayTracer(instanceLayout,
+                                                           instanceSun, sunAperture, sunShape, airTemp,
+                                                           *m_rand,
+                                                           &mutex, m_photonsBuffer, &mutexPhotonMap,
+                                                           exportSurfaceList) );
+    futureWatcher.setFuture(photonMap);
+
+    progressDialog.exec();
+    futureWatcher.waitForFinished();
+    std::cout << "QtConcurrent finished: " << timer.elapsed() << std::endl;
+
+    m_raysTracedTotal += m_raysNumber;
+
+    if (exportSurfaceList.empty())
+        ShowRaysIn3DView(); // all photons must be stored
+    else {
+        //            ui->actionViewRays->setEnabled(false);
+        //            ui->actionViewRays->setChecked(false);
+    }
+
+    double area = sunAperture->getArea();
+    double irradiance = sunPosition->irradiance.getValue();
+    double power = area*irradiance/m_raysTracedTotal;
+    m_photonsBuffer->endExport(power);
+
 
     std::cout << "Elapsed time (Run): " << timer.elapsed() << std::endl;
 }
@@ -2707,41 +2708,29 @@ void MainWindow::UpdateRecentFileActions()
  */
 bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
                                     InstanceNode*& instanceSun,
-                                    SunShape*& sunShape,
-                                    SunAperture*& sunAperture,
                                     AirTransmission*& air)
 {
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return false;
 
-    air = dynamic_cast<AirTransmission*>(sceneKit->getPart("world.air.transmission", false));
+    air = (AirTransmission*) sceneKit->getPart("world.air.transmission", false);
 
     InstanceNode* instanceScene = m_modelScene->getInstance(QModelIndex());
     if (!instanceScene) return false;
 
-    instanceSun = instanceScene->children[0]->children[0];
+//    instanceSun = instanceScene->children[0]->children[0];
+    instanceSun = instanceScene->children[0]->children[2];
     if (!instanceSun) return false;
 
     instanceLayout = instanceScene->children[1];
     if (!instanceLayout) return false;
 
-    if (!sceneKit->getPart("lightList[0]", false)) return false;
-    SunKit* sunKit = (SunKit*) sceneKit->getPart("lightList[0]", false);
-//    sunKit->updateTransform();
-
-    if (!sunKit->getPart("tsunshape", false)) return false;
-    sunShape = (SunShape*) sunKit->getPart("tsunshape", false);
-
-    if (!sunKit->getPart("icon", false)) return false;
-    sunAperture = (SunAperture*) sunKit->getPart("icon", false);
-
-    if (!sunKit->getPart("transform", false)) return false;
+    SunKitW* sunKit = (SunKitW*) sceneKit->getPart("world.sun", false);
     SoTransform* sunTransform = (SoTransform*) sunKit->getPart("transform", false);
     instanceSun->setTransform(tgf::makeTransform(sunTransform));
 
     QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
     if (!m_rand) m_rand = randomFactories[m_raysRandomFactoryIndex]->create();
-
 
     //Create the photon map where photons are going to be stored
     if (!m_photonBufferAppend)
@@ -2999,7 +2988,7 @@ void MainWindow::setDocumentModified(bool value)
 void MainWindow::UpdateLightSize()
 {
     TSceneKit* sceneKit = m_document->getSceneKit();
-    SunKit* sunKit = (SunKit*) sceneKit->getPart("lightList[0]", false);
+    SunKitW* sunKit = (SunKitW*) sceneKit->getPart("world.sun", false);
     if (!sunKit) return;
 
     sunKit->setBox(sceneKit);
