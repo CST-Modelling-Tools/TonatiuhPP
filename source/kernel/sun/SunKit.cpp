@@ -46,6 +46,7 @@ SunKit::SunKit()
     SO_KIT_INIT_INSTANCE();
 
     SoDirectionalLight* light = static_cast<SoDirectionalLight*>(getPart("light", true) );
+    light->intensity = 0.;
     light->direction.setValue(SbVec3f(0, 0, 1));
 
     // temp

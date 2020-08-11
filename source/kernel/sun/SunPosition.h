@@ -25,13 +25,7 @@ public:
 
     vec3d getSunVector();
 
-    SoSeparator* getRoot() const {return m_root;}
-
 protected:
-    SoSeparator* m_root;
-    SoTransform* m_transform;
-    void create();
-
     SoNodeSensor* m_sensor;
     static void update(void* data, SoSensor*);
 };

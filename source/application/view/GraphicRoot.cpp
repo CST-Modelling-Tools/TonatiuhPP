@@ -17,6 +17,7 @@
 #include "kernel/scene/TSceneKit.h"
 #include "main/Document.h"
 #include "SkyNode3D.h"
+#include "SunNode3D.h"
 #include "kernel/scene/GridNode.h"
 #include "kernel/sun/SunPosition.h"
 
@@ -70,6 +71,9 @@ GraphicRoot::GraphicRoot()
     m_sky = new SkyNode3D;
     m_root->addChild(m_sky);
 
+    m_sun = new SunNode3D;
+    m_sky->getRoot()->addChild(m_sun);
+
     m_grid = new GridNode3D;
     m_root->addChild(m_grid);
 
@@ -77,21 +81,31 @@ GraphicRoot::GraphicRoot()
     environment->ambientIntensity = 1.;
     m_root->addChild(environment);
 
-    m_transformSun = new SoTransform;
-    m_transformSun->setName("transformSun");
-
     SoTransformSeparator* ts = new SoTransformSeparator;
-    ts->addChild(m_transformSun);
+    ts->addChild(m_sun->getTransform());
     SoDirectionalLight* light = new SoDirectionalLight;
     light->intensity = 0.7;
-    light->direction = SbVec3f(0., 0., -1.);
+    light->direction = SbVec3f(0., 0., 1.);
     ts->addChild(light);
     m_root->addChild(ts);
+
+    SoShadowGroup* group = new SoShadowGroup;
+    group->precision = 1.;
+    group->quality = 1.;
+    m_root->addChild(group);
+
+    SoTransformSeparator* ts2 = new SoTransformSeparator;
+    ts2->addChild(m_sun->getTransform());
+    SoShadowDirectionalLight* shadow = new SoShadowDirectionalLight;
+    shadow->intensity = 0.3;
+    shadow->direction = SbVec3f(0., 0., 1.);
+    ts2->addChild(shadow);
+    group->addChild(ts2);
 
     m_selection = new SoSelection;
     m_selection->policy = SoSelection::SINGLE;
     m_selection->addFinishCallback(selectionFinishCallback, (void*) this);
-    m_root->addChild(m_selection);
+    group->addChild(m_selection);
 
     m_rays = new SoSeparator; // order important for antialiasing
     m_root->addChild(m_rays);
@@ -109,7 +123,7 @@ void GraphicRoot::setDocument(Document* document)
     m_selection->addChild(document->getSceneKit());
 
     SunPosition* sunPosition = (SunPosition*) document->getSceneKit()->getPart("world.sun.position", false);
-    m_sky->getRoot()->addChild(sunPosition->getRoot());
+    m_sun->attach(sunPosition);
 
     GridNode* gridNode = (GridNode*) document->getSceneKit()->getPart("world.terrain.grid", true);
     m_grid->attach(gridNode);

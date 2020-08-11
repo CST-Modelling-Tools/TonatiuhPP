@@ -8,6 +8,7 @@ class SoSelection;
 class SoPath;
 class Document;
 class SkyNode3D;
+class SunNode3D;
 class SoTransform;
 
 
@@ -39,8 +40,8 @@ signals:
 
 private:
     SoSeparator* m_root;
-    SoTransform* m_transformSun;
     SkyNode3D* m_sky;
+    SunNode3D* m_sun;
     GridNode3D* m_grid;
     SoSelection* m_selection;
     SoSeparator* m_rays;
