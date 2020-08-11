@@ -13,17 +13,14 @@
 
 GridNode3D::GridNode3D()
 {
-    m_root = new SoSwitch;
-    m_root->setName("grid");
-    m_root->ref();
-
+    setName("grid");
     m_sensor = new SoNodeSensor(update, this);
+    addChild(new SoLineSet);
 }
 
 GridNode3D::~GridNode3D()
 {
     delete m_sensor;
-    m_root->unref();
 }
 
 void GridNode3D::attach(GridNode* grid)
@@ -36,7 +33,7 @@ void GridNode3D::attach(GridNode* grid)
 void GridNode3D::create()
 {
     GridNode* grid = (GridNode*) m_sensor->getAttachedNode();
-    m_root->removeAllChildren();
+    removeAllChildren();
 
     double dx = grid->step.getValue();
     int divs = grid->divisions.getValue();
@@ -57,7 +54,7 @@ void GridNode3D::create()
 
     SoTransform* transform = new SoTransform;
     transform->translation.setValue(0., 0., -0.01);
-    m_root->addChild(transform);
+    addChild(transform);
 
     // points
     QVector<SbVec3f> pointsMajor;
@@ -97,34 +94,34 @@ void GridNode3D::create()
     SoMaterial* sMaterial = new SoMaterial;
     sMaterial->diffuseColor.setValue(0., 0., 0.);
     sMaterial->transparency = 0.8;
-    m_root->addChild(sMaterial);
+    addChild(sMaterial);
 
     SoCoordinate3* sPoints = new SoCoordinate3;
     sPoints->point.setValues(0, pointsMajor.size(), pointsMajor.data());
-    m_root->addChild(sPoints);
+    addChild(sPoints);
 
     SoLineSet* sLines = new SoLineSet;
     sLines->numVertices.setValues(0, sizesMajor.size(), sizesMajor.data());
-    m_root->addChild(sLines);
+    addChild(sLines);
 
     // minor grid
     sMaterial = new SoMaterial;
     sMaterial->diffuseColor.setValue(0., 0., 0.);
     sMaterial->transparency = 0.95;
-    m_root->addChild(sMaterial);
+    addChild(sMaterial);
 
     sPoints = new SoCoordinate3;
     sPoints->point.setValues(0, pointsMinor.size(), pointsMinor.data());
-    m_root->addChild(sPoints);
+    addChild(sPoints);
 
     sLines = new SoLineSet;
     sLines->numVertices.setValues(0, sizesMinor.size(), sizesMinor.data());
-    m_root->addChild(sLines);
+    addChild(sLines);
 
     // axes
-    m_root->addChild(makeAxes(xMin - dx, xMax + dx, yMin - dx, yMax + dx));
+    addChild(makeAxes(xMin - dx, xMax + dx, yMin - dx, yMax + dx));
 
-    m_root->whichChild = grid->show.getValue() ? SO_SWITCH_ALL : SO_SWITCH_NONE;
+    whichChild = grid->show.getValue() ? SO_SWITCH_ALL : SO_SWITCH_NONE;
 }
 
 SoSeparator* GridNode3D::makeAxes(double xMin, double xMax, double yMin, double yMax)

@@ -7,8 +7,6 @@
 #include <Inventor/fields/SoSFInt32.h>
 #include <Inventor/fields/SoSFVec2d.h>
 
-class SoSensor;
-class SoNodeSensor;
 
 class TONATIUH_KERNEL GridNode: public SoNode
 {

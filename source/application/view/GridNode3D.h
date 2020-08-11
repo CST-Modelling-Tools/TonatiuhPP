@@ -3,19 +3,20 @@
 #include "kernel/scene/GridNode.h"
 #include <Inventor/nodes/SoSwitch.h>
 
+class SoSensor;
+class SoNodeSensor;
 
-class GridNode3D
+
+class GridNode3D: public SoSwitch
 {
 public:
     GridNode3D();
     ~GridNode3D();
 
     void attach(GridNode* grid);
-    SoGroup* getRoot() const {return m_root;}
     void create();
 
 protected:
-    SoSwitch* m_root;
     SoSeparator* makeAxes(double xMin, double xMax, double yMin, double yMax);
 
     SoNodeSensor* m_sensor;

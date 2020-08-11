@@ -23,7 +23,7 @@ public:
     void setDocument(Document* document);
     void removeScene();
 
-    SoSeparator* grid() {return m_grid;}
+    GridNode3D* grid() {return m_grid;}
     void showGrid(bool on);
 
     SoSeparator* rays() {return m_rays;}
@@ -41,8 +41,7 @@ private:
     SoSeparator* m_root;
     SoTransform* m_transformSun;
     SkyNode3D* m_sky;
-    GridNode3D m_gridNode3D;
-    SoSeparator* m_grid;
+    GridNode3D* m_grid;
     SoSelection* m_selection;
     SoSeparator* m_rays;
 };
