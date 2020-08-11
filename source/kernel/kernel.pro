@@ -11,6 +11,7 @@ HEADERS += \
     TonatiuhFunctions.h \
     TonatiuhKernel.h \
     TonatiuhTypes.h \
+    air/AirVacuum.h \
     scene/GridNode.h \
     sun/SunKitW.h \
     sun/SunPosition.h \
@@ -62,6 +63,7 @@ HEADERS += \
 
 SOURCES += \
     TonatiuhFunctions.cpp \
+    air/AirVacuum.cpp \
     scene/GridNode.cpp \
     sun/SunKitW.cpp \
     sun/SunPosition.cpp \

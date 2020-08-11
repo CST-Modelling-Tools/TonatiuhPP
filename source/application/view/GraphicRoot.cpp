@@ -1,3 +1,5 @@
+#include "GraphicRoot.h"
+
 #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoSwitch.h>
@@ -5,11 +7,13 @@
 #include <Inventor/nodes/SoLineSet.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/actions/SoSearchAction.h>
+#include <Inventor/nodes/SoTransformSeparator.h>
+#include <Inventor/nodes/SoEnvironment.h>
+#include <Inventor/annex/FXViz/nodes/SoShadowGroup.h>
+#include <Inventor/annex/FXViz/nodes/SoShadowDirectionalLight.h>
 
 #include "libraries/math/gcf.h"
 #include "libraries/math/gcf.h"
-
-#include "GraphicRoot.h"
 #include "kernel/scene/TSceneKit.h"
 #include "main/Document.h"
 #include "SkyBackground.h"
@@ -41,6 +45,23 @@ void selectionFinishCallback(void* userData, SoSelection* selection)
 }
 
 
+/*
+ SoSeparator m_root
+    SkyBackground m_sky
+    SoSeparator m_grid
+    SoEnvironment env
+    SoTransformSeparator ts // transform for direct light
+        SoTransform m_transformSun
+        SoDirectionalLight light // should be outside ShadowGroup
+    SoShadowGroup sg
+        SoTransformSeparator ts2 // transform for shadow light
+            SoTransform m_transformSun
+            SoShadowDirectionalLight shadow // should be inside ShadowGroup
+        m_selection // objects below SoSelection can be selected
+            TSceneKit m_scene // for ray tracing
+   SoSeparator m_rays
+*/
+
 GraphicRoot::GraphicRoot()
 {
     m_root = new SoSeparator;
@@ -52,6 +73,21 @@ GraphicRoot::GraphicRoot()
     m_grid = new SoSeparator;
     m_grid->addChild(new SoLineSet); // empty scene hides sky
     m_root->addChild(m_grid);
+
+    SoEnvironment* environment = new SoEnvironment;
+    environment->ambientIntensity = 1.;
+    m_root->addChild(environment);
+
+    m_transformSun = new SoTransform;
+    m_transformSun->setName("transformSun");
+
+    SoTransformSeparator* ts = new SoTransformSeparator;
+    ts->addChild(m_transformSun);
+    SoDirectionalLight* light = new SoDirectionalLight;
+    light->intensity = 0.7;
+    light->direction = SbVec3f(0., 0., -1.);
+    ts->addChild(light);
+    m_root->addChild(ts);
 
     m_selection = new SoSelection;
     m_selection->policy = SoSelection::SINGLE;

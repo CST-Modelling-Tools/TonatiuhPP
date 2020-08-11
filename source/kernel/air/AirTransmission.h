@@ -6,15 +6,14 @@
 
 class TONATIUH_KERNEL AirTransmission: public SoNode
 {
-    SO_NODE_HEADER(AirTransmission);
+    SO_NODE_ABSTRACT_HEADER(AirTransmission);
 
 public:
     static void initClass();
-    AirTransmission();
 
-    virtual double transmission(double /*distance*/) const {return 1.;}
+    virtual double transmission(double distance) const = 0;
 
-    NAME_ICON_FUNCTIONS("Vacuum", ":/images/AirVacuum.png")
+    NAME_ICON_FUNCTIONS("Vacuum", ":/images/AirX.png")
 };
 
 

@@ -52,9 +52,7 @@ SoNode* SunPillbox::copy(SbBool copyConnections) const
 	// Use the standard version of the copy method to create
 	// a copy of this instance, including its field data
     SunPillbox* sun = dynamic_cast<SunPillbox*>(SoNode::copy(copyConnections));
-
-    sun->m_sinThetaMax = m_sinThetaMax; //?
-
+    sun->m_sinThetaMax = m_sinThetaMax;
     return sun;
 }
 

@@ -18,7 +18,7 @@ public:
     virtual vec3d generateRay(Random& rand) const = 0;
     virtual double getThetaMax() const = 0;
 
-    NAME_ICON_FUNCTIONS("X", ":/SunX.png")
+    NAME_ICON_FUNCTIONS("X", ":/images/SunX.png")
 
 protected:
     SunShape() {}

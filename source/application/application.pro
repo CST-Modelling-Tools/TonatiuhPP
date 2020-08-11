@@ -10,39 +10,147 @@ QT += gui # QVector3D
 LIBS += -lTonatiuh-Kernel -lTonatiuh-Libraries -lOpengl32
 
 HEADERS += \
-    $$files(calculator/*.h) \
-    $$files(commands/*.h) \
-    $$files(run/*.h) \
-    $$files(main/*.h) \
-    $$files(parameters/*.h) \
-    $$files(script/*.h) \
-    $$files(tree/*.h) \
-    $$files(view/*.h) \
-    $$files(widgets/*.h)
+    calculator/CelestialWidget.h \
+    calculator/HorizontalWidget.h \
+    calculator/Image.h \
+    calculator/SunCalculatorDialog.h \
+    calculator/WorldMap.h \
+    commands/ActionInsert.h \
+    commands/CmdAirModified.h \
+    commands/CmdChangeNodeName.h \
+    commands/CmdCopy.h \
+    commands/CmdCut.h \
+    commands/CmdDelete.h \
+    commands/CmdDeleteTracker.h \
+    commands/CmdInsertNode.h \
+    commands/CmdInsertShape.h \
+    commands/CmdInsertSurface.h \
+    commands/CmdInsertTracker.h \
+    commands/CmdLightPositionModified.h \
+    commands/CmdModifyParameter.h \
+    commands/CmdPaste.h \
+    commands/CmdSunModified.h \
+    commands/tgc.h \
+    run/FluxAnalysis.h \
+    run/FluxAnalysisDialog.h \
+    run/RayTracingDialog.h \
+    run/SelectSurfaceDialog.h \
+    main/Document.h \
+    main/MainWindow.h \
+    main/PluginManager.h \
+    main/UndoView.h \
+    parameters/ParametersDelegate.h \
+    parameters/ParametersEditor.h \
+    parameters/ParametersItem.h \
+    parameters/ParametersModel.h \
+    parameters/ParametersTabs.h \
+    parameters/ParametersView.h \
+    script/CodeEditArea.h \
+    script/CodeEditorWidget.h \
+    script/LineNumberWidget.h \
+    script/NodeObject.h \
+    script/ScriptEditorDialog.h \
+    script/ScriptRayTracer.h \
+    script/tonatiuh_script.h \
+    tree/SceneDelegate.h \
+    tree/SceneFilter.h \
+    tree/SceneModel.h \
+    tree/SceneView.h \
+    tree/SoPathVariant.h \
+    view/ExaminerViewer.h \
+    view/ExaminerViewer2.h \
+    view/GraphicRoot.h \
+    view/GraphicView.h \
+    view/SkyBackground.h \
+    view/SunNode.h \
+    widgets/AboutDialog.h \
+    widgets/AirDialog.h \
+    widgets/GridDialog.h \
+    widgets/NetworkConnectionsDialog.h \
+    widgets/SunDialog.h
 
 SOURCES += \
-    $$files(calculator/*.cpp) \
-    $$files(commands/*.cpp) \
-    $$files(run/*.cpp) \
-    $$files(main/*.cpp) \
-    $$files(parameters/*.cpp) \
-    $$files(script/*.cpp) \
-    $$files(tree/*.cpp) \
-    $$files(view/*.cpp) \
-    $$files(widgets/*.cpp)
+    calculator/CelestialWidget.cpp \
+    calculator/HorizontalWidget.cpp \
+    calculator/Image.cpp \
+    calculator/SunCalculatorDialog.cpp \
+    calculator/WorldMap.cpp \
+    commands/ActionInsert.cpp \
+    commands/CmdAirModified.cpp \
+    commands/CmdChangeNodeName.cpp \
+    commands/CmdCopy.cpp \
+    commands/CmdCut.cpp \
+    commands/CmdDelete.cpp \
+    commands/CmdDeleteTracker.cpp \
+    commands/CmdInsertNode.cpp \
+    commands/CmdInsertShape.cpp \
+    commands/CmdInsertSurface.cpp \
+    commands/CmdInsertTracker.cpp \
+    commands/CmdLightPositionModified.cpp \
+    commands/CmdModifyParameter.cpp \
+    commands/CmdPaste.cpp \
+    commands/CmdSunModified.cpp \
+    run/FluxAnalysis.cpp \
+    run/FluxAnalysisDialog.cpp \
+    run/RayTracingDialog.cpp \
+    run/SelectSurfaceDialog.cpp \
+    main/Document.cpp \
+    main/main.cpp \
+    main/MainWindow.cpp \
+    main/PluginManager.cpp \
+    main/UndoView.cpp \
+    parameters/ParametersDelegate.cpp \
+    parameters/ParametersEditor.cpp \
+    parameters/ParametersItem.cpp \
+    parameters/ParametersModel.cpp \
+    parameters/ParametersTabs.cpp \
+    parameters/ParametersView.cpp \
+    script/CodeEditArea.cpp \
+    script/CodeEditorWidget.cpp \
+    script/LineNumberWidget.cpp \
+    script/NodeObject.cpp \
+    script/ScriptEditorDialog.cpp \
+    script/ScriptRayTracer.cpp \
+    script/tonatiuh_script.cpp \
+    tree/SceneDelegate.cpp \
+    tree/SceneFilter.cpp \
+    tree/SceneModel.cpp \
+    tree/SceneView.cpp \
+    tree/SoPathVariant.cpp \
+    view/ExaminerViewer.cpp \
+    view/ExaminerViewer2.cpp \
+    view/GraphicRoot.cpp \
+    view/GraphicView.cpp \
+    view/SkyBackground.cpp \
+    view/SunNode.cpp \
+    widgets/AboutDialog.cpp \
+    widgets/AirDialog.cpp \
+    widgets/GridDialog.cpp \
+    widgets/NetworkConnectionsDialog.cpp \
+    widgets/SunDialog.cpp
 
 FORMS += \
-    $$files(calculator/*.ui) \
-    $$files(run/*.ui) \
-    $$files(main/*.ui) \
-    $$files(parameters/*.ui) \
-    $$files(script/*.ui) \
-    $$files(widgets/*.ui)
+    calculator/SunCalculatorDialog.ui \
+    run/FluxAnalysisDialog.ui \
+    run/RayTracingDialog.ui \
+    run/SelectSurfaceDialog.ui \
+    main/ContainerViewer.ui \
+    main/MainWindow.ui \
+    main/UndoView.ui \
+    parameters/ParametersEditor.ui \
+    script/CodeEditorWidget.ui \
+    script/ScriptEditorDialog.ui \
+    widgets/AboutDialog.ui \
+    widgets/AirDialog.ui \
+    widgets/GridDialog.ui \
+    widgets/NetworkConnectionsDialog.ui \
+    widgets/SunDialog.ui
+
 
 RESOURCES += resources.qrc
 
 win32 { # icons for windows explorer
-    RC_ICONS = images/about/Tonatiuh.ico
+    RC_ICONS += images/about/Tonatiuh.ico
     RC_ICONS += images/about/TonatiuhCy.ico
 }
 

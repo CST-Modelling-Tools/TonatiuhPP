@@ -65,7 +65,7 @@
 
 #include "PluginManager.h"
 #include "kernel/TonatiuhFunctions.h"
-#include "kernel/air/AirTransmission.h"
+#include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/material/MaterialRT.h"
 #include "kernel/photons/PhotonsBuffer.h"
@@ -1845,7 +1845,7 @@ void MainWindow::Run()
         QMutex mutexPhotonMap;
         QFuture<void> photonMap;
         AirTransmission* airTemp = 0;
-        if (air->getTypeId() != AirTransmission::getClassTypeId())
+        if (air->getTypeId() != AirVacuum::getClassTypeId())
             airTemp = air;
 
         photonMap = QtConcurrent::map(raysPerThread, RayTracer(instanceRoot,

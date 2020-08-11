@@ -6,6 +6,7 @@
 
 #include "kernel/air/AirExponential.h"
 #include "kernel/air/AirPolynomial.h"
+#include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/material/MaterialAbsorber.h"
 #include "kernel/material/MaterialVirtual.h"
@@ -52,7 +53,7 @@ void PluginManager::load(QDir dir)
 {
     loadPlugin(new SunFactoryT<SunPillbox>);
 
-    loadPlugin(new AirFactoryT<AirTransmission>);
+    loadPlugin(new AirFactoryT<AirVacuum>);
     loadPlugin(new AirFactoryT<AirExponential>);
     loadPlugin(new AirFactoryT<AirPolynomial>);
 

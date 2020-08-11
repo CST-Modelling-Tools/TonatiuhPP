@@ -7,6 +7,7 @@ class SoSelection;
 class SoPath;
 class Document;
 class SkyBackground;
+class SoTransform;
 
 
 class GraphicRoot: public QObject
@@ -37,6 +38,7 @@ signals:
 
 private:
     SoSeparator* m_root;
+    SoTransform* m_transformSun;
     SkyBackground* m_sky;
     SoSeparator* m_grid;
     SoSelection* m_selection;
