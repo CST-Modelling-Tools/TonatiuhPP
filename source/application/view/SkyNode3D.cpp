@@ -70,7 +70,7 @@ SkyNode3D::SkyNode3D(void)
 //    m_camera->focalDistance = 0.5f;
     m_camera->nearDistance = 0.1;
     m_camera->farDistance = 10.f;
-    m_camera->heightAngle = 0.523599; // 30 deg
+    m_camera->heightAngle = 30.*gcf::degree; // 30 deg
     m_camera->enableNotify(FALSE);
     m_root->addChild(m_camera);
 
@@ -201,6 +201,7 @@ void SkyNode3D::makeLabelAE(SoSeparator* parent, double azimuth, double elevatio
     parent->addChild(ans);
 }
 
+#include <Inventor/nodes/SoDepthBuffer.h>
 void SkyNode3D::GLRender(SoGLRenderAction* action)
 {
   SoState* state = action->getState();
@@ -210,8 +211,16 @@ void SkyNode3D::GLRender(SoGLRenderAction* action)
   const SbMatrix& tmp = SoViewingMatrixElement::get(state);
   m_camera->orientation = SbRotation(tmp).inverse();
 
-  m_root->GLRender(action);
+  SbBool test_out, write_out;
+  SoDepthBufferElement::DepthWriteFunction function_out;
+  SbVec2f range_out;
+  SoDepthBufferElement::get(state, test_out, write_out, function_out, range_out);
+  range_out[0] = 0.99999f;
+  range_out[1] = 1.0f;
+  SoDepthBufferElement::set(state, test_out, write_out, function_out, range_out);
 
-  glClear(GL_DEPTH_BUFFER_BIT);
+  m_root->GLRender(action);
+//  glClear(GL_DEPTH_BUFFER_BIT);
+
   state->pop();
 }

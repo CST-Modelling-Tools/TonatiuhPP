@@ -40,20 +40,9 @@ void SunNode3D::create()
     m_transform = new SoTransform;
     addChild(m_transform);
 
-    // from {0, 0, -1}
     SoTransform* sTransform = new SoTransform;
     sTransform->translation = SbVec3f(0., 0., -1.);
     addChild(sTransform);
-
-//    SoShapeHints* hints = new SoShapeHints;
-//    hints->shapeType = SoShapeHints::SOLID;
-//    addChild(hints);
-
-    // transparent textures do not check depth buffer
-//    SoMaterial* material = new SoMaterial;
-//    material->diffuseColor = SbVec3f(1, 1, 1);
-//    material->transparency = 0.5;
-//    addChild(material);
 
     SoTexture2* texture = new SoTexture2;
     texture->filename.setValue("../images/sun.png"); // relative to exe file
@@ -78,14 +67,6 @@ void SunNode3D::create()
     sCoords->point.set1Value(2, SbVec3f( s, s, 0.));
     sCoords->point.set1Value(3, SbVec3f(-s, s, 0.));
     addChild(sCoords);
-
-//    SoNormal* normal = new SoNormal;
-//    normal->vector.set1Value(0, SbVec3f(0, 0, 1));
-//    addChild(normal);
-
-//    SoNormalBinding* nBind = new SoNormalBinding;
-//    nBind->value.setValue(SoNormalBinding::OVERALL);
-//    addChild(nBind);
 
     SoFaceSet* shape = new SoFaceSet;
     shape->numVertices.set1Value(0, 4);

@@ -21,6 +21,7 @@
 #include <QElapsedTimer>
 #include <QPushButton>
 
+#include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
 #include <Inventor/actions/SoGetMatrixAction.h>
 #include <Inventor/actions/SoSearchAction.h>
@@ -183,11 +184,12 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
         StartOver(tonatiuhFile);
     } else {
         SetCurrentFile("");
-        SoCamera* camera = m_graphicView[0]->getCamera();
-        camera->focalDistance = 10.;
+        SoPerspectiveCamera* camera = (SoPerspectiveCamera*) m_graphicView[0]->getCamera();
+//        camera->focalDistance = 0.5;
         SbVec3f target(0., 0., 0.);
         camera->position = target + SbVec3f(0, 0, camera->focalDistance.getValue());
         camera->pointAt(target, SbVec3f(0., 1., 0.));
+        camera->heightAngle = 30.*gcf::degree;
         ui->sceneView->expandToDepth(1);
     }
 
@@ -247,9 +249,6 @@ MainWindow::~MainWindow()
     delete m_photonsBuffer;
 }
 
-/*!
- * Initializes tonatiuh document object.
- */
 void MainWindow::SetupDocument()
 {
     m_document = new Document;
@@ -276,9 +275,6 @@ void MainWindow::SetupDocument()
     m_modelSelection = new QItemSelectionModel(m_modelScene);
 }
 
-/*!
- * Starts MainWindow views.
- */
 void MainWindow::SetupViews()
 {
     SetupUndoView();
@@ -1392,10 +1388,10 @@ void MainWindow::InsertNode()
         return;
 
     TSeparatorKit* kit = new TSeparatorKit;
-    qDebug() << "dsfg " << kit->getRefCount();
+//    qDebug() << "dsfg " << kit->getRefCount();
     CmdInsertNode* cmd = new CmdInsertNode(kit, QPersistentModelIndex(index), m_modelScene);
     m_undoStack->push(cmd);
-    qDebug() << "dsfg as " << kit->getRefCount();
+//    qDebug() << "dsfg as " << kit->getRefCount();
 
     QString name("Node");
     int count = 0;
@@ -2685,7 +2681,6 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return false;
 
-    air = (AirTransmission*) sceneKit->getPart("world.air.transmission", false);
 
     InstanceNode* instanceScene = m_modelScene->getInstance(QModelIndex());
     if (!instanceScene) return false;
@@ -2697,8 +2692,9 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
     if (!instanceLayout) return false;
 
     SunKit* sunKit = (SunKit*) sceneKit->getPart("world.sun", false);
-    SoTransform* sunTransform = sunKit->m_transform;
-    instanceSun->setTransform(tgf::makeTransform(sunTransform));
+    instanceSun->setTransform(tgf::makeTransform(sunKit->m_transform));
+
+    air = (AirTransmission*) sceneKit->getPart("world.air.transmission", false);
 
     QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
     if (!m_rand) m_rand = randomFactories[m_raysRandomFactoryIndex]->create();
@@ -2706,8 +2702,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
     if (!m_photonBufferAppend)
     {
         delete m_photonsBuffer;
-        m_photonsBuffer = new PhotonsBuffer(m_photonBufferSize, m_photonBufferSize);
-        m_raysTracedTotal = 0;
+        m_photonsBuffer = 0;
     }
 
     if (!m_photonsBuffer)

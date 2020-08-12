@@ -10,6 +10,16 @@ TSceneKit {
     sun 
     DEF Sun SunKit {
       fields [ SFNode callbackList, SFNode position, SFNode shape, SFNode aperture ]
+      position 
+      SunPosition {
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
+   
+      }
+      shape 
+      SunPillbox {
+        fields [ SFDouble thetaMax ]
+
+      }
       aperture 
       SunAperture {
         fields [ SFString disabledNodes ]
