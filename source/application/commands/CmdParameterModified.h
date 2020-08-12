@@ -5,11 +5,11 @@
 class SceneModel;
 class SoNode;
 
-class CmdModifyParameter: public QUndoCommand
+class CmdParameterModified: public QUndoCommand
 {
 
 public:
-    CmdModifyParameter(SoNode* node, QString name, QString value, SceneModel* model, QUndoCommand* parent = 0);
+    CmdParameterModified(SoNode* node, QString name, QString value, SceneModel* model, QUndoCommand* parent = 0);
 
     void undo();
     void redo();

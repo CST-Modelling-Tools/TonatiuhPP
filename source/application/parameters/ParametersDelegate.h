@@ -18,10 +18,11 @@ public:
 
     void updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
-//    void setEditorData(QWidget* editor, const QModelIndex& index) const;
+    void setEditorData(QWidget* editor, const QModelIndex& index) const;
 
 public slots:
     void onCloseEditor();
+    void commitAndCloseEditor();
 
 signals:
     void closeEditor(QWidget*);

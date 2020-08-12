@@ -9,6 +9,7 @@
 
 #include "Document.h"
 #include "kernel/scene/TSceneKit.h"
+#include "application/view/GraphicRoot.h"
 
 /*!
  * Creates a new document object.
@@ -92,7 +93,7 @@ bool Document::WriteFile(const QString& fileName)
     if (fileName.endsWith(".tnh") || fileName.endsWith(".tnpp")) // normal
         action.apply(m_scene);
     else if (fileName.endsWith(".tnhd")) // debug
-        action.apply(m_root);
+        action.apply(m_scene->m_graphicRoot->getRoot());
 
     action.getOutput()->closeFile();
     QApplication::restoreOverrideCursor();

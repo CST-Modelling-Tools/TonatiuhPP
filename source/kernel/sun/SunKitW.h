@@ -8,6 +8,7 @@
 class InstanceNode;
 class TSceneKit;
 
+#include <QDebug>
 class TONATIUH_KERNEL SunKitW: public SoBaseKit
 {
     SO_KIT_HEADER(SunKitW);
@@ -23,6 +24,7 @@ class TONATIUH_KERNEL SunKitW: public SoBaseKit
 public:
     static void initClass(void);
     SunKitW();
+    ~SunKitW();
 
     void updateTransform();
     void setBox(Box3D box);

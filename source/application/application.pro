@@ -17,7 +17,6 @@ HEADERS += \
     calculator/WorldMap.h \
     commands/ActionInsert.h \
     commands/CmdAirModified.h \
-    commands/CmdChangeNodeName.h \
     commands/CmdCopy.h \
     commands/CmdCut.h \
     commands/CmdDelete.h \
@@ -27,7 +26,8 @@ HEADERS += \
     commands/CmdInsertSurface.h \
     commands/CmdInsertTracker.h \
     commands/CmdLightPositionModified.h \
-    commands/CmdModifyParameter.h \
+    commands/CmdNameChanged.h \
+    commands/CmdParameterModified.h \
     commands/CmdPaste.h \
     commands/CmdSunModified.h \
     commands/tgc.h \
@@ -78,7 +78,6 @@ SOURCES += \
     calculator/WorldMap.cpp \
     commands/ActionInsert.cpp \
     commands/CmdAirModified.cpp \
-    commands/CmdChangeNodeName.cpp \
     commands/CmdCopy.cpp \
     commands/CmdCut.cpp \
     commands/CmdDelete.cpp \
@@ -88,7 +87,8 @@ SOURCES += \
     commands/CmdInsertSurface.cpp \
     commands/CmdInsertTracker.cpp \
     commands/CmdLightPositionModified.cpp \
-    commands/CmdModifyParameter.cpp \
+    commands/CmdNameChanged.cpp \
+    commands/CmdParameterModified.cpp \
     commands/CmdPaste.cpp \
     commands/CmdSunModified.cpp \
     run/FluxAnalysis.cpp \

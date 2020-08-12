@@ -48,7 +48,7 @@
 
 #include "calculator/SunCalculatorDialog.h"
 #include "commands/ActionInsert.h"
-#include "commands/CmdChangeNodeName.h"
+#include "commands/CmdNameChanged.h"
 #include "commands/CmdCopy.h"
 #include "commands/CmdCut.h"
 #include "commands/CmdDelete.h"
@@ -59,13 +59,14 @@
 #include "commands/CmdInsertTracker.h"
 #include "commands/CmdSunModified.h"
 #include "commands/CmdLightPositionModified.h"
-#include "commands/CmdModifyParameter.h"
+#include "commands/CmdParameterModified.h"
 #include "commands/CmdPaste.h"
 #include "commands/CmdAirModified.h"
 
 #include "PluginManager.h"
 #include "kernel/TonatiuhFunctions.h"
 #include "kernel/air/AirVacuum.h"
+#include "kernel/air/AirKit.h"
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/material/MaterialRT.h"
 #include "kernel/photons/PhotonsBuffer.h"
@@ -261,7 +262,6 @@ void MainWindow::SetupDocument()
     m_graphicsRoot = new GraphicRoot;
     m_graphicsRoot->setDocument(m_document);
 
-
     ShowGrid();
 
     connect(
@@ -305,11 +305,10 @@ void MainWindow::SetupUndoView()
             ui->actionEditRedo, SLOT(setEnabled(bool)) );
     connect(m_undoStack, SIGNAL(canUndoChanged(bool)),
             ui->actionEditUndo, SLOT(setEnabled(bool)) );
+    connect(m_undoStack, SIGNAL(indexChanged(int)),
+            this, SLOT(onUndoStack()));
 }
 
-/*!
- * Initializates graphic view.
- */
 void MainWindow::SetupGraphicView()
 {
     QSplitter* splitter = findChild<QSplitter*>("horizontalSplitter");
@@ -468,7 +467,7 @@ void MainWindow::FinishManipulation()
         QString::number(nodeTransform->translation.getValue()[1]),
         QString::number(nodeTransform->translation.getValue()[2])
     );
-    new CmdModifyParameter(nodeTransform, "translation", translationValue, m_modelScene, command);
+    new CmdParameterModified(nodeTransform, "translation", translationValue, m_modelScene, command);
     m_undoStack->push(command);
 
     UpdateLightSize();
@@ -486,6 +485,12 @@ void MainWindow::ExecuteScriptFile(QString fileName)
 void MainWindow::onAbort(QString error)
 {
     statusBar()->showMessage(error, 2000);
+}
+
+void MainWindow::onUndoStack()
+{
+    ChangeSelection(m_modelSelection->currentIndex());
+    ui->parametersTabs->UpdateView();
 }
 
 /*!
@@ -532,55 +537,23 @@ void MainWindow::StartManipulation(SoDragger* dragger)
     }
 }
 
-/*!
- * Defines Tonatiuh model light paramenters with a dilog window.
- */
 void MainWindow::onSunDialog()
 {
-    TSceneKit* sceneKit = m_document->getSceneKit();
-    if (!sceneKit) return;
-
-    SunKit* sunKitOld = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
-
-    SunDialog dialog(m_modelScene, sunKitOld, m_pluginManager->getSunMap(), this);
+    SunDialog dialog(m_modelScene, m_pluginManager->getSunMap(), this);
     if (!dialog.exec()) return;
 
-    SunKit* sunKit = dialog.getSunKit();
-    if (!sunKit) return;
-
-    CmdSunModified* cmd = new CmdSunModified(sunKit, sceneKit, m_modelScene);
+    CmdSunModified* cmd = new CmdSunModified(dialog.getSun(), m_modelScene);
     m_undoStack->push(cmd);
-
-    sceneKit->updateTrackers();
-    UpdateLightSize();
-
-    ui->parametersTabs->UpdateView();
     setDocumentModified(true);
-
-    m_graphicsRoot->rays()->removeAllChildren();
-//    ui->actionViewRays->setEnabled(false);
-//    ui->actionViewRays->setChecked(false);
 }
 
-/*!
- * Opens a dialog to define the scene transmissivity.
- */
 void MainWindow::onAirDialog()
 {
-    AirDialog dialog(m_pluginManager->getAirMap(), this);
-
-    TSceneKit* sceneKit = m_document->getSceneKit();
-    if (!sceneKit) return;
-    AirTransmission* airOld = static_cast<AirTransmission*>(sceneKit->getPart("world.air.transmission", false));
-    if (airOld) dialog.setModel(airOld);
-
+    AirDialog dialog(m_modelScene, m_pluginManager->getAirMap(), this);
     if (!dialog.exec()) return;
 
-    AirTransmission* air = dialog.getModel();
-    CmdAirModified* cmd = new CmdAirModified(air, sceneKit);
-    if (m_undoStack) m_undoStack->push(cmd);
-
-    ui->parametersTabs->UpdateView();
+    CmdAirModified* cmd = new CmdAirModified(dialog.getAir(), m_modelScene);
+    m_undoStack->push(cmd);
     setDocumentModified(true);
 }
 
@@ -949,9 +922,8 @@ void MainWindow::SelectionFinish(SoSelection* selection)
  */
 void MainWindow::SetParameterValue(SoNode* node, QString name, QString value)
 {
-    CmdModifyParameter* cmd = new CmdModifyParameter(node, name, value, m_modelScene);
-    if (m_undoStack) m_undoStack->push(cmd);
-//    UpdateLightSize();
+    CmdParameterModified* cmd = new CmdParameterModified(node, name, value, m_modelScene);
+    m_undoStack->push(cmd);
     setDocumentModified(true);
 }
 
@@ -1083,7 +1055,7 @@ void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& name)
     if (!instance) return;
     if (!instance->getNode()) return;
 
-    CmdChangeNodeName* cmd = new CmdChangeNodeName(index, name, m_modelScene);
+    CmdNameChanged* cmd = new CmdNameChanged(index, name, m_modelScene);
     m_undoStack->push(cmd);
 
     setDocumentModified(true);
@@ -2042,32 +2014,32 @@ void MainWindow::SetRaysGrid(int width, int height)
  */
 void MainWindow::SetSunshape(QString name)
 {
-    SunFactory* f = m_pluginManager->getSunMap().value(name, 0);
-    if (!f)
-    {
-        emit Abort(tr("SetSunshape: Defined sunshape is not valid type.") );
-        return;
-    }
+//    SunFactory* f = m_pluginManager->getSunMap().value(name, 0);
+//    if (!f)
+//    {
+//        emit Abort(tr("SetSunshape: Defined sunshape is not valid type.") );
+//        return;
+//    }
 
-    TSceneKit* sceneKit = m_document->getSceneKit();
-    SunKit* sunKit = 0;
-    if (sceneKit->getPart("lightList[0]", false))
-    {
-        sunKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
-    }
-    else
-        sunKit = new SunKit;
+//    TSceneKit* sceneKit = m_document->getSceneKit();
+//    SunKit* sunKit = 0;
+//    if (sceneKit->getPart("lightList[0]", false))
+//    {
+//        sunKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
+//    }
+//    else
+//        sunKit = new SunKit;
 
-    sunKit->setPart("tsunshape", f->create() );
+//    sunKit->setPart("tsunshape", f->create() );
 
-    CmdSunModified* command = new CmdSunModified(sunKit, sceneKit, m_modelScene);
-    m_undoStack->push(command);
+//    CmdSunModified* command = new CmdSunModified(sunKit, sceneKit, m_modelScene);
+//    m_undoStack->push(command);
 
-    //UpdateLightDimensions();
-    UpdateLightSize();
+//    //UpdateLightDimensions();
+//    UpdateLightSize();
 
-    ui->parametersTabs->UpdateView();
-    setDocumentModified(true);
+//    ui->parametersTabs->UpdateView();
+//    setDocumentModified(true);
 }
 
 /*!
@@ -2075,24 +2047,24 @@ void MainWindow::SetSunshape(QString name)
  */
 void MainWindow::SetSunshapeParameter(QString parameter, QString value)
 {
-    TSceneKit* sceneKit = m_document->getSceneKit();
-    SunKit* sunKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
-    if (!sunKit)
-    {
-        emit Abort(tr("SetSunshapeParameter: There is not light defined.") );
-        return;
-    }
+//    TSceneKit* sceneKit = m_document->getSceneKit();
+//    SunKit* sunKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
+//    if (!sunKit)
+//    {
+//        emit Abort(tr("SetSunshapeParameter: There is not light defined.") );
+//        return;
+//    }
 
-    SunShape* sunshape = static_cast<SunShape*>(sunKit->getPart("tsunshape", false));
-    if (!sunshape)
-    {
-        emit Abort(tr("SetSunshapeParameter: There is not sunshape defined.") );
-        return;
-    }
+//    SunShape* sunshape = static_cast<SunShape*>(sunKit->getPart("tsunshape", false));
+//    if (!sunshape)
+//    {
+//        emit Abort(tr("SetSunshapeParameter: There is not sunshape defined.") );
+//        return;
+//    }
 
-    CmdModifyParameter* cmd = new CmdModifyParameter(sunshape, parameter, value, m_modelScene);
-    if (m_undoStack) m_undoStack->push(cmd);
-    setDocumentModified(true);
+//    CmdModifyParameter* cmd = new CmdModifyParameter(sunshape, parameter, value, m_modelScene);
+//    if (m_undoStack) m_undoStack->push(cmd);
+//    setDocumentModified(true);
 }
 
 /*!
@@ -2100,20 +2072,20 @@ void MainWindow::SetSunshapeParameter(QString parameter, QString value)
  */
 void MainWindow::SetAir(QString name)
 {
-    AirFactory* f = m_pluginManager->getAirMap().value(name, 0);
-    if (!f)
-    {
-        emit Abort("SetTransmissivity: Error defining transmissivity.");
-        return;
-    }
+//    AirFactory* f = m_pluginManager->getAirMap().value(name, 0);
+//    if (!f)
+//    {
+//        emit Abort("SetTransmissivity: Error defining transmissivity.");
+//        return;
+//    }
 
-    AirTransmission* air = f->create();
+//    AirTransmission* air = f->create();
 
-    TSceneKit* sceneKit = m_document->getSceneKit();
+//    TSceneKit* sceneKit = m_document->getSceneKit();
 
-    CmdAirModified* cmd = new CmdAirModified(air, sceneKit);
-    m_undoStack->push(cmd);
-    setDocumentModified(true);
+//    CmdAirModified* cmd = new CmdAirModified(air, sceneKit);
+//    m_undoStack->push(cmd);
+//    setDocumentModified(true);
 }
 
 /*!
@@ -2121,17 +2093,17 @@ void MainWindow::SetAir(QString name)
  */
 void MainWindow::SetAirParameter(QString parameter, QString value)
 {
-    TSceneKit* sceneKit = m_document->getSceneKit();
-    AirTransmission* air = static_cast<AirTransmission*>(sceneKit->getPart("world.air.transmission", false));
-    if (!air)
-    {
-        emit Abort("SetTransmissivity: No transmissivity type defined.");
-        return;
-    }
+//    TSceneKit* sceneKit = m_document->getSceneKit();
+//    AirTransmission* air = static_cast<AirTransmission*>(sceneKit->getPart("world.air.transmission", false));
+//    if (!air)
+//    {
+//        emit Abort("SetTransmissivity: No transmissivity type defined.");
+//        return;
+//    }
 
-    CmdModifyParameter* cmd = new CmdModifyParameter(air, parameter, value, m_modelScene);
-    if (m_undoStack) m_undoStack->push(cmd);
-    setDocumentModified(true);
+//    CmdModifyParameter* cmd = new CmdModifyParameter(air, parameter, value, m_modelScene);
+//    if (m_undoStack) m_undoStack->push(cmd);
+//    setDocumentModified(true);
 }
 
 //Manipulators actions
@@ -2718,8 +2690,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
     InstanceNode* instanceScene = m_modelScene->getInstance(QModelIndex());
     if (!instanceScene) return false;
 
-//    instanceSun = instanceScene->children[0]->children[0];
-    instanceSun = instanceScene->children[0]->children[2];
+    instanceSun = instanceScene->children[0]->children[1];
     if (!instanceSun) return false;
 
     instanceLayout = instanceScene->children[1];

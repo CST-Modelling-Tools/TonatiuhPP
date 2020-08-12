@@ -10,7 +10,7 @@ class Document;
 class SkyNode3D;
 class SunNode3D;
 class SoTransform;
-
+class TSceneKit;
 
 class GraphicRoot: public QObject
 {
@@ -22,6 +22,7 @@ public:
 
     SoSeparator* getRoot() const {return m_root;}
     void setDocument(Document* document);
+    void updateScene(TSceneKit* scene);
     void removeScene();
 
     GridNode3D* grid() {return m_grid;}

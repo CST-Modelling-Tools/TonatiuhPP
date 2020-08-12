@@ -9,7 +9,7 @@
 class TSeparatorKit;
 class Transform;
 struct vec3d;
-
+class GraphicRoot;
 
 class TONATIUH_KERNEL TSceneKit: public SoSceneKit
 {
@@ -25,6 +25,8 @@ public:
 
     TSeparatorKit* getLayout();
     void updateTrackers();
+
+    GraphicRoot* m_graphicRoot;
 
 protected:
     ~TSceneKit() {}

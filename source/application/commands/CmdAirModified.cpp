@@ -1,25 +1,19 @@
 #include "CmdAirModified.h"
 
+#include "kernel/air/AirKit.h"
+#include "application/tree/SceneModel.h"
 #include "kernel/scene/TSceneKit.h"
-#include "kernel/air/AirTransmission.h"
 
 
-CmdAirModified::CmdAirModified(AirTransmission* air, TSceneKit* sceneKit, QUndoCommand* parent):
+CmdAirModified::CmdAirModified(AirKit* air, SceneModel* model, QUndoCommand* parent):
     QUndoCommand("Air modified", parent),
-    m_airOld(0),
-    m_air(0),
-    m_sceneKit(sceneKit)
+    m_model(model)
 {
-    AirTransmission* airOld = dynamic_cast<AirTransmission*>(m_sceneKit->getPart("world.air.transmission", false));
-    if (airOld) {
-        m_airOld = airOld;
-        m_airOld->ref();
-    }
+    m_airOld = (AirKit*) m_model->getSceneKit()->getPart("world.air", false);
+    m_airOld->ref();
 
-    if (air) {
-        m_air = static_cast<AirTransmission*>(air->copy(true));
-        m_air->ref();
-    }
+    m_air = air;
+    m_air->ref();
 }
 
 CmdAirModified::~CmdAirModified()
@@ -28,21 +22,12 @@ CmdAirModified::~CmdAirModified()
     m_air->unref();
 }
 
-/*!
- * Reverts to the previous transmissivity definition. After undo() is called, the scene transmissivityn will be the same as before redo() was called.
- *
- * \sa redo().
- */
 void CmdAirModified::undo()
 {
-    m_sceneKit->setPart("world.air.transmission", m_airOld);
+    m_model->replaceAir(m_airOld);
 }
 
-/*!
- * Applies a change to the scene. After redo() the transmissivity will be new transmissivity defined by the constructor parameters.
- * \sa undo().
- */
 void CmdAirModified::redo()
 {
-    m_sceneKit->setPart("world.air.transmission", m_air);
+    m_model->replaceAir(m_air);
 }

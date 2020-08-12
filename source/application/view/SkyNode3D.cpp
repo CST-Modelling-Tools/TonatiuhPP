@@ -125,7 +125,8 @@ SoSeparator* SkyNode3D::makeSky()
             float x = cos(phi)*cos(alpha);
             float y = sin(phi)*cos(alpha);
             float z = sin(alpha);
-            vertices << SbVec3f(x, y, z);
+            float r = alpha >= 0. ? 1.2 : 0.8; // for sun set
+            vertices << r*SbVec3f(x, y, z);
 
             if (alpha > 0.)
                 c = grSky.find(alpha);
@@ -184,14 +185,12 @@ void SkyNode3D::makeLabelAE(SoSeparator* parent, double azimuth, double elevatio
     // Rz(-gamma) Rx(alpha)
     SoTransform* sTransform = new SoTransform;
     sTransform->rotation =
-        SbRotation(SbVec3f(1., 0., 0.), elevation*gcf::degree) *
+        SbRotation(SbVec3f(1., 0., 0.), (90. + elevation)*gcf::degree) *
         SbRotation(SbVec3f(0., 0., 1.), -azimuth*gcf::degree);
     ans->addChild(sTransform);
 
-    // from {0, 1, 0}
     sTransform = new SoTransform;
-    sTransform->translation = SbVec3f(0., 0.8, 0.);
-    sTransform->rotation = SbRotation(SbVec3f(1., 0., 0.), 90.*gcf::degree);
+    sTransform->translation = SbVec3f(0., 0., -1.);
     ans->addChild(sTransform);
 
     SoText3* sText = new SoText3;
@@ -202,18 +201,15 @@ void SkyNode3D::makeLabelAE(SoSeparator* parent, double azimuth, double elevatio
     parent->addChild(ans);
 }
 
-//#include <QDebug>
 void SkyNode3D::GLRender(SoGLRenderAction* action)
 {
   SoState* state = action->getState();
   state->push();
 
-  const SbMatrix& tmp = SoViewingMatrixElement::get(state);
-  SbRotation rot(tmp);
-//  qDebug() << rot.toString().getString();
-  m_camera->orientation = rot.inverse();
-
   SoModelMatrixElement::makeIdentity(state, this);
+  const SbMatrix& tmp = SoViewingMatrixElement::get(state);
+  m_camera->orientation = SbRotation(tmp).inverse();
+
   m_root->GLRender(action);
 
   glClear(GL_DEPTH_BUFFER_BIT);

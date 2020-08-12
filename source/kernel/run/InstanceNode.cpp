@@ -50,6 +50,7 @@ void InstanceNode::insertChild(int row, InstanceNode* child)
 
 void InstanceNode::replaceChild(int row, InstanceNode* child)
 {
+    delete children[row];
     children[row] = child;
     child->m_parent = this;
 }
@@ -61,14 +62,10 @@ bool InstanceNode::operator==(const InstanceNode& other)
         m_parent->m_node == other.m_parent->m_node;
 }
 
-/**
- * Returns node URL.
- */
 QString InstanceNode::getURL() const
 {
     QString url;
-    if (m_parent)
-        url = m_parent->getURL();
+    if (m_parent) url = m_parent->getURL();
     return url + "/" + m_node->getName().getString();
 }
 

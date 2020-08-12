@@ -2,25 +2,36 @@
 #include "ui_AirDialog.h"
 
 #include <Inventor/fields/SoField.h>
+
 #include "kernel/air/AirTransmission.h"
+#include "kernel/air/AirKit.h"
+#include "tree/SceneModel.h"
+#include "kernel/scene/TSceneKit.h"
 
 
-AirDialog::AirDialog(QMap<QString, AirFactory*> airMap, QWidget* parent, Qt::WindowFlags f):
-    QDialog(parent, f),
+AirDialog::AirDialog(SceneModel* sceneModel, QMap<QString, AirFactory*> airMap, QWidget* parent):
+    QDialog(parent),
     ui(new Ui::AirDialog),
-    m_airMap(airMap),
-    m_index(-1),
-    m_air(0)
+    m_airMap(airMap)
 {
     ui->setupUi(this);
 
+    TSceneKit* sceneKit = sceneModel->getSceneKit();
+    AirKit* airOld = (AirKit*) sceneKit->getPart("world.air", false);
+    m_air = (AirKit*) airOld->copy();
+    m_air->ref();
+
     for (AirFactory* f : airMap)
         ui->comboBox->addItem(f->icon(), f->name());
-    ui->comboBox->setCurrentIndex(-1);
+
+    AirTransmission* airT = (AirTransmission*) m_air->getPart("transmission", false);
+    int index = ui->comboBox->findText(airT->getTypeName());
+    ui->comboBox->setCurrentIndex(index); // activated != cuurentIndexChanged
+    ui->airParameters->SetContainer(airT);
 
     connect(
-        ui->comboBox, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(changeModel(int))
+        ui->comboBox, SIGNAL(activated(int)),
+        this, SLOT(setModel(int))
     );
     connect(
         ui->airParameters, SIGNAL(valueModified(SoNode*, QString, QString)),
@@ -33,37 +44,20 @@ AirDialog::AirDialog(QMap<QString, AirFactory*> airMap, QWidget* parent, Qt::Win
 AirDialog::~AirDialog()
 {
     delete ui;
+    m_air->unref();
 }
 
-void AirDialog::setModel(AirTransmission* air)
-{    
-    if (!air) return;
-    m_airOld = static_cast<AirTransmission*>(air->copy(true));
-    m_index = 0;
-    if (m_airOld) {
-        m_index = ui->comboBox->findText(m_airOld->getTypeName());
-        ui->comboBox->setCurrentIndex(m_index);
-    }
-}
-
-void AirDialog::changeModel(int index)
+void AirDialog::setModel(int index)
 {
-    while (m_air && m_air->getRefCount() > 0)
-        m_air->unref();
-
-    if (index == m_index)
-        m_air = static_cast<AirTransmission*>(m_airOld->copy(true));
-    else {
-        AirFactory* f = m_airMap[ui->comboBox->itemText(index)];
-        m_air = f->create();
-    }
-
-    ui->airParameters->SetContainer(m_air);
+    AirFactory* f = m_airMap[ui->comboBox->itemText(index)];
+    AirTransmission* airT = f->create();
+    m_air->setPart("transmission", airT);
+    ui->airParameters->SetContainer(airT);
 }
 
 void AirDialog::setValue(SoNode* node, QString parameter, QString value)
 {
-    SoField* field = node->getField(SbName(parameter.toStdString().c_str()));
+    SoField* field = node->getField(parameter.toStdString().c_str());
     if (field)
         field->set(value.toStdString().c_str());
 }

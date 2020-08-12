@@ -11,6 +11,7 @@
 #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoMaterial.h>
 
+#include "application/view/GraphicRoot.h"
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/material/MaterialRT.h"
 #include "kernel/run/InstanceNode.h"
@@ -68,7 +69,7 @@ void SceneModel::setDocument(Document* document)
 {
     beginResetModel();
 
-    m_nodeRoot = document->m_root;
+    m_nodeRoot = document->getSceneKit()->m_graphicRoot->getRoot();
     m_nodeScene = document->getSceneKit();
     m_mapCoinQt.clear();
     if (m_instanceScene) clear();
@@ -78,9 +79,6 @@ void SceneModel::setDocument(Document* document)
 
     SoNode* worldKit = m_nodeScene->getPart("world", true);
     InstanceNode* instanceW = addInstanceNode(m_instanceScene, worldKit);
-
-    if (SunKit* sunKit = static_cast<SunKit*>(m_nodeScene->getPart("lightList[0]", false)))
-        insertSunNode(sunKit);
 
     SoNode* location = m_nodeScene->getPart("world.location", true);
     addInstanceNode(instanceW, location);
@@ -466,32 +464,15 @@ SoNodeKitPath* SceneModel::pathFromIndex(const QModelIndex& index) const
  * Insert a light node to the model. If the model has an other light node, the previous node
  * will be deleted.
  */
-void SceneModel::insertSunNode(SunKit* sunKit)
+void SceneModel::insertSunNode(SunKitW* sunKit)
 {
-    SoNodeKitListPart* lightList =
-        static_cast<SoNodeKitListPart*>(m_nodeScene->getPart("lightList", true));
-
-    InstanceNode* instW = m_instanceScene->children[0];
-    if (lightList->getNumChildren() > 0)
-        if (instW->children.size() > 0)
-            instW->children.remove(0);
-
-    m_nodeScene->setPart("lightList[0]", sunKit);
+    m_nodeScene->setPart("world.sun", sunKit);
 
     InstanceNode* instance = new InstanceNode(sunKit);
-    instW->insertChild(0, instance);
-
-    emit layoutChanged();
-}
-
-void SceneModel::removeSunNode(SunKit* sunKit)
-{
-    SoNodeKitListPart* lightList =
-        static_cast<SoNodeKitListPart*>(m_nodeScene->getPart("lightList", true));
-    if (lightList) lightList->removeChild(sunKit);
 
     InstanceNode* instW = m_instanceScene->children[0];
-    instW->children.remove(0);
+    instW->children.remove(1);
+    instW->insertChild(1, instance);
 
     emit layoutChanged();
 }
@@ -591,6 +572,30 @@ void SceneModel::replaceCoinNode(TShapeKit* parent, SoNode* node)
         instanceParent->replaceChild(row, instance);
         m_mapCoinQt[node].append(instance);
     }
+
+    emit layoutChanged();
+}
+
+void SceneModel::replaceAir(AirKit* air)
+{
+    m_nodeScene->setPart("world.air", air);
+
+//    InstanceNode* instance = new InstanceNode(air);
+    InstanceNode* instW = m_instanceScene->children[0];
+    instW->children[2]->setNode(air);
+//    instW->replaceChild(2, instance);
+
+    emit layoutChanged();
+}
+
+void SceneModel::replaceSun(SunKitW* sun)
+{
+    m_nodeScene->setPart("world.sun", sun);
+
+//    InstanceNode* instance = new InstanceNode(sun);
+    InstanceNode* instW = m_instanceScene->children[0];
+    instW->children[1]->setNode(sun);
+//    instW->replaceChild(1, instance);
 
     emit layoutChanged();
 }

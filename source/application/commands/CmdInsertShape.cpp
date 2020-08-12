@@ -33,7 +33,7 @@ CmdInsertShape::CmdInsertShape(
     InstanceNode* instanceParent = m_model->getInstance(parentIndex);
     m_nodeParent = static_cast<SoBaseKit*>(instanceParent->getNode());
 
-    setText("Insert Shape");
+    setText("Insert shape");
 }
 
 /*!

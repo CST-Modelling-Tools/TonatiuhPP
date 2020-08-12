@@ -119,17 +119,24 @@ GraphicRoot::~GraphicRoot()
 
 void GraphicRoot::setDocument(Document* document)
 {
-    if (!document->getSceneKit()) return;
+    TSceneKit* scene = document->getSceneKit();
+    if (!scene) return;
     m_selection->removeAllChildren();
-    m_selection->addChild(document->getSceneKit());
+    m_selection->addChild(scene);
 
-    SunPosition* sunPosition = (SunPosition*) document->getSceneKit()->getPart("world.sun.position", false);
+    SunPosition* sunPosition = (SunPosition*) scene->getPart("world.sun.position", false);
     m_sun->attach(sunPosition);
 
-    GridNode* gridNode = (GridNode*) document->getSceneKit()->getPart("world.terrain.grid", true);
+    GridNode* gridNode = (GridNode*) scene->getPart("world.terrain.grid", true);
     m_grid->attach(gridNode);
 
-    document->m_root = m_root;
+    scene->m_graphicRoot = this;
+}
+
+void GraphicRoot::updateScene(TSceneKit* scene)
+{
+    SunPosition* sunPosition = (SunPosition*) scene->getPart("world.sun.position", false);
+    m_sun->attach(sunPosition);
 }
 
 void GraphicRoot::removeScene()

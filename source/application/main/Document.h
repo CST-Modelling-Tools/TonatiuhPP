@@ -34,8 +34,5 @@ private:
 
     TSceneKit* m_scene;
     bool m_isModified;
-
-public:
-    SoSeparator* m_root;
 };
 

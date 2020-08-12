@@ -1,4 +1,4 @@
-#include "CmdChangeNodeName.h"
+#include "CmdNameChanged.h"
 
 /*!
  * \class CmdChangeNodeName
@@ -19,7 +19,7 @@
 /*!
  * Creates a new CmdChangeNodeName command.
  */
-CmdChangeNodeName::CmdChangeNodeName(
+CmdNameChanged::CmdNameChanged(
     const QModelIndex& index,
     QString name,
     SceneModel* model,
@@ -46,7 +46,7 @@ CmdChangeNodeName::CmdChangeNodeName(
 /*!
  * Changes the node name to the name that the node takes before the command is applied.
  */
-void CmdChangeNodeName::undo()
+void CmdNameChanged::undo()
 {
     m_model->SetNodeName(m_node, m_nameOld);
 }
@@ -54,7 +54,7 @@ void CmdChangeNodeName::undo()
 /*!
  * Changes the node name to the name defined in the command constructor.
  */
-void CmdChangeNodeName::redo()
+void CmdNameChanged::redo()
 {
     m_model->SetNodeName(m_node, m_name);
 }

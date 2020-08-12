@@ -19,7 +19,8 @@ void ParametersItem::updateItem(void* data, SoSensor*)
 
 ParametersItem::ParametersItem(QString text, bool editable, SoField* field):
     QStandardItem(text),
-    m_field(field)
+    m_field(field),
+    m_sensor(0)
 {
      setEditable(editable);
      if (editable) {
@@ -30,8 +31,7 @@ ParametersItem::ParametersItem(QString text, bool editable, SoField* field):
             setCheckable(true);
             setCheckState(f->getValue() ? Qt::Checked : Qt::Unchecked);
         }
-     } else
-         m_sensor = 0;
+     }
 }
 
 ParametersItem::~ParametersItem()

@@ -25,24 +25,17 @@
 #include "ParametersEditor.h"
 
 
-/**
- * Creates a new ParametersView for the parameters in the \a fieldContainer with parent \a parent.
- *
- * The container name is \a containerName.
- */
 ParametersView::ParametersView(QWidget* parent):
     QTreeView(parent)
 {
-    m_delegate = new ParametersDelegate;
-    setItemDelegate(m_delegate);
+    ParametersDelegate* delegate = new ParametersDelegate(this);
+    setItemDelegate(delegate);
+    setEditTriggers(QAbstractItemView::AllEditTriggers);
 
     m_model = new ParametersModel;
-    m_model->SetEditable(true);
     setModel(m_model);
-
-    m_node = 0;
-
     connect(m_model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onBoolChecked(QStandardItem*)));
+    m_node = 0;
 
     setStyleSheet(R"(
 QLineEdit {
@@ -53,12 +46,8 @@ selection-color: black;
      )");
 }
 
-/**
- * Destroys the ParametersView object.
- */
 ParametersView::~ParametersView()
 {
-    delete m_delegate;
     delete m_model;
 }
 
@@ -69,6 +58,9 @@ void ParametersView::SetContainer(SoNode* node)
 {
     m_model->clear();
     m_model->setHorizontalHeaderLabels({"Parameter", "Value"});
+
+    double w = 2.5*fontMetrics().horizontalAdvance("Parameter");
+    setColumnWidth(0, w);
 
     m_node = node;
     if (!m_node) return;
@@ -88,36 +80,12 @@ void ParametersView::SetContainer(SoNode* node)
         field->get(value);
         ParametersItem* itemValue = new ParametersItem(value.getString(), true, field);
         m_model->setItem(n, 1, itemValue);
+//        QModelIndex index = m_model->indexFromItem(itemValue);
+//        openPersistentEditor(index);
     }
-
-    double w = 2.5*fontMetrics().horizontalAdvance("Parameter");
-    setColumnWidth(0, w);
 }
 
-/**
- * Sets if the parameters values can be modified.
- */
-void ParametersView::SetEditable(bool editable)
-{
-    m_model->SetEditable(editable);
-}
-
-//edit on single click
-void ParametersView::mousePressEvent(QMouseEvent* event)
-{
-    QTreeView::mousePressEvent(event);
-    if (event->button() == Qt::LeftButton) {
-        QModelIndex index = indexAt(event->pos());
-
-        if (index.column() == 1) { // column you want to use for one click
-            setCurrentIndex(index);
-//            if (!(m_model->flags(index) & Qt::ItemIsUserCheckable))
-                edit(index);
-        }
-    }
-
-}
-
+#include <QDebug>
 void ParametersView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint)
 {
     SoField* field = m_model->getData(currentIndex())->getField();
@@ -151,14 +119,13 @@ void ParametersView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEdit
             value = w->getText();
     }
 
+    QTreeView::closeEditor(editor, hint);
     if (!value.isEmpty())
     {
         SbName name;
         m_node->getFieldName(field, name);
         emit valueModified(m_node, name.getString(), value);
     }
-
-    QTreeView::closeEditor(editor, hint);
 }
 
 void ParametersView::onBoolChecked(QStandardItem* item)

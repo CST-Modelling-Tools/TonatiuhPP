@@ -12,7 +12,7 @@
 
 #include "libraries/math/gcf.h"
 
-#include "CmdModifyParameter.h"
+#include "CmdParameterModified.h"
 #include "kernel/run/InstanceNode.h"
 #include "tree/SceneModel.h"
 
@@ -22,8 +22,8 @@
  *
  * The \a parent is command object parent.
  */
-CmdModifyParameter::CmdModifyParameter(SoNode* node, QString name, QString value, SceneModel* model, QUndoCommand* parent ):
-    QUndoCommand(parent),
+CmdParameterModified::CmdParameterModified(SoNode* node, QString name, QString value, SceneModel* model, QUndoCommand* parent ):
+    QUndoCommand("Parameter modified", parent),
     m_coinNode(node),
     m_newValue (value),
     m_oldValue(""),
@@ -46,7 +46,7 @@ CmdModifyParameter::CmdModifyParameter(SoNode* node, QString name, QString value
  * Applies a change to the scene. After undo() the node parameter value will be changed to \a m_oldValue defined in the constructor.
  * \sa undo().
  */
-void CmdModifyParameter::undo()
+void CmdParameterModified::undo()
 {
     SoField* field = m_coinNode->getField( m_parameterName.toStdString().c_str() );
     if (field)
@@ -57,7 +57,7 @@ void CmdModifyParameter::undo()
  * Applies a change to the scene. After redo() the node parameter value will be changed to \a m_newValue defined in the constructor.
  * \sa undo().
  */
-void CmdModifyParameter::redo()
+void CmdParameterModified::redo()
 {
     SoField* field = m_coinNode->getField(m_parameterName.toStdString().c_str());
     if (field)

@@ -3,6 +3,7 @@
 #include <QComboBox>
 #include <QCheckBox>
 #include <QLineEdit>
+#include <QTimer>
 
 #include <Inventor/fields/SoSFEnum.h>
 #include <Inventor/fields/SoSFBool.h>
@@ -37,6 +38,10 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
             editor->addItem(name.getString());
         }
         editor->setCurrentIndex(f->getValue());
+        connect(editor,  SIGNAL(activated(int)),
+                this, SLOT(onCloseEditor()));
+
+
         return editor;
     }
     else if (SoSFBool* f = dynamic_cast<SoSFBool*>(field))
@@ -99,13 +104,26 @@ void ParametersDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptio
         QStyledItemDelegate::updateEditorGeometry(editor, option, index);
 }
 
-//void ParametersDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
-//{
+void ParametersDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
+{
+    if (QComboBox* cb = dynamic_cast<QComboBox*>(editor))
+    {
+//        cb->addItem(QIcon(":/icons/select16.png"), "select");
+//        cb->set();
+//        cb->showPopup();
 
-//}
+    }
+}
 
 void ParametersDelegate::onCloseEditor() // not used?
 {
     QWidget* editor = qobject_cast<QWidget*>(sender());
+    emit closeEditor(editor);
+}
+
+void ParametersDelegate::commitAndCloseEditor()
+{
+    QComboBox *editor = qobject_cast<QComboBox*>(sender());
+    emit commitData(editor);
     emit closeEditor(editor);
 }

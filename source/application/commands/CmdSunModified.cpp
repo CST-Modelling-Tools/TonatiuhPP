@@ -1,60 +1,43 @@
 #include "CmdSunModified.h"
 
-#include <Inventor/nodekits/SoSceneKit.h>
-
-#include "libraries/math/gcf.h"
+#include "kernel/sun/SunKitW.h"
 #include "tree/SceneModel.h"
 #include "kernel/scene/TSceneKit.h"
-#include "kernel/sun/SunKit.h"
+#include "application/view/GraphicRoot.h"
 
-/**
- * Creates a new lightKit modification command that represents a new light defined as \a newLightKit to the \a scene.
- *
- * If the model has not previous light a light node is added to \a sceneModel.
- */
-CmdSunModified::CmdSunModified(SunKit* sunKit,
-    TSceneKit* sceneKit,
-    SceneModel* model,
-    QUndoCommand* parent
-):
+CmdSunModified::CmdSunModified(SunKitW* sun, SceneModel* model, QUndoCommand* parent):
     QUndoCommand("Sun modified", parent),
-    m_sunKitOld(0),
-    m_sunKit(0),
-    m_sceneKit(sceneKit),
     m_model(model)
 {
-    SunKit* sunKitOld = dynamic_cast<SunKit*>(m_sceneKit->getPart("lightList[0]", false));
-    if (sunKitOld) {
-        m_sunKitOld = sunKitOld;
-        m_sunKitOld->ref();
-    }
+    m_sunOld = (SunKitW*) m_model->getSceneKit()->getPart("world.sun", false);
+    m_sunOld->ref();
 
-    if (sunKit) {
-        m_sunKit = static_cast<SunKit*>(sunKit->copy(true));
-        m_sunKit->ref();
-    }
+    m_sun = sun;
+    m_sun->ref();
 }
 
 CmdSunModified::~CmdSunModified()
 {
-    m_sunKitOld->unref();
-    m_sunKit->unref();
+    m_sunOld->unref();
+    m_sun->unref();
 }
 
-/*!
- * Reverts to the previous light. After undo() is called, the state of the scene will be the same as before redo() was called.
- *  * \sa redo().
- */
 void CmdSunModified::undo()
 {
-    m_model->insertSunNode(m_sunKitOld);
+    set(m_sunOld);
 }
 
-/*!
- * Applies a change to the light. After redo() scene will contain the light with the new definition.
- * \sa undo().
- */
 void CmdSunModified::redo()
 {
-    m_model->insertSunNode(m_sunKit);
+    set(m_sun);
+}
+
+void CmdSunModified::set(SunKitW* sun)
+{
+    m_model->replaceSun(sun);
+    TSceneKit* scene = m_model->getSceneKit();
+    GraphicRoot* root = scene->m_graphicRoot;
+    root->updateScene(scene);
+    root->rays()->removeAllChildren();
+    scene->updateTrackers();
 }

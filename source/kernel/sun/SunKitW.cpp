@@ -81,6 +81,11 @@ SunKitW::SunKitW()
     setName("SunW");
 }
 
+SunKitW::~SunKitW()
+{
+    qDebug() << QString("destroyrd") + getName().getString();
+}
+
 void SunKitW::updateTransform()
 {
     SoTransform* transform = (SoTransform*) getPart("transform", true);

@@ -2,12 +2,13 @@
 
 #include "kernel/scene/GridNode.h"
 #include <Inventor/nodes/SoSwitch.h>
+#include <Inventor/nodes/SoSeparator.h>
 
 class SoSensor;
 class SoNodeSensor;
 
 
-class GridNode3D: public SoSwitch
+class GridNode3D: public SoSeparator
 {
 public:
     GridNode3D();
@@ -18,6 +19,7 @@ public:
 
 protected:
     SoSeparator* makeAxes(double xMin, double xMax, double yMin, double yMax);
+    SoSwitch* m_grid;
 
     SoNodeSensor* m_sensor;
     static void update(void* data, SoSensor*);

@@ -128,6 +128,7 @@ public slots:
 
 private slots:
     void onAbort(QString error);
+    void onUndoStack();
     void FileOpen();
     void FileOpenRecent();
     bool FileSaveAs();

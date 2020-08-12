@@ -20,10 +20,8 @@ public:
     ~ParametersView();
 
     void SetContainer(SoNode* node);
-    void SetEditable(bool editable);
 
 protected slots:
-    void mousePressEvent(QMouseEvent* event);
     void closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint);
 
 private slots:
@@ -34,6 +32,5 @@ signals:
 
 private:
     ParametersModel* m_model;
-    ParametersDelegate* m_delegate;
     SoNode* m_node;
 };

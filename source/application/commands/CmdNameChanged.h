@@ -7,11 +7,11 @@ class SoNode;
 class SceneModel;
 
 
-class CmdChangeNodeName: public QUndoCommand
+class CmdNameChanged: public QUndoCommand
 {
 public:
-    CmdChangeNodeName(const QModelIndex& index, QString name, SceneModel* model, QUndoCommand* parent = 0);
-    ~CmdChangeNodeName() {}
+    CmdNameChanged(const QModelIndex& index, QString name, SceneModel* model, QUndoCommand* parent = 0);
+    ~CmdNameChanged() {}
 
     void undo();
     void redo();
