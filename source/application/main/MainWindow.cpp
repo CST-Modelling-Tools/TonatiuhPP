@@ -84,7 +84,7 @@
 #include "kernel/sun/SunShape.h"
 #include "kernel/sun/SunPosition.h"
 #include "kernel/sun/SunKit.h"
-#include "kernel/sun/SunKitW.h"
+#include "kernel/sun/SunKit.h"
 #include "kernel/trackers/Tracker.h"
 #include "kernel/trf.h"
 #include "main/Document.h"
@@ -1076,21 +1076,21 @@ void MainWindow::AddExportSurfaceURL(QString nodeURL)
  */
 void MainWindow::ChangeSunPosition(double azimuth, double elevation)
 {
-    TSceneKit* sceneKit = m_document->getSceneKit();
-    SunKit* sunKit = (SunKit*) sceneKit->getPart("lightList[0]", false);
-    if (!sunKit)
-    {
-        QMessageBox::warning(this, "Tonatiuh warning", tr("ChangeSunPosition:: Sun not defined in scene") );
-        return;
-    }
+//    TSceneKit* sceneKit = m_document->getSceneKit();
+//    SunKit* sunKit = (SunKit*) sceneKit->getPart("lightList[0]", false);
+//    if (!sunKit)
+//    {
+//        QMessageBox::warning(this, "Tonatiuh warning", tr("ChangeSunPosition:: Sun not defined in scene") );
+//        return;
+//    }
 
-    CmdLightPositionModified* command = new CmdLightPositionModified(sunKit, azimuth*gcf::degree, elevation*gcf::degree);
-    m_undoStack->push(command);
+//    CmdLightPositionModified* command = new CmdLightPositionModified(sunKit, azimuth*gcf::degree, elevation*gcf::degree);
+//    m_undoStack->push(command);
 
-    //UpdateLightDimensions();
-    sceneKit->updateTrackers();
-    UpdateLightSize();
-    setDocumentModified(true);
+//    //UpdateLightDimensions();
+//    sceneKit->updateTrackers();
+//    UpdateLightSize();
+//    setDocumentModified(true);
 
 //    ui->actionViewRays->setEnabled(false);
 //    ui->actionViewRays->setChecked(false);
@@ -1777,7 +1777,7 @@ void MainWindow::Run()
 
     instanceLayout->updateTree(Transform::Identity);
 
-    SunKitW* sunKit = (SunKitW*) instanceSun->getNode();
+    SunKit* sunKit = (SunKit*) instanceSun->getNode();
     SunPosition* sunPosition = (SunPosition*) sunKit->getPart("position", false);
     SunShape* sunShape = (SunShape*) sunKit->getPart("shape", false);
     SunAperture* sunAperture = (SunAperture*) sunKit->getPart("aperture", false);
@@ -2127,8 +2127,8 @@ void MainWindow::SoTransform_to_SoCenterballManip()
     ChangeSelection(currentIndex);
 
     SoDragger* dragger = manipulator->getDragger();
-    dragger->addStartCallback (startManipulator, static_cast< void*>(this) );
-    dragger->addFinishCallback(finishManipulator, static_cast< void*>(this) );
+    dragger->addStartCallback (startManipulator, static_cast<void*>(this) );
+    dragger->addFinishCallback(finishManipulator, static_cast<void*>(this) );
 
     setDocumentModified(true);
 }
@@ -2696,14 +2696,13 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
     instanceLayout = instanceScene->children[1];
     if (!instanceLayout) return false;
 
-    SunKitW* sunKit = (SunKitW*) sceneKit->getPart("world.sun", false);
-    SoTransform* sunTransform = (SoTransform*) sunKit->getPart("transform", false);
+    SunKit* sunKit = (SunKit*) sceneKit->getPart("world.sun", false);
+    SoTransform* sunTransform = sunKit->m_transform;
     instanceSun->setTransform(tgf::makeTransform(sunTransform));
 
     QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
     if (!m_rand) m_rand = randomFactories[m_raysRandomFactoryIndex]->create();
 
-    //Create the photon map where photons are going to be stored
     if (!m_photonBufferAppend)
     {
         delete m_photonsBuffer;
@@ -2959,7 +2958,7 @@ void MainWindow::setDocumentModified(bool value)
 void MainWindow::UpdateLightSize()
 {
     TSceneKit* sceneKit = m_document->getSceneKit();
-    SunKitW* sunKit = (SunKitW*) sceneKit->getPart("world.sun", false);
+    SunKit* sunKit = (SunKit*) sceneKit->getPart("world.sun", false);
     if (!sunKit) return;
 
     sunKit->setBox(sceneKit);
@@ -3060,9 +3059,9 @@ void MainWindow::on_actionViewSun_triggered()
 {
     SoSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
-    SunKit* lightKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false));
+    SunKit* lightKit = static_cast<SunKit*>(sceneKit->getPart("world.sun", false));
     if (!lightKit) return;
-    SoTransform* transform = (SoTransform*)lightKit->getPart("transform", false);
+    SoTransform* transform = lightKit->m_transform;
 
     SoCamera* camera = m_graphicView[m_focusView]->getCamera();
     SbVec3f target = getTarget(camera);

@@ -8,7 +8,7 @@
 #include "kernel/sun/SunShape.h"
 #include "kernel/sun/SunPosition.h"
 #include "kernel/sun/SunAperture.h"
-#include "kernel/sun/SunKitW.h"
+#include "kernel/sun/SunKit.h"
 #include "kernel/scene/TSceneKit.h"
 #include "calculator/SunCalculatorDialog.h"
 
@@ -25,8 +25,8 @@ SunDialog::SunDialog(SceneModel* sceneModel,
     ui->setupUi(this);
 
     TSceneKit* sceneKit = sceneModel->getSceneKit();
-    SunKitW* sunOld = (SunKitW*) sceneKit->getPart("world.sun", false);
-    m_sun = (SunKitW*) sunOld->copy();
+    SunKit* sunOld = (SunKit*) sceneKit->getPart("world.sun", false);
+    m_sun = (SunKit*) sunOld->copy();
     m_sun->ref();
 
     makeSunPositionTab();

@@ -10,7 +10,7 @@ class SoBaseKit;
 class SoNode;
 class SoNodeKitPath;
 class SoSeparator;
-class SunKitW;
+class SunKit;
 class TSeparatorKit;
 class TSceneKit;
 class TShapeKit;
@@ -47,13 +47,13 @@ public:
     QModelIndex indexFromPath(const SoNodeKitPath& path) const;
     SoNodeKitPath* pathFromIndex(const QModelIndex& index) const;
 
-    void insertSunNode(SunKitW* lightKit);
+    void insertSunNode(SunKit* lightKit);
 
     int insertCoinNode(SoNode* coinChild, SoBaseKit* coinParent);
     void removeCoinNode(int row, SoBaseKit* parent);
     void replaceCoinNode(TShapeKit* parent, SoNode* node);
     void replaceAir(AirKit* air);
-    void replaceSun(SunKitW* sun);
+    void replaceSun(SunKit* sun);
 
     bool Cut(SoBaseKit& parent, int row);
     bool Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinChild, int row);

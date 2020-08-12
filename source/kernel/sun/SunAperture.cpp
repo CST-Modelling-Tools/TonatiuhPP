@@ -31,7 +31,7 @@ SO_NODE_SOURCE(SunAperture)
 
 void SunAperture::initClass()
 {
-    SO_NODE_INIT_CLASS(SunAperture, SoShape, "Shape");
+    SO_NODE_INIT_CLASS(SunAperture, SoNode, "Node");
 }
 
 SunAperture::SunAperture():
@@ -204,45 +204,45 @@ void SunAperture::computeBBox(SoAction*, SbBox3f& box, SbVec3f& /*center*/)
     );
 }
 
-void SunAperture::generatePrimitives(SoAction* action)
-{
-    SoPrimitiveVertex pv;
-    SbVec4f texCoord;
-    SbVec3f normal(0., 0., -1.);
+//void SunAperture::generatePrimitives(SoAction* action)
+//{
+//    SoPrimitiveVertex pv;
+//    SbVec4f texCoord;
+//    SbVec3f normal(0., 0., -1.);
 
-    beginShape(action, TRIANGLE_STRIP);
+//    beginShape(action, TRIANGLE_STRIP);
 
-    // P0
-    SbVec3f point(m_xMin, m_yMin, 0.);
-    pv.setPoint(point);
-    pv.setNormal(normal);
-    texCoord = SbVec4f(0., 0., 0., 1.);
-    pv.setTextureCoords(texCoord);
-    shapeVertex(&pv);
+//    // P0
+//    SbVec3f point(m_xMin, m_yMin, 0.);
+//    pv.setPoint(point);
+//    pv.setNormal(normal);
+//    texCoord = SbVec4f(0., 0., 0., 1.);
+//    pv.setTextureCoords(texCoord);
+//    shapeVertex(&pv);
 
-    // P1
-    point = SbVec3f(m_xMin, m_yMax, 0.);
-    pv.setPoint(point);
-    pv.setNormal(normal);
-    texCoord = SbVec4f(0., 1., 0., 1.);
-    pv.setTextureCoords(texCoord);
-    shapeVertex(&pv);
+//    // P1
+//    point = SbVec3f(m_xMin, m_yMax, 0.);
+//    pv.setPoint(point);
+//    pv.setNormal(normal);
+//    texCoord = SbVec4f(0., 1., 0., 1.);
+//    pv.setTextureCoords(texCoord);
+//    shapeVertex(&pv);
 
-    // P2
-    point = SbVec3f(m_xMax, m_yMin, 0.);
-    pv.setPoint(point);
-    pv.setNormal(normal);
-    texCoord = SbVec4f(1., 0., 0., 1.);
-    pv.setTextureCoords(texCoord);
-    shapeVertex(&pv);
+//    // P2
+//    point = SbVec3f(m_xMax, m_yMin, 0.);
+//    pv.setPoint(point);
+//    pv.setNormal(normal);
+//    texCoord = SbVec4f(1., 0., 0., 1.);
+//    pv.setTextureCoords(texCoord);
+//    shapeVertex(&pv);
 
-    // P3
-    point = SbVec3f(m_xMax, m_yMax, 0.);
-    pv.setPoint(point);
-    pv.setNormal(normal);
-    texCoord = SbVec4f(1., 1., 0., 1.);
-    pv.setTextureCoords(texCoord);
-    shapeVertex(&pv);
+//    // P3
+//    point = SbVec3f(m_xMax, m_yMax, 0.);
+//    pv.setPoint(point);
+//    pv.setNormal(normal);
+//    texCoord = SbVec4f(1., 1., 0., 1.);
+//    pv.setTextureCoords(texCoord);
+//    shapeVertex(&pv);
 
-    endShape();
-}
+//    endShape();
+//}

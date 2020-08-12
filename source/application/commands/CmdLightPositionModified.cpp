@@ -28,9 +28,9 @@ CmdLightPositionModified::~CmdLightPositionModified()
  */
 void CmdLightPositionModified::undo()
 {
-    sunKit->azimuth.setValue(m_azimuthOld);
-    sunKit->elevation.setValue(m_elevationOld);
-    sunKit->updateTransform();
+//    sunKit->azimuth.setValue(m_azimuthOld);
+//    sunKit->elevation.setValue(m_elevationOld);
+//    sunKit->updateTransform();
 }
 
 /*!
@@ -39,7 +39,7 @@ void CmdLightPositionModified::undo()
  */
 void CmdLightPositionModified::redo()
 {
-    sunKit->azimuth.setValue(m_azimuth);
-    sunKit->elevation.setValue(m_elevation);
-    sunKit->updateTransform();
+//    sunKit->azimuth.setValue(m_azimuth);
+//    sunKit->elevation.setValue(m_elevation);
+//    sunKit->updateTransform();
 }

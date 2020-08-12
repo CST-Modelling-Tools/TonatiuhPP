@@ -5,7 +5,7 @@
 
 class SceneModel;
 class SunFactory;
-class SunKitW;
+class SunKit;
 class SoNode;
 
 namespace Ui {
@@ -21,7 +21,7 @@ public:
     SunDialog(SceneModel* sceneModel, QMap<QString, SunFactory*> sunShapeMap, QWidget* parent = 0);
     ~SunDialog();
 
-    SunKitW* getSun() {return m_sun;}
+    SunKit* getSun() {return m_sun;}
 
 private:
     void makeSunPositionTab();
@@ -40,5 +40,5 @@ private:
     Ui::SunDialog* ui;
     SceneModel* m_sceneModel;
     QMap<QString, SunFactory*> m_sunShapeMap;
-    SunKitW* m_sun;
+    SunKit* m_sun;
 };

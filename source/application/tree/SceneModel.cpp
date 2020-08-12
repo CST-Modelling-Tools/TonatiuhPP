@@ -24,7 +24,7 @@
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/air/AirKit.h"
 #include "kernel/sun/SunKit.h"
-#include "kernel/sun/SunKitW.h"
+#include "kernel/sun/SunKit.h"
 #include "kernel/trackers/Tracker.h"
 #include "libraries/math/gcf.h"
 #include "tree/SoPathVariant.h"
@@ -285,8 +285,6 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
             return QIcon(":/images/scene/nodeFolder.png");
         else if (type == LocationNode::getClassTypeId())
             return QIcon(":/images/scene/nodeLocation.png");
-        else if (type == SunKitW::getClassTypeId())
-            return QIcon(":/images/scene/nodeSun.png");
         else if (type == AirKit::getClassTypeId())
             return QIcon(":/images/scene/nodeAir.png");
         else if (type == TerrainKit::getClassTypeId())
@@ -464,7 +462,7 @@ SoNodeKitPath* SceneModel::pathFromIndex(const QModelIndex& index) const
  * Insert a light node to the model. If the model has an other light node, the previous node
  * will be deleted.
  */
-void SceneModel::insertSunNode(SunKitW* sunKit)
+void SceneModel::insertSunNode(SunKit* sunKit)
 {
     m_nodeScene->setPart("world.sun", sunKit);
 
@@ -588,7 +586,7 @@ void SceneModel::replaceAir(AirKit* air)
     emit layoutChanged();
 }
 
-void SceneModel::replaceSun(SunKitW* sun)
+void SceneModel::replaceSun(SunKit* sun)
 {
     m_nodeScene->setPart("world.sun", sun);
 

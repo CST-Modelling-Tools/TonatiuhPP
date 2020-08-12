@@ -13,7 +13,7 @@ HEADERS += \
     TonatiuhTypes.h \
     air/AirVacuum.h \
     scene/GridNode.h \
-    sun/SunKitW.h \
+    sun/SunKit.h \
     sun/SunPosition.h \
     trf.h \
     air/AirExponential.h \
@@ -54,7 +54,6 @@ HEADERS += \
     shape/ShapePlanar.h \
     shape/ShapeRT.h \
     sun/SunAperture.h \
-    sun/SunKit.h \
     sun/SunPillbox.h \
     sun/SunShape.h \
     trackers/Tracker.h \
@@ -65,7 +64,7 @@ SOURCES += \
     TonatiuhFunctions.cpp \
     air/AirVacuum.cpp \
     scene/GridNode.cpp \
-    sun/SunKitW.cpp \
+    sun/SunKit.cpp \
     sun/SunPosition.cpp \
     trf.cpp \
     air/AirExponential.cpp \
@@ -102,7 +101,6 @@ SOURCES += \
     shape/ShapePlanar.cpp \
     shape/ShapeRT.cpp \
     sun/SunAperture.cpp \
-    sun/SunKit.cpp \
     sun/SunPillbox.cpp \
     sun/SunShape.cpp \
     trackers/Tracker.cpp \

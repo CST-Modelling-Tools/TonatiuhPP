@@ -8,7 +8,7 @@
 
 #include "kernel/run/InstanceNode.h"
 #include "SceneModel.h"
-#include "kernel/sun/SunKitW.h"
+#include "kernel/sun/SunKit.h"
 #include "kernel/air/AirKit.h"
 #include "kernel/scene/TerrainKit.h"
 #include "kernel/scene/TSeparatorKit.h"
@@ -30,7 +30,7 @@ QWidget* SceneDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem
     SoNode* node = model->getInstance(index)->getNode();
 
     SoType type = node->getTypeId();
-    if (type == SunKitW::getClassTypeId()) {
+    if (type == SunKit::getClassTypeId()) {
         model->emitModifySun();
     } else if (type == AirKit::getClassTypeId()) {
         model->emitModifyAir();

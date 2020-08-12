@@ -17,7 +17,7 @@ class Transform;
 class TShapeKit;
 class SunKit;
 
-class TONATIUH_KERNEL SunAperture: public SoShape
+class TONATIUH_KERNEL SunAperture: public SoNode
 {
     SO_NODE_HEADER(SunAperture);
 
@@ -38,7 +38,7 @@ public:
 protected:
     ~SunAperture();
     void computeBBox(SoAction* action, SbBox3f& box, SbVec3f& center);
-    void generatePrimitives(SoAction* action);
+//    void generatePrimitives(SoAction* action);
 
 private:
     double m_xMin;

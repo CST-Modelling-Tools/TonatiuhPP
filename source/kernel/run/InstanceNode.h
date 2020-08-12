@@ -15,7 +15,6 @@
 class Random;
 class Ray;
 class SoNode;
-class SunKit;
 class TShapeKit;
 class SceneModel;
 

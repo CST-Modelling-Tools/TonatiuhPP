@@ -2,22 +2,22 @@
 
 #include <QUndoCommand>
 
-class SunKitW;
+class SunKit;
 class SceneModel;
 
 class CmdSunModified: public QUndoCommand
 {
 public:
-    CmdSunModified(SunKitW* sun, SceneModel* model, QUndoCommand* parent = 0);
+    CmdSunModified(SunKit* sun, SceneModel* model, QUndoCommand* parent = 0);
     ~CmdSunModified();
 
      void undo();
      void redo();
 
-     void set(SunKitW* sun);
+     void set(SunKit* sun);
 
 private:
-     SunKitW* m_sunOld;
-     SunKitW* m_sun;
+     SunKit* m_sunOld;
+     SunKit* m_sun;
      SceneModel* m_model;
 };

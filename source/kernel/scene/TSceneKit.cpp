@@ -25,7 +25,6 @@ void TSceneKit::initClass()
     SO_KIT_INIT_CLASS(TSceneKit, SoSceneKit, "SceneKit");
 
     WorldKit::initClass();
-    SunKit::initClass();
 
     TSeparatorKit::initClass();
     TShapeKit::initClass();
@@ -46,9 +45,6 @@ TSceneKit::TSceneKit()
     SO_KIT_INIT_INSTANCE();
 
     setSearchingChildren(true); // for lightList[0]
-
-    SunKit* sunKit = new SunKit;
-    setPart("lightList[0]", sunKit);
 
 //    LocationNode* loc = (LocationNode*) getPart("world.location", true);
 //    loc->name = "unknown";
