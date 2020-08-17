@@ -18,7 +18,7 @@ public:
     void create();
 
 protected:
-    SoSeparator* makeAxes(double xMin, double xMax, double yMin, double yMax);
+    void makeAxes(double xMin, double xMax, double yMin, double yMax);
     SoSwitch* m_grid;
 
     SoNodeSensor* m_sensor;

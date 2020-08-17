@@ -122,15 +122,13 @@ void GridNode3D::create()
     m_grid->addChild(sLines);
 
     // axes
-    m_grid->addChild(makeAxes(xMin - dx, xMax + dx, yMin - dx, yMax + dx));
+    makeAxes(xMin - dx, xMax + dx, yMin - dx, yMax + dx);
 
     m_grid->whichChild = grid->show.getValue() ? SO_SWITCH_ALL : SO_SWITCH_NONE;
 }
 
-SoSeparator* GridNode3D::makeAxes(double xMin, double xMax, double yMin, double yMax)
+void GridNode3D::makeAxes(double xMin, double xMax, double yMin, double yMax)
 {
-    SoSeparator* ans = new SoSeparator;
-
     // axes
     QVector<SbVec3f> points;
     QVector<int> sizes;
@@ -146,21 +144,19 @@ SoSeparator* GridNode3D::makeAxes(double xMin, double xMax, double yMin, double 
     SoMaterial* sMaterial = new SoMaterial;
     sMaterial->diffuseColor.setValue(0., 0., 0.);
     sMaterial->transparency = 0.7;
-    ans->addChild(sMaterial);
+    m_grid->addChild(sMaterial);
 
     SoDrawStyle* sStyle = new SoDrawStyle;
     sStyle->lineWidth = 1.5;
-    ans->addChild(sStyle);
+    m_grid->addChild(sStyle);
 
     SoCoordinate3* sPoints = new SoCoordinate3;
     sPoints->point.setValues(0, points.size(), points.data());
-    ans->addChild(sPoints);
+    m_grid->addChild(sPoints);
 
     SoLineSet* sLines = new SoLineSet;
     sLines->numVertices.setValues(0, sizes.size(), sizes.data());
-    ans->addChild(sLines);
-
-    return ans;
+    m_grid->addChild(sLines);
 }
 
 void GridNode3D::update(void* data, SoSensor*)

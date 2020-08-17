@@ -4,59 +4,88 @@
 TSceneKit {
   fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
   version "2020"
-  lightList 
-  NodeKitListPart {
-    childTypeNames "LightKit"
-    containerNode 
+  world 
+  DEF World WorldKit {
+    fields [ SFNode callbackList, SFNode location, SFNode sun, SFNode air, SFNode terrain ]
+    sun 
+    DEF Sun SunKit {
+      fields [ SFNode callbackList, SFNode position, SFNode shape, SFNode aperture ]
+      position 
+      SunPosition {
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
+
+      }
+      shape 
+      SunPillbox {
+        fields [ SFDouble thetaMax ]
+
+      }
+      aperture 
+      SunAperture {
+        fields [ SFString disabledNodes ]
+        disabledNodes ""
+
+      }
+
+    }
+    terrain 
+    DEF Terrain TerrainKit {
+      fields [ SFNode callbackList, SFNode grid ]
+      grid 
+      DEF Grid GridNode {
+        fields [ SFBool show, SFDouble step, SFInt32 divisions, SFVec2d xRange, SFVec2d yRange ]
+
+      }
+
+    }
+
+  }
+  group 
+  DEF Layout TSeparatorKit {
+    transform 
+    Transform {
+
+    }
+    group 
     Group {
 
-      DEF Sun SunKit {
-        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
-        transform 
-        Transform {
-          translation 0 -8.7422779e-007 10
-          rotation 1 0 0  3.1415927
+      DEF Shape TShapeKit {
+        shapeRT 
+        DEF PlanarN ShapePlanarN {
+          fields [ SFVec2f xLimits, SFVec2f yLimits, SFVec2i32 dims, MFVec3f normals ]
+          xLimits -0.5 0.5
+          yLimits -0.5 0.5
+          dims 3 3
+          normals [ 0.23570228 0.23570228 0.9428091,
+              0.24253564 -0 0.97014254,
+              0.23570228 -0.23570228 0.9428091,
+              -0 0.24253564 0.97014254,
+              -0 -0 1,
+              -0 -0.24253564 0.97014254,
+              -0.23570228 0.23570228 0.9428091,
+              -0.24253564 -0 0.97014254,
+              -0.23570228 -0.23570228 0.9428091 ]
 
         }
-        light 
-        DirectionalLight {
-          direction 0 0 1
+        profileRT 
+        DEF Regular ProfileRegular {
+          fields [ SFInt32 n, SFDouble r ]
+          n 5
+          r 0.5
 
         }
-        icon 
-        SunAperture {
-          fields [ SFString disabledNodes ]
-          disabledNodes ""
+        materialRT 
+        DEF Specular MaterialSpecular {
+          fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+          slope 0
 
         }
-        iconMaterial 
-        Material {
-          transparency 0.75
+        appearance 
+        AppearanceKit {
+          material 
+          DEF MaterialGL Material {
 
-        }
-        iconTexture 
-        Texture2 {
-          image 10 10 1
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 
-          model BLEND
-          blendColor 1 1 1
-
-        }
-        tsunshape 
-        SunPillbox {
-          fields [ SFDouble thetaMax ]
+          }
 
         }
 
@@ -64,60 +93,5 @@ TSceneKit {
     }
 
   }
-  group 
-
-    DEF Layout TSeparatorKit {
-      transform 
-      Transform {
-
-      }
-      group 
-      Group {
-
-        DEF Shape TShapeKit {
-          shapeRT 
-          DEF PlanarN ShapePlanarN {
-            fields [ SFVec2f xLimits, SFVec2f yLimits, SFVec2i32 dims, MFVec3f normals ]
-            xLimits -0.5 0.5
-            yLimits -0.5 0.5
-            dims 3 3
-            normals [ 0.23570228 0.23570228 0.9428091,
-                0.24253564 -0 0.97014254,
-                0.23570228 -0.23570228 0.9428091,
-                -0 0.24253564 0.97014254,
-                -0 -0 1,
-                -0 -0.24253564 0.97014254,
-                -0.23570228 0.23570228 0.9428091,
-                -0.24253564 -0 0.97014254,
-                -0.23570228 -0.23570228 0.9428091 ]
-
-          }
-          profileRT 
-          DEF Regular ProfileRegular {
-            fields [ SFInt32 n, SFDouble r ]
-            n 5
-            r 0.5
-
-          }
-          materialRT 
-          DEF Specular MaterialSpecular {
-            fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
-            slope 0
-
-          }
-          appearance 
-          AppearanceKit {
-            material 
-            DEF MaterialGL Material {
-
-            }
-
-          }
-
-        }
-      }
-
-    }
-
 
 }

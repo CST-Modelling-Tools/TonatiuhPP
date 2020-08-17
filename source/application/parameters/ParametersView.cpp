@@ -34,7 +34,7 @@ ParametersView::ParametersView(QWidget* parent):
 
     m_model = new ParametersModel;
     setModel(m_model);
-    connect(m_model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onBoolChecked(QStandardItem*)));
+//    connect(m_model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onBoolChecked(QStandardItem*)));
     m_node = 0;
 
     setStyleSheet(R"(

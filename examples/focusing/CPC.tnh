@@ -4,66 +4,39 @@
 TSceneKit {
   fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
   version "2020"
-  lightList 
-  NodeKitListPart {
-    childTypeNames "LightKit"
-    containerNode 
-    Group {
-
-      DEF Sun SunKit {
-        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
-        azimuth -1.570796326794897
-        elevation 1.047197551196598
-        irradiance 1000
-        transform 
-        Transform {
-          translation -7.1665797 0 12.412879
-          rotation 0.69474661 0.69474661 0.18615682  2.7734926
-
-        }
-        light 
-        DirectionalLight {
-          direction 0 0 1
-
-        }
-        icon 
-        SunAperture {
-          fields [ SFString disabledNodes ]
-          disabledNodes "//Layout/Right/Focus;//Layout/Right/Axis;"
-
-        }
-        iconMaterial 
-        Material {
-          transparency 0.75
-
-        }
-        iconTexture 
-        Texture2 {
-          image 10 10 1
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 
-          model BLEND
-          blendColor 1 1 1
-
-        }
-        tsunshape 
-        SunPillbox {
-          fields [ SFDouble thetaMax ]
-
-        }
+  world 
+  DEF World WorldKit {
+    fields [ SFNode callbackList, SFNode location, SFNode sun, SFNode air, SFNode terrain ]
+    sun 
+    DEF Sun SunKit {
+      fields [ SFNode callbackList, SFNode position, SFNode shape, SFNode aperture ]
+      position 
+      SunPosition {
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
+   
+      }
+      shape 
+      SunPillbox {
+        fields [ SFDouble thetaMax ]
 
       }
+      aperture 
+      SunAperture {
+        fields [ SFString disabledNodes ]
+        disabledNodes "//Layout/Right/Focus;//Layout/Right/Axis;"
+
+      }
+
+    }
+    terrain 
+    DEF Terrain TerrainKit {
+      fields [ SFNode callbackList, SFNode grid ]
+      grid 
+      DEF Grid GridNode {
+        fields [ SFBool show, SFDouble step, SFInt32 divisions, SFVec2d xRange, SFVec2d yRange ]
+
+      }
+
     }
 
   }

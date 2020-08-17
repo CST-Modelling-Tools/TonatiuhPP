@@ -4,66 +4,39 @@
 TSceneKit {
   fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
   version "2020"
-  lightList 
-  NodeKitListPart {
-    childTypeNames "LightKit"
-    containerNode 
-    Group {
-
-      DEF Sun SunKit {
-        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
-        azimuth 2.094395102393195
-        elevation 0.7853981633974483
-        irradiance 1000
-        transform 
-        Transform {
-          translation 26.860003 -15.507634 31.015263
-          rotation 0.47063541 -0.81516457 -0.33765224  2.7565348
-
-        }
-        light 
-        DirectionalLight {
-          direction 0 0 1
-
-        }
-        icon 
-        SunAperture {
-          fields [ SFString disabledNodes ]
-          disabledNodes "//Layout/Target;//Layout/Heliostat/primary/secondary/target;"
-
-        }
-        iconMaterial 
-        Material {
-          transparency 0.75
-
-        }
-        iconTexture 
-        Texture2 {
-          image 10 10 1
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 
-          model BLEND
-          blendColor 1 1 1
-
-        }
-        tsunshape 
-        SunPillbox {
-          fields [ SFDouble thetaMax ]
-
-        }
+  world 
+  DEF World WorldKit {
+    fields [ SFNode callbackList, SFNode location, SFNode sun, SFNode air, SFNode terrain ]
+    sun 
+    DEF Sun SunKit {
+      fields [ SFNode callbackList, SFNode position, SFNode shape, SFNode aperture ]
+      position 
+      SunPosition {
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
+   
+      }
+      shape 
+      SunPillbox {
+        fields [ SFDouble thetaMax ]
 
       }
+      aperture 
+      SunAperture {
+        fields [ SFString disabledNodes ]
+          disabledNodes "//Layout/Target;//Layout/Heliostat/primary/secondary/target;"
+
+      }
+
+    }
+    terrain 
+    DEF Terrain TerrainKit {
+      fields [ SFNode callbackList, SFNode grid ]
+      grid 
+      DEF Grid GridNode {
+        fields [ SFBool show, SFDouble step, SFInt32 divisions, SFVec2d xRange, SFVec2d yRange ]
+
+      }
+
     }
 
   }

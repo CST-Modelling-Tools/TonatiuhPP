@@ -23,7 +23,7 @@ MaterialSpecular::MaterialSpecular()
 
     SO_NODE_ADD_FIELD(reflectivity, (0.9) ); // 1 may give infinite reflections
 
-    //SO_NODE_DEFINE_ENUM_VALUE(Distribution, pillbox);
+    SO_NODE_DEFINE_ENUM_VALUE(Distribution, pillbox);
     SO_NODE_DEFINE_ENUM_VALUE(Distribution, Gaussian);
     SO_NODE_SET_SF_ENUM_TYPE(distribution, Distribution);
     SO_NODE_ADD_FIELD(distribution, (Gaussian) );
@@ -52,10 +52,11 @@ bool MaterialSpecular::OutputRay(const Ray& rayIn, const DifferentialGeometry& d
         if (distribution.getValue() == Distribution::pillbox)
         {
             double phi = gcf::TwoPi*rand.RandomDouble();
-            double theta = sigma*rand.RandomDouble();
-            normal.x = sin(theta)*cos(phi);
-            normal.y = sin(theta)*sin(phi);
-            normal.z = cos(theta);
+            double sinTheta = sin(sigma)*sqrt(rand.RandomDouble());
+            double cosTheta = sqrt(1. - sinTheta*sinTheta);
+            normal.x = sinTheta*cos(phi);
+            normal.y = sinTheta*sin(phi);
+            normal.z = cosTheta;
         }
         else if (distribution.getValue() == Distribution::Gaussian)
         {

@@ -46,7 +46,7 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
     }
     else if (SoSFBool* f = dynamic_cast<SoSFBool*>(field))
     {
-        return 0;
+//        return 0;
         QCheckBox* editor = new QCheckBox(parent);
         editor->setChecked(f->getValue());
         return editor;

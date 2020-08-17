@@ -1063,7 +1063,7 @@ void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& name)
 void MainWindow::AddExportSurfaceURL(QString nodeURL)
 {
     if (!m_photonsSettings) return;
-    m_photonsSettings->surfaces.push_back(nodeURL);
+    m_photonsSettings->surfaces << nodeURL;
 }
 
 /*!
@@ -1099,13 +1099,13 @@ void MainWindow::ChangeSunPosition(double azimuth, double elevation)
  */
 void MainWindow::ChangeSunPosition(int year, int month, int day, double hours, double minutes, double seconds, double latitude, double longitude)
 {
-    if ( (month < 0) || (month> 12) ||
-         (day < 0) || (day > 31) ||
-         (hours < 0) || (hours > 23) ||
-         (minutes < 0) || (minutes > 59) ||
-         (seconds < 0) || (seconds > 59) ||
-         (longitude < -180.) || (longitude > 180.) ||
-         (latitude < -90.) || (latitude > 90.) )
+    if ( month < 0 || month > 12 ||
+         day < 0 || day > 31 ||
+         hours < 0 || hours > 23 ||
+         minutes < 0 || minutes > 59 ||
+         seconds < 0 || seconds > 59 ||
+         longitude < -180. || longitude > 180. ||
+         latitude < -90. || latitude > 90. )
     {
         QMessageBox::warning(this, "Tonatiuh warning", tr("ChangeSunPosition:: Not valid value define to new sun position.") );
         return;

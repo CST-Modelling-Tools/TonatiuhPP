@@ -38,6 +38,7 @@ void SunNode3D::attach(SunPosition* sp)
 void SunNode3D::create()
 {
     m_transform = new SoTransform;
+    m_transform->setName("transformSun");
     addChild(m_transform);
 
     SoTransform* sTransform = new SoTransform;

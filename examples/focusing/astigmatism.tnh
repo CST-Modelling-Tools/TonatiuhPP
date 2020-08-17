@@ -4,215 +4,189 @@
 TSceneKit {
   fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
   version "2020"
-  lightList 
-  NodeKitListPart {
-    childTypeNames "LightKit"
-    containerNode 
+  world 
+  DEF World WorldKit {
+    fields [ SFNode callbackList, SFNode location, SFNode sun, SFNode air, SFNode terrain ]
+    sun 
+    DEF Sun SunKit {
+      fields [ SFNode callbackList, SFNode position, SFNode shape, SFNode aperture ]
+      position 
+      SunPosition {
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
+        azimuth -90
+        elevation 45
+        irradiance 1000
+
+      }
+      shape 
+      SunPillbox {
+        fields [ SFDouble thetaMax ]
+
+      }
+      aperture 
+      SunAperture {
+        fields [ SFString disabledNodes ]
+        disabledNodes "//Layout/Target"
+
+      }
+
+    }
+    terrain 
+    DEF Terrain TerrainKit {
+      fields [ SFNode callbackList, SFNode grid ]
+      grid 
+      DEF Grid GridNode {
+        fields [ SFBool show, SFDouble step, SFInt32 divisions, SFVec2d xRange, SFVec2d yRange ]
+
+      }
+
+    }
+
+  }
+  group 
+  DEF Layout TSeparatorKit {
+    transform 
+    Transform {
+
+    }
+    group 
     Group {
 
-      DEF Sun SunKit {
-        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance, SFNode callbackList, SFNode transform, SFNode light, SFNode icon, SFNode iconMaterial, SFNode iconTexture, SFNode tsunshape, SFNode transformGroup, SFNode iconSeparator ]
-        azimuth -1.570796326794897
-        elevation 0.7853981633974483
-        irradiance 1000
+      DEF Mirror TSeparatorKit {
         transform 
         Transform {
-          translation -13.279409 0 13.279411
-          rotation 0.67859828 0.67859828 0.28108463  2.5935643
 
         }
-        light 
-        DirectionalLight {
-          direction 0 0 1
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Parabolic ShapeParabolic {
+              fields [ SFDouble fX, SFDouble fY ]
+              fX 10
+              fY 10
+
+            }
+            profileRT 
+            DEF Box ProfileBox {
+              fields [ SFDouble uSize, SFDouble vSize ]
+              uSize 2
+              vSize 2
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+
+            }
+            appearance 
+            AppearanceKit {
+              material 
+              DEF MaterialGL Material {
+
+              }
+
+            }
+
+          }
+        }
+
+      }
+      DEF Target TSeparatorKit {
+        transform 
+        Transform {
+          translation 0 0 0
+          rotation 0 1 0  0.78500009
 
         }
-        icon 
-        SunAperture {
-          fields [ SFString disabledNodes ]
-          disabledNodes "//Layout/Target;"
+        group 
+        Group {
 
-        }
-        iconMaterial 
-        Material {
-          transparency 0.75
+          DEF tangential TSeparatorKit {
+            transform 
+            Transform {
+              translation 0 0 7.0700002
+              scaleFactor 0.5 0.5 0.5
 
-        }
-        iconTexture 
-        Texture2 {
-          image 10 10 1
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff
-          0xff 0xff 0xff 0xff 
-          model BLEND
-          blendColor 1 1 1
+            }
+            group 
+            Group {
 
-        }
-        tsunshape 
-        SunPillbox {
-          fields [ SFDouble thetaMax ]
+              DEF Shape TShapeKit {
+                shapeRT 
+                DEF Sphere ShapeSphere {
+                  fields [  ]
 
+                }
+                profileRT 
+                DEF Box ProfileBox {
+                  fields [ SFDouble uSize, SFDouble vSize ]
+
+                }
+                materialRT 
+                DEF Virtual MaterialVirtual {
+                  fields [  ]
+
+                }
+                appearance 
+                AppearanceKit {
+                  material 
+                  DEF MaterialGL Material {
+                    transparency 0.5
+
+                  }
+
+                }
+
+              }
+            }
+
+          }
+          DEF skew TSeparatorKit {
+            transform 
+            Transform {
+              translation 0 0 14.14
+
+            }
+            group 
+            Group {
+
+              DEF Shape TShapeKit {
+                shapeRT 
+                DEF Sphere ShapeSphere {
+                  fields [  ]
+
+                }
+                profileRT 
+                DEF Box ProfileBox {
+                  fields [ SFDouble uSize, SFDouble vSize ]
+
+                }
+                materialRT 
+                DEF Virtual MaterialVirtual {
+                  fields [  ]
+
+                }
+                appearance 
+                AppearanceKit {
+                  material 
+                  DEF MaterialGL Material {
+                    transparency 0.5
+
+                  }
+
+                }
+
+              }
+            }
+
+          }
         }
 
       }
     }
 
   }
-  group 
-
-    DEF Layout TSeparatorKit {
-      transform 
-      Transform {
-
-      }
-      group 
-      Group {
-
-        DEF Mirror TSeparatorKit {
-          transform 
-          Transform {
-
-          }
-          group 
-          Group {
-
-            DEF Shape TShapeKit {
-              shapeRT 
-              DEF Parabolic ShapeParabolic {
-                fields [ SFDouble fX, SFDouble fY ]
-                fX 10
-                fY 10
-
-              }
-              profileRT 
-              DEF Box ProfileBox {
-                fields [ SFDouble uSize, SFDouble vSize ]
-                uSize 2
-                vSize 2
-
-              }
-              materialRT 
-              DEF Specular MaterialSpecular {
-                fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
-
-              }
-              appearance 
-              AppearanceKit {
-                material 
-                DEF MaterialGL Material {
-
-                }
-
-              }
-
-            }
-          }
-
-        }
-        DEF Target TSeparatorKit {
-          transform 
-          Transform {
-            translation 0 0 0
-            rotation 0 1 0  0.78500009
-
-          }
-          group 
-          Group {
-
-            DEF tangential TSeparatorKit {
-              transform 
-              Transform {
-                translation 0 0 7.0700002
-                scaleFactor 0.5 0.5 0.5
-
-              }
-              group 
-              Group {
-
-                DEF Shape TShapeKit {
-                  shapeRT 
-                  DEF Sphere ShapeSphere {
-                    fields [  ]
-
-                  }
-                  profileRT 
-                  DEF Box ProfileBox {
-                    fields [ SFDouble uSize, SFDouble vSize ]
-
-                  }
-                  materialRT 
-                  DEF Virtual MaterialVirtual {
-                    fields [  ]
-
-                  }
-                  appearance 
-                  AppearanceKit {
-                    material 
-                    DEF MaterialGL Material {
-                      transparency 0.5
-
-                    }
-
-                  }
-
-                }
-              }
-
-            }
-            DEF skew TSeparatorKit {
-              transform 
-              Transform {
-                translation 0 0 14.14
-
-              }
-              group 
-              Group {
-
-                DEF Shape TShapeKit {
-                  shapeRT 
-                  DEF Sphere ShapeSphere {
-                    fields [  ]
-
-                  }
-                  profileRT 
-                  DEF Box ProfileBox {
-                    fields [ SFDouble uSize, SFDouble vSize ]
-
-                  }
-                  materialRT 
-                  DEF Virtual MaterialVirtual {
-                    fields [  ]
-
-                  }
-                  appearance 
-                  AppearanceKit {
-                    material 
-                    DEF MaterialGL Material {
-                      transparency 0.5
-
-                    }
-
-                  }
-
-                }
-              }
-
-            }
-          }
-
-        }
-      }
-
-    }
-
 
 }
