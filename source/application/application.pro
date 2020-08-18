@@ -26,9 +26,9 @@ HEADERS += \
     commands/CmdInsertSurface.h \
     commands/CmdInsertTracker.h \
     commands/CmdLightPositionModified.h \
-    commands/CmdNameChanged.h \
     commands/CmdParameterModified.h \
     commands/CmdPaste.h \
+    commands/CmdRename.h \
     commands/CmdSunModified.h \
     commands/tgc.h \
     run/FluxAnalysis.h \
@@ -87,9 +87,9 @@ SOURCES += \
     commands/CmdInsertSurface.cpp \
     commands/CmdInsertTracker.cpp \
     commands/CmdLightPositionModified.cpp \
-    commands/CmdNameChanged.cpp \
     commands/CmdParameterModified.cpp \
     commands/CmdPaste.cpp \
+    commands/CmdRename.cpp \
     commands/CmdSunModified.cpp \
     run/FluxAnalysis.cpp \
     run/FluxAnalysisDialog.cpp \

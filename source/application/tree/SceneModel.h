@@ -42,7 +42,7 @@ public:
     Qt::DropActions supportedDragActions() const;
 
     InstanceNode* getInstance(const QModelIndex& index) const;
-    bool SetNodeName(SoNode* node, QString name);
+    bool setNodeName(SoNode* node, QString name);
     QModelIndex indexFromUrl(QString url) const;
     QModelIndex indexFromPath(const SoNodeKitPath& path) const;
     SoNodeKitPath* pathFromIndex(const QModelIndex& index) const;

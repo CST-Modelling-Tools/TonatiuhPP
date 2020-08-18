@@ -11,6 +11,7 @@
 #include "kernel/sun/SunKit.h"
 #include "kernel/scene/TSceneKit.h"
 #include "calculator/SunCalculatorDialog.h"
+#include "parameters/ParametersModel.h"
 
 
 SunDialog::SunDialog(SceneModel* sceneModel,
@@ -76,13 +77,16 @@ void SunDialog::makeSunShapeTab()
     SunShape* sunShape = (SunShape*) m_sun->getPart("shape", false);
     int index = ui->sunshapeCombo->findText(sunShape->getTypeName());
     ui->sunshapeCombo->setCurrentIndex(index);
+    ParametersModel* model = new ParametersModel(this);
+    ui->sunshapeParameters->setModel(model);
+    model->setNode(sunShape);
 
     connect(
         ui->sunshapeCombo, SIGNAL(activated(int)),
         this, SLOT(setShape(int))
     );
     connect(
-        ui->sunshapeParameters, SIGNAL(valueModified(SoNode*, QString, QString)),
+        model, SIGNAL(valueModified(SoNode*, QString, QString)),
         this, SLOT(setValue(SoNode*, QString, QString))
     );
 }
@@ -91,18 +95,17 @@ void SunDialog::setShape(int index)
 {
     SunFactory* f = m_sunShapeMap[ui->sunshapeCombo->itemText(index)];
     SunShape* sunShape = f->create();
+    ui->sunshapeParameters->getModel()->setNode(sunShape);
     m_sun->setPart("shape", sunShape);
-    ui->sunshapeParameters->SetContainer(sunShape);
 }
 
-void SunDialog::setValue(SoNode* node, QString parameter, QString value)
+void SunDialog::setValue(SoNode* node, QString field, QString value)
 {
-    if (parameter == "irradiance")
+    if (field == "irradiance")
         if (value.toDouble() < 0.) return;
 
-    SoField* field = node->getField(SbName(parameter.toStdString().c_str()));
-    if (field)
-        field->set(value.toStdString().c_str());
+    SoField* f = node->getField(field.toStdString().c_str());
+    if (f) f->set(value.toStdString().c_str());
 }
 
 void SunDialog::makeSunApertureTab()

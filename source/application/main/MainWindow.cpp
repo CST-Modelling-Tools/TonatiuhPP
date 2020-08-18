@@ -49,7 +49,7 @@
 
 #include "calculator/SunCalculatorDialog.h"
 #include "commands/ActionInsert.h"
-#include "commands/CmdNameChanged.h"
+#include "commands/CmdRename.h"
 #include "commands/CmdCopy.h"
 #include "commands/CmdCut.h"
 #include "commands/CmdDelete.h"
@@ -615,7 +615,7 @@ void MainWindow::ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex
         dragAndDrop->setText("Drag and Drop node");
         new CmdCut(node, m_coinNode_Buffer, m_modelScene, dragAndDrop);
 
-        new CmdPaste(tgc::Copied, newParent, coinNode, *m_modelScene, dragAndDrop);
+        new CmdPaste(tgc::Copied, newParent, coinNode, m_modelScene, dragAndDrop);
         m_undoStack->push(dragAndDrop);
 
         UpdateLightSize();
@@ -635,7 +635,7 @@ void MainWindow::ItemDragAndDropCopy(const QModelIndex& newParent, const QModelI
     QUndoCommand* dragAndDropCopy = new QUndoCommand();
     dragAndDropCopy->setText("Drag and Drop Copy");
     new CmdCopy(node, m_coinNode_Buffer, m_modelScene);
-    new CmdPaste(tgc::Shared, newParent, coinNode, *m_modelScene, dragAndDropCopy);
+    new CmdPaste(tgc::Shared, newParent, coinNode, m_modelScene, dragAndDropCopy);
     m_undoStack->push(dragAndDropCopy);
 
     UpdateLightSize();
@@ -1051,7 +1051,7 @@ void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& name)
     if (!instance) return;
     if (!instance->getNode()) return;
 
-    CmdNameChanged* cmd = new CmdNameChanged(index, name, m_modelScene);
+    CmdRename* cmd = new CmdRename(index, name, m_modelScene);
     m_undoStack->push(cmd);
 
     setDocumentModified(true);
@@ -1395,7 +1395,7 @@ void MainWindow::InsertNode()
 
     QString name("Node");
     int count = 0;
-    while (!m_modelScene->SetNodeName(kit, name))
+    while (!m_modelScene->setNodeName(kit, name))
         name = QString("Node_%1").arg(++count);
 
     setDocumentModified(true);
@@ -1423,7 +1423,7 @@ void MainWindow::InsertShape()
 
     QString name("Shape");
     int count = 0;
-    while (!m_modelScene->SetNodeName(kit, name))
+    while (!m_modelScene->setNodeName(kit, name))
         name = QString("Shape_%1").arg(++count);
 
     Select(instance->getURL() + "/" + name);
@@ -1589,7 +1589,7 @@ void MainWindow::InsertFileComponent(QString componentFileName)
         return;
     }
 
-    TSeparatorKit* componentLayout = static_cast< TSeparatorKit* >(componentSeparator->getChild(0) );
+    TSeparatorKit* componentLayout = static_cast<TSeparatorKit*>(componentSeparator->getChild(0) );
 
     CmdInsertNode* cmdInsertSeparatorKit = new CmdInsertNode(componentLayout, QPersistentModelIndex(parentIndex), m_modelScene);
     cmdInsertSeparatorKit->setText("Insert SeparatorKit node");
@@ -1605,7 +1605,7 @@ void MainWindow::InsertScene(QScriptValue v)
 {
     QModelIndex parentIndex;
     if ((!ui->sceneView->currentIndex().isValid() ) || (ui->sceneView->currentIndex() == ui->sceneView->rootIndex() ) )
-        parentIndex = m_modelScene->index (0,0,ui->sceneView->rootIndex());
+        parentIndex = m_modelScene->index(0, 0, ui->sceneView->rootIndex());
     else
         parentIndex = ui->sceneView->currentIndex();
 
@@ -2598,7 +2598,7 @@ bool MainWindow::Paste(QModelIndex index, tgc::PasteType type)
         ancestor = ancestor->getParent();
     }
 
-    CmdPaste* cmd = new CmdPaste(type, m_modelSelection->currentIndex(), m_coinNode_Buffer, *m_modelScene);
+    CmdPaste* cmd = new CmdPaste(type, m_modelSelection->currentIndex(), m_coinNode_Buffer, m_modelScene);
     m_undoStack->push(cmd);
 
     UpdateLightSize();

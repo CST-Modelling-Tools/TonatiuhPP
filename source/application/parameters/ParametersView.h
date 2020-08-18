@@ -1,15 +1,10 @@
 #pragma once
 
-#include <Inventor/lists/SbStringList.h>
-
-#include <QModelIndex>
 #include <QTreeView>
 
-class ParametersDelegate;
-class SoField;
-class SoNode;
 class ParametersModel;
-class QStandardItem;
+class SoNode;
+
 
 class ParametersView: public QTreeView
 {
@@ -17,20 +12,12 @@ class ParametersView: public QTreeView
 
 public:
     ParametersView(QWidget* parent);
-    ~ParametersView();
 
-    void SetContainer(SoNode* node);
+    ParametersModel* getModel();
 
-protected slots:
-    void closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint);
+public slots:
+    void reset();
 
-private slots:
-    void onBoolChecked(QStandardItem *item);
-
-signals:
-    void valueModified(SoNode* nodeContainer, QString parameterName, QString newValue);
-
-private:
-    ParametersModel* m_model;
-    SoNode* m_node;
+protected:
+    void mousePressEvent(QMouseEvent* event);
 };

@@ -328,7 +328,7 @@ InstanceNode* SceneModel::getInstance(const QModelIndex& index) const
     return (InstanceNode*) index.internalPointer();
 }
 
-bool SceneModel::SetNodeName(SoNode* node, QString name)
+bool SceneModel::setNodeName(SoNode* node, QString name)
 {
     SbName sbname(name.toStdString().c_str());
 
@@ -577,24 +577,16 @@ void SceneModel::replaceCoinNode(TShapeKit* parent, SoNode* node)
 void SceneModel::replaceAir(AirKit* air)
 {
     m_nodeScene->setPart("world.air", air);
-
-//    InstanceNode* instance = new InstanceNode(air);
     InstanceNode* instW = m_instanceScene->children[0];
     instW->children[2]->setNode(air);
-//    instW->replaceChild(2, instance);
-
     emit layoutChanged();
 }
 
 void SceneModel::replaceSun(SunKit* sun)
 {
     m_nodeScene->setPart("world.sun", sun);
-
-//    InstanceNode* instance = new InstanceNode(sun);
     InstanceNode* instW = m_instanceScene->children[0];
     instW->children[1]->setNode(sun);
-//    instW->replaceChild(1, instance);
-
     emit layoutChanged();
 }
 

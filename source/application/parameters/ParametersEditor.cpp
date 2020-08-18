@@ -19,7 +19,7 @@ void ParametersEditor::setText(const QString& text)
     ui->plainTextEdit->setPlainText(text);
 }
 
-QString ParametersEditor::getText()
+QString ParametersEditor::text()
 {
     return ui->plainTextEdit->toPlainText();
 }

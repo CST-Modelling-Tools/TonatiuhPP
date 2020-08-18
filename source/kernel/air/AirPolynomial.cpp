@@ -20,9 +20,8 @@ AirPolynomial::AirPolynomial()
     SO_NODE_DEFINE_ENUM_VALUE(Coefficients, VittitoeBiggs_hazy);
     SO_NODE_DEFINE_ENUM_VALUE(Coefficients, Ballestrin_clear);
     SO_NODE_DEFINE_ENUM_VALUE(Coefficients, Ballestrin_hazy);
-
     SO_NODE_SET_SF_ENUM_TYPE(coefficients, Coefficients);
-    SO_NODE_ADD_FIELD( coefficients, (Custom) );
+    SO_NODE_ADD_FIELD(coefficients, (Custom) );
 
     SO_NODE_ADD_FIELD(a0, (1.) );
     SO_NODE_ADD_FIELD(a1, (0.) );

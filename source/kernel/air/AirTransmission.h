@@ -13,7 +13,7 @@ public:
 
     virtual double transmission(double distance) const = 0;
 
-    NAME_ICON_FUNCTIONS("Vacuum", ":/images/AirX.png")
+    NAME_ICON_FUNCTIONS("Air", ":/images/AirX.png")
 };
 
 

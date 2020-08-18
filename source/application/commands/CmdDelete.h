@@ -23,8 +23,8 @@ public:
     void redo();
 
 private:
-    SoNode* m_node;
-    SoBaseKit* m_nodeParent;
     SceneModel* m_model;
+    SoNode* m_node;
+    SoBaseKit* m_parent;
     int m_row;
 };

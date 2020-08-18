@@ -1,37 +1,25 @@
-#include <Inventor/nodekits/SoBaseKit.h>
-
 #include "CmdCopy.h"
-#include "kernel/run/InstanceNode.h"
+
 #include "tree/SceneModel.h"
+#include "kernel/run/InstanceNode.h"
 
-/**
- * Creates a new copy command that represents the copy of the node located with \a index in the \a model to the \a clipborad.
- *
- * If \a parent is not null, this command is appended to parent's child list and then owns this command.
- */
-CmdCopy::CmdCopy( const QModelIndex& index, SoNode*& clipboard, SceneModel* model, QUndoCommand* parent)
-: QUndoCommand("Copy", parent), m_pClipboard ( clipboard ), m_pNode( 0 ),m_previousNode ( 0 ), m_pModel( model )
+
+CmdCopy::CmdCopy(const QModelIndex& index, SoNode*& clipboard, SceneModel* model, QUndoCommand* parent):
+    QUndoCommand("Copy", parent),
+    m_clipboard(clipboard),
+    m_model(model)
 {
-    InstanceNode* instanceNode = m_pModel->getInstance( index );
-    m_pNode = instanceNode->getNode();
-
-    m_previousNode = clipboard ;
+    m_nodeOld = clipboard;
+    InstanceNode* instance = m_model->getInstance(index);
+    m_node = instance->getNode();
 }
 
-/*!
- * Reverts clipboard contain. After undo() is called, the state of the clipboard will be the same as before redo() was called.
- * \sa redo().
- */
 void CmdCopy::undo()
 {
-    m_pClipboard = m_previousNode;
+    m_clipboard = m_nodeOld;
 }
 
-/*!
- * Applies a change to the clipboard. After redo() clipboard will contain the node located on the model as index
- * \sa undo().
- */
-void CmdCopy::redo( )
+void CmdCopy::redo()
 {
-    m_pClipboard  = m_pNode;
+    m_clipboard = m_node;
 }

@@ -16,7 +16,7 @@ public:
     ~ParametersEditor();
 
     void setText(const QString& text);
-    QString getText();
+    QString text();
 
 private:
     Ui::ParameterTextEditor *ui;

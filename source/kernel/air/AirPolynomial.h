@@ -8,12 +8,6 @@ class TONATIUH_KERNEL AirPolynomial: public AirTransmission
     SO_NODE_HEADER(AirPolynomial);
 
 public:
-    static void initClass();
-    AirPolynomial();
-    ~AirPolynomial();
-
-    double transmission(double distance) const;
-
     enum Coefficients {
         Custom,
         VittitoeBiggs_clear,
@@ -21,6 +15,12 @@ public:
         Ballestrin_clear,
         Ballestrin_hazy
     };
+
+    static void initClass();
+    AirPolynomial();
+    ~AirPolynomial();
+
+    double transmission(double distance) const;
 
     SoSFEnum coefficients;
 

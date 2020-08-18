@@ -31,7 +31,7 @@ private:
 protected slots:
     void on_buttonSunCalc_clicked();
     void setShape(int index);
-    void setValue(SoNode* node, QString parameter, QString value);
+    void setValue(SoNode* node, QString field, QString value);
     void addNode();
     void removeNode();
     void onAccept();

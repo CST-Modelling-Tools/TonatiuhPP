@@ -11,55 +11,53 @@
  *
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
-CmdPaste::CmdPaste( tgc::PasteType type, const QModelIndex& parentModelIndex,  SoNode*& coinClipboard, SceneModel& sceneModel, QUndoCommand* parent )
-: QUndoCommand("Paste", parent), m_pasteType( type ), m_parentInstance( 0 ), m_coinChild( coinClipboard ), m_sceneModel( &sceneModel ), m_oldNodeName( "" ),  m_row( -1 )
+CmdPaste::CmdPaste(tgc::PasteType type,
+                   const QModelIndex& indexParent,
+                   SoNode*& node,
+                   SceneModel* model,
+                   QUndoCommand* parent):
+    QUndoCommand("Paste", parent),
+    m_pasteType(type),
+    m_parentInstance(0),
+    m_row(-1),
+    m_node(node),
+    m_model(model)
 {
-    if( !parentModelIndex.isValid() ) gcf::SevereError( "CmdPaste called with invalid ModelIndex." );
+    m_nameOld = node->getName().getString();
 
-    m_parentInstance = m_sceneModel->getInstance( parentModelIndex );
-    if( !m_parentInstance-> getNode() ) gcf::SevereError( "CmdPaste NULL m_coinParent." );
+    if (!indexParent.isValid())
+        gcf::SevereError("CmdPaste called with invalid ModelIndex.");
+
+    m_parentInstance = m_model->getInstance(indexParent);
+    if (!m_parentInstance->getNode())
+        gcf::SevereError("CmdPaste NULL m_coinParent.");
 
     m_row = m_parentInstance->children.size();
-    m_oldNodeName = QString( coinClipboard->getName().getString() );
 }
 
-/*!
- * Destroys the CmdPaste object.
- */
 CmdPaste::~CmdPaste()
 {
 
 }
 
-/*!
- * Reverts scene state. After undo() is called, the node will remove from the scene.
- * \sa redo().
- */
 void CmdPaste::undo()
 {
-    SoBaseKit* coinParent = static_cast< SoBaseKit* > ( m_parentInstance-> getNode() );
-    m_sceneModel->Cut( *coinParent, m_row );
+    SoBaseKit* nodeParent = static_cast<SoBaseKit*> ( m_parentInstance->getNode() );
+    m_model->Cut(*nodeParent, m_row);
     m_parentInstance->children[m_row]->getNode()->unref();
-    m_sceneModel->SetNodeName( m_coinChild, m_oldNodeName );
+    m_model->setNodeName(m_node, m_nameOld);
 }
 
-/*!
- * Applies a change to the scene. After redo() parentIndex contains a new child.
- * \sa undo().
- */
-void CmdPaste::redo( )
+void CmdPaste::redo()
 {
-    SoBaseKit* coinParent = static_cast< SoBaseKit* > ( m_parentInstance-> getNode() );
-    if( !m_sceneModel->Paste( m_pasteType, *coinParent, *m_coinChild, m_row ) ) return;
+    SoBaseKit* coinParent = static_cast<SoBaseKit*> ( m_parentInstance->getNode() );
+    if ( !m_model->Paste(m_pasteType, *coinParent, *m_node, m_row) ) return;
 
-    SoNode* newNode = m_parentInstance->children[m_row]->getNode();
-    newNode->ref();
+    SoNode* node = m_parentInstance->children[m_row]->getNode();
+    node->ref();
 
+    QString name = m_nameOld;
     int count = 0;
-    QString newName = m_oldNodeName;
-    while ( !m_sceneModel->SetNodeName( newNode, newName ) )
-    {
-        count++;
-        newName = QString( "%1_copy%2").arg( m_oldNodeName, QString::number( count) );
-    }
+    while (!m_model->setNodeName(node, name))
+        name = m_nameOld + QString("_copy_%1").arg(++count);
 }

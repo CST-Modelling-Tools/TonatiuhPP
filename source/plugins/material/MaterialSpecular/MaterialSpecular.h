@@ -9,8 +9,8 @@ class MaterialSpecular: public MaterialRT
 
 public:
     enum Distribution {
-        pillbox = 0,
-        Gaussian = 1
+        pillbox,
+        Gaussian
     };
 
     static void initClass();

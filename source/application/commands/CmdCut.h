@@ -16,17 +16,18 @@ class SoBaseKit;
 class CmdCut: public QUndoCommand
 {
 public:
-    CmdCut(const QModelIndex& selectedIndex, SoNode*& clipboard, SceneModel* model, QUndoCommand* parent = 0);
+    CmdCut(const QModelIndex& index, SoNode*& clipboard, SceneModel* model, QUndoCommand* parent = 0);
     ~CmdCut();
 
     void undo();
     void redo();
 
 private:
-    SoNode*& m_pClipboard;
-    SoNode* m_previousNode;
-    SoNode* m_coinNode;
-    SoBaseKit* m_coinParent;
+    SoNode*& m_clipboard;
     SceneModel* m_model;
+
+    SoNode* m_nodeOld;
+    SoNode* m_node;
+    SoBaseKit* m_parent;
     int m_row;
 };

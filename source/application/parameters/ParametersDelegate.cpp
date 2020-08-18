@@ -38,15 +38,13 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
             editor->addItem(name.getString());
         }
         editor->setCurrentIndex(f->getValue());
+
         connect(editor,  SIGNAL(activated(int)),
-                this, SLOT(onCloseEditor()));
-
-
+                this, SLOT(commitAndCloseEditor()));
         return editor;
     }
     else if (SoSFBool* f = dynamic_cast<SoSFBool*>(field))
     {
-//        return 0;
         QCheckBox* editor = new QCheckBox(parent);
         editor->setChecked(f->getValue());
         return editor;
@@ -79,7 +77,7 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
     }
     else
     {
-        SbString fieldValue = "null";
+        SbString fieldValue;
         field->get(fieldValue);
         QString text = fieldValue.getString();
 //        QString s = model->data(index, Qt::DisplayRole).toString();
@@ -98,21 +96,64 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
     }
 }
 
+void ParametersDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
+{
+//    if (QComboBox* cb = dynamic_cast<QComboBox*>(editor))
+//    {
+//        cb->showPopup();
+//    }
+}
+
+#include <QMouseEvent>
+#include <QApplication>
 void ParametersDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     if (!dynamic_cast<ParametersEditor*>(editor))
         QStyledItemDelegate::updateEditorGeometry(editor, option, index);
-}
-
-void ParametersDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
-{
     if (QComboBox* cb = dynamic_cast<QComboBox*>(editor))
     {
-//        cb->addItem(QIcon(":/icons/select16.png"), "select");
-//        cb->set();
+        QMouseEvent event(QEvent::MouseButtonPress, QPointF(0, 0), Qt::LeftButton, 0, 0);
+        QApplication::sendEvent(cb, &event);
 //        cb->showPopup();
-
     }
+}
+
+void ParametersDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
+{
+    ParametersModel* modelP = static_cast<ParametersModel*>(model);
+    SoField* field = modelP->getData(index)->getField();
+
+    QString value;
+
+    if (dynamic_cast<SoSFEnum*>(field))
+    {
+        QComboBox* w = qobject_cast<QComboBox*>(editor);
+        value = w->currentText();
+    }
+    else if (dynamic_cast<SoSFBool*>(field))
+    {
+        QCheckBox* w = qobject_cast<QCheckBox*>(editor);
+        value = w->isChecked() ? "TRUE" : "FALSE";
+    }
+    else if (dynamic_cast<UserSField*>(field))
+    {
+        FieldEditor* w = static_cast<FieldEditor*>(editor);
+        value = w->GetData();
+    }
+    else if (dynamic_cast<UserMField*>(field))
+    {
+        FieldEditor* w = static_cast<FieldEditor*>(editor);
+        value = w->GetData();
+    }
+    else
+    {
+        if (QLineEdit* w = dynamic_cast<QLineEdit*>(editor) )
+            value = w->text();
+        else if (ParametersEditor* w = dynamic_cast<ParametersEditor*>(editor) )
+            value = w->text();
+    }
+
+    modelP->setData(index, value);
 }
 
 void ParametersDelegate::onCloseEditor() // not used?
@@ -123,7 +164,8 @@ void ParametersDelegate::onCloseEditor() // not used?
 
 void ParametersDelegate::commitAndCloseEditor()
 {
-    QComboBox *editor = qobject_cast<QComboBox*>(sender());
+    QComboBox* editor = qobject_cast<QComboBox*>(sender());
     emit commitData(editor);
-    emit closeEditor(editor);
+//    emit closeEditor(editor);
+    editor->close();
 }

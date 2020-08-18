@@ -36,9 +36,6 @@ CmdInsertNode::CmdInsertNode(
     setText("Insert node");
 }
 
-/*!
- * Destroys the CmdInsertSeparatorKit object.
- */
 CmdInsertNode::~CmdInsertNode()
 {
     m_node->unref();

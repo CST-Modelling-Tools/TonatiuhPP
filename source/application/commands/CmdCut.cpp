@@ -2,59 +2,39 @@
 
 #include <Inventor/nodekits/SoBaseKit.h>
 
-#include "kernel/run/InstanceNode.h"
 #include "tree/SceneModel.h"
+#include "kernel/run/InstanceNode.h"
 
-/**
- * Creates a new cut command that represents the cut the node located with \a index from the \a model.
- * The node is stored at the \a clipborad.
- *
- * If \a parent is not null, this command is appended to parent's child list and then owns this command.
- */
-CmdCut::CmdCut(const QModelIndex& selectedIndex, SoNode*& clipboard, SceneModel* model, QUndoCommand* parent):
+
+CmdCut::CmdCut(const QModelIndex& index, SoNode*& clipboard, SceneModel* model, QUndoCommand* parent):
     QUndoCommand("Cut", parent),
-    m_pClipboard(clipboard),
-    m_previousNode(0),
-    m_coinNode(0),
-    m_coinParent(0),
-    m_model(model),
-    m_row(-1)
+    m_clipboard(clipboard),
+    m_model(model)
 {
-    InstanceNode* instanceNode = m_model->getInstance(selectedIndex);
-    m_coinNode = instanceNode->getNode();
-    m_coinNode->ref();
-    m_coinParent = static_cast< SoBaseKit* > (instanceNode->getParent()->getNode() );
+    m_nodeOld = clipboard;
 
-    m_previousNode = clipboard;
+    InstanceNode* instance = m_model->getInstance(index);
+    m_node = instance->getNode();
+    m_node->ref();
 
-    m_row = instanceNode->getParent()->children.indexOf(instanceNode);
+    InstanceNode* instanceP = instance->getParent();
+    m_parent = static_cast<SoBaseKit*>(instanceP->getNode());
+    m_row = instanceP->children.indexOf(instance);
 }
 
-/*!
- * Destroys the CmdCut object.
- */
 CmdCut::~CmdCut()
 {
-    m_coinNode->unref();
+    m_node->unref();
 }
 
-/*!
- * Reverts clipboard and scene contain. After undo() is called, the state of the scene and clipboard will be the same as before redo() was called.
- * \sa redo().
- */
 void CmdCut::undo()
 {
-    m_pClipboard = m_previousNode;
-    m_model->Paste(tgc::Shared, *m_coinParent, *m_coinNode, m_row);
+    m_clipboard = m_nodeOld;
+    m_model->Paste(tgc::Shared, *m_parent, *m_node, m_row);
 }
 
-/*!
- * Applies a change to the scene and clipboard. After redo() clipboard will contain the node located on the model as index
- * and the node will remove from the scene.
- * \sa undo().
- */
 void CmdCut::redo()
 {
-    m_pClipboard = m_coinNode;
-    m_model->Cut(*m_coinParent, m_row);
+    m_clipboard = m_node;
+    m_model->Cut(*m_parent, m_row);
 }

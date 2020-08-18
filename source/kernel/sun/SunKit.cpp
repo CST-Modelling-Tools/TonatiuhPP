@@ -41,7 +41,7 @@ SunKit::SunKit()
     SO_KIT_CONSTRUCTOR(SunKit);
 
     SO_KIT_ADD_CATALOG_ENTRY(position, SunPosition, FALSE, this, "", TRUE);
-    SO_KIT_ADD_CATALOG_ENTRY(shape, SunPillbox, FALSE, this, "", TRUE);
+    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(shape, SunShape, SunPillbox, FALSE, this, "", TRUE);
     SO_KIT_ADD_CATALOG_ENTRY(aperture, SunAperture, FALSE, this, "", TRUE);
 
     SO_KIT_INIT_INSTANCE();

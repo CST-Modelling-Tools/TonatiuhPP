@@ -9,11 +9,13 @@
 #include <Inventor/sensors/SoFieldSensor.h>
 #include <Inventor/fields/SoSFBool.h>
 
+
 void ParametersItem::updateItem(void* data, SoSensor*)
 {
     ParametersItem* item = (ParametersItem*) data;
     SbString v;
     item->m_field->get(v);
+    if (item->data() == v.getString()) return;
     item->setData(v.getString(), Qt::DisplayRole);
 }
 
@@ -76,6 +78,7 @@ QVariant ParametersItem::data(int role) const
 
 void ParametersItem::setData(const QVariant& value, int role)
 {
+
 //    if (role == Qt::EditRole)
 //    {
 //        if (column() == 1)
@@ -87,5 +90,5 @@ void ParametersItem::setData(const QVariant& value, int role)
 //            m_field->set(value.toString().toStdString().c_str());
 //    }
 //    else
-        return QStandardItem::setData(value, role);
+      QStandardItem::setData(value, role);
 }

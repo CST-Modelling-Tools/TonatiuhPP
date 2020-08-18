@@ -3,6 +3,7 @@
 #include <Inventor/nodekits/SoBaseKit.h>
 #include <Inventor/nodes/SoGroup.h>
 
+#include "ParametersModel.h"
 #include "ParametersView.h"
 #include "ParametersTabs.h"
 
@@ -26,23 +27,28 @@ border:none;
  */
 void ParametersTabs::SelectionChanged(SoNode* node)
 {
+    if (node == m_node) return;
+//    QList<QWidget*> list;
+//    for (int n = 0; n < count(); ++n)
+//        list << widget(n);
     clear();
+//    qDeleteAll(list);
 
     m_node = node;
     SoBaseKit* kit = dynamic_cast<SoBaseKit*>(m_node);
     if (!kit)
-        AddTab(node, "");
+        addTabNode(node, "");
 
     for (QString part : ContainerNodeParts(kit))
     {
         if (SoNode* node = kit->getPart(part.toStdString().c_str(), false))
         {
-            AddTab(node, part);
+            addTabNode(node, part);
         }
         else if (SoField* field = kit->getField(part.toStdString().c_str()))
         {
             if (SoSFNode* fn = dynamic_cast<SoSFNode*>(field))
-                AddTab(fn->getValue(), part);
+                addTabNode(fn->getValue(), part);
         }
         else if (part[part.size() - 1] == '*')
         {
@@ -53,43 +59,42 @@ void ParametersTabs::SelectionChanged(SoNode* node)
             for (int n = 0; n < nMax; n++)
             {
                 SoNode* element = (SoNode*) parentGroup->getChild(n);
-                if (element) AddTab(element, "");
+                if (element) addTabNode(element, "");
             }
         }
     }
 }
 
-/*!
- * Updates selected node parametes views.
- */
 void ParametersTabs::UpdateView()
 {
     SelectionChanged(m_node);
 }
 
 /*!
- * Emits a valueModified signal with \a node as the actual node, \a paramenterName and \a newValue.
+ * Emits a signal with \a node as the actual node, \a paramenterName and \a newValue.
  */
-void ParametersTabs::SetValue(SoNode* node, QString parameter, QString value)
+void ParametersTabs::setValue(SoNode* node, QString field, QString value)
 {
-    emit valueModified(node, parameter, value);
+    emit valueModified(node, field, value);
 }
 
 /*!
  * Adds a new tab to the view with \a coinNode \a partName parameters.
  */
-void ParametersTabs::AddTab(SoNode* node, QString /*partName*/)
+void ParametersTabs::addTabNode(SoNode* node, QString /*partName*/)
 {
     QString name = node->getName().getString();
     if (name.length() <= 0)
         name = node->getTypeId().getName().getString();
 
     ParametersView* view = new ParametersView(this);
-    view->SetContainer(node);
+    ParametersModel* model = new ParametersModel(view);
+    model->setNode(node);
+    view->setModel(model);
     addTab(view, name);
     connect(
-        view, SIGNAL(valueModified(SoNode*, QString, QString)),
-        this, SLOT(SetValue(SoNode*, QString, QString))
+        model, SIGNAL(valueModified(SoNode*, QString, QString)),
+        this, SLOT(setValue(SoNode*, QString, QString))
     );
 }
 

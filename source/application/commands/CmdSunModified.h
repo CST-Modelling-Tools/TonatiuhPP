@@ -5,6 +5,7 @@
 class SunKit;
 class SceneModel;
 
+
 class CmdSunModified: public QUndoCommand
 {
 public:
@@ -14,6 +15,7 @@ public:
      void undo();
      void redo();
 
+private:
      void set(SunKit* sun);
 
 private:

@@ -5,6 +5,7 @@
 class AirKit;
 class SceneModel;
 
+
 class CmdAirModified: public QUndoCommand
 {
 public:

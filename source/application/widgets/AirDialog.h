@@ -25,7 +25,7 @@ public:
 
 protected slots:
     void setModel(int index);
-    void setValue(SoNode* node, QString parameter, QString value);
+    void setValue(SoNode* node, QString field, QString value);
 
 private:
     Ui::AirDialog* ui;

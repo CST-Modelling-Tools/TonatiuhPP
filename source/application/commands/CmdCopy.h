@@ -1,16 +1,11 @@
 #pragma once
+
 #include <QUndoCommand>
 
 class QModelIndex;
-class SoBaseKit;
-class SceneModel;
 class SoNode;
+class SceneModel;
 
-//!  CmdCopy class is the copy command stored in the command stack.
-/*!
-   CmdCopy represents a single copy action on a scene, copy on a clipboard a node from the scene.
-   \sa CmdCut, CmdPaste, CmdDelete
- */
 
 class CmdCopy: public QUndoCommand
 {
@@ -18,12 +13,12 @@ public:
     CmdCopy(const QModelIndex& index, SoNode*& clipboard, SceneModel* model, QUndoCommand* parent = 0);
     ~CmdCopy() {}
 
-    virtual void undo();
-    virtual void redo();
+    void undo();
+    void redo();
 
 private:
-    SoNode*& m_pClipboard; /*!< The Clipboard */
-    SoNode* m_pNode; /*!< Copied node to the clipboard*/
-    SoNode* m_previousNode; /*!< The node saved on the clipboard befor apply copy*/
-    SceneModel* m_pModel; /*!< The scene */
+    SoNode*& m_clipboard;
+    SoNode* m_nodeOld; // Node saved in clipboard before
+    SoNode* m_node; // Node copied to clipboard
+    SceneModel* m_model;
 };

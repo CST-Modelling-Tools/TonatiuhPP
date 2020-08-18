@@ -7,6 +7,7 @@
 #include "kernel/air/AirKit.h"
 #include "tree/SceneModel.h"
 #include "kernel/scene/TSceneKit.h"
+#include "parameters/ParametersModel.h"
 
 
 AirDialog::AirDialog(SceneModel* sceneModel, QMap<QString, AirFactory*> airMap, QWidget* parent):
@@ -26,15 +27,17 @@ AirDialog::AirDialog(SceneModel* sceneModel, QMap<QString, AirFactory*> airMap, 
 
     AirTransmission* airT = (AirTransmission*) m_air->getPart("transmission", false);
     int index = ui->comboBox->findText(airT->getTypeName());
-    ui->comboBox->setCurrentIndex(index); // activated != cuurentIndexChanged
-    ui->airParameters->SetContainer(airT);
+    ui->comboBox->setCurrentIndex(index); // activated != currentIndexChanged
+    ParametersModel* model = new ParametersModel(this);
+    ui->airParameters->setModel(model);
+    model->setNode(airT);
 
     connect(
         ui->comboBox, SIGNAL(activated(int)),
         this, SLOT(setModel(int))
     );
     connect(
-        ui->airParameters, SIGNAL(valueModified(SoNode*, QString, QString)),
+        model, SIGNAL(valueModified(SoNode*, QString, QString)),
         this, SLOT(setValue(SoNode*, QString, QString))
     );
 
@@ -51,13 +54,12 @@ void AirDialog::setModel(int index)
 {
     AirFactory* f = m_airMap[ui->comboBox->itemText(index)];
     AirTransmission* airT = f->create();
+    ui->airParameters->getModel()->setNode(airT);
     m_air->setPart("transmission", airT);
-    ui->airParameters->SetContainer(airT);
 }
 
-void AirDialog::setValue(SoNode* node, QString parameter, QString value)
+void AirDialog::setValue(SoNode* node, QString field, QString value)
 {
-    SoField* field = node->getField(parameter.toStdString().c_str());
-    if (field)
-        field->set(value.toStdString().c_str());
+    SoField* f = node->getField(field.toStdString().c_str());
+    if (f) f->set(value.toStdString().c_str());
 }

@@ -5,6 +5,7 @@
 #include "kernel/scene/TSceneKit.h"
 #include "application/view/GraphicRoot.h"
 
+
 CmdSunModified::CmdSunModified(SunKit* sun, SceneModel* model, QUndoCommand* parent):
     QUndoCommand("Sun modified", parent),
     m_model(model)

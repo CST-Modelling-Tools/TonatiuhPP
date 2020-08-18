@@ -2,8 +2,9 @@
 
 #include <QUndoCommand>
 
-class SceneModel;
 class SoNode;
+class SceneModel;
+
 
 class CmdParameterModified: public QUndoCommand
 {
@@ -15,9 +16,9 @@ public:
     void redo();
 
 private:
-    SoNode* m_coinNode;
-    QString m_newValue;
-    QString m_oldValue;
-    QString m_parameterName;
-    SceneModel* m_pModel;
+    SoNode* m_node;
+    QString m_name;
+    QString m_value;
+    QString m_valueOld;
+    SceneModel* m_model;
 };
