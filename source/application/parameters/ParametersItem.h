@@ -12,7 +12,8 @@ class SoFieldSensor;
 class ParametersItem: public QStandardItem
 {
 public:
-    ParametersItem(QString text, bool editable, SoField* field);
+    ParametersItem(QString text);
+    ParametersItem(SoField* field);
     ~ParametersItem();
     
     QVariant data(int role = Qt::UserRole + 1) const;

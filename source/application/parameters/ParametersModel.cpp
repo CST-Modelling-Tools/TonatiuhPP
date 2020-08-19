@@ -11,7 +11,7 @@
 ParametersModel::ParametersModel(QObject* parent):
     QStandardItemModel(parent)
 {
-    connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)));
+//    connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)));
 }
 
 void ParametersModel::setNode(SoNode* node)
@@ -29,16 +29,15 @@ void ParametersModel::setNode(SoNode* node)
     for (int n = 0; n < fields.getLength(); ++n)
     {
         SoField* field = fields.get(n);
-
         SbName name;
         if (!node->getFieldName(field, name)) continue;
-        ParametersItem* itemName = new ParametersItem(name.getString(), false, field);
-        setItem(n, 0, itemName);
 
-        SbString value;
-        field->get(value);
-        ParametersItem* itemValue = new ParametersItem(value.getString(), true, field);
+//        QStandardItem* itemName = new QStandardItem(name.getString());
+        ParametersItem* itemName = new ParametersItem(name.getString());
+        setItem(n, 0, itemName);
+        ParametersItem* itemValue = new ParametersItem(field);
         setItem(n, 1, itemValue);
+
 //        QModelIndex index = m_model->indexFromItem(itemValue);
 //        openPersistentEditor(index);
     }
@@ -53,15 +52,14 @@ QVariant ParametersModel::data(const QModelIndex& index, int role) const
 
 bool ParametersModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    ParametersItem* parameter = static_cast<ParametersItem*>(itemFromIndex(index));
-    parameter->setData(value, role);
-    return true;
-}
-
-ParametersItem* ParametersModel::getData(const QModelIndex& index) const
-{
     ParametersItem* item = static_cast<ParametersItem*>(itemFromIndex(index));
-    return item;
+    item->setData(value, role);
+
+    SbName name;
+    m_node->getFieldName(item->getField(), name);
+
+    emit valueModified(m_node, name.getString(), value.toString());
+    return true;
 }
 
 void ParametersModel::onItemChanged(QStandardItem* item)

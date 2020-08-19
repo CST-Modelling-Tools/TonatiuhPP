@@ -26,7 +26,8 @@ ParametersDelegate::ParametersDelegate(QObject* parent):
 QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     const ParametersModel* model = static_cast<const ParametersModel*>(index.model());
-    SoField* field = model->getData(index)->getField();
+    ParametersItem* item = static_cast<ParametersItem*>(model->itemFromIndex(index));
+    SoField* field = item->getField();
 
     if (SoSFEnum* f = dynamic_cast<SoSFEnum*>(field))
     {
@@ -38,15 +39,22 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
             editor->addItem(name.getString());
         }
         editor->setCurrentIndex(f->getValue());
-
-        connect(editor,  SIGNAL(activated(int)),
-                this, SLOT(commitAndCloseEditor()));
+        connect(
+            editor,  SIGNAL(activated(int)),
+            this, SLOT(commitAndCloseEditor())
+        );
         return editor;
     }
     else if (SoSFBool* f = dynamic_cast<SoSFBool*>(field))
     {
-        QCheckBox* editor = new QCheckBox(parent);
-        editor->setChecked(f->getValue());
+        QComboBox* editor = new QComboBox(parent);
+        editor->addItem("false");
+        editor->addItem("true");
+        editor->setCurrentIndex(f->getValue() ? 1 : 0);
+        connect(
+            editor,  SIGNAL(activated(int)),
+            this, SLOT(commitAndCloseEditor())
+        );
         return editor;
     }
     else if (UserSField* f = dynamic_cast<UserSField*>(field))
@@ -54,12 +62,12 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
         FieldEditor* editor = f->GetEditor();
         editor->setGeometry(option.rect);
         editor->setParent(parent);
+        QString s = model->data(index, Qt::DisplayRole).toString();
+        editor->SetData(s);
         connect(
             editor, SIGNAL(editingFinished()),
             this, SLOT(onCloseEditor())
-            );
-        QString s = model->data(index, Qt::DisplayRole).toString();
-        editor->SetData(s);
+        );
         return editor;
     }
     else if (UserMField* f = dynamic_cast<UserMField*>(field))
@@ -67,23 +75,20 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
         FieldEditor* editor = f->getEditor();
         editor->setGeometry(option.rect);
         editor->setParent(parent);
+        QString s = model->data(index, Qt::DisplayRole).toString();
+        editor->SetData(s);
         connect(
             editor, SIGNAL(editingFinished()),
             this, SLOT(onCloseEditor())
-            );
-        QString s = model->data(index, Qt::DisplayRole).toString();
-        editor->SetData(s);
+        );
         return editor;
     }
     else
     {
-        SbString fieldValue;
-        field->get(fieldValue);
-        QString text = fieldValue.getString();
-//        QString s = model->data(index, Qt::DisplayRole).toString();
+        QString text = model->data(index).toString();
 
         if (text.indexOf('\n') >= 0) {
-            text = text.trimmed();
+//            text = text.trimmed();
             ParametersEditor* editor = new ParametersEditor;
             editor->setText(text);
             return editor;
@@ -98,10 +103,7 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
 
 void ParametersDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
-//    if (QComboBox* cb = dynamic_cast<QComboBox*>(editor))
-//    {
-//        cb->showPopup();
-//    }
+// keep
 }
 
 #include <QMouseEvent>
@@ -110,6 +112,7 @@ void ParametersDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptio
 {
     if (!dynamic_cast<ParametersEditor*>(editor))
         QStyledItemDelegate::updateEditorGeometry(editor, option, index);
+
     if (QComboBox* cb = dynamic_cast<QComboBox*>(editor))
     {
         QMouseEvent event(QEvent::MouseButtonPress, QPointF(0, 0), Qt::LeftButton, 0, 0);
@@ -121,7 +124,8 @@ void ParametersDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptio
 void ParametersDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
     ParametersModel* modelP = static_cast<ParametersModel*>(model);
-    SoField* field = modelP->getData(index)->getField();
+    ParametersItem* item = static_cast<ParametersItem*>(modelP->itemFromIndex(index));
+    SoField* field = item->getField();
 
     QString value;
 
@@ -132,8 +136,8 @@ void ParametersDelegate::setModelData(QWidget* editor, QAbstractItemModel* model
     }
     else if (dynamic_cast<SoSFBool*>(field))
     {
-        QCheckBox* w = qobject_cast<QCheckBox*>(editor);
-        value = w->isChecked() ? "TRUE" : "FALSE";
+        QComboBox* w = qobject_cast<QComboBox*>(editor);
+        value = w->currentIndex() ? "TRUE" : "FALSE";
     }
     else if (dynamic_cast<UserSField*>(field))
     {
@@ -149,8 +153,12 @@ void ParametersDelegate::setModelData(QWidget* editor, QAbstractItemModel* model
     {
         if (QLineEdit* w = dynamic_cast<QLineEdit*>(editor) )
             value = w->text();
+
         else if (ParametersEditor* w = dynamic_cast<ParametersEditor*>(editor) )
             value = w->text();
+
+        QString text = model->data(index).toString();
+        if (value == text) return;
     }
 
     modelP->setData(index, value);
@@ -165,7 +173,7 @@ void ParametersDelegate::onCloseEditor() // not used?
 void ParametersDelegate::commitAndCloseEditor()
 {
     QComboBox* editor = qobject_cast<QComboBox*>(sender());
-    emit commitData(editor);
+//    emit commitData(editor);
 //    emit closeEditor(editor);
     editor->close();
 }

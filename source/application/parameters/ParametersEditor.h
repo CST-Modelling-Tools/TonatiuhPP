@@ -19,5 +19,5 @@ public:
     QString text();
 
 private:
-    Ui::ParameterTextEditor *ui;
+    Ui::ParameterTextEditor* ui;
 };
