@@ -34,6 +34,8 @@ void ParametersView::reset()
     QTreeView::reset(); // keep one model to avoid reset?
     double w = 3*fontMetrics().horizontalAdvance("Parameter");
     setColumnWidth(0, w);
+//    expandToDepth(1);
+    expandAll();
 }
 
 void ParametersView::onPressed(const QModelIndex& index)

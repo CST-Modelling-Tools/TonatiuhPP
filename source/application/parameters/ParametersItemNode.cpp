@@ -6,16 +6,13 @@
 #include <Inventor/nodekits/SoBaseKit.h>
 #include <Inventor/nodes/SoGroup.h>
 
-#include "ParametersItem.h"
+#include "ParametersItemField.h"
 
-ParametersItemNode::ParametersItemNode(SoNode* node):
-    QStandardItem(),
+
+ParametersItemNode::ParametersItemNode(QString part, SoNode* node):
+    QStandardItem(part),
     m_node(node)
 {
-    QString name = node->getName().getString();
-    if (name.isEmpty())
-        name = node->getTypeId().getName().getString();
-    setText(name);
     setEditable(false);
 
     SoFieldList fields;
@@ -28,7 +25,7 @@ ParametersItemNode::ParametersItemNode(SoNode* node):
 
         QStandardItem* itemName = new QStandardItem(name.getString());
         itemName->setEditable(false);
-        ParametersItem* itemValue = new ParametersItem(field);
+        ParametersItemField* itemValue = new ParametersItemField(field);
 
         appendRow({itemName, itemValue});
 

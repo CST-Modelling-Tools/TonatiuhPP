@@ -7,11 +7,11 @@ class SoSensor;
 class SoFieldSensor;
 
 
-class ParametersItem: public QStandardItem
+class ParametersItemField: public QStandardItem
 {
 public:
-    ParametersItem(SoField* field);
-    ~ParametersItem();
+    ParametersItemField(SoField* field);
+    ~ParametersItemField();
     
     QVariant data(int role = Qt::UserRole + 1) const;
     void setData(const QVariant& value, int role = Qt::UserRole + 1);

@@ -31,6 +31,7 @@ HEADERS += \
     commands/CmdRename.h \
     commands/CmdSunModified.h \
     commands/tgc.h \
+    parameters/ParametersItemField.h \
     parameters/ParametersItemNode.h \
     run/FluxAnalysis.h \
     run/FluxAnalysisDialog.h \
@@ -42,7 +43,6 @@ HEADERS += \
     main/UndoView.h \
     parameters/ParametersDelegate.h \
     parameters/ParametersEditor.h \
-    parameters/ParametersItem.h \
     parameters/ParametersModel.h \
     parameters/ParametersTabs.h \
     parameters/ParametersView.h \
@@ -91,6 +91,7 @@ SOURCES += \
     commands/CmdPaste.cpp \
     commands/CmdRename.cpp \
     commands/CmdSunModified.cpp \
+    parameters/ParametersItemField.cpp \
     parameters/ParametersItemNode.cpp \
     run/FluxAnalysis.cpp \
     run/FluxAnalysisDialog.cpp \
@@ -103,7 +104,6 @@ SOURCES += \
     main/UndoView.cpp \
     parameters/ParametersDelegate.cpp \
     parameters/ParametersEditor.cpp \
-    parameters/ParametersItem.cpp \
     parameters/ParametersModel.cpp \
     parameters/ParametersTabs.cpp \
     parameters/ParametersView.cpp \

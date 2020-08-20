@@ -23,7 +23,5 @@ public slots:
     void setValue(SoNode* node, QString field, QString value);
 
 private:
-    void addTabNode(SoNode* node, QString partName);
-
     SoNode* m_node;
 };

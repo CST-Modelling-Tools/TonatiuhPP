@@ -113,21 +113,21 @@ void SceneModel::generateInstanceTree(InstanceNode* instance)
 
     if (TShapeKit* shapeKit = dynamic_cast<TShapeKit*>(node))
     {
-        SoNode* shape = shapeKit->shapeRT.getValue();
-        if (shape)
-            addInstanceNode(instance, shape);
+//        SoNode* shape = shapeKit->shapeRT.getValue();
+//        if (shape)
+//            addInstanceNode(instance, shape);
 
-        SoNode* aperture = shapeKit->profileRT.getValue();
-        if (aperture)
-            addInstanceNode(instance, aperture);
+//        SoNode* aperture = shapeKit->profileRT.getValue();
+//        if (aperture)
+//            addInstanceNode(instance, aperture);
 
-        SoNode* materialRT = shapeKit->materialRT.getValue();
-        if (materialRT)
-            addInstanceNode(instance, materialRT);
+//        SoNode* materialRT = shapeKit->materialRT.getValue();
+//        if (materialRT)
+//            addInstanceNode(instance, materialRT);
 
-        SoNode* material = shapeKit->getPart("material", false);
-        if (material)
-            addInstanceNode(instance, material);
+//        SoNode* material = shapeKit->getPart("material", false);
+//        if (material)
+//            addInstanceNode(instance, material);
     }
     else if (TSeparatorKit* separatorKit = dynamic_cast<TSeparatorKit*>(node))
     {
@@ -558,20 +558,20 @@ void SceneModel::replaceCoinNode(TShapeKit* parent, SoNode* node)
         parent->materialRT = node;
     }
 
-    for (InstanceNode* instanceParent : m_mapCoinQt[parent])
-    {
-        // remove
-        InstanceNode* instance = instanceParent->children[row];
-        QList<InstanceNode*>& instances = m_mapCoinQt[instance->getNode()];
-        instances.removeAt(instances.indexOf(instance));
+//    for (InstanceNode* instanceParent : m_mapCoinQt[parent])
+//    {
+//        // remove
+//        InstanceNode* instance = instanceParent->children[row];
+//        QList<InstanceNode*>& instances = m_mapCoinQt[instance->getNode()];
+//        instances.removeAt(instances.indexOf(instance));
 
-        // insert
-        instance = new InstanceNode(node);
-        instanceParent->replaceChild(row, instance);
-        m_mapCoinQt[node].append(instance);
-    }
+//        // insert
+//        instance = new InstanceNode(node);
+//        instanceParent->replaceChild(row, instance);
+//        m_mapCoinQt[node].append(instance);
+//    }
 
-    emit layoutChanged();
+//    emit layoutChanged();
 }
 
 void SceneModel::replaceAir(AirKit* air)

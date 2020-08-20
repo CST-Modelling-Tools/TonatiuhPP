@@ -18,7 +18,7 @@
 #include "libraries/Coin3D/UserMField.h"
 
 #include "ParametersModel.h"
-#include "ParametersItem.h"
+#include "ParametersItemField.h"
 #include "ParametersEditor.h"
 
 
@@ -31,7 +31,7 @@ ParametersDelegate::ParametersDelegate(QObject* parent):
 QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     const ParametersModel* model = static_cast<const ParametersModel*>(index.model());
-    ParametersItem* item = static_cast<ParametersItem*>(model->itemFromIndex(index));
+    ParametersItemField* item = static_cast<ParametersItemField*>(model->itemFromIndex(index));
     SoField* field = item->field();
 
     if (SoSFEnum* f = dynamic_cast<SoSFEnum*>(field))
@@ -143,7 +143,7 @@ void ParametersDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptio
 void ParametersDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
     ParametersModel* modelP = static_cast<ParametersModel*>(model);
-    ParametersItem* item = static_cast<ParametersItem*>(modelP->itemFromIndex(index));
+    ParametersItemField* item = static_cast<ParametersItemField*>(modelP->itemFromIndex(index));
     SoField* field = item->field();
 
     QString value;

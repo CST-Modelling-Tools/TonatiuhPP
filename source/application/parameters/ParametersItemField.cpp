@@ -1,20 +1,20 @@
-#include "ParametersItem.h"
+#include "ParametersItemField.h"
 
 #include <Inventor/fields/SoField.h>
 #include <Inventor/fields/SoSFBool.h>
 #include <Inventor/sensors/SoFieldSensor.h>
 
 
-void ParametersItem::updateItem(void* data, SoSensor*)
+void ParametersItemField::updateItem(void* data, SoSensor*)
 {
-    ParametersItem* item = (ParametersItem*) data;
+    ParametersItemField* item = (ParametersItemField*) data;
     SbString v;
     item->m_field->get(v);
     item->setData(v.getString(), Qt::EditRole);
 }
 
 
-ParametersItem::ParametersItem(SoField* field):
+ParametersItemField::ParametersItemField(SoField* field):
     QStandardItem(),
     m_field(field)
 {
@@ -22,12 +22,12 @@ ParametersItem::ParametersItem(SoField* field):
      m_sensor->attach(m_field);
 }
 
-ParametersItem::~ParametersItem()
+ParametersItemField::~ParametersItemField()
 {
     delete m_sensor;
 }
 
-QVariant ParametersItem::data(int role) const
+QVariant ParametersItemField::data(int role) const
 {
     if (role == Qt::DisplayRole)
     {
@@ -75,7 +75,7 @@ QVariant ParametersItem::data(int role) const
     return QStandardItem::data(role);
 }
 
-void ParametersItem::setData(const QVariant& value, int role)
+void ParametersItemField::setData(const QVariant& value, int role)
 {
       QStandardItem::setData(value, role);
 }

@@ -95,9 +95,12 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isFront, Inst
 //    if (TShapeKit* kit = dynamic_cast<TShapeKit*>(m_node)) // slower
     if (m_node->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId())) // faster
     {
-        ShapeRT* shape = (ShapeRT*) children[IndexShapeRT]->m_node;
+        TShapeKit* kit = (TShapeKit*) m_node;
+        ShapeRT* shape = (ShapeRT*) kit->shapeRT.getValue();
+//        ShapeRT* shape = (ShapeRT*) children[IndexShapeRT]->m_node;
         if (!shape) return false;
-        ProfileRT* profile = (ProfileRT*) children[IndexProfileRT]->m_node;
+        ProfileRT* profile = (ProfileRT*) kit->profileRT.getValue();
+//        ProfileRT* profile = (ProfileRT*) children[IndexProfileRT]->m_node;
 
         Ray rayLocal = m_transform.transformInverse(rayIn);
         double tHit = 0.;
@@ -112,7 +115,8 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isFront, Inst
         dg.dpdv = m_transform.transformVector(dg.dpdv);
         dg.normal = m_transform.transformNormal(dg.normal);
 
-        MaterialRT* material = (MaterialRT*) children[IndexMaterialRT]->m_node;
+        MaterialRT* material = (MaterialRT*) kit->materialRT.getValue();
+//        MaterialRT* material = (MaterialRT*) children[IndexMaterialRT]->m_node;
         if (!material) return false;
         return material->OutputRay(rayIn, dg, rand, rayOut);
     }
@@ -169,13 +173,17 @@ void InstanceNode::updateTree(const Transform& tParent)
     }
     else if (TShapeKit* shapeKit = dynamic_cast<TShapeKit*>(m_node))
     {
+        TShapeKit* kit = (TShapeKit*) m_node;
+
         if (SoTransform* t = (SoTransform*) shapeKit->getPart("transform", false))
             m_transform = tParent*tgf::makeTransform(t);
         else
             m_transform = tParent;
 
-        ShapeRT* shape = (ShapeRT*) children[IndexShapeRT]->m_node;
-        ProfileRT* profile = (ProfileRT*) children[IndexProfileRT]->m_node;
+        ShapeRT* shape = (ShapeRT*) kit->shapeRT.getValue();
+        ProfileRT* profile = (ProfileRT*) kit->profileRT.getValue();
+//        ShapeRT* shape = (ShapeRT*) children[IndexShapeRT]->m_node;
+//        ProfileRT* profile = (ProfileRT*) children[IndexProfileRT]->m_node;
         m_box = m_transform(shape->getBox(profile));
     }
 }

@@ -7,7 +7,7 @@
 #include <Inventor/nodes/SoGroup.h>
 
 
-#include "ParametersItem.h"
+#include "ParametersItemField.h"
 #include "ParametersItemNode.h"
 
 
@@ -26,7 +26,10 @@ void ParametersModel::setNode(SoNode* node)
 
     SoBaseKit* kit = dynamic_cast<SoBaseKit*>(node);
     if (!kit) {
-        parent->appendRow(new ParametersItemNode(node));
+        QString name = node->getName().getString();
+        if (name.isEmpty())
+            name = node->getTypeId().getName().getString();
+        parent->appendRow(new ParametersItemNode(name, node));
     } else {
         QString type = kit->getTypeId().getName().getString();
         QStringList parts;
@@ -43,28 +46,34 @@ void ParametersModel::setNode(SoNode* node)
 
         for (QString part : parts)
         {
-            if (SoNode* node = kit->getPart(part.toStdString().c_str(), false))
-            {
-                parent->appendRow(new ParametersItemNode(node));
+            SoNode* nodeSub = kit->getPart(part.toStdString().c_str(), false);
+            if (!nodeSub)
+                if (SoField* field = kit->getField(part.toStdString().c_str()))
+                    if (SoSFNode* fn = dynamic_cast<SoSFNode*>(field))
+                        nodeSub = fn->getValue();
+
+            if (nodeSub) {
+//                QString name = nodeSub->getName().getString();
+//                if (name.isEmpty())
+                QString name = nodeSub->getTypeId().getName().getString();
+                QStandardItem* item = new QStandardItem(name);
+                item->setEditable(false);
+                parent->appendRow({new ParametersItemNode(part, nodeSub), item});
+
             }
-            else if (SoField* field = kit->getField(part.toStdString().c_str()))
-            {
-                if (SoSFNode* fn = dynamic_cast<SoSFNode*>(field))
-                    parent->appendRow(new ParametersItemNode(fn->getValue()));
-            }
-            else if (part[part.size() - 1] == '*')
-            {
-                QString partX = part.left(part.size() - 1);
-                SoGroup* group = static_cast<SoGroup*>(kit->getPart(partX.toStdString().c_str(), false));
-                if (!group) continue;
-                int nMax = std::min(group->getNumChildren(), 10);
-                for (int n = 0; n < nMax; n++)
-                {
-                    SoNode* node = (SoNode*) group->getChild(n);
-                    if (node)
-                        parent->appendRow(new ParametersItemNode(node));
-                }
-            }
+//            else if (part[part.size() - 1] == '*')
+//            {
+//                QString partX = part.left(part.size() - 1);
+//                SoGroup* group = static_cast<SoGroup*>(kit->getPart(partX.toStdString().c_str(), false));
+//                if (!group) continue;
+//                int nMax = std::min(group->getNumChildren(), 10);
+//                for (int n = 0; n < nMax; n++)
+//                {
+//                    SoNode* node = (SoNode*) group->getChild(n);
+//                    if (node)
+//                        parent->appendRow(new ParametersItemNode(node));
+//                }
+//            }
         }
     }
 
@@ -73,7 +82,7 @@ void ParametersModel::setNode(SoNode* node)
 
 bool ParametersModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    ParametersItem* item = dynamic_cast<ParametersItem*>(itemFromIndex(index));
+    ParametersItemField* item = dynamic_cast<ParametersItemField*>(itemFromIndex(index));
     if (!item)
         return QStandardItemModel::setData(index, value, role);
     else {
