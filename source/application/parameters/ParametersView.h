@@ -3,7 +3,6 @@
 #include <QTreeView>
 
 class ParametersModel;
-class SoNode;
 
 
 class ParametersView: public QTreeView
@@ -17,10 +16,6 @@ public:
 
     void reset();
 
-public slots:
+private slots:
     void onPressed(const QModelIndex &index);
-
-//protected:
-//    void mousePressEvent(QMouseEvent* event);
-//    void mouseDoubleClickEvent(QMouseEvent* event);
 };

@@ -228,7 +228,6 @@ private:
     void SetupUndoView();
     void SetupGraphicView();
     void SetupTreeView();
-    void SetupParametersView();
 
     void SetupPluginManager();
     void SetupActionsInsertComponent();

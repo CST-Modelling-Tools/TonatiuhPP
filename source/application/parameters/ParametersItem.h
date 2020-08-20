@@ -1,8 +1,6 @@
 #pragma once
 
 #include <QStandardItem>
-#include <QList>
-#include <QString>
 
 class SoField;
 class SoSensor;
@@ -19,6 +17,8 @@ public:
     void setData(const QVariant& value, int role = Qt::UserRole + 1);
     
     SoField* field() const {return m_field;}
+
+private:
     static void updateItem(void* data, SoSensor*);
 
 private:

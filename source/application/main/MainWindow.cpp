@@ -239,11 +239,9 @@ border-width: 0 0 1 0;
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete m_undoView;
     delete m_pluginManager;
     delete m_modelScene;
     delete m_document;
-    delete m_undoStack;
     delete m_rand;
     delete m_photonsBuffer;
 }
@@ -279,7 +277,6 @@ void MainWindow::SetupViews()
     SetupUndoView();
     SetupGraphicView();
     SetupTreeView();
-    SetupParametersView();
 }
 
 /*!
@@ -352,11 +349,9 @@ void MainWindow::SetupGraphicView()
     on_actionQuadView_toggled();
 }
 
-/*!
- * Initializates Tonatiuh objectes tree view.
- */
 void MainWindow::SetupTreeView()
 {
+    // tree
     ui->sceneView->setModel(m_modelScene);
     ui->sceneView->setSelectionModel(m_modelSelection);
     ui->sceneView->setRootIndex(m_modelScene->indexFromUrl(""));
@@ -369,18 +364,12 @@ void MainWindow::SetupTreeView()
             this, SLOT(ShowMenu(const QModelIndex&)) );
     connect(ui->sceneView, SIGNAL(nodeNameModificated(const QModelIndex&,const QString&)),
             this, SLOT(ChangeNodeName(const QModelIndex&,const QString&)) );
-}
 
-/*!
- * Initializes the tonatiuh objects parameters view.
- */
-void MainWindow::SetupParametersView()
-{
+    // parameters
     connect(
         ui->parametersTabs, SIGNAL(valueModified(SoNode*, QString, QString)),
         this, SLOT(SetParameterValue(SoNode*, QString, QString))
     );
-
 
     connect(
         m_modelSelection, SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)),
@@ -485,7 +474,7 @@ void MainWindow::onAbort(QString error)
 void MainWindow::onUndoStack()
 {
     ChangeSelection(m_modelSelection->currentIndex());
-    ui->parametersTabs->UpdateView();
+//    ui->parametersTabs->updateNode();
 }
 
 /*!
@@ -2313,7 +2302,7 @@ void MainWindow::ChangeSelection(const QModelIndex& index)
 {
     InstanceNode* instance = m_modelScene->getInstance(index);
     SoNode* node = instance->getNode();
-    ui->parametersTabs->SelectionChanged(node);
+    ui->parametersTabs->setNode(node);
 }
 
 /*!

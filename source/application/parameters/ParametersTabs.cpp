@@ -7,9 +7,7 @@
 #include "ParametersView.h"
 #include "ParametersTabs.h"
 
-/**
- * Creates a new ParametersView with parent \a parent.
- */
+
 ParametersTabs::ParametersTabs(QWidget* parent):
     QTabWidget(parent),
     m_node(0)
@@ -22,24 +20,37 @@ border:none;
 
 }
 
-/*!
- * Changes the parameters view to show \a coinNode \a parts parameters.
- */
-void ParametersTabs::SelectionChanged(SoNode* node)
+void ParametersTabs::setNode(SoNode* node)
 {
     if (node == m_node) return;
+    m_node = node;
+
 //    QList<QWidget*> list;
 //    for (int n = 0; n < count(); ++n)
 //        list << widget(n);
     clear();
 //    qDeleteAll(list);
 
-    m_node = node;
     SoBaseKit* kit = dynamic_cast<SoBaseKit*>(m_node);
-    if (!kit)
+    if (!kit) {
         addTabNode(node, "");
+        return;
+    }
 
-    for (QString part : ContainerNodeParts(kit))
+    QString type = kit->getTypeId().getName().getString();
+    QStringList parts;
+    if (type == "TSeparatorKit")
+        parts << "transform";
+    else if (type == "TShapeKit")
+        parts << "shapeRT" << "profileRT" << "materialRT" << "material";
+    else if (type == "SunKit")
+        parts << "position" << "shape" << "aperture";
+    else if (type == "AirKit")
+        parts << "transmission";
+    else if (type == "TerrainKit")
+        parts << "grid";
+
+    for (QString part : parts)
     {
         if (SoNode* node = kit->getPart(part.toStdString().c_str(), false))
         {
@@ -53,72 +64,42 @@ void ParametersTabs::SelectionChanged(SoNode* node)
         else if (part[part.size() - 1] == '*')
         {
             QString partX = part.left(part.size() - 1);
-            SoGroup* parentGroup = static_cast<SoGroup*>(kit->getPart(partX.toStdString().c_str(), false));
-            if (!parentGroup) continue;
-            int nMax = std::min(parentGroup->getNumChildren(), 10);
+            SoGroup* group = static_cast<SoGroup*>(kit->getPart(partX.toStdString().c_str(), false));
+            if (!group) continue;
+            int nMax = std::min(group->getNumChildren(), 10);
             for (int n = 0; n < nMax; n++)
             {
-                SoNode* element = (SoNode*) parentGroup->getChild(n);
-                if (element) addTabNode(element, "");
+                SoNode* node = (SoNode*) group->getChild(n);
+                if (node) addTabNode(node, "");
             }
         }
     }
 }
 
-void ParametersTabs::UpdateView()
+void ParametersTabs::updateNode()
 {
-    SelectionChanged(m_node);
+    setNode(m_node);
 }
 
-/*!
- * Emits a signal with \a node as the actual node, \a paramenterName and \a newValue.
- */
 void ParametersTabs::setValue(SoNode* node, QString field, QString value)
 {
     emit valueModified(node, field, value);
 }
 
-/*!
- * Adds a new tab to the view with \a coinNode \a partName parameters.
- */
 void ParametersTabs::addTabNode(SoNode* node, QString /*partName*/)
 {
-    QString name = node->getName().getString();
-    if (name.length() <= 0)
-        name = node->getTypeId().getName().getString();
-
     ParametersView* view = new ParametersView(this);
     ParametersModel* model = new ParametersModel(view);
     model->setNode(node);
     view->setModel(model);
+
+    QString name = node->getName().getString();
+    if (name.isEmpty())
+        name = node->getTypeId().getName().getString();
     addTab(view, name);
+
     connect(
         model, SIGNAL(valueModified(SoNode*, QString, QString)),
         this, SLOT(setValue(SoNode*, QString, QString))
     );
-}
-
-/*!
- * Returns the names of the parts of the \a coinNode that the view shows.
- *
- * If the \a coinNode is not a container node, return a empty list.
- */
-QStringList ParametersTabs::ContainerNodeParts(SoBaseKit* kit)
-{
-    if (!kit) return {};
-
-    QString type = kit->getTypeId().getName().getString();
-
-    if (type == "TSeparatorKit")
-        return {"transform"};
-    else if (type == "TShapeKit")
-        return {"shapeRT", "profileRT", "materialRT", "material"};
-    else if (type == "SunKit")
-        return {"position", "shape", "aperture"};
-    else if (type == "AirKit")
-        return {"transmission"};
-    else if (type == "TerrainKit")
-        return {"grid"};
-    else
-        return {};
 }

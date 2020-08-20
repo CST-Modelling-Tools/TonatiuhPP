@@ -44,12 +44,6 @@ void ParametersModel::setNode(SoNode* node)
     endResetModel();
 }
 
-//QVariant ParametersModel::data(const QModelIndex& index, int role) const
-//{
-//    ParametersItem* parameter = static_cast<ParametersItem*>(itemFromIndex(index));
-//    return parameter->data(role);
-//}
-
 bool ParametersModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
     ParametersItem* item = static_cast<ParametersItem*>(itemFromIndex(index));

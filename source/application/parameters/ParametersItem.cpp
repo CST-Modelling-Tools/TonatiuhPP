@@ -1,13 +1,8 @@
 #include "ParametersItem.h"
 
-#include <QString>
-
-#include <Inventor/SbString.h>
 #include <Inventor/fields/SoField.h>
-#include <Inventor/fields/SoSFString.h>
-#include <Inventor/lists/SoFieldList.h>
-#include <Inventor/sensors/SoFieldSensor.h>
 #include <Inventor/fields/SoSFBool.h>
+#include <Inventor/sensors/SoFieldSensor.h>
 
 
 void ParametersItem::updateItem(void* data, SoSensor*)
@@ -82,22 +77,5 @@ QVariant ParametersItem::data(int role) const
 
 void ParametersItem::setData(const QVariant& value, int role)
 {
-//    if (role == Qt::EditRole)
-//    {
-//        SbString v;
-//        m_field->get(v);
-//        if (v.getString() == value.toString()) return;
-//    }
-//    if (role == Qt::EditRole)
-//    {
-//        if (column() == 1)
-//            setText(value.toString());
-//    }
-//    else if (role == Qt::UserRole)
-//    {
-//        if (m_field)
-//            m_field->set(value.toString().toStdString().c_str());
-//    }
-//    else
       QStandardItem::setData(value, role);
 }
