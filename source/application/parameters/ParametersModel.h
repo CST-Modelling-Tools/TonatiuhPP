@@ -15,14 +15,11 @@ public:
 
     void setNode(SoNode* node);
 
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+//    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
     bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
 
 signals:
     void valueModified(SoNode* node, QString field, QString value);
-
-public slots:
-    void onItemChanged(QStandardItem *item);
 
 private:
     SoNode* m_node;

@@ -66,7 +66,6 @@ HEADERS += \
     view/SunNode3D.h \
     widgets/AboutDialog.h \
     widgets/AirDialog.h \
-    widgets/GridDialog.h \
     widgets/NetworkConnectionsDialog.h \
     widgets/SunDialog.h
 
@@ -127,7 +126,6 @@ SOURCES += \
     view/SunNode3D.cpp \
     widgets/AboutDialog.cpp \
     widgets/AirDialog.cpp \
-    widgets/GridDialog.cpp \
     widgets/NetworkConnectionsDialog.cpp \
     widgets/SunDialog.cpp
 
@@ -144,7 +142,6 @@ FORMS += \
     script/ScriptEditorDialog.ui \
     widgets/AboutDialog.ui \
     widgets/AirDialog.ui \
-    widgets/GridDialog.ui \
     widgets/NetworkConnectionsDialog.ui \
     widgets/SunDialog.ui
 

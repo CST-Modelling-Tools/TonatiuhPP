@@ -48,7 +48,7 @@ ContainerEditorMFVec2::ContainerEditorMFVec2(QWidget* parent):
 /*!
  * Return current value in the editor.
  */
-QString ContainerEditorMFVec2::GetData() const
+QString ContainerEditorMFVec2::getData() const
 {
     return m_valuesEdit->text();
 }
@@ -56,7 +56,7 @@ QString ContainerEditorMFVec2::GetData() const
 /*!
  * Set defaults values in the editor.
  */
-void ContainerEditorMFVec2::SetData(QString value)
+void ContainerEditorMFVec2::setData(QString value)
 {
     m_valuesEdit->setText(value);
 }

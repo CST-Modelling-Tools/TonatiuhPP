@@ -11,7 +11,7 @@
 ParametersModel::ParametersModel(QObject* parent):
     QStandardItemModel(parent)
 {
-//    connect(this, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)));
+
 }
 
 void ParametersModel::setNode(SoNode* node)
@@ -32,8 +32,8 @@ void ParametersModel::setNode(SoNode* node)
         SbName name;
         if (!node->getFieldName(field, name)) continue;
 
-//        QStandardItem* itemName = new QStandardItem(name.getString());
-        ParametersItem* itemName = new ParametersItem(name.getString());
+        QStandardItem* itemName = new QStandardItem(name.getString());
+        itemName->setEditable(false);
         setItem(n, 0, itemName);
         ParametersItem* itemValue = new ParametersItem(field);
         setItem(n, 1, itemValue);
@@ -44,11 +44,11 @@ void ParametersModel::setNode(SoNode* node)
     endResetModel();
 }
 
-QVariant ParametersModel::data(const QModelIndex& index, int role) const
-{
-    ParametersItem* parameter = static_cast<ParametersItem*>(itemFromIndex(index));
-    return parameter->data(role);
-}
+//QVariant ParametersModel::data(const QModelIndex& index, int role) const
+//{
+//    ParametersItem* parameter = static_cast<ParametersItem*>(itemFromIndex(index));
+//    return parameter->data(role);
+//}
 
 bool ParametersModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
@@ -56,22 +56,11 @@ bool ParametersModel::setData(const QModelIndex& index, const QVariant& value, i
     item->setData(value, role);
 
     SbName name;
-    m_node->getFieldName(item->getField(), name);
+    m_node->getFieldName(item->field(), name);
 
     emit valueModified(m_node, name.getString(), value.toString());
     return true;
 }
-
-void ParametersModel::onItemChanged(QStandardItem* item)
-{
-    ParametersItem* pitem = (ParametersItem*) item;
-    SbName name;
-    m_node->getFieldName(pitem->getField(), name);
-
-    emit valueModified(m_node, name.getString(), pitem->getText());
-
-
-//    emit valueModified(node, field, value);
 
 //    if (item->isCheckable()) {
 //        ParametersItem* pitem = (ParametersItem*) item;
@@ -79,9 +68,5 @@ void ParametersModel::onItemChanged(QStandardItem* item)
 //        if (!f) return;
 //        bool on = item->checkState() == Qt::Checked;
 //        if (f->getValue() == on) return;
-
-//        SbName name;
-//        m_node->getFieldName(f, name);
-//        emit valueModified(m_node, name.getString(), on ? "TRUE" : "FALSE");
 //    }
-}
+

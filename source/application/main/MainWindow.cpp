@@ -98,7 +98,6 @@
 #include "view/GraphicView.h"
 #include "widgets/AboutDialog.h"
 #include "widgets/AirDialog.h"
-#include "widgets/GridDialog.h"
 #include "widgets/NetworkConnectionsDialog.h"
 #include "widgets/SunDialog.h"
 #include "UndoView.h"

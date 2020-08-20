@@ -19,19 +19,10 @@ void ParametersItem::updateItem(void* data, SoSensor*)
 }
 
 
-ParametersItem::ParametersItem(QString text):
-    QStandardItem(text),
-    m_field(0),
-    m_sensor(0)
-{
-     setEditable(false);
-}
-
 ParametersItem::ParametersItem(SoField* field):
-    QStandardItem("qqq"),
+    QStandardItem(),
     m_field(field)
 {
-     setEditable(true);
      m_sensor = new SoFieldSensor(updateItem, this);
      m_sensor->attach(m_field);
 }

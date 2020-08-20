@@ -31,8 +31,8 @@ class TONATIUH_LIBRARIES ContainerEditorMFVec2: public FieldEditor
 public:
     ContainerEditorMFVec2(QWidget* parent = 0);
 
-    QString GetData() const;
-    void SetData(QString value);
+    QString getData() const;
+    void setData(QString value);
     void SetTitles(QStringList titles);
 
 signals:

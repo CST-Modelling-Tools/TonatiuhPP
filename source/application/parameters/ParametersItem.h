@@ -12,15 +12,13 @@ class SoFieldSensor;
 class ParametersItem: public QStandardItem
 {
 public:
-    ParametersItem(QString text);
     ParametersItem(SoField* field);
     ~ParametersItem();
     
     QVariant data(int role = Qt::UserRole + 1) const;
     void setData(const QVariant& value, int role = Qt::UserRole + 1);
     
-    QString getText() const {return text();}
-    SoField* getField() const {return m_field;}
+    SoField* field() const {return m_field;}
     static void updateItem(void* data, SoSensor*);
 
 private:
