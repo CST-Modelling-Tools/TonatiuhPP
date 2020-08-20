@@ -132,8 +132,6 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
     ui(new Ui::MainWindow),
     m_recentFiles(""),
     m_currentFile(""),
-    m_undoStack(0),
-    m_undoView(0),
     m_document(0),
     m_graphicsRoot(0),
     m_modelScene(0),
@@ -287,18 +285,14 @@ void MainWindow::SetupUndoView()
     m_undoStack = new QUndoStack(this);
     m_undoStack->setUndoLimit(10);
 
-    m_undoView = new UndoView(m_undoStack);
-    m_undoView->setWindowTitle("Undo List");
-    m_undoView->setAttribute(Qt::WA_QuitOnClose, false);
-    int q = fontMetrics().height();
-    m_undoView->resize(24*q, 16*q);
-
     connect(m_undoStack, SIGNAL(canRedoChanged(bool)),
             ui->actionEditRedo, SLOT(setEnabled(bool)) );
     connect(m_undoStack, SIGNAL(canUndoChanged(bool)),
             ui->actionEditUndo, SLOT(setEnabled(bool)) );
     connect(m_undoStack, SIGNAL(indexChanged(int)),
             this, SLOT(onUndoStack()));
+
+    m_undoView = new UndoView(m_undoStack);
 }
 
 void MainWindow::SetupGraphicView()
@@ -913,12 +907,11 @@ void MainWindow::SetParameterValue(SoNode* node, QString name, QString value)
 
 /*!
  * Shows a windows with the applied commands.
- * The most recently executed command is always selected.
- * When a different command is selected the model returns to the state after selected command was applied.
  */
 void MainWindow::ShowCommandView()
 {
     m_undoView->show();
+    m_undoView->activateWindow();
 }
 
 /*!

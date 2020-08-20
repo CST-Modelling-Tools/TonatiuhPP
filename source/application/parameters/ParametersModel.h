@@ -2,7 +2,6 @@
 
 #include <QStandardItemModel>
 
-class ParametersItem;
 class SoNode;
 
 
@@ -19,7 +18,4 @@ public:
 
 signals:
     void valueModified(SoNode* node, QString field, QString value);
-
-private:
-    SoNode* m_node;
 };

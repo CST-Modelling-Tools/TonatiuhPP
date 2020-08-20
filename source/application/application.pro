@@ -31,6 +31,7 @@ HEADERS += \
     commands/CmdRename.h \
     commands/CmdSunModified.h \
     commands/tgc.h \
+    parameters/ParametersItemNode.h \
     run/FluxAnalysis.h \
     run/FluxAnalysisDialog.h \
     run/RayTracingDialog.h \
@@ -90,6 +91,7 @@ SOURCES += \
     commands/CmdPaste.cpp \
     commands/CmdRename.cpp \
     commands/CmdSunModified.cpp \
+    parameters/ParametersItemNode.cpp \
     run/FluxAnalysis.cpp \
     run/FluxAnalysisDialog.cpp \
     run/RayTracingDialog.cpp \

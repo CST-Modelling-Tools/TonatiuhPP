@@ -31,49 +31,49 @@ void ParametersTabs::setNode(SoNode* node)
     clear();
 //    qDeleteAll(list);
 
-    SoBaseKit* kit = dynamic_cast<SoBaseKit*>(m_node);
-    if (!kit) {
+//    SoBaseKit* kit = dynamic_cast<SoBaseKit*>(m_node);
+//    if (!kit) {
         addTabNode(node, "");
-        return;
-    }
+//        return;
+//    }
 
-    QString type = kit->getTypeId().getName().getString();
-    QStringList parts;
-    if (type == "TSeparatorKit")
-        parts << "transform";
-    else if (type == "TShapeKit")
-        parts << "shapeRT" << "profileRT" << "materialRT" << "material";
-    else if (type == "SunKit")
-        parts << "position" << "shape" << "aperture";
-    else if (type == "AirKit")
-        parts << "transmission";
-    else if (type == "TerrainKit")
-        parts << "grid";
+//    QString type = kit->getTypeId().getName().getString();
+//    QStringList parts;
+//    if (type == "TSeparatorKit")
+//        parts << "transform";
+//    else if (type == "TShapeKit")
+//        parts << "shapeRT" << "profileRT" << "materialRT" << "material";
+//    else if (type == "SunKit")
+//        parts << "position" << "shape" << "aperture";
+//    else if (type == "AirKit")
+//        parts << "transmission";
+//    else if (type == "TerrainKit")
+//        parts << "grid";
 
-    for (QString part : parts)
-    {
-        if (SoNode* node = kit->getPart(part.toStdString().c_str(), false))
-        {
-            addTabNode(node, part);
-        }
-        else if (SoField* field = kit->getField(part.toStdString().c_str()))
-        {
-            if (SoSFNode* fn = dynamic_cast<SoSFNode*>(field))
-                addTabNode(fn->getValue(), part);
-        }
-        else if (part[part.size() - 1] == '*')
-        {
-            QString partX = part.left(part.size() - 1);
-            SoGroup* group = static_cast<SoGroup*>(kit->getPart(partX.toStdString().c_str(), false));
-            if (!group) continue;
-            int nMax = std::min(group->getNumChildren(), 10);
-            for (int n = 0; n < nMax; n++)
-            {
-                SoNode* node = (SoNode*) group->getChild(n);
-                if (node) addTabNode(node, "");
-            }
-        }
-    }
+//    for (QString part : parts)
+//    {
+//        if (SoNode* node = kit->getPart(part.toStdString().c_str(), false))
+//        {
+//            addTabNode(node, part);
+//        }
+//        else if (SoField* field = kit->getField(part.toStdString().c_str()))
+//        {
+//            if (SoSFNode* fn = dynamic_cast<SoSFNode*>(field))
+//                addTabNode(fn->getValue(), part);
+//        }
+//        else if (part[part.size() - 1] == '*')
+//        {
+//            QString partX = part.left(part.size() - 1);
+//            SoGroup* group = static_cast<SoGroup*>(kit->getPart(partX.toStdString().c_str(), false));
+//            if (!group) continue;
+//            int nMax = std::min(group->getNumChildren(), 10);
+//            for (int n = 0; n < nMax; n++)
+//            {
+//                SoNode* node = (SoNode*) group->getChild(n);
+//                if (node) addTabNode(node, "");
+//            }
+//        }
+//    }
 }
 
 void ParametersTabs::updateNode()
@@ -92,6 +92,7 @@ void ParametersTabs::addTabNode(SoNode* node, QString /*partName*/)
     ParametersModel* model = new ParametersModel(view);
     model->setNode(node);
     view->setModel(model);
+    view->expandToDepth(1);
 
     QString name = node->getName().getString();
     if (name.isEmpty())

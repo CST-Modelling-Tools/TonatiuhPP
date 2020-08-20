@@ -10,6 +10,11 @@ ParametersView::ParametersView(QWidget* parent):
     setItemDelegate(delegate);
     setEditTriggers(QAbstractItemView::NoEditTriggers);
 
+    connect(
+        this, SIGNAL(pressed(QModelIndex)),
+        this, SLOT(onPressed(QModelIndex))
+    );
+
     setStyleSheet(R"(
 QLineEdit {
 padding-left: 1;
@@ -17,10 +22,6 @@ selection-background-color: #c8dbe5;
 selection-color: black;
 }
      )");
-    connect(
-        this, SIGNAL(pressed(QModelIndex)),
-        this, SLOT(onPressed(QModelIndex))
-    );
 }
 
 ParametersModel* ParametersView::getModel()
@@ -31,7 +32,7 @@ ParametersModel* ParametersView::getModel()
 void ParametersView::reset()
 {
     QTreeView::reset(); // keep one model to avoid reset?
-    double w = 2.5*fontMetrics().horizontalAdvance("Parameter");
+    double w = 3*fontMetrics().horizontalAdvance("Parameter");
     setColumnWidth(0, w);
 }
 

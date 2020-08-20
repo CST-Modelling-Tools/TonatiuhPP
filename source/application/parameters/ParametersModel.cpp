@@ -3,9 +3,12 @@
 #include <Inventor/nodes/SoNode.h>
 #include <Inventor/fields/SoField.h>
 #include <Inventor/lists/SoFieldList.h>
-#include <Inventor/SbString.h>
+#include <Inventor/nodekits/SoBaseKit.h>
+#include <Inventor/nodes/SoGroup.h>
+
 
 #include "ParametersItem.h"
+#include "ParametersItemNode.h"
 
 
 ParametersModel::ParametersModel(QObject* parent):
@@ -18,42 +21,72 @@ void ParametersModel::setNode(SoNode* node)
 {
     beginResetModel();
     clear();
-
     setHorizontalHeaderLabels({"Parameter", "Value"});
+    QStandardItem* parent = invisibleRootItem();
 
-    if (!node) return;
-    m_node = node;
+    SoBaseKit* kit = dynamic_cast<SoBaseKit*>(node);
+    if (!kit) {
+        parent->appendRow(new ParametersItemNode(node));
+    } else {
+        QString type = kit->getTypeId().getName().getString();
+        QStringList parts;
+        if (type == "TSeparatorKit")
+            parts << "transform";
+        else if (type == "TShapeKit")
+            parts << "shapeRT" << "profileRT" << "materialRT" << "material";
+        else if (type == "SunKit")
+            parts << "position" << "shape" << "aperture";
+        else if (type == "AirKit")
+            parts << "transmission";
+        else if (type == "TerrainKit")
+            parts << "grid";
 
-    SoFieldList fields;
-    node->getFields(fields);
-    for (int n = 0; n < fields.getLength(); ++n)
-    {
-        SoField* field = fields.get(n);
-        SbName name;
-        if (!node->getFieldName(field, name)) continue;
-
-        QStandardItem* itemName = new QStandardItem(name.getString());
-        itemName->setEditable(false);
-        setItem(n, 0, itemName);
-        ParametersItem* itemValue = new ParametersItem(field);
-        setItem(n, 1, itemValue);
-
-//        QModelIndex index = m_model->indexFromItem(itemValue);
-//        openPersistentEditor(index);
+        for (QString part : parts)
+        {
+            if (SoNode* node = kit->getPart(part.toStdString().c_str(), false))
+            {
+                parent->appendRow(new ParametersItemNode(node));
+            }
+            else if (SoField* field = kit->getField(part.toStdString().c_str()))
+            {
+                if (SoSFNode* fn = dynamic_cast<SoSFNode*>(field))
+                    parent->appendRow(new ParametersItemNode(fn->getValue()));
+            }
+            else if (part[part.size() - 1] == '*')
+            {
+                QString partX = part.left(part.size() - 1);
+                SoGroup* group = static_cast<SoGroup*>(kit->getPart(partX.toStdString().c_str(), false));
+                if (!group) continue;
+                int nMax = std::min(group->getNumChildren(), 10);
+                for (int n = 0; n < nMax; n++)
+                {
+                    SoNode* node = (SoNode*) group->getChild(n);
+                    if (node)
+                        parent->appendRow(new ParametersItemNode(node));
+                }
+            }
+        }
     }
+
     endResetModel();
 }
 
 bool ParametersModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    ParametersItem* item = static_cast<ParametersItem*>(itemFromIndex(index));
-    item->setData(value, role);
+    ParametersItem* item = dynamic_cast<ParametersItem*>(itemFromIndex(index));
+    if (!item)
+        return QStandardItemModel::setData(index, value, role);
+    else {
+        item->setData(value, role);
 
-    SbName name;
-    m_node->getFieldName(item->field(), name);
+        ParametersItemNode* itemNode = (ParametersItemNode*) itemFromIndex(index.parent());
+        SoNode* node = itemNode->node();
+        SbName name;
+        node->getFieldName(item->field(), name);
+        emit valueModified(node, name.getString(), value.toString());
 
-    emit valueModified(m_node, name.getString(), value.toString());
-    return true;
+        return true;
+    }
 }
 
 //    if (item->isCheckable()) {

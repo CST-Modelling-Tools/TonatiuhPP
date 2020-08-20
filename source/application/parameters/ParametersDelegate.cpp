@@ -46,8 +46,8 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
         editor->setCurrentIndex(f->getValue());
         connect(
             editor,  SIGNAL(activated(int)),
-            this, SLOT(commitAndCloseEditor())
-//            editor, SLOT(close())
+//            this, SLOT(onCloseEditor())
+            editor, SLOT(close())
         );
         return editor;
     }
