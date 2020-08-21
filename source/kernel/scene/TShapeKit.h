@@ -27,6 +27,7 @@ public:
     SoSFNode material;
 
     SoShapeKit* m_shapeKit;
+
 protected:
      ~TShapeKit();
 

@@ -31,43 +31,40 @@ QVariant ParametersItemField::data(int role) const
 {
     if (role == Qt::DisplayRole)
     {
-        if (m_field) {
-            if (SoSFBool* f = dynamic_cast<SoSFBool*>(m_field))
-                return f->getValue() ? "true" : "false";
-            else {
-                SbString v;
-                m_field->get(v);
-                return v.getString();
+        if (SoSFBool* f = dynamic_cast<SoSFBool*>(m_field))
+            return f->getValue() ? "true" : "false";
+        else {
+            SbString v;
+            m_field->get(v);
+            QString txt = v.getString();
+
+            // discard multilines
+            if (txt.indexOf('\n') >= 0)
+                return QString("...");
+
+            // correct precision
+            QStringList list = txt.split(" ");
+            QString ans;
+            for (int n = 0; n < list.size(); ++n) {
+                if (n > 0) ans += " ";
+                QString q = list[n];
+                bool ok;
+                double d = q.toDouble(&ok);
+                if (ok)
+                    ans += QString::number(d);
+                else
+                    return txt;
             }
+            return ans;
         }
     }
-//        QString text = QStandardItem::data(role).toString();
+    else if (role == Qt::EditRole)
+    {
+        SbString v;
+        m_field->get(v);
+        return v.getString();
+    }
 
-//        // discard multilines
-//        if (text.indexOf('\n') >= 0)
-//            return QString("...");
-
-//        // correct precision
-//        QStringList list = text.split(" ");
-//        QString ans;
-//        for (int n = 0; n < list.size(); ++n) {
-//            if (n > 0) ans += " ";
-//            QString q = list[n];
-//            bool ok;
-//            double d = q.toDouble(&ok);
-//            if (ok) ans += QString::number(d);
-//            else
-//                return text;
-//        }
-//        return ans;
-
-//    {
-//        if (column() == 0) return text();
-
-//        SbString value = "null";
-//        m_field->get(value);
-//        return QString(value.getString());
-//    }
     return QStandardItem::data(role);
 }
 

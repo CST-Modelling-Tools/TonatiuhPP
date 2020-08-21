@@ -71,7 +71,6 @@ QScriptValue NodeObject::insertSurface(const QString& name)
 
     ShapeFactory* f = m_plugins->getShapeMap().value(name, 0);
     ShapeRT* shape = f->create();
-    shape->setName(f->name().toStdString().c_str());
 
     TShapeKit* parent = (TShapeKit*)(m_node);
     parent->shapeRT = shape;
@@ -86,7 +85,6 @@ QScriptValue NodeObject::insertProfile(const QString& name)
 
     ProfileFactory* f = m_plugins->getProfileMap().value(name, 0);
     ProfileRT* profile = f->create();
-    profile->setName(f->name().toStdString().c_str());
 
     TShapeKit* parent = (TShapeKit*)(m_node);
     parent->profileRT = profile;
@@ -101,7 +99,6 @@ QScriptValue NodeObject::insertMaterial(const QString& name)
 
     MaterialFactory* f = m_plugins->getMaterialMap().value(name, 0);
     MaterialRT* material = f->create();
-    material->setName(f->name().toStdString().c_str());
 
     TShapeKit* parent = (TShapeKit*)(m_node);
     parent->materialRT = material;

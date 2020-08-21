@@ -220,4 +220,9 @@ void PluginManager::sort()
         "File"
     };
     sortFactories(exportNames, m_exportFactories);
+
+    QStringList randomNames = {
+        "Mersenne-Twister"
+    };
+    sortFactories(randomNames, m_randomFactories);
 }

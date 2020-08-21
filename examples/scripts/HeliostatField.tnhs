@@ -22,10 +22,10 @@ function makeHeliostat(parent, name, position, aiming, focus)
 	m = s.insertMaterial("Specular");
 	m.setParameter("slope", "0.002");
 	
-	mG = s.getPart("material");
-	mG.setParameter("diffuseColor", "0.6 0.7 0.9")
-	mG.setParameter("specularColor", "0.3 0.3 0.3")
-	mG.setParameter("shiness", "0.8")
+	//mG = s.getPart("material");
+	//mG.setParameter("diffuseColor", "0.6 0.7 0.9")
+	//mG.setParameter("specularColor", "0.3 0.3 0.3")
+	//mG.setParameter("shiness", "0.8")
 }
 
 nodeRoot = NodeObject();
@@ -39,17 +39,17 @@ n.setParameter("translation", "0 0 10");
 n.setParameter("scaleFactor", "1 1 20");
 s = n.createShape();
 q = s.insertSurface("Cylinder");
-mG = s.getPart("material");
-mG.setParameter("ambientColor", "1 1 1");
-mG.setParameter("diffuseColor", "0.5 0.5 0.5");
+//mG = s.getPart("material");
+//mG.setParameter("ambientColor", "1 1 1");
+//mG.setParameter("diffuseColor", "0.5 0.5 0.5");
 
 n = nodeTower.createNode("Receiver");
 n.setParameter("translation", "0 0 21.5");
 n.setParameter("scaleFactor", "1 1 3");
 s = n.createShape();
 q = s.insertSurface("Cylinder");
-mG = s.getPart("material");
-mG.setParameter("emissiveColor", "1 1 1")
+//mG = s.getPart("material");
+//mG.setParameter("emissiveColor", "1 1 1")
 
 n = nodeTower.createNode("Cap");
 n.setParameter("translation", "0 0 23");
@@ -58,9 +58,9 @@ s = n.createShape();
 q = s.insertSurface("Planar");
 p = s.insertProfile("Circular");
 p.setParameter("rMax", "1");
-mG = s.getPart("material");
-mG.setParameter("ambientColor", "1 1 1");
-mG.setParameter("diffuseColor", "0.5 0.5 0.5");
+//mG = s.getPart("material");
+//mG.setParameter("ambientColor", "1 1 1");
+//mG.setParameter("diffuseColor", "0.5 0.5 0.5");
 
 printTime("Heliostats");
 nodeHeliostats = nodeRoot.createNode("Heliostats");

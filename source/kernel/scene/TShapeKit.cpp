@@ -28,34 +28,30 @@ void TShapeKit::initClass()
 TShapeKit::TShapeKit()
 {
     SO_KIT_CONSTRUCTOR(TShapeKit);
-//    isBuiltIn = TRUE;
+    isBuiltIn = TRUE;
 
-    SO_KIT_ADD_CATALOG_ENTRY(topSeparator, SoSeparator, FALSE, this, "", TRUE);
-
+    SO_KIT_ADD_CATALOG_ENTRY(topSeparator, SoGroup, FALSE, this, "", FALSE);
     SO_NODE_ADD_FIELD( shapeRT, (0) );
     SO_NODE_ADD_FIELD( profileRT, (0) );
     SO_NODE_ADD_FIELD( materialRT, (0) );
     SO_NODE_ADD_FIELD( material, (0) );
     SO_KIT_INIT_INSTANCE();
 
-
     SoGroup* g = (SoGroup*) topSeparator.getValue();
     m_shapeKit = new SoShapeKit;
     g->addChild(m_shapeKit);
 
+    profileRT = new ProfileBox;
+    materialRT = new MaterialAbsorber;
+    material = m_shapeKit->getPart("material", true);
+
     m_sensorShape = new SoFieldSensor(onSensor, this);
     m_sensorShape->attach(&shapeRT);
 
-    shapeRT = new ShapePlanar;
-    profileRT = new ProfileBox;
-    materialRT = new MaterialAbsorber;
-
-//    SoShapeKit* kit = (SoShapeKit*) getPart("topSeparator", true);
-//    material = ((SoShapeKit*)shapeKit2.getValue())->getPart("material", true);
-//    material = kit->getPart("material", true);
-
     m_sensorProfile = new SoFieldSensor(onSensor, this);
     m_sensorProfile->attach(&profileRT);
+
+    shapeRT = new ShapePlanar;
 }
 
 TShapeKit::~TShapeKit()
@@ -76,6 +72,5 @@ void TShapeKit::onSensor(void* data, SoSensor*)
 void TShapeKit::setDefaultOnNonWritingFields()
 {
     topSeparator.setDefault(TRUE);
-//    shapeKit.setDefault(TRUE);
     SoBaseKit::setDefaultOnNonWritingFields();
 }
