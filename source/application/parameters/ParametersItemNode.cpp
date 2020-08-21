@@ -23,24 +23,25 @@ ParametersItemNode::ParametersItemNode(QString part, SoNode* node):
     for (int n = 0; n < fields.getLength(); ++n)
     {
         SoField* field = fields.get(n);
-        SbName name;
-        node->getFieldName(field, name);
+        SbName sname;
+        node->getFieldName(field, sname);
+        QString name = sname.getString();
 
         if (SoSFNode* fn = dynamic_cast<SoSFNode*>(field)) {
             SoNode* nodeSub = fn->getValue();
             if (!nodeSub) continue;
             if (nodeSub->getTypeId().isDerivedFrom(SoGroup::getClassTypeId())) continue;
-            if (nodeSub->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId())) continue;
-            QString nameType;
-            nameType = nodeSub->getTypeId().getName().getString();
-            QStandardItem* item = new QStandardItem(nameType);
-            item->setEditable(false);
-            appendRow({new ParametersItemNode(name.getString(), nodeSub), item});
+            ParametersItemNode* itemNode = new ParametersItemNode(name, nodeSub);
+
+            QString nameType = nodeSub->getTypeId().getName().getString();
+            QStandardItem* itemType = new QStandardItem(nameType);
+            itemType->setEditable(false);
+
+            appendRow({itemNode, itemType});
         } else {
-            QStandardItem* itemName = new QStandardItem(name.getString());
+            QStandardItem* itemName = new QStandardItem(name);
             itemName->setEditable(false);
             ParametersItemField* itemValue = new ParametersItemField(field);
-
             appendRow({itemName, itemValue});
 
         }

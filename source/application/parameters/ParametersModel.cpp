@@ -18,60 +18,19 @@ ParametersModel::ParametersModel(QObject* parent):
 
 void ParametersModel::setNode(SoNode* node)
 {
-    if (!node) return;
     beginResetModel();
     clear();
     setHorizontalHeaderLabels({"Parameter", "Value"});
+
+    QString name = node->getName().getString();
+    ParametersItemNode* itemNode = new ParametersItemNode(name, node);
+
+    QString nameType = node->getTypeId().getName().getString();
+    QStandardItem* itemType = new QStandardItem(nameType);
+    itemType->setEditable(false);
+
     QStandardItem* parent = invisibleRootItem();
-
-//    SoBaseKit* kit = dynamic_cast<SoBaseKit*>(node);
-//    if (!kit) {
-        QString name = node->getName().getString();
-        QString nameType = node->getTypeId().getName().getString();
-        QStandardItem* item = new QStandardItem(nameType);
-        item->setEditable(false);
-        parent->appendRow({new ParametersItemNode(name, node), item});
-//    } else {
-//        QString type = kit->getTypeId().getName().getString();
-//        QStringList parts;
-//        if (type == "TSeparatorKit")
-//            parts << "transform";
-//        else if (type == "TShapeKit")
-//            parts << "shapeRT" << "profileRT" << "materialRT" << "material";
-//        else if (type == "WorldKit")
-//            parts;
-//        else {
-//            SoFieldList fields;
-//            kit->getFields(fields);
-//            for (int n = 0; n < fields.getLength(); ++n)
-//            {
-//                SoField* field = fields.get(n);
-//                SbName name;
-//                kit->getFieldName(field, name);
-//                parts << name.getString();
-//            }
-//        }
-
-//        for (QString part : parts)
-//        {
-//            SoNode* nodeSub = kit->getPart(part.toStdString().c_str(), false);
-//            if (!nodeSub)
-//                if (SoField* field = kit->getField(part.toStdString().c_str()))
-//                    if (SoSFNode* fn = dynamic_cast<SoSFNode*>(field))
-//                        nodeSub = fn->getValue();
-
-//            if (nodeSub) {
-////                QString name = nodeSub->getName().getString();
-////                if (name.isEmpty())
-//                QString name = nodeSub->getTypeId().getName().getString();
-//                QStandardItem* item = new QStandardItem(name);
-//                item->setEditable(false);
-//                parent->appendRow({new ParametersItemNode(part, nodeSub), item});
-
-//            }
-
-//        }
-//    }
+    parent->appendRow({itemNode, itemType});
 
     endResetModel();
 }
