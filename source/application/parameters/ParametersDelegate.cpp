@@ -113,7 +113,6 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
             return editor;
         } else {
             QLineEdit* editor = new QLineEdit(parent);
-            editor->setFrame(false);
             editor->setText(text);
             return editor;
         }

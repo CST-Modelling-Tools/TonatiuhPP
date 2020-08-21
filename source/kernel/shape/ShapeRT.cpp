@@ -82,7 +82,7 @@ bool ShapeRT::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, 
 void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals, bool /*reverseClock*/)
 {
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
-        SoShapeKit* shapeKit =  parent->m_shapeKit;
+    SoShapeKit* shapeKit = parent->m_shapeKit;
 //    SoShapeKit* shapeKit = (SoShapeKit*) parent->getPart("shapeKit", false);
 //    SoShapeKit* shapeKit = (SoShapeKit*) parent->shapeKit2.getValue();
     if (ProfilePolygon* profilePolygon = dynamic_cast<ProfilePolygon*>(profile))

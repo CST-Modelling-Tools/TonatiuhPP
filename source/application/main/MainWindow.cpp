@@ -199,7 +199,7 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
     ui->toolbarFile->hide();
     ui->toolbarEdit->hide();
 
-    setStyleSheet(R"(
+    qApp->setStyleSheet(R"(
 QAbstractItemView {
 outline: 0;
 }
@@ -2370,7 +2370,6 @@ void MainWindow::InsertSurface(ShapeFactory* factory, int /*numberofParameters*/
     if (!kit) return;
 
     ShapeRT* shape = factory->create(parametersList);
-    shape->setName(factory->name().toStdString().c_str() );
 
     CmdInsertSurface* cmd = new CmdInsertSurface(kit, shape, m_modelScene);
     m_undoStack->push(cmd);
@@ -2396,7 +2395,6 @@ void MainWindow::InsertMaterial(MaterialFactory* factory)
     if (!kit) return;
 
     MaterialRT* material = factory->create();
-    material->setName(factory->name().toStdString().c_str());
 
     CmdInsertSurface* cmd = new CmdInsertSurface(kit, material, m_modelScene);
     m_undoStack->push(cmd);
@@ -2416,7 +2414,6 @@ void MainWindow::InsertProfile(ProfileFactory* factory)
     if (!kit) return;
 
     ProfileRT* profile = factory->create();
-    profile->setName(factory->name().toStdString().c_str());
 
     CmdInsertSurface* cmd = new CmdInsertSurface(kit, profile, m_modelScene);
     m_undoStack->push(cmd);

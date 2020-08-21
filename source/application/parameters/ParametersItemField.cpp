@@ -2,15 +2,22 @@
 
 #include <Inventor/fields/SoField.h>
 #include <Inventor/fields/SoSFBool.h>
+#include <Inventor/fields/SoSFNode.h>
+#include <Inventor/nodes/SoNode.h>
 #include <Inventor/sensors/SoFieldSensor.h>
 
+#include "ParametersItemNode.h"
 
 void ParametersItemField::updateItem(void* data, SoSensor*)
 {
     ParametersItemField* item = (ParametersItemField*) data;
-    SbString v;
-    item->m_field->get(v);
-    item->setData(v.getString(), Qt::EditRole);
+    if (SoSFNode* f = dynamic_cast<SoSFNode*>(item->m_field))
+    {
+        QStandardItem* qitem = item->parent()->child(item->row(), 0);
+        ParametersItemNode* itemNode = (ParametersItemNode*) qitem;
+        itemNode->setNode(f->getValue());
+    }
+    item->update();
 }
 
 
@@ -31,6 +38,10 @@ QVariant ParametersItemField::data(int role) const
 {
     if (role == Qt::DisplayRole)
     {
+        if (SoSFNode* f = dynamic_cast<SoSFNode*>(m_field))
+        {
+            return f->getValue()->getTypeId().getName().getString();
+        }
         if (SoSFBool* f = dynamic_cast<SoSFBool*>(m_field))
             return f->getValue() ? "true" : "false";
         else {
@@ -70,5 +81,10 @@ QVariant ParametersItemField::data(int role) const
 
 void ParametersItemField::setData(const QVariant& value, int role)
 {
-      QStandardItem::setData(value, role);
+    QStandardItem::setData(value, role);
+}
+
+void ParametersItemField::update()
+{
+    emitDataChanged();
 }

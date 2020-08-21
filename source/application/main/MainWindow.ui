@@ -359,6 +359,9 @@
    <property name="text">
     <string>Undo List...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+Z</string>
+   </property>
   </action>
   <action name="actionEditCut">
    <property name="icon">

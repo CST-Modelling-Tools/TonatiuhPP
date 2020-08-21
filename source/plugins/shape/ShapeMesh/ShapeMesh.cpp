@@ -93,19 +93,21 @@ bool ShapeMesh::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
 
 void ShapeMesh::updateShapeGL(TShapeKit* parent)
 {
+    SoShapeKit* shapeKit = parent->m_shapeKit;
+
     SoCoordinate3* sVertices = new SoCoordinate3;
     sVertices->point.setValues(0, vertices.getNum(), vertices.getValues(0));
-    parent->setPart("coordinate3", sVertices);
+    shapeKit->setPart("coordinate3", sVertices);
 
     SoNormal* sNormals = new SoNormal;
     sNormals->vector.setValues(0, normals.getNum(), normals.getValues(0));
-    parent->setPart("normal", sNormals);
+    shapeKit->setPart("normal", sNormals);
 
     SoIndexedFaceSet* sMesh = new SoIndexedFaceSet;
     sMesh->coordIndex.setValues(0, facesVertices.getNum(), facesVertices.getValues(0));
     sMesh->normalIndex.setValues(0, facesNormals.getNum(), facesNormals.getValues(0));
 
-    parent->setPart("shape", sMesh);
+    shapeKit->setPart("shape", sMesh);
 }
 
 ShapeMesh::~ShapeMesh()

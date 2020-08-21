@@ -3,12 +3,14 @@
 #include "ParametersDelegate.h"
 #include "ParametersModel.h"
 
+
 ParametersView::ParametersView(QWidget* parent):
     QTreeView(parent)
 {
+    setEditTriggers(QAbstractItemView::NoEditTriggers);
+
     ParametersDelegate* delegate = new ParametersDelegate(this);
     setItemDelegate(delegate);
-    setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     connect(
         this, SIGNAL(pressed(QModelIndex)),
@@ -17,7 +19,9 @@ ParametersView::ParametersView(QWidget* parent):
 
     setStyleSheet(R"(
 QLineEdit {
-padding-left: 1;
+
+border: 1px solid #c8dbe5;
+
 selection-background-color: #c8dbe5;
 selection-color: black;
 }
@@ -46,7 +50,12 @@ void ParametersView::reset()
 
 void ParametersView::onPressed(const QModelIndex& index)
 {
-    if (model()->flags(index) & Qt::ItemIsEditable)
+    if (model()->flags(index) & Qt::ItemIsEditable) {
+//        setSelectionBehavior(QAbstractItemView::SelectItems);
+//        selectionModel()->select(index, QItemSelectionModel::Clear);
         edit(index);
+//        selectionModel()->select(index, QItemSelectionModel::Select);
+//        setSelectionBehavior(QAbstractItemView::SelectRows);
+    }
 }
 

@@ -140,9 +140,10 @@ bool ShapeCube::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
 
 void ShapeCube::updateShapeGL(TShapeKit* parent)
 {
+    SoShapeKit* shapeKit = parent->m_shapeKit;
     SoCube* cube = new SoCube;
     cube->width = 1.;
     cube->height = 1.;
     cube->depth = 1.;
-    parent->setPart("shape", cube);
+    shapeKit->setPart("shape", cube);
 }
