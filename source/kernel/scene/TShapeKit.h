@@ -1,8 +1,8 @@
 #pragma once
 
 #include "kernel/TonatiuhKernel.h"
+
 #include <Inventor/nodekits/SoShapeKit.h>
-#include <Inventor/fields/SoSFNode.h>
 
 class ShapeRT;
 class MaterialRT;
@@ -10,15 +10,12 @@ class MaterialRT;
 class SoFieldSensor;
 class SoSensor;
 
-//!  TShapeKit class groups what is necessary to the shape.
-/*!
-  TShapeKit groups the shape geometry, material and the transformation.
 
-*/
-
-class TONATIUH_KERNEL TShapeKit: public SoShapeKit
+class TONATIUH_KERNEL TShapeKit: public SoBaseKit
 {
     SO_KIT_HEADER(TShapeKit);
+
+    SO_KIT_CATALOG_ENTRY_HEADER(topSeparator);
 
 public:
     static void initClass();
@@ -27,13 +24,15 @@ public:
     SoSFNode shapeRT;
     SoSFNode profileRT;
     SoSFNode materialRT;
+    SoSFNode material;
 
+    SoShapeKit* m_shapeKit;
 protected:
-    virtual ~TShapeKit();
-
-    void setDefaultOnNonWritingFields();
+     ~TShapeKit();
 
     SoFieldSensor* m_sensorShape;
     SoFieldSensor* m_sensorProfile;
     static void onSensor(void* data, SoSensor*);
+
+    void setDefaultOnNonWritingFields();
 };

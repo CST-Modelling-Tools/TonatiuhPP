@@ -2,6 +2,7 @@
 
 #include <Inventor/nodekits/SoAppearanceKit.h>
 #include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoGroup.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/sensors/SoFieldSensor.h>
 
@@ -14,12 +15,10 @@
 
 SO_KIT_SOURCE(TShapeKit)
 
-/**
- * Sets up initialization for data common to all instances of this class, like submitting necessary information to the Coin type system.
- */
+
 void TShapeKit::initClass()
 {
-    SO_KIT_INIT_CLASS(TShapeKit, SoShapeKit, "ShapeKit");
+    SO_KIT_INIT_CLASS(TShapeKit, SoBaseKit, "BaseKit");
 
     ShapeRT::initClass();
     ProfileRT::initClass();
@@ -29,31 +28,31 @@ void TShapeKit::initClass()
 TShapeKit::TShapeKit()
 {
     SO_KIT_CONSTRUCTOR(TShapeKit);
-    isBuiltIn = TRUE;
+//    isBuiltIn = TRUE;
+
+    SO_KIT_ADD_CATALOG_ENTRY(topSeparator, SoSeparator, FALSE, this, "", TRUE);
 
     SO_NODE_ADD_FIELD( shapeRT, (0) );
     SO_NODE_ADD_FIELD( profileRT, (0) );
     SO_NODE_ADD_FIELD( materialRT, (0) );
+    SO_NODE_ADD_FIELD( material, (0) );
     SO_KIT_INIT_INSTANCE();
+
+
+    SoGroup* g = (SoGroup*) topSeparator.getValue();
+    m_shapeKit = new SoShapeKit;
+    g->addChild(m_shapeKit);
 
     m_sensorShape = new SoFieldSensor(onSensor, this);
     m_sensorShape->attach(&shapeRT);
 
-    ShapeRT* sRT = new ShapePlanar;
-//    sRT->setName(sRT->getTypeName());
-    shapeRT = sRT;
+    shapeRT = new ShapePlanar;
+    profileRT = new ProfileBox;
+    materialRT = new MaterialAbsorber;
 
-    ProfileRT* a = new ProfileBox;
-//    a->setName(a->getTypeName());
-    profileRT = a;
-
-    MaterialRT* mRT = new MaterialAbsorber;
-//    mRT->setName(mRT->getTypeName());
-    materialRT = mRT;
-
-    SoMaterial* materialGL = new SoMaterial;
-//    materialGL->setName("MaterialGL");
-    setPart("material", materialGL);
+//    SoShapeKit* kit = (SoShapeKit*) getPart("topSeparator", true);
+//    material = ((SoShapeKit*)shapeKit2.getValue())->getPart("material", true);
+//    material = kit->getPart("material", true);
 
     m_sensorProfile = new SoFieldSensor(onSensor, this);
     m_sensorProfile->attach(&profileRT);
@@ -65,17 +64,6 @@ TShapeKit::~TShapeKit()
     delete m_sensorProfile;
 }
 
-void TShapeKit::setDefaultOnNonWritingFields()
-{
-    coordinate3.setDefault(TRUE); // do not save
-    normal.setDefault(TRUE);
-    shape.setDefault(TRUE);
-
-    SoShapeKit::setDefaultOnNonWritingFields();
-}
-
-#include <QDebug>
-
 void TShapeKit::onSensor(void* data, SoSensor*)
 {
     TShapeKit* kit = (TShapeKit*) data;
@@ -83,4 +71,11 @@ void TShapeKit::onSensor(void* data, SoSensor*)
 
     ShapeRT* shape = (ShapeRT*) kit->shapeRT.getValue();
     shape->updateShapeGL(kit);
+}
+
+void TShapeKit::setDefaultOnNonWritingFields()
+{
+    topSeparator.setDefault(TRUE);
+//    shapeKit.setDefault(TRUE);
+    SoBaseKit::setDefaultOnNonWritingFields();
 }

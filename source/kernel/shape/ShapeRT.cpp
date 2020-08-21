@@ -82,6 +82,9 @@ bool ShapeRT::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, 
 void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals, bool /*reverseClock*/)
 {
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
+        SoShapeKit* shapeKit =  parent->m_shapeKit;
+//    SoShapeKit* shapeKit = (SoShapeKit*) parent->getPart("shapeKit", false);
+//    SoShapeKit* shapeKit = (SoShapeKit*) parent->shapeKit2.getValue();
     if (ProfilePolygon* profilePolygon = dynamic_cast<ProfilePolygon*>(profile))
     {
         const QPolygonF& qpolygon = profilePolygon->getPolygon();
@@ -117,17 +120,17 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNor
 
         SoCoordinate3* sVertices = new SoCoordinate3;
         sVertices->point.setValues(0, vertices.size(), vertices.data());
-        parent->setPart("coordinate3", sVertices);
+        shapeKit->setPart("coordinate3", sVertices);
 
         SoNormal* sNormals = new SoNormal;
         sNormals->vector.setValues(0, normals.size(), normals.data());
-        parent->setPart("normal", sNormals);
+        shapeKit->setPart("normal", sNormals);
 
 
         SoIndexedFaceSet* sMesh = new SoIndexedFaceSet;
         sMesh->coordIndex.setValues(0, faces.size(), faces.data());
 
-        parent->setPart("shape", sMesh);
+        shapeKit->setPart("shape", sMesh);
     }
     else
     {
@@ -146,16 +149,16 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNor
 
         SoCoordinate3* sVertices = new SoCoordinate3;
         sVertices->point.setValues(0, vertices.size(), vertices.data());
-        parent->setPart("coordinate3", sVertices);
+        shapeKit->setPart("coordinate3", sVertices);
 
         SoNormal* sNormals = new SoNormal;
         sNormals->vector.setValues(0, normals.size(), normals.data());
-        parent->setPart("normal", sNormals);
+        shapeKit->setPart("normal", sNormals);
 
         SoQuadMesh* sMesh = new SoQuadMesh;
         sMesh->verticesPerRow = dimensions.height();
         sMesh->verticesPerColumn = dimensions.width();
 
-        parent->setPart("shape", sMesh);
+        shapeKit->setPart("shape", sMesh);
     }
 }

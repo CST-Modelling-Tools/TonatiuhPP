@@ -2,6 +2,7 @@
 
 #include <Inventor/nodes/SoNode.h>
 #include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodekits/SoShapeKit.h>
 #include <Inventor/fields/SoField.h>
 #include <Inventor/fields/SoSFNode.h>
 #include <Inventor/lists/SoFieldList.h>
@@ -29,6 +30,7 @@ ParametersItemNode::ParametersItemNode(QString part, SoNode* node):
             SoNode* nodeSub = fn->getValue();
             if (!nodeSub) continue;
             if (nodeSub->getTypeId().isDerivedFrom(SoGroup::getClassTypeId())) continue;
+            if (nodeSub->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId())) continue;
             QString nameType;
             nameType = nodeSub->getTypeId().getName().getString();
             QStandardItem* item = new QStandardItem(nameType);
