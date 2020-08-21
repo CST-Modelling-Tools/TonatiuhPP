@@ -41,10 +41,6 @@ QVariant ParametersItemField::data(int role) const
             }
         }
     }
-//    if (role == Qt::EditRole)
-//    {
-
-//    }
 //        QString text = QStandardItem::data(role).toString();
 
 //        // discard multilines

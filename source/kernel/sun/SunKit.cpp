@@ -39,6 +39,7 @@ void SunKit::initClass()
 SunKit::SunKit()
 {
     SO_KIT_CONSTRUCTOR(SunKit);
+//    isBuiltIn = TRUE;
 
     SO_KIT_ADD_CATALOG_ENTRY(position, SunPosition, FALSE, this, "", TRUE);
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(shape, SunShape, SunPillbox, FALSE, this, "", TRUE);

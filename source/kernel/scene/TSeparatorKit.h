@@ -40,15 +40,15 @@
 
 */
 
-class QString;
 
-class TONATIUH_KERNEL TSeparatorKit: public SoSeparatorKit
+class TONATIUH_KERNEL TSeparatorKit: public SoBaseKit
 {
-    typedef SoSeparatorKit inherited;
-
     SO_KIT_HEADER(TSeparatorKit);
-    SO_KIT_CATALOG_ENTRY_HEADER(group);
+
+    SO_KIT_CATALOG_ENTRY_HEADER(topSeparator);
+    SO_KIT_CATALOG_ENTRY_HEADER(transform);
     SO_KIT_CATALOG_ENTRY_HEADER(tracker);
+    SO_KIT_CATALOG_ENTRY_HEADER(group);
 
 public:
     static void initClass();

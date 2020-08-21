@@ -40,19 +40,19 @@ TShapeKit::TShapeKit()
     m_sensorShape->attach(&shapeRT);
 
     ShapeRT* sRT = new ShapePlanar;
-    sRT->setName(sRT->getTypeName());
+//    sRT->setName(sRT->getTypeName());
     shapeRT = sRT;
 
     ProfileRT* a = new ProfileBox;
-    a->setName(a->getTypeName());
+//    a->setName(a->getTypeName());
     profileRT = a;
 
     MaterialRT* mRT = new MaterialAbsorber;
-    mRT->setName(mRT->getTypeName());
+//    mRT->setName(mRT->getTypeName());
     materialRT = mRT;
 
     SoMaterial* materialGL = new SoMaterial;
-    materialGL->setName("MaterialGL");
+//    materialGL->setName("MaterialGL");
     setPart("material", materialGL);
 
     m_sensorProfile = new SoFieldSensor(onSensor, this);

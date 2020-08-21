@@ -30,7 +30,7 @@ AirDialog::AirDialog(SceneModel* sceneModel, QMap<QString, AirFactory*> airMap, 
     ui->comboBox->setCurrentIndex(index); // activated != currentIndexChanged
     ParametersModel* model = new ParametersModel(this);
     ui->airParameters->setModel(model);
-    model->setNode(airT);
+    model->setNode(m_air);
 
     connect(
         ui->comboBox, SIGNAL(activated(int)),
@@ -54,7 +54,7 @@ void AirDialog::setModel(int index)
 {
     AirFactory* f = m_airMap[ui->comboBox->itemText(index)];
     AirTransmission* airT = f->create();
-    ui->airParameters->getModel()->setNode(airT);
+//    ui->airParameters->getModel()->setNode(airT);
     m_air->setPart("transmission", airT);
 }
 

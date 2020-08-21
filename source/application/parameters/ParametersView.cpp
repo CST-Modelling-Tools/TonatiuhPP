@@ -1,7 +1,7 @@
 #include "ParametersView.h"
 
 #include "ParametersDelegate.h"
-
+#include "ParametersModel.h"
 
 ParametersView::ParametersView(QWidget* parent):
     QTreeView(parent)
@@ -35,6 +35,12 @@ void ParametersView::reset()
     double w = 3*fontMetrics().horizontalAdvance("Parameter");
     setColumnWidth(0, w);
 //    expandToDepth(1);
+
+    if (ParametersModel* m = getModel()) {
+        QStandardItem* root = m->invisibleRootItem();
+        root = root->child(0);
+        if (root) setRootIndex(root->index());
+    }
     expandAll();
 }
 
