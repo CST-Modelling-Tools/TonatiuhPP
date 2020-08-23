@@ -4,6 +4,7 @@
 
 class SoBaseKit;
 class SoNode;
+class MainWindow;
 
 
 class ParametersTabs: public QTabWidget
@@ -16,6 +17,9 @@ public:
     void setNode(SoNode* node);
     void updateNode();
 
+    void setMain(MainWindow* main) {m_main = main;}
+    MainWindow* getMain() const {return m_main;}
+
 signals:
     void valueModified(SoNode* node, QString field, QString value);
 
@@ -24,4 +28,5 @@ public slots:
 
 private:
     SoNode* m_node;
+    MainWindow* m_main;
 };

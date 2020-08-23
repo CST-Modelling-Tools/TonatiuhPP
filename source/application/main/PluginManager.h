@@ -15,7 +15,7 @@ class ProfileFactory;
 class MaterialFactory;
 class RandomFactory;
 class PhotonsFactory;
-
+class SoNode;
 
 /*!
  * \class PluginManager
@@ -48,6 +48,8 @@ public:
     const QMap<QString, MaterialFactory*>& getMaterialMap() const {return m_materialMap;}
     const QMap<QString, RandomFactory*>& getRandomMap() const {return m_randomMap;}
     const QMap<QString, PhotonsFactory*>& getExportMap() const {return m_exportMap;}
+
+    QVector<TFactory*> getFactories(SoNode* node);
 
 private:
     void findFiles(QDir dir, QStringList& files);

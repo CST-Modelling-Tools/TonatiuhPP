@@ -43,6 +43,7 @@ struct PhotonsSettings;
 class ProfileFactory;
 class UndoView;
 class NodeObject;
+class TFactory;
 #include <QScriptValue>
 
 //!  Main window class.
@@ -89,6 +90,7 @@ public slots:
 
     void InsertNode();
     void InsertShape();
+    void Insert(TFactory* f);
     void InsertSurface(QString name);
     void InsertSurface(QString shapeType, int numberOfParameters, QVector<QVariant> parametersList);
     void InsertProfile(QString name);

@@ -10,12 +10,17 @@
 
 #include <Inventor/fields/SoSFEnum.h>
 #include <Inventor/fields/SoSFBool.h>
+#include <Inventor/fields/SoSFNode.h>
 #include <Inventor/fields/SoSFInt32.h>
 #include <Inventor/fields/SoSFDouble.h>
 
 #include "libraries/Coin3D/FieldEditor.h"
 #include "libraries/Coin3D/UserSField.h"
 #include "libraries/Coin3D/UserMField.h"
+#include "main/MainWindow.h"
+#include "main/PluginManager.h"
+#include "kernel/scene/TFactory.h"
+#include "kernel/scene/TNode.h"
 
 #include "ParametersModel.h"
 #include "ParametersItemField.h"
@@ -46,7 +51,6 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
         editor->setCurrentIndex(f->getValue());
         connect(
             editor,  SIGNAL(activated(int)),
-//            this, SLOT(onCloseEditor())
             editor, SLOT(close())
         );
         return editor;
@@ -56,6 +60,28 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
         QComboBox* editor = new QComboBox(parent);
         editor->addItems({"false", "true"});
         editor->setCurrentIndex(f->getValue() ? 1 : 0);
+        connect(
+            editor, SIGNAL(activated(int)),
+            this, SLOT(onCloseEditor())
+        );
+        return editor;
+    }
+    else if (SoSFNode* f = dynamic_cast<SoSFNode*>(field))
+    {
+        QComboBox* editor = new QComboBox(parent);
+        SoNode* node = f->getValue();
+        MainWindow* main = model->getMain();
+        QVector<TFactory*> factories = main->getPlugins()->getFactories(node);
+        for (TFactory* tf : factories) {
+            if (!tf)
+                editor->insertSeparator(editor->count());
+            else
+                editor->addItem(tf->icon(), tf->name());
+        }
+
+        if (TNode* tnode = dynamic_cast<TNode*>(node))
+            editor->setCurrentText(tnode->getTypeName());
+
         connect(
             editor, SIGNAL(activated(int)),
             this, SLOT(onCloseEditor())
@@ -133,9 +159,10 @@ void ParametersDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptio
 
     if (QComboBox* cb = dynamic_cast<QComboBox*>(editor))
     {
+        cb->setGeometry(option.rect);
+//        cb->showPopup();
         QMouseEvent event(QEvent::MouseButtonPress, QPointF(0, 0), Qt::LeftButton, 0, 0);
         QApplication::sendEvent(cb, &event);
-//        cb->showPopup();
     }
 }
 
@@ -156,6 +183,19 @@ void ParametersDelegate::setModelData(QWidget* editor, QAbstractItemModel* model
     {
         QComboBox* w = qobject_cast<QComboBox*>(editor);
         value = w->currentIndex() ? "TRUE" : "FALSE";
+    }
+    else if (SoSFNode* f = dynamic_cast<SoSFNode*>(field))
+    {
+        QComboBox* w = qobject_cast<QComboBox*>(editor);
+        value = w->currentText();
+        QString text = model->data(index, Qt::DisplayRole).toString();
+        if (value == text) return;
+
+        SoNode* node = f->getValue();
+        MainWindow* main = modelP->getMain();
+        TFactory* tf = main->getPlugins()->getFactories(node)[w->currentIndex()];
+        main->Insert(tf);
+        return;
     }
     else if (dynamic_cast<SoSFInt32*>(field))
     {

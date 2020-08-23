@@ -679,7 +679,7 @@ bool SceneModel::Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinN
             }
             coinParent.setPart("tracker", child);
         }
-        if (child->getTypeId().isDerivedFrom(SoShape::getClassTypeId()))
+        if (child->getTypeId().isDerivedFrom(ShapeRT::getClassTypeId()))
         {
             TShapeKit* shapeKit = static_cast<TShapeKit*>(pCoinParent);
             if (!shapeKit) return false;

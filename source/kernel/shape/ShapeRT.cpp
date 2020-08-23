@@ -22,7 +22,7 @@ SO_NODE_ABSTRACT_SOURCE(ShapeRT)
 
 void ShapeRT::initClass()
 {
-    SO_NODE_INIT_ABSTRACT_CLASS(ShapeRT, SoNode, "Node");
+    SO_NODE_INIT_ABSTRACT_CLASS(ShapeRT, TNode, "TNode");
 }
 
 vec3d ShapeRT::getPoint(double u, double v) const

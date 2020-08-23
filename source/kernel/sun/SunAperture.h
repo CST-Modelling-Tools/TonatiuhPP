@@ -4,6 +4,7 @@
 #include <vector>
 #include <QPair>
 
+#include <Inventor/SbBox3f.h>
 #include <Inventor/fields/SoSFDouble.h>
 #include <Inventor/fields/SoSFEnum.h>
 #include <Inventor/fields/SoSFFloat.h>

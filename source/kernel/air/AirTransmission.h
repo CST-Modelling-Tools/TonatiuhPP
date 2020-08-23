@@ -1,10 +1,9 @@
 #pragma once
 
-#include "kernel/scene/TAbstract.h"
-#include <Inventor/nodes/SoSubNode.h>
+#include "kernel/scene/TNode.h"
 
 
-class TONATIUH_KERNEL AirTransmission: public SoNode
+class TONATIUH_KERNEL AirTransmission: public TNode
 {
     SO_NODE_ABSTRACT_HEADER(AirTransmission);
 

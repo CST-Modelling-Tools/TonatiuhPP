@@ -1,14 +1,11 @@
 #pragma once
 
-#include "kernel/scene/TAbstract.h"
+#include "kernel/scene/TNode.h"
 #include "kernel/random/Random.h"
 #include "libraries/math/3D/vec3d.h"
 
-#include <Inventor/nodes/SoSubNode.h>
 
-
-
-class TONATIUH_KERNEL SunShape: public SoNode
+class TONATIUH_KERNEL SunShape: public TNode
 {
     SO_NODE_ABSTRACT_HEADER(SunShape);
 
@@ -19,10 +16,6 @@ public:
     virtual double getThetaMax() const = 0;
 
     NAME_ICON_FUNCTIONS("X", ":/images/SunX.png")
-
-protected:
-    SunShape() {}
-    ~SunShape() {}
 };
 
 

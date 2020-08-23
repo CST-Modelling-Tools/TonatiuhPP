@@ -1,8 +1,6 @@
 #pragma once
 
-#include "kernel/scene/TAbstract.h"
-
-#include <Inventor/nodes/SoShape.h>
+#include "kernel/scene/TNode.h"
 
 struct vec2d;
 struct vec3d;
@@ -14,7 +12,7 @@ class TShapeKit;
 class ProfileRT;
 
 
-class TONATIUH_KERNEL ShapeRT: public SoNode
+class TONATIUH_KERNEL ShapeRT: public TNode
 {
     SO_NODE_ABSTRACT_HEADER(ShapeRT);
 
@@ -37,9 +35,6 @@ public:
 
 protected:
     void makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals = false, bool reverseClock = false);
-
-    ShapeRT() {}
-    ~ShapeRT() {}
 };
 
 

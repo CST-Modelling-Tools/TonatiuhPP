@@ -2,7 +2,7 @@
 
 #include <QStringList>
 
-#include "kernel/scene/TAbstract.h"
+#include "kernel/scene/TNode.h"
 #include "Photon.h"
 
 struct PhotonsSettings;

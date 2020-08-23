@@ -1,8 +1,7 @@
 #pragma once
 
-#include "kernel/scene/TAbstract.h"
+#include "kernel/scene/TNode.h"
 
-#include <Inventor/nodes/SoSubNode.h>
 #include <Inventor/nodekits/SoBaseKit.h>
 
 struct vec3d;
@@ -10,7 +9,7 @@ class Transform;
 class TSeparatorKit;
 
 
-class TONATIUH_KERNEL Tracker: public SoNode
+class TONATIUH_KERNEL Tracker: public TNode
 {
     SO_NODE_ABSTRACT_HEADER(Tracker);
 
@@ -20,10 +19,6 @@ public:
     virtual void update(TSeparatorKit* parent, const Transform& toGlobal, const vec3d& vSun);
 
     NAME_ICON_FUNCTIONS("X", ":/TrackerX.png")
-
-protected:
-    Tracker() {}
-    ~Tracker() {}
 };
 
 

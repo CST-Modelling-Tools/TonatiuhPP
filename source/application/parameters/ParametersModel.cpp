@@ -22,15 +22,12 @@ void ParametersModel::setNode(SoNode* node)
     clear();
     setHorizontalHeaderLabels({"Parameter", "Value"});
 
-    QString name = node->getName().getString();
-    ParametersItemNode* itemNode = new ParametersItemNode(name, node);
-
-    QString nameType = node->getTypeId().getName().getString();
-    QStandardItem* itemType = new QStandardItem(nameType);
-    itemType->setEditable(false);
-
-    QStandardItem* parent = invisibleRootItem();
-    parent->appendRow({itemNode, itemType});
+    QString nameP = node->getName().getString();
+    ParametersItemNode* itemP = new ParametersItemNode(nameP, node);
+//    QString nameV = node->getTypeId().getName().getString();
+//    QStandardItem* itemV = new QStandardItem(nameV);
+//    itemV->setEditable(false);
+    invisibleRootItem()->appendRow(itemP);
 
     endResetModel();
 }

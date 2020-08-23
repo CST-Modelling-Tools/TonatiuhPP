@@ -31,6 +31,7 @@ void ParametersTabs::setNode(SoNode* node)
 
     ParametersView* view = new ParametersView(this);
     ParametersModel* model = new ParametersModel(view);
+    model->setMain(m_main);
     model->setNode(node);
     view->setModel(model);
 

@@ -5,5 +5,5 @@ SO_NODE_ABSTRACT_SOURCE(MaterialRT)
 
 void MaterialRT::initClass()
 {
-    SO_NODE_INIT_ABSTRACT_CLASS(MaterialRT, SoNode, "Node");
+    SO_NODE_INIT_ABSTRACT_CLASS(MaterialRT, TNode, "TNode");
 }

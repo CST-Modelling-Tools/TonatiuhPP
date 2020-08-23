@@ -13,6 +13,7 @@ HEADERS += \
     TonatiuhTypes.h \
     air/AirVacuum.h \
     scene/GridNode.h \
+    scene/TNode.h \
     sun/SunKit.h \
     sun/SunPosition.h \
     trf.h \
@@ -29,7 +30,6 @@ HEADERS += \
     profiles/ProfileTriangle.h \
     component/ComponentFactory.h \
     scene/LocationNode.h \
-    scene/TAbstract.h \
     scene/TerrainKit.h \
     scene/TFactory.h \
     scene/TSceneKit.h \
@@ -64,6 +64,7 @@ SOURCES += \
     TonatiuhFunctions.cpp \
     air/AirVacuum.cpp \
     scene/GridNode.cpp \
+    scene/TNode.cpp \
     sun/SunKit.cpp \
     sun/SunPosition.cpp \
     trf.cpp \

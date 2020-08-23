@@ -40,6 +40,7 @@ PluginManager::PluginManager()
     UserMField::initClass();
     UserSField::initClass();
     MFVec2::initClass();
+    TNode::initClass();
 
     TSceneKit::initClass();
     SkyNode3D::initClass();
@@ -85,6 +86,23 @@ void PluginManager::load(QDir dir)
     }
 
     sort();
+}
+
+
+QVector<TFactory*> PluginManager::getFactories(SoNode* node)
+{
+    QVector<TFactory*> ans;
+    if (dynamic_cast<ShapeRT*>(node)) {
+        for (auto q : m_shapeFactories) ans << q;
+    } else if (dynamic_cast<ProfileRT*>(node))
+        for (auto q : m_profileFactories) ans << q;
+    else if (dynamic_cast<MaterialRT*>(node))
+        for (auto q : m_materialFactories) ans << q;
+    else if (dynamic_cast<SunShape*>(node))
+        for (auto q : m_sunFactories) ans << q;
+    else if (dynamic_cast<AirTransmission*>(node))
+        for (auto q : m_airFactories) ans << q;
+    return ans;
 }
 
 /*!

@@ -7,17 +7,19 @@
 #include <Inventor/sensors/SoFieldSensor.h>
 
 #include "ParametersItemNode.h"
+#include "kernel/scene/TNode.h"
+
 
 void ParametersItemField::updateItem(void* data, SoSensor*)
 {
-    ParametersItemField* item = (ParametersItemField*) data;
-    if (SoSFNode* f = dynamic_cast<SoSFNode*>(item->m_field))
+    ParametersItemField* itemField = (ParametersItemField*) data;
+    if (SoSFNode* f = dynamic_cast<SoSFNode*>(itemField->m_field))
     {
-        QStandardItem* qitem = item->parent()->child(item->row(), 0);
-        ParametersItemNode* itemNode = (ParametersItemNode*) qitem;
+        QStandardItem* item = itemField->parent()->child(itemField->row(), 0);
+        ParametersItemNode* itemNode = (ParametersItemNode*) item;
         itemNode->setNode(f->getValue());
     }
-    item->update();
+    itemField->emitDataChanged();
 }
 
 
@@ -40,7 +42,10 @@ QVariant ParametersItemField::data(int role) const
     {
         if (SoSFNode* f = dynamic_cast<SoSFNode*>(m_field))
         {
-            return f->getValue()->getTypeId().getName().getString();
+            if (TNode* tn = dynamic_cast<TNode*>(f->getValue()))
+                return tn->getTypeName();
+            else
+                return f->getValue()->getTypeId().getName().getString();
         }
         if (SoSFBool* f = dynamic_cast<SoSFBool*>(m_field))
             return f->getValue() ? "true" : "false";
@@ -69,6 +74,12 @@ QVariant ParametersItemField::data(int role) const
             return ans;
         }
     }
+    else if (role == Qt::DecorationRole)
+    {
+        if (SoSFNode* f = dynamic_cast<SoSFNode*>(m_field))
+            if (TNode* tn = dynamic_cast<TNode*>(f->getValue()))
+                return QIcon(tn->getTypeIcon());
+    }
     else if (role == Qt::EditRole)
     {
         SbString v;
@@ -82,9 +93,4 @@ QVariant ParametersItemField::data(int role) const
 void ParametersItemField::setData(const QVariant& value, int role)
 {
     QStandardItem::setData(value, role);
-}
-
-void ParametersItemField::update()
-{
-    emitDataChanged();
 }

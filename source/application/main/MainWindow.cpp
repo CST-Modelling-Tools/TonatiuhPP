@@ -359,6 +359,7 @@ void MainWindow::SetupTreeView()
     connect(ui->sceneView, SIGNAL(nodeNameModificated(const QModelIndex&,const QString&)),
             this, SLOT(ChangeNodeName(const QModelIndex&,const QString&)) );
 
+    ui->parametersTabs->setMain(this);
     // parameters
     connect(
         ui->parametersTabs, SIGNAL(valueModified(SoNode*, QString, QString)),
@@ -1409,6 +1410,16 @@ void MainWindow::InsertShape()
 
     Select(instance->getURL() + "/" + name);
     setDocumentModified(true);
+}
+
+void MainWindow::Insert(TFactory* f)
+{
+    if (ShapeFactory* sf = dynamic_cast<ShapeFactory*>(f))
+        InsertSurface(sf);
+    else if (ProfileFactory* pf = dynamic_cast<ProfileFactory*>(f))
+        InsertProfile(pf);
+    else if (MaterialFactory* mf = dynamic_cast<MaterialFactory*>(f))
+        InsertMaterial(mf);
 }
 
 /*!

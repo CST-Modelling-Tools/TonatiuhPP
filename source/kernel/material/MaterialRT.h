@@ -1,29 +1,23 @@
 #pragma once
 
-#include "kernel/scene/TAbstract.h"
-#include <Inventor/nodes/SoSubNode.h>
-
+#include "kernel/scene/TNode.h"
 
 struct DifferentialGeometry;
 class Random;
 class Ray;
 
 
-class TONATIUH_KERNEL MaterialRT: public SoNode
+class TONATIUH_KERNEL MaterialRT: public TNode
 {
     SO_NODE_ABSTRACT_HEADER(MaterialRT);
 
 public:
     static void initClass();
 
-    //Ray* OutputRay( const Ray& incident, DifferentialGeometry* dg, RandomDeviate& rand) const;
+    //Ray* OutputRay(const Ray& incident, DifferentialGeometry* dg, RandomDeviate& rand) const;
     virtual bool OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& rand, Ray& rayOut) const = 0;
 
     NAME_ICON_FUNCTIONS("X", ":/MaterialX.png")
-
-protected:
-    MaterialRT() {}
-    ~MaterialRT() {}
 };
 
 

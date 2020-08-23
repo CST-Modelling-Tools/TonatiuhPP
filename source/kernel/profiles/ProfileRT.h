@@ -3,9 +3,7 @@
 #include <QVector>
 #include <QSize>
 
-#include <Inventor/nodes/SoSubNode.h>
-
-#include "kernel/scene/TAbstract.h"
+#include "kernel/scene/TNode.h"
 #include "libraries/math/2D/vec2d.h"
 #include "libraries/math/2D/Box2D.h"
 
@@ -14,7 +12,7 @@ class Random;
 class Ray;
 
 
-class TONATIUH_KERNEL ProfileRT: public SoNode
+class TONATIUH_KERNEL ProfileRT: public TNode
 {
     SO_NODE_ABSTRACT_HEADER(ProfileRT);
 
@@ -29,10 +27,6 @@ public:
 
     static vec2d getAbsMin(const Box2D& b);
     static vec2d getAbsMax(const Box2D& b);
-
-protected:
-    ProfileRT() {}
-    ~ProfileRT() {}
 };
 
 
