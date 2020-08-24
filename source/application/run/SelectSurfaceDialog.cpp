@@ -56,7 +56,7 @@ SelectSurfaceDialog::~SelectSurfaceDialog()
 
 void SelectSurfaceDialog::SetShapeTypeFilters(QStringList filters)
 {
-    m_filter->SetShapeTypeFilters(filters);
+    m_filter->setShapeTypes(filters);
     m_filter->invalidate();
 }
 

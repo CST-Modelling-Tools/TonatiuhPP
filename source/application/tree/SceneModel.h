@@ -51,7 +51,6 @@ public:
 
     int insertCoinNode(SoNode* coinChild, SoBaseKit* coinParent);
     void removeCoinNode(int row, SoBaseKit* parent);
-    void replaceCoinNode(TShapeKit* parent, SoNode* node);
     void replaceAir(AirKit* air);
     void replaceSun(SunKit* sun);
 

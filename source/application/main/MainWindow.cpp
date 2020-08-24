@@ -380,8 +380,6 @@ void MainWindow::SetupPluginManager()
     if (!m_pluginManager) return;
     SetupActionsInsertComponent();
 //    addToolBarBreak();
-    SetupActionsInsertShape();
-    SetupActionsInsertMaterial();
     SetupActionsInsertTracker();
 }
 
@@ -2356,7 +2354,6 @@ void MainWindow::InsertSurface(ShapeFactory* factory)
     if (!kit) return;
 
     ShapeRT* shape = factory->create();
-    shape->setName(factory->name().toStdString().c_str());
 
     CmdInsertSurface* cmd = new CmdInsertSurface(kit, shape, m_modelScene);
     m_undoStack->push(cmd);
@@ -2764,82 +2761,6 @@ void MainWindow::SetupActionsInsertComponent()
         connect(a, SIGNAL(CreateComponent(ComponentFactory*)),
                 this, SLOT(CreateComponent(ComponentFactory*)) );
     }
-}
-
-void MainWindow::SetupActionsInsertMaterial()
-{
-    QMenu* menu = ui->menuInsert->findChild<QMenu*>("menuMaterial");
-
-    for (MaterialFactory* f : m_pluginManager->getMaterialFactories()) {
-        ActionInsert* a = new ActionInsert(f, this);
-        menu->addAction(a);
-        connect(
-            a, SIGNAL(InsertMaterial(MaterialFactory*)),
-            this, SLOT(InsertMaterial(MaterialFactory*))
-        );
-    }
-
-    QPushButton* button = new QPushButton;
-    button->setIcon(QIcon(":/images/scene/nodeMaterial.png")); // can be static
-    button->setToolTip("Materials");
-    button->setMenu(menu);
-    findChild<QToolBar*>("insertToolBar")->addWidget(button);
-}
-
-/**
- * Creates an action for the /a pShapeFactory and adds to shape insert menu and toolbar.
- */
-void MainWindow::SetupActionsInsertShape()
-{
-    QMenu* menu = ui->menuInsert->findChild<QMenu*>("menuShape");
-
-//    QToolBar* toolbar = findChild<QToolBar*>("shapeToolBar");
-//    if (!toolbar) {
-//        toolbar = new QToolBar(menu);
-//        toolbar->setOrientation(Qt::Horizontal);
-//        toolbar->setWindowTitle("Shapes");
-//        toolbar->setObjectName("shapeToolBar");
-//        addToolBar(toolbar);
-//    }
-
-    for (ShapeFactory* f : m_pluginManager->getShapeFactories()) {
-        if (f) {
-            ActionInsert* a = new ActionInsert(f, this);
-            menu->addAction(a);
-//            toolbar->addAction(a);
-            connect(
-                a, SIGNAL(InsertSurface(ShapeFactory*)),
-                this, SLOT(InsertSurface(ShapeFactory*))
-            );
-        } else {
-            menu->addSeparator();
-//            toolbar->addSeparator();
-        }
-    }
-
-    QPushButton* button = new QPushButton;
-    button->setIcon(QIcon(":/images/scene/nodeSurface.png"));
-    button->setToolTip("Shapes");
-    button->setMenu(menu);
-    findChild<QToolBar*>("insertToolBar")->addWidget(button);
-
-    // profiles
-    menu = ui->menuInsert->findChild<QMenu*>("menuProfile");
-
-    for (ProfileFactory* f : m_pluginManager->getProfileFactories()) {
-        ActionInsert* a = new ActionInsert(f, this);
-        menu->addAction(a);
-        connect(
-            a, SIGNAL(InsertProfile(ProfileFactory*)),
-            this, SLOT(InsertProfile(ProfileFactory*))
-        );
-    }
-
-    button = new QPushButton;
-    button->setIcon(QIcon(":/images/scene/nodeProfile.png"));
-    button->setToolTip("Profiles");
-    button->setMenu(menu);
-    findChild<QToolBar*>("insertToolBar")->addWidget(button);
 }
 
 void MainWindow::SetupActionsInsertTracker()

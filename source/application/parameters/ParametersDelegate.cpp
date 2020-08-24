@@ -68,8 +68,11 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
     }
     else if (SoSFNode* f = dynamic_cast<SoSFNode*>(field))
     {
-        QComboBox* editor = new QComboBox(parent);
         SoNode* node = f->getValue();
+        if (!dynamic_cast<TNode*>(f->getValue()))
+            return 0;
+
+        QComboBox* editor = new QComboBox(parent);
         MainWindow* main = model->getMain();
         QVector<TFactory*> factories = main->getPlugins()->getFactories(node);
         for (TFactory* tf : factories) {

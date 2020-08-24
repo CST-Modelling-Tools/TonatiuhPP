@@ -233,8 +233,6 @@ private:
 
     void SetupPluginManager();
     void SetupActionsInsertComponent();
-    void SetupActionsInsertMaterial();
-    void SetupActionsInsertShape();
     void SetupActionsInsertTracker();
 
     void SetupTriggers();

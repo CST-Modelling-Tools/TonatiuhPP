@@ -9,23 +9,17 @@
 
 #include <Inventor/nodes/SoMaterial.h>
 
-/**
- * Creates a new shape insert command that adds a \a shape to \a shapekit node in the \a model.
- *
- * If \a parent is not null, this command is appended to parent's child list and then owns this command.
- */
+
 CmdInsertSurface::CmdInsertSurface(
-    TShapeKit* kit,
-    SoNode* node,
-    SceneModel* model,
-    QUndoCommand* parent
+    TShapeKit* kit, SoNode* node,
+    SceneModel* model, QUndoCommand* parent
 ):
     QUndoCommand(parent),
     m_kit(kit),
     m_node(node),
     m_model(model)
 {
-    if (!m_kit || ! node)
+    if (!m_kit || !m_node)
         gcf::SevereError("CmdInsertShape called with NULL TShapeKit*");
 
     QString text;
@@ -62,20 +56,28 @@ CmdInsertSurface::~CmdInsertSurface()
     m_nodeOld->unref();
 }
 
-/*!
- * Reverts model state. After undo() is called, the \a shapekit node will not contain a shape type node.
- * \sa redo().
- */
 void CmdInsertSurface::undo()
 {
-    m_model->replaceCoinNode(m_kit, m_nodeOld);
+    set(m_nodeOld);
 }
 
-/*!
- * Applies a change to the model. After redo() the model will contain new shape node located as \a shapekit type node child.
- * \sa undo().
- */
 void CmdInsertSurface::redo()
 {
-    m_model->replaceCoinNode(m_kit, m_node);
+    set(m_node);
+}
+
+void CmdInsertSurface::set(SoNode* node)
+{
+    if (dynamic_cast<ShapeRT*>(node))
+    {
+        m_kit->shapeRT = node;
+    }
+    else if (dynamic_cast<ProfileRT*>(node))
+    {
+        m_kit->profileRT = node;
+    }
+    else if (dynamic_cast<MaterialRT*>(node))
+    {
+        m_kit->materialRT = node;
+    }
 }

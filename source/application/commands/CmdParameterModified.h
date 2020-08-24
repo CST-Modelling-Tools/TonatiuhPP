@@ -10,14 +10,17 @@ class CmdParameterModified: public QUndoCommand
 {
 
 public:
-    CmdParameterModified(SoNode* node, QString name, QString value, SceneModel* model, QUndoCommand* parent = 0);
+    CmdParameterModified(
+        SoNode* node, QString name, QString value,
+        SceneModel* model, QUndoCommand* parent = 0
+    );
 
     void undo();
     void redo();
 
 private:
     SoNode* m_node;
-    QString m_name;
+    QString m_parameter;
     QString m_value;
     QString m_valueOld;
     SceneModel* m_model;

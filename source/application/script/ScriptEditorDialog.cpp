@@ -15,9 +15,11 @@
 Q_DECLARE_METATYPE(QVector<QVariant>)
 
 #include "NodeObject.h"
+#include "FileObject.h"
 #include "main/MainWindow.h"
 
 Q_SCRIPT_DECLARE_QMETAOBJECT(NodeObject, QObject*)
+Q_SCRIPT_DECLARE_QMETAOBJECT(FileObject, QObject*)
 
 QString timeString()
 {
@@ -43,6 +45,7 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory
 
     QString pluginsDirectory = QApplication::applicationDirPath() + QDir::separator() + "plugins";
     QCoreApplication::addLibraryPath(pluginsDirectory);
+    QCoreApplication::addLibraryPath(QApplication::applicationDirPath());
 
     // init QtScript environment
     m_interpreter = new QScriptEngine(this);
@@ -80,6 +83,9 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory
 
     QScriptValue nodeObjectClass = m_interpreter->scriptValueFromQMetaObject<NodeObject>();
     m_interpreter->globalObject().setProperty("NodeObject", nodeObjectClass);
+
+    QScriptValue fileObjectClass = m_interpreter->scriptValueFromQMetaObject<FileObject>();
+    m_interpreter->globalObject().setProperty("FileObject", fileObjectClass);
 }
 
 ScriptEditorDialog::~ScriptEditorDialog()

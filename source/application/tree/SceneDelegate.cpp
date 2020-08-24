@@ -14,16 +14,13 @@
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
 
+
 SceneDelegate::SceneDelegate(QObject* parent):
     QStyledItemDelegate(parent)
 {
 
 }
 
-/**
- * Returns a line edit editor with a validates the input names. The names must start with a alphabetic character and optionally followed with some
- * alphanumeric characters.
- */
 QWidget* SceneDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& /*option*/, const QModelIndex& index) const
 {
     SceneModel* model = (SceneModel*) (index.model());
@@ -45,9 +42,6 @@ QWidget* SceneDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem
     return 0;
 }
 
-/**
- * Takes the name of the selected node and sets to de editor to display it.
- */
 void SceneDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
     if (!editor) return;

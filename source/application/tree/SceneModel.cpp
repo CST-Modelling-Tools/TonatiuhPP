@@ -30,9 +30,6 @@
 #include "tree/SoPathVariant.h"
 #include "main/Document.h"
 
-/*!
- * Creates an empty model.
- */
 SceneModel::SceneModel(QObject* parent):
     QAbstractItemModel(parent),
     m_nodeRoot(0),
@@ -255,25 +252,25 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
         {
             return QIcon(":/images/scene/nodeShape.png");
         }
-        else if (type.isDerivedFrom(ShapeRT::getClassTypeId()))
-        {
-            ShapeRT* shape = static_cast<ShapeRT*>(node);
-            return QIcon(shape->getTypeIcon());
-        }
-        else if (type.isDerivedFrom(ProfileRT::getClassTypeId()))
-        {
-            ProfileRT* aperture = static_cast<ProfileRT*>(node);
-            return QIcon(aperture->getTypeIcon());
-        }
-        else if (type.isDerivedFrom(MaterialRT::getClassTypeId()))
-        {
-            MaterialRT* material = static_cast<MaterialRT*>(node);
-            return QIcon(material->getTypeIcon());
-        }
-        else if (type.isDerivedFrom(SoMaterial::getClassTypeId()))
-        {
-            return QIcon(":/images/scene/nodeMaterialGL.png");
-        }
+//        else if (type.isDerivedFrom(ShapeRT::getClassTypeId()))
+//        {
+//            ShapeRT* shape = static_cast<ShapeRT*>(node);
+//            return QIcon(shape->getTypeIcon());
+//        }
+//        else if (type.isDerivedFrom(ProfileRT::getClassTypeId()))
+//        {
+//            ProfileRT* aperture = static_cast<ProfileRT*>(node);
+//            return QIcon(aperture->getTypeIcon());
+//        }
+//        else if (type.isDerivedFrom(MaterialRT::getClassTypeId()))
+//        {
+//            MaterialRT* material = static_cast<MaterialRT*>(node);
+//            return QIcon(material->getTypeIcon());
+//        }
+//        else if (type.isDerivedFrom(SoMaterial::getClassTypeId()))
+//        {
+//            return QIcon(":/images/scene/nodeMaterialGL.png");
+//        }
         else if (type.isDerivedFrom(Tracker::getClassTypeId()))
         {
             Tracker* tracker = static_cast<Tracker*>(node);
@@ -408,6 +405,19 @@ QModelIndex SceneModel::indexFromPath(const SoNodeKitPath& path) const
         }
         return QModelIndex();
     }
+    int temp = 1;
+    if (coinParent->getTypeId().isDerivedFrom(SoGroup::getClassTypeId()))
+    {
+        temp++;
+        coinNode = coinParent;
+        coinParent = (SoBaseKit*)path.getNodeFromTail(temp);
+    }
+    if (coinParent->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId()))
+    {
+        temp++;
+        coinNode = coinParent;
+        coinParent = (SoBaseKit*) path.getNodeFromTail(temp);
+    }
 
     SoGroup* coinPartList = static_cast<SoGroup*>(coinParent->getPart("group", true));
     if (!coinPartList) gcf::SevereError("IndexFromPath Null coinPartList.");
@@ -417,7 +427,7 @@ QModelIndex SceneModel::indexFromPath(const SoNodeKitPath& path) const
 
     SoNodeKitPath* pathParent = static_cast<SoNodeKitPath*>(path.copy());
     pathParent->ref();
-    pathParent->truncate(pathParent->getLength() - 1);
+    pathParent->truncate(pathParent->getLength() - temp);
     QModelIndex indexParent = indexFromPath(*pathParent);
     pathParent->unref();
     return index(row, 0, indexParent);
@@ -537,41 +547,6 @@ void SceneModel::removeCoinNode(int row, SoBaseKit* parent)
     }
 
     emit layoutChanged();
-}
-
-void SceneModel::replaceCoinNode(TShapeKit* parent, SoNode* node)
-{
-    int row = 0;
-    if (dynamic_cast<ShapeRT*>(node))
-    {
-        row = InstanceNode::IndexShapeRT;
-        parent->shapeRT = node;
-    }
-    else if (dynamic_cast<ProfileRT*>(node))
-    {
-        row = InstanceNode::IndexProfileRT;
-        parent->profileRT = node;
-    }
-    else if (dynamic_cast<MaterialRT*>(node))
-    {
-        row = InstanceNode::IndexMaterialRT;
-        parent->materialRT = node;
-    }
-
-//    for (InstanceNode* instanceParent : m_mapCoinQt[parent])
-//    {
-//        // remove
-//        InstanceNode* instance = instanceParent->children[row];
-//        QList<InstanceNode*>& instances = m_mapCoinQt[instance->getNode()];
-//        instances.removeAt(instances.indexOf(instance));
-
-//        // insert
-//        instance = new InstanceNode(node);
-//        instanceParent->replaceChild(row, instance);
-//        m_mapCoinQt[node].append(instance);
-//    }
-
-//    emit layoutChanged();
 }
 
 void SceneModel::replaceAir(AirKit* air)

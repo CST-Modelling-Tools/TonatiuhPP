@@ -153,7 +153,7 @@ void GraphicView::currentChanged(const QModelIndex& current, const QModelIndex& 
     m_graphicRoot->deselectAll();
 
     QVariant variant = current.data(Qt::UserRole);
-     if (!variant.canConvert<SoPathVariant>()) return;
+    if (!variant.canConvert<SoPathVariant>()) return;
     SoPath* path = variant.value<SoPathVariant>().getPath();
     {
         SceneModel* model = (SceneModel*) current.model();

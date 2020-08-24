@@ -48,6 +48,7 @@ HEADERS += \
     parameters/ParametersView.h \
     script/CodeEditArea.h \
     script/CodeEditorWidget.h \
+    script/FileObject.h \
     script/LineNumberWidget.h \
     script/NodeObject.h \
     script/ScriptEditorDialog.h \
@@ -109,6 +110,7 @@ SOURCES += \
     parameters/ParametersView.cpp \
     script/CodeEditArea.cpp \
     script/CodeEditorWidget.cpp \
+    script/FileObject.cpp \
     script/LineNumberWidget.cpp \
     script/NodeObject.cpp \
     script/ScriptEditorDialog.cpp \

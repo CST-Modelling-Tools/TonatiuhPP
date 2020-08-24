@@ -87,6 +87,9 @@ FluxAnalysisDialog::~FluxAnalysisDialog()
 }
 
 QStringList sFilters = {"Planar", "Parabolic", "Elliptic", "Hyperbolic", "Cylinder"};
+//#include <QSet>
+//QSet<QString> setFilters = {"Planar", "Parabolic", "Elliptic", "Hyperbolic", "Cylinder"};
+
 /*!
  * Opens a dialog to select a surface from the system.
  * If the selected surface is ok

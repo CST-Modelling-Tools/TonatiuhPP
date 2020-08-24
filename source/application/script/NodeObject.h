@@ -11,6 +11,7 @@ class PluginManager;
 class NodeObject: public QObject, protected QScriptable
 {
     Q_OBJECT
+
 public:
     explicit NodeObject(QObject* parent = 0);
     NodeObject(SoNode* node);

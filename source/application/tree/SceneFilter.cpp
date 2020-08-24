@@ -13,47 +13,30 @@ SceneFilter::SceneFilter(QObject* parent):
 
 }
 
-/*!
- * Adds new node type to de filter.
- */
-void SceneFilter::AddShapeTypeFilter(QString shape)
+void SceneFilter::addShapeType(QString shape)
 {
     if (!m_shapes.contains(shape))
         m_shapes << shape;
 }
 
-/*!
- * Sets the shape filters to \a  shapeTypeFilters. Previously defined shape filters will be removed.
- */
-void SceneFilter::SetShapeTypeFilters(QStringList shapes)
-{
-    m_shapes = shapes;
-}
-
-/*!
- * Returns true if the \a m_nodetypeList contains the type of the element defined with \a sourceRow and \a sourceParent
- */
 bool SceneFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
     if (m_shapes.isEmpty()) return true;
 
-    SceneModel* sceneModel = dynamic_cast<SceneModel*>(sourceModel());
-    QModelIndex index = sceneModel->index(sourceRow, 0, sourceParent);
-    InstanceNode* instance = sceneModel->getInstance(index);
+    SceneModel* model = dynamic_cast<SceneModel*>(sourceModel());
+    QModelIndex index = model->index(sourceRow, 0, sourceParent);
+    InstanceNode* instance = model->getInstance(index);
     if (!instance) return false;
     SoNode* node = instance->getNode();
     if (!node) return false;
 
-    if (node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
-        return true;
-
-    if (node->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId()))
+    if (node->getTypeId() == TShapeKit::getClassTypeId())
     {
-        TShapeKit* shapeKit = static_cast<TShapeKit*>(node);
-        ShapeRT* shape = static_cast<ShapeRT*>(shapeKit->shapeRT.getValue());
-        if (shape && m_shapes.contains(shape->getTypeName()))
-            return true;
+        TShapeKit* kit = static_cast<TShapeKit*>(node);
+        ShapeRT* shape = static_cast<ShapeRT*>(kit->shapeRT.getValue());
+        if (!shape) return false;
+        return m_shapes.contains(shape->getTypeName());
     }
 
-    return false;
+    return true;
 }

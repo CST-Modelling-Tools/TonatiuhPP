@@ -19,6 +19,8 @@ SceneView::SceneView(QWidget* parent):
 {
     header()->setFont(font()); // resolves Qt bug
 
+    setEditTriggers(QAbstractItemView::DoubleClicked);
+
     setItemDelegate(new SceneDelegate(this));
 
 //    setAcceptDrops(true);

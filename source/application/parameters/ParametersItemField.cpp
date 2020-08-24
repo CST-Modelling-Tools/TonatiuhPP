@@ -44,10 +44,10 @@ QVariant ParametersItemField::data(int role) const
         {
             if (TNode* tn = dynamic_cast<TNode*>(f->getValue()))
                 return tn->getTypeName();
-            else
-                return f->getValue()->getTypeId().getName().getString();
+//            else
+//                return f->getValue()->getTypeId().getName().getString();
         }
-        if (SoSFBool* f = dynamic_cast<SoSFBool*>(m_field))
+        else if (SoSFBool* f = dynamic_cast<SoSFBool*>(m_field))
             return f->getValue() ? "true" : "false";
         else {
             SbString v;

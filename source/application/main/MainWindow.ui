@@ -117,16 +117,6 @@
     <property name="title">
      <string>&amp;Insert</string>
     </property>
-    <widget class="QMenu" name="menuShape">
-     <property name="title">
-      <string>Surface</string>
-     </property>
-    </widget>
-    <widget class="QMenu" name="menuMaterial">
-     <property name="title">
-      <string>Material</string>
-     </property>
-    </widget>
     <widget class="QMenu" name="menuTracker">
      <property name="title">
       <string>Tracker</string>
@@ -138,17 +128,9 @@
      </property>
      <addaction name="separator"/>
     </widget>
-    <widget class="QMenu" name="menuProfile">
-     <property name="title">
-      <string>Profile</string>
-     </property>
-    </widget>
     <addaction name="actionInsertNode"/>
     <addaction name="actionInsertShape"/>
     <addaction name="separator"/>
-    <addaction name="menuShape"/>
-    <addaction name="menuProfile"/>
-    <addaction name="menuMaterial"/>
     <addaction name="menuTracker"/>
     <addaction name="separator"/>
     <addaction name="menuComponent"/>
