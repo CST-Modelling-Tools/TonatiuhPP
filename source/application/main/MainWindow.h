@@ -99,6 +99,7 @@ public slots:
     void CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector<QVariant> parametersList);
     void InsertFileComponent(QString componentFileName = "");
     void InsertScene(QScriptValue v);
+    QScriptValue FindInterception(QScriptValue surface, QScriptValue rays);
 
     void Select(QString url);
     void SetName(QString name);
@@ -107,7 +108,7 @@ public slots:
     void ChangeSunPosition(double azimuth, double elevation);
     void ChangeSunPosition(int year, int month, int day, double hours, double minutes, double seconds, double latitude, double longitude);
     void SetSunshape(QString name);
-    void SetSunshapeParameter(QString parameter, QString value);
+    void SetSunParameter(QString parameter, QString value);
     void SetAir(QString name);
     void SetAirParameter(QString parameter, QString value);
 

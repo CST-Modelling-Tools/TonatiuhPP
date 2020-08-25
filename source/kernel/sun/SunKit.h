@@ -28,8 +28,6 @@ public:
     void setBox(TSceneKit* scene);
     bool findTexture(int sizeX, int sizeY, InstanceNode* instanceRoot);
 
-
-
 public:
     SoMaterial* m_imageMaterial;
     SoTexture2* m_imageTexture;

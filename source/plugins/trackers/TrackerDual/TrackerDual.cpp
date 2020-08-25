@@ -40,6 +40,7 @@ TrackerDual::TrackerDual()
 
     m_heliostat = 0;
     m_sensor = new SoNodeSensor(onModified, this);
+    m_sensor->setPriority(0);
     m_sensor->attach(this);
     onModified(this, 0);
 }

@@ -1052,6 +1052,15 @@ void MainWindow::AddExportSurfaceURL(QString nodeURL)
  */
 void MainWindow::ChangeSunPosition(double azimuth, double elevation)
 {
+    TSceneKit* scene = m_document->getSceneKit();
+    SunKit* sk = (SunKit*) scene->getPart("world.sun", false);
+    SunPosition* sp = (SunPosition*) sk->getPart("position", false);
+    sp->azimuth = azimuth;
+    sp->elevation = elevation;
+    sk->updateTransform();
+    m_graphicsRoot->rays()->removeAllChildren();
+    scene->updateTrackers();
+
 //    TSceneKit* sceneKit = m_document->getSceneKit();
 //    SunKit* sunKit = (SunKit*) sceneKit->getPart("lightList[0]", false);
 //    if (!sunKit)
@@ -1615,6 +1624,15 @@ void MainWindow::InsertScene(QScriptValue v)
     setDocumentModified(true);
 }
 
+QScriptValue MainWindow::FindInterception(QScriptValue surface, QScriptValue rays)
+{
+    Random* rand = m_pluginManager->getRandomFactories()[m_raysRandomFactoryIndex]->create();
+    FluxAnalysis fa(m_document->getSceneKit(), m_modelScene, m_raysGridWidth, m_raysGridHeight, rand);
+    fa.run(surface.toString(), "front", rays.toUInt32(), false, 5, 5);
+    delete rand;
+    return fa.powerTotal();
+}
+
 /*!
  * Changes selected node to the node with \a nodeUrl. If model does not contains a node with defined url,
  * the selection will be null.
@@ -2031,8 +2049,15 @@ void MainWindow::SetSunshape(QString name)
 /*!
  * Set the \a value for the sunshape parameter \a parameter.
  */
-void MainWindow::SetSunshapeParameter(QString parameter, QString value)
+void MainWindow::SetSunParameter(QString parameter, QString value)
 {
+    TSceneKit* scene = m_document->getSceneKit();
+    SunKit* sk = (SunKit*) scene->getPart("world.sun", false);
+    SunAperture* sp = (SunAperture*) sk->getPart("aperture", false);
+
+    if (parameter == "aperture.disabledNodes")
+        sp->disabledNodes = value.toLatin1().data();
+
 //    TSceneKit* sceneKit = m_document->getSceneKit();
 //    SunKit* sunKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
 //    if (!sunKit)

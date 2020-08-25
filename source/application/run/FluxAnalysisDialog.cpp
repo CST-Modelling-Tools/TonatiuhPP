@@ -86,7 +86,7 @@ FluxAnalysisDialog::~FluxAnalysisDialog()
     delete ui;
 }
 
-QStringList sFilters = {"Planar", "Parabolic", "Elliptic", "Hyperbolic", "Cylinder"};
+QStringList sFilters = {"Planar", "Parabolic", "Elliptic", "Hyperbolic", "Cylinder", "Sphere"};
 //#include <QSet>
 //QSet<QString> setFilters = {"Planar", "Parabolic", "Elliptic", "Hyperbolic", "Cylinder"};
 
@@ -100,7 +100,7 @@ void FluxAnalysisDialog::SurfaceSelected()
     dialog.SetShapeTypeFilters(sFilters);
     if (!dialog.exec()) return;
 
-    QString fluxSurfaceURL = dialog.GetSelectedSurfaceURL();
+    QString fluxSurfaceURL = dialog.GetSelectedSurfaceURL(); //bug
     if (fluxSurfaceURL.isEmpty()) return;
     if (fluxSurfaceURL == m_fluxSurfaceURL) return;
 

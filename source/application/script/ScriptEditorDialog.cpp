@@ -86,6 +86,9 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory
 
     QScriptValue fileObjectClass = m_interpreter->scriptValueFromQMetaObject<FileObject>();
     m_interpreter->globalObject().setProperty("FileObject", fileObjectClass);
+
+    int q = fontMetrics().height();
+    resize(64*q, 48*q);
 }
 
 ScriptEditorDialog::~ScriptEditorDialog()

@@ -110,7 +110,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
     SunKit* sunKit = static_cast<SunKit*>(m_sceneKit->getPart("world.sun", false));
 
 //    InstanceNode* instanceSun = instanceScene->children[0]->children[0];
-    InstanceNode* instanceSun = instanceScene->children[0]->children[2];
+    InstanceNode* instanceSun = instanceScene->children[0]->children[1];
     if (!instanceSun) return;
 
     SunPosition* sunPosition = (SunPosition*) sunKit->getPart("position", false);

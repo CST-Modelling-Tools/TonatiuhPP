@@ -57,7 +57,7 @@ public:
 
     void SetupGraphcisRoot();
     void SetupModels();
-    int SetTonatiuhModelFile (QString filename);
+    int SetTonatiuhModelFile(QString filename);
 
     int Trace();
 

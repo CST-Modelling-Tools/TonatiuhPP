@@ -25,7 +25,7 @@ function makeHeliostat(parent, name, position, aiming, focus)
 	//mG = s.getPart("material");
 	//mG.setParameter("diffuseColor", "0.6 0.7 0.9")
 	//mG.setParameter("specularColor", "0.3 0.3 0.3")
-	//mG.setParameter("shiness", "0.8")
+	//mG.setParameter("shininess", "0.8")
 }
 
 nodeRoot = NodeObject();

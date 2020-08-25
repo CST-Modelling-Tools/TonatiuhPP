@@ -1,0 +1,113 @@
+file = FileObject();
+file.readCSV("../examples/scripts/heliostats.csv");
+
+vRec = "0.046700001 -2.0216 13.8347";
+
+function makeHeliostat(parent, name, position, aiming, focus)
+{
+	var nm = parent.createNode(name);
+	nm.setParameter("translation", position);
+	nm.setParameter("rotation", "0 0 1 3.14159");
+
+	var t = nm.insertTracker("Dual");
+	t.setParameter("primaryShift", "0 0.04 1.5");
+	t.setParameter("primaryAxis", "1 0 0");
+	t.setParameter("primaryAngles", "-1.5707964 1.5707964");
+	t.setParameter("secondaryShift", "0 0.175 0");
+	t.setParameter("secondaryAxis", "0 0 1");
+	t.setParameter("facetShift", "0 0.125 0");
+	t.setParameter("facetNormal", "0 1 0");
+	t.setParameter("aimingFrame", "global");
+	t.setParameter("aimingPoint", aiming);
+						
+	var n = nm.createNode("primary");
+	n = n.createNode("secondary");
+	n = n.createNode("facet");
+	n.setParameter("translation", "0 0.125 0");
+	n.setParameter("rotation", "1 0 0 -1.57080");	
+	
+	var s = n.createShape();
+
+	var q = s.insertSurface("Parabolic");
+	q.setParameter("fX", focus);
+	q.setParameter("fY", focus);
+
+	var p = s.insertProfile("Box");
+	p.setParameter("uSize", 2.25);
+	p.setParameter("vSize", 2.25);
+
+	var m = s.insertMaterial("Specular");
+	m.setParameter("slope", "0.002");
+	
+	var mG = s.getPart("material");
+	mG.setParameter("ambientColor", "0.68 0.75 0.82")
+	mG.setParameter("diffuseColor", "0. 0. 0.")
+	mG.setParameter("specularColor", "0.2 0.2 0.2")
+	mG.setParameter("shininess", "0.5")
+	
+	// pylon
+	n = nm.createNode("pylon");
+	n.setParameter("scaleFactor", "0.05 0.05 1");
+	s = n.createShape();
+	q = s.insertSurface("Cylinder");
+	p = s.insertProfile("Rectangular");
+	p.setParameter("vMin", 0.);
+	p.setParameter("vMax", 1.5);
+}
+
+var nodeRoot = NodeObject();
+nodeRoot.setName("Script");
+
+printTime("Heliostats");
+var nodeHeliostats = nodeRoot.createNode("Heliostats");
+nodeHeliostats.setParameter("translation", "0 0 -1.5");
+
+var nMax = file.rows();
+for (var n = 0; n < nMax; n++) {
+	name = file.part(n, 0);
+	position = file.part(n, 1);
+	focus = file.part(n, 2);
+	makeHeliostat(nodeHeliostats, name, position, vRec, focus);
+}
+
+n = nodeRoot.createNode("Ground");
+n.setParameter("translation", "0 0 -0.1");
+s = n.createShape();
+p = s.insertProfile("Rectangular");
+p.setParameter("uMin", -70);
+p.setParameter("uMax", 70);
+p.setParameter("vMin", -20);
+p.setParameter("vMax", 100);
+mG = s.getPart("material");
+mG.setParameter("ambientColor", "0.1 0.1 0.1");	
+mG.setParameter("diffuseColor", "0.85 0.85 0.8");
+
+n = nodeRoot.createNode("Tower");
+n.setParameter("translation", "0 -3 1");
+n.setParameter("rotation", "0 0 1  0.087298729");
+n.setParameter("scaleFactor", "6 6 2");
+s = n.createShape();
+q = s.insertSurface("Cube");
+
+//n = nodeRoot.createNode("Receiver");
+//n.setParameter("translation", vRec);
+//n.setParameter("scaleFactor", "4 4 4");
+//s = n.createShape();
+//q = s.insertSurface("Sphere");
+
+n = nodeRoot.createNode("Plate");
+n.setParameter("translation", vRec);
+n.setParameter("rotation", "1 0 0 -1.57080");
+s = n.createShape();
+s.setName("Shape")
+q = s.insertSurface("Planar");
+p = s.insertProfile("Box");
+p.setParameter("uSize", 5);
+p.setParameter("vSize", 5);
+
+tn.InsertScene(nodeRoot);
+
+printTime("Tracking");
+tn.ChangeSunPosition(180., 90 - 11.27182); 
+tn.SetSunParameter("aperture.disabledNodes", "//Layout/Script/Ground");
+

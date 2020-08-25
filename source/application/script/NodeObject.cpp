@@ -61,6 +61,12 @@ QScriptValue NodeObject::getPart(const QString& name)
 
     SoBaseKit* parent = (SoBaseKit*)(m_node);
     SoNode* node = parent->getPart(name.toLatin1().data(), true);
+    if (!node) {
+        SoField* field = m_node->getField(name.toLatin1().data());
+        SoSFNode* fnode = dynamic_cast<SoSFNode*>(field);
+        if (fnode) node = fnode->getValue();
+    }
+    if (!node) return 0;
     NodeObject* ans = new NodeObject(node);
     return engine()->newQObject(ans);
 }
@@ -120,6 +126,12 @@ QScriptValue NodeObject::insertTracker(const QString& name)
 
     NodeObject* ans = new NodeObject(tracker);
     return engine()->newQObject(ans);
+}
+
+void NodeObject::update()
+{
+    m_node->touch();
+    m_node->startNotify();
 }
 
 void NodeObject::setName(const QString& name)
