@@ -1010,11 +1010,11 @@ SbVec3f MainWindow::getTarget(SoCamera* camera)
 void MainWindow::on_actionRunScript_triggered()
 {
 //    m_undoStack->setActive(false);
-    m_undoStack->beginMacro("Script");
+//    m_undoStack->beginMacro("Script");
     ScriptEditorDialog dialog(m_pluginManager->getRandomFactories(), this);
     dialog.exec();
 //    m_undoStack->setActive(true);
-    m_undoStack->endMacro();
+//    m_undoStack->endMacro();
 }
 
 void MainWindow::on_actionAbout_triggered()

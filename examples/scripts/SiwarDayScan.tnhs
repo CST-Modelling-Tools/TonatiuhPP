@@ -1,0 +1,23 @@
+var file = FileObject();
+file.readCSV("../examples/scripts/clearSolsticeDayPROTEAS.csv");
+
+var degree = 3.14159/180;
+var wMax = 2.25*2.25*155*1000;
+var wTotal = 0;
+printTime("azimuth [deg], elevation[deg], efficiency");
+
+var nMax = file.rows();
+for (var n = 1; n < nMax; n++) {
+	var gamma = file.part(n, 4)/degree;
+	var alpha = 90 - file.part(n, 5)/degree;
+	var irradiance = file.part(n, 6);
+	if (irradiance <= 0) continue;
+	
+	tn.ChangeSunPosition(gamma, alpha); 
+	var w = tn.FindInterception("//Layout/Script/Receiver/Plate/Shape", 100000);
+	var eta = w/wMax;
+	print("" + gamma + ", " + alpha + ", " + eta);
+	wTotal += eta*wMax/1000*irradiance;
+}
+
+printTime("Daily energy [Wh] = " + wTotal/4);

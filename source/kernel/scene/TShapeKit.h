@@ -21,6 +21,7 @@ public:
     static void initClass();
     TShapeKit();
 
+
     SoSFNode shapeRT;
     SoSFNode profileRT;
     SoSFNode materialRT;
@@ -36,4 +37,8 @@ protected:
     static void onSensor(void* data, SoSensor*);
 
     void setDefaultOnNonWritingFields();
+
+    // SoBaseKit interface
+protected:
+    SbBool setUpConnections(SbBool onoff, SbBool doitalways);
 };

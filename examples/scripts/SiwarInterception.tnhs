@@ -1,9 +1,12 @@
-// set azimuth and elevation of the sun in degrees
-tn.ChangeSunPosition(180., 90 - 11.27182); 
-// find power intercepted by a node using a given number of rays
-var w = tn.FindInterception("//Layout/Script/Plate/Shape", 1000000);
-printTime("power = " + w);
-
-tn.ChangeSunPosition(180., 90 - 20); 
-var w = tn.FindInterception("//Layout/Script/Plate/Shape", 1000000);
-printTime("power = " + w);
+printTime("azimuth [deg], elevation[deg], efficiency");
+var wMax = 2.25*2.25*155*1000;
+var gamma = 180; // South
+for (var alpha = 10; alpha <= 90; alpha += 20) 
+{
+	// set azimuth and elevation of the sun in degrees
+	tn.ChangeSunPosition(gamma, alpha);
+	// find power intercepted by a node using a given number of rays
+	var w = tn.FindInterception("//Layout/Script/Receiver/Plate/Shape", 1000000);
+	var eta = w/wMax;
+	print("" + gamma + ", " + alpha + ", " + eta);
+}

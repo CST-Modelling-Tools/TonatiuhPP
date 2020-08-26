@@ -31,3 +31,5 @@ struct TONATIUH_KERNEL Photon
     // 0 otherwise
     bool isAbsorbed;
 };
+
+// 4 + 4 + 2 + 3*8 = 34 bytes/photon

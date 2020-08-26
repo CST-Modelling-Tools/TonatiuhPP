@@ -43,7 +43,8 @@ TShapeKit::TShapeKit()
 
     profileRT = new ProfileBox;
     materialRT = new MaterialAbsorber;
-    material = m_shapeKit->getPart("material", true);
+    material = new SoMaterial;
+    m_shapeKit->setPart("material", material.getValue());
 
     m_sensorShape = new SoFieldSensor(onSensor, this);
     m_sensorShape->attach(&shapeRT);
@@ -73,4 +74,10 @@ void TShapeKit::setDefaultOnNonWritingFields()
 {
     topSeparator.setDefault(TRUE);
     SoBaseKit::setDefaultOnNonWritingFields();
+}
+
+SbBool TShapeKit::setUpConnections(SbBool onoff, SbBool doitalways)
+{
+    SoBaseKit::setUpConnections(onoff, doitalways);
+    m_shapeKit->setPart("material", material.getValue());
 }

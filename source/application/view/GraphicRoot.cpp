@@ -81,13 +81,13 @@ GraphicRoot::GraphicRoot()
     environment->ambientIntensity = 1.;
     m_root->addChild(environment);
 
-    SoTransformSeparator* ts = new SoTransformSeparator;
-    ts->addChild(m_sun->getTransform());
-    SoDirectionalLight* light = new SoDirectionalLight;
-    light->intensity = 0.7;
-    light->direction = SbVec3f(0., 0., 1.);
-    ts->addChild(light);
-    m_root->addChild(ts);
+//    SoTransformSeparator* ts = new SoTransformSeparator;
+//    ts->addChild(m_sun->getTransform());
+//    SoDirectionalLight* light = new SoDirectionalLight;
+//    light->intensity = 0.;
+//    light->direction = SbVec3f(0., 0., 1.);
+//    ts->addChild(light);
+//    m_root->addChild(ts);
 
     //? GLSL shader must have version, Coin bug
     SoShadowGroup* group = new SoShadowGroup;
@@ -98,7 +98,7 @@ GraphicRoot::GraphicRoot()
     SoTransformSeparator* ts2 = new SoTransformSeparator;
     ts2->addChild(m_sun->getTransform());
     SoShadowDirectionalLight* shadow = new SoShadowDirectionalLight;
-    shadow->intensity = 0.3;
+    shadow->intensity = 1.;
     shadow->direction = SbVec3f(0., 0., 1.);
     ts2->addChild(shadow);
     group->addChild(ts2);

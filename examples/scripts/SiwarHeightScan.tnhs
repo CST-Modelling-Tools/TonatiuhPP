@@ -192,9 +192,14 @@ function makeField()
 }
 
 
-var zReceiver = 25;
-var vRec = "0.0467 -2.0216 " + zReceiver;
-makeField();
-
-
-
+var wMax = 2.25*2.25*155*1000;
+print("height [m], efficiency");
+for (var h = 10; h <= 30; h += 2)
+{
+	var zReceiver = h;
+	var vRec = "0.0467 -2.0216 " + zReceiver;
+	makeField();
+	var w = tn.FindInterception("//Layout/Script/Receiver/Plate/Shape", 100000);
+	w /= wMax;
+	print("" + h + ", " + w);
+}
