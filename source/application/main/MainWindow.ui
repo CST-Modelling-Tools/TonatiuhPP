@@ -117,11 +117,6 @@
     <property name="title">
      <string>&amp;Insert</string>
     </property>
-    <widget class="QMenu" name="menuTracker">
-     <property name="title">
-      <string>Tracker</string>
-     </property>
-    </widget>
     <widget class="QMenu" name="menuComponent">
      <property name="title">
       <string>Component</string>
@@ -130,8 +125,7 @@
     </widget>
     <addaction name="actionInsertNode"/>
     <addaction name="actionInsertShape"/>
-    <addaction name="separator"/>
-    <addaction name="menuTracker"/>
+    <addaction name="actionInsertTracker"/>
     <addaction name="separator"/>
     <addaction name="menuComponent"/>
     <addaction name="actionUserComponent"/>
@@ -218,6 +212,7 @@
    </attribute>
    <addaction name="actionInsertNode"/>
    <addaction name="actionInsertShape"/>
+   <addaction name="actionInsertTracker"/>
   </widget>
   <widget class="QToolBar" name="viewToolBar">
    <property name="windowTitle">
@@ -653,6 +648,18 @@
   <action name="actionRunTestC">
    <property name="text">
     <string>C</string>
+   </property>
+  </action>
+  <action name="actionInsertTracker">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/scene/nodeTracker.png</normaloff>:/images/scene/nodeTracker.png</iconset>
+   </property>
+   <property name="text">
+    <string>Tracker</string>
+   </property>
+   <property name="toolTip">
+    <string>Tracker</string>
    </property>
   </action>
  </widget>

@@ -90,12 +90,13 @@ public slots:
 
     void InsertNode();
     void InsertShape();
+    void InsertTracker();
     void Insert(TFactory* f);
-    void InsertSurface(QString name);
-    void InsertSurface(QString shapeType, int numberOfParameters, QVector<QVariant> parametersList);
-    void InsertProfile(QString name);
-    void InsertMaterial(QString name);
-    void InsertTracker(QString name);
+    void InsertShapeSurface(QString name);
+    void InsertShapeSurface(QString shapeType, int numberOfParameters, QVector<QVariant> parametersList);
+    void InsertShapeProfile(QString name);
+    void InsertShapeMaterial(QString name);
+    void InsertTrackerArmature(QString name);
     void CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector<QVariant> parametersList);
     void InsertFileComponent(QString componentFileName = "");
     void InsertScene(QScriptValue v);
@@ -140,11 +141,11 @@ private slots:
     void ChangeSelection(const QModelIndex& index);
     void CreateComponent(ComponentFactory* factory);
 
-    void InsertMaterial(MaterialFactory* factory);
-    void InsertSurface(ShapeFactory* factory);
-    void InsertSurface(ShapeFactory* factory, int numberOfParameters, QVector<QVariant> parametersList);
-    void InsertProfile(ProfileFactory* factory);
-    void InsertTracker(TrackerFactory* factory);
+    void InsertShapeMaterial(MaterialFactory* factory);
+    void InsertShapeSurface(ShapeFactory* factory);
+    void InsertShapeSurface(ShapeFactory* factory, int numberOfParameters, QVector<QVariant> parametersList);
+    void InsertShapeProfile(ProfileFactory* factory);
+    void InsertTrackerArmature(TrackerFactory* f);
 
     void onSunDialog();
     void onAirDialog();
@@ -234,7 +235,7 @@ private:
 
     void SetupPluginManager();
     void SetupActionsInsertComponent();
-    void SetupActionsInsertTracker();
+//    void SetupActionsInsertTracker();
 
     void SetupTriggers();
 

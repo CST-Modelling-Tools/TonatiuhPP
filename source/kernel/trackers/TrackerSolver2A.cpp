@@ -1,4 +1,4 @@
-#include "TrackerDualSolver.h"
+#include "TrackerSolver2A.h"
 
 #include "libraries/math/gcf.h"
 
@@ -10,31 +10,23 @@ inline double findAngle(const vec3d& a, const vec3d& m, const vec3d& v, double a
     return atan2(dot(a, cross(m, v)), dot(m, v) - av*av);
 }
 
-TrackerDualSolver::TrackerDualSolver(
-    const TrackingDrive& primary,
-    const TrackingDrive& secondary,
-    const TrackingVertex& facet,
-    const Angles& angles0
-):
-    primary(primary),
-    secondary(secondary),
-    facet(facet),
-    angles0(angles0)
-{
 
+TrackerSolver2A::TrackerSolver2A(TrackerArmature2A* armature)
+{
+    m_armature = armature;
 }
 
-vec3d TrackerDualSolver::findFacetPoint(const Angles& angles)
+vec3d TrackerSolver2A::findFacetPoint(const Angles& angles)
 {
-    vec3d r = secondary.getTransform(angles.y).transformPoint(facet.shift);
-    return primary.getTransform(angles.x).transformPoint(r);
+    vec3d r = m_armature->secondary.getTransform(angles.y).transformPoint(m_armature->facet.shift);
+    return m_armature->primary.getTransform(angles.x).transformPoint(r);
 }
 
 // rotate v0 to v
-QVector<Angles> TrackerDualSolver::solveRotation(const vec3d& v0, const vec3d& v)
+QVector<Angles> TrackerSolver2A::solveRotation(const vec3d& v0, const vec3d& v)
 {
-    const vec3d& a = primary.axis;
-    const vec3d& b = secondary.axis;
+    const vec3d& a = m_armature->primary.axis;
+    const vec3d& b = m_armature->secondary.axis;
 
     vec3d k = cross(a, b);
     double k2 = k.norm2();
@@ -60,19 +52,19 @@ QVector<Angles> TrackerDualSolver::solveRotation(const vec3d& v0, const vec3d& v
 }
 
 // rotate facet.normal to normal
-QVector<Angles> TrackerDualSolver::solveFacetNormal(const vec3d& normal)
+QVector<Angles> TrackerSolver2A::solveFacetNormal(const vec3d& normal)
 {
-    return solveRotation(facet.normal, normal);
+    return solveRotation(m_armature->facet.normal, normal);
 }
 
-QVector<Angles> TrackerDualSolver::solveReflectionSecondary(const vec3d& vSun, const vec3d& rAim)
+QVector<Angles> TrackerSolver2A::solveReflectionSecondary(const vec3d& vSun, const vec3d& rAim)
 {
-    vec3d vTarget0 = (rAim - facet.shift).normalized();
-    vec3d vSun0 = -vTarget0.reflected(facet.normal);
+    vec3d vTarget0 = (rAim - m_armature->facet.shift).normalized();
+    vec3d vSun0 = -vTarget0.reflected(m_armature->facet.normal);
     return solveRotation(vSun0, vSun);
 }
 
-QVector<Angles> TrackerDualSolver::solveReflectionGlobal(const vec3d& vSun, const vec3d& rAim)
+QVector<Angles> TrackerSolver2A::solveReflectionGlobal(const vec3d& vSun, const vec3d& rAim)
 {
     QVector<Angles> ans;
     int iMax = 5; // max iterations
@@ -80,7 +72,7 @@ QVector<Angles> TrackerDualSolver::solveReflectionGlobal(const vec3d& vSun, cons
 
     for (int s = 0; s < 2; ++s) // solutions
     {
-        vec3d rFacet = findFacetPoint(angles0);
+        vec3d rFacet = findFacetPoint(m_armature->angles0);
         for (int i = 0; i < iMax; ++i)
         {
             vec3d vTarget = (rAim - rFacet).normalized();
@@ -99,7 +91,7 @@ QVector<Angles> TrackerDualSolver::solveReflectionGlobal(const vec3d& vSun, cons
     return ans;
 }
 
-Angles TrackerDualSolver::selectSolution(const QVector<Angles>& solutions)
+Angles TrackerSolver2A::selectSolution(const QVector<Angles>& solutions)
 {
     Angles ans;
     double zAns = gcf::infinity;
@@ -107,11 +99,11 @@ Angles TrackerDualSolver::selectSolution(const QVector<Angles>& solutions)
     for (const Angles& solution : solutions)
     {
         Angles temp;
-        temp.x = primary.angles.normalizeAngle(solution.x);
-        if (!primary.angles.isInside(temp.x)) continue;
-        temp.y = secondary.angles.normalizeAngle(solution.y);
-        if (!secondary.angles.isInside(temp.y)) continue;
-        double z = (temp - angles0).norm2();
+        temp.x = m_armature->primary.angles.normalizeAngle(solution.x);
+        if (!m_armature->primary.angles.isInside(temp.x)) continue;
+        temp.y = m_armature->secondary.angles.normalizeAngle(solution.y);
+        if (!m_armature->secondary.angles.isInside(temp.y)) continue;
+        double z = (temp - m_armature->angles0).norm2();
         if (z > zAns) continue;
         ans = temp;
         zAns = z;
@@ -119,5 +111,5 @@ Angles TrackerDualSolver::selectSolution(const QVector<Angles>& solutions)
 
     if (zAns < gcf::infinity)
         return ans;
-    return angles0;
+    return m_armature->angles0;
 }

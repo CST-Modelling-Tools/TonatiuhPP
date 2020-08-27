@@ -1,24 +1,14 @@
 #pragma once
 
-#include "kernel/trackers/TrackingDrive.h"
-#include "libraries/math/2D/vec2d.h"
+#include "kernel/trackers/TrackerArmature2A.h"
 
 typedef vec2d Angles;
 
 
-struct TrackerDualSolver
+class TrackerSolver2A
 {
-    TrackerDualSolver(
-        const TrackingDrive& primary,
-        const TrackingDrive& secondary,
-        const TrackingVertex& facet,
-        const Angles& angles0 = Angles(0., 0.)
-    );
-
-    TrackingDrive primary;
-    TrackingDrive secondary;
-    TrackingVertex facet;
-    Angles angles0; // default angles
+public:
+    TrackerSolver2A(TrackerArmature2A* armature);
 
     vec3d findFacetPoint(const Angles& angles);
 
@@ -29,4 +19,7 @@ struct TrackerDualSolver
     QVector<Angles> solveReflectionGlobal(const vec3d& vSun, const vec3d& rAim);
 
     Angles selectSolution(const QVector<Angles>& solutions);
+
+private:
+    TrackerArmature2A* m_armature;
 };

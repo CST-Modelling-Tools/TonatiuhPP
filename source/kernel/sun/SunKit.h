@@ -1,15 +1,18 @@
 #pragma once
+
 #include "kernel/TonatiuhKernel.h"
 
 #include <Inventor/nodekits/SoBaseKit.h>
 
 #include "kernel/TonatiuhTypes.h"
 #include "libraries/math/3D/Box3D.h"
+
 class InstanceNode;
 class TSceneKit;
 class SoTransform;
 class SoMaterial;
 class SoTexture2;
+
 
 class TONATIUH_KERNEL SunKit: public SoBaseKit
 {

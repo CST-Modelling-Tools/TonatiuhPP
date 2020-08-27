@@ -4,9 +4,6 @@
 
 #include <Inventor/nodekits/SoShapeKit.h>
 
-class ShapeRT;
-class MaterialRT;
-
 class SoFieldSensor;
 class SoSensor;
 
@@ -37,8 +34,5 @@ protected:
     static void onSensor(void* data, SoSensor*);
 
     void setDefaultOnNonWritingFields();
-
-    // SoBaseKit interface
-protected:
     SbBool setUpConnections(SbBool onoff, SbBool doitalways);
 };

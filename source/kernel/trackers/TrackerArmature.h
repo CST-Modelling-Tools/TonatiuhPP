@@ -4,19 +4,21 @@
 
 #include <Inventor/nodekits/SoBaseKit.h>
 
-struct vec3d;
-class Transform;
 class TSeparatorKit;
+class Transform;
+struct vec3d;
+class TrackerTarget;
 
 
-class TONATIUH_KERNEL Tracker: public TNode
+class TONATIUH_KERNEL TrackerArmature: public TNode
 {
-    SO_NODE_ABSTRACT_HEADER(Tracker);
+    SO_NODE_ABSTRACT_HEADER(TrackerArmature);
 
 public:
     static void initClass();
 
-    virtual void update(TSeparatorKit* parent, const Transform& toGlobal, const vec3d& vSun);
+    virtual void update(TSeparatorKit* parent, const Transform& toGlobal,
+                        const vec3d& vSun, TrackerTarget* target);
 
     NAME_ICON_FUNCTIONS("X", ":/TrackerX.png")
 };
@@ -28,7 +30,7 @@ public:
 class TrackerFactory: public TFactory
 {
 public:
-    virtual Tracker* create() const = 0;
+    virtual TrackerArmature* create() const = 0;
 };
 
 Q_DECLARE_INTERFACE(TrackerFactory, "tonatiuh.TrackerFactory")

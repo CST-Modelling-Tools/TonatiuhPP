@@ -3,7 +3,7 @@
 #include <QUndoCommand>
 
 class SceneModel;
-class TShapeKit;
+class SoBaseKit;
 class SoNode;
 
 
@@ -11,7 +11,7 @@ class CmdInsertSurface: public QUndoCommand
 {
 public:
     CmdInsertSurface(
-        TShapeKit* kit, SoNode* node,
+        SoBaseKit* kit, SoNode* node,
         SceneModel* model, QUndoCommand* parent = 0
     );
     ~CmdInsertSurface();
@@ -23,7 +23,7 @@ private:
     void set(SoNode* node);
 
 private:
-    TShapeKit* m_kit;
+    SoBaseKit* m_kit;
     SoNode* m_node;
     SoNode* m_nodeOld;
     SceneModel* m_model;

@@ -19,7 +19,10 @@ CodeEditorWidget::CodeEditorWidget(QWidget* parent, Qt::WindowFlags f):
 
     SetupToolbar();
     lineNumberWidget->SetCodeEditor(codeEditor);
-    connect( codeEditor, SIGNAL( updateRequest( QRect, int ) ), lineNumberWidget, SLOT( UpdateLineNumberArea( QRect, int ) ) );
+    connect(
+        codeEditor, SIGNAL( updateRequest(QRect, int) ),
+        lineNumberWidget, SLOT(UpdateLineNumberArea(QRect,int) )
+    );
 }
 
 CodeEditorWidget::~CodeEditorWidget()
@@ -40,7 +43,7 @@ bool CodeEditorWidget::OkToContinue()
 {
     QTextDocument* document = codeEditor->document();
 
-    if ( document->isModified () )
+    if ( document->isModified() )
     {
         int answer = QMessageBox::warning( this, tr( "Tonatiuh" ),
                          tr( "The document has been modified.\n"

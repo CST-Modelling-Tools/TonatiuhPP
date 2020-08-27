@@ -23,12 +23,13 @@ public:
 public slots:
     QScriptValue createNode(const QString& name = "");
     QScriptValue createShape();
+    QScriptValue createTracker();
     QScriptValue getPart(const QString& name = "");
 
     QScriptValue insertSurface(const QString& name = "");
     QScriptValue insertProfile(const QString& name = "");
     QScriptValue insertMaterial(const QString& name = "");
-    QScriptValue insertTracker(const QString& name = "");
+    QScriptValue insertArmature(const QString& name = "");
 
     void update();
 

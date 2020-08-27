@@ -16,7 +16,7 @@ CodeEditArea::CodeEditArea(QWidget* parent):
     UpdateCurrentLine();
 
 
-    QFont font("Consolas", 10);
+    QFont font("Consolas", 9);
 //    if (font.exactMatch())
     setFont(font);
 

@@ -191,11 +191,13 @@ inline vec3d cross(const vec3d& a, const vec3d& b)
     );
 }
 
+// this != normal
 inline vec3d vec3d::reflected(const vec3d& n) const
 {
     return *this - n*(2.*dot(*this, n));
 }
 
+// this = normal
 inline vec3d vec3d::reflect(const vec3d& v) const
 {
     return v - (*this)*(2.*dot(*this, v)/norm2());

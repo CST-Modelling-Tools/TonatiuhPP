@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include <QDateTime>
+#include <QElapsedTimer>
 #include <QScriptEngine>
 #include <QString>
 #include <QDir>
@@ -89,6 +90,9 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory
 
     int q = fontMetrics().height();
     resize(64*q, 48*q);
+
+    QFont font("Consolas", 9);
+    ui->logWidget->setFont(font);
 }
 
 ScriptEditorDialog::~ScriptEditorDialog()
@@ -127,6 +131,8 @@ void ScriptEditorDialog::closeEvent(QCloseEvent* event)
  */
 void  ScriptEditorDialog::RunScript()
 {
+    QElapsedTimer timer;
+    timer.start();
     QString message = timeString() + "Script started.";
     WriteMessage(message);
 
@@ -174,7 +180,8 @@ void  ScriptEditorDialog::RunScript()
            WriteMessage( logmessage );
          *
          */
-        QString message = timeString() + "Script finished.";
+        int tElapsed = timer.elapsed();
+        QString message = timeString() + QString("Script finished in %1 ms.").arg(tElapsed);
         WriteMessage(message);
     }
 }
@@ -194,8 +201,8 @@ void ScriptEditorDialog::SetCurrentFile(QString fileName)
 
     setWindowTitle(tr("%1[*] - Tonatiuh").arg(title));
 
-    QString message = timeString() + QString("Current script file: '%2'.").arg(fileName);
-    WriteMessage(message);
+//    QString message = timeString() + QString("Current script file: '%2'.").arg(fileName);
+//    WriteMessage(message);
 }
 
 /*!

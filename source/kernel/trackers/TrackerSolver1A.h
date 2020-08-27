@@ -1,19 +1,12 @@
 #pragma once
 
-#include "kernel/trackers/TrackingDrive.h"
+#include "kernel/trackers/TrackerArmature1A.h"
 
 
-struct TrackerSingleSolver
+class TrackerSolver1A
 {
-    TrackerSingleSolver(
-        const TrackingDrive& primary,
-        const TrackingVertex& facet,
-        double angle0 = 0.
-    );
-
-    TrackingDrive primary;
-    TrackingVertex facet;
-    double angle0; // default angle
+public:
+    TrackerSolver1A(TrackerArmature1A* armature);
 
     vec3d findFacetPoint(double angle);
 
@@ -24,4 +17,7 @@ struct TrackerSingleSolver
     double solveReflectionGlobal(const vec3d& vSun, const vec3d& rAim);
 
     double selectSolution(double solution);
+
+private:
+    TrackerArmature1A* m_armature;
 };

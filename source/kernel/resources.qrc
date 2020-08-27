@@ -15,5 +15,8 @@
         <file>images/ProfilePolygon.png</file>
         <file>images/ShapeCube.png</file>
         <file>images/ProfileRegular.png</file>
+        <file>images/MaterialTransparent.png</file>
+        <file>images/Tracker2A.png</file>
+        <file>images/Tracker1A.png</file>
     </qresource>
 </RCC>

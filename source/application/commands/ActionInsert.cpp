@@ -3,7 +3,7 @@
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/material/MaterialRT.h"
-#include "kernel/trackers/Tracker.h"
+#include "kernel/trackers/TrackerArmature.h"
 #include "kernel/component/ComponentFactory.h"
 
 

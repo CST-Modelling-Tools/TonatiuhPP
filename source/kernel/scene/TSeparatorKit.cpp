@@ -4,7 +4,7 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
 
-#include "kernel/trackers/Tracker.h"
+#include "kernel/trackers/TrackerKit.h"
 
 SO_KIT_SOURCE(TSeparatorKit)
 
@@ -13,7 +13,7 @@ void TSeparatorKit::initClass()
 {
     SO_KIT_INIT_CLASS(TSeparatorKit, SoBaseKit, "BaseKit");
 
-    Tracker::initClass();
+    TrackerKit::initClass();
 }
 
 TSeparatorKit::TSeparatorKit()
@@ -23,7 +23,7 @@ TSeparatorKit::TSeparatorKit()
 
     SO_KIT_ADD_CATALOG_ENTRY(topSeparator, SoSeparator, TRUE, this, "", FALSE);
     SO_KIT_ADD_CATALOG_ENTRY(transform, SoTransform, FALSE, topSeparator, "", TRUE);
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tracker, SoNode, Tracker, TRUE, this, "", TRUE);
+    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(tracker, SoNode, TrackerKit, TRUE, this, "", TRUE);
     SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(group, SoGroup, SoGroup, TRUE, topSeparator, "", TRUE); // temp
     SO_KIT_INIT_INSTANCE();
 }

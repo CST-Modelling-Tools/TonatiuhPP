@@ -3,12 +3,12 @@
 #include "kernel/sun/SunShape.h"
 
 
-class TONATIUH_KERNEL SunPillbox: public SunShape
+class TONATIUH_KERNEL SunShapePillbox: public SunShape
 {
-    SO_NODE_HEADER(SunPillbox);
+    SO_NODE_HEADER(SunShapePillbox);
 
 public:
-    SunPillbox();
+    SunShapePillbox();
     static void initClass();
     SoNode* copy(SbBool copyConnections) const;
 
@@ -20,7 +20,7 @@ public:
     NAME_ICON_FUNCTIONS("Pillbox", ":/images/SunPillbox.png")
 
 protected:
-    ~SunPillbox();
+    ~SunShapePillbox();
 
     double m_sinThetaMax;
 

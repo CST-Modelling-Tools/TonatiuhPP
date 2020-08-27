@@ -25,7 +25,7 @@
 #include "kernel/air/AirKit.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunKit.h"
-#include "kernel/trackers/Tracker.h"
+#include "kernel/trackers/TrackerKit.h"
 #include "libraries/math/gcf.h"
 #include "tree/SoPathVariant.h"
 #include "main/Document.h"
@@ -252,6 +252,10 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
         {
             return QIcon(":/images/scene/nodeShape.png");
         }
+        else if (type.isDerivedFrom(TrackerKit::getClassTypeId()))
+        {
+            return QIcon(":/images/scene/nodeTracker.png");
+        }
 //        else if (type.isDerivedFrom(ShapeRT::getClassTypeId()))
 //        {
 //            ShapeRT* shape = static_cast<ShapeRT*>(node);
@@ -271,11 +275,6 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
 //        {
 //            return QIcon(":/images/scene/nodeMaterialGL.png");
 //        }
-        else if (type.isDerivedFrom(Tracker::getClassTypeId()))
-        {
-            Tracker* tracker = static_cast<Tracker*>(node);
-            return QIcon(tracker->getTypeIcon());
-        }
         else if (type == SunKit::getClassTypeId())
             return QIcon(":/images/scene/nodeSun.png");
         else if (type == WorldKit::getClassTypeId())
@@ -490,7 +489,7 @@ int SceneModel::insertCoinNode(SoNode* node, SoBaseKit* parent)
     int row = -1;
     if (dynamic_cast<TSeparatorKit*>(parent))
     {
-        if (dynamic_cast<Tracker*>(node))
+        if (dynamic_cast<TrackerKit*>(node))
         {
             parent->setPart("tracker", node);
             row = 0;
@@ -643,10 +642,10 @@ bool SceneModel::Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinN
 
     if (!child->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId()))
     { // material, tracker, shape
-        if (child->getTypeId().isDerivedFrom(Tracker::getClassTypeId()))
+        if (child->getTypeId().isDerivedFrom(TrackerKit::getClassTypeId()))
         {
             TSeparatorKit* separatorKit = static_cast<TSeparatorKit*>(pCoinParent);
-            Tracker* tracker = static_cast<Tracker*>(separatorKit->getPart("tracker", false));
+            TrackerKit* tracker = static_cast<TrackerKit*>(separatorKit->getPart("tracker", false));
             if (tracker)
             {
                 QMessageBox::warning(0, "Tonatiuh warning", "This TSeparatorKit already contains a tracker");

@@ -5,12 +5,14 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTransform.h>
 
-#include "kernel/material/MaterialRT.h"
-#include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeRT.h"
-#include "kernel/trackers/Tracker.h"
+#include "kernel/profiles/ProfileRT.h"
+#include "kernel/material/MaterialRT.h"
+#include "kernel/trackers/TrackerArmature.h"
+#include "kernel/trackers/TrackerKit.h"
+
 #include "main/PluginManager.h"
 
 PluginManager* NodeObject::m_plugins = 0;
@@ -33,7 +35,7 @@ QScriptValue NodeObject::createNode(const QString& name)
     if (m_node->getTypeId() != TSeparatorKit::getClassTypeId()) return 0;
     TSeparatorKit* kit = new TSeparatorKit;
 
-    TSeparatorKit* parent = (TSeparatorKit*)(m_node);
+    TSeparatorKit* parent = (TSeparatorKit*) m_node;
     SoGroup* group = (SoGroup*) parent->getPart("group", true);
     group->addChild(kit);
 
@@ -47,9 +49,21 @@ QScriptValue NodeObject::createShape()
     if (m_node->getTypeId() != TSeparatorKit::getClassTypeId()) return 0;
     TShapeKit* kit = new TShapeKit;
 
-    TSeparatorKit* parent = (TSeparatorKit*)(m_node);
+    TSeparatorKit* parent = (TSeparatorKit*) m_node;
     SoGroup* group = (SoGroup*) parent->getPart("group", true);
     group->addChild(kit);
+
+    NodeObject* ans = new NodeObject(kit);
+    return engine()->newQObject(ans);
+}
+
+QScriptValue NodeObject::createTracker()
+{
+    if (m_node->getTypeId() != TSeparatorKit::getClassTypeId()) return 0;
+    TrackerKit* kit = new TrackerKit;
+
+    TSeparatorKit* parent = (TSeparatorKit*) m_node;
+    parent->setPart("tracker", kit);
 
     NodeObject* ans = new NodeObject(kit);
     return engine()->newQObject(ans);
@@ -113,16 +127,15 @@ QScriptValue NodeObject::insertMaterial(const QString& name)
     return engine()->newQObject(ans);
 }
 
-QScriptValue NodeObject::insertTracker(const QString& name)
+QScriptValue NodeObject::insertArmature(const QString& name)
 {
-    if (m_node->getTypeId() != TSeparatorKit::getClassTypeId()) return 0;
+    if (m_node->getTypeId() != TrackerKit::getClassTypeId()) return 0;
 
     TrackerFactory* f = m_plugins->getTrackerMap().value(name, 0);
-    Tracker* tracker = f->create();
-    tracker->setName(f->name().toStdString().c_str());
+    TrackerArmature* tracker = f->create();
 
-    TSeparatorKit* parent = (TSeparatorKit*)(m_node);
-    parent->setPart("tracker", tracker);
+    TrackerKit* parent = (TrackerKit*)(m_node);
+    parent->armature = tracker;
 
     NodeObject* ans = new NodeObject(tracker);
     return engine()->newQObject(ans);

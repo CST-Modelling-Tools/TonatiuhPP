@@ -6,7 +6,7 @@
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
 
 #include "TonatiuhFunctions.h"
-#include "kernel/material/MaterialRT.h"
+#include "kernel/material/MaterialTransparent.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/shape/ShapeRT.h"
 #include "libraries/math/3D/Box3D.h"
@@ -15,7 +15,7 @@
 #include "scene/TShapeKit.h"
 #include "shape//DifferentialGeometry.h"
 #include "sun/SunKit.h"
-#include "trackers/Tracker.h"
+#include "trackers/TrackerArmature.h"
 
 
 InstanceNode::InstanceNode(SoNode* node):
@@ -93,14 +93,17 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isFront, Inst
         return instance1->intersect(rayIn, rand, isFront, instance, rayOut);
 
 //    if (TShapeKit* kit = dynamic_cast<TShapeKit*>(m_node)) // slower
-    if (m_node->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId())) // faster
+    if (m_node->getTypeId() == TShapeKit::getClassTypeId()) // faster
     {
         TShapeKit* kit = (TShapeKit*) m_node;
+
+        MaterialRT* material = (MaterialRT*) kit->materialRT.getValue();
+        if (!material) return false;
+        if (material->getTypeId() == MaterialTransparent::getClassTypeId()) return false;
+
         ShapeRT* shape = (ShapeRT*) kit->shapeRT.getValue();
-//        ShapeRT* shape = (ShapeRT*) children[IndexShapeRT]->m_node;
         if (!shape) return false;
         ProfileRT* profile = (ProfileRT*) kit->profileRT.getValue();
-//        ProfileRT* profile = (ProfileRT*) children[IndexProfileRT]->m_node;
 
         Ray rayLocal = m_transform.transformInverse(rayIn);
         double tHit = 0.;
@@ -115,9 +118,6 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isFront, Inst
         dg.dpdv = m_transform.transformVector(dg.dpdv);
         dg.normal = m_transform.transformNormal(dg.normal);
 
-        MaterialRT* material = (MaterialRT*) kit->materialRT.getValue();
-//        MaterialRT* material = (MaterialRT*) children[IndexMaterialRT]->m_node;
-        if (!material) return false;
         return material->OutputRay(rayIn, dg, rand, rayOut);
     }
     else // SeparatorKit

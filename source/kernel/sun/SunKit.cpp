@@ -1,7 +1,7 @@
 #include "SunKit.h"
 
 #include "SunPosition.h"
-#include "SunPillbox.h"
+#include "SunShapePillbox.h"
 #include "SunAperture.h"
 
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
@@ -42,7 +42,7 @@ SunKit::SunKit()
 //    isBuiltIn = TRUE;
 
     SO_KIT_ADD_CATALOG_ENTRY(position, SunPosition, FALSE, this, "", TRUE);
-    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(shape, SunShape, SunPillbox, FALSE, this, "", TRUE);
+    SO_KIT_ADD_CATALOG_ABSTRACT_ENTRY(shape, SunShape, SunShapePillbox, FALSE, this, "", TRUE);
     SO_KIT_ADD_CATALOG_ENTRY(aperture, SunAperture, FALSE, this, "", TRUE);
 
     SO_KIT_INIT_INSTANCE();

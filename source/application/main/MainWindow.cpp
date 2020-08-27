@@ -86,7 +86,8 @@
 #include "kernel/sun/SunPosition.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunKit.h"
-#include "kernel/trackers/Tracker.h"
+#include "kernel/trackers/TrackerKit.h"
+#include "kernel/trackers/TrackerArmature.h"
 #include "kernel/trf.h"
 #include "main/Document.h"
 #include "run/FluxAnalysis.h"
@@ -380,7 +381,7 @@ void MainWindow::SetupPluginManager()
     if (!m_pluginManager) return;
     SetupActionsInsertComponent();
 //    addToolBarBreak();
-    SetupActionsInsertTracker();
+//    SetupActionsInsertTracker();
 }
 
 /*!
@@ -410,6 +411,7 @@ void MainWindow::SetupTriggers()
     // insert
     connect(ui->actionInsertNode, SIGNAL(triggered()), this, SLOT(InsertNode()) );
     connect(ui->actionInsertShape, SIGNAL(triggered()), this, SLOT(InsertShape()) );
+    connect(ui->actionInsertTracker, SIGNAL(triggered()), this, SLOT(InsertTracker()) );
     connect(ui->actionSaveComponent, SIGNAL(triggered()), this, SLOT(SaveComponent()) );
     connect(ui->actionUserComponent, SIGNAL(triggered()), this, SLOT(InsertUserDefinedComponent()) );
 
@@ -1282,7 +1284,7 @@ bool MainWindow::Delete(QModelIndex index)
     InstanceNode* instance = m_modelScene->getInstance(index);
     SoNode* node = instance->getNode();
 
-    if (node->getTypeId().isDerivedFrom(Tracker::getClassTypeId()))
+    if (node->getTypeId().isDerivedFrom(TrackerKit::getClassTypeId()))
     {
         CmdDeleteTracker* cmd = new CmdDeleteTracker(index, m_document->getSceneKit(), *m_modelScene);
         m_undoStack->push(cmd);
@@ -1419,14 +1421,46 @@ void MainWindow::InsertShape()
     setDocumentModified(true);
 }
 
+void MainWindow::InsertTracker()
+{
+    QModelIndex index = ui->sceneView->currentIndex();
+    if (!index.isValid()) return;
+    ui->sceneView->expand(index);
+
+    InstanceNode* instance = m_modelScene->getInstance(index);
+    SoNode* node = instance->getNode();
+    TSeparatorKit* parent = dynamic_cast<TSeparatorKit*>(node);
+    if (!parent) return;
+
+//    Tracker* tracker = (Tracker*) kit->getPart("tracker", false);
+//    if (tracker)
+//    {
+//        ShowWarning("This TSeparatorKit already contains a tracker node");
+//        return;
+//    }
+
+    TrackerKit* kit = new TrackerKit;
+    CmdInsertTracker* cmd = new CmdInsertTracker(kit, index, m_modelScene);
+    m_undoStack->push(cmd);
+
+    QString name("Tracker");
+    int count = 0;
+    while (!m_modelScene->setNodeName(kit, name))
+        name = QString("Tracker_%1").arg(++count);
+
+    setDocumentModified(true);
+}
+
 void MainWindow::Insert(TFactory* f)
 {
     if (ShapeFactory* sf = dynamic_cast<ShapeFactory*>(f))
-        InsertSurface(sf);
+        InsertShapeSurface(sf);
     else if (ProfileFactory* pf = dynamic_cast<ProfileFactory*>(f))
-        InsertProfile(pf);
+        InsertShapeProfile(pf);
     else if (MaterialFactory* mf = dynamic_cast<MaterialFactory*>(f))
-        InsertMaterial(mf);
+        InsertShapeMaterial(mf);
+    else if (TrackerFactory* tf = dynamic_cast<TrackerFactory*>(f))
+        InsertTrackerArmature(tf);
 }
 
 /*!
@@ -1435,11 +1469,11 @@ void MainWindow::Insert(TFactory* f)
  * If the current node is not a valid parent node or \a shapeType is not a valid type, the shape node will not be created.
  *
  */
-void MainWindow::InsertSurface(QString name)
+void MainWindow::InsertShapeSurface(QString name)
 {
     ShapeFactory* f = m_pluginManager->getShapeMap().value(name, 0);
     if (f)
-        InsertSurface(f);
+        InsertShapeSurface(f);
     else
         emit Abort("CreateShape: Shape not found");
 }
@@ -1451,20 +1485,20 @@ void MainWindow::InsertSurface(QString name)
  * If the current node is not a valid parent node or \a shapeType is not a valid type, the shape node will not be created.
  *
  */
-void MainWindow::InsertSurface(QString name, int numberOfParameters, QVector<QVariant> parametersList)
+void MainWindow::InsertShapeSurface(QString name, int numberOfParameters, QVector<QVariant> parametersList)
 {
     ShapeFactory* f = m_pluginManager->getShapeMap().value(name, 0);
     if (f)
-        InsertSurface(f, numberOfParameters, parametersList);
+        InsertShapeSurface(f, numberOfParameters, parametersList);
     else
         emit Abort("CreateShape: Selected shape type is not valid.");
 }
 
-void MainWindow::InsertProfile(QString name)
+void MainWindow::InsertShapeProfile(QString name)
 {
     ProfileFactory* f = m_pluginManager->getProfileMap().value(name, 0);
     if (f)
-        InsertProfile(f);
+        InsertShapeProfile(f);
     else
         emit Abort("InsertProfile: Profile not found");
 }
@@ -1474,11 +1508,11 @@ void MainWindow::InsertProfile(QString name)
  *
  * If the current node is not a surface type node or \a materialType is not a valid type, the material node will not be created.
  */
-void MainWindow::InsertMaterial(QString name)
+void MainWindow::InsertShapeMaterial(QString name)
 {
     MaterialFactory* f = m_pluginManager->getMaterialMap().value(name, 0);
     if (f)
-        InsertMaterial(f);
+        InsertShapeMaterial(f);
     else
         emit Abort("CreateMaterial: Material not found");
 }
@@ -1489,11 +1523,11 @@ void MainWindow::InsertMaterial(QString name)
  * If the current node is not a valid parent node or \a trackerType is not a valid type, the shape node will not be created.
  *
  */
-void MainWindow::InsertTracker(QString name)
+void MainWindow::InsertTrackerArmature(QString name)
 {
     TrackerFactory* f = m_pluginManager->getTrackerMap().value(name, 0);
     if (f)
-        InsertTracker(f);
+        InsertTrackerArmature(f);
     else
         emit Abort("CreateTracker: Selected tracker type is not valid.");
 }
@@ -2367,7 +2401,7 @@ void MainWindow::CreateComponent(ComponentFactory* factory)
  *
  * If the current node is not a surface type node, the shape node will not be created.
  */
-void MainWindow::InsertSurface(ShapeFactory* factory)
+void MainWindow::InsertShapeSurface(ShapeFactory* factory)
 {
     QModelIndex index = ui->sceneView->currentIndex();
     if (!index.isValid()) return;
@@ -2392,7 +2426,7 @@ void MainWindow::InsertSurface(ShapeFactory* factory)
  *
  * If the current node is not a surface type node, the shape node will not be created.
  */
-void MainWindow::InsertSurface(ShapeFactory* factory, int /*numberofParameters*/, QVector<QVariant> parametersList)
+void MainWindow::InsertShapeSurface(ShapeFactory* factory, int /*numberofParameters*/, QVector<QVariant> parametersList)
 {
     QModelIndex index = ui->sceneView->currentIndex();
     if (!index.isValid()) return;
@@ -2416,7 +2450,7 @@ void MainWindow::InsertSurface(ShapeFactory* factory, int /*numberofParameters*/
  *
  * If the current node is not a surface type node, the material node will not be created.
  */
-void MainWindow::InsertMaterial(MaterialFactory* factory)
+void MainWindow::InsertShapeMaterial(MaterialFactory* factory)
 {
     QModelIndex index = ui->sceneView->currentIndex();
     if (!index.isValid()) return;
@@ -2435,7 +2469,7 @@ void MainWindow::InsertMaterial(MaterialFactory* factory)
     setDocumentModified(true);
 }
 
-void MainWindow::InsertProfile(ProfileFactory* factory)
+void MainWindow::InsertShapeProfile(ProfileFactory* factory)
 {
     QModelIndex index = ui->sceneView->currentIndex();
     if (!index.isValid()) return;
@@ -2455,32 +2489,23 @@ void MainWindow::InsertProfile(ProfileFactory* factory)
     setDocumentModified(true);
 }
 
-/*!
- * Creates a shape node from the \a pTrackerFactory as current selected node child.
- *
- */
-void MainWindow::InsertTracker(TrackerFactory* factory)
+void MainWindow::InsertTrackerArmature(TrackerFactory* f)
 {
-    QModelIndex parentIndex = ui->sceneView->currentIndex();
-    if (!parentIndex.isValid()) return;
+    QModelIndex index = ui->sceneView->currentIndex();
+    if (!index.isValid()) return;
+    ui->sceneView->expand(index);
 
-    InstanceNode* parentInstance = m_modelScene->getInstance(parentIndex);
-    SoNode* parentNode = parentInstance->getNode();
-    TSeparatorKit* kit = dynamic_cast<TSeparatorKit*>(parentNode);
+    InstanceNode* instance = m_modelScene->getInstance(index);
+    SoNode* node = instance->getNode();
+    TrackerKit* kit = dynamic_cast<TrackerKit*>(node);
     if (!kit) return;
 
-    Tracker* tracker = (Tracker*) kit->getPart("tracker", false);
-    if (tracker)
-    {
-        ShowWarning("This TSeparatorKit already contains a tracker node");
-        return;
-    }
-    tracker = factory->create();
-    tracker->setName(factory->name().toStdString().c_str());
+    TrackerArmature* armature = f->create();
 
-    CmdInsertTracker* cmd = new CmdInsertTracker(tracker, parentIndex, m_modelScene);
+    CmdInsertSurface* cmd = new CmdInsertSurface(kit, armature, m_modelScene);
     m_undoStack->push(cmd);
 
+//    UpdateLightSize();
     setDocumentModified(true);
 }
 
@@ -2788,26 +2813,26 @@ void MainWindow::SetupActionsInsertComponent()
     }
 }
 
-void MainWindow::SetupActionsInsertTracker()
-{
-    QMenu* menu = ui->menuInsert->findChild<QMenu*>("menuTracker");
+//void MainWindow::SetupActionsInsertTracker()
+//{
+//    QMenu* menu = ui->menuInsert->findChild<QMenu*>("menuTracker");
 
-    for (TrackerFactory* f : m_pluginManager->getTrackerFactories())
-    {
-        ActionInsert* a = new ActionInsert(f, this);
-        menu->addAction(a);
-        connect(
-            a, SIGNAL(InsertTracker(TrackerFactory*)),
-            this, SLOT(InsertTracker(TrackerFactory*))
-        );
-    }
+//    for (TrackerFactory* f : m_pluginManager->getTrackerFactories())
+//    {
+//        ActionInsert* a = new ActionInsert(f, this);
+//        menu->addAction(a);
+//        connect(
+//            a, SIGNAL(InsertTracker(TrackerFactory*)),
+//            this, SLOT(InsertTracker(TrackerFactory*))
+//        );
+//    }
 
-    QPushButton* button = new QPushButton;
-    button->setIcon(QIcon(":/images/scene/nodeTracker.png"));
-    button->setToolTip("Trackers");
-    button->setMenu(menu);
-    findChild<QToolBar*>("insertToolBar")->addWidget(button);
-}
+//    QPushButton* button = new QPushButton;
+//    button->setIcon(QIcon(":/images/scene/nodeTracker.png"));
+//    button->setToolTip("Trackers");
+//    button->setMenu(menu);
+//    findChild<QToolBar*>("insertToolBar")->addWidget(button);
+//}
 
 /**
  * Action slot to show/hide a grid with the scene dimensions.

@@ -7,9 +7,9 @@
 #include "libraries/math/3D/Transform.h"
 #include "libraries/math/3D/vec3d.h"
 
-#include "kernel/trackers/Tracker.h"
+#include "kernel/trackers/TrackerKit.h"
 #include "kernel/air/AirTransmission.h"
-#include "kernel/sun/SunPillbox.h"
+#include "kernel/sun/SunShapePillbox.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunPosition.h"
 #include "kernel/scene/TSeparatorKit.h"
@@ -73,7 +73,7 @@ void TSceneKit::updateTrackers(TSeparatorKit* parent, Transform toGlobal, const 
     SoTransform* tParent = (SoTransform*) parent->getPart("transform", true);
     Transform t = toGlobal*tgf::makeTransform(tParent);
 
-    if (Tracker* tracker = (Tracker*) parent->getPart("tracker", false))
+    if (TrackerKit* tracker = (TrackerKit*) parent->getPart("tracker", false))
     {
         tracker->update(parent, t, vSun);
     }

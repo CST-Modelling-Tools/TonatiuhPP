@@ -11,7 +11,7 @@ LineNumberWidget::LineNumberWidget(QWidget* parent, Qt::WindowFlags f):
     QWidget(parent, f),
     m_codeEditArea(0)
 {
-    QFont font("Consolas", 10);
+    QFont font("Consolas", 9);
 //    if (font.exactMatch())
     setFont(font);
 }
@@ -34,14 +34,14 @@ QSize LineNumberWidget::sizeHint() const
 int LineNumberWidget::LineNumberAreaWidth() const
 {
     int digits = 1;
-    int max = qMax(1, m_codeEditArea->blockCount());
+    int max = std::max(1, m_codeEditArea->blockCount());
     while (max >= 10)
     {
         max /= 10;
         ++digits;
     }
 
-    int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('0')) * digits;
+    int space = 3 + fontMetrics().horizontalAdvance('0')*digits;
 
     return space;
 }

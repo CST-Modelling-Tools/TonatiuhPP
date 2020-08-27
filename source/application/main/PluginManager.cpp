@@ -9,6 +9,7 @@
 #include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/material/MaterialAbsorber.h"
+#include "kernel/material/MaterialTransparent.h"
 #include "kernel/material/MaterialVirtual.h"
 #include "kernel/photons/PhotonsAbstract.h"
 #include "kernel/photons/PhotonsWidget.h"
@@ -26,8 +27,10 @@
 #include "kernel/shape/ShapePlanar.h"
 #include "kernel/sun/SunAperture.h"
 #include "kernel/sun/SunKit.h"
-#include "kernel/sun/SunPillbox.h"
-#include "kernel/trackers/Tracker.h"
+#include "kernel/sun/SunShapePillbox.h"
+#include "kernel/trackers/TrackerArmature.h"
+#include "kernel/trackers/TrackerArmature1A.h"
+#include "kernel/trackers/TrackerArmature2A.h"
 #include "libraries/Coin3D/UserMField.h"
 #include "libraries/Coin3D/UserSField.h"
 #include "libraries/Coin3D/MFVec2.h"
@@ -52,7 +55,7 @@ PluginManager::PluginManager()
  */
 void PluginManager::load(QDir dir)
 {
-    loadPlugin(new SunFactoryT<SunPillbox>);
+    loadPlugin(new SunFactoryT<SunShapePillbox>);
 
     loadPlugin(new AirFactoryT<AirVacuum>);
     loadPlugin(new AirFactoryT<AirExponential>);
@@ -70,8 +73,12 @@ void PluginManager::load(QDir dir)
 
     loadPlugin(new MaterialFactoryT<MaterialAbsorber>);
     loadPlugin(new MaterialFactoryT<MaterialVirtual>);
+    loadPlugin(new MaterialFactoryT<MaterialTransparent>);
 
     loadPlugin(new RandomFactoryT<RandomSTL>);
+
+    loadPlugin(new TrackerFactoryT<TrackerArmature1A>);
+    loadPlugin(new TrackerFactoryT<TrackerArmature2A>);
 
     loadPlugin(new PhotonsFactoryT<PhotonsAbstract, PhotonsWidget>);
 
@@ -102,6 +109,8 @@ QVector<TFactory*> PluginManager::getFactories(SoNode* node)
         for (auto q : m_sunFactories) ans << q;
     else if (dynamic_cast<AirTransmission*>(node))
         for (auto q : m_airFactories) ans << q;
+    else if (dynamic_cast<TrackerArmature*>(node))
+        for (auto q : m_trackerFactories) ans << q;
     return ans;
 }
 
@@ -142,7 +151,7 @@ void PluginManager::loadPlugin(TFactory* p)
     }
     else if (auto f = dynamic_cast<MaterialFactory*>(p))
     {
-        f->init();\
+        f->init();
         m_materialFactories << f;
         m_materialMap[f->name()] = f;
     }
@@ -222,14 +231,15 @@ void PluginManager::sort()
 
     QStringList materialNames = {
         "Absorber",
-        "Virtual",
-        "Specular"
+        "Specular",
+        "Transparent",
+        "Virtual"
     };
     sortFactories(materialNames, m_materialFactories);
 
     QStringList trackerNames = {
-        "Single",
-        "Dual"
+        "one-axis",
+        "two-axes"
     };
     sortFactories(trackerNames, m_trackerFactories);
 

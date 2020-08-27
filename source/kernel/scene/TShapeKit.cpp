@@ -78,6 +78,6 @@ void TShapeKit::setDefaultOnNonWritingFields()
 
 SbBool TShapeKit::setUpConnections(SbBool onoff, SbBool doitalways)
 {
-    SoBaseKit::setUpConnections(onoff, doitalways);
     m_shapeKit->setPart("material", material.getValue());
+    return SoBaseKit::setUpConnections(onoff, doitalways);
 }

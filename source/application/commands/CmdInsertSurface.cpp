@@ -4,14 +4,14 @@
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/material/MaterialRT.h"
+#include "kernel/trackers/TrackerArmature.h"
 #include "libraries/math/gcf.h"
 #include "tree/SceneModel.h"
 
 #include <Inventor/nodes/SoMaterial.h>
 
 
-CmdInsertSurface::CmdInsertSurface(
-    TShapeKit* kit, SoNode* node,
+CmdInsertSurface::CmdInsertSurface(SoBaseKit* kit, SoNode* node,
     SceneModel* model, QUndoCommand* parent
 ):
     QUndoCommand(parent),
@@ -25,17 +25,20 @@ CmdInsertSurface::CmdInsertSurface(
     QString text;
     if (ShapeRT* shape = dynamic_cast<ShapeRT*>(node))
     {
-        m_nodeOld = m_kit->shapeRT.getValue();
+        SoSFNode* sf = (SoSFNode*) m_kit->getField("shapeRT");
+        m_nodeOld = sf->getValue();
         text = QString("Create Shape: %1").arg(shape->getTypeName());
     }
     else if (ProfileRT* profile = dynamic_cast<ProfileRT*>(node))
     {
-        m_nodeOld = m_kit->profileRT.getValue();
+        SoSFNode* sf = (SoSFNode*) m_kit->getField("profileRT");
+        m_nodeOld = sf->getValue();
         text = QString("Create Profile: %1").arg(profile->getTypeName());
     }
     else if (MaterialRT* material = dynamic_cast<MaterialRT*>(node))
     {
-        m_nodeOld = m_kit->materialRT.getValue();
+        SoSFNode* sf = (SoSFNode*) m_kit->getField("materialRT");
+        m_nodeOld = sf->getValue();
         text = QString("Create Material: %1").arg(material->getTypeName());
 //        if (material->getTypeName() == QString("Specular")) {
 //            SoMaterial* mg = (SoMaterial*) m_kit->getPart("material", true);
@@ -43,6 +46,12 @@ CmdInsertSurface::CmdInsertSurface(
 //            mg->specularColor = SbVec3f(0.3, 0.3, 0.3);
 //            mg->shininess = 0.8;
 //        }
+    }
+    else if (TrackerArmature* armature = dynamic_cast<TrackerArmature*>(node))
+    {
+        SoSFNode* sf = (SoSFNode*) m_kit->getField("armature");
+        m_nodeOld = sf->getValue();
+        text = QString("Create Armature: %1").arg(armature->getTypeName());
     }
 
     m_nodeOld->ref();
@@ -68,16 +77,16 @@ void CmdInsertSurface::redo()
 
 void CmdInsertSurface::set(SoNode* node)
 {
+    SoField* f = 0;
     if (dynamic_cast<ShapeRT*>(node))
-    {
-        m_kit->shapeRT = node;
-    }
+        f = m_kit->getField("shapeRT");
     else if (dynamic_cast<ProfileRT*>(node))
-    {
-        m_kit->profileRT = node;
-    }
+        f = m_kit->getField("profileRT");
     else if (dynamic_cast<MaterialRT*>(node))
-    {
-        m_kit->materialRT = node;
-    }
+        f = m_kit->getField("materialRT");
+    else if (dynamic_cast<TrackerArmature*>(node))
+        f = m_kit->getField("armature");
+
+    if (f)
+        static_cast<SoSFNode*>(f)->setValue(node);
 }
