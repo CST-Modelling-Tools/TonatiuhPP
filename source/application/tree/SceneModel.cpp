@@ -89,7 +89,7 @@ void SceneModel::setDocument(Document* document)
     SoNode* terrainKit = m_nodeScene->getPart("world.terrain", true);
     addInstanceNode(instanceW, terrainKit);
 
-    TSeparatorKit* nodeLayout = (TSeparatorKit*) m_nodeScene->getLayout();
+    TSeparatorKit* nodeLayout = m_nodeScene->getLayout();
     m_instanceLayout = addInstanceNode(m_instanceScene, nodeLayout);
     generateInstanceTree(m_instanceLayout);
 
@@ -107,31 +107,8 @@ InstanceNode* SceneModel::addInstanceNode(InstanceNode* parent, SoNode* node)
 void SceneModel::generateInstanceTree(InstanceNode* instance)
 {
     SoNode* node = instance->getNode();
-
-    if (TShapeKit* shapeKit = dynamic_cast<TShapeKit*>(node))
+    if (TSeparatorKit* separatorKit = dynamic_cast<TSeparatorKit*>(node))
     {
-//        SoNode* shape = shapeKit->shapeRT.getValue();
-//        if (shape)
-//            addInstanceNode(instance, shape);
-
-//        SoNode* aperture = shapeKit->profileRT.getValue();
-//        if (aperture)
-//            addInstanceNode(instance, aperture);
-
-//        SoNode* materialRT = shapeKit->materialRT.getValue();
-//        if (materialRT)
-//            addInstanceNode(instance, materialRT);
-
-//        SoNode* material = shapeKit->getPart("material", false);
-//        if (material)
-//            addInstanceNode(instance, material);
-    }
-    else if (TSeparatorKit* separatorKit = dynamic_cast<TSeparatorKit*>(node))
-    {
-        SoNode* tracker = separatorKit->getPart("tracker", false);
-        if (tracker)
-            addInstanceNode(instance, tracker);
-
         SoGroup* group = (SoGroup*) separatorKit->getPart("group", false);
         if (!group) return;
         for (int n = 0; n < group->getNumChildren(); ++n)
@@ -260,20 +237,6 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
 //        {
 //            ShapeRT* shape = static_cast<ShapeRT*>(node);
 //            return QIcon(shape->getTypeIcon());
-//        }
-//        else if (type.isDerivedFrom(ProfileRT::getClassTypeId()))
-//        {
-//            ProfileRT* aperture = static_cast<ProfileRT*>(node);
-//            return QIcon(aperture->getTypeIcon());
-//        }
-//        else if (type.isDerivedFrom(MaterialRT::getClassTypeId()))
-//        {
-//            MaterialRT* material = static_cast<MaterialRT*>(node);
-//            return QIcon(material->getTypeIcon());
-//        }
-//        else if (type.isDerivedFrom(SoMaterial::getClassTypeId()))
-//        {
-//            return QIcon(":/images/scene/nodeMaterialGL.png");
 //        }
         else if (type == SunKit::getClassTypeId())
             return QIcon(":/images/scene/nodeSun.png");
@@ -467,46 +430,19 @@ SoNodeKitPath* SceneModel::pathFromIndex(const QModelIndex& index) const
     return path; // make unref later
 }
 
-/*!
- * Insert a light node to the model. If the model has an other light node, the previous node
- * will be deleted.
- */
-void SceneModel::insertSunNode(SunKit* sunKit)
-{
-    m_nodeScene->setPart("world.sun", sunKit);
-
-    InstanceNode* instance = new InstanceNode(sunKit);
-
-    InstanceNode* instW = m_instanceScene->children[0];
-    instW->children.remove(1);
-    instW->insertChild(1, instance);
-
-    emit layoutChanged();
-}
-
 int SceneModel::insertCoinNode(SoNode* node, SoBaseKit* parent)
 {
     int row = -1;
     if (dynamic_cast<TSeparatorKit*>(parent))
     {
-        if (dynamic_cast<TrackerKit*>(node))
-        {
-            parent->setPart("tracker", node);
-            row = 0;
-        }
-        else // separatorKits and shapeKits
-        {
             SoGroup* group = (SoGroup*) parent->getPart("group", true);
-
             row = group->getNumChildren();
-            if (parent->getPart("tracker", false)) row++;
 
             if (SoBaseKit* kit = dynamic_cast<SoBaseKit*>(node))
             {
 //                kit->setSearchingChildren(true);
                 group->addChild(kit);
             }
-        }
     }
     else // parent shapeKit
     {
@@ -530,11 +466,8 @@ void SceneModel::removeCoinNode(int row, SoBaseKit* parent)
 {
     if (parent->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
     {
-        bool hasTracker = parent->getPart("tracker", false);
-        if (row == 0 && hasTracker)
-            parent->setPart("tracker", 0);
-        else if (SoGroup* parts = (SoGroup*) parent->getPart("group", false))
-            parts->removeChild(hasTracker ? row - 1 : row);
+         if (SoGroup* parts = (SoGroup*) parent->getPart("group", false))
+            parts->removeChild(row);
     }
 
     for (InstanceNode* instanceParent : m_mapCoinQt[parent])
@@ -593,7 +526,6 @@ bool SceneModel::Cut(SoBaseKit& parent, int row)
             if (!childList) return false;
 
             int r = row;
-            if (parent.getPart("tracker", false)) r--;
             node = childList->getChild(r);
             childList->removeChild(r);
 
@@ -630,7 +562,7 @@ bool SceneModel::Cut(SoBaseKit& parent, int row)
  * Adds a child to \a coinParent as \a row child. If \a type is tgc::Copied, the added child is a copy of \a coinNode. But the type is tgc::Shared the node is shared with previous parent.
  * Return true if the paste action is correctly done. Otherwise returns false.
 **/
-bool SceneModel::Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinNode, int row)
+bool SceneModel::Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinNode, int row) // bugs
 {
     SoNode* child;
     SoNode* pCoinParent = &coinParent;
@@ -682,10 +614,7 @@ bool SceneModel::Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinN
     {
         SoGroup* parts = static_cast<SoGroup*>(coinParent.getPart("group", true));
         if (!parts) gcf::SevereError( "SceneModel::Paste Null coinPartList pointer");
-        if (coinParent.getPart("tracker", false))
-            parts->insertChild(child, row - 1);
-        else
-            parts->insertChild(child, row);
+        parts->insertChild(child, row);
     }
 
     for (InstanceNode* instanceParent : m_mapCoinQt[&coinParent])

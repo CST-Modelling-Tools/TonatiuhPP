@@ -120,7 +120,7 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isFront, Inst
 
         return material->OutputRay(rayIn, dg, rand, rayOut);
     }
-    else // SeparatorKit
+    else if (m_node->getTypeId() == TSeparatorKit::getClassTypeId())
     {
         bool hasRayOut = false;
         double t = rayIn.tMax;

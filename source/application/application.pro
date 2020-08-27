@@ -22,9 +22,7 @@ HEADERS += \
     commands/CmdDelete.h \
     commands/CmdDeleteTracker.h \
     commands/CmdInsertNode.h \
-    commands/CmdInsertShape.h \
     commands/CmdInsertSurface.h \
-    commands/CmdInsertTracker.h \
     commands/CmdLightPositionModified.h \
     commands/CmdParameterModified.h \
     commands/CmdPaste.h \
@@ -84,9 +82,7 @@ SOURCES += \
     commands/CmdDelete.cpp \
     commands/CmdDeleteTracker.cpp \
     commands/CmdInsertNode.cpp \
-    commands/CmdInsertShape.cpp \
     commands/CmdInsertSurface.cpp \
-    commands/CmdInsertTracker.cpp \
     commands/CmdLightPositionModified.cpp \
     commands/CmdParameterModified.cpp \
     commands/CmdPaste.cpp \

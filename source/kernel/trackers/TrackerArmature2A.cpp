@@ -64,19 +64,22 @@ void TrackerArmature2A::update(TSeparatorKit* parent, const Transform& toGlobal,
 
     // rotate nodes
     SoGroup* childList = (SoGroup*) parent->getPart("group", false);
-    auto nodePrimary = static_cast<TSeparatorKit*>(childList->getChild(0));
-    if (!nodePrimary) return;
-    SoTransform* tPrimary = (SoTransform*) nodePrimary->getPart("transform", true);
-    tPrimary->translation = primaryShift.getValue();
-    tPrimary->rotation.setValue(primaryAxis.getValue(), solution.x);
+    for (int q = 0; q < childList->getNumChildren(); ++q) {
+        TSeparatorKit* nodePrimary = dynamic_cast<TSeparatorKit*>(childList->getChild(q));
+        if (!nodePrimary) continue;
+        SoTransform* tPrimary = (SoTransform*) nodePrimary->getPart("transform", true);
+        tPrimary->translation = primaryShift.getValue();
+        tPrimary->rotation.setValue(primaryAxis.getValue(), solution.x);
 
-    childList = (SoGroup*) nodePrimary->getPart("group", false);
-//    auto nodeSecondary = static_cast<TSeparatorKit*>(nodePrimary->getPart("group[0]", false));
-    auto nodeSecondary = static_cast<TSeparatorKit*>(childList->getChild(0));
-    if (!nodeSecondary) return;
-    SoTransform* tSecondary = (SoTransform*) nodeSecondary->getPart("transform", true);
-    tSecondary->translation = secondaryShift.getValue();
-    tSecondary->rotation.setValue(secondaryAxis.getValue(), solution.y);
+        childList = (SoGroup*) nodePrimary->getPart("group", false);
+    //    auto nodeSecondary = static_cast<TSeparatorKit*>(nodePrimary->getPart("group[0]", false));
+        auto nodeSecondary = static_cast<TSeparatorKit*>(childList->getChild(0));
+        if (!nodeSecondary) return;
+        SoTransform* tSecondary = (SoTransform*) nodeSecondary->getPart("transform", true);
+        tSecondary->translation = secondaryShift.getValue();
+        tSecondary->rotation.setValue(secondaryAxis.getValue(), solution.y);
+        break;
+    }
 }
 
 void TrackerArmature2A::onModified(void* data, SoSensor*)

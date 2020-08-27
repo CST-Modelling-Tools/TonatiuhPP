@@ -16,7 +16,7 @@ TSceneKit {
 
       }
       shape 
-      SunPillbox {
+      SunShapePillbox {
         fields [ SFDouble thetaMax ]
         thetaMax 4.650000000000002e-006
 

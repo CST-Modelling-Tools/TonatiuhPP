@@ -63,7 +63,8 @@ QScriptValue NodeObject::createTracker()
     TrackerKit* kit = new TrackerKit;
 
     TSeparatorKit* parent = (TSeparatorKit*) m_node;
-    parent->setPart("tracker", kit);
+    SoGroup* group = (SoGroup*) parent->getPart("group", true);
+    group->addChild(kit);
 
     NodeObject* ans = new NodeObject(kit);
     return engine()->newQObject(ans);

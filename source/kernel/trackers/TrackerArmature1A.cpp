@@ -64,11 +64,14 @@ void TrackerArmature1A::update(TSeparatorKit* parent, const Transform& toGlobal,
     // rotate nodes
 //    auto node = static_cast<TSeparatorKit*>(parent->getPart("group[0]", false));
     SoGroup* childList = (SoGroup*) parent->getPart("group", false);
-    auto node = static_cast<TSeparatorKit*>(childList->getChild(0));
-    if (!node) return;
-    SoTransform* tPrimary = (SoTransform*) node->getPart("transform", true);
-    tPrimary->translation = primaryShift.getValue();
-    tPrimary->rotation.setValue(primaryAxis.getValue(), angle);
+    for (int q = 0; q < childList->getNumChildren(); ++q) {
+        TSeparatorKit* node = dynamic_cast<TSeparatorKit*>(childList->getChild(q));
+        if (!node) continue;
+        SoTransform* tPrimary = (SoTransform*) node->getPart("transform", true);
+        tPrimary->translation = primaryShift.getValue();
+        tPrimary->rotation.setValue(primaryAxis.getValue(), angle);
+        break;
+    }
 }
 
 void TrackerArmature1A::onModified(void* data, SoSensor*)

@@ -18,7 +18,6 @@ public:
     static void initClass();
     TShapeKit();
 
-
     SoSFNode shapeRT;
     SoSFNode profileRT;
     SoSFNode materialRT;

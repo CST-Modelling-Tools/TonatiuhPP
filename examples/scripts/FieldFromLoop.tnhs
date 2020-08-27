@@ -1,10 +1,11 @@
 function makeHeliostat(parent, name, position, aiming, focus)
 {
-	n = parent.createNode(name);
+	var n = parent.createNode(name);
 	n.setParameter("translation", position);
 
-	t = n.insertTracker("Dual");
-	t.setParameter("aimingPoint", aiming);
+	t = n.createTracker();
+	var tt = t.getPart("target");
+	tt.setParameter("aimingPoint", aiming);
 
 	n = n.createNode("primary");
 	n = n.createNode("secondary");
@@ -22,10 +23,11 @@ function makeHeliostat(parent, name, position, aiming, focus)
 	m = s.insertMaterial("Specular");
 	m.setParameter("slope", "0.002");
 	
-	//mG = s.getPart("material");
-	//mG.setParameter("diffuseColor", "0.6 0.7 0.9")
-	//mG.setParameter("specularColor", "0.3 0.3 0.3")
-	//mG.setParameter("shininess", "0.8")
+	var mG = s.getPart("material");
+	mG.setParameter("ambientColor", "0.65 0.72 0.79");
+	mG.setParameter("diffuseColor", "0.05 0.05 0.05");
+	mG.setParameter("specularColor", "0.3 0.25 0.2");
+	mG.setParameter("shininess", "0.5");
 }
 
 nodeRoot = NodeObject();

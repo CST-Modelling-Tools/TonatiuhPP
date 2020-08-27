@@ -13,11 +13,6 @@ TSceneKit {
       position 
       SunPosition {
         fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
-   
-      }
-      shape 
-      SunPillbox {
-        fields [ SFDouble thetaMax ]
 
       }
       aperture 
@@ -65,12 +60,8 @@ TSceneKit {
           fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
         }
-        appearance 
-        AppearanceKit {
-          material 
-          DEF MaterialGL Material {
-
-          }
+        material 
+        Material {
 
         }
 

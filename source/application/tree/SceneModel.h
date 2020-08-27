@@ -47,8 +47,6 @@ public:
     QModelIndex indexFromPath(const SoNodeKitPath& path) const;
     SoNodeKitPath* pathFromIndex(const QModelIndex& index) const;
 
-    void insertSunNode(SunKit* lightKit);
-
     int insertCoinNode(SoNode* coinChild, SoBaseKit* coinParent);
     void removeCoinNode(int row, SoBaseKit* parent);
     void replaceAir(AirKit* air);

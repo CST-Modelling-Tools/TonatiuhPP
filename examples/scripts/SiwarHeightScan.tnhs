@@ -8,16 +8,19 @@ function makeHeliostat(parent, name, position, aiming, focus)
 	nm.setParameter("translation", position);
 	nm.setParameter("rotation", "0 0 1 3.14159");
 
-	var t = nm.insertTracker("Dual");
-	t.setParameter("primaryShift", "0 0.04 1.5");
-	t.setParameter("primaryAxis", "1 0 0");
-	t.setParameter("primaryAngles", "-1.5707964 1.5707964");
-	t.setParameter("secondaryShift", "0 0.175 0");
-	t.setParameter("secondaryAxis", "0 0 1");
-	t.setParameter("facetShift", "0 0.125 0");
-	t.setParameter("facetNormal", "0 1 0");
-	t.setParameter("aimingFrame", "global");
-	t.setParameter("aimingPoint", aiming);
+	var t = nm.createTracker();
+	var ta = t.insertArmature("two-axes");
+	ta.setParameter("primaryShift", "0 0.04 1.5");
+	ta.setParameter("primaryAxis", "1 0 0");
+	ta.setParameter("primaryAngles", "-90 90");
+	ta.setParameter("secondaryShift", "0 0.175 0");
+	ta.setParameter("secondaryAxis", "0 0 1");
+	ta.setParameter("secondaryAngles", "-90 90");
+	ta.setParameter("facetShift", "0 0.125 0");
+	ta.setParameter("facetNormal", "0 1 0");
+	var tt = t.getPart("target");
+	tt.setParameter("aimingFrame", "global");
+	tt.setParameter("aimingPoint", aiming);
 						
 	var n = nm.createNode("primary");
 	n = n.createNode("secondary");

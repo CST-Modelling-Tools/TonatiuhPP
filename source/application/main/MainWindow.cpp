@@ -56,8 +56,6 @@
 #include "commands/CmdDeleteTracker.h"
 #include "commands/CmdInsertNode.h"
 #include "commands/CmdInsertSurface.h"
-#include "commands/CmdInsertShape.h"
-#include "commands/CmdInsertTracker.h"
 #include "commands/CmdSunModified.h"
 #include "commands/CmdLightPositionModified.h"
 #include "commands/CmdParameterModified.h"
@@ -1380,7 +1378,7 @@ void MainWindow::InsertNode()
 
     TSeparatorKit* kit = new TSeparatorKit;
 //    qDebug() << "dsfg " << kit->getRefCount();
-    CmdInsertNode* cmd = new CmdInsertNode(kit, QPersistentModelIndex(index), m_modelScene);
+    CmdInsertNode* cmd = new CmdInsertNode(kit, index);
     m_undoStack->push(cmd);
 //    qDebug() << "dsfg as " << kit->getRefCount();
 
@@ -1409,7 +1407,7 @@ void MainWindow::InsertShape()
         return;
 
     TShapeKit* kit = new TShapeKit;
-    CmdInsertShape* cmd = new CmdInsertShape(kit, index, m_modelScene);
+    CmdInsertNode* cmd = new CmdInsertNode(kit, index);
     m_undoStack->push(cmd);
 
     QString name("Shape");
@@ -1417,7 +1415,6 @@ void MainWindow::InsertShape()
     while (!m_modelScene->setNodeName(kit, name))
         name = QString("Shape_%1").arg(++count);
 
-    Select(instance->getURL() + "/" + name);
     setDocumentModified(true);
 }
 
@@ -1440,7 +1437,7 @@ void MainWindow::InsertTracker()
 //    }
 
     TrackerKit* kit = new TrackerKit;
-    CmdInsertTracker* cmd = new CmdInsertTracker(kit, index, m_modelScene);
+    CmdInsertNode* cmd = new CmdInsertNode(kit, index);
     m_undoStack->push(cmd);
 
     QString name("Tracker");
@@ -1570,7 +1567,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
 //    QString typeName = pComponentFactory->name();
     componentLayout->setName(nodeName.toStdString().c_str() );
 
-    CmdInsertNode* cmd = new CmdInsertNode(componentLayout, QPersistentModelIndex(parentIndex), m_modelScene);
+    CmdInsertNode* cmd = new CmdInsertNode(componentLayout, parentIndex);
     QString commandText = QString("Create Component: %1").arg(pComponentFactory->name().toLatin1().constData() );
     cmd->setText(commandText);
     m_undoStack->push(cmd);
@@ -1624,7 +1621,7 @@ void MainWindow::InsertFileComponent(QString componentFileName)
 
     TSeparatorKit* componentLayout = static_cast<TSeparatorKit*>(componentSeparator->getChild(0) );
 
-    CmdInsertNode* cmdInsertSeparatorKit = new CmdInsertNode(componentLayout, QPersistentModelIndex(parentIndex), m_modelScene);
+    CmdInsertNode* cmdInsertSeparatorKit = new CmdInsertNode(componentLayout, parentIndex);
     cmdInsertSeparatorKit->setText("Insert SeparatorKit node");
     m_undoStack->push(cmdInsertSeparatorKit);
 
@@ -1650,7 +1647,7 @@ void MainWindow::InsertScene(QScriptValue v)
     }
     NodeObject* no = (NodeObject*)v.toQObject();
     TSeparatorKit* kit = (TSeparatorKit*)no->getNode();
-    CmdInsertNode* cmd = new CmdInsertNode(kit, QPersistentModelIndex(parentIndex), m_modelScene);
+    CmdInsertNode* cmd = new CmdInsertNode(kit, parentIndex);
     cmd->setText("Insert SeparatorKit node");
     m_undoStack->push(cmd);
 
@@ -2387,7 +2384,7 @@ void MainWindow::CreateComponent(ComponentFactory* factory)
     QString typeName = factory->name();
     componentLayout->setName(typeName.toStdString().c_str() );
 
-    CmdInsertNode* cmd = new CmdInsertNode(componentLayout, QPersistentModelIndex(parentIndex), m_modelScene);
+    CmdInsertNode* cmd = new CmdInsertNode(componentLayout, parentIndex);
     QString text = QString("Create Component: %1").arg(factory->name().toLatin1().constData() );
     cmd->setText(text);
     m_undoStack->push(cmd);

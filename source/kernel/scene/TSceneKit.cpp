@@ -73,16 +73,17 @@ void TSceneKit::updateTrackers(TSeparatorKit* parent, Transform toGlobal, const 
     SoTransform* tParent = (SoTransform*) parent->getPart("transform", true);
     Transform t = toGlobal*tgf::makeTransform(tParent);
 
-    if (TrackerKit* tracker = (TrackerKit*) parent->getPart("tracker", false))
+    SoGroup* nodes = (SoGroup*) parent->getPart("group", false);
+    if (!nodes) return;
+
+    for (int n = 0; n < nodes->getNumChildren(); ++n)
     {
-        tracker->update(parent, t, vSun);
-    }
-    else if (SoGroup* nodes = (SoGroup*) parent->getPart("group", false))
-    {
-        for (int n = 0; n < nodes->getNumChildren(); ++n)
-        {
-            TSeparatorKit* child = dynamic_cast<TSeparatorKit*>(nodes->getChild(n));
-            if (child) updateTrackers(child, t, vSun);
+        SoNode* node = nodes->getChild(n);
+        if (TSeparatorKit* child = dynamic_cast<TSeparatorKit*>(node))
+            updateTrackers(child, t, vSun);
+        else if (TrackerKit* tracker = dynamic_cast<TrackerKit*>(node)) {
+            tracker->update(parent, t, vSun);
+            return;
         }
     }
 }

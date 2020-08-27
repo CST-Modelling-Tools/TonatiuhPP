@@ -15,11 +15,6 @@ TSceneKit {
         fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
    
       }
-      shape 
-      SunPillbox {
-        fields [ SFDouble thetaMax ]
-
-      }
       aperture 
       SunAperture {
         fields [ SFString disabledNodes ]

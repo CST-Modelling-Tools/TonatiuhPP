@@ -123,10 +123,6 @@
      </property>
      <addaction name="separator"/>
     </widget>
-    <addaction name="actionInsertNode"/>
-    <addaction name="actionInsertShape"/>
-    <addaction name="actionInsertTracker"/>
-    <addaction name="separator"/>
     <addaction name="menuComponent"/>
     <addaction name="actionUserComponent"/>
     <addaction name="actionSaveComponent"/>
