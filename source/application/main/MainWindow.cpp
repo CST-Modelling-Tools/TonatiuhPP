@@ -53,7 +53,6 @@
 #include "commands/CmdCopy.h"
 #include "commands/CmdCut.h"
 #include "commands/CmdDelete.h"
-#include "commands/CmdDeleteTracker.h"
 #include "commands/CmdInsertNode.h"
 #include "commands/CmdInsertSurface.h"
 #include "commands/CmdSunModified.h"
@@ -197,6 +196,9 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
 
     ui->toolbarFile->hide();
     ui->toolbarEdit->hide();
+    ui->viewToolBar->hide();
+
+    ui->centralWidget->setFocus();
 
     qApp->setStyleSheet(R"(
 QAbstractItemView {
@@ -296,7 +298,7 @@ void MainWindow::SetupUndoView()
 
 void MainWindow::SetupGraphicView()
 {
-    QSplitter* splitter = findChild<QSplitter*>("horizontalSplitter");
+    QSplitter* splitter = ui->splitterH;
 
     QSplitter* splitterV = new QSplitter();
     splitterV->setObjectName("graphicSplitterV");
@@ -425,6 +427,10 @@ void MainWindow::SetupTriggers()
     connect(ui->actionViewGrid, SIGNAL(triggered()), this, SLOT(ShowGrid()));
     connect(ui->actionViewRays, SIGNAL(toggled(bool)), this, SLOT(ShowRays(bool)));
     connect(ui->actionViewPhotons, SIGNAL(toggled(bool)), this, SLOT(ShowPhotons(bool)));
+
+    connect(ui->buttonInsertNode, SIGNAL(pressed()), this, SLOT(InsertNode()) );
+    connect(ui->buttonInsertShape, SIGNAL(pressed()), this, SLOT(InsertShape()) );
+    connect(ui->buttonInsertTracker, SIGNAL(pressed()), this, SLOT(InsertTracker()) );
 }
 
 /*!
@@ -1282,12 +1288,7 @@ bool MainWindow::Delete(QModelIndex index)
     InstanceNode* instance = m_modelScene->getInstance(index);
     SoNode* node = instance->getNode();
 
-    if (node->getTypeId().isDerivedFrom(TrackerKit::getClassTypeId()))
-    {
-        CmdDeleteTracker* cmd = new CmdDeleteTracker(index, m_document->getSceneKit(), *m_modelScene);
-        m_undoStack->push(cmd);
-    }
-    else if (node->getTypeId().isDerivedFrom(SunKit::getClassTypeId()))
+    if (node->getTypeId().isDerivedFrom(SunKit::getClassTypeId()))
         return false;
     else
     {
@@ -1882,8 +1883,10 @@ void MainWindow::Run()
     double power = area*irradiance/m_raysTracedTotal;
     m_photonsBuffer->endExport(power);
 
-
     std::cout << "Elapsed time (Run): " << timer.elapsed() << std::endl;
+
+    QString msg = QString("Timing: %1 s").arg(timer.elapsed()/1000., 0, 'f', 3);
+    statusBar()->showMessage(msg, 2000);
 }
 
 /*

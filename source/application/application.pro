@@ -20,7 +20,6 @@ HEADERS += \
     commands/CmdCopy.h \
     commands/CmdCut.h \
     commands/CmdDelete.h \
-    commands/CmdDeleteTracker.h \
     commands/CmdInsertNode.h \
     commands/CmdInsertSurface.h \
     commands/CmdLightPositionModified.h \
@@ -80,7 +79,6 @@ SOURCES += \
     commands/CmdCopy.cpp \
     commands/CmdCut.cpp \
     commands/CmdDelete.cpp \
-    commands/CmdDeleteTracker.cpp \
     commands/CmdInsertNode.cpp \
     commands/CmdInsertSurface.cpp \
     commands/CmdLightPositionModified.cpp \

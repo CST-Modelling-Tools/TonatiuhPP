@@ -61,6 +61,7 @@ void GraphicView::setSceneGraph(GraphicRoot* sceneGraphRoot)
 
     showAxes(true);
     m_viewer->setHeadlight(false);
+    m_viewer->setDecoration(false);
     m_viewer->setAntialiasing(true, 1); // disable if slow
 }
 

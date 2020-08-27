@@ -180,8 +180,8 @@ void  ScriptEditorDialog::RunScript()
            WriteMessage( logmessage );
          *
          */
-        int tElapsed = timer.elapsed();
-        QString message = timeString() + QString("Script finished in %1 ms.").arg(tElapsed);
+        QString message = timeString() + QString("Script finished in %1 s.")
+            .arg(timer.elapsed()/1000., 0, 'f', 3);
         WriteMessage(message);
     }
 }

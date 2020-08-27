@@ -225,7 +225,6 @@ private:
     bool SaveFile(const QString& fileName);
     void SetCurrentFile(const QString& fileName);
 
-
     void SetupDocument();
 
     void SetupViews();
@@ -235,7 +234,6 @@ private:
 
     void SetupPluginManager();
     void SetupActionsInsertComponent();
-//    void SetupActionsInsertTracker();
 
     void SetupTriggers();
 
