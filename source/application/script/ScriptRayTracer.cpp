@@ -27,12 +27,12 @@
 #include "kernel/air/AirTransmission.h"
 
 
-ScriptRayTracer::ScriptRayTracer(QVector<RandomFactory*> listRandomFactory):
+ScriptRayTracer::ScriptRayTracer(QVector<RandomFactory*> randomFactories):
     m_document(0),
     m_irradiance(-1),
     m_numberOfRays(0),
     m_photonMap(0),
-    m_RandomFactoryList(listRandomFactory),
+    m_randomFactories(randomFactories),
     m_random(0),
     m_sceneModel (0),
     m_widthDivisions(200),
@@ -72,18 +72,13 @@ void ScriptRayTracer::Clear()
     m_dirName.clear();
 }
 
-QString ScriptRayTracer::GetDir()
-{
-    return m_dirName;
-}
-
 bool ScriptRayTracer::IsValidRandomGeneratorType(QString type)
 {
-    if (m_RandomFactoryList.size() == 0) return 0;
+    if (m_randomFactories.size() == 0) return 0;
 
     QVector< QString > randomGeneratorsNames;
-    for (int i = 0; i < m_RandomFactoryList.size(); i++)
-        randomGeneratorsNames << m_RandomFactoryList[i]->name();
+    for (int i = 0; i < m_randomFactories.size(); i++)
+        randomGeneratorsNames << m_randomFactories[i]->name();
 
     int selectedRandom = randomGeneratorsNames.indexOf(type);
 
@@ -103,19 +98,19 @@ bool ScriptRayTracer::IsValidSurface(QString surfaceName)
     return true;
 }
 
-int ScriptRayTracer::SetDir(QString dir)
+int ScriptRayTracer::setDir(QString dir)
 {
     m_dirName = dir;
     return 1;
 }
 
-int ScriptRayTracer::SetIrradiance(double irradiance)
+int ScriptRayTracer::setIrradiance(double irradiance)
 {
     m_irradiance = irradiance;
     return 1;
 }
 
-int ScriptRayTracer::SetNumberOfRays(double nrays)
+int ScriptRayTracer::setNumberOfRays(double nrays)
 {
     m_numberOfRays = nrays;
     return 1;
@@ -145,8 +140,8 @@ int ScriptRayTracer::SetPhotonMapExportMode(QString typeName)
 int ScriptRayTracer::SetRandomDeviateType(QString typeName)
 {
     QVector< QString > randomGeneratorsNames;
-    for (int i = 0; i < m_RandomFactoryList.size(); i++)
-        randomGeneratorsNames << m_RandomFactoryList[i]->name();
+    for (int i = 0; i < m_randomFactories.size(); i++)
+        randomGeneratorsNames << m_randomFactories[i]->name();
 
     int selectedRandom = randomGeneratorsNames.indexOf(typeName);
     if (selectedRandom < 0)
@@ -155,7 +150,7 @@ int ScriptRayTracer::SetRandomDeviateType(QString typeName)
         return 0;
     }
 
-    m_random = m_RandomFactoryList[selectedRandom]->create(0);
+    m_random = m_randomFactories[selectedRandom]->create(0);
     return 1;
 }
 
@@ -214,7 +209,7 @@ int ScriptRayTracer::Save(const QString& fileName)
     return 1;
 }
 
-int ScriptRayTracer::SetTonatiuhModelFile(QString filename)
+int ScriptRayTracer::openFile(QString filename)
 {
     delete m_document;
     m_document = new Document;

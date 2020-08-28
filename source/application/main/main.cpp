@@ -2,7 +2,6 @@
 #include <QStyleFactory>
 #include <QCommandLineParser>
 #include <QSplashScreen>
-#include <QDebug>
 
 #include <QFileInfo>
 #include <QScriptEngine>
@@ -97,49 +96,46 @@ int main(int argc, char** argv)
     }
     else
     {
-        SoQt::init((QWidget*) NULL);
+        SoQt::init((QWidget*) 0);
 
-        QScriptEngine* interpreter = new QScriptEngine;
-        qScriptRegisterSequenceMetaType<QVector<QVariant> >(interpreter);
+        QScriptEngine* engine = new QScriptEngine;
+        qScriptRegisterSequenceMetaType<QVector<QVariant>>(engine);
 
         MainWindow mw;
-        QScriptValue tonatiuh = interpreter->newQObject(&mw);
-        interpreter->globalObject().setProperty("tonatiuh", tonatiuh);
+        QScriptValue tonatiuh = engine->newQObject(&mw);
+        engine->globalObject().setProperty("tonatiuh", tonatiuh);
 
-        QFile scriptFile(fileName);
-        if (!scriptFile.open(QIODevice::ReadOnly))
+        QFile file(fileName);
+        if (!file.open(QIODevice::ReadOnly))
         {
             QString text = QString("Cannot open file %1.").arg(fileName);
             cerr << text << endl;
         }
-        QTextStream in(&scriptFile);
+        QTextStream in(&file);
         QString program = in.readAll();
-        scriptFile.close();
+        file.close();
 
-        QScriptSyntaxCheckResult check = interpreter->checkSyntax(program);
+        QScriptSyntaxCheckResult check = engine->checkSyntax(program);
         if (check.state() != QScriptSyntaxCheckResult::Valid)
         {
-            QString text = QString("Script Syntaxis Error.\nLine: %1. %2").arg(
-                QString::number(check.errorLineNumber()),
-                check.errorMessage()
-            );
+            QString text = QString("Syntax error in line %1.\n%2")
+                .arg(check.errorLineNumber())
+                .arg(check.errorMessage());
             cerr << text << endl;
             return -1;
         }
 
-        QScriptValue result = interpreter->evaluate(program);
+        QScriptValue result = engine->evaluate(program);
         if (result.isError())
         {
-            QScriptValue lineNumber = result.property("lineNumber");
-            QString text = QString("Script Execution Error.\nLine %1. %2").arg(
-                QString::number(lineNumber.toNumber()),
-                result.toString()
-            );
+            QString text = QString("Runtime error.\nLine %1. %2")
+                .arg(result.property("lineNumber").toNumber())
+                .arg(result.toString());
             cerr << text << endl;
             return -1;
         }
 
-        delete interpreter;
+        delete engine;
         return 0;
     }
 }

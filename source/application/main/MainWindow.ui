@@ -204,6 +204,9 @@ background-color: #d7e3ed;
      <property name="title">
       <string>&amp;Recent</string>
      </property>
+     <property name="toolTipsVisible">
+      <bool>true</bool>
+     </property>
     </widget>
     <addaction name="actionFileNew"/>
     <addaction name="actionFileOpen"/>

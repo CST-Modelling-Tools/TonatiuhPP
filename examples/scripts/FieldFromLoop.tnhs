@@ -33,7 +33,7 @@ function makeHeliostat(parent, name, position, aiming, focus)
 nodeRoot = NodeObject();
 nodeRoot.setName("Script");
 
-printTime("Tower");
+printTimed("Tower");
 nodeTower = nodeRoot.createNode("Tower");
 
 n = nodeTower.createNode("Base");
@@ -64,12 +64,12 @@ p.setParameter("rMax", "1");
 //mG.setParameter("ambientColor", "1 1 1");
 //mG.setParameter("diffuseColor", "0.5 0.5 0.5");
 
-printTime("Heliostats");
+printTimed("Heliostats");
 nodeHeliostats = nodeRoot.createNode("Heliostats");
 iMax = 10;
 count = 1;
 for (i = -iMax; i <= iMax; i++) {
-	printTime("row " + i);
+	printTimed("row " + i);
 	nodeTemp = nodeHeliostats.createNode("Row" + i);
 	for (j = -iMax; j <= iMax; j++) {
 		name = "H_" + count;

@@ -23,26 +23,26 @@ public:
     ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory, QWidget* parent = 0);
     ~ScriptEditorDialog();
 
-    void ExecuteScript(QString file);
+    void run(QString fileName);
 
     static QScriptValue ImportExtension(QScriptContext* context, QScriptEngine* engine);
     static QScriptValue PrintMessage(QScriptContext* context, QScriptEngine* engine);
-    static QScriptValue PrintTime(QScriptContext* context, QScriptEngine* engine);
+    static QScriptValue PrintMessageTimed(QScriptContext* context, QScriptEngine* engine);
 
 public slots:
-    void AbortEvaluation(QString error);
+    void abortScript(QString error);
 
 protected:
     void closeEvent(QCloseEvent* event);
 
 private slots:
     void RunScript();
-    void SetCurrentFile(QString fileName);
-    void WriteMessage(QString message);
+    void setCurrentFile(QString fileName);
+    void writeMessage(QString message);
 
 private:
     Ui::ScriptEditorDialog* ui;
 
-    QString m_currentScritFileName;
-    QScriptEngine* m_interpreter;
+    QString m_fileName;
+    QScriptEngine* m_engine;
 };

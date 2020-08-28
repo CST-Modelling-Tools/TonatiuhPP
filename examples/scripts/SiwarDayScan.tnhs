@@ -20,4 +20,4 @@ for (var n = 1; n < nMax; n++) {
 	wTotal += eta*wMax/1000*irradiance;
 }
 
-printTime("Daily energy [Wh] = " + wTotal/4);
+printTimed("Daily energy [Wh] = " + wTotal/4);

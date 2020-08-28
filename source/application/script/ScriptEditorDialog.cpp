@@ -31,10 +31,10 @@ QString timeString()
  * Creates a dialog to edit scripts and run them. The list \a listRandomFactory is
  * the random generator types that can be defined in the scripts to run Tonatiuh. The dialog explorer shows the directories and scripts files from \a dirName path.
  */
-ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory, QWidget* parent):
+ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> randomFactories, QWidget* parent):
     QDialog(parent),
     ui(new Ui::ScriptEditorDialog),
-    m_currentScritFileName("")
+    m_fileName("")
 {
     ui->setupUi(this);
     setWindowFlag(Qt::WindowMaximizeButtonHint, true);
@@ -48,49 +48,49 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory
     QFont font("Consolas", 9);
     ui->logWidget->setFont(font);
 
-//    QString pluginsDirectory = QApplication::applicationDirPath() + QDir::separator() + "plugins";
-//    QCoreApplication::addLibraryPath(pluginsDirectory);
-//    QCoreApplication::addLibraryPath(QApplication::applicationDirPath());
-
-    // init QtScript environment
-    m_interpreter = new QScriptEngine(this);
-    qScriptRegisterSequenceMetaType<QVector<QVariant>>(m_interpreter);
+    // engine
+    m_engine = new QScriptEngine(this);
+    qScriptRegisterSequenceMetaType<QVector<QVariant>>(m_engine);
 
     // objects
-    QScriptValue tonatiuh = m_interpreter->newQObject(parent);
-    m_interpreter->globalObject().setProperty("tonatiuh", tonatiuh);
-    m_interpreter->globalObject().setProperty("tn", tonatiuh);
+    QScriptValue tonatiuhObject = m_engine->newQObject(parent);
+    m_engine->globalObject().setProperty("tonatiuh", tonatiuhObject);
+    m_engine->globalObject().setProperty("tn", tonatiuhObject);
 
-    QScriptValue logConsoleObject = m_interpreter->newQObject(ui->logWidget);
-    m_interpreter->globalObject().setProperty("console", logConsoleObject);
+    QScriptValue consoleObject = m_engine->newQObject(ui->logWidget);
+    m_engine->globalObject().setProperty("console", consoleObject);
 
-    QObject* rayTracer = new ScriptRayTracer(listRandomFactory);
-    QScriptValue rayTracerValue = m_interpreter->newQObject(rayTracer);
-    m_interpreter->globalObject().setProperty("rayTracer", rayTracerValue);
+    QObject* rayTracer = new ScriptRayTracer(randomFactories);
+    QScriptValue rayTracerObject = m_engine->newQObject(rayTracer);
+    m_engine->globalObject().setProperty("rayTracer", rayTracerObject);
 
     NodeObject::setPlugins(static_cast<MainWindow*>(parent)->getPlugins());
-    QScriptValue nodeObjectClass = m_interpreter->scriptValueFromQMetaObject<NodeObject>();
-    m_interpreter->globalObject().setProperty("NodeObject", nodeObjectClass);
+    QScriptValue nodeObjectClass = m_engine->scriptValueFromQMetaObject<NodeObject>();
+    m_engine->globalObject().setProperty("NodeObject", nodeObjectClass);
 
-    QScriptValue fileObjectClass = m_interpreter->scriptValueFromQMetaObject<FileObject>();
-    m_interpreter->globalObject().setProperty("FileObject", fileObjectClass);
+    QScriptValue fileObjectClass = m_engine->scriptValueFromQMetaObject<FileObject>();
+    m_engine->globalObject().setProperty("FileObject", fileObjectClass);
 
     // functions
-    QScriptValue import = m_interpreter->newFunction(ScriptEditorDialog::ImportExtension);
-    m_interpreter->globalObject().setProperty("Import", import, QScriptValue::ReadOnly);
+    //    QString pluginsDirectory = QApplication::applicationDirPath() + QDir::separator() + "plugins";
+    //    QCoreApplication::addLibraryPath(pluginsDirectory);
+    //    QCoreApplication::addLibraryPath(QApplication::applicationDirPath());
+    QScriptValue importFunction = m_engine->newFunction(ScriptEditorDialog::ImportExtension);
+    m_engine->globalObject().setProperty("Import", importFunction, QScriptValue::ReadOnly);
 
-    QScriptValue printFunction = m_interpreter->newFunction(ScriptEditorDialog::PrintMessage);
-    m_interpreter->globalObject().setProperty("print", printFunction);
+    QScriptValue printFunction = m_engine->newFunction(ScriptEditorDialog::PrintMessage);
+    m_engine->globalObject().setProperty("print", printFunction);
 
-    QScriptValue printTime = m_interpreter->newFunction(ScriptEditorDialog::PrintTime);
-    m_interpreter->globalObject().setProperty("printTime", printTime);
+    QScriptValue timeFunction = m_engine->newFunction(ScriptEditorDialog::PrintMessageTimed);
+    m_engine->globalObject().setProperty("printTimed", timeFunction);
 
-    connect(ui->codeEditorWidget, SIGNAL(opened(QString)), this, SLOT(SetCurrentFile(QString)) );
-    connect(ui->codeEditorWidget, SIGNAL(saved(QString)), this, SLOT(SetCurrentFile(QString)) );
+    connect(ui->codeEditorWidget, SIGNAL(opened(QString)), this, SLOT(setCurrentFile(QString)) );
+    connect(ui->codeEditorWidget, SIGNAL(saved(QString)), this, SLOT(setCurrentFile(QString)) );
     connect(ui->codeEditorWidget, SIGNAL(runned()), this, SLOT(RunScript()) );
+
     connect(ui->runButton, SIGNAL(clicked(bool)), this, SLOT(RunScript()) );
     connect(ui->closeButton, SIGNAL(clicked(bool)), this, SLOT(close()) );
-    connect(parent, SIGNAL(Abort(QString)), this, SLOT(AbortEvaluation(QString)) );
+    connect(parent, SIGNAL(Abort(QString)), this, SLOT(abortScript(QString)) );
 }
 
 ScriptEditorDialog::~ScriptEditorDialog()
@@ -98,24 +98,21 @@ ScriptEditorDialog::~ScriptEditorDialog()
     delete ui;
 }
 
-void ScriptEditorDialog::ExecuteScript(QString file)
+void ScriptEditorDialog::run(QString fileName)
 {
-    if (file.isEmpty()) return;
-    ui->codeEditorWidget->open(file);
-    SetCurrentFile(file);
+    if (fileName.isEmpty()) return;
+    ui->codeEditorWidget->open(fileName);
+    setCurrentFile(fileName);
     RunScript();
     close();
 }
 
-void ScriptEditorDialog::AbortEvaluation(QString error)
+void ScriptEditorDialog::abortScript(QString error)
 {
-    QScriptContext* context = m_interpreter->currentContext();
+    QScriptContext* context = m_engine->currentContext();
     context->throwError(error);
 }
 
-/**
- * Reimplemented from QDialog::closeEvent().
- */
 void ScriptEditorDialog::closeEvent(QCloseEvent* event)
 {
     if (ui->codeEditorWidget->isReady())
@@ -124,135 +121,112 @@ void ScriptEditorDialog::closeEvent(QCloseEvent* event)
         event->ignore();
 }
 
-/**
- * Executes the code editor script.
- */
-void  ScriptEditorDialog::RunScript()
+// ScriptRayTracer is less general than MainWindow
+// its functions are added by tonatiuh_script::init
+// todo: why not to use as NodeObject?
+// better make a class interface as NodeObject on top of ScriptRayTracer
+// instead of global functions
+
+void ScriptEditorDialog::RunScript()
 {
-    QElapsedTimer timer;
-    timer.start();
-    QString message = timeString() + "Script started.";
-    WriteMessage(message);
+    try {
+        int initialized = tonatiuh_script::init(m_engine);
+        if (!initialized)
+            throw timeString() + "Script engine could not start.";
 
-    int initialized = tonatiuh_script::init(m_interpreter);
-    if (!initialized)
-    {
-        message = timeString() + "Script error.";
-        WriteMessage(message);
-        std::cerr << message.toStdString() << std::endl;
-        return;
+        QScriptValue rayTracerObject = m_engine->globalObject().property("rayTracer");
+        ScriptRayTracer* rayTracer = (ScriptRayTracer*) rayTracerObject.toQObject();
+        QFileInfo fileInfo(m_fileName);
+        rayTracer->setDir(fileInfo.absoluteDir().absolutePath());
+
+        QTextDocument* document = ui->codeEditorWidget->document();
+        QString program = document->toPlainText();
+
+        QScriptSyntaxCheckResult check = m_engine->checkSyntax(program);
+        if (check.state() != QScriptSyntaxCheckResult::Valid)
+            throw timeString() + QString("Syntax error in line %1.\n%2")
+                .arg(check.errorLineNumber())
+                .arg(check.errorMessage());
+
+        QElapsedTimer timer;
+        timer.start();
+        writeMessage(timeString() + "Script started.");
+
+        QScriptValue result = m_engine->evaluate(document->toPlainText());
+        if (result.isError())
+            throw timeString() + QString("Runtime error in line %1\n%2")
+                .arg(result.property("lineNumber").toNumber())
+                .arg(result.toString());
+
+        QString msg = timeString() + QString("Script finished in %1 s.")
+                .arg(timer.elapsed()/1000., 0, 'f', 3);
+        writeMessage(msg);
     }
-
-    QScriptValue rayTracerValue = m_interpreter->globalObject().property("rayTracer");
-    ScriptRayTracer* rayTracer = (ScriptRayTracer*) rayTracerValue.toQObject();
-    QFileInfo currentFile(m_currentScritFileName);
-    rayTracer->SetDir(currentFile.absoluteDir().absolutePath());
-
-    QTextDocument* document = ui->codeEditorWidget->document();
-    QString program = document->toPlainText();
-    QScriptSyntaxCheckResult checkResult = m_interpreter->checkSyntax(program);
-    if (checkResult.state() != QScriptSyntaxCheckResult::Valid)
+    catch (QString msg)
     {
-        message = timeString() + QString("Script error in line: %2. %3").arg(QString::number(checkResult.errorLineNumber()), checkResult.errorMessage());
-        WriteMessage(message);
-        std::cerr << message.toStdString() << std::endl;
-        return;
-    }
-
-    QScriptValue result = m_interpreter->evaluate(document->toPlainText());
-    if (result.isError())
-    {
-        message = timeString()+ QString("Script error. %2").arg(result.toString());
-        WriteMessage(message);
-        //std::cerr<<logmessage.toStdString()<<std::endl;
-    }
-    else
-    {
-        /*
-         * Display a dialog
-         *
-           QString st;
-           QString area( QString("The valid sun area is %2" ).arg(st.setNum(rayTracer->GetArea())));
-           QString drawRays( QString("Number of rays traced per interaction: %1").arg(st.setNum(int(rayTracer->GetNumrays()))));
-           QString logmessage = QString( "[%1]\t The script execution is successfully finished in %2 seconds.\n \t\t %3 \n \t\t %4 \n" ).arg( QDateTime::currentDateTime().toString(),st.setNum(start.secsTo( QDateTime::currentDateTime() )),area,drawRays );
-           WriteMessage( logmessage );
-         *
-         */
-        QString message = timeString() + QString("Script finished in %1 s.")
-            .arg(timer.elapsed()/1000., 0, 'f', 3);
-        WriteMessage(message);
+        writeMessage(msg);
+        std::cerr << msg.toStdString() << std::endl;
     }
 }
 
-/*!
- * Sets the editor current script file to \a fileName.
- *
- * Changes the editor dialog title to shows the current file base name.
- */
-void ScriptEditorDialog::SetCurrentFile(QString fileName)
+void ScriptEditorDialog::setCurrentFile(QString fileName)
 {
-    m_currentScritFileName = fileName;
+    m_fileName = fileName;
 
     QString title = "Untitled";
     if (!fileName.isEmpty())
         title = QFileInfo(fileName).fileName();
-
     setWindowTitle(tr("%1[*] - Tonatiuh").arg(title));
-
-//    QString message = timeString() + QString("Current script file: '%2'.").arg(fileName);
-//    WriteMessage(message);
 }
 
-/*!
- * Write the \a message at log window.
- */
-void ScriptEditorDialog::WriteMessage(QString message)
+void ScriptEditorDialog::writeMessage(QString message)
 {
     ui->logWidget->appendPlainText(message);
 }
 
-QScriptValue ScriptEditorDialog::ImportExtension(QScriptContext *context, QScriptEngine* engine)
+QScriptValue ScriptEditorDialog::ImportExtension(QScriptContext* context, QScriptEngine* engine)
 {
-    if (context->argumentCount() != 1)
-        return QScriptValue();
-
+    if (context->argumentCount() != 1) return false;
+    if (!context->argument(0).isString()) return false;
     QString name = context->argument(0).toString();
 
     if (!engine->importExtension(name).isUndefined())
     {
-        QScriptValue consoleObject = engine->globalObject().property("console");
-        QPlainTextEdit* console = (QPlainTextEdit*) consoleObject.toQObject();
-        if (!console) return 0;
+        QString msg = QString("Warning! %1 not found!").arg(name);
 
-        QString message = QString("Warning! %1 not found!").arg(name);
-        console->insertPlainText(message);
+        //    writeMessage(msg); //?
+        QScriptValue object = engine->globalObject().property("console");
+        QPlainTextEdit* console = (QPlainTextEdit*) object.toQObject();
+        if (!console) return false;
+        console->appendPlainText(msg);
+        return false;
     }
 
-    return QScriptValue();
+    return true;
 }
 
 QScriptValue ScriptEditorDialog::PrintMessage(QScriptContext* context, QScriptEngine* engine)
 {
+    if (context->argumentCount() < 1) return false;
+    if (!context->argument(0).isString()) return false;
+    QString msg = context->argument(0).toString();
+
     QScriptValue object = engine->globalObject().property("console");
     QPlainTextEdit* console = (QPlainTextEdit*) object.toQObject();
-    if (!console) return 0;
-    if (context->argumentCount() < 1) return 0;
-    if (!context->argument(0).isString()) return 0;
-
-    QString message = context->argument(0).toString();
-    console->appendPlainText(message);
-    return 1;
+    if (!console) return false;
+    console->appendPlainText(msg);
+    return true;
 }
 
-QScriptValue ScriptEditorDialog::PrintTime(QScriptContext* context, QScriptEngine* engine)
+QScriptValue ScriptEditorDialog::PrintMessageTimed(QScriptContext* context, QScriptEngine* engine)
 {
+    if (context->argumentCount() < 1) return false;
+    if (!context->argument(0).isString()) return false;
+    QString msg = timeString() + context->argument(0).toString();
+
     QScriptValue object = engine->globalObject().property("console");
     QPlainTextEdit* console = (QPlainTextEdit*) object.toQObject();
-    if (!console) return 0;
-    if (context->argumentCount() < 1) return 0;
-    if (!context->argument(0).isString()) return 0;
-
-    QString message = timeString() + context->argument(0).toString();
-    console->appendPlainText(message);
-    return 1;
+    if (!console) return false;
+    console->appendPlainText(msg);
+    return true;
 }

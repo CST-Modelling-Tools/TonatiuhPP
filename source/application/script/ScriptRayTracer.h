@@ -22,28 +22,24 @@ class ScriptRayTracer: public QObject
     Q_OBJECT
 
 public:
-    ScriptRayTracer(QVector<RandomFactory*> listRandomFactory);
+    ScriptRayTracer(QVector<RandomFactory*> randomFactories);
     ~ScriptRayTracer();
 
     void Clear();
 
-    QString GetDir();
+    QString getDir() {return m_dirName;}
 
     bool IsValidRandomGeneratorType(QString type);
     bool IsValidSurface(QString surfaceName);
 
-    double GetArea() {
-        return m_area;
-    }
-    double GetNumrays() {
-        return m_numberOfRays;
-    }
+    double GetArea() {return m_area;}
+    double GetNumrays() {return m_numberOfRays;}
 
-    int SetDir(QString dir);
+    int setDir(QString dir);
 
-    int SetIrradiance(double irradiance);
+    int setIrradiance(double irradiance);
 
-    int SetNumberOfRays(double nrays);
+    int setNumberOfRays(double nrays);
 
     int SetNumberOfWidthDivisions(int wdivisions);
     int SetNumberOfHeightDivisions(int hdivisions);
@@ -57,7 +53,7 @@ public:
 
     void SetupGraphcisRoot();
     void SetupModels();
-    int SetTonatiuhModelFile(QString filename);
+    int openFile(QString filename);
 
     int Trace();
 
@@ -74,7 +70,7 @@ private:
     PhotonsBuffer* m_photonMap;
     bool m_photonMapToFile;
 
-    QVector<RandomFactory*> m_RandomFactoryList;
+    QVector<RandomFactory*> m_randomFactories;
     Random* m_random;
 
     SceneModel* m_sceneModel;

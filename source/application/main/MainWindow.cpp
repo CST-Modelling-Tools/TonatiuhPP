@@ -2640,7 +2640,7 @@ void MainWindow::UpdateRecentFileActions()
                     .arg(n + 1)
                     .arg(StrippedName(m_recentFiles[n]));
             actions[n]->setText(text);
-//            actions[n]->setToolTip(m_recentFiles[n]);
+            actions[n]->setToolTip(m_recentFiles[n]); // does not work
             actions[n]->setStatusTip(m_recentFiles[n]);
             actions[n]->setData(m_recentFiles[n]);
             actions[n]->setVisible(true);

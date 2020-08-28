@@ -15,7 +15,6 @@ CodeEditorWidget::CodeEditorWidget(QWidget* parent, Qt::WindowFlags f):
 {
     ui->setupUi(this);
 
-    // toolbar
     connect(ui->newButton, SIGNAL(clicked(bool)), this, SLOT(openNew()) );
     connect(ui->openButton, SIGNAL(clicked(bool)), this, SLOT(open()) );
     connect(ui->saveButton, SIGNAL(clicked(bool)), this, SLOT(saveThis()) );

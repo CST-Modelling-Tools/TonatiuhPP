@@ -7,6 +7,7 @@ class QScriptEngine;
 namespace tonatiuh_script
 {
     int init(QScriptEngine* engine);
+
     QScriptValue tonatiuh_filename(QScriptContext* context, QScriptEngine* engine);
     QScriptValue tonatiuh_irradiance(QScriptContext* context, QScriptEngine* engine);
     QScriptValue tonatiuh_numrays(QScriptContext* context, QScriptEngine* engine);

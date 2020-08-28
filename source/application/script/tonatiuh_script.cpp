@@ -15,9 +15,9 @@
 
 int tonatiuh_script::init(QScriptEngine* engine)
 {
-    QScriptValue rayTracerValue = engine->globalObject().property("rayTracer");
-    ScriptRayTracer* rayTracer = (ScriptRayTracer*) rayTracerValue.toQObject();
-        if (!rayTracer) return 0;
+    QScriptValue rayTracerObject = engine->globalObject().property("rayTracer");
+    ScriptRayTracer* rayTracer = (ScriptRayTracer*) rayTracerObject.toQObject();
+    if (!rayTracer) return 0;
 
     rayTracer->Clear();
 
@@ -60,38 +60,33 @@ int tonatiuh_script::init(QScriptEngine* engine)
 QScriptValue tonatiuh_script::tonatiuh_filename(QScriptContext* context, QScriptEngine* engine)
 {
     QScriptValue rayTracerValue = engine->globalObject().property("rayTracer");
-    ScriptRayTracer* rayTracer = ( ScriptRayTracer* ) rayTracerValue.toQObject();
+    ScriptRayTracer* rayTracer = (ScriptRayTracer*) rayTracerValue.toQObject();
 
-        if (context->argumentCount() != 1) return context->throwError("tonatiuh_filename: takes exactly one argument.");
-        if (!context->argument(0).isString() ) return context->throwError("tonatiuh_filename: argument is not a string.");
-
-
+    if (context->argumentCount() != 1)
+        return context->throwError("tonatiuh_filename: takes exactly one argument.");
+    if (!context->argument(0).isString())
+        return context->throwError("tonatiuh_filename: argument is not a string.");
 
     QString fileName = context->argument(0).toString();
-        if (fileName.isEmpty()  ) return context->throwError("tonatiuh_filename: the model file is not correct.");
+    if (fileName.isEmpty())
+        return context->throwError("tonatiuh_filename: the model file is not correct.");
 
-        QFileInfo file(fileName);
-        if (!file.isAbsolute() )
+    if (!QFileInfo(fileName).isAbsolute())
     {
-        QString dirName = rayTracer->GetDir();
-                QDir currentDir(dirName);
-                QFileInfo absolutefile(currentDir, fileName);
-        fileName = absolutefile.absoluteFilePath();
-
+        fileName = QFileInfo(rayTracer->getDir(), fileName).absoluteFilePath();
     }
 
-        QFileInfo modelFile(fileName);
-        if (!modelFile.exists() )
+    if (!QFileInfo(fileName).exists())
     {
-                QString message = QString("tonatiuh_filename: The %1 file can not be opened.").arg(fileName);
-                return context->throwError(QScriptContext::UnknownError, message);
+        QString message = QString("tonatiuh_filename: The %1 file can not be opened.").arg(fileName);
+        return context->throwError(QScriptContext::UnknownError, message);
     }
 
-        int result = rayTracer->SetTonatiuhModelFile(fileName);
-        if (result == 0)
+    int result = rayTracer->openFile(fileName);
+    if (result == 0)
     {
-                QString message = QString("tonatiuh_filename: The %1 file is not a valid file.").arg(fileName);
-                return context->throwError(message);
+        QString message = QString("tonatiuh_filename: The %1 file is not a valid file.").arg(fileName);
+        return context->throwError(message);
     }
 
     return 1;
@@ -100,33 +95,38 @@ QScriptValue tonatiuh_script::tonatiuh_filename(QScriptContext* context, QScript
 QScriptValue tonatiuh_script::tonatiuh_irradiance(QScriptContext* context, QScriptEngine* engine)
 {
     QScriptValue rayTracerValue = engine->globalObject().property("rayTracer");
-    ScriptRayTracer* rayTracer = ( ScriptRayTracer* ) rayTracerValue.toQObject();
+    ScriptRayTracer* rayTracer = (ScriptRayTracer*) rayTracerValue.toQObject();
 
-    if (context->argumentCount() != 1) return context->throwError("tonatiuh_irradiance: takes exactly one argument.");
-    if (!context->argument(0).isNumber() ) return context->throwError("tonatiuh_irradiance: argument is not a number.");
+    if (context->argumentCount() != 1)
+        return context->throwError("tonatiuh_irradiance: takes exactly one argument.");
+    if (!context->argument(0).isNumber() )
+        return context->throwError("tonatiuh_irradiance: argument is not a number.");
 
     double irradiance = context->argument(0).toNumber();
 
-    int result = rayTracer->SetIrradiance(irradiance);
-    if (result == 0) return context->throwError(QScriptContext::UnknownError, "tonatiuh_irradiance: UnknownError.");
-
+    int result = rayTracer->setIrradiance(irradiance);
+    if (result == 0)
+        return context->throwError(QScriptContext::UnknownError, "tonatiuh_irradiance: UnknownError.");
     return 1;
 }
 
 QScriptValue tonatiuh_script::tonatiuh_numrays(QScriptContext* context, QScriptEngine* engine)
 {
     QScriptValue rayTracerValue = engine->globalObject().property("rayTracer");
-    ScriptRayTracer* rayTracer = ( ScriptRayTracer* ) rayTracerValue.toQObject();
+    ScriptRayTracer* rayTracer = (ScriptRayTracer*) rayTracerValue.toQObject();
 
-    if (context->argumentCount() != 1) return context->throwError("tonatiuh_numrays: takes exactly one argument.");
-    if (!context->argument(0).isNumber() ) return context->throwError("tonatiuh_numrays: argument is not a number.");
+    if (context->argumentCount() != 1)
+        return context->throwError("tonatiuh_numrays: takes exactly one argument.");
+    if (!context->argument(0).isNumber() )
+        return context->throwError("tonatiuh_numrays: argument is not a number.");
 
     double nrays = context->argument(0).toNumber();
-    if (nrays < 1) return context->throwError("tonatiuh_numrays: the number of rays must be at least 1.");
+    if (nrays < 1)
+        return context->throwError("tonatiuh_numrays: the number of rays must be at least 1.");
 
-    int result = rayTracer->SetNumberOfRays(nrays);
-    if (result == 0) return context->throwError("tonatiuh_numrays: UnknownError.");
-
+    int result = rayTracer->setNumberOfRays(nrays);
+    if (result == 0)
+        return context->throwError("tonatiuh_numrays: UnknownError.");
     return 1;
 }
 
@@ -135,24 +135,24 @@ QScriptValue tonatiuh_script::tonatiuh_numdivisions(QScriptContext* context, QSc
     QScriptValue rayTracerValue = engine->globalObject().property("rayTracer");
     ScriptRayTracer* rayTracer = ( ScriptRayTracer* ) rayTracerValue.toQObject();
 
-        if (context->argumentCount() < 1) return context->throwError("tonatiuh_numdivisions: takes at least one argument.");
-        if (context->argumentCount() > 2) return context->throwError("tonatiuh_numdivisions: takes no more than two arguments.");
-        if (context->argumentCount()==2) {
-                if (!context->argument(1).isNumber() ) return context->throwError("tonatiuh_numdivisions: second argument is not a number.");
+    if (context->argumentCount() < 1) return context->throwError("tonatiuh_numdivisions: takes at least one argument.");
+    if (context->argumentCount() > 2) return context->throwError("tonatiuh_numdivisions: takes no more than two arguments.");
+    if (context->argumentCount() == 2) {
+        if (!context->argument(1).isNumber() ) return context->throwError("tonatiuh_numdivisions: second argument is not a number.");
 
-                double nheightdivisions = context->argument(1).toNumber();
-                if (nheightdivisions < 1) return context->throwError("tonatiuh_numdivisions: the number of heigth divisions must be at least 1.");
+        double nheightdivisions = context->argument(1).toNumber();
+        if (nheightdivisions < 1) return context->throwError("tonatiuh_numdivisions: the number of heigth divisions must be at least 1.");
 
-                int result = rayTracer->SetNumberOfHeightDivisions(nheightdivisions);
-                if (result == 0) return context->throwError("tonatiuh_numdivisions: UnknownError.");
+        int result = rayTracer->SetNumberOfHeightDivisions(nheightdivisions);
+        if (result == 0) return context->throwError("tonatiuh_numdivisions: UnknownError.");
     }
-        if (!context->argument(0).isNumber() ) return context->throwError("tonatiuh_numdivisions: argument is not a number.");
+    if (!context->argument(0).isNumber() ) return context->throwError("tonatiuh_numdivisions: argument is not a number.");
 
     double nwidthdivisions = context->argument(0).toNumber();
-        if (nwidthdivisions < 1) return context->throwError("tonatiuh_numdivisions: the number of width divisions must be at least 1.");
+    if (nwidthdivisions < 1) return context->throwError("tonatiuh_numdivisions: the number of width divisions must be at least 1.");
 
-        int result = rayTracer->SetNumberOfWidthDivisions(nwidthdivisions);
-        if (result == 0) return context->throwError("tonatiuh_numdivisions: UnknownError.");
+    int result = rayTracer->SetNumberOfWidthDivisions(nwidthdivisions);
+    if (result == 0) return context->throwError("tonatiuh_numdivisions: UnknownError.");
 
     return 1;
 }
@@ -166,7 +166,7 @@ QScriptValue tonatiuh_script::tonatiuh_photon_map_export_mode(QScriptContext* co
     if (!context->argument(0).isString() ) return context->throwError("tonatiuh_photon_map: argument is not a string.");
 
     QString photonMapExportType = context->argument(0).toString();
-    int result =    rayTracer->SetPhotonMapExportMode(photonMapExportType);
+    int result = rayTracer->SetPhotonMapExportMode(photonMapExportType);
     if (result == 0) return context->throwError("tonatiuh_photon_map: UnknownError.");
 
     return 1;
@@ -174,7 +174,6 @@ QScriptValue tonatiuh_script::tonatiuh_photon_map_export_mode(QScriptContext* co
 
 QScriptValue tonatiuh_script::tonatiuh_random_generator(QScriptContext* context, QScriptEngine* engine)
 {
-
     if (context->argumentCount() != 1) return context->throwError("tonatiuh_random_generator: takes exactly one argument.");
     if (!context->argument(0).isString() ) return context->throwError("tonatiuh_random_generator: argument is not a string.");
 
@@ -293,7 +292,7 @@ QScriptValue tonatiuh_script::tonatiuh_saveas(QScriptContext* context, QScriptEn
     QFileInfo file(fileName);
     if (!file.isAbsolute() )
     {
-        QString dirName = rayTracer->GetDir();
+        QString dirName = rayTracer->getDir();
         QDir currentDir(dirName);
         QFileInfo absolutefile(currentDir, fileName);
         fileName = absolutefile.absoluteFilePath();
