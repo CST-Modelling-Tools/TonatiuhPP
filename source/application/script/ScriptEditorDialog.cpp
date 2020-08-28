@@ -31,13 +31,13 @@ QString timeString()
  * Creates a dialog to edit scripts and run them. The list \a listRandomFactory is
  * the random generator types that can be defined in the scripts to run Tonatiuh. The dialog explorer shows the directories and scripts files from \a dirName path.
  */
-ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> randomFactories, QWidget* parent):
+ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> randomFactories, MainWindow* mw, QWidget* parent):
     QDialog(parent),
-    ui(new Ui::ScriptEditorDialog),
-    m_fileName("")
+    ui(new Ui::ScriptEditorDialog)
 {
     ui->setupUi(this);
     setWindowFlag(Qt::WindowMaximizeButtonHint, true);
+    setWindowFlag(Qt::WindowMinimizeButtonHint, true);
 
     int h = height();
     ui->splitter->setSizes({ int(0.8*h), int(0.2*h) });
@@ -53,7 +53,7 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> randomFactories, 
     qScriptRegisterSequenceMetaType<QVector<QVariant>>(m_engine);
 
     // objects
-    QScriptValue tonatiuhObject = m_engine->newQObject(parent);
+    QScriptValue tonatiuhObject = m_engine->newQObject(mw);
     m_engine->globalObject().setProperty("tonatiuh", tonatiuhObject);
     m_engine->globalObject().setProperty("tn", tonatiuhObject);
 
@@ -64,7 +64,7 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> randomFactories, 
     QScriptValue rayTracerObject = m_engine->newQObject(rayTracer);
     m_engine->globalObject().setProperty("rayTracer", rayTracerObject);
 
-    NodeObject::setPlugins(static_cast<MainWindow*>(parent)->getPlugins());
+    NodeObject::setPlugins(static_cast<MainWindow*>(mw)->getPlugins());
     QScriptValue nodeObjectClass = m_engine->scriptValueFromQMetaObject<NodeObject>();
     m_engine->globalObject().setProperty("NodeObject", nodeObjectClass);
 
@@ -89,8 +89,7 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> randomFactories, 
     connect(ui->codeEditorWidget, SIGNAL(runned()), this, SLOT(RunScript()) );
 
     connect(ui->runButton, SIGNAL(clicked(bool)), this, SLOT(RunScript()) );
-    connect(ui->closeButton, SIGNAL(clicked(bool)), this, SLOT(close()) );
-    connect(parent, SIGNAL(Abort(QString)), this, SLOT(abortScript(QString)) );
+    connect(mw, SIGNAL(Abort(QString)), this, SLOT(abortScript(QString)) );
 }
 
 ScriptEditorDialog::~ScriptEditorDialog()

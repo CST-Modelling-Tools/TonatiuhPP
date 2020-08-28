@@ -9,6 +9,7 @@ class QLineEdit;
 class QScriptContext;
 class QScriptEngine;
 class RandomFactory;
+class MainWindow;
 
 namespace Ui {
 class ScriptEditorDialog;
@@ -20,7 +21,7 @@ class ScriptEditorDialog: public QDialog
     Q_OBJECT
 
 public:
-    ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory, QWidget* parent = 0);
+    ScriptEditorDialog(QVector<RandomFactory*> randomFactories, MainWindow* mw, QWidget* parent = 0);
     ~ScriptEditorDialog();
 
     void run(QString fileName);

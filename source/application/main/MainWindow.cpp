@@ -1013,12 +1013,19 @@ SbVec3f MainWindow::getTarget(SoCamera* camera)
     return target;
 }
 
+#include "script/CodeEditorWidget.h"
 void MainWindow::on_actionRunScript_triggered()
 {
+//    CodeEditorWidget mw(this);
+//    mw.setWindowModality(Qt::ApplicationModal);
+//    mw.show();
+
 //    m_undoStack->setActive(false);
 //    m_undoStack->beginMacro("Script");
-    ScriptEditorDialog dialog(m_pluginManager->getRandomFactories(), this);
-    dialog.exec();
+    ScriptEditorDialog* dialog = new ScriptEditorDialog(m_pluginManager->getRandomFactories(), this, 0);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->show();
+//    dialog.exec();
 //    m_undoStack->setActive(true);
 //    m_undoStack->endMacro();
 }
