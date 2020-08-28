@@ -14,10 +14,7 @@ namespace Ui {
 class ScriptEditorDialog;
 }
 
-//!  ScriptEditorDialog class is the dialog to edit and run scripts with Tonatiuh.
-/*!
-  ScriptEditorDialog allow to the user open, edit, run and save scripts to automate the ray tracing.
-*/
+
 class ScriptEditorDialog: public QDialog
 {
     Q_OBJECT

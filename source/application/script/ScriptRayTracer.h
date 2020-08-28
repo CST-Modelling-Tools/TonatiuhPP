@@ -75,7 +75,7 @@ private:
     bool m_photonMapToFile;
 
     QVector<RandomFactory*> m_RandomFactoryList;
-    Random* m_randomDeviate;
+    Random* m_random;
 
     SceneModel* m_sceneModel;
 

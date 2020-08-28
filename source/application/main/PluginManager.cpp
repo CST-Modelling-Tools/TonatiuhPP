@@ -230,10 +230,10 @@ void PluginManager::sort()
     sortFactories(shapeNames, m_shapeFactories);
 
     QStringList materialNames = {
-        "Absorber",
-        "Specular",
         "Transparent",
-        "Virtual"
+        "Virtual",
+        "Absorber",
+        "Specular"
     };
     sortFactories(materialNames, m_materialFactories);
 

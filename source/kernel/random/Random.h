@@ -54,7 +54,7 @@ protected:
 class RandomFactory: public TFactory
 {
 public:
-    virtual Random* create() const = 0;
+    virtual Random* create(int) const = 0;
 };
 
 Q_DECLARE_INTERFACE(RandomFactory, "tonatiuh.RandomFactory")
@@ -66,7 +66,7 @@ class RandomFactoryT: public RandomFactory
 public:
     QString name() const {return T::getClassName();}
 
-    T* create() const {
+    T* create(int) const {
         ulong seed = QTime::currentTime().msec();
         return new T(seed);
     }

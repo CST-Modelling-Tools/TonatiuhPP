@@ -68,7 +68,7 @@ public:
     PluginManager* getPlugins() {return m_pluginManager;}
     void FinishManipulation();
     void StartManipulation(SoDragger* dragger);
-    void ExecuteScriptFile(QString fileName);
+//    void ExecuteScriptFile(QString fileName); // del?
 
 public slots:
     void FileNew();
@@ -141,11 +141,8 @@ private slots:
     void ChangeSelection(const QModelIndex& index);
     void CreateComponent(ComponentFactory* factory);
 
-    void InsertShapeMaterial(MaterialFactory* factory);
-    void InsertShapeSurface(ShapeFactory* factory);
+    void InsertShapeSurface(TFactory* factory);
     void InsertShapeSurface(ShapeFactory* factory, int numberOfParameters, QVector<QVariant> parametersList);
-    void InsertShapeProfile(ProfileFactory* factory);
-    void InsertTrackerArmature(TrackerFactory* f);
 
     void onSunDialog();
     void onAirDialog();

@@ -14,9 +14,6 @@
    <string>Code Editor</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="spacing">
-    <number>0</number>
-   </property>
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -264,38 +261,15 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="mainLayout">
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="LineNumberWidget" name="lineNumberWidget" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>50</width>
-         <height>0</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="CodeEditArea" name="codeEditor"/>
-     </item>
-    </layout>
+    <widget class="CodeEditor" name="codeEditor"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LineNumberWidget</class>
-   <extends>QWidget</extends>
-   <header>script/LineNumberWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>CodeEditArea</class>
+   <class>CodeEditor</class>
    <extends>QPlainTextEdit</extends>
-   <header>script/CodeEditArea.h</header>
+   <header>script/CodeEditor.h</header>
   </customwidget>
  </customwidgets>
  <resources>

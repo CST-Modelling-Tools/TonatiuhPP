@@ -457,13 +457,13 @@ void MainWindow::FinishManipulation()
     setDocumentModified(true);
 }
 
-void MainWindow::ExecuteScriptFile(QString fileName)
-{
-    ScriptEditorDialog dialog(m_pluginManager->getRandomFactories(), this);
-    dialog.show();
-    dialog.ExecuteScript(fileName);
-    dialog.done(0);
-}
+//void MainWindow::ExecuteScriptFile(QString fileName)
+//{
+//    ScriptEditorDialog dialog(m_pluginManager->getRandomFactories(), this);
+//    dialog.show();
+//    dialog.ExecuteScript(fileName);
+//    dialog.done(0);
+//}
 
 void MainWindow::onAbort(QString error)
 {
@@ -738,7 +738,7 @@ void MainWindow::RunFluxAnalysisDialog()
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
 
-    Random* rand = m_pluginManager->getRandomFactories()[m_raysRandomFactoryIndex]->create();
+    Random* rand = m_pluginManager->getRandomFactories()[m_raysRandomFactoryIndex]->create(0);
 
     FluxAnalysisDialog dialog(sceneKit, m_modelScene, m_raysGridWidth, m_raysGridHeight, rand, this);
     dialog.exec();
@@ -1449,16 +1449,23 @@ void MainWindow::InsertTracker()
     setDocumentModified(true);
 }
 
+// todo: add kit
 void MainWindow::Insert(TFactory* f)
 {
-    if (ShapeFactory* sf = dynamic_cast<ShapeFactory*>(f))
-        InsertShapeSurface(sf);
-    else if (ProfileFactory* pf = dynamic_cast<ProfileFactory*>(f))
-        InsertShapeProfile(pf);
-    else if (MaterialFactory* mf = dynamic_cast<MaterialFactory*>(f))
-        InsertShapeMaterial(mf);
-    else if (TrackerFactory* tf = dynamic_cast<TrackerFactory*>(f))
-        InsertTrackerArmature(tf);
+    if (dynamic_cast<AirFactory*>(f)) {
+        AirKit* kit = (AirKit*) m_document->getSceneKit()->getPart("world.air", false);
+        TNode* node = f->create();
+        CmdInsertSurface* cmd = new CmdInsertSurface(kit, node);
+        m_undoStack->push(cmd);
+    } else if (dynamic_cast<SunFactory*>(f)) {
+        SunKit* kit = (SunKit*) m_document->getSceneKit()->getPart("world.sun", false);
+        TNode* node = f->create();
+        CmdInsertSurface* cmd = new CmdInsertSurface(kit, node);
+        m_undoStack->push(cmd);
+    }
+    else {
+        InsertShapeSurface(f);
+    }
 }
 
 /*!
@@ -1496,7 +1503,7 @@ void MainWindow::InsertShapeProfile(QString name)
 {
     ProfileFactory* f = m_pluginManager->getProfileMap().value(name, 0);
     if (f)
-        InsertShapeProfile(f);
+        InsertShapeSurface(f);
     else
         emit Abort("InsertProfile: Profile not found");
 }
@@ -1510,7 +1517,7 @@ void MainWindow::InsertShapeMaterial(QString name)
 {
     MaterialFactory* f = m_pluginManager->getMaterialMap().value(name, 0);
     if (f)
-        InsertShapeMaterial(f);
+        InsertShapeSurface(f);
     else
         emit Abort("CreateMaterial: Material not found");
 }
@@ -1525,7 +1532,7 @@ void MainWindow::InsertTrackerArmature(QString name)
 {
     TrackerFactory* f = m_pluginManager->getTrackerMap().value(name, 0);
     if (f)
-        InsertTrackerArmature(f);
+        InsertShapeSurface(f);
     else
         emit Abort("CreateTracker: Selected tracker type is not valid.");
 }
@@ -1658,10 +1665,11 @@ void MainWindow::InsertScene(QScriptValue v)
 
 QScriptValue MainWindow::FindInterception(QScriptValue surface, QScriptValue rays)
 {
-    Random* rand = m_pluginManager->getRandomFactories()[m_raysRandomFactoryIndex]->create();
-    FluxAnalysis fa(m_document->getSceneKit(), m_modelScene, m_raysGridWidth, m_raysGridHeight, rand);
+    if (!m_rand)
+        m_rand = m_pluginManager->getRandomFactories()[m_raysRandomFactoryIndex]->create(0);
+
+    FluxAnalysis fa(m_document->getSceneKit(), m_modelScene, m_raysGridWidth, m_raysGridHeight, m_rand);
     fa.run(surface.toString(), "front", rays.toUInt32(), false, 5, 5);
-    delete rand;
     return fa.powerTotal();
 }
 
@@ -1899,7 +1907,8 @@ void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, uint nOfR
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
 
-    if (!m_rand) m_rand = m_pluginManager->getRandomFactories()[m_raysRandomFactoryIndex]->create();
+    if (!m_rand)
+        m_rand = m_pluginManager->getRandomFactories()[m_raysRandomFactoryIndex]->create(0);
 
     FluxAnalysis fa(sceneKit, m_modelScene, m_raysGridWidth, m_raysGridHeight, m_rand);
     fa.run(nodeURL, surfaceSide, nOfRays, false, heightDivisions, widthDivisions); //?
@@ -2401,20 +2410,17 @@ void MainWindow::CreateComponent(ComponentFactory* factory)
  *
  * If the current node is not a surface type node, the shape node will not be created.
  */
-void MainWindow::InsertShapeSurface(ShapeFactory* factory)
+void MainWindow::InsertShapeSurface(TFactory* factory)
 {
     QModelIndex index = ui->sceneView->currentIndex();
     if (!index.isValid()) return;
-    ui->sceneView->expand(index);
-
     InstanceNode* instance = m_modelScene->getInstance(index);
     SoNode* node = instance->getNode();
-    TShapeKit* kit = dynamic_cast<TShapeKit*>(node);
+    SoBaseKit* kit = dynamic_cast<SoBaseKit*>(node);
     if (!kit) return;
 
-    ShapeRT* shape = factory->create();
-
-    CmdInsertSurface* cmd = new CmdInsertSurface(kit, shape, m_modelScene);
+    TNode* nodeN = factory->create();
+    CmdInsertSurface* cmd = new CmdInsertSurface(kit, nodeN);
     m_undoStack->push(cmd);
 
 //    UpdateLightSize();
@@ -2438,71 +2444,7 @@ void MainWindow::InsertShapeSurface(ShapeFactory* factory, int /*numberofParamet
 
     ShapeRT* shape = factory->create(parametersList);
 
-    CmdInsertSurface* cmd = new CmdInsertSurface(kit, shape, m_modelScene);
-    m_undoStack->push(cmd);
-
-//    UpdateLightSize();
-    setDocumentModified(true);
-}
-
-/*!
- * Creates a material node from the \a pMaterialFactory as current selected node child.
- *
- * If the current node is not a surface type node, the material node will not be created.
- */
-void MainWindow::InsertShapeMaterial(MaterialFactory* factory)
-{
-    QModelIndex index = ui->sceneView->currentIndex();
-    if (!index.isValid()) return;
-    ui->sceneView->expand(index);
-
-    InstanceNode* instance = m_modelScene->getInstance(index);
-    SoNode* node = instance->getNode();
-    TShapeKit* kit = dynamic_cast<TShapeKit*>(node);
-    if (!kit) return;
-
-    MaterialRT* material = factory->create();
-
-    CmdInsertSurface* cmd = new CmdInsertSurface(kit, material, m_modelScene);
-    m_undoStack->push(cmd);
-
-    setDocumentModified(true);
-}
-
-void MainWindow::InsertShapeProfile(ProfileFactory* factory)
-{
-    QModelIndex index = ui->sceneView->currentIndex();
-    if (!index.isValid()) return;
-    ui->sceneView->expand(index);
-
-    InstanceNode* instance = m_modelScene->getInstance(index);
-    SoNode* node = instance->getNode();
-    TShapeKit* kit = dynamic_cast<TShapeKit*>(node);
-    if (!kit) return;
-
-    ProfileRT* profile = factory->create();
-
-    CmdInsertSurface* cmd = new CmdInsertSurface(kit, profile, m_modelScene);
-    m_undoStack->push(cmd);
-
-//    UpdateLightSize();
-    setDocumentModified(true);
-}
-
-void MainWindow::InsertTrackerArmature(TrackerFactory* f)
-{
-    QModelIndex index = ui->sceneView->currentIndex();
-    if (!index.isValid()) return;
-    ui->sceneView->expand(index);
-
-    InstanceNode* instance = m_modelScene->getInstance(index);
-    SoNode* node = instance->getNode();
-    TrackerKit* kit = dynamic_cast<TrackerKit*>(node);
-    if (!kit) return;
-
-    TrackerArmature* armature = f->create();
-
-    CmdInsertSurface* cmd = new CmdInsertSurface(kit, armature, m_modelScene);
+    CmdInsertSurface* cmd = new CmdInsertSurface(kit, shape);
     m_undoStack->push(cmd);
 
 //    UpdateLightSize();
@@ -2580,7 +2522,7 @@ PhotonsAbstract* MainWindow::CreatePhotonMapExport() const
 {
     PhotonsFactory* f = m_pluginManager->getExportMap().value(m_photonsSettings->name, 0);
     if (!f) return 0;
-    PhotonsAbstract* photonExport = f->create();
+    PhotonsAbstract* photonExport = f->create(0);
     if (!photonExport) return 0;
 
     photonExport->setSceneModel(*m_modelScene);
@@ -2733,7 +2675,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
     air = (AirTransmission*) sceneKit->getPart("world.air.transmission", false);
 
     QVector<RandomFactory*> randomFactories = m_pluginManager->getRandomFactories();
-    if (!m_rand) m_rand = randomFactories[m_raysRandomFactoryIndex]->create();
+    if (!m_rand) m_rand = randomFactories[m_raysRandomFactoryIndex]->create(0);
 
     if (!m_photonBufferAppend)
     {
@@ -2952,14 +2894,14 @@ void MainWindow::on_actionViewAll_triggered()
 
 void MainWindow::on_actionViewSelected_triggered()
 {
-    QModelIndex index = m_modelSelection->currentIndex();
+    QModelIndex index = ui->sceneView->currentIndex();
     InstanceNode* node = m_modelScene->getInstance(index);
 
-    SoGetBoundingBoxAction* action = new SoGetBoundingBoxAction( SbViewportRegion() ) ;
-    node->getNode()->getBoundingBox(action);
-    SbBox3f box = action->getBoundingBox();
-    delete action;
-    if ( box.isEmpty() ) return;
+    SbViewportRegion vr;
+    SoGetBoundingBoxAction action(vr);
+    node->getNode()->getBoundingBox(&action);
+    SbBox3f box = action.getBoundingBox();
+    if (box.isEmpty()) return;
 
     SoCamera* camera = m_graphicView[m_focusView]->getCamera();
     camera->pointAt(box.getCenter(), SbVec3f(0., 0., 1.));

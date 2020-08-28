@@ -37,25 +37,29 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory
     m_currentScritFileName("")
 {
     ui->setupUi(this);
-    setWindowFlags(windowFlags() | Qt::WindowMinMaxButtonsHint);
+    setWindowFlag(Qt::WindowMaximizeButtonHint, true);
 
-    QSize windowSize = size();
-    QList<int> sizes;
-    sizes << windowSize.height() * 0.8 << windowSize.height() * 0.2;
-    ui->splitter->setSizes(sizes);
+    int h = height();
+    ui->splitter->setSizes({ int(0.8*h), int(0.2*h) });
 
-    QString pluginsDirectory = QApplication::applicationDirPath() + QDir::separator() + "plugins";
-    QCoreApplication::addLibraryPath(pluginsDirectory);
-    QCoreApplication::addLibraryPath(QApplication::applicationDirPath());
+    int q = fontMetrics().height();
+    resize(64*q, 48*q);
+
+    QFont font("Consolas", 9);
+    ui->logWidget->setFont(font);
+
+//    QString pluginsDirectory = QApplication::applicationDirPath() + QDir::separator() + "plugins";
+//    QCoreApplication::addLibraryPath(pluginsDirectory);
+//    QCoreApplication::addLibraryPath(QApplication::applicationDirPath());
 
     // init QtScript environment
     m_interpreter = new QScriptEngine(this);
-    qScriptRegisterSequenceMetaType<QVector<QVariant> >(m_interpreter);
+    qScriptRegisterSequenceMetaType<QVector<QVariant>>(m_interpreter);
 
+    // objects
     QScriptValue tonatiuh = m_interpreter->newQObject(parent);
     m_interpreter->globalObject().setProperty("tonatiuh", tonatiuh);
     m_interpreter->globalObject().setProperty("tn", tonatiuh);
-    NodeObject::setPlugins(static_cast<MainWindow*>(parent)->getPlugins());
 
     QScriptValue logConsoleObject = m_interpreter->newQObject(ui->logWidget);
     m_interpreter->globalObject().setProperty("console", logConsoleObject);
@@ -64,35 +68,29 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> listRandomFactory
     QScriptValue rayTracerValue = m_interpreter->newQObject(rayTracer);
     m_interpreter->globalObject().setProperty("rayTracer", rayTracerValue);
 
-    QScriptValue printFunction = m_interpreter->newFunction(ScriptEditorDialog::PrintMessage);
-    m_interpreter->globalObject().setProperty("print", printFunction);
-    //m_interpreter->globalObject().setProperty( "print", m_interpreter->newFunction( ScriptEditorDialog::WriteMessage ) );
-
-    QScriptValue printTime = m_interpreter->newFunction(ScriptEditorDialog::PrintTime);
-    m_interpreter->globalObject().setProperty("printTime", printTime);
-
-    QScriptValue import = m_interpreter->newFunction(ScriptEditorDialog::ImportExtension);
-    m_interpreter->globalObject().setProperty("Import", import, QScriptValue::ReadOnly);
-
-    connect(ui->codeEditorWidget, SIGNAL(FileOpened(QString)), this, SLOT(SetCurrentFile(QString)) );
-    connect(ui->codeEditorWidget, SIGNAL(FileSaved(QString)), this, SLOT(SetCurrentFile(QString)) );
-    connect(ui->codeEditorWidget, SIGNAL(RunScript()), this, SLOT(RunScript()) );
-    connect(ui->runButton, SIGNAL(clicked(bool)), this, SLOT(RunScript()) );
-    connect(ui->closeButton, SIGNAL(clicked(bool)), this, SLOT(close()) );
-    connect(parent, SIGNAL(Abort(QString)), this, SLOT(AbortEvaluation(QString)) );
-
-
+    NodeObject::setPlugins(static_cast<MainWindow*>(parent)->getPlugins());
     QScriptValue nodeObjectClass = m_interpreter->scriptValueFromQMetaObject<NodeObject>();
     m_interpreter->globalObject().setProperty("NodeObject", nodeObjectClass);
 
     QScriptValue fileObjectClass = m_interpreter->scriptValueFromQMetaObject<FileObject>();
     m_interpreter->globalObject().setProperty("FileObject", fileObjectClass);
 
-    int q = fontMetrics().height();
-    resize(64*q, 48*q);
+    // functions
+    QScriptValue import = m_interpreter->newFunction(ScriptEditorDialog::ImportExtension);
+    m_interpreter->globalObject().setProperty("Import", import, QScriptValue::ReadOnly);
 
-    QFont font("Consolas", 9);
-    ui->logWidget->setFont(font);
+    QScriptValue printFunction = m_interpreter->newFunction(ScriptEditorDialog::PrintMessage);
+    m_interpreter->globalObject().setProperty("print", printFunction);
+
+    QScriptValue printTime = m_interpreter->newFunction(ScriptEditorDialog::PrintTime);
+    m_interpreter->globalObject().setProperty("printTime", printTime);
+
+    connect(ui->codeEditorWidget, SIGNAL(opened(QString)), this, SLOT(SetCurrentFile(QString)) );
+    connect(ui->codeEditorWidget, SIGNAL(saved(QString)), this, SLOT(SetCurrentFile(QString)) );
+    connect(ui->codeEditorWidget, SIGNAL(runned()), this, SLOT(RunScript()) );
+    connect(ui->runButton, SIGNAL(clicked(bool)), this, SLOT(RunScript()) );
+    connect(ui->closeButton, SIGNAL(clicked(bool)), this, SLOT(close()) );
+    connect(parent, SIGNAL(Abort(QString)), this, SLOT(AbortEvaluation(QString)) );
 }
 
 ScriptEditorDialog::~ScriptEditorDialog()
@@ -103,7 +101,7 @@ ScriptEditorDialog::~ScriptEditorDialog()
 void ScriptEditorDialog::ExecuteScript(QString file)
 {
     if (file.isEmpty()) return;
-    ui->codeEditorWidget->OpenScriptFile(file);
+    ui->codeEditorWidget->open(file);
     SetCurrentFile(file);
     RunScript();
     close();
@@ -120,7 +118,7 @@ void ScriptEditorDialog::AbortEvaluation(QString error)
  */
 void ScriptEditorDialog::closeEvent(QCloseEvent* event)
 {
-    if (ui->codeEditorWidget->OkToContinue())
+    if (ui->codeEditorWidget->isReady())
         event->accept();
     else
         event->ignore();
@@ -150,7 +148,7 @@ void  ScriptEditorDialog::RunScript()
     QFileInfo currentFile(m_currentScritFileName);
     rayTracer->SetDir(currentFile.absoluteDir().absolutePath());
 
-    QTextDocument* document = ui->codeEditorWidget->Document();
+    QTextDocument* document = ui->codeEditorWidget->document();
     QString program = document->toPlainText();
     QScriptSyntaxCheckResult checkResult = m_interpreter->checkSyntax(program);
     if (checkResult.state() != QScriptSyntaxCheckResult::Valid)
@@ -218,7 +216,7 @@ QScriptValue ScriptEditorDialog::ImportExtension(QScriptContext *context, QScrip
     if (context->argumentCount() != 1)
         return QScriptValue();
 
-    const QString name = context->argument(0).toString();
+    QString name = context->argument(0).toString();
 
     if (!engine->importExtension(name).isUndefined())
     {

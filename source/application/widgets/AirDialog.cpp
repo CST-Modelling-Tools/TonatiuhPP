@@ -9,6 +9,8 @@
 #include "kernel/scene/TSceneKit.h"
 #include "parameters/ParametersModel.h"
 
+// todo: add custom plot
+
 
 AirDialog::AirDialog(SceneModel* sceneModel, QMap<QString, AirFactory*> airMap, QWidget* parent):
     QDialog(parent),

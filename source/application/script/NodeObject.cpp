@@ -32,7 +32,8 @@ NodeObject::NodeObject(SoNode* node):
 
 QScriptValue NodeObject::createNode(const QString& name)
 {
-    if (m_node->getTypeId() != TSeparatorKit::getClassTypeId()) return 0;
+    if (m_node->getTypeId() != TSeparatorKit::getClassTypeId())
+        return QScriptValue();
     TSeparatorKit* kit = new TSeparatorKit;
 
     TSeparatorKit* parent = (TSeparatorKit*) m_node;

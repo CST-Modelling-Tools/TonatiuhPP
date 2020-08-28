@@ -33,7 +33,7 @@ ScriptRayTracer::ScriptRayTracer(QVector<RandomFactory*> listRandomFactory):
     m_numberOfRays(0),
     m_photonMap(0),
     m_RandomFactoryList(listRandomFactory),
-    m_randomDeviate(0),
+    m_random(0),
     m_sceneModel (0),
     m_widthDivisions(200),
     m_heightDivisions(200),
@@ -50,7 +50,7 @@ ScriptRayTracer::~ScriptRayTracer()
 {
     delete m_document;
     delete m_photonMap;
-    delete m_randomDeviate;
+    delete m_random;
     delete m_sceneModel;
 }
 
@@ -62,8 +62,8 @@ void ScriptRayTracer::Clear()
     m_numberOfRays = 0;
     delete m_photonMap;
     m_photonMap = 0;
-    delete m_randomDeviate;
-    m_randomDeviate = 0;
+    delete m_random;
+    m_random = 0;
     delete m_sceneModel;
     m_sceneModel = 0;
     m_sunAzimuth = 0;
@@ -151,11 +151,11 @@ int ScriptRayTracer::SetRandomDeviateType(QString typeName)
     int selectedRandom = randomGeneratorsNames.indexOf(typeName);
     if (selectedRandom < 0)
     {
-        m_randomDeviate = 0;
+        m_random = 0;
         return 0;
     }
 
-    m_randomDeviate = m_RandomFactoryList[selectedRandom]->create();
+    m_random = m_RandomFactoryList[selectedRandom]->create(0);
     return 1;
 }
 

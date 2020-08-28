@@ -49,7 +49,7 @@ class PhotonsWidget;
 class TONATIUH_KERNEL PhotonsFactory: public TFactory
 {
 public:
-    virtual PhotonsAbstract* create() const = 0;
+    virtual PhotonsAbstract* create(int) const = 0;
     virtual PhotonsWidget* createWidget() const {return 0;}
 };
 
@@ -63,6 +63,6 @@ class PhotonsFactoryT: public PhotonsFactory
 public:
     QString name() const {return T::getClassName();}
     QIcon icon() const {return QIcon(T::getClassIcon());}
-    T* create() const {return new T;}
+    T* create(int) const {return new T;}
     W* createWidget() const {return new W;}
 };

@@ -47,8 +47,8 @@ protected:
 class ShapeFactory: public TFactory
 {
 public:
-    virtual ShapeRT* create() const = 0;
-    virtual ShapeRT* create(QVector<QVariant> /*parameters*/) const {return create();}
+    ShapeRT* create() const = 0;
+    ShapeRT* create(QVector<QVariant> /*parameters*/) const {return create();}
 };
 
 Q_DECLARE_INTERFACE(ShapeFactory, "tonatiuh.ShapeFactory")

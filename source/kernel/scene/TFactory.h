@@ -6,7 +6,7 @@
 #include <QIcon>
 
 class QString;
-
+class TNode;
 
 class TFactory
 {
@@ -15,4 +15,5 @@ public:
     virtual QString name() const {return QString();}
     virtual QIcon icon() const {return QIcon();}
     virtual void init() const {}
+    virtual TNode* create() const {return 0;}
 };

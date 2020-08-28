@@ -43,13 +43,14 @@ HEADERS += \
     parameters/ParametersModel.h \
     parameters/ParametersTabs.h \
     parameters/ParametersView.h \
-    script/CodeEditArea.h \
+    script/CodeEditor.h \
     script/CodeEditorWidget.h \
     script/FileObject.h \
-    script/LineNumberWidget.h \
+    script/LineNumbers.h \
     script/NodeObject.h \
     script/ScriptEditorDialog.h \
     script/ScriptRayTracer.h \
+    script/ScriptWindow.h \
     script/tonatiuh_script.h \
     tree/SceneDelegate.h \
     tree/SceneFilter.h \
@@ -102,13 +103,14 @@ SOURCES += \
     parameters/ParametersModel.cpp \
     parameters/ParametersTabs.cpp \
     parameters/ParametersView.cpp \
-    script/CodeEditArea.cpp \
+    script/CodeEditor.cpp \
     script/CodeEditorWidget.cpp \
     script/FileObject.cpp \
-    script/LineNumberWidget.cpp \
+    script/LineNumbers.cpp \
     script/NodeObject.cpp \
     script/ScriptEditorDialog.cpp \
     script/ScriptRayTracer.cpp \
+    script/ScriptWindow.cpp \
     script/tonatiuh_script.cpp \
     tree/SceneDelegate.cpp \
     tree/SceneFilter.cpp \
@@ -138,6 +140,7 @@ FORMS += \
     parameters/ParametersEditor.ui \
     script/CodeEditorWidget.ui \
     script/ScriptEditorDialog.ui \
+    script/ScriptWindow.ui \
     widgets/AboutDialog.ui \
     widgets/AirDialog.ui \
     widgets/NetworkConnectionsDialog.ui \
