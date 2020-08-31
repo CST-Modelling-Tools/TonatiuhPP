@@ -25,21 +25,26 @@ public:
     ~ScriptEditorDialog();
 
     void run(QString fileName);
+    bool isReady();
 
     static QScriptValue ImportExtension(QScriptContext* context, QScriptEngine* engine);
     static QScriptValue PrintMessage(QScriptContext* context, QScriptEngine* engine);
     static QScriptValue PrintMessageTimed(QScriptContext* context, QScriptEngine* engine);
 
 public slots:
-    void abortScript(QString error);
+    void open(QString fileName = QString());
+    void openNew();
+    bool save(QString fileName = QString());
+    bool saveThis();
+    void run();
 
 protected:
+    void setTitle(QString fileName);
     void closeEvent(QCloseEvent* event);
 
 private slots:
-    void RunScript();
-    void setCurrentFile(QString fileName);
     void writeMessage(QString message);
+    void abortScript(QString error);
 
 private:
     Ui::ScriptEditorDialog* ui;

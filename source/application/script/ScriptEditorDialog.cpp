@@ -10,6 +10,11 @@
 #include <QString>
 #include <QDir>
 
+#include <QMessageBox>
+#include <QSettings>
+#include <QFileDialog>
+#include <QTextStream>
+
 #include "ScriptRayTracer.h"
 #include "tonatiuh_script.h"
 
@@ -36,8 +41,9 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> randomFactories, 
     ui(new Ui::ScriptEditorDialog)
 {
     ui->setupUi(this);
-    setWindowFlag(Qt::WindowMaximizeButtonHint, true);
+
     setWindowFlag(Qt::WindowMinimizeButtonHint, true);
+    setWindowFlag(Qt::WindowMaximizeButtonHint, true);
 
     int h = height();
     ui->splitter->setSizes({ int(0.8*h), int(0.2*h) });
@@ -84,12 +90,21 @@ ScriptEditorDialog::ScriptEditorDialog(QVector<RandomFactory*> randomFactories, 
     QScriptValue timeFunction = m_engine->newFunction(ScriptEditorDialog::PrintMessageTimed);
     m_engine->globalObject().setProperty("printTimed", timeFunction);
 
-    connect(ui->codeEditorWidget, SIGNAL(opened(QString)), this, SLOT(setCurrentFile(QString)) );
-    connect(ui->codeEditorWidget, SIGNAL(saved(QString)), this, SLOT(setCurrentFile(QString)) );
-    connect(ui->codeEditorWidget, SIGNAL(runned()), this, SLOT(RunScript()) );
-
-    connect(ui->runButton, SIGNAL(clicked(bool)), this, SLOT(RunScript()) );
+    connect(ui->pushRun, SIGNAL(clicked(bool)), this, SLOT(run()) );
     connect(mw, SIGNAL(Abort(QString)), this, SLOT(abortScript(QString)) );
+
+    connect(ui->newButton, SIGNAL(clicked(bool)), this, SLOT(openNew()) );
+    connect(ui->openButton, SIGNAL(clicked(bool)), this, SLOT(open()) );
+    connect(ui->saveButton, SIGNAL(clicked(bool)), this, SLOT(saveThis()) );
+    connect(ui->saveAsButton, SIGNAL(clicked(bool)), this, SLOT(save()) );
+    connect(ui->runButton, SIGNAL(clicked(bool)), this, SLOT(run()) );
+
+    connect(ui->undoButton, SIGNAL(clicked(bool)), ui->codeEditor, SLOT(undo()) );
+    connect(ui->redoButton, SIGNAL(clicked(bool)), ui->codeEditor, SLOT(redo()) );
+    connect(ui->cutButton, SIGNAL(clicked(bool)), ui->codeEditor, SLOT(cut()) );
+    connect(ui->copyButton, SIGNAL(clicked(bool)), ui->codeEditor, SLOT(copy()) );
+    connect(ui->pasteButton, SIGNAL(clicked(bool)), ui->codeEditor, SLOT(paste()) );
+
 }
 
 ScriptEditorDialog::~ScriptEditorDialog()
@@ -100,24 +115,119 @@ ScriptEditorDialog::~ScriptEditorDialog()
 void ScriptEditorDialog::run(QString fileName)
 {
     if (fileName.isEmpty()) return;
-    ui->codeEditorWidget->open(fileName);
-    setCurrentFile(fileName);
-    RunScript();
+    open(fileName);
+    run();
     close();
 }
 
-void ScriptEditorDialog::abortScript(QString error)
+bool ScriptEditorDialog::isReady()
 {
-    QScriptContext* context = m_engine->currentContext();
-    context->throwError(error);
+    if (!ui->codeEditor->document()->isModified())
+        return true;
+
+    QMessageBox::StandardButton answer = QMessageBox::warning(
+        this, "Tonatiuh",
+        "The document was modified.\n"
+        "Do you want to save changes?",
+        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
+        QMessageBox::Yes
+    );
+
+    if (answer == QMessageBox::Yes)
+        return saveThis();
+    if (answer == QMessageBox::No)
+        return true;
+    return false;
 }
 
-void ScriptEditorDialog::closeEvent(QCloseEvent* event)
+void ScriptEditorDialog::open(QString fileName)
 {
-    if (ui->codeEditorWidget->isReady())
-        event->accept();
-    else
-        event->ignore();
+    if (!isReady()) return;
+
+    if (fileName.isEmpty())
+    {
+        QSettings settings("CyI", "Tonatiuh");
+        QString dirName = settings.value("script.openDirectory", "../examples").toString();
+
+        fileName = QFileDialog::getOpenFileName(
+            this, "Open File", dirName,
+            "Tonatiuh script file (*.tnhs)"
+        );
+        if (fileName.isEmpty()) return;
+
+        QFileInfo fileInfo(fileName);
+        settings.setValue("script.openDirectory", fileInfo.path());
+    }
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        QMessageBox::warning(
+            this, "Tonatiuh",
+            tr("Cannot open file %1.").arg(fileName)
+        );
+        return;
+    }
+    QTextStream in(&file);
+
+    QTextDocument* document = ui->codeEditor->document();
+    document->clear();
+    document->setPlainText(in.readAll());
+    document->setModified(false);
+
+    setTitle(fileName);
+}
+
+void ScriptEditorDialog::openNew()
+{
+    if (!isReady()) return;
+
+    QTextDocument* document = ui->codeEditor->document();
+    document->clear();
+    document->setModified(false);
+
+    setTitle("");
+}
+
+bool ScriptEditorDialog::save(QString fileName)
+{
+    if (fileName.isEmpty())
+    {
+        QSettings settings("CyI", "Tonatiuh");
+        QString dirName = settings.value("script.saveDirectory", "../examples").toString();
+
+        QString fileName = QFileDialog::getSaveFileName(
+            this, "Save File", dirName,
+            "Tonatiuh script file (*.tnhs)"
+        );
+        if (fileName.isEmpty()) return false;
+
+        QFileInfo fileInfo(fileName);
+        settings.setValue("script.saveDirectory", fileInfo.path());
+    }
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        QMessageBox::warning(
+            this, "Tonatiuh",
+            tr("Cannot open file %1.").arg(fileName)
+        );
+        return false;
+    }
+    QTextStream out(&file);
+
+    QTextDocument* document = ui->codeEditor->document();
+    out << document->toPlainText();
+    document->setModified(false);
+
+    setTitle(fileName);
+    return true;
+}
+
+bool ScriptEditorDialog::saveThis()
+{
+    return save(m_fileName);
 }
 
 // ScriptRayTracer is less general than MainWindow
@@ -126,7 +236,7 @@ void ScriptEditorDialog::closeEvent(QCloseEvent* event)
 // better make a class interface as NodeObject on top of ScriptRayTracer
 // instead of global functions
 
-void ScriptEditorDialog::RunScript()
+void ScriptEditorDialog::run()
 {
     try {
         int initialized = tonatiuh_script::init(m_engine);
@@ -138,7 +248,7 @@ void ScriptEditorDialog::RunScript()
         QFileInfo fileInfo(m_fileName);
         rayTracer->setDir(fileInfo.absoluteDir().absolutePath());
 
-        QTextDocument* document = ui->codeEditorWidget->document();
+        QTextDocument* document = ui->codeEditor->document();
         QString program = document->toPlainText();
 
         QScriptSyntaxCheckResult check = m_engine->checkSyntax(program);
@@ -168,7 +278,7 @@ void ScriptEditorDialog::RunScript()
     }
 }
 
-void ScriptEditorDialog::setCurrentFile(QString fileName)
+void ScriptEditorDialog::setTitle(QString fileName)
 {
     m_fileName = fileName;
 
@@ -178,9 +288,23 @@ void ScriptEditorDialog::setCurrentFile(QString fileName)
     setWindowTitle(tr("%1[*] - Tonatiuh").arg(title));
 }
 
+void ScriptEditorDialog::closeEvent(QCloseEvent* event)
+{
+    if (isReady())
+        event->accept();
+    else
+        event->ignore();
+}
+
 void ScriptEditorDialog::writeMessage(QString message)
 {
     ui->logWidget->appendPlainText(message);
+}
+
+void ScriptEditorDialog::abortScript(QString error)
+{
+    QScriptContext* context = m_engine->currentContext();
+    context->throwError(error);
 }
 
 QScriptValue ScriptEditorDialog::ImportExtension(QScriptContext* context, QScriptEngine* engine)

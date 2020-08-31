@@ -44,7 +44,6 @@ HEADERS += \
     parameters/ParametersTabs.h \
     parameters/ParametersView.h \
     script/CodeEditor.h \
-    script/CodeEditorWidget.h \
     script/FileObject.h \
     script/LineNumbers.h \
     script/NodeObject.h \
@@ -104,7 +103,6 @@ SOURCES += \
     parameters/ParametersTabs.cpp \
     parameters/ParametersView.cpp \
     script/CodeEditor.cpp \
-    script/CodeEditorWidget.cpp \
     script/FileObject.cpp \
     script/LineNumbers.cpp \
     script/NodeObject.cpp \
