@@ -386,12 +386,11 @@ background-color: #d7e3ed;
    </property>
   </action>
   <action name="actionFileExit">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/images/file/close.png</normaloff>:/images/file/close.png</iconset>
-   </property>
    <property name="text">
-    <string>E&amp;xit</string>
+    <string>&amp;Quit</string>
+   </property>
+   <property name="iconText">
+    <string>Quit</string>
    </property>
   </action>
   <action name="actionEditUndo">

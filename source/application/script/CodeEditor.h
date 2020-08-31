@@ -1,6 +1,7 @@
 #pragma once
 
-#include <QPlainTextEdit>
+#include <QTextEdit>
+#include <QPLainTextEdit>
 
 
 class CodeEditor: public QPlainTextEdit

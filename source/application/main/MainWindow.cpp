@@ -90,7 +90,7 @@
 #include "run/FluxAnalysis.h"
 #include "run/FluxAnalysisDialog.h"
 #include "run/RayTracingDialog.h"
-#include "script/ScriptEditorDialog.h"
+#include "script/ScriptWindow.h"
 #include "tree/SceneModel.h"
 #include "view/GraphicRoot.h"
 #include "view/GraphicView.h"
@@ -1012,19 +1012,13 @@ SbVec3f MainWindow::getTarget(SoCamera* camera)
     return target;
 }
 
-#include "script/CodeEditorWidget.h"
 void MainWindow::on_actionRunScript_triggered()
 {
-//    CodeEditorWidget mw(this);
-//    mw.setWindowModality(Qt::ApplicationModal);
-//    mw.show();
-
 //    m_undoStack->setActive(false);
 //    m_undoStack->beginMacro("Script");
-    ScriptEditorDialog* dialog = new ScriptEditorDialog(m_pluginManager->getRandomFactories(), this, 0);
-    dialog->setAttribute(Qt::WA_DeleteOnClose);
-    dialog->show();
-//    dialog.exec();
+    ScriptWindow* window = new ScriptWindow(this, 0);
+    window->setAttribute(Qt::WA_DeleteOnClose);
+    window->show();
 //    m_undoStack->setActive(true);
 //    m_undoStack->endMacro();
 }
@@ -2463,6 +2457,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
     {
         WriteSettings();
         event->accept();
+        qApp->quit(); // closes script windows
     }
     else
         event->ignore();

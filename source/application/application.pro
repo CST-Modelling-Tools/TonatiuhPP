@@ -47,9 +47,9 @@ HEADERS += \
     script/FileObject.h \
     script/LineNumbers.h \
     script/NodeObject.h \
-    script/ScriptEditorDialog.h \
     script/ScriptRayTracer.h \
     script/ScriptWindow.h \
+    script/SyntaxHighlighter.h \
     script/tonatiuh_script.h \
     tree/SceneDelegate.h \
     tree/SceneFilter.h \
@@ -106,9 +106,9 @@ SOURCES += \
     script/FileObject.cpp \
     script/LineNumbers.cpp \
     script/NodeObject.cpp \
-    script/ScriptEditorDialog.cpp \
     script/ScriptRayTracer.cpp \
     script/ScriptWindow.cpp \
+    script/SyntaxHighlighter.cpp \
     script/tonatiuh_script.cpp \
     tree/SceneDelegate.cpp \
     tree/SceneFilter.cpp \
@@ -136,8 +136,6 @@ FORMS += \
     main/MainWindow.ui \
     main/UndoView.ui \
     parameters/ParametersEditor.ui \
-    script/CodeEditorWidget.ui \
-    script/ScriptEditorDialog.ui \
     script/ScriptWindow.ui \
     widgets/AboutDialog.ui \
     widgets/AirDialog.ui \

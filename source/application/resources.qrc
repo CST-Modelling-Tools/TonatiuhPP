@@ -1,11 +1,7 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/AnalysisTool.png</file>
-        <file>images/AnalyzerKit.png</file>
-        <file>images/CalculationRequest.png</file>
         <file>images/about/SplashScreen.png</file>
         <file>images/about/Tonatiuh.png</file>
-        <file>images/deleteTracker.png</file>
         <file>images/edit/copy.png</file>
         <file>images/edit/cut.png</file>
         <file>images/edit/delete.png</file>
@@ -16,16 +12,11 @@
         <file>images/edit/undoList.png</file>
         <file>images/scene/nodeAir.png</file>
         <file>images/scene/nodeSun.png</file>
-        <file>images/export.png</file>
-        <file>images/exportSurface.png</file>
-        <file>images/file/close.png</file>
         <file>images/file/new.png</file>
         <file>images/file/open.png</file>
-        <file>images/file/print.png</file>
         <file>images/file/save.png</file>
         <file>images/file/saveas.png</file>
         <file>images/run/runFluxAnalysis.png</file>
-        <file>images/go-home.png</file>
         <file>images/map/position.png</file>
         <file>images/map/sun.png</file>
         <file>images/map/worldMap.bmp</file>
@@ -33,9 +24,7 @@
         <file>images/scene/nodeGroup.png</file>
         <file>images/scene/nodeShape.png</file>
         <file>images/scene/nodeSurface.png</file>
-        <file>images/refresh.png</file>
         <file>images/run/runRayTracing.png</file>
-        <file>images/tcube.png</file>
         <file>images/view/viewGrid.png</file>
         <file>images/view/viewSun.png</file>
         <file>images/run/runScript.png</file>
