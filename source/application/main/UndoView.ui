@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>UndoView</class>
- <widget class="QWidget" name="UndoView">
+ <widget class="QDialog" name="UndoView">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -9,6 +9,9 @@
     <width>400</width>
     <height>300</height>
    </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Undo</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

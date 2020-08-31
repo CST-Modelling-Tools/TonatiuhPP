@@ -293,7 +293,7 @@ void MainWindow::SetupUndoView()
     connect(m_undoStack, SIGNAL(indexChanged(int)),
             this, SLOT(onUndoStack()));
 
-    m_undoView = new UndoView(m_undoStack);
+    m_undoView = new UndoView(m_undoStack, this);
 }
 
 void MainWindow::SetupGraphicView()
@@ -916,7 +916,6 @@ void MainWindow::SetParameterValue(SoNode* node, QString name, QString value)
 void MainWindow::ShowCommandView()
 {
     m_undoView->show();
-    m_undoView->activateWindow();
 }
 
 /*!
