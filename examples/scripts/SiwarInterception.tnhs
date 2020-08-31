@@ -1,4 +1,4 @@
-printTime("azimuth [deg], elevation[deg], efficiency");
+printTimed("azimuth [deg], elevation[deg], efficiency");
 var wMax = 2.25*2.25*155*1000;
 var gamma = 180; // South
 for (var alpha = 10; alpha <= 90; alpha += 20) 

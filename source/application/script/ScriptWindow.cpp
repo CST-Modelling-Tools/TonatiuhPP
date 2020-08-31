@@ -38,6 +38,7 @@ ScriptWindow::ScriptWindow(MainWindow* mw, QWidget* parent):
     ui(new Ui::ScriptWindow)
 {
     ui->setupUi(this);
+    ui->toolBarEdit->hide();
 
     int h = height();
     ui->splitter->setSizes({ int(0.8*h), int(0.2*h) });

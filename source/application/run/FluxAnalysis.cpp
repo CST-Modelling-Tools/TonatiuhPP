@@ -171,6 +171,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
 
     // Create a progress dialog.
     QProgressDialog dialog;
+    dialog.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     dialog.setLabelText(QString("Progressing using %1 thread(s)...").arg(QThread::idealThreadCount() ) );
 
     // Create a QFutureWatcher and conncect signals and slots.

@@ -194,7 +194,7 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
 //    qDebug() << "counter " << m_document->getSceneKit()->getRefCount();
 //    qDebug() << "layout " << m_modelScene->getInstance(m_modelScene->indexFromUrl("//Layout"))->getNode()->getRefCount();
 
-    ui->toolbarFile->hide();
+//    ui->toolbarFile->hide();
     ui->toolbarEdit->hide();
     ui->viewToolBar->hide();
 
@@ -1848,15 +1848,15 @@ void MainWindow::Run()
     // change ideal
 
     // Create a progress dialog.
-    QProgressDialog progressDialog;
-    progressDialog.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-    progressDialog.setLabelText(QString("Progressing using %1 thread(s)...").arg(QThread::idealThreadCount() ) );
+    QProgressDialog dialog;
+    dialog.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+    dialog.setLabelText(QString("Progressing using %1 thread(s)...").arg(QThread::idealThreadCount() ) );
 
-    QFutureWatcher<void> futureWatcher;
-    QObject::connect(&futureWatcher, SIGNAL(finished()), &progressDialog, SLOT(reset()));
-    QObject::connect(&progressDialog, SIGNAL(canceled()), &futureWatcher, SLOT(cancel()));
-    QObject::connect(&futureWatcher, SIGNAL(progressRangeChanged(int, int)), &progressDialog, SLOT(setRange(int, int)));
-    QObject::connect(&futureWatcher, SIGNAL(progressValueChanged(int)), &progressDialog, SLOT(setValue(int)));
+    QFutureWatcher<void> watcher;
+    connect(&watcher, SIGNAL(finished()), &dialog, SLOT(reset()));
+    connect(&dialog, SIGNAL(canceled()), &watcher, SLOT(cancel()));
+    connect(&watcher, SIGNAL(progressRangeChanged(int, int)), &dialog, SLOT(setRange(int, int)));
+    connect(&watcher, SIGNAL(progressValueChanged(int)), &dialog, SLOT(setValue(int)));
 
     std::cout << "QtConcurrent started: " << timer.elapsed() << std::endl;
     QMutex mutex;
@@ -1871,10 +1871,10 @@ void MainWindow::Run()
                                                            *m_rand,
                                                            &mutex, m_photonsBuffer, &mutexPhotonMap,
                                                            exportSurfaceList) );
-    futureWatcher.setFuture(photonMap);
+    watcher.setFuture(photonMap);
 
-    progressDialog.exec();
-    futureWatcher.waitForFinished();
+    dialog.exec();
+    watcher.waitForFinished();
     std::cout << "QtConcurrent finished: " << timer.elapsed() << std::endl;
 
     m_raysTracedTotal += m_raysNumber;
@@ -2537,19 +2537,22 @@ PhotonsAbstract* MainWindow::CreatePhotonMapExport() const
  */
 bool MainWindow::OkToContinue()
 {
-    if (m_document->isModified() )
-    {
-        int answer = QMessageBox::warning(this, tr("Tonatiuh"),
-                                          tr("The document has been modified.\n"
-                                             "Do you want to save your changes?"),
-                                          QMessageBox::Yes | QMessageBox::Default,
-                                          QMessageBox::No,
-                                          QMessageBox::Cancel | QMessageBox::Escape);
+    if (!m_document->isModified())
+        return true;
 
-        if (answer == QMessageBox::Yes) return FileSave();
-        else if (answer == QMessageBox::Cancel) return false;
-    }
-    return true;
+    QMessageBox::StandardButton answer = QMessageBox::warning(
+        this, "Tonatiuh",
+        "The document was modified.\n"
+        "Do you want to save changes?",
+        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
+        QMessageBox::Yes
+     );
+
+    if (answer == QMessageBox::Yes)
+        return FileSave();
+    if (answer == QMessageBox::No)
+        return true;
+    return false;
 }
 
 /*!
