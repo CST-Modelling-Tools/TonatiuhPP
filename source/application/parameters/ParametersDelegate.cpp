@@ -13,6 +13,7 @@
 #include <Inventor/fields/SoSFNode.h>
 #include <Inventor/fields/SoSFInt32.h>
 #include <Inventor/fields/SoSFDouble.h>
+#include <Inventor/nodekits/SoBaseKit.h>
 
 #include "libraries/Coin3D/FieldEditor.h"
 #include "libraries/Coin3D/UserSField.h"
@@ -24,6 +25,7 @@
 
 #include "ParametersModel.h"
 #include "ParametersItemField.h"
+#include "ParametersItemNode.h"
 #include "ParametersEditor.h"
 
 
@@ -69,8 +71,8 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
     else if (SoSFNode* f = dynamic_cast<SoSFNode*>(field))
     {
         SoNode* node = f->getValue();
-        if (!dynamic_cast<TNode*>(f->getValue()))
-            return 0;
+        TNode* tnode = dynamic_cast<TNode*>(node);
+        if (!tnode) return 0;
 
         QComboBox* editor = new QComboBox(parent);
         MainWindow* main = model->getMain();
@@ -81,9 +83,7 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
             else
                 editor->addItem(tf->icon(), tf->name());
         }
-
-        if (TNode* tnode = dynamic_cast<TNode*>(node))
-            editor->setCurrentText(tnode->getTypeName());
+        editor->setCurrentText(tnode->getTypeName());
 
         connect(
             editor, SIGNAL(activated(int)),
@@ -162,7 +162,7 @@ void ParametersDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptio
 
     if (QComboBox* cb = dynamic_cast<QComboBox*>(editor))
     {
-        cb->setGeometry(option.rect);
+        cb->setGeometry(option.rect); // fit icons
 //        cb->showPopup();
         QMouseEvent event(QEvent::MouseButtonPress, QPointF(0, 0), Qt::LeftButton, 0, 0);
         QApplication::sendEvent(cb, &event);
@@ -194,10 +194,19 @@ void ParametersDelegate::setModelData(QWidget* editor, QAbstractItemModel* model
         QString text = model->data(index, Qt::DisplayRole).toString();
         if (value == text) return;
 
+//        kit, field and node?
+        ParametersItemNode* pitem = (ParametersItemNode*) item->parent();
+        SoBaseKit* kit = (SoBaseKit*) pitem->node();
+
+        SbName sname;
+        kit->getFieldName(field, sname);
+        QString name = sname.getString();
+
         SoNode* node = f->getValue();
         MainWindow* main = modelP->getMain();
         TFactory* tf = main->getPlugins()->getFactories(node)[w->currentIndex()];
-        main->Insert(tf);
+//        main->Insert(tf);
+        main->Insert(kit, name, tf->create());
         return;
     }
     else if (dynamic_cast<SoSFInt32*>(field))

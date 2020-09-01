@@ -9,10 +9,13 @@ UndoView::UndoView(QUndoStack* stack, QWidget* parent):
     ui(new Ui::UndoView)
 {
     ui->setupUi(this);
+
     ui->undoView->setStack(stack);
 
     int q = fontMetrics().height();
     resize(24*q, 16*q);
+
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 }
 
 UndoView::~UndoView()

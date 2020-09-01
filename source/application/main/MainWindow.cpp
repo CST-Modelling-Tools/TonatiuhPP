@@ -54,7 +54,7 @@
 #include "commands/CmdCut.h"
 #include "commands/CmdDelete.h"
 #include "commands/CmdInsertNode.h"
-#include "commands/CmdInsertSurface.h"
+#include "commands/CmdNodeModified.h"
 #include "commands/CmdSunModified.h"
 #include "commands/CmdLightPositionModified.h"
 #include "commands/CmdParameterModified.h"
@@ -257,7 +257,7 @@ void MainWindow::SetupDocument()
     m_graphicsRoot = new GraphicRoot;
     m_graphicsRoot->setDocument(m_document);
 
-    ShowGrid();
+    showGrid();
 
     connect(
         m_graphicsRoot, SIGNAL(selectionChanged(SoSelection*)),
@@ -273,16 +273,7 @@ void MainWindow::SetupDocument()
 
 void MainWindow::SetupViews()
 {
-    SetupUndoView();
-    SetupGraphicView();
-    SetupTreeView();
-}
-
-/*!
- * Creates a view for visualize user done last actions.
- */
-void MainWindow::SetupUndoView()
-{
+    // undo
     m_undoStack = new QUndoStack(this);
     m_undoStack->setUndoLimit(10);
 
@@ -294,6 +285,12 @@ void MainWindow::SetupUndoView()
             this, SLOT(onUndoStack()));
 
     m_undoView = new UndoView(m_undoStack, this);
+
+    // graphic
+    SetupGraphicView();
+
+    // tree
+    SetupTreeView();
 }
 
 void MainWindow::SetupGraphicView()
@@ -380,8 +377,6 @@ void MainWindow::SetupPluginManager()
 {
     if (!m_pluginManager) return;
     SetupActionsInsertComponent();
-//    addToolBarBreak();
-//    SetupActionsInsertTracker();
 }
 
 /*!
@@ -399,9 +394,9 @@ void MainWindow::SetupTriggers()
     connect(ui->actionFileExit, SIGNAL(triggered()), this, SLOT(close()) );
 
     // edit
-    connect(ui->actionEditUndo, SIGNAL(triggered()), this, SLOT(Undo()) );
-    connect(ui->actionEditRedo, SIGNAL(triggered()), this, SLOT(Redo()) );
-    connect(ui->actionEditUndoView, SIGNAL(triggered()), this, SLOT(ShowCommandView()) );
+    connect(ui->actionEditUndo, SIGNAL(triggered()), this, SLOT(undo()) );
+    connect(ui->actionEditRedo, SIGNAL(triggered()), this, SLOT(redo()) );
+    connect(ui->actionEditUndoView, SIGNAL(triggered()), this, SLOT(showUndoHistory()) );
     connect(ui->actionEditCut, SIGNAL(triggered()), this, SLOT(Cut()) );
     connect(ui->actionEditCopy, SIGNAL(triggered()), this, SLOT(Copy()) );
     connect(ui->actionEditPaste, SIGNAL(triggered()), this, SLOT(PasteCopy()) );
@@ -424,9 +419,9 @@ void MainWindow::SetupTriggers()
     connect(ui->actionRunFlux, SIGNAL(triggered()), this, SLOT(RunFluxAnalysisDialog()) );
 
     // view
-    connect(ui->actionViewGrid, SIGNAL(triggered()), this, SLOT(ShowGrid()));
-    connect(ui->actionViewRays, SIGNAL(toggled(bool)), this, SLOT(ShowRays(bool)));
-    connect(ui->actionViewPhotons, SIGNAL(toggled(bool)), this, SLOT(ShowPhotons(bool)));
+    connect(ui->actionViewGrid, SIGNAL(triggered()), this, SLOT(showGrid()));
+    connect(ui->actionViewRays, SIGNAL(toggled(bool)), this, SLOT(showRays(bool)));
+    connect(ui->actionViewPhotons, SIGNAL(toggled(bool)), this, SLOT(showPhotons(bool)));
 
     connect(ui->buttonInsertNode, SIGNAL(pressed()), this, SLOT(InsertNode()) );
     connect(ui->buttonInsertShape, SIGNAL(pressed()), this, SLOT(InsertShape()) );
@@ -473,7 +468,6 @@ void MainWindow::onAbort(QString error)
 void MainWindow::onUndoStack()
 {
     ChangeSelection(m_modelSelection->currentIndex());
-//    ui->parametersTabs->updateNode();
 }
 
 /*!
@@ -540,15 +534,18 @@ void MainWindow::onAirDialog()
     setDocumentModified(true);
 }
 
-/*!
- * If actionDisplay_rays is checked the 3D view shows rays representation. Otherwise the representation is hidden.
- */
-void MainWindow::ShowRays(bool on)
+void MainWindow::showGrid()
+{
+    GridNode* node = (GridNode*) m_document->getSceneKit()->getPart("world.terrain.grid", false);
+    if (node) node->show = ui->actionViewGrid->isChecked();
+}
+
+void MainWindow::showRays(bool on)
 {
     m_graphicsRoot->showRays(on);
 }
 
-void MainWindow::ShowPhotons(bool on)
+void MainWindow::showPhotons(bool on)
 {
     m_graphicsRoot->showPhotons(on);
 }
@@ -670,7 +667,7 @@ void MainWindow::FileOpenRecent()
 /*!
  * Applies las reverted command action changes to Tonatiuh.
  */
-void MainWindow::Redo()
+void MainWindow::redo()
 {
     m_undoStack->redo();
     UpdateLightSize();
@@ -679,7 +676,7 @@ void MainWindow::Redo()
 /*!
  * Reverts a change to Tonatiuh model. The model is returne to the previous state before the command is applied.
  */
-void MainWindow::Undo()
+void MainWindow::undo()
 {
     m_undoStack->undo();
     UpdateLightSize();
@@ -910,10 +907,7 @@ void MainWindow::SetParameterValue(SoNode* node, QString name, QString value)
     setDocumentModified(true);
 }
 
-/*!
- * Shows a windows with the applied commands.
- */
-void MainWindow::ShowCommandView()
+void MainWindow::showUndoHistory()
 {
     m_undoView->show();
 }
@@ -1449,38 +1443,10 @@ void MainWindow::InsertTracker()
     setDocumentModified(true);
 }
 
-// todo: add kit
-void MainWindow::Insert(TFactory* f)
+void MainWindow::Insert(SoBaseKit* kit, QString field, TNode* node)
 {
-    if (dynamic_cast<AirFactory*>(f)) {
-        AirKit* kit = (AirKit*) m_document->getSceneKit()->getPart("world.air", false);
-        TNode* node = f->create();
-        CmdInsertSurface* cmd = new CmdInsertSurface(kit, node);
-        m_undoStack->push(cmd);
-    } else if (dynamic_cast<SunFactory*>(f)) {
-        SunKit* kit = (SunKit*) m_document->getSceneKit()->getPart("world.sun", false);
-        TNode* node = f->create();
-        CmdInsertSurface* cmd = new CmdInsertSurface(kit, node);
-        m_undoStack->push(cmd);
-    }
-    else {
-        InsertShapeSurface(f);
-    }
-}
-
-/*!
- * Creates a \a shapeType shape node from the as current selected node child.
- *
- * If the current node is not a valid parent node or \a shapeType is not a valid type, the shape node will not be created.
- *
- */
-void MainWindow::InsertShapeSurface(QString name)
-{
-    ShapeFactory* f = m_pluginManager->getShapeMap().value(name, 0);
-    if (f)
-        InsertShapeSurface(f);
-    else
-        emit Abort("CreateShape: Shape not found");
+    CmdNodeModified* cmd = new CmdNodeModified(kit, field, node);
+    m_undoStack->push(cmd);
 }
 
 /*!
@@ -1497,44 +1463,6 @@ void MainWindow::InsertShapeSurface(QString name, int numberOfParameters, QVecto
         InsertShapeSurface(f, numberOfParameters, parametersList);
     else
         emit Abort("CreateShape: Selected shape type is not valid.");
-}
-
-void MainWindow::InsertShapeProfile(QString name)
-{
-    ProfileFactory* f = m_pluginManager->getProfileMap().value(name, 0);
-    if (f)
-        InsertShapeSurface(f);
-    else
-        emit Abort("InsertProfile: Profile not found");
-}
-
-/*!
- * Creates a \a materialType material node from the as current selected node child.
- *
- * If the current node is not a surface type node or \a materialType is not a valid type, the material node will not be created.
- */
-void MainWindow::InsertShapeMaterial(QString name)
-{
-    MaterialFactory* f = m_pluginManager->getMaterialMap().value(name, 0);
-    if (f)
-        InsertShapeSurface(f);
-    else
-        emit Abort("CreateMaterial: Material not found");
-}
-
-/*!
- * Creates a \a trackerType shape node from the as current selected node child.
- *
- * If the current node is not a valid parent node or \a trackerType is not a valid type, the shape node will not be created.
- *
- */
-void MainWindow::InsertTrackerArmature(QString name)
-{
-    TrackerFactory* f = m_pluginManager->getTrackerMap().value(name, 0);
-    if (f)
-        InsertShapeSurface(f);
-    else
-        emit Abort("CreateTracker: Selected tracker type is not valid.");
 }
 
 /*!
@@ -2410,28 +2338,6 @@ void MainWindow::CreateComponent(ComponentFactory* factory)
  *
  * If the current node is not a surface type node, the shape node will not be created.
  */
-void MainWindow::InsertShapeSurface(TFactory* factory)
-{
-    QModelIndex index = ui->sceneView->currentIndex();
-    if (!index.isValid()) return;
-    InstanceNode* instance = m_modelScene->getInstance(index);
-    SoNode* node = instance->getNode();
-    SoBaseKit* kit = dynamic_cast<SoBaseKit*>(node);
-    if (!kit) return;
-
-    TNode* nodeN = factory->create();
-    CmdInsertSurface* cmd = new CmdInsertSurface(kit, nodeN);
-    m_undoStack->push(cmd);
-
-//    UpdateLightSize();
-    setDocumentModified(true);
-}
-
-/*!
- * Creates a shape node from the \a pShapeFactory as current selected node child.
- *
- * If the current node is not a surface type node, the shape node will not be created.
- */
 void MainWindow::InsertShapeSurface(ShapeFactory* factory, int /*numberofParameters*/, QVector<QVariant> parametersList)
 {
     QModelIndex index = ui->sceneView->currentIndex();
@@ -2444,8 +2350,8 @@ void MainWindow::InsertShapeSurface(ShapeFactory* factory, int /*numberofParamet
 
     ShapeRT* shape = factory->create(parametersList);
 
-    CmdInsertSurface* cmd = new CmdInsertSurface(kit, shape);
-    m_undoStack->push(cmd);
+//    CmdInsertSurface* cmd = new CmdInsertSurface(kit, shape);
+//    m_undoStack->push(cmd);
 
 //    UpdateLightSize();
     setDocumentModified(true);
@@ -2780,15 +2686,6 @@ void MainWindow::SetupActionsInsertComponent()
 //    findChild<QToolBar*>("insertToolBar")->addWidget(button);
 //}
 
-/**
- * Action slot to show/hide a grid with the scene dimensions.
- */
-void MainWindow::ShowGrid()
-{
-    GridNode* node = (GridNode*) m_document->getSceneKit()->getPart("world.terrain.grid", false);
-    if (node) node->show = ui->actionViewGrid->isChecked();
-}
-
 /*!
 ->* Shows the rays and photons stored at the photon map in the 3D view.
  */
@@ -2901,33 +2798,25 @@ void MainWindow::on_actionViewSelected_triggered()
     QModelIndex index = ui->sceneView->currentIndex();
     InstanceNode* instance = m_modelScene->getInstance(index);
     SoNode* node = instance->getNode();
+    TSeparatorKit* kit = dynamic_cast<TSeparatorKit*>(node);
+    if (kit) node = kit->getPart("group", false);
 
-    SoSearchAction searchaction;
-    searchaction.setNode(node);
-    searchaction.apply(m_document->getSceneKit()->getLayout());
+    SoSearchAction actionSearch;
+    actionSearch.setNode(node);
+    actionSearch.apply(m_document->getSceneKit()->getLayout());
+    SoPath* path = actionSearch.getPath();
 
-    SoPath * path = searchaction.getPath();
-    assert(path != NULL);
+    SbViewportRegion vpr;
+    SoGetMatrixAction actionMatrix(vpr);
+    actionMatrix.apply(path);
+    SbMatrix matrix = actionMatrix.getMatrix();
 
-
-    SbViewportRegion vpr = m_graphicView[m_focusView]->getViewportRegion();
-    SoGetMatrixAction getmatrixaction(vpr);
-    getmatrixaction.apply(path);
-
-    SbMatrix transformation = getmatrixaction.getMatrix();
-    SbVec3f v;
-
-    transformation.
-//    SbViewportRegion vr;
-//    SoGetBoundingBoxAction action(vr);
-//    action.apply(node->getNode());
-////    node->getNode()->getBoundingBox(&action);
-//    SbBox3f box = action.getBoundingBox();
-//   action.getXfBoundingBox().
-//    if (box.isEmpty()) return;
+    SbVec3f vL(0., 0., 0.);
+    SbVec3f vG;
+    matrix.multVecMatrix(vL, vG);
 
     SoCamera* camera = m_graphicView[m_focusView]->getCamera();
-    camera->pointAt(box.getCenter(), SbVec3f(0., 0., 1.));
+    camera->pointAt(vG, SbVec3f(0., 0., 1.));
 }
 
 void MainWindow::on_actionViewTop_triggered()

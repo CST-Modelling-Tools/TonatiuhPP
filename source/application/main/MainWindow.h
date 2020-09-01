@@ -1,8 +1,8 @@
 #pragma once
 
 #include <QMainWindow>
-
 #include <QVariant>
+#include <QScriptValue>
 
 class QItemSelectionModel;
 class QSplitter;
@@ -11,7 +11,6 @@ class QSplashScreen;
 #include <Inventor/SbVec3f.h>
 
 #include "commands/tgc.h"
-
 
 class Document;
 class GraphicRoot;
@@ -44,13 +43,8 @@ class ProfileFactory;
 class UndoView;
 class NodeObject;
 class TFactory;
-#include <QScriptValue>
-
-//!  Main window class.
-/*!
-  Tonatiuh's main window class. It includes the menu bars and all the actions, signals
-  and slots to provide user interaction with the program.
-*/
+class SoBaseKit;
+class TNode;
 
 namespace Ui {
 class MainWindow;
@@ -91,12 +85,8 @@ public slots:
     void InsertNode();
     void InsertShape();
     void InsertTracker();
-    void Insert(TFactory* f);
-    void InsertShapeSurface(QString name);
+    void Insert(SoBaseKit* kit, QString field, TNode* node); //? setNode
     void InsertShapeSurface(QString shapeType, int numberOfParameters, QVector<QVariant> parametersList);
-    void InsertShapeProfile(QString name);
-    void InsertShapeMaterial(QString name);
-    void InsertTrackerArmature(QString name);
     void CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector<QVariant> parametersList);
     void InsertFileComponent(QString componentFileName = "");
     void InsertScene(QScriptValue v);
@@ -141,7 +131,7 @@ private slots:
     void ChangeSelection(const QModelIndex& index);
     void CreateComponent(ComponentFactory* factory);
 
-    void InsertShapeSurface(TFactory* factory);
+//    void InsertShapeSurface(TFactory* f);
     void InsertShapeSurface(ShapeFactory* factory, int numberOfParameters, QVector<QVariant> parametersList);
 
     void onSunDialog();
@@ -151,9 +141,9 @@ private slots:
     void ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex& node);
     void ItemDragAndDropCopy(const QModelIndex& newParent, const QModelIndex& node);
 
-    void Undo();
-    void Redo();
-    void ShowCommandView();
+    void undo();
+    void redo();
+    void showUndoHistory();
 
     void RunCompleteRayTracer();
     void RunFluxAnalysisDialog();
@@ -162,9 +152,9 @@ private slots:
     void SelectionFinish(SoSelection* selection);
     void SetParameterValue(SoNode* node, QString paramenterName, QString value);
 
-    void ShowGrid();
-    void ShowRays(bool on);
-    void ShowPhotons(bool on);
+    void showGrid();
+    void showRays(bool on);
+    void showPhotons(bool on);
 
     void ShowMenu(const QModelIndex& index);
     void ShowWarning(QString message);
@@ -225,7 +215,6 @@ private:
     void SetupDocument();
 
     void SetupViews();
-    void SetupUndoView();
     void SetupGraphicView();
     void SetupTreeView();
 

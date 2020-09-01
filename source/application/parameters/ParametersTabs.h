@@ -2,9 +2,9 @@
 
 #include <QTabWidget>
 
-class SoBaseKit;
 class SoNode;
 class MainWindow;
+class ParametersModel;
 
 
 class ParametersTabs: public QTabWidget
@@ -14,11 +14,8 @@ class ParametersTabs: public QTabWidget
 public:
     ParametersTabs(QWidget* parent = 0);
 
+    void setMain(MainWindow* main);
     void setNode(SoNode* node);
-    void updateNode();
-
-    void setMain(MainWindow* main) {m_main = main;}
-    MainWindow* getMain() const {return m_main;}
 
 signals:
     void valueModified(SoNode* node, QString field, QString value);
@@ -28,5 +25,5 @@ public slots:
 
 private:
     SoNode* m_node;
-    MainWindow* m_main;
+    ParametersModel* m_model;
 };

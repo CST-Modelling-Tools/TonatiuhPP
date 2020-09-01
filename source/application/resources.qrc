@@ -9,7 +9,6 @@
         <file>images/edit/pasteLink.png</file>
         <file>images/edit/redo.png</file>
         <file>images/edit/undo.png</file>
-        <file>images/edit/undoList.png</file>
         <file>images/scene/nodeAir.png</file>
         <file>images/scene/nodeSun.png</file>
         <file>images/file/new.png</file>
@@ -38,5 +37,6 @@
         <file>images/scene/nodeFolder.png</file>
         <file>images/scene/nodeTerrain.png</file>
         <file>images/scene/nodeLocation.png</file>
+        <file>images/edit/undoHistory.png</file>
     </qresource>
 </RCC>

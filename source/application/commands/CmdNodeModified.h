@@ -7,11 +7,11 @@ class SoBaseKit;
 class TNode;
 
 
-class CmdInsertSurface: public QUndoCommand
+class CmdNodeModified: public QUndoCommand
 {
 public:
-    CmdInsertSurface(SoBaseKit* kit, TNode* node, QUndoCommand* parent = 0);
-    ~CmdInsertSurface();
+    CmdNodeModified(SoBaseKit* kit, QString field, TNode* node, QUndoCommand* parent = 0);
+    ~CmdNodeModified();
 
     void undo();
     void redo();
@@ -21,6 +21,7 @@ private:
 
 private:
     SoBaseKit* m_kit;
+    QString m_field;
     TNode* m_node;
     TNode* m_nodeOld;
 };

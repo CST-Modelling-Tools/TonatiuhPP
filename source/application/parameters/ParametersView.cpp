@@ -37,13 +37,14 @@ void ParametersView::reset()
     QTreeView::reset(); // keep one model to avoid reset?
     double w = 3*fontMetrics().horizontalAdvance("Parameter");
     setColumnWidth(0, w);
-//    expandToDepth(1);
 
     if (ParametersModel* m = getModel()) {
         QStandardItem* root = m->invisibleRootItem();
         root = root->child(0);
         if (root) setRootIndex(root->index());
     }
+
+//    expandToDepth(1);
     expandAll();
 }
 

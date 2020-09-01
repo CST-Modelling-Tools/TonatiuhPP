@@ -9,6 +9,8 @@
 #include "libraries/math/3D/vec3d.h"
 #include "libraries/math/2D/vec2d.h"
 
+// https://www.openinventor.com/reference-manuals/NewRefMan9912/RefManJava/com/openinventor/inventor/SbMatrix.html
+
 
 SbMatrix tgf::makeSbMatrix(const Transform& transform)
 {

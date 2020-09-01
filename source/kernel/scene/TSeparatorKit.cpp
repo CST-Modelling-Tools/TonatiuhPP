@@ -43,5 +43,15 @@ void TSeparatorKit::getBoundingBox(SoGetBoundingBoxAction* action)
 //    box.setTransform(SbMatrix::identity());
 }
 
+//    SbViewportRegion vpr;// = m_graphicView[m_focusView]->getViewportRegion();
+//    SbViewportRegion vr;
+//    SoGetBoundingBoxAction action(vr);
+//    action.apply(node);
+//    node->getNode()->getBoundingBox(&action);
+//    SbBox3f box = action.getBoundingBox();
+
+//    SbXfBox3f box = action.getXfBoundingBox();
+//    if (box.isEmpty()) return;
+//    box.getTransform().multVecMatrix(box.getCenter(), vG);
 
 //    SO_KIT_CHANGE_ENTRY_TYPE(childList, SoGroup, SoGroup); // without node lists

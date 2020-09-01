@@ -24,6 +24,7 @@ public:
     TSceneKit();
 
     TSeparatorKit* getLayout();
+
     void updateTrackers();
 
     GraphicRoot* m_graphicRoot;

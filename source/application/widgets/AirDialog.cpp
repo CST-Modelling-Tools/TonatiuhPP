@@ -31,6 +31,7 @@ AirDialog::AirDialog(SceneModel* sceneModel, QMap<QString, AirFactory*> airMap, 
     int index = ui->comboBox->findText(airT->getTypeName());
     ui->comboBox->setCurrentIndex(index); // activated != currentIndexChanged
     ParametersModel* model = new ParametersModel(this);
+    model->setMain((MainWindow*) parent);
     ui->airParameters->setModel(model);
     model->setNode(m_air);
 

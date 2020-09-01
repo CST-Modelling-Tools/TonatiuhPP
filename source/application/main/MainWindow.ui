@@ -36,7 +36,7 @@ background-color: #d7e3ed;
 }  
 </string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
+        <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -114,6 +114,12 @@ background-color: #d7e3ed;
            </item>
            <item>
             <widget class="QLineEdit" name="lineEdit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="maximumSize">
               <size>
                <width>250</width>
@@ -121,7 +127,7 @@ background-color: #d7e3ed;
               </size>
              </property>
              <property name="placeholderText">
-              <string>search</string>
+              <string>Search</string>
              </property>
              <property name="clearButtonEnabled">
               <bool>true</bool>
@@ -145,13 +151,7 @@ background-color: #d7e3ed;
          </item>
         </layout>
        </widget>
-       <widget class="ParametersTabs" name="parametersTabs">
-        <widget class="QWidget" name="tab">
-         <attribute name="title">
-          <string>Tab 1</string>
-         </attribute>
-        </widget>
-       </widget>
+       <widget class="ParametersTabs" name="parametersTabs"/>
       </widget>
      </widget>
     </item>
@@ -202,7 +202,7 @@ background-color: #d7e3ed;
     </property>
     <widget class="QMenu" name="menuFileRecent">
      <property name="title">
-      <string>&amp;Recent</string>
+      <string>Open &amp;Recent</string>
      </property>
      <property name="toolTipsVisible">
       <bool>true</bool>
@@ -234,8 +234,8 @@ background-color: #d7e3ed;
     <addaction name="actionViewRays"/>
     <addaction name="actionViewPhotons"/>
     <addaction name="separator"/>
-    <addaction name="actionViewAll"/>
     <addaction name="actionViewSelected"/>
+    <addaction name="actionViewAll"/>
     <addaction name="actionViewTop"/>
     <addaction name="actionViewSun"/>
     <addaction name="menuCamera"/>
@@ -425,10 +425,10 @@ background-color: #d7e3ed;
   <action name="actionEditUndoView">
    <property name="icon">
     <iconset resource="../resources.qrc">
-     <normaloff>:/images/edit/undoList.png</normaloff>:/images/edit/undoList.png</iconset>
+     <normaloff>:/images/edit/undoHistory.png</normaloff>:/images/edit/undoHistory.png</iconset>
    </property>
    <property name="text">
-    <string>Undo List...</string>
+    <string>Undo History...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+Z</string>

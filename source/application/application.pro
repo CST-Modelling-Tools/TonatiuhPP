@@ -21,8 +21,8 @@ HEADERS += \
     commands/CmdCut.h \
     commands/CmdDelete.h \
     commands/CmdInsertNode.h \
-    commands/CmdInsertSurface.h \
     commands/CmdLightPositionModified.h \
+    commands/CmdNodeModified.h \
     commands/CmdParameterModified.h \
     commands/CmdPaste.h \
     commands/CmdRename.h \
@@ -80,8 +80,8 @@ SOURCES += \
     commands/CmdCut.cpp \
     commands/CmdDelete.cpp \
     commands/CmdInsertNode.cpp \
-    commands/CmdInsertSurface.cpp \
     commands/CmdLightPositionModified.cpp \
+    commands/CmdNodeModified.cpp \
     commands/CmdParameterModified.cpp \
     commands/CmdPaste.cpp \
     commands/CmdRename.cpp \
