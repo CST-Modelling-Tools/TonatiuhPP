@@ -65,7 +65,7 @@ void GraphicView::setSceneGraph(GraphicRoot* sceneGraphRoot)
     m_viewer->setAntialiasing(true, 1); // disable if slow
 }
 
-SbViewportRegion GraphicView::GetViewportRegion() const
+SbViewportRegion GraphicView::getViewportRegion() const
 {
     return m_viewer->getViewportRegion();
 }

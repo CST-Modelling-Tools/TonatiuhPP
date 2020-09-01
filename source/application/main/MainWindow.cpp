@@ -2891,7 +2891,7 @@ void MainWindow::WriteSettings()
 
 void MainWindow::on_actionViewAll_triggered()
 {
-    SbViewportRegion vpr = m_graphicView[m_focusView]->GetViewportRegion();
+    SbViewportRegion vpr = m_graphicView[m_focusView]->getViewportRegion();
     SoCamera* camera = m_graphicView[m_focusView]->getCamera();
     camera->viewAll(m_graphicsRoot->getRoot(), vpr);
 }
@@ -2899,13 +2899,32 @@ void MainWindow::on_actionViewAll_triggered()
 void MainWindow::on_actionViewSelected_triggered()
 {
     QModelIndex index = ui->sceneView->currentIndex();
-    InstanceNode* node = m_modelScene->getInstance(index);
+    InstanceNode* instance = m_modelScene->getInstance(index);
+    SoNode* node = instance->getNode();
 
-    SbViewportRegion vr;
-    SoGetBoundingBoxAction action(vr);
-    node->getNode()->getBoundingBox(&action);
-    SbBox3f box = action.getBoundingBox();
-    if (box.isEmpty()) return;
+    SoSearchAction searchaction;
+    searchaction.setNode(node);
+    searchaction.apply(m_document->getSceneKit()->getLayout());
+
+    SoPath * path = searchaction.getPath();
+    assert(path != NULL);
+
+
+    SbViewportRegion vpr = m_graphicView[m_focusView]->getViewportRegion();
+    SoGetMatrixAction getmatrixaction(vpr);
+    getmatrixaction.apply(path);
+
+    SbMatrix transformation = getmatrixaction.getMatrix();
+    SbVec3f v;
+
+    transformation.
+//    SbViewportRegion vr;
+//    SoGetBoundingBoxAction action(vr);
+//    action.apply(node->getNode());
+////    node->getNode()->getBoundingBox(&action);
+//    SbBox3f box = action.getBoundingBox();
+//   action.getXfBoundingBox().
+//    if (box.isEmpty()) return;
 
     SoCamera* camera = m_graphicView[m_focusView]->getCamera();
     camera->pointAt(box.getCenter(), SbVec3f(0., 0., 1.));

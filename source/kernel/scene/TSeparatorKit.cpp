@@ -34,7 +34,7 @@ TSeparatorKit::TSeparatorKit()
     SO_KIT_INIT_INSTANCE();
 }
 
-// use bounding box in world coordinates
+// use bounding box in world coordinates ?
 void TSeparatorKit::getBoundingBox(SoGetBoundingBoxAction* action)
 {
     SoBaseKit::getBoundingBox(action);
