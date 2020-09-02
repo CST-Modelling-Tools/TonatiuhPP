@@ -40,11 +40,11 @@ ScriptWindow::ScriptWindow(MainWindow* mw, QWidget* parent):
     ui->setupUi(this);
     ui->toolBarEdit->hide();
 
-    int h = height();
-    ui->splitter->setSizes({ int(0.8*h), int(0.2*h) });
-
     int q = fontMetrics().height();
     resize(64*q, 48*q);
+
+    int h = height();
+    ui->splitter->setSizes({ int(0.8*h), int(0.2*h) });
 
     ui->logWidget->setFont(ui->codeEditor->font());
 

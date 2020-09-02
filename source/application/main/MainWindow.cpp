@@ -43,7 +43,6 @@
 #include <Inventor/nodekits/SoSceneKit.h>
 
 #include "libraries/math/gcf.h"
-#include "libraries/math/gcf.h"
 #include "libraries/math/3D/Ray.h"
 #include "libraries/math/3D/Transform.h"
 
@@ -54,10 +53,10 @@
 #include "commands/CmdCut.h"
 #include "commands/CmdDelete.h"
 #include "commands/CmdInsertNode.h"
-#include "commands/CmdNodeModified.h"
+#include "commands/CmdSetFieldNode.h"
 #include "commands/CmdSunModified.h"
 #include "commands/CmdLightPositionModified.h"
-#include "commands/CmdParameterModified.h"
+#include "commands/CmdSetFieldText.h"
 #include "commands/CmdPaste.h"
 #include "commands/CmdAirModified.h"
 
@@ -357,11 +356,16 @@ void MainWindow::SetupTreeView()
     connect(ui->sceneView, SIGNAL(nodeNameModificated(const QModelIndex&,const QString&)),
             this, SLOT(ChangeNodeName(const QModelIndex&,const QString&)) );
 
-    ui->parametersTabs->setMain(this);
     // parameters
+    ui->parametersTabs->getView()->getModel()->setMain(this);
+
     connect(
-        ui->parametersTabs, SIGNAL(valueModified(SoNode*, QString, QString)),
-        this, SLOT(SetParameterValue(SoNode*, QString, QString))
+        ui->parametersTabs->getView()->getModel(), SIGNAL(fieldTextModified(SoNode*, QString, QString)),
+        this, SLOT(setFieldText(SoNode*, QString, QString))
+    );
+    connect(
+        ui->parametersTabs->getView()->getModel(), SIGNAL(fieldNodeModified(SoNode*, QString, TNode*)),
+        this, SLOT(setFieldNode(SoNode*, QString, TNode*))
     );
 
     connect(
@@ -436,7 +440,7 @@ void MainWindow::FinishManipulation()
     QModelIndex currentIndex = ui->sceneView->currentIndex();
     SoBaseKit* coinNode = static_cast<SoBaseKit*>(m_modelScene->getInstance(currentIndex)->getNode() );
 
-    SoTransform* nodeTransform = static_cast< SoTransform* >(coinNode->getPart("transform", true) );
+    SoTransform* nodeTransform = static_cast<SoTransform*>(coinNode->getPart("transform", true) );
 
     QUndoCommand* command = new QUndoCommand();
 
@@ -445,7 +449,7 @@ void MainWindow::FinishManipulation()
         QString::number(nodeTransform->translation.getValue()[1]),
         QString::number(nodeTransform->translation.getValue()[2])
     );
-    new CmdParameterModified(nodeTransform, "translation", translationValue, m_modelScene, command);
+    new CmdSetFieldText(nodeTransform, "translation", translationValue, command);
     m_undoStack->push(command);
 
     UpdateLightSize();
@@ -526,7 +530,7 @@ void MainWindow::onSunDialog()
 
 void MainWindow::onAirDialog()
 {
-    AirDialog dialog(m_modelScene, m_pluginManager->getAirMap(), this);
+    AirDialog dialog(m_document->getSceneKit(), this);
     if (!dialog.exec()) return;
 
     CmdAirModified* cmd = new CmdAirModified(dialog.getAir(), m_modelScene);
@@ -897,12 +901,16 @@ void MainWindow::SelectionFinish(SoSelection* selection)
 //    m_selectionModel->select(index, QItemSelectionModel::ClearAndSelect);
 }
 
-/*!
- * Changes to the node defined by \a node the value of the \a parameter to \a value.
- */
-void MainWindow::SetParameterValue(SoNode* node, QString name, QString value)
+void MainWindow::setFieldText(SoNode* node, QString field, QString value)
 {
-    CmdParameterModified* cmd = new CmdParameterModified(node, name, value, m_modelScene);
+    CmdSetFieldText* cmd = new CmdSetFieldText(node, field, value);
+    m_undoStack->push(cmd);
+    setDocumentModified(true);
+}
+
+void MainWindow::setFieldNode(SoNode* node, QString field, TNode* value)
+{
+    CmdSetFieldNode* cmd = new CmdSetFieldNode(node, field, value);
     m_undoStack->push(cmd);
     setDocumentModified(true);
 }
@@ -1443,12 +1451,6 @@ void MainWindow::InsertTracker()
     setDocumentModified(true);
 }
 
-void MainWindow::Insert(SoBaseKit* kit, QString field, TNode* node)
-{
-    CmdNodeModified* cmd = new CmdNodeModified(kit, field, node);
-    m_undoStack->push(cmd);
-}
-
 /*!
  * Creates a \a shapeType shape node from the as current selected node child with the parameters defined in \a parametersList. \a numberOfParameters is the
  * number of parametners in the vector \a numberOfParameters
@@ -1673,7 +1675,7 @@ void MainWindow::SetValue(QString url, QString parameter, QString value)
         return;
     }
 
-    SetParameterValue(node, parameter, value);
+    setFieldText(node, parameter, value);
 }
 
 /*!

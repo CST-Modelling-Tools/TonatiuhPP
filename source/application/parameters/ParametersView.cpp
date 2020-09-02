@@ -1,12 +1,14 @@
 #include "ParametersView.h"
 
 #include "ParametersDelegate.h"
-#include "ParametersModel.h"
 
 
 ParametersView::ParametersView(QWidget* parent):
     QTreeView(parent)
 {
+    ParametersModel* model = new ParametersModel(this);
+    setModel(model);
+
     setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     setItemDelegate(new ParametersDelegate(this));
@@ -18,9 +20,7 @@ ParametersView::ParametersView(QWidget* parent):
 
     setStyleSheet(R"(
 QLineEdit {
-
 border: 1px solid #c8dbe5;
-
 selection-background-color: #c8dbe5;
 selection-color: black;
 }

@@ -17,7 +17,7 @@ void ParametersItemField::updateItem(void* data, SoSensor*)
     {
         QStandardItem* item = itemField->parent()->child(itemField->row(), 0);
         ParametersItemNode* itemNode = (ParametersItemNode*) item;
-        itemNode->setNode(f->getValue());
+        itemNode->setNode(f->getValue());// this line changes current
     }
     itemField->emitDataChanged();
 }

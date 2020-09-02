@@ -22,10 +22,10 @@ HEADERS += \
     commands/CmdDelete.h \
     commands/CmdInsertNode.h \
     commands/CmdLightPositionModified.h \
-    commands/CmdNodeModified.h \
-    commands/CmdParameterModified.h \
     commands/CmdPaste.h \
     commands/CmdRename.h \
+    commands/CmdSetFieldNode.h \
+    commands/CmdSetFieldText.h \
     commands/CmdSunModified.h \
     commands/tgc.h \
     parameters/ParametersItemField.h \
@@ -81,10 +81,10 @@ SOURCES += \
     commands/CmdDelete.cpp \
     commands/CmdInsertNode.cpp \
     commands/CmdLightPositionModified.cpp \
-    commands/CmdNodeModified.cpp \
-    commands/CmdParameterModified.cpp \
     commands/CmdPaste.cpp \
     commands/CmdRename.cpp \
+    commands/CmdSetFieldNode.cpp \
+    commands/CmdSetFieldText.cpp \
     commands/CmdSunModified.cpp \
     parameters/ParametersItemField.cpp \
     parameters/ParametersItemNode.cpp \

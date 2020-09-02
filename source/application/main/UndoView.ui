@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>UndoView</class>
  <widget class="QDialog" name="UndoView">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>274</width>
+    <height>241</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>Undo History</string>
   </property>
@@ -16,12 +24,21 @@
        <property name="text">
         <string>Clear</string>
        </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
        </property>
       </spacer>
      </item>

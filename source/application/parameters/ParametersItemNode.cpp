@@ -12,7 +12,8 @@
 
 
 ParametersItemNode::ParametersItemNode(QString part, SoNode* node):
-    QStandardItem(part)
+    QStandardItem(part),
+    m_node(0)
 {
     setEditable(false);
     setNode(node);
@@ -20,10 +21,11 @@ ParametersItemNode::ParametersItemNode(QString part, SoNode* node):
 
 void ParametersItemNode::setNode(SoNode* node)
 {
+    if (m_node == node) return;
     m_node = node;
+
     removeRows(0, rowCount());
     if (!m_node) return;
-
     SoFieldList fields;
     m_node->getFields(fields);
     for (int n = 0; n < fields.getLength(); ++n)

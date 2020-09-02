@@ -3,45 +3,40 @@
 
 #include <Inventor/fields/SoField.h>
 
-#include "kernel/air/AirTransmission.h"
-#include "kernel/air/AirKit.h"
-#include "tree/SceneModel.h"
 #include "kernel/scene/TSceneKit.h"
-#include "parameters/ParametersModel.h"
+#include "kernel/air/AirKit.h"
+#include "kernel/air/AirTransmission.h"
 
-// todo: add custom plot
 
-
-AirDialog::AirDialog(SceneModel* sceneModel, QMap<QString, AirFactory*> airMap, QWidget* parent):
+AirDialog::AirDialog(TSceneKit* sceneKit, QWidget* parent):
     QDialog(parent),
-    ui(new Ui::AirDialog),
-    m_airMap(airMap)
+    ui(new Ui::AirDialog)
 {
     ui->setupUi(this);
 
-    TSceneKit* sceneKit = sceneModel->getSceneKit();
-    AirKit* airOld = (AirKit*) sceneKit->getPart("world.air", false);
-    m_air = (AirKit*) airOld->copy();
+    int q = fontMetrics().height();
+    resize(64*q, 36*q);
+
+    int w = width();
+    ui->splitter->setSizes({ int(0.4*w), int(0.6*w) });
+
+    AirKit* air = (AirKit*) sceneKit->getPart("world.air", false);
+    m_air = (AirKit*) air->copy();
     m_air->ref();
 
-    for (AirFactory* f : airMap)
-        ui->comboBox->addItem(f->icon(), f->name());
+    initCustomPlot();
+    updateCustomPlot();
 
-    AirTransmission* airT = (AirTransmission*) m_air->getPart("transmission", false);
-    int index = ui->comboBox->findText(airT->getTypeName());
-    ui->comboBox->setCurrentIndex(index); // activated != currentIndexChanged
-    ParametersModel* model = new ParametersModel(this);
-    model->setMain((MainWindow*) parent);
-    ui->airParameters->setModel(model);
-    model->setNode(m_air);
+    ui->airParameters->getModel()->setMain((MainWindow*) parent);
+    ui->airParameters->getModel()->setNode(m_air);
 
     connect(
-        ui->comboBox, SIGNAL(activated(int)),
-        this, SLOT(setModel(int))
+        ui->airParameters->getModel(), SIGNAL(fieldTextModified(SoNode*, QString, QString)),
+        this, SLOT(setFieldText(SoNode*, QString, QString))
     );
     connect(
-        model, SIGNAL(valueModified(SoNode*, QString, QString)),
-        this, SLOT(setValue(SoNode*, QString, QString))
+        ui->airParameters->getModel(), SIGNAL(fieldNodeModified(SoNode*, QString, TNode*)),
+        this, SLOT(setFieldNode(SoNode*, QString, TNode*))
     );
 
     setWindowFlag(Qt::WindowContextHelpButtonHint, false);
@@ -53,16 +48,71 @@ AirDialog::~AirDialog()
     m_air->unref();
 }
 
-void AirDialog::setModel(int index)
+void AirDialog::setFieldText(SoNode* node, QString field, QString value)
 {
-    AirFactory* f = m_airMap[ui->comboBox->itemText(index)];
-    AirTransmission* airT = f->create();
-//    ui->airParameters->getModel()->setNode(airT);
-    m_air->setPart("transmission", airT);
+    SoField* f = node->getField(field.toLatin1().data());
+    f->set(value.toLatin1().data());
+    updateCustomPlot();
 }
 
-void AirDialog::setValue(SoNode* node, QString field, QString value)
+void AirDialog::setFieldNode(SoNode* node, QString field, TNode* value)
 {
-    SoField* f = node->getField(field.toStdString().c_str());
-    if (f) f->set(value.toStdString().c_str());
+    SoSFNode* f = (SoSFNode*) node->getField(field.toLatin1().data());
+    f->setValue(value);
+    updateCustomPlot();
+}
+
+void AirDialog::initCustomPlot()
+{
+    QCustomPlot* cp = ui->customPlot;
+
+    // axes
+    cp->addGraph();
+    cp->xAxis->setLabel("Distance, d [m]");
+    cp->yAxis->setLabel("Transmission, t [%]");
+
+    cp->xAxis2->setVisible(true);
+    cp->xAxis2->setTickLabels(false);
+    connect(cp->xAxis, SIGNAL(rangeChanged(QCPRange)), cp->xAxis2, SLOT(setRange(QCPRange)));
+
+    cp->yAxis2->setVisible(true);
+    cp->yAxis2->setTickLabels(false);
+    connect(cp->yAxis, SIGNAL(rangeChanged(QCPRange)), cp->yAxis2, SLOT(setRange(QCPRange)));
+
+    cp->xAxis->setRange(0., 2000.);
+    cp->yAxis->setRange(0., 105.);
+
+    // line
+    QPen pen("#225F8E");
+    pen.setWidthF(2);
+//    pen.setStyle(Qt::DashLine);
+    cp->graph(0)->setPen(pen);
+//    cp->graph(0)->setLineStyle(QCPGraph::lsLine);
+//    cp->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 5));
+    cp->graph(0)->setBrush(QBrush("#30225F8E"));
+
+    // label
+    cp->plotLayout()->insertRow(0);
+    cp->plotLayout()->addElement(0, 0, new QCPTextElement(cp, "Atmospheric transmission", QFont("sans", 9, QFont::Bold)));
+
+    cp->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+}
+
+void AirDialog::updateCustomPlot()
+{
+    QCustomPlot* cp = ui->customPlot;
+    if (!m_air) return;
+    AirTransmission* airTransmission = (AirTransmission*) m_air->getPart("transmission", false);
+
+    int nMax = 51;
+    double xStep = 2000./(nMax - 1);
+    QVector<double> x(nMax), y(nMax);
+    for (int n = 0; n < nMax; ++n) {
+        double d = n*xStep;
+        x[n] = d;
+        y[n] = 100.*airTransmission->transmission(d);
+    }
+
+    cp->graph(0)->setData(x, y);
+    cp->replot();
 }

@@ -194,7 +194,6 @@ void ParametersDelegate::setModelData(QWidget* editor, QAbstractItemModel* model
         QString text = model->data(index, Qt::DisplayRole).toString();
         if (value == text) return;
 
-//        kit, field and node?
         ParametersItemNode* pitem = (ParametersItemNode*) item->parent();
         SoBaseKit* kit = (SoBaseKit*) pitem->node();
 
@@ -205,8 +204,7 @@ void ParametersDelegate::setModelData(QWidget* editor, QAbstractItemModel* model
         SoNode* node = f->getValue();
         MainWindow* main = modelP->getMain();
         TFactory* tf = main->getPlugins()->getFactories(node)[w->currentIndex()];
-//        main->Insert(tf);
-        main->Insert(kit, name, tf->create());
+        modelP->setData(kit, name, tf->create());
         return;
     }
     else if (dynamic_cast<SoSFInt32*>(field))

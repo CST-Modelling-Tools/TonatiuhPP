@@ -11,13 +11,17 @@
 
 
 ParametersModel::ParametersModel(QObject* parent):
-    QStandardItemModel(parent)
+    QStandardItemModel(parent),
+    m_node(0)
 {
 
 }
 
 void ParametersModel::setNode(SoNode* node)
 {
+    if (m_node == node) return; // important to keep selection
+    m_node = node;
+
     beginResetModel();
     clear();
     setHorizontalHeaderLabels({"Parameter", "Value"});
@@ -44,10 +48,16 @@ bool ParametersModel::setData(const QModelIndex& index, const QVariant& value, i
         SoNode* node = itemNode->node();
         SbName name;
         node->getFieldName(item->field(), name);
-        emit valueModified(node, name.getString(), value.toString());
+        emit fieldTextModified(node, name.getString(), value.toString());
 
         return true;
     }
+}
+
+bool ParametersModel::setData(SoNode* node, QString field, TNode* value) // todo combine with setData
+{
+    emit fieldNodeModified(node, field, value);
+    return true;
 }
 
 

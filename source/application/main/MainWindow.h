@@ -85,7 +85,6 @@ public slots:
     void InsertNode();
     void InsertShape();
     void InsertTracker();
-    void Insert(SoBaseKit* kit, QString field, TNode* node); //? setNode
     void InsertShapeSurface(QString shapeType, int numberOfParameters, QVector<QVariant> parametersList);
     void CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector<QVariant> parametersList);
     void InsertFileComponent(QString componentFileName = "");
@@ -150,7 +149,8 @@ private slots:
 
     bool SaveComponent();
     void SelectionFinish(SoSelection* selection);
-    void SetParameterValue(SoNode* node, QString paramenterName, QString value);
+    void setFieldText(SoNode* node, QString field, QString value);
+    void setFieldNode(SoNode* node, QString field, TNode* value);
 
     void showGrid();
     void showRays(bool on);

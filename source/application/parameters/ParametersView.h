@@ -2,7 +2,7 @@
 
 #include <QTreeView>
 
-class ParametersModel;
+#include "ParametersModel.h"
 
 
 class ParametersView: public QTreeView

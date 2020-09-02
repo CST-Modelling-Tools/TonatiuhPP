@@ -29,6 +29,7 @@ AirPolynomial::AirPolynomial()
     SO_NODE_ADD_FIELD(a3, (0.) );
 
     m_sensor_coefficients = new SoFieldSensor(update_coefficients, this);
+    m_sensor_coefficients->setPriority(0);
     m_sensor_coefficients->attach(&coefficients);
 }
 
