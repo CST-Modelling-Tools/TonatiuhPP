@@ -107,15 +107,15 @@ InstanceNode* SceneModel::addInstanceNode(InstanceNode* parent, SoNode* node)
 void SceneModel::generateInstanceTree(InstanceNode* instance)
 {
     SoNode* node = instance->getNode();
-    if (TSeparatorKit* separatorKit = dynamic_cast<TSeparatorKit*>(node))
+    if (TSeparatorKit* kit = dynamic_cast<TSeparatorKit*>(node))
     {
-        SoGroup* group = (SoGroup*) separatorKit->getPart("group", false);
+        SoGroup* group = (SoGroup*) kit->getPart("group", false);
         if (!group) return;
         for (int n = 0; n < group->getNumChildren(); ++n)
         {
-            SoBaseKit* coinChild = (SoBaseKit*) group->getChild(n);
-            InstanceNode* instanceChild = addInstanceNode(instance, coinChild);
-            generateInstanceTree(instanceChild);
+            SoNode* childNode = (SoNode*) group->getChild(n);
+            InstanceNode* childInstance = addInstanceNode(instance, childNode);
+            generateInstanceTree(childInstance);
         }
     }
 }

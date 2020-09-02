@@ -11,6 +11,7 @@ class Transform;
 struct vec3d;
 class GraphicRoot;
 
+
 class TONATIUH_KERNEL TSceneKit: public SoSceneKit
 {
     SO_KIT_HEADER(TSceneKit);

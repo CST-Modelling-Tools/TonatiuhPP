@@ -27,13 +27,6 @@ class SceneModel;
 class TONATIUH_KERNEL InstanceNode
 {
 public:
-    enum IndicesTShapeKit {
-        IndexShapeRT = 0,
-        IndexProfileRT,
-        IndexMaterialRT,
-        IndexMaterial
-    };
-
     InstanceNode(SoNode* node);
     ~InstanceNode();
 

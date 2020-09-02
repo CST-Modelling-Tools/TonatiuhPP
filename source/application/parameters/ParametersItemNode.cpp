@@ -1,11 +1,9 @@
 #include "ParametersItemNode.h"
 
 #include <Inventor/nodes/SoNode.h>
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/nodekits/SoShapeKit.h>
+#include <Inventor/nodes/SoGroup.h>
 #include <Inventor/fields/SoField.h>
 #include <Inventor/fields/SoSFNode.h>
-#include <Inventor/lists/SoFieldList.h>
 #include <Inventor/SbName.h>
 
 #include "ParametersItemField.h"
@@ -50,6 +48,3 @@ void ParametersItemNode::setNode(SoNode* node)
         appendRow({itemP, itemV});
     }
 }
-
-//        QModelIndex index = m_model->indexFromItem(itemValue);
-//        openPersistentEditor(index);

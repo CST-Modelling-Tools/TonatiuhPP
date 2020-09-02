@@ -65,10 +65,15 @@ void AirDialog::setFieldNode(SoNode* node, QString field, TNode* value)
 void AirDialog::initCustomPlot()
 {
     QCustomPlot* cp = ui->customPlot;
+    QFont cfont = font();
+    cfont.setPointSize(9);
+    cp->setFont(cfont);
 
     // axes
     cp->addGraph();
+    cp->xAxis->setLabelFont(cfont);
     cp->xAxis->setLabel("Distance, d [m]");
+    cp->yAxis->setLabelFont(cfont);
     cp->yAxis->setLabel("Transmission, t [%]");
 
     cp->xAxis2->setVisible(true);
@@ -93,7 +98,9 @@ void AirDialog::initCustomPlot()
 
     // label
     cp->plotLayout()->insertRow(0);
-    cp->plotLayout()->addElement(0, 0, new QCPTextElement(cp, "Atmospheric transmission", QFont("sans", 9, QFont::Bold)));
+    cfont.setPointSize(10);
+//    cfont.setBold(true);
+    cp->plotLayout()->addElement(0, 0, new QCPTextElement(cp, "Atmospheric transmission", cfont));
 
     cp->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
 }

@@ -17,5 +17,5 @@ protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const;
 
 private:
-    QStringList m_shapes;
+    QStringList m_shapes; // todo use set
 };
