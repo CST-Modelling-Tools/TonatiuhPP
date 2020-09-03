@@ -11,6 +11,7 @@ void ProfileBox::initClass()
 ProfileBox::ProfileBox()
 {
     SO_NODE_CONSTRUCTOR(ProfileBox);
+    isBuiltIn = TRUE;
     SO_NODE_ADD_FIELD( uSize, (1.) );
     SO_NODE_ADD_FIELD( vSize, (1.) );
 }

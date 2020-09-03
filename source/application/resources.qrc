@@ -38,5 +38,7 @@
         <file>images/scene/nodeTerrain.png</file>
         <file>images/scene/nodeLocation.png</file>
         <file>images/edit/undoHistory.png</file>
+        <file>images/scene/nodeExport.png</file>
+        <file>images/scene/nodeImport.png</file>
     </qresource>
 </RCC>

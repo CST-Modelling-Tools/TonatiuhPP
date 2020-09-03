@@ -17,6 +17,7 @@ void ShapePlanar::initClass()
 ShapePlanar::ShapePlanar()
 {
     SO_NODE_CONSTRUCTOR(ShapePlanar);
+    isBuiltIn = TRUE;
 }
 
 void ShapePlanar::updateShapeGL(TShapeKit* parent)

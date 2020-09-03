@@ -73,7 +73,7 @@ background-color: #d7e3ed;
          </font>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tabWorld">
          <attribute name="title">
@@ -212,6 +212,44 @@ background-color: #d7e3ed;
              </widget>
             </item>
             <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="buttonNodeExport">
+              <property name="toolTip">
+               <string>Export Node</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../resources.qrc">
+                <normaloff>:/images/scene/nodeExport.png</normaloff>:/images/scene/nodeExport.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="buttonNodeImport">
+              <property name="toolTip">
+               <string>Import Node</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../resources.qrc">
+                <normaloff>:/images/scene/nodeImport.png</normaloff>:/images/scene/nodeImport.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="horizontalSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -322,20 +360,6 @@ border:none;
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <widget class="QMenu" name="menuInsert">
-     <property name="title">
-      <string>Insert</string>
-     </property>
-     <widget class="QMenu" name="menuComponent">
-      <property name="title">
-       <string>Component</string>
-      </property>
-      <addaction name="separator"/>
-     </widget>
-     <addaction name="menuComponent"/>
-     <addaction name="actionUserComponent"/>
-     <addaction name="actionSaveComponent"/>
-    </widget>
     <addaction name="actionEditUndo"/>
     <addaction name="actionEditRedo"/>
     <addaction name="actionEditUndoView"/>
@@ -346,7 +370,6 @@ border:none;
     <addaction name="actionEditPasteLink"/>
     <addaction name="actionEditDelete"/>
     <addaction name="separator"/>
-    <addaction name="menuInsert"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -400,16 +423,24 @@ border:none;
     </property>
     <widget class="QMenu" name="menuTest">
      <property name="title">
-      <string>Test</string>
+      <string>Tests</string>
      </property>
      <addaction name="actionRunTestA"/>
      <addaction name="actionRunTestB"/>
      <addaction name="actionRunTestC"/>
     </widget>
+    <widget class="QMenu" name="menuComponent">
+     <property name="title">
+      <string>Plugins</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
     <addaction name="actionRun"/>
     <addaction name="actionRunFlux"/>
     <addaction name="actionRunScript"/>
+    <addaction name="separator"/>
     <addaction name="menuTest"/>
+    <addaction name="menuComponent"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -652,30 +683,6 @@ border:none;
     <string>Del</string>
    </property>
   </action>
-  <action name="actionInsertNode">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/images/scene/nodeGroup.png</normaloff>:/images/scene/nodeGroup.png</iconset>
-   </property>
-   <property name="text">
-    <string>Node</string>
-   </property>
-   <property name="toolTip">
-    <string>Node</string>
-   </property>
-  </action>
-  <action name="actionInsertShape">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/images/scene/nodeShape.png</normaloff>:/images/scene/nodeShape.png</iconset>
-   </property>
-   <property name="text">
-    <string>Shape</string>
-   </property>
-   <property name="toolTip">
-    <string>Shape</string>
-   </property>
-  </action>
   <action name="actionViewAxes">
    <property name="checkable">
     <bool>true</bool>
@@ -842,16 +849,6 @@ border:none;
     <string>Ctrl+Alt+R</string>
    </property>
   </action>
-  <action name="actionUserComponent">
-   <property name="text">
-    <string>Import Nodes...</string>
-   </property>
-  </action>
-  <action name="actionSaveComponent">
-   <property name="text">
-    <string>Export Nodes...</string>
-   </property>
-  </action>
   <action name="actionAbout">
    <property name="text">
     <string>About...</string>
@@ -878,10 +875,6 @@ border:none;
    </property>
   </action>
   <action name="actionAnalyzerNode">
-   <property name="icon">
-    <iconset>
-     <normaloff>:/images/AnalyzerKit.png</normaloff>:/images/AnalyzerKit.png</iconset>
-   </property>
    <property name="text">
     <string>Analyzer Node</string>
    </property>
@@ -909,28 +902,6 @@ border:none;
   <action name="actionRunTestC">
    <property name="text">
     <string>C</string>
-   </property>
-  </action>
-  <action name="actionInsertTracker">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/images/scene/nodeTracker.png</normaloff>:/images/scene/nodeTracker.png</iconset>
-   </property>
-   <property name="text">
-    <string>Tracker</string>
-   </property>
-   <property name="toolTip">
-    <string>Tracker</string>
-   </property>
-  </action>
-  <action name="actionsdfasd">
-   <property name="text">
-    <string>sdfasd</string>
-   </property>
-  </action>
-  <action name="actiondfgsdfg">
-   <property name="text">
-    <string>dfgsdfg</string>
    </property>
   </action>
  </widget>

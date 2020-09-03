@@ -70,7 +70,7 @@ public slots:
     void FileOpen(QString fileName);
     bool FileSave();
     void FileSaveAs(QString fileName);
-    void SaveComponent(QString fileName);
+    void nodeExport(QString fileName);
     void Clear();
 
     void Copy();
@@ -134,10 +134,9 @@ private slots:
 //    void InsertShapeSurface(TFactory* f);
     void InsertShapeSurface(ShapeFactory* factory, int numberOfParameters, QVector<QVariant> parametersList);
 
-    void onSunDialog();
-    void onAirDialog();
+    bool nodeExport();
+    void nodeImport();
 
-    void InsertUserDefinedComponent();
     void ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex& node);
     void ItemDragAndDropCopy(const QModelIndex& newParent, const QModelIndex& node);
 
@@ -148,7 +147,6 @@ private slots:
     void RunCompleteRayTracer();
     void RunFluxAnalysisDialog();
 
-    bool SaveComponent();
     void SelectionFinish(SoSelection* selection);
     void setFieldText(SoNode* node, QString field, QString value);
     void setFieldNode(SoNode* node, QString field, SoNode* value);
@@ -234,6 +232,9 @@ private:
 
     bool StartOver(const QString& fileName);
     void setDocumentModified(bool value);
+
+    void onSunDialog();
+    void onAirDialog();
 
     void ShowRaysIn3DView();
     void UpdateLightSize();

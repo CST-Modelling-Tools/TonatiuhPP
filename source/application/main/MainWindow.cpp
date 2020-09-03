@@ -420,13 +420,6 @@ void MainWindow::SetupTriggers()
     connect(ui->actionEditPasteLink, SIGNAL(triggered()), this, SLOT(PasteLink()) );
     connect(ui->actionEditDelete, SIGNAL(triggered()), this, SLOT(Delete()) );
 
-    // insert
-    connect(ui->actionInsertNode, SIGNAL(triggered()), this, SLOT(InsertNode()) );
-    connect(ui->actionInsertShape, SIGNAL(triggered()), this, SLOT(InsertShape()) );
-    connect(ui->actionInsertTracker, SIGNAL(triggered()), this, SLOT(InsertTracker()) );
-    connect(ui->actionSaveComponent, SIGNAL(triggered()), this, SLOT(SaveComponent()) );
-    connect(ui->actionUserComponent, SIGNAL(triggered()), this, SLOT(InsertUserDefinedComponent()) );
-
     // run
     connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(RunCompleteRayTracer()) );
     connect(ui->actionRunFlux, SIGNAL(triggered()), this, SLOT(RunFluxAnalysisDialog()) );
@@ -436,9 +429,12 @@ void MainWindow::SetupTriggers()
     connect(ui->actionViewRays, SIGNAL(toggled(bool)), this, SLOT(showRays(bool)));
     connect(ui->actionViewPhotons, SIGNAL(toggled(bool)), this, SLOT(showPhotons(bool)));
 
+    // layout
     connect(ui->buttonInsertNode, SIGNAL(pressed()), this, SLOT(InsertNode()) );
     connect(ui->buttonInsertShape, SIGNAL(pressed()), this, SLOT(InsertShape()) );
     connect(ui->buttonInsertTracker, SIGNAL(pressed()), this, SLOT(InsertTracker()) );
+    connect(ui->buttonNodeExport, SIGNAL(pressed()), this, SLOT(nodeExport()) );
+    connect(ui->buttonNodeImport, SIGNAL(pressed()), this, SLOT(nodeImport()) );
 }
 
 /*!
@@ -562,7 +558,7 @@ void MainWindow::showPhotons(bool on)
  *
  * A open file dialog is opened to select the file where the existing component is saved.
  */
-void MainWindow::InsertUserDefinedComponent()
+void MainWindow::nodeImport()
 {
     QModelIndex parentIndex;
     if ((!ui->sceneView->currentIndex().isValid() ) || (ui->sceneView->currentIndex() == ui->sceneView->rootIndex() ) )
@@ -764,7 +760,7 @@ bool MainWindow::FileSave()
 /*!
  * Saves current selected node as a component in the files named \a componentFileName.
  */
-void MainWindow::SaveComponent(QString fileName)
+void MainWindow::nodeExport(QString fileName)
 {
     if (!m_modelSelection->hasSelection() ) return;
     if (m_modelSelection->currentIndex() == ui->sceneView->rootIndex() ) return;
@@ -830,7 +826,7 @@ bool MainWindow::FileSaveAs()
  * Saves selected node subtree as a component in a file.
  * A dialog is opened to select a file name and its location.
  */
-bool MainWindow::SaveComponent()
+bool MainWindow::nodeExport()
 {
     if (!m_modelSelection->hasSelection() ) return false;
     if (m_modelSelection->currentIndex() == ui->sceneView->rootIndex() ) return false;
@@ -2670,7 +2666,7 @@ void MainWindow::SetCurrentFile(const QString& fileName)
 
 void MainWindow::SetupActionsInsertComponent()
 {
-    QMenu* menu = ui->menuInsert->findChild<QMenu*>("menuComponent");
+    QMenu* menu = ui->menuRun->findChild<QMenu*>("menuComponent");
     if (!menu) return;
     if (menu->isEmpty() )
         menu->setEnabled(true);

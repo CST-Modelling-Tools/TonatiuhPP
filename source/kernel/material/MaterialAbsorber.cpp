@@ -15,6 +15,7 @@ void MaterialAbsorber::initClass()
 MaterialAbsorber::MaterialAbsorber()
 {
     SO_NODE_CONSTRUCTOR(MaterialAbsorber);
+    isBuiltIn = TRUE;
 }
 
 bool MaterialAbsorber::OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& rand, Ray& rayOut) const
