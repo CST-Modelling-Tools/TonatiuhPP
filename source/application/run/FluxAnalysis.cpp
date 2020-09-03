@@ -61,7 +61,7 @@ FluxAnalysis::FluxAnalysis(TSceneKit* sceneKit,
     m_photonsError(0)
 {
     m_instanceLayout = m_sceneModel->getInstance(QModelIndex());
-    m_instanceLayout = m_instanceLayout->children[1];
+    m_instanceLayout = m_instanceLayout->children[0];
 }
 
 FluxAnalysis::~FluxAnalysis()
@@ -108,10 +108,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
     if (!instanceScene) return;
 
     SunKit* sunKit = static_cast<SunKit*>(m_sceneKit->getPart("world.sun", false));
-
-//    InstanceNode* instanceSun = instanceScene->children[0]->children[0];
-    InstanceNode* instanceSun = instanceScene->children[0]->children[1];
-    if (!instanceSun) return;
+    InstanceNode instanceSun(sunKit);
 
     SunPosition* sunPosition = (SunPosition*) sunKit->getPart("position", false);
     SunShape* sunShape = (SunShape*) sunKit->getPart("shape", false);
@@ -167,7 +164,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
         raysPerThread << nRays - t1*maximumValueProgressScale;
 
     Transform lightToWorld = tgf::makeTransform(sunTransform);
-    instanceSun->setTransform(lightToWorld);
+    instanceSun.setTransform(lightToWorld);
 
     // Create a progress dialog.
     QProgressDialog dialog;
@@ -190,7 +187,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
 
     photonMap = QtConcurrent::map(raysPerThread, RayTracer(
         m_instanceLayout,
-        instanceSun, sunAperture, sunShape, airTemp,
+        &instanceSun, sunAperture, sunShape, airTemp,
         *m_rand, &mutex, m_photons, &mutexPhotonMap, exportSuraceList
     ));
 

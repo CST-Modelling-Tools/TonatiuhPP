@@ -135,7 +135,7 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
     {
         QString text = model->data(index, Qt::EditRole).toString();
 
-        if (text.indexOf('\n') >= 0) {
+        if (text.indexOf('\n') >= 0 || text.size() > 50) {
 //            text = text.trimmed();
             ParametersEditor* editor = new ParametersEditor;
             editor->setText(text);

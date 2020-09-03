@@ -7,6 +7,8 @@ ParametersEditor::ParametersEditor(QWidget* parent):
     ui(new Ui::ParameterTextEditor)
 {
     ui->setupUi(this);
+
+    setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 }
 
 ParametersEditor::~ParametersEditor()

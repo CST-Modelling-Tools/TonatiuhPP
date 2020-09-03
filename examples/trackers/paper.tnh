@@ -13,17 +13,20 @@ TSceneKit {
       position 
       SunPosition {
         fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
-   
+        azimuth 0
+        elevation 90
+        irradiance 1000
+
       }
       shape 
-      SunPillbox {
+      SunShapePillbox {
         fields [ SFDouble thetaMax ]
 
       }
       aperture 
       SunAperture {
         fields [ SFString disabledNodes ]
-          disabledNodes "//Layout/Target;//Layout/Heliostat/primary/secondary/target;"
+        disabledNodes "//Layout/Target;//Layout/Heliostat/primary/secondary/target"
 
       }
 
@@ -41,274 +44,258 @@ TSceneKit {
 
   }
   group 
-
-
-    DEF Layout TSeparatorKit {
-      transform 
-      Transform {
-
-      }
-      group 
-      Group {
-
-        DEF Target TSeparatorKit {
-          transform 
-          Transform {
-            translation 0 0 20
-            scaleFactor 0.5 0.5 0.5
-
-          }
-          group 
-          Group {
-
-            DEF Shape TShapeKit {
-              shapeRT 
-              DEF Sphere ShapeSphere {
-                fields [  ]
-
-              }
-              profileRT 
-              DEF Box ProfileBox {
-                fields [ SFDouble uSize, SFDouble vSize ]
-
-              }
-              materialRT 
-              DEF Absorber MaterialAbsorber {
-                fields [  ]
-
-              }
-              appearance 
-              AppearanceKit {
-                material 
-                DEF MaterialGL Material {
-
-                }
-
-              }
-
-            }
-          }
-
-        }
-        DEF Heliostat TSeparatorKit {
-          transform 
-          Transform {
-            translation 30 50 0
-            rotation 0 0 1  2.5999999
-
-          }
-          group 
-          Group {
-
-            DEF primary TSeparatorKit {
-              transform 
-              Transform {
-                translation 0 0 1.5
-                rotation -0 -0 1  0.64477766
-
-              }
-              group 
-              Group {
-
-                DEF secondary TSeparatorKit {
-                  transform 
-                  Transform {
-                    translation 0 0.1 0
-                    rotation 1 0 0  0.70932841
-
-                  }
-                  group 
-                  Group {
-
-                    DEF facet TSeparatorKit {
-                      transform 
-                      Transform {
-                        translation 0 0 0
-                        rotation 0 0.70710683 0.70710683  3.1415
-
-                      }
-                      group 
-                      Group {
-
-                        DEF Shape TShapeKit {
-                          shapeRT 
-                          DEF Parabolic ShapeParabolic {
-                            fields [ SFDouble fX, SFDouble fY ]
-                            fX 10
-                            fY 10
-
-                          }
-                          profileRT 
-                          DEF Box ProfileBox {
-                            fields [ SFDouble uSize, SFDouble vSize ]
-
-                          }
-                          materialRT 
-                          DEF Specular MaterialSpecular {
-                            fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
-
-                          }
-                          appearance 
-                          AppearanceKit {
-                            material 
-                            DEF MaterialGL Material {
-
-                            }
-
-                          }
-
-                        }
-                      }
-
-                    }
-                    DEF target TSeparatorKit {
-                      transform 
-                      Transform {
-                        translation 0 10 10
-                        scaleFactor 0.2 0.2 0.2
-
-                      }
-                      group 
-                      Group {
-
-                        DEF Shape TShapeKit {
-                          shapeRT 
-                          DEF Sphere ShapeSphere {
-                            fields [  ]
-
-                          }
-                          profileRT 
-                          DEF Box ProfileBox {
-                            fields [ SFDouble uSize, SFDouble vSize ]
-
-                          }
-                          materialRT 
-                          DEF Absorber MaterialAbsorber {
-                            fields [  ]
-
-                          }
-                          appearance 
-                          AppearanceKit {
-                            material 
-                            DEF MaterialGL Material {
-
-                            }
-
-                          }
-
-                        }
-                      }
-
-                    }
-                    DEF axis TSeparatorKit {
-                      transform 
-                      Transform {
-                        translation 0 0 0
-                        rotation 0 0 1  0
-                        scaleFactor 0.029999999 0.029999999 1
-
-                      }
-                      group 
-                      Group {
-
-                        DEF Shape TShapeKit {
-                          shapeRT 
-                          DEF Cylinder ShapeCylinder {
-                            fields [  ]
-
-                          }
-                          profileRT 
-                          DEF Box ProfileBox {
-                            fields [ SFDouble uSize, SFDouble vSize ]
-                            vSize 0.2
-
-                          }
-                          materialRT 
-                          DEF Absorber MaterialAbsorber {
-                            fields [  ]
-
-                          }
-                          appearance 
-                          AppearanceKit {
-                            material 
-                            DEF MaterialGL Material {
-                              diffuseColor 0.30000001 0.5 0.30000001
-
-                            }
-
-                          }
-
-                        }
-                      }
-
-                    }
-                  }
-
-                }
-                DEF axis TSeparatorKit {
-                  transform 
-                  Transform {
-                    translation 0 0 0
-                    rotation 0 1 0  1.5700002
-                    scaleFactor 0.029999999 0.029999999 1
-
-                  }
-                  group 
-                  Group {
-
-                    DEF Shape TShapeKit {
-                      shapeRT 
-                      DEF Cylinder ShapeCylinder {
-                        fields [  ]
-
-                      }
-                      profileRT 
-                      DEF Box ProfileBox {
-                        fields [ SFDouble uSize, SFDouble vSize ]
-                        vSize 0.2
-
-                      }
-                      materialRT 
-                      DEF Absorber MaterialAbsorber {
-                        fields [  ]
-
-                      }
-                      appearance 
-                      AppearanceKit {
-                        material 
-                        DEF MaterialGL Material {
-                          diffuseColor 0.80000001 0.30000001 0.80000001
-
-                        }
-
-                      }
-
-                    }
-                  }
-
-                }
-              }
-
-            }
-          }
-          tracker 
-          DEF Dual TrackerDual {
-            fields [ SFVec3f primaryShift, SFVec3f primaryAxis, SFVec2f primaryAngles, SFVec3f secondaryShift, SFVec3f secondaryAxis, SFVec2f secondaryAngles, SFVec3f facetShift, SFVec3f facetNormal, SFEnum aimingFrame, SFVec3f aimingPoint, SFVec2f anglesDefault ]
-            primaryShift 0 0 1.5
-            primaryAxis 0 0 -1
-            secondaryShift 0 0.1 0
-            secondaryAxis 1 0 0
-            secondaryAngles 0 1.5707964
-            facetShift 0 0 0
-            facetNormal 0 1 0
-            aimingFrame global
-            aimingPoint 0 0 20
-
-          }
-
-        }
-      }
+  DEF Layout TSeparatorKit {
+    transform 
+    Transform {
 
     }
- 
+    group 
+    Group {
+
+      DEF Target TSeparatorKit {
+        transform 
+        Transform {
+          translation 0 0 20
+          scaleFactor 0.5 0.5 0.5
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Sphere ShapeSphere {
+              fields [  ]
+
+            }
+            profileRT 
+            DEF Box ProfileBox {
+              fields [ SFDouble uSize, SFDouble vSize ]
+
+            }
+            materialRT 
+            DEF Absorber MaterialAbsorber {
+              fields [  ]
+
+            }
+            material 
+            Material {
+
+            }
+
+          }
+        }
+
+      }
+      DEF Heliostat TSeparatorKit {
+        transform 
+        Transform {
+          translation 30 50 0
+          rotation 0 0 1  2.5999999
+
+        }
+        group 
+        Group {
+
+          DEF Tracker TrackerKit {
+            fields [ SFNode armature, SFNode target, SFNode callbackList ]
+            armature 
+            TrackerArmature2A {
+              fields [ SFVec3f primaryShift, SFVec3f primaryAxis, SFVec2f primaryAngles, SFVec3f secondaryShift, SFVec3f secondaryAxis, SFVec2f secondaryAngles, SFVec3f facetShift, SFVec3f facetNormal, SFVec2f anglesDefault ]
+              primaryShift 0 0 1.5
+              primaryAxis 0 0 -1
+              secondaryShift 0 0.1 0
+              secondaryAxis 1 0 0
+              facetShift 0 0 0
+              facetNormal 0 1 0
+
+            }
+            target 
+            TrackerTarget {
+              fields [ SFEnum aimingFrame, SFVec3f aimingPoint ]
+              aimingFrame global
+              aimingPoint 0 0 20
+
+            }
+
+          }
+          DEF primary TSeparatorKit {
+            transform 
+            Transform {
+              translation 0 0 1.5
+              rotation -0 -0 0.98263347  0.00119604
+
+            }
+            group 
+            Group {
+
+              DEF secondary TSeparatorKit {
+                transform 
+                Transform {
+                  translation 0 0.1 0
+                  rotation 0.99999988 0 0  0.93925923
+
+                }
+                group 
+                Group {
+
+                  DEF facet TSeparatorKit {
+                    transform 
+                    Transform {
+                      translation 0 0 0
+                      rotation 0 0.70710683 0.70710683  3.1415
+
+                    }
+                    group 
+                    Group {
+
+                      DEF Shape TShapeKit {
+                        shapeRT 
+                        DEF Parabolic ShapeParabolic {
+                          fields [ SFDouble fX, SFDouble fY ]
+                          fX 10
+                          fY 10
+
+                        }
+                        profileRT 
+                        DEF Box ProfileBox {
+                          fields [ SFDouble uSize, SFDouble vSize ]
+
+                        }
+                        materialRT 
+                        DEF Specular MaterialSpecular {
+                          fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+
+                        }
+                        material 
+                        Material {
+
+                        }
+
+                      }
+                    }
+
+                  }
+                  DEF target TSeparatorKit {
+                    transform 
+                    Transform {
+                      translation 0 10 10
+                      scaleFactor 0.2 0.2 0.2
+
+                    }
+                    group 
+                    Group {
+
+                      DEF Shape TShapeKit {
+                        shapeRT 
+                        DEF Sphere ShapeSphere {
+                          fields [  ]
+
+                        }
+                        profileRT 
+                        DEF Box ProfileBox {
+                          fields [ SFDouble uSize, SFDouble vSize ]
+
+                        }
+                        materialRT 
+                        DEF Absorber MaterialAbsorber {
+                          fields [  ]
+
+                        }
+                        material 
+                        Material {
+
+                        }
+
+                      }
+                    }
+
+                  }
+                  DEF axis TSeparatorKit {
+                    transform 
+                    Transform {
+                      translation 0 0 0
+                      rotation 0 0 1  0
+                      scaleFactor 0.029999999 0.029999999 1
+
+                    }
+                    group 
+                    Group {
+
+                      DEF Shape TShapeKit {
+                        shapeRT 
+                        DEF Cylinder ShapeCylinder {
+                          fields [  ]
+
+                        }
+                        profileRT 
+                        DEF Box ProfileBox {
+                          fields [ SFDouble uSize, SFDouble vSize ]
+                          vSize 0.2
+
+                        }
+                        materialRT 
+                        DEF Absorber MaterialAbsorber {
+                          fields [  ]
+
+                        }
+                        material 
+                        Material {
+
+                        }
+
+                      }
+                    }
+
+                  }
+                }
+
+              }
+              DEF axis TSeparatorKit {
+                transform 
+                Transform {
+                  translation 0 0 0
+                  rotation 0 1 0  1.5700002
+                  scaleFactor 0.029999999 0.029999999 1
+
+                }
+                group 
+                Group {
+
+                  DEF Shape TShapeKit {
+                    shapeRT 
+                    DEF Cylinder ShapeCylinder {
+                      fields [  ]
+
+                    }
+                    profileRT 
+                    DEF Box ProfileBox {
+                      fields [ SFDouble uSize, SFDouble vSize ]
+                      vSize 0.2
+
+                    }
+                    materialRT 
+                    DEF Absorber MaterialAbsorber {
+                      fields [  ]
+
+                    }
+                    material 
+                    Material {
+
+                    }
+
+                  }
+                }
+
+              }
+            }
+
+          }
+        }
+
+      }
+    }
+
+  }
+
 }

@@ -13,13 +13,13 @@ TSceneKit {
       position 
       SunPosition {
         fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
-        azimuth 90
-        elevation 60
+        azimuth 80
+        elevation 50
         irradiance 1000
 
       }
       shape 
-      SunPillbox {
+      SunShapePillbox {
         fields [ SFDouble thetaMax ]
 
       }
@@ -60,11 +60,27 @@ TSceneKit {
         group 
         Group {
 
+          DEF Tracker TrackerKit {
+            fields [ SFNode armature, SFNode target, SFNode callbackList ]
+            armature 
+            TrackerArmature1A {
+              fields [ SFVec3f primaryShift, SFVec3f primaryAxis, SFVec2f primaryAngles, SFVec3f facetShift, SFVec3f facetNormal, SFFloat angleDefault ]
+              facetShift 0 0 1
+
+            }
+            target 
+            TrackerTarget {
+              fields [ SFEnum aimingFrame, SFVec3f aimingPoint ]
+              aimingPoint 0 0 5
+
+            }
+
+          }
           DEF primary TSeparatorKit {
             transform 
             Transform {
               translation 0 0 1
-              rotation 0 0.99999815 0  0.22501551
+              rotation 0 0.99999869 0  0.29735109
 
             }
             group 
@@ -96,12 +112,8 @@ TSceneKit {
                       fields [  ]
 
                     }
-                    appearance 
-                    AppearanceKit {
-                      material 
-                      DEF MaterialGL Material {
-
-                      }
+                    material 
+                    Material {
 
                     }
 
@@ -137,12 +149,8 @@ TSceneKit {
                       fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
                     }
-                    appearance 
-                    AppearanceKit {
-                      material 
-                      DEF MaterialGL Material {
-
-                      }
+                    material 
+                    Material {
 
                     }
 
@@ -178,12 +186,8 @@ TSceneKit {
                       fields [  ]
 
                     }
-                    appearance 
-                    AppearanceKit {
-                      material 
-                      DEF MaterialGL Material {
-
-                      }
+                    material 
+                    Material {
 
                     }
 
@@ -194,14 +198,6 @@ TSceneKit {
             }
 
           }
-        }
-        tracker 
-        DEF Single TrackerSingle {
-          fields [ SFVec3f primaryShift, SFVec3f primaryAxis, SFVec2f primaryAngles, SFVec3f facetShift, SFVec3f facetNormal, SFEnum aimingFrame, SFVec3f aimingPoint, SFFloat angleDefault ]
-          facetShift 0 0 1
-          aimingFrame global
-          aimingPoint 0 0 5
-
         }
 
       }
@@ -233,12 +229,8 @@ TSceneKit {
               fields [  ]
 
             }
-            appearance 
-            AppearanceKit {
-              material 
-              DEF MaterialGL Material {
-
-              }
+            material 
+            Material {
 
             }
 

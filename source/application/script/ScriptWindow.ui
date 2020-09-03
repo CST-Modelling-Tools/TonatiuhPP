@@ -24,7 +24,11 @@
        <enum>Qt::Vertical</enum>
       </property>
       <widget class="CodeEditor" name="codeEditor"/>
-      <widget class="QPlainTextEdit" name="logWidget"/>
+      <widget class="QPlainTextEdit" name="logWidget">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
      </widget>
     </item>
    </layout>

@@ -349,7 +349,7 @@ void MainWindow::SetupTreeView()
     // tree
     ui->sceneView->setModel(m_modelScene);
     ui->sceneView->setSelectionModel(m_modelSelection);
-    ui->sceneView->setRootIndex(m_modelScene->indexFromUrl(""));
+    ui->sceneView->setRootIndex(m_modelScene->indexFromUrl("//Layout")); // also in ChangeModelScene
 
     connect(ui->sceneView, SIGNAL(dragAndDrop(const QModelIndex&,const QModelIndex&)),
             this, SLOT(ItemDragAndDrop(const QModelIndex&,const QModelIndex&)) );
@@ -359,6 +359,17 @@ void MainWindow::SetupTreeView()
             this, SLOT(ShowMenu(const QModelIndex&)) );
     connect(ui->sceneView, SIGNAL(nodeNameModificated(const QModelIndex&,const QString&)),
             this, SLOT(ChangeNodeName(const QModelIndex&,const QString&)) );
+
+    // tree world
+    connect(
+        ui->treeWorldWidget, SIGNAL(itemClicked(QTreeWidgetItem*, int)),
+        this, SLOT(treeWorldClicked(QTreeWidgetItem*, int))
+    );
+    connect(
+        ui->treeWorldWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
+        this, SLOT(treeWorldDoubleClicked(QTreeWidgetItem*, int))
+    );
+
 
     // parameters
     ui->parametersTabs->removeTab(1);
@@ -376,16 +387,6 @@ void MainWindow::SetupTreeView()
     connect(
         m_modelSelection, SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)),
         this, SLOT(ChangeSelection(const QModelIndex&))
-    );
-
-    //
-    connect(
-        ui->treeWorldWidget, SIGNAL(itemClicked(QTreeWidgetItem*, int)),
-        this, SLOT(treeWorldClicked(QTreeWidgetItem*, int))
-    );
-    connect(
-        ui->treeWorldWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
-        this, SLOT(treeWorldDoubleClicked(QTreeWidgetItem*, int))
     );
 }
 
@@ -703,13 +704,13 @@ void MainWindow::undo()
 void MainWindow::RunCompleteRayTracer()
 {
     InstanceNode* instanceRoot = 0;
-    InstanceNode* instanceSun = 0;
+    InstanceNode instanceSun(0);
     AirTransmission* air = 0;
 
 //    QElapsedTimer timer;
 //    timer.start();
 
-    if (!ReadyForRaytracing(instanceRoot, instanceSun, air) ) // ? 2 times
+    if (!ReadyForRaytracing(instanceRoot, &instanceSun, air) ) // ? 2 times
         return;
 
 //    std::cout << "Elapsed time (ReadyForRaytracing): " << timer.elapsed() << std::endl;
@@ -1044,6 +1045,7 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::treeWorldClicked(QTreeWidgetItem* item, int column)
 {
+    m_graphicsRoot->deselectAll();
     TSceneKit* sceneKit = m_document->getSceneKit();
     SoNode* node = 0;
     QString name = item->text(0);
@@ -1289,9 +1291,10 @@ void MainWindow::Delete()
 
     QModelIndex index = m_modelSelection->currentIndex();
     m_modelSelection->clearSelection();
-
-    InstanceNode* instance = m_modelScene->getInstance(index);
-    m_modelSelection->setCurrentIndex(m_modelScene->indexFromUrl(instance->getParent()->getURL()), QItemSelectionModel::ClearAndSelect);
+    if (index != ui->sceneView->rootIndex() ) {
+        InstanceNode* instance = m_modelScene->getInstance(index);
+        m_modelSelection->setCurrentIndex(m_modelScene->indexFromUrl(instance->getParent()->getURL()), QItemSelectionModel::ClearAndSelect);
+    }
 
     Delete(index);
 }
@@ -1323,18 +1326,13 @@ bool MainWindow::Delete(QModelIndex index)
 {
     if (!index.isValid()) return false;
     if (index == ui->sceneView->rootIndex() ) return false;
-    if (index.parent() == ui->sceneView->rootIndex() ) return false;
+//    if (index.parent() == ui->sceneView->rootIndex() ) return false;
 
     InstanceNode* instance = m_modelScene->getInstance(index);
     SoNode* node = instance->getNode();
 
-    if (node->getTypeId().isDerivedFrom(SunKit::getClassTypeId()))
-        return false;
-    else
-    {
-        CmdDelete* cmd = new CmdDelete(index, m_modelScene);
-        m_undoStack->push(cmd);
-    }
+    CmdDelete* cmd = new CmdDelete(index, m_modelScene);
+    m_undoStack->push(cmd);
 
 //    UpdateLightSize();
     setDocumentModified(true);
@@ -1610,8 +1608,8 @@ void MainWindow::InsertFileComponent(QString componentFileName)
 void MainWindow::InsertScene(QScriptValue v)
 {
     QModelIndex parentIndex;
-    if ((!ui->sceneView->currentIndex().isValid() ) || (ui->sceneView->currentIndex() == ui->sceneView->rootIndex() ) )
-        parentIndex = m_modelScene->index(0, 0, ui->sceneView->rootIndex());
+    if (!ui->sceneView->currentIndex().isValid())
+        parentIndex = ui->sceneView->rootIndex();
     else
         parentIndex = ui->sceneView->currentIndex();
 
@@ -1621,8 +1619,8 @@ void MainWindow::InsertScene(QScriptValue v)
         emit Abort(tr("InsertFileComponent: Parent node is not valid node type.") );
         return;
     }
-    NodeObject* no = (NodeObject*)v.toQObject();
-    TSeparatorKit* kit = (TSeparatorKit*)no->getNode();
+    NodeObject* no = (NodeObject*) v.toQObject();
+    TSeparatorKit* kit = (TSeparatorKit*) no->getNode();
     CmdInsertNode* cmd = new CmdInsertNode(kit, parentIndex);
     cmd->setText("Insert SeparatorKit node");
     m_undoStack->push(cmd);
@@ -1760,7 +1758,8 @@ void MainWindow::FileOpen(QString fileName)
 void MainWindow::Run()
 {
     InstanceNode* instanceLayout = 0;
-    InstanceNode* instanceSun = 0;
+    InstanceNode instanceSun(0);
+
 
     AirTransmission* air = 0;
 
@@ -1769,7 +1768,7 @@ void MainWindow::Run()
 
     UpdateLightSize();
 
-    if (!ReadyForRaytracing(instanceLayout, instanceSun, air) ) return;
+    if (!ReadyForRaytracing(instanceLayout, &instanceSun, air) ) return;
 
     if (!m_photonsBuffer->getExporter() )
     {
@@ -1789,7 +1788,7 @@ void MainWindow::Run()
 
     instanceLayout->updateTree(Transform::Identity);
 
-    SunKit* sunKit = (SunKit*) instanceSun->getNode();
+    SunKit* sunKit = (SunKit*) instanceSun.getNode();
     SunPosition* sunPosition = (SunPosition*) sunKit->getPart("position", false);
     SunShape* sunShape = (SunShape*) sunKit->getPart("shape", false);
     SunAperture* sunAperture = (SunAperture*) sunKit->getPart("aperture", false);
@@ -1835,7 +1834,7 @@ void MainWindow::Run()
         airTemp = air;
 
     photonMap = QtConcurrent::map(raysPerThread, RayTracer(instanceLayout,
-                                                           instanceSun, sunAperture, sunShape, airTemp,
+                                                           &instanceSun, sunAperture, sunShape, airTemp,
                                                            *m_rand,
                                                            &mutex, m_photonsBuffer, &mutexPhotonMap,
                                                            exportSurfaceList) );
@@ -2338,9 +2337,14 @@ void MainWindow::SoManip_to_SoTransform()
 
 void MainWindow::ChangeSelection(const QModelIndex& index)
 {
-    InstanceNode* instance = m_modelScene->getInstance(index);
-    SoNode* node = instance->getNode();
-    ui->parametersTabs->setNode(node);
+    if (ui->tabWidget->currentIndex() == 1) {
+        InstanceNode* instance = m_modelScene->getInstance(index);
+        SoNode* node = instance->getNode();
+        ui->parametersTabs->setNode(node);
+    } else if (ui->tabWidget->currentIndex() == 0)
+    {
+        treeWorldClicked(ui->treeWorldWidget->currentItem(), 0); // redo
+    }
 }
 
 /*!
@@ -2453,13 +2457,12 @@ void MainWindow::ChangeModelScene()
     m_graphicsRoot->setDocument(m_document);
     m_modelScene->setDocument(m_document);
 
-    QModelIndex viewLayoutIndex = m_modelScene->indexFromUrl("");
-    InstanceNode* viewLayout = m_modelScene->getInstance(viewLayoutIndex);
-    ui->sceneView->setRootIndex(viewLayoutIndex);
+    QModelIndex index = m_modelScene->indexFromUrl("//Layout");
+    ui->sceneView->setRootIndex(index);
 
-    InstanceNode* concentratorRoot = viewLayout->children[1];
-
-    m_modelSelection->setCurrentIndex(m_modelScene->indexFromUrl(concentratorRoot->getURL() ), QItemSelectionModel::ClearAndSelect);
+//    InstanceNode* viewLayout = m_modelScene->getInstance(index);
+//    InstanceNode* concentratorRoot = viewLayout->children[0];
+//    m_modelSelection->setCurrentIndex(m_modelScene->indexFromUrl(concentratorRoot->getURL() ), QItemSelectionModel::ClearAndSelect);
 }
 
 /*!
@@ -2603,7 +2606,7 @@ void MainWindow::UpdateRecentFileActions()
  * Checks whether a ray tracing can be started with the current light and model.
  */
 bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
-                                    InstanceNode*& instanceSun,
+                                    InstanceNode* instanceSun,
                                     AirTransmission*& air)
 {
     TSceneKit* sceneKit = m_document->getSceneKit();
@@ -2612,13 +2615,11 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
     InstanceNode* instanceScene = m_modelScene->getInstance(QModelIndex());
     if (!instanceScene) return false;
 
-    instanceSun = instanceScene->children[0]->children[1];
-    if (!instanceSun) return false;
-
-    instanceLayout = instanceScene->children[1];
+    instanceLayout = instanceScene->children[0];
     if (!instanceLayout) return false;
 
     SunKit* sunKit = (SunKit*) sceneKit->getPart("world.sun", false);
+    instanceSun->setNode(sunKit);
     instanceSun->setTransform(tgf::makeTransform(sunKit->m_transform));
 
     air = (AirTransmission*) sceneKit->getPart("world.air.transmission", false);
@@ -2773,6 +2774,7 @@ bool MainWindow::StartOver(const QString& fileName)
     }
 
     ChangeModelScene();
+
     ui->sceneView->expandToDepth(1);
     Select("//Layout");
     on_actionViewAll_triggered(); // discard sun

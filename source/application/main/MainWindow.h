@@ -211,7 +211,7 @@ private:
     bool Paste(QModelIndex index, tgc::PasteType type);
 
     bool ReadyForRaytracing(InstanceNode*& instanceLayout,
-                            InstanceNode*& instanceSun,
+                            InstanceNode* instanceSun,
                             AirTransmission*& air);
     bool SaveFile(const QString& fileName);
     void SetCurrentFile(const QString& fileName);

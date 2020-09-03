@@ -475,17 +475,11 @@ void SceneTreeModel::removeCoinNode(int row, SoBaseKit* parent)
 void SceneTreeModel::replaceAir(AirKit* air)
 {
     m_nodeScene->setPart("world.air", air);
-//    InstanceNode* instW = m_instanceScene->children[0];
-//    instW->children[2]->setNode(air);
-//    emit layoutChanged();
 }
 
 void SceneTreeModel::replaceSun(SunKit* sun)
 {
     m_nodeScene->setPart("world.sun", sun);
-//    InstanceNode* instW = m_instanceScene->children[0];
-//    instW->children[1]->setNode(sun);
-//    emit layoutChanged();
 }
 
 /**
