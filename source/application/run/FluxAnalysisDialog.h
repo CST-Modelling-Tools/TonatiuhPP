@@ -10,7 +10,7 @@ class FluxAnalysisDialog;
 #include "libraries/math/2D/Matrix2D.h"
 
 class InstanceNode;
-class SceneModel;
+class SceneTreeModel;
 class QIntValidator;
 class Random;
 class TSceneKit;
@@ -22,7 +22,7 @@ class FluxAnalysisDialog: public QDialog
     Q_OBJECT
 
 public:
-    FluxAnalysisDialog(TSceneKit* sceneKit, SceneModel* sceneModel, int sunWidthDivisions, int sunHeightDivisions,
+    FluxAnalysisDialog(TSceneKit* sceneKit, SceneTreeModel* sceneModel, int sunWidthDivisions, int sunHeightDivisions,
                        Random* randomDeviate, QWidget* parent = 0);
     ~FluxAnalysisDialog();
 
@@ -52,7 +52,7 @@ private:
 private:
     Ui::FluxAnalysisDialog* ui;
     FluxAnalysis* m_fluxAnalysis;
-    SceneModel* m_sceneModel;
+    SceneTreeModel* m_sceneModel;
     QString m_fluxSurfaceURL;
     QString m_fluxLabel;
 };

@@ -37,7 +37,7 @@ class TrackerFactory;
 class AirTransmission;
 class SoCamera;
 class SoGroup;
-class SceneModel;
+class SceneTreeModel;
 struct PhotonsSettings;
 class ProfileFactory;
 class UndoView;
@@ -247,7 +247,7 @@ private:
 
     Document* m_document;
     GraphicRoot* m_graphicsRoot;
-    SceneModel* m_modelScene;
+    SceneTreeModel* m_modelScene;
     QItemSelectionModel* m_modelSelection;
 
     QString m_lastExportFileName;

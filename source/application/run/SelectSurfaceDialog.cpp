@@ -7,13 +7,13 @@
 #include "kernel/run/InstanceNode.h"
 #include "kernel/scene/TShapeKit.h"
 #include "tree/SceneFilter.h"
-#include "tree/SceneModel.h"
-#include "tree/SceneView.h"
+#include "tree/SceneTreeModel.h"
+#include "tree/SceneTreeView.h"
 
 /*!
  * Creates a dialog object to select a surface from the \a currentSceneModel.
  */
-SelectSurfaceDialog::SelectSurfaceDialog(SceneModel& model, bool enableLight, QWidget* parent):
+SelectSurfaceDialog::SelectSurfaceDialog(SceneTreeModel& model, bool enableLight, QWidget* parent):
     QDialog(parent),
     ui(new Ui::SelectSurfaceDialog),
     m_isLightVisible(enableLight),
@@ -45,9 +45,6 @@ SelectSurfaceDialog::SelectSurfaceDialog(SceneModel& model, bool enableLight, QW
     resize(36*q, 24*q);
 }
 
-/*!
- * Destroys dialog object.
- */
 SelectSurfaceDialog::~SelectSurfaceDialog()
 {
     delete ui;

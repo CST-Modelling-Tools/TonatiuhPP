@@ -1,7 +1,7 @@
 #include "SunDialog.h"
 #include "ui_SunDialog.h"
 
-#include "tree/SceneModel.h"
+#include "tree/SceneTreeModel.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeRT.h"
@@ -14,7 +14,7 @@
 #include "parameters/ParametersModel.h"
 
 
-SunDialog::SunDialog(SceneModel* sceneModel,
+SunDialog::SunDialog(SceneTreeModel* sceneModel,
     QMap<QString, SunFactory*> sunShapeMap,
     QWidget* parent
 ):

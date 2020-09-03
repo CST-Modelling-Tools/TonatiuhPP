@@ -4,7 +4,7 @@
 #include "libraries/math/2D/Matrix2D.h"
 
 class TSceneKit;
-class SceneModel;
+class SceneTreeModel;
 class InstanceNode;
 class Random;
 class PhotonsBuffer;
@@ -13,7 +13,7 @@ class FluxAnalysis
 {
 
 public:
-    FluxAnalysis(TSceneKit* sceneKit, SceneModel* sceneModel, int sunWidthDivisions, int sunHeightDivisions, Random* randomDeviate);
+    FluxAnalysis(TSceneKit* sceneKit, SceneTreeModel* sceneModel, int sunWidthDivisions, int sunHeightDivisions, Random* randomDeviate);
     ~FluxAnalysis();
 
     QString getShapeType(QString nodeURL);
@@ -38,7 +38,7 @@ private:
     void fillBins();
 
     TSceneKit* m_sceneKit;
-    SceneModel* m_sceneModel;
+    SceneTreeModel* m_sceneModel;
     InstanceNode* m_instanceLayout;
     int m_sunWidthDivisions;
     int m_sunHeightDivisions;

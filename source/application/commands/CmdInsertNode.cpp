@@ -4,7 +4,7 @@
 
 #include "libraries/math/gcf.h"
 #include "kernel/run/InstanceNode.h"
-#include "tree/SceneModel.h"
+#include "tree/SceneTreeModel.h"
 
 
 CmdInsertNode::CmdInsertNode(SoNode* node, QModelIndex& index, QUndoCommand* parent):
@@ -15,7 +15,7 @@ CmdInsertNode::CmdInsertNode(SoNode* node, QModelIndex& index, QUndoCommand* par
         gcf::SevereError("CmdInsertShapeKit called with NULL TShapeKit*");
     m_node->ref();
 
-    m_model = (SceneModel*) index.model();
+    m_model = (SceneTreeModel*) index.model();
     if (!index.isValid())
         gcf::SevereError("CmdInsertShapeKit called with invalid ModelIndex.");
     InstanceNode* instance = m_model->getInstance(index);

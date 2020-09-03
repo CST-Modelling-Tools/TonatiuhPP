@@ -1,11 +1,11 @@
 #include "CmdAirModified.h"
 
 #include "kernel/air/AirKit.h"
-#include "application/tree/SceneModel.h"
+#include "application/tree/SceneTreeModel.h"
 #include "kernel/scene/TSceneKit.h"
 
 
-CmdAirModified::CmdAirModified(AirKit* air, SceneModel* model, QUndoCommand* parent):
+CmdAirModified::CmdAirModified(AirKit* air, SceneTreeModel* model, QUndoCommand* parent):
     QUndoCommand("Air modified", parent),
     m_model(model)
 {

@@ -53,8 +53,8 @@ HEADERS += \
     script/tonatiuh_script.h \
     tree/SceneDelegate.h \
     tree/SceneFilter.h \
-    tree/SceneModel.h \
-    tree/SceneView.h \
+    tree/SceneTreeModel.h \
+    tree/SceneTreeView.h \
     tree/SoPathVariant.h \
     view/ExaminerViewer.h \
     view/ExaminerViewer2.h \
@@ -112,8 +112,8 @@ SOURCES += \
     script/tonatiuh_script.cpp \
     tree/SceneDelegate.cpp \
     tree/SceneFilter.cpp \
-    tree/SceneModel.cpp \
-    tree/SceneView.cpp \
+    tree/SceneTreeModel.cpp \
+    tree/SceneTreeView.cpp \
     tree/SoPathVariant.cpp \
     view/ExaminerViewer.cpp \
     view/ExaminerViewer2.cpp \

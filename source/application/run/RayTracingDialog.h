@@ -4,7 +4,7 @@
 #include <QVector>
 
 class RandomFactory;
-class SceneModel;
+class SceneTreeModel;
 class PhotonsFactory;
 struct PhotonsSettings;
 
@@ -36,7 +36,7 @@ public:
     int photonBufferSize() const;
     bool photonBufferAppend() const;
 
-    void setPhotonSettings(SceneModel* scene, QVector<PhotonsFactory*> factories, PhotonsSettings* ps);
+    void setPhotonSettings(SceneTreeModel* scene, QVector<PhotonsFactory*> factories, PhotonsSettings* ps);
     PhotonsSettings getPhotonSettings() const;
 
 private slots:
@@ -46,6 +46,6 @@ private slots:
 
 private:
     Ui::RayTracingDialog* ui;
-    SceneModel* m_scene;
+    SceneTreeModel* m_scene;
     QStringList m_surfaces;
 };

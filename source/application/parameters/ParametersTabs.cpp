@@ -9,12 +9,6 @@ ParametersTabs::ParametersTabs(QWidget* parent):
 {  
     m_view = new ParametersView(this);
     addTab(m_view, "");
-
-    setStyleSheet(R"(
-QTabWidget::pane {
-border:none;
-}
-    )");
 }
 
 void ParametersTabs::setNode(SoNode* node)

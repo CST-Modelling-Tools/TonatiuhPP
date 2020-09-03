@@ -18,7 +18,7 @@ public:
     virtual void setPhotonPower(double /*p*/) {}
     virtual void endExport() {}
 
-    void setSceneModel(SceneModel& sceneModel) {m_sceneModel = &sceneModel;}
+    void setSceneModel(SceneTreeModel& sceneModel) {m_sceneModel = &sceneModel;}
     void setPhotonSettings(PhotonsSettings* ps);
 
     static QStringList getParameterNames() {return QStringList();}
@@ -27,7 +27,7 @@ public:
     NAME_ICON_FUNCTIONS("No export", ":/images/PhotonsDefault.png")
 
 protected:
-    SceneModel* m_sceneModel;
+    SceneTreeModel* m_sceneModel;
 
     bool m_saveAllPhotonsData;
     QStringList m_surfaces;

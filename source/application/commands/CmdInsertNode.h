@@ -4,7 +4,7 @@
 
 class SoNode;
 class QModelIndex;
-class SceneModel;
+class SceneTreeModel;
 class SoBaseKit;
 
 
@@ -20,6 +20,6 @@ public:
 private:
     SoNode* m_node;
     SoBaseKit* m_parent;
-    SceneModel* m_model;
+    SceneTreeModel* m_model;
     int m_row;
 };

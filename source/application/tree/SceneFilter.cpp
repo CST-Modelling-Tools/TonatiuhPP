@@ -4,7 +4,7 @@
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/ShapeRT.h"
-#include "tree/SceneModel.h"
+#include "tree/SceneTreeModel.h"
 
 
 SceneFilter::SceneFilter(QObject* parent):
@@ -23,7 +23,7 @@ bool SceneFilter::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParen
 {
     if (m_shapes.isEmpty()) return true;
 
-    SceneModel* model = dynamic_cast<SceneModel*>(sourceModel());
+    SceneTreeModel* model = dynamic_cast<SceneTreeModel*>(sourceModel());
     QModelIndex index = model->index(sourceRow, 0, sourceParent);
     InstanceNode* instance = model->getInstance(index);
     if (!instance) return false;

@@ -5,12 +5,12 @@
 #include "SceneDelegate.h"
 
 
-class SceneView: public QTreeView
+class SceneTreeView: public QTreeView
 {
     Q_OBJECT
 
 public:
-    SceneView(QWidget* parent = 0);
+    SceneTreeView(QWidget* parent = 0);
 
 signals:
     void dragAndDrop(const QModelIndex& newParent, const QModelIndex& item);

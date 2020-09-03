@@ -12,7 +12,7 @@ class InstanceNode;
 class Random;
 class RandomFactory;
 class QScriptContext;
-class SceneModel;
+class SceneTreeModel;
 class PhotonsBuffer;
 class Transform;
 
@@ -73,7 +73,7 @@ private:
     QVector<RandomFactory*> m_randomFactories;
     Random* m_random;
 
-    SceneModel* m_sceneModel;
+    SceneTreeModel* m_sceneModel;
 
     double m_area;
     int m_widthDivisions;

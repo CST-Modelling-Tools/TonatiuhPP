@@ -2,11 +2,11 @@
 
 #include <Inventor/nodekits/SoBaseKit.h>
 
-#include "tree/SceneModel.h"
+#include "tree/SceneTreeModel.h"
 #include "kernel/run/InstanceNode.h"
 
 
-CmdCut::CmdCut(const QModelIndex& index, SoNode*& clipboard, SceneModel* model, QUndoCommand* parent):
+CmdCut::CmdCut(const QModelIndex& index, SoNode*& clipboard, SceneTreeModel* model, QUndoCommand* parent):
     QUndoCommand("Cut", parent),
     m_clipboard(clipboard),
     m_model(model)

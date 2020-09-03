@@ -3,7 +3,7 @@
 #include "libraries/math/gcf.h"
 
 #include "CmdPaste.h"
-#include "tree/SceneModel.h"
+#include "tree/SceneTreeModel.h"
 #include "kernel/run/InstanceNode.h"
 
 /**
@@ -14,7 +14,7 @@
 CmdPaste::CmdPaste(tgc::PasteType type,
                    const QModelIndex& indexParent,
                    SoNode*& node,
-                   SceneModel* model,
+                   SceneTreeModel* model,
                    QUndoCommand* parent):
     QUndoCommand("Paste", parent),
     m_pasteType(type),

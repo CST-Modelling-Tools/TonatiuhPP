@@ -1,4 +1,4 @@
-#include "SceneModel.h"
+#include "SceneTreeModel.h"
 
 #include <QIcon>
 #include <QMessageBox>
@@ -30,7 +30,8 @@
 #include "tree/SoPathVariant.h"
 #include "main/Document.h"
 
-SceneModel::SceneModel(QObject* parent):
+
+SceneTreeModel::SceneTreeModel(QObject* parent):
     QAbstractItemModel(parent),
     m_nodeRoot(0),
     m_nodeScene(0),
@@ -39,7 +40,7 @@ SceneModel::SceneModel(QObject* parent):
 
 }
 
-SceneModel::~SceneModel()
+SceneTreeModel::~SceneTreeModel()
 {
     clear();
 }
@@ -49,7 +50,7 @@ SceneModel::~SceneModel()
  *
  * Clears nodes from the model.
  */
-void SceneModel::clear()
+void SceneTreeModel::clear()
 {
     deleteInstanceTree(m_instanceScene);
 
@@ -62,7 +63,7 @@ void SceneModel::clear()
  *
  * Creates nodes for the model to the scene subnodes.
  */
-void SceneModel::setDocument(Document* document)
+void SceneTreeModel::setDocument(Document* document)
 {
     beginResetModel();
 
@@ -96,7 +97,7 @@ void SceneModel::setDocument(Document* document)
     endResetModel();
 }
 
-InstanceNode* SceneModel::addInstanceNode(InstanceNode* parent, SoNode* node)
+InstanceNode* SceneTreeModel::addInstanceNode(InstanceNode* parent, SoNode* node)
 {
     InstanceNode* instance = new InstanceNode(node);
     parent->addChild(instance);
@@ -104,7 +105,7 @@ InstanceNode* SceneModel::addInstanceNode(InstanceNode* parent, SoNode* node)
     return instance;
 }
 
-void SceneModel::generateInstanceTree(InstanceNode* instance)
+void SceneTreeModel::generateInstanceTree(InstanceNode* instance)
 {
     SoNode* node = instance->getNode();
     if (TSeparatorKit* kit = dynamic_cast<TSeparatorKit*>(node))
@@ -120,7 +121,7 @@ void SceneModel::generateInstanceTree(InstanceNode* instance)
     }
 }
 
-void SceneModel::deleteInstanceTree(InstanceNode* instance)
+void SceneTreeModel::deleteInstanceTree(InstanceNode* instance)
 {
     while (instance->children.count() > 0)
     {
@@ -147,25 +148,25 @@ void SceneModel::deleteInstanceTree(InstanceNode* instance)
     }
 }
 
-QModelIndex SceneModel::index(int row, int column, const QModelIndex& parent) const
+QModelIndex SceneTreeModel::index(int row, int column, const QModelIndex& parent) const
 {
     if (!m_instanceScene) return QModelIndex();
     InstanceNode* instance = getInstance(parent);
     return createIndex(row, column, instance->children[row]);
 }
 
-int SceneModel::rowCount(const QModelIndex& index) const
+int SceneTreeModel::rowCount(const QModelIndex& index) const
 {
     InstanceNode* instance = getInstance(index);
     return instance ? instance->children.count() : 0;
 }
 
-int SceneModel::columnCount(const QModelIndex& /*index*/) const
+int SceneTreeModel::columnCount(const QModelIndex& /*index*/) const
 {
     return 1;
 }
 
-QModelIndex SceneModel::parent(const QModelIndex& index) const
+QModelIndex SceneTreeModel::parent(const QModelIndex& index) const
 {
     InstanceNode* instance = getInstance(index);
     if (!instance) return QModelIndex();
@@ -180,7 +181,7 @@ QModelIndex SceneModel::parent(const QModelIndex& index) const
     return createIndex(row, 0, instanceParent);
 }
 
-QVariant SceneModel::data(const QModelIndex& index, int role) const
+QVariant SceneTreeModel::data(const QModelIndex& index, int role) const
 {
     if (role != Qt::DisplayRole && role != Qt::UserRole && role != Qt::DecorationRole) return QVariant();
 
@@ -253,7 +254,7 @@ QVariant SceneModel::data(const QModelIndex& index, int role) const
     return QVariant();
 }
 
-QVariant SceneModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant SceneTreeModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (orientation == Qt::Horizontal) {
         if (role == Qt::DisplayRole) {
@@ -263,7 +264,7 @@ QVariant SceneModel::headerData(int section, Qt::Orientation orientation, int ro
     return QVariant();
 }
 
-Qt::ItemFlags SceneModel::flags(const QModelIndex& index) const
+Qt::ItemFlags SceneTreeModel::flags(const QModelIndex& index) const
 {
     Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
     if (!index.isValid()) return defaultFlags;
@@ -271,23 +272,23 @@ Qt::ItemFlags SceneModel::flags(const QModelIndex& index) const
     return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsEditable | defaultFlags;
 }
 
-Qt::DropActions SceneModel::supportedDropActions() const
+Qt::DropActions SceneTreeModel::supportedDropActions() const
 {
     return Qt::CopyAction | Qt::MoveAction;
 }
 
-Qt::DropActions SceneModel::supportedDragActions() const
+Qt::DropActions SceneTreeModel::supportedDragActions() const
 {
     return Qt::CopyAction | Qt::MoveAction;
 }
 
-InstanceNode* SceneModel::getInstance(const QModelIndex& index) const
+InstanceNode* SceneTreeModel::getInstance(const QModelIndex& index) const
 {
     if (!index.isValid()) return m_instanceScene;
     return (InstanceNode*) index.internalPointer();
 }
 
-bool SceneModel::setNodeName(SoNode* node, QString name)
+bool SceneTreeModel::setNodeName(SoNode* node, QString name)
 {
     SbName sbname(name.toStdString().c_str());
 
@@ -314,7 +315,7 @@ bool SceneModel::setNodeName(SoNode* node, QString name)
  *
  * \sa IndexFromNodeUrl, NodeFromIndex, PathFromIndex.
 **/
-QModelIndex SceneModel::indexFromUrl(QString url) const
+QModelIndex SceneTreeModel::indexFromUrl(QString url) const
 {
     QStringList path = url.split("/", QString::SkipEmptyParts);
 
@@ -346,7 +347,7 @@ QModelIndex SceneModel::indexFromUrl(QString url) const
  *
  * \sa IndexFromNodeUrl, NodeFromIndex, PathFromIndex.
 **/
-QModelIndex SceneModel::indexFromPath(const SoNodeKitPath& path) const
+QModelIndex SceneTreeModel::indexFromPath(const SoNodeKitPath& path) const
 {
     SoBaseKit* coinNode = static_cast<SoBaseKit*>(path.getTail());
     if (!coinNode) gcf::SevereError("IndexFromPath Null coinNode.");
@@ -395,7 +396,7 @@ QModelIndex SceneModel::indexFromPath(const SoNodeKitPath& path) const
     return index(row, 0, indexParent);
 }
 
-SoNodeKitPath* SceneModel::pathFromIndex(const QModelIndex& index) const
+SoNodeKitPath* SceneTreeModel::pathFromIndex(const QModelIndex& index) const
 {
     // search for kits only
     SoNode* node = getInstance(index)->getNode();
@@ -430,7 +431,7 @@ SoNodeKitPath* SceneModel::pathFromIndex(const QModelIndex& index) const
     return path; // make unref later
 }
 
-int SceneModel::insertCoinNode(SoNode* node, SoBaseKit* parent)
+int SceneTreeModel::insertCoinNode(SoNode* node, SoBaseKit* parent)
 {
     int row = -1;
     if (dynamic_cast<TSeparatorKit*>(parent))
@@ -462,7 +463,7 @@ int SceneModel::insertCoinNode(SoNode* node, SoBaseKit* parent)
     return row;
 }
 
-void SceneModel::removeCoinNode(int row, SoBaseKit* parent)
+void SceneTreeModel::removeCoinNode(int row, SoBaseKit* parent)
 {
     if (parent->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
     {
@@ -481,7 +482,7 @@ void SceneModel::removeCoinNode(int row, SoBaseKit* parent)
     emit layoutChanged();
 }
 
-void SceneModel::replaceAir(AirKit* air)
+void SceneTreeModel::replaceAir(AirKit* air)
 {
     m_nodeScene->setPart("world.air", air);
     InstanceNode* instW = m_instanceScene->children[0];
@@ -489,7 +490,7 @@ void SceneModel::replaceAir(AirKit* air)
     emit layoutChanged();
 }
 
-void SceneModel::replaceSun(SunKit* sun)
+void SceneTreeModel::replaceSun(SunKit* sun)
 {
     m_nodeScene->setPart("world.sun", sun);
     InstanceNode* instW = m_instanceScene->children[0];
@@ -502,7 +503,7 @@ void SceneModel::replaceSun(SunKit* sun)
  *
  * Returns whether the cut is successfully done.
 **/
-bool SceneModel::Cut(SoBaseKit& parent, int row)
+bool SceneTreeModel::Cut(SoBaseKit& parent, int row)
 {
     if (row < 0) return false;
 
@@ -562,7 +563,7 @@ bool SceneModel::Cut(SoBaseKit& parent, int row)
  * Adds a child to \a coinParent as \a row child. If \a type is tgc::Copied, the added child is a copy of \a coinNode. But the type is tgc::Shared the node is shared with previous parent.
  * Return true if the paste action is correctly done. Otherwise returns false.
 **/
-bool SceneModel::Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinNode, int row) // bugs
+bool SceneTreeModel::Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinNode, int row) // bugs
 {
     SoNode* child;
     SoNode* pCoinParent = &coinParent;
@@ -629,7 +630,7 @@ bool SceneModel::Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinN
     return true;
 }
 
-void SceneModel::UpdateSceneModel()
+void SceneTreeModel::UpdateSceneModel()
 {
     emit layoutChanged();
 }

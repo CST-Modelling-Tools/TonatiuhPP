@@ -16,7 +16,7 @@ class Random;
 class Ray;
 class SoNode;
 class TShapeKit;
-class SceneModel;
+class SceneTreeModel;
 
 
 //!  InstanceNode class represents a instance of a node in the scene.

@@ -3,7 +3,7 @@
 #include <QDialog>
 #include <QMap>
 
-class SceneModel;
+class SceneTreeModel;
 class SunFactory;
 class SunKit;
 class SoNode;
@@ -18,7 +18,7 @@ class SunDialog: public QDialog
     Q_OBJECT
 
 public:
-    SunDialog(SceneModel* sceneModel, QMap<QString, SunFactory*> sunShapeMap, QWidget* parent = 0);
+    SunDialog(SceneTreeModel* sceneModel, QMap<QString, SunFactory*> sunShapeMap, QWidget* parent = 0);
     ~SunDialog();
 
     SunKit* getSun() {return m_sun;}
@@ -38,7 +38,7 @@ protected slots:
 
 private:
     Ui::SunDialog* ui;
-    SceneModel* m_sceneModel;
+    SceneTreeModel* m_sceneModel;
     QMap<QString, SunFactory*> m_sunShapeMap;
     SunKit* m_sun;
 };

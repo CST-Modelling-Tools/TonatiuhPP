@@ -6,152 +6,228 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>751</width>
-    <height>356</height>
+    <width>722</width>
+    <height>606</height>
    </rect>
   </property>
   <property name="acceptDrops">
    <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <item>
-     <widget class="QSplitter" name="splitterH">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <widget class="QSplitter" name="splitterV">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <widget class="QWidget" name="widget" native="true">
-        <property name="styleSheet">
-         <string notr="true">QPushButton {  
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
 border: none;
-padding: 5;
+padding: 3;
 }   
 
 QPushButton:hover {
 background-color: #d7e3ed;
 }  
+
+QTabWidget::pane {
+margin-top: 3;
+border:none;
+}
+
+QTabBar::tab {
+border: none;
+padding: 3 5 3 5;
+color: gray;
+}
+
+QTabBar::tab:selected {
+color: black;
+}
+
+QTabBar::tab:hover {
+background-color: #d7e3ed;
+}
 </string>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QSplitter" name="splitterH">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QWidget" name="widget" native="true">
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>3D View</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QSplitter" name="splitterV">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <widget class="QTabWidget" name="tabWidget">
+        <property name="currentIndex">
+         <number>1</number>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,1">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QPushButton" name="buttonInsertNode">
-             <property name="toolTip">
-              <string>Add Node</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../resources.qrc">
-               <normaloff>:/images/scene/nodeGroup.png</normaloff>:/images/scene/nodeGroup.png</iconset>
-             </property>
-             <property name="shortcut">
-              <string>Ctrl+A, N</string>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="buttonInsertShape">
-             <property name="toolTip">
-              <string>Add Shape</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../resources.qrc">
-               <normaloff>:/images/scene/nodeShape.png</normaloff>:/images/scene/nodeShape.png</iconset>
-             </property>
-             <property name="shortcut">
-              <string>Ctrl+A, S</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="buttonInsertTracker">
-             <property name="toolTip">
-              <string>Add Tracker</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../resources.qrc">
-               <normaloff>:/images/scene/nodeTracker.png</normaloff>:/images/scene/nodeTracker.png</iconset>
-             </property>
-             <property name="shortcut">
-              <string>Ctrl+A, T</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>0</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>250</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="placeholderText">
-              <string>Search</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="SceneView" name="sceneView">
-           <property name="acceptDrops">
-            <bool>true</bool>
-           </property>
-           <property name="dragEnabled">
-            <bool>true</bool>
-           </property>
-           <property name="dragDropMode">
-            <enum>QAbstractItemView::DragDrop</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <widget class="QWidget" name="tabWorld">
+         <attribute name="title">
+          <string>World</string>
+         </attribute>
+        </widget>
+        <widget class="QWidget" name="tabLayout">
+         <attribute name="title">
+          <string>Layout</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,1">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="buttonInsertNode">
+              <property name="toolTip">
+               <string>Add Node</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../resources.qrc">
+                <normaloff>:/images/scene/nodeGroup.png</normaloff>:/images/scene/nodeGroup.png</iconset>
+              </property>
+              <property name="shortcut">
+               <string>Ctrl+A, N</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="buttonInsertShape">
+              <property name="toolTip">
+               <string>Add Shape</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../resources.qrc">
+                <normaloff>:/images/scene/nodeShape.png</normaloff>:/images/scene/nodeShape.png</iconset>
+              </property>
+              <property name="shortcut">
+               <string>Ctrl+A, S</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="buttonInsertTracker">
+              <property name="toolTip">
+               <string>Add Tracker</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../resources.qrc">
+                <normaloff>:/images/scene/nodeTracker.png</normaloff>:/images/scene/nodeTracker.png</iconset>
+              </property>
+              <property name="shortcut">
+               <string>Ctrl+A, T</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>250</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="placeholderText">
+               <string>Search</string>
+              </property>
+              <property name="clearButtonEnabled">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="SceneTreeView" name="sceneView">
+            <property name="acceptDrops">
+             <bool>true</bool>
+            </property>
+            <property name="dragEnabled">
+             <bool>true</bool>
+            </property>
+            <property name="dragDropMode">
+             <enum>QAbstractItemView::DragDrop</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tabResources">
+         <attribute name="title">
+          <string>Resources</string>
+         </attribute>
+        </widget>
        </widget>
-       <widget class="ParametersTabs" name="parametersTabs"/>
+       <widget class="ParametersTabs" name="parametersTabs">
+        <property name="styleSheet">
+         <string notr="true">QTabWidget::pane {
+border:none;
+}</string>
+        </property>
+        <widget class="QWidget" name="tab">
+         <attribute name="title">
+          <string>Page</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QTreeView" name="treeView"/>
+          </item>
+         </layout>
+        </widget>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -162,7 +238,7 @@ background-color: #d7e3ed;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>751</width>
+     <width>722</width>
      <height>21</height>
     </rect>
    </property>
@@ -785,9 +861,9 @@ background-color: #d7e3ed;
  <layoutdefault spacing="6" margin="9"/>
  <customwidgets>
   <customwidget>
-   <class>SceneView</class>
+   <class>SceneTreeView</class>
    <extends>QTreeView</extends>
-   <header>tree/SceneView.h</header>
+   <header>tree/SceneTreeView.h</header>
   </customwidget>
   <customwidget>
    <class>ParametersTabs</class>

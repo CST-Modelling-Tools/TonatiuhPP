@@ -17,7 +17,7 @@
 
 #include "FluxAnalysis.h"
 #include "SelectSurfaceDialog.h"
-#include "tree/SceneModel.h"
+#include "tree/SceneTreeModel.h"
 #include "kernel/air/AirTransmission.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/random/Random.h"
@@ -33,7 +33,7 @@
 
 
 
-FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* sceneKit, SceneModel* sceneModel,
+FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* sceneKit, SceneTreeModel* sceneModel,
                                        int sunWidthDivisions, int sunHeightDivisions,
                                        Random* randomDeviate,  QWidget* parent):
     QDialog(parent),

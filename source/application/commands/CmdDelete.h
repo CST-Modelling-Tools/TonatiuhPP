@@ -3,7 +3,7 @@
 #include <QUndoCommand>
 
 class QModelIndex;
-class SceneModel;
+class SceneTreeModel;
 class SoNode;
 class SoBaseKit;
 
@@ -16,14 +16,14 @@ class SoBaseKit;
 class CmdDelete: public QUndoCommand
 {
 public:
-    CmdDelete(const QModelIndex& index, SceneModel* model, QUndoCommand* parent = 0);
+    CmdDelete(const QModelIndex& index, SceneTreeModel* model, QUndoCommand* parent = 0);
     ~CmdDelete();
 
     void undo();
     void redo();
 
 private:
-    SceneModel* m_model;
+    SceneTreeModel* m_model;
     SoNode* m_node;
     SoBaseKit* m_parent;
     int m_row;

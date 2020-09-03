@@ -1,10 +1,10 @@
 #include "CmdCopy.h"
 
-#include "tree/SceneModel.h"
+#include "tree/SceneTreeModel.h"
 #include "kernel/run/InstanceNode.h"
 
 
-CmdCopy::CmdCopy(const QModelIndex& index, SoNode*& clipboard, SceneModel* model, QUndoCommand* parent):
+CmdCopy::CmdCopy(const QModelIndex& index, SoNode*& clipboard, SceneTreeModel* model, QUndoCommand* parent):
     QUndoCommand("Copy", parent),
     m_clipboard(clipboard),
     m_model(model)

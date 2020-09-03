@@ -4,13 +4,13 @@
 
 class QString;
 class SoNode;
-class SceneModel;
+class SceneTreeModel;
 
 
 class CmdRename: public QUndoCommand
 {
 public:
-    CmdRename(const QModelIndex& index, QString name, SceneModel* model, QUndoCommand* parent = 0);
+    CmdRename(const QModelIndex& index, QString name, SceneTreeModel* model, QUndoCommand* parent = 0);
     ~CmdRename() {}
 
     void undo();
@@ -20,5 +20,5 @@ private:
     QString m_name;
     QString m_nameOld;
     SoNode* m_node;
-    SceneModel* m_model;
+    SceneTreeModel* m_model;
 };

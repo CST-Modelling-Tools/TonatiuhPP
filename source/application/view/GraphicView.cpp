@@ -145,7 +145,7 @@ QRegion GraphicView::visualRegionForSelection(const QItemSelection& /*selection*
     return QRegion();
 }
 
-#include "tree/SceneModel.h"
+#include "tree/SceneTreeModel.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/scene/TSeparatorKit.h"
 void GraphicView::currentChanged(const QModelIndex& current, const QModelIndex& /*previous*/)
@@ -157,7 +157,7 @@ void GraphicView::currentChanged(const QModelIndex& current, const QModelIndex& 
     if (!variant.canConvert<SoPathVariant>()) return;
     SoPath* path = variant.value<SoPathVariant>().getPath();
     {
-        SceneModel* model = (SceneModel*) current.model();
+        SceneTreeModel* model = (SceneTreeModel*) current.model();
         if (!model) return;
         InstanceNode* instance = model->getInstance(current);
         if (!instance) return;

@@ -3,13 +3,13 @@
 #include <QUndoCommand>
 
 class SunKit;
-class SceneModel;
+class SceneTreeModel;
 
 
 class CmdSunModified: public QUndoCommand
 {
 public:
-    CmdSunModified(SunKit* sun, SceneModel* model, QUndoCommand* parent = 0);
+    CmdSunModified(SunKit* sun, SceneTreeModel* model, QUndoCommand* parent = 0);
     ~CmdSunModified();
 
      void undo();
@@ -21,5 +21,5 @@ private:
 private:
      SunKit* m_sunOld;
      SunKit* m_sun;
-     SceneModel* m_model;
+     SceneTreeModel* m_model;
 };

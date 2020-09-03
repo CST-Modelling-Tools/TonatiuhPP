@@ -3,7 +3,7 @@
 #include <QUndoCommand>
 
 class QModelIndex;
-class SceneModel;
+class SceneTreeModel;
 class SoNode;
 class SoBaseKit;
 
@@ -16,7 +16,7 @@ class SoBaseKit;
 class CmdCut: public QUndoCommand
 {
 public:
-    CmdCut(const QModelIndex& index, SoNode*& clipboard, SceneModel* model, QUndoCommand* parent = 0);
+    CmdCut(const QModelIndex& index, SoNode*& clipboard, SceneTreeModel* model, QUndoCommand* parent = 0);
     ~CmdCut();
 
     void undo();
@@ -24,7 +24,7 @@ public:
 
 private:
     SoNode*& m_clipboard;
-    SceneModel* m_model;
+    SceneTreeModel* m_model;
 
     SoNode* m_nodeOld;
     SoNode* m_node;

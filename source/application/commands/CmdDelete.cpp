@@ -2,11 +2,11 @@
 
 #include <Inventor/nodekits/SoBaseKit.h>
 
-#include "tree/SceneModel.h"
+#include "tree/SceneTreeModel.h"
 #include "kernel/run/InstanceNode.h"
 
 
-CmdDelete::CmdDelete(const QModelIndex& index, SceneModel* model, QUndoCommand* parent):
+CmdDelete::CmdDelete(const QModelIndex& index, SceneTreeModel* model, QUndoCommand* parent):
     QUndoCommand("Delete", parent),
     m_model(model)
 {

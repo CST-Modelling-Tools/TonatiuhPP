@@ -1,12 +1,12 @@
 #include "CmdSunModified.h"
 
 #include "kernel/sun/SunKit.h"
-#include "tree/SceneModel.h"
+#include "tree/SceneTreeModel.h"
 #include "kernel/scene/TSceneKit.h"
 #include "application/view/GraphicRoot.h"
 
 
-CmdSunModified::CmdSunModified(SunKit* sun, SceneModel* model, QUndoCommand* parent):
+CmdSunModified::CmdSunModified(SunKit* sun, SceneTreeModel* model, QUndoCommand* parent):
     QUndoCommand("Sun modified", parent),
     m_model(model)
 {

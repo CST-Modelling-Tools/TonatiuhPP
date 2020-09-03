@@ -1,3 +1,5 @@
+#include "SceneTreeView.h"
+
 #include <QApplication>
 #include <QDrag>
 #include <QLineEdit>
@@ -7,14 +9,13 @@
 #include <Inventor/nodekits/SoBaseKit.h>
 
 #include "kernel/run/InstanceNode.h"
-#include "SceneView.h"
-#include "tree/SceneModel.h"
+#include "tree/SceneTreeModel.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
 #include <QHeaderView>
 
 
-SceneView::SceneView(QWidget* parent):
+SceneTreeView::SceneTreeView(QWidget* parent):
     QTreeView(parent)
 {
     header()->setFont(font()); // resolves Qt bug
@@ -27,7 +28,7 @@ SceneView::SceneView(QWidget* parent):
 //    setAnimated(false);
 }
 
-void SceneView::mousePressEvent(QMouseEvent* event)
+void SceneTreeView::mousePressEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton)
         m_startPos = event->pos();
@@ -37,7 +38,7 @@ void SceneView::mousePressEvent(QMouseEvent* event)
     QTreeView::mousePressEvent(event);
 }
 
-void SceneView::mouseMoveEvent(QMouseEvent* event)
+void SceneTreeView::mouseMoveEvent(QMouseEvent* event)
 {
     if (event->buttons() & Qt::LeftButton) {
         int distance = (event->pos() - m_startPos).manhattanLength();
@@ -47,24 +48,24 @@ void SceneView::mouseMoveEvent(QMouseEvent* event)
    // QTreeView::mouseMoveEvent(event);
 }
 
-void SceneView::dragEnterEvent(QDragEnterEvent *event)
+void SceneTreeView::dragEnterEvent(QDragEnterEvent *event)
 {
     event->setDropAction(Qt::MoveAction);
     event->accept();
 }
 
-void SceneView::dragMoveEvent(QDragMoveEvent *event)
+void SceneTreeView::dragMoveEvent(QDragMoveEvent *event)
 {
     event->setDropAction(Qt::MoveAction);
     event->accept();
 }
 
-void SceneView::dropEvent(QDropEvent* event)
+void SceneTreeView::dropEvent(QDropEvent* event)
 {
     QModelIndex newParent = indexAt(event->pos());
     if (newParent.isValid())
     {
-        SceneModel* modelScene = static_cast< SceneModel* >(model());
+        SceneTreeModel* modelScene = static_cast< SceneTreeModel* >(model());
         QString type = modelScene->getInstance(newParent)->getNode()->getTypeId().getName().getString();
         
         SoNode* parentNode = modelScene->getInstance(newParent)->getNode();
@@ -118,7 +119,7 @@ void SceneView::dropEvent(QDropEvent* event)
     }
 }
 
-void SceneView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint)
+void SceneTreeView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint)
 {
     if (!editor) return;
 
@@ -129,7 +130,7 @@ void SceneView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint 
     QTreeView::closeEditor(editor, hint);
 }
 
-void SceneView::startDrag(QMouseEvent* event)
+void SceneTreeView::startDrag(QMouseEvent* event)
 {
     QPoint position = event->pos();
     QModelIndex index = indexAt(position);

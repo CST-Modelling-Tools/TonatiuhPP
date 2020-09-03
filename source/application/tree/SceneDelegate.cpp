@@ -7,7 +7,7 @@
 #include <Inventor/nodekits/SoBaseKit.h>
 
 #include "kernel/run/InstanceNode.h"
-#include "SceneModel.h"
+#include "SceneTreeModel.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/air/AirKit.h"
 #include "kernel/scene/TerrainKit.h"
@@ -23,7 +23,7 @@ SceneDelegate::SceneDelegate(QObject* parent):
 
 QWidget* SceneDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& /*option*/, const QModelIndex& index) const
 {
-    SceneModel* model = (SceneModel*) (index.model());
+    SceneTreeModel* model = (SceneTreeModel*) (index.model());
     SoNode* node = model->getInstance(index)->getNode();
 
     SoType type = node->getTypeId();
@@ -46,7 +46,7 @@ void SceneDelegate::setEditorData(QWidget* editor, const QModelIndex& index) con
 {
     if (!editor) return;
 
-    const SceneModel* model = static_cast<const SceneModel*>(index.model());
+    const SceneTreeModel* model = static_cast<const SceneTreeModel*>(index.model());
     SoNode* node = model->getInstance(index)->getNode();
 
     QString name;

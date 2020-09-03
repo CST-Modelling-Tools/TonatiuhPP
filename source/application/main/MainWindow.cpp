@@ -90,7 +90,7 @@
 #include "run/FluxAnalysisDialog.h"
 #include "run/RayTracingDialog.h"
 #include "script/ScriptWindow.h"
-#include "tree/SceneModel.h"
+#include "tree/SceneTreeModel.h"
 #include "view/GraphicRoot.h"
 #include "view/GraphicView.h"
 #include "widgets/AboutDialog.h"
@@ -264,7 +264,7 @@ void MainWindow::SetupDocument()
     );
 
     // models
-    m_modelScene = new SceneModel;
+    m_modelScene = new SceneTreeModel;
     m_modelScene->setDocument(m_document);
 
     m_modelSelection = new QItemSelectionModel(m_modelScene);
@@ -299,6 +299,9 @@ void MainWindow::SetupGraphicView()
     QSplitter* splitterV = new QSplitter();
     splitterV->setObjectName("graphicSplitterV");
     splitterV->setOrientation(Qt::Vertical);
+
+//    delete splitter->replaceWidget(0, splitterV);
+    delete splitter->widget(0);
     splitter->insertWidget(0, splitterV);
 
     QList<int> sizes;
@@ -357,6 +360,7 @@ void MainWindow::SetupTreeView()
             this, SLOT(ChangeNodeName(const QModelIndex&,const QString&)) );
 
     // parameters
+    ui->parametersTabs->removeTab(1);
     ui->parametersTabs->getView()->getModel()->setMain(this);
 
     connect(

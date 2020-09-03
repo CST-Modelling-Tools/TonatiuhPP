@@ -14,12 +14,12 @@
 
 #include "libraries/math/gcf.h"
 #include "kernel/run/InstanceNode.h"
-#include "tree/SceneModel.h"
+#include "tree/SceneTreeModel.h"
 
 CmdRename::CmdRename(
     const QModelIndex& index,
     QString name,
-    SceneModel* model,
+    SceneTreeModel* model,
     QUndoCommand* parent
 ):
     QUndoCommand(parent),

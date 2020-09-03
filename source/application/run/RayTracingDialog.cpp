@@ -52,7 +52,7 @@ int RayTracingDialog::photonBufferSize() const {return ui->photonBufferSizeSpin-
 bool RayTracingDialog::photonBufferAppend() const {return ui->photonBufferAppendRadio->isChecked();}
 
 
-void RayTracingDialog::setPhotonSettings(SceneModel* scene, QVector<PhotonsFactory*> factories, PhotonsSettings* ps)
+void RayTracingDialog::setPhotonSettings(SceneTreeModel* scene, QVector<PhotonsFactory*> factories, PhotonsSettings* ps)
 {
     m_scene = scene;
     for (PhotonsFactory* f : factories)

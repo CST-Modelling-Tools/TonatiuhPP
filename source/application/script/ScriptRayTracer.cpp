@@ -13,7 +13,7 @@
 
 #include "main/Document.h"
 #include "view/GraphicRoot.h"
-#include "tree/SceneModel.h"
+#include "tree/SceneTreeModel.h"
 #include "kernel/random/Random.h"
 #include "kernel/run/RayTracer.h"
 #include "kernel/TonatiuhFunctions.h"
@@ -216,7 +216,7 @@ int ScriptRayTracer::openFile(QString filename)
     if (!m_document->ReadFile(filename) ) return 0;
 
     delete m_sceneModel;
-    m_sceneModel = new SceneModel;
+    m_sceneModel = new SceneTreeModel;
     m_sceneModel->setDocument(m_document);
 
     return 1;

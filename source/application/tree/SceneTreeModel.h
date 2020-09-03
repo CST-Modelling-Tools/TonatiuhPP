@@ -18,13 +18,13 @@ class Document;
 class AirKit;
 
 
-class SceneModel: public QAbstractItemModel
+class SceneTreeModel: public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    SceneModel(QObject* parent = 0);
-    ~SceneModel();
+    SceneTreeModel(QObject* parent = 0);
+    ~SceneTreeModel();
 
     void clear();
 

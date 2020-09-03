@@ -3,13 +3,13 @@
 #include <QUndoCommand>
 
 class AirKit;
-class SceneModel;
+class SceneTreeModel;
 
 
 class CmdAirModified: public QUndoCommand
 {
 public:
-    CmdAirModified(AirKit* air, SceneModel* model, QUndoCommand* parent = 0);
+    CmdAirModified(AirKit* air, SceneTreeModel* model, QUndoCommand* parent = 0);
     ~CmdAirModified();
 
      void undo();
@@ -18,5 +18,5 @@ public:
 private:
      AirKit* m_airOld;
      AirKit* m_air;
-     SceneModel* m_model;
+     SceneTreeModel* m_model;
 };

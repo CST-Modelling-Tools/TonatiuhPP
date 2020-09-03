@@ -14,7 +14,7 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoGroup.h>
 
-#include "tree/SceneModel.h"
+#include "tree/SceneTreeModel.h"
 #include "kernel/air/AirTransmission.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/photons/PhotonsBuffer.h"
@@ -36,7 +36,7 @@
 
 
 FluxAnalysis::FluxAnalysis(TSceneKit* sceneKit,
-    SceneModel* sceneModel,
+    SceneTreeModel* sceneModel,
     int sunWidthDivisions,
     int sunHeightDivisions,
     Random* randomDeviate

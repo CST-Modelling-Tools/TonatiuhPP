@@ -7,7 +7,7 @@ class SelectSurfaceDialog;
 }
 
 class SceneFilter;
-class SceneModel;
+class SceneTreeModel;
 
 
 class SelectSurfaceDialog: public QDialog
@@ -15,7 +15,7 @@ class SelectSurfaceDialog: public QDialog
     Q_OBJECT
 
 public:
-    SelectSurfaceDialog(SceneModel& model, bool enableLight = true, QWidget* parent = 0);
+    SelectSurfaceDialog(SceneTreeModel& model, bool enableLight = true, QWidget* parent = 0);
     ~SelectSurfaceDialog();
 
     void SetShapeTypeFilters(QStringList filters);
@@ -28,6 +28,6 @@ public slots:
 private:
     Ui::SelectSurfaceDialog* ui;
     bool m_isLightVisible;
-    SceneModel* m_model;
+    SceneTreeModel* m_model;
     SceneFilter* m_filter;
 };
