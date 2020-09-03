@@ -302,7 +302,7 @@ void MainWindow::SetupGraphicView()
     splitter->insertWidget(0, splitterV);
 
     QList<int> sizes;
-    sizes << 500 << 200;
+    sizes << 700 << 200;
     splitter->setSizes(sizes);
 
     QSplitter* splitterH1 = new QSplitter(splitterV);
@@ -377,8 +377,8 @@ void MainWindow::SetupTreeView()
         this, SLOT(setFieldText(SoNode*, QString, QString))
     );
     connect(
-        ui->parametersTabs->getView()->getModel(), SIGNAL(fieldNodeModified(SoNode*, QString, TNode*)),
-        this, SLOT(setFieldNode(SoNode*, QString, TNode*))
+        ui->parametersTabs->getView()->getModel(), SIGNAL(fieldNodeModified(SoNode*, QString, SoNode*)),
+        this, SLOT(setFieldNode(SoNode*, QString, SoNode*))
     );
 
     connect(

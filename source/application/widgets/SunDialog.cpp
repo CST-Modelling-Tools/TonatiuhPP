@@ -86,7 +86,7 @@ void SunDialog::makeSunShapeTab()
         this, SLOT(setShape(int))
     );
     connect(
-        model, SIGNAL(valueModified(SoNode*, QString, QString)),
+        model, SIGNAL(fieldTextModified(SoNode*, QString, QString)),
         this, SLOT(setValue(SoNode*, QString, QString))
     );
 }

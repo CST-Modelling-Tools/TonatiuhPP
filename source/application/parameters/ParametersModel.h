@@ -20,11 +20,11 @@ public:
     MainWindow* getMain() const {return m_main;}
 
     bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
-    bool setData(SoNode* node, QString field, TNode* value);
+    bool setData(SoNode* node, QString field, SoNode* value);
 
 signals:
     void fieldTextModified(SoNode* node, QString field, QString value);
-    void fieldNodeModified(SoNode* node, QString field, TNode* value);
+    void fieldNodeModified(SoNode* node, QString field, SoNode* value);
 
 protected:
     MainWindow* m_main;

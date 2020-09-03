@@ -54,7 +54,7 @@ bool ParametersModel::setData(const QModelIndex& index, const QVariant& value, i
     }
 }
 
-bool ParametersModel::setData(SoNode* node, QString field, TNode* value) // todo combine with setData
+bool ParametersModel::setData(SoNode* node, QString field, SoNode* value) // todo combine with setData
 {
     emit fieldNodeModified(node, field, value);
     return true;
