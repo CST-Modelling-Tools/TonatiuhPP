@@ -25,10 +25,6 @@ public slots:
     void onTriggered();
 
 signals:
-    void InsertSurface(ShapeFactory* factory);
-    void InsertProfile(ProfileFactory* factory);
-    void InsertMaterial(MaterialFactory* factory);
-    void InsertTracker(TrackerFactory* factory);
     void InsertComponent(ComponentFactory* factory);
 
 private:

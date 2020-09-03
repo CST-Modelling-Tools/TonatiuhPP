@@ -7,7 +7,7 @@
 #include "libraries/math/gcf.h"
 
 
-CmdSetFieldNode::CmdSetFieldNode(SoNode* node, QString field, TNode* value, QUndoCommand* parent):
+CmdSetFieldNode::CmdSetFieldNode(SoNode* node, QString field, SoNode* value, QUndoCommand* parent):
     QUndoCommand(parent),
     m_node(node),
     m_field(field),
@@ -20,7 +20,12 @@ CmdSetFieldNode::CmdSetFieldNode(SoNode* node, QString field, TNode* value, QUnd
     m_value->ref();
 
     QString name = node->getTypeId().getName().getString();
-    QString text = QString("%1.%2 -> %3").arg(name, m_field, m_value->getTypeName());
+    QString type;
+    if (TNode* tnode = dynamic_cast<TNode*>(m_value))
+        type = tnode->getTypeName();
+    else
+        type = m_value->getTypeId().getName().getString();
+    QString text = QString("%1.%2 -> %3").arg(name, m_field, type);
     setText(text);
 }
 

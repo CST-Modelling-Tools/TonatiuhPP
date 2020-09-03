@@ -54,11 +54,8 @@
 #include "commands/CmdDelete.h"
 #include "commands/CmdInsertNode.h"
 #include "commands/CmdSetFieldNode.h"
-#include "commands/CmdSunModified.h"
-#include "commands/CmdLightPositionModified.h"
 #include "commands/CmdSetFieldText.h"
 #include "commands/CmdPaste.h"
-#include "commands/CmdAirModified.h"
 
 #include "PluginManager.h"
 #include "kernel/TonatiuhFunctions.h"
@@ -534,20 +531,14 @@ void MainWindow::onSunDialog()
 {
     SunDialog dialog(m_modelScene, m_pluginManager->getSunMap(), this);
     if (!dialog.exec()) return;
-
-    CmdSunModified* cmd = new CmdSunModified(dialog.getSun(), m_modelScene);
-    m_undoStack->push(cmd);
-    setDocumentModified(true);
+    setFieldNode(m_document->getSceneKit()->getPart("world", false), "sun", dialog.getSun());
 }
 
 void MainWindow::onAirDialog()
 {
     AirDialog dialog(m_document->getSceneKit(), this);
     if (!dialog.exec()) return;
-
-    CmdAirModified* cmd = new CmdAirModified(dialog.getAir(), m_modelScene);
-    m_undoStack->push(cmd);
-    setDocumentModified(true);
+    setFieldNode(m_document->getSceneKit()->getPart("world", false), "air", dialog.getAir());
 }
 
 void MainWindow::showGrid()
@@ -920,7 +911,7 @@ void MainWindow::setFieldText(SoNode* node, QString field, QString value)
     setDocumentModified(true);
 }
 
-void MainWindow::setFieldNode(SoNode* node, QString field, TNode* value)
+void MainWindow::setFieldNode(SoNode* node, QString field, SoNode* value)
 {
     CmdSetFieldNode* cmd = new CmdSetFieldNode(node, field, value);
     m_undoStack->push(cmd);
@@ -1043,7 +1034,7 @@ void MainWindow::on_actionAbout_triggered()
     dialog.exec();
 }
 
-void MainWindow::treeWorldClicked(QTreeWidgetItem* item, int column)
+void MainWindow::treeWorldClicked(QTreeWidgetItem* item, int /*column*/)
 {
     m_graphicsRoot->deselectAll();
     TSceneKit* sceneKit = m_document->getSceneKit();
@@ -1062,7 +1053,7 @@ void MainWindow::treeWorldClicked(QTreeWidgetItem* item, int column)
         ui->parametersTabs->setNode(node);
 }
 
-void MainWindow::treeWorldDoubleClicked(QTreeWidgetItem* item, int column)
+void MainWindow::treeWorldDoubleClicked(QTreeWidgetItem* item, int /*column*/)
 {
     QString name = item->text(0);
     if (name == "Sun")
@@ -1105,9 +1096,6 @@ void MainWindow::ChangeSunPosition(double azimuth, double elevation)
     SunPosition* sp = (SunPosition*) sk->getPart("position", false);
     sp->azimuth = azimuth;
     sp->elevation = elevation;
-    sk->updateTransform();
-    m_graphicsRoot->rays()->removeAllChildren();
-    scene->updateTrackers();
 
 //    TSceneKit* sceneKit = m_document->getSceneKit();
 //    SunKit* sunKit = (SunKit*) sceneKit->getPart("lightList[0]", false);

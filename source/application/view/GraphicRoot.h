@@ -11,6 +11,8 @@ class SkyNode3D;
 class SunNode3D;
 class SoTransform;
 class TSceneKit;
+class SoSensor;
+class SoFieldSensor;
 
 class GraphicRoot: public QObject
 {
@@ -46,4 +48,8 @@ private:
     GridNode3D* m_grid;
     SoSelection* m_selection;
     SoSeparator* m_rays;
+
+    TSceneKit* m_scene;
+    SoFieldSensor* m_sensor;
+    static void update(void* data, SoSensor*);
 };

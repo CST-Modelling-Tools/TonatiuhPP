@@ -135,6 +135,11 @@ background-color: #d7e3ed;
                <normaloff>:/images/scene/nodeTerrain.png</normaloff>:/images/scene/nodeTerrain.png</iconset>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>Camera</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>

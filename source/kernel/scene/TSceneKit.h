@@ -10,6 +10,8 @@ class TSeparatorKit;
 class Transform;
 struct vec3d;
 class GraphicRoot;
+class SoSensor;
+class SoFieldSensor;
 
 
 class TONATIUH_KERNEL TSceneKit: public SoSceneKit
@@ -31,6 +33,6 @@ public:
     GraphicRoot* m_graphicRoot;
 
 protected:
-    ~TSceneKit() {}
+    ~TSceneKit();
     void updateTrackers(TSeparatorKit* parent, Transform t, const vec3d& vSun);
 };

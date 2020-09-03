@@ -472,16 +472,6 @@ void SceneTreeModel::removeCoinNode(int row, SoBaseKit* parent)
     emit layoutChanged();
 }
 
-void SceneTreeModel::replaceAir(AirKit* air)
-{
-    m_nodeScene->setPart("world.air", air);
-}
-
-void SceneTreeModel::replaceSun(SunKit* sun)
-{
-    m_nodeScene->setPart("world.sun", sun);
-}
-
 /**
  * Cuts the \a row child from \a coinParent node.
  *

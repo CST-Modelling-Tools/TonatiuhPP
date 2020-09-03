@@ -151,7 +151,7 @@ private slots:
     bool SaveComponent();
     void SelectionFinish(SoSelection* selection);
     void setFieldText(SoNode* node, QString field, QString value);
-    void setFieldNode(SoNode* node, QString field, TNode* value);
+    void setFieldNode(SoNode* node, QString field, SoNode* value);
 
     void showGrid();
     void showRays(bool on);

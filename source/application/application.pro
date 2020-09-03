@@ -16,17 +16,14 @@ HEADERS += \
     calculator/SunCalculatorDialog.h \
     calculator/WorldMap.h \
     commands/ActionInsert.h \
-    commands/CmdAirModified.h \
     commands/CmdCopy.h \
     commands/CmdCut.h \
     commands/CmdDelete.h \
     commands/CmdInsertNode.h \
-    commands/CmdLightPositionModified.h \
     commands/CmdPaste.h \
     commands/CmdRename.h \
     commands/CmdSetFieldNode.h \
     commands/CmdSetFieldText.h \
-    commands/CmdSunModified.h \
     commands/tgc.h \
     parameters/ParametersItemField.h \
     parameters/ParametersItemNode.h \
@@ -56,7 +53,6 @@ HEADERS += \
     tree/SceneTreeModel.h \
     tree/SceneTreeView.h \
     tree/SoPathVariant.h \
-    tree/WorldModel.h \
     view/ExaminerViewer.h \
     view/ExaminerViewer2.h \
     view/GraphicRoot.h \
@@ -76,17 +72,14 @@ SOURCES += \
     calculator/SunCalculatorDialog.cpp \
     calculator/WorldMap.cpp \
     commands/ActionInsert.cpp \
-    commands/CmdAirModified.cpp \
     commands/CmdCopy.cpp \
     commands/CmdCut.cpp \
     commands/CmdDelete.cpp \
     commands/CmdInsertNode.cpp \
-    commands/CmdLightPositionModified.cpp \
     commands/CmdPaste.cpp \
     commands/CmdRename.cpp \
     commands/CmdSetFieldNode.cpp \
     commands/CmdSetFieldText.cpp \
-    commands/CmdSunModified.cpp \
     parameters/ParametersItemField.cpp \
     parameters/ParametersItemNode.cpp \
     run/FluxAnalysis.cpp \
@@ -116,7 +109,6 @@ SOURCES += \
     tree/SceneTreeModel.cpp \
     tree/SceneTreeView.cpp \
     tree/SoPathVariant.cpp \
-    tree/WorldModel.cpp \
     view/ExaminerViewer.cpp \
     view/ExaminerViewer2.cpp \
     view/GraphicRoot.cpp \

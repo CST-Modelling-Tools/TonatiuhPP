@@ -3,6 +3,7 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoGroup.h>
 
+
 #include "libraries/math/gcf.h"
 #include "libraries/math/3D/Transform.h"
 #include "libraries/math/3D/vec3d.h"
@@ -65,6 +66,11 @@ void TSceneKit::updateTrackers()
     updateTrackers(getLayout(), Transform::Identity, vSun);
 }
 
+TSceneKit::~TSceneKit()
+{
+
+}
+
 /*!
  * Updates all trackers transform for the current sun angles.
  */
@@ -87,3 +93,4 @@ void TSceneKit::updateTrackers(TSeparatorKit* parent, Transform toGlobal, const 
         }
     }
 }
+

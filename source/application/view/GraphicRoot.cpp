@@ -11,6 +11,7 @@
 #include <Inventor/nodes/SoEnvironment.h>
 #include <Inventor/annex/FXViz/nodes/SoShadowGroup.h>
 #include <Inventor/annex/FXViz/nodes/SoShadowDirectionalLight.h>
+#include <Inventor/sensors/SoFieldSensor.h>
 
 #include "libraries/math/gcf.h"
 #include "libraries/math/gcf.h"
@@ -110,17 +111,22 @@ GraphicRoot::GraphicRoot()
 
     m_rays = new SoSeparator; // order important for antialiasing
     m_root->addChild(m_rays);
+
+    m_sensor = new SoFieldSensor(update, this);
+    m_sensor->setPriority(0);
 }
 
 GraphicRoot::~GraphicRoot()
 {
     m_root->unref();
+    delete m_sensor;
 }
 
 void GraphicRoot::setDocument(Document* document)
 {
     TSceneKit* scene = document->getSceneKit();
     if (!scene) return;
+    m_scene = scene;
     m_selection->removeAllChildren();
     m_selection->addChild(scene);
 
@@ -131,6 +137,8 @@ void GraphicRoot::setDocument(Document* document)
     m_grid->attach(gridNode);
 
     scene->m_graphicRoot = this;
+
+    m_sensor->attach(scene->getPart("world", false)->getField("sun"));
 }
 
 void GraphicRoot::updateScene(TSceneKit* scene)
@@ -193,4 +201,12 @@ void GraphicRoot::deselectAll()
 void GraphicRoot::onSelectionChanged(SoSelection* selection)
 {
     emit selectionChanged(selection);
+}
+
+void GraphicRoot::update(void* data, SoSensor*)
+{
+    GraphicRoot* gr = (GraphicRoot*) data;
+    gr->rays()->removeAllChildren();
+    gr->updateScene(gr->m_scene);
+    gr->m_scene->updateTrackers();
 }
