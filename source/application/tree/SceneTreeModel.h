@@ -57,14 +57,6 @@ public:
 
     void UpdateSceneModel();
 
-signals:
-    void modifySun();
-    void modifyAir();
-
-public:
-    void emitModifySun() {emit modifySun();}
-    void emitModifyAir() {emit modifyAir();}
-
 private:
     InstanceNode* addInstanceNode(InstanceNode* parent, SoNode* node);
     void generateInstanceTree(InstanceNode* instance);

@@ -45,6 +45,7 @@ class NodeObject;
 class TFactory;
 class SoBaseKit;
 class TNode;
+class QTreeWidgetItem;
 
 namespace Ui {
 class MainWindow;
@@ -191,6 +192,9 @@ private slots:
     // help menu actions
     void on_actionAbout_triggered();
     //void on_actionCheckForUpdates_triggered();
+
+    void treeWorldClicked(QTreeWidgetItem* item, int column); // temporary
+    void treeWorldDoubleClicked(QTreeWidgetItem* item, int column);
 
 signals:
     void Abort(QString error);

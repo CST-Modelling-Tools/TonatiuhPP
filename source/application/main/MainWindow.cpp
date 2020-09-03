@@ -343,6 +343,7 @@ void MainWindow::SetupGraphicView()
     on_actionQuadView_toggled();
 }
 
+#include <QTreeWidget>
 void MainWindow::SetupTreeView()
 {
     // tree
@@ -375,6 +376,16 @@ void MainWindow::SetupTreeView()
     connect(
         m_modelSelection, SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)),
         this, SLOT(ChangeSelection(const QModelIndex&))
+    );
+
+    //
+    connect(
+        ui->treeWorldWidget, SIGNAL(itemClicked(QTreeWidgetItem*, int)),
+        this, SLOT(treeWorldClicked(QTreeWidgetItem*, int))
+    );
+    connect(
+        ui->treeWorldWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
+        this, SLOT(treeWorldDoubleClicked(QTreeWidgetItem*, int))
     );
 }
 
@@ -417,10 +428,6 @@ void MainWindow::SetupTriggers()
     connect(ui->actionInsertTracker, SIGNAL(triggered()), this, SLOT(InsertTracker()) );
     connect(ui->actionSaveComponent, SIGNAL(triggered()), this, SLOT(SaveComponent()) );
     connect(ui->actionUserComponent, SIGNAL(triggered()), this, SLOT(InsertUserDefinedComponent()) );
-
-    // scene
-    connect(m_modelScene, SIGNAL(modifySun()), this, SLOT(onSunDialog()) );
-    connect(m_modelScene, SIGNAL(modifyAir()), this, SLOT(onAirDialog()) );
 
     // run
     connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(RunCompleteRayTracer()) );
@@ -1033,6 +1040,33 @@ void MainWindow::on_actionAbout_triggered()
 {
     AboutDialog dialog;
     dialog.exec();
+}
+
+void MainWindow::treeWorldClicked(QTreeWidgetItem* item, int column)
+{
+    TSceneKit* sceneKit = m_document->getSceneKit();
+    SoNode* node = 0;
+    QString name = item->text(0);
+    if (name == "Location")
+        node = sceneKit->getPart("world.location", false);
+    else if (name == "Sun")
+        node = sceneKit->getPart("world.sun", false);
+    else if (name == "Air")
+        node = sceneKit->getPart("world.air", false);
+    else if (name == "Terrain")
+        node = sceneKit->getPart("world.terrain", false);
+
+    if (node)
+        ui->parametersTabs->setNode(node);
+}
+
+void MainWindow::treeWorldDoubleClicked(QTreeWidgetItem* item, int column)
+{
+    QString name = item->text(0);
+    if (name == "Sun")
+        onSunDialog();
+    else if (name == "Air")
+        onAirDialog();
 }
 
 void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& name)
@@ -2574,7 +2608,6 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
 {
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return false;
-
 
     InstanceNode* instanceScene = m_modelScene->getInstance(QModelIndex());
     if (!instanceScene) return false;

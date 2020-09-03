@@ -56,6 +56,7 @@ HEADERS += \
     tree/SceneTreeModel.h \
     tree/SceneTreeView.h \
     tree/SoPathVariant.h \
+    tree/WorldModel.h \
     view/ExaminerViewer.h \
     view/ExaminerViewer2.h \
     view/GraphicRoot.h \
@@ -115,6 +116,7 @@ SOURCES += \
     tree/SceneTreeModel.cpp \
     tree/SceneTreeView.cpp \
     tree/SoPathVariant.cpp \
+    tree/WorldModel.cpp \
     view/ExaminerViewer.cpp \
     view/ExaminerViewer2.cpp \
     view/GraphicRoot.cpp \

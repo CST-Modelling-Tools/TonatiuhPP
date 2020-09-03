@@ -27,11 +27,7 @@ QWidget* SceneDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem
     SoNode* node = model->getInstance(index)->getNode();
 
     SoType type = node->getTypeId();
-    if (type == SunKit::getClassTypeId()) {
-        model->emitModifySun();
-    } else if (type == AirKit::getClassTypeId()) {
-        model->emitModifyAir();
-    } else if (type == TSeparatorKit::getClassTypeId() ||
+    if (type == TSeparatorKit::getClassTypeId() ||
                type == TShapeKit::getClassTypeId()) {
         QLineEdit* editor = new QLineEdit(parent);
         QRegExp rx("[a-zA-Z]\\S*"); // \\S matches a non-whitespace character

@@ -75,20 +75,20 @@ void SceneTreeModel::setDocument(Document* document)
     m_instanceScene = new InstanceNode(m_nodeScene);
     m_mapCoinQt[m_nodeScene].append(m_instanceScene);
 
-    SoNode* worldKit = m_nodeScene->getPart("world", true);
-    InstanceNode* instanceW = addInstanceNode(m_instanceScene, worldKit);
+//    SoNode* worldKit = m_nodeScene->getPart("world", true);
+//    InstanceNode* instanceW = addInstanceNode(m_instanceScene, worldKit);
 
-    SoNode* location = m_nodeScene->getPart("world.location", true);
-    addInstanceNode(instanceW, location);
+//    SoNode* location = m_nodeScene->getPart("world.location", true);
+//    addInstanceNode(instanceW, location);
 
-    SoNode* sunKitW = m_nodeScene->getPart("world.sun", true);
-    addInstanceNode(instanceW, sunKitW);
+//    SoNode* sunKitW = m_nodeScene->getPart("world.sun", true);
+//    addInstanceNode(instanceW, sunKitW);
 
-    SoNode* airKit = m_nodeScene->getPart("world.air", true);
-    addInstanceNode(instanceW, airKit);
+//    SoNode* airKit = m_nodeScene->getPart("world.air", true);
+//    addInstanceNode(instanceW, airKit);
 
-    SoNode* terrainKit = m_nodeScene->getPart("world.terrain", true);
-    addInstanceNode(instanceW, terrainKit);
+//    SoNode* terrainKit = m_nodeScene->getPart("world.terrain", true);
+//    addInstanceNode(instanceW, terrainKit);
 
     TSeparatorKit* nodeLayout = m_nodeScene->getLayout();
     m_instanceLayout = addInstanceNode(m_instanceScene, nodeLayout);
@@ -239,16 +239,6 @@ QVariant SceneTreeModel::data(const QModelIndex& index, int role) const
 //            ShapeRT* shape = static_cast<ShapeRT*>(node);
 //            return QIcon(shape->getTypeIcon());
 //        }
-        else if (type == SunKit::getClassTypeId())
-            return QIcon(":/images/scene/nodeSun.png");
-        else if (type == WorldKit::getClassTypeId())
-            return QIcon(":/images/scene/nodeFolder.png");
-        else if (type == LocationNode::getClassTypeId())
-            return QIcon(":/images/scene/nodeLocation.png");
-        else if (type == AirKit::getClassTypeId())
-            return QIcon(":/images/scene/nodeAir.png");
-        else if (type == TerrainKit::getClassTypeId())
-            return QIcon(":/images/scene/nodeTerrain.png");
     }
 
     return QVariant();
@@ -485,17 +475,17 @@ void SceneTreeModel::removeCoinNode(int row, SoBaseKit* parent)
 void SceneTreeModel::replaceAir(AirKit* air)
 {
     m_nodeScene->setPart("world.air", air);
-    InstanceNode* instW = m_instanceScene->children[0];
-    instW->children[2]->setNode(air);
-    emit layoutChanged();
+//    InstanceNode* instW = m_instanceScene->children[0];
+//    instW->children[2]->setNode(air);
+//    emit layoutChanged();
 }
 
 void SceneTreeModel::replaceSun(SunKit* sun)
 {
     m_nodeScene->setPart("world.sun", sun);
-    InstanceNode* instW = m_instanceScene->children[0];
-    instW->children[1]->setNode(sun);
-    emit layoutChanged();
+//    InstanceNode* instW = m_instanceScene->children[0];
+//    instW->children[1]->setNode(sun);
+//    emit layoutChanged();
 }
 
 /**
