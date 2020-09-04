@@ -39,7 +39,7 @@ TSceneKit {
 
   }
   group 
-  DEF Layout TSeparatorKit {
+  DEF Node TSeparatorKit {
     transform 
     Transform {
 
@@ -65,7 +65,6 @@ TSceneKit {
             }
             profileRT 
             DEF Box ProfileBox {
-              fields [ SFDouble uSize, SFDouble vSize ]
               uSize 2
               vSize 2
 
@@ -75,12 +74,8 @@ TSceneKit {
               fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
             }
-            appearance 
-            AppearanceKit {
-              material 
-              DEF MaterialGL Material {
-
-              }
+            material 
+            Material {
 
             }
 
@@ -116,7 +111,6 @@ TSceneKit {
                 }
                 profileRT 
                 DEF Box ProfileBox {
-                  fields [ SFDouble uSize, SFDouble vSize ]
 
                 }
                 materialRT 
@@ -124,13 +118,8 @@ TSceneKit {
                   fields [  ]
 
                 }
-                appearance 
-                AppearanceKit {
-                  material 
-                  DEF MaterialGL Material {
-                    transparency 0.5
-
-                  }
+                material 
+                Material {
 
                 }
 
@@ -155,7 +144,6 @@ TSceneKit {
                 }
                 profileRT 
                 DEF Box ProfileBox {
-                  fields [ SFDouble uSize, SFDouble vSize ]
 
                 }
                 materialRT 
@@ -163,13 +151,8 @@ TSceneKit {
                   fields [  ]
 
                 }
-                appearance 
-                AppearanceKit {
-                  material 
-                  DEF MaterialGL Material {
-                    transparency 0.5
-
-                  }
+                material 
+                Material {
 
                 }
 

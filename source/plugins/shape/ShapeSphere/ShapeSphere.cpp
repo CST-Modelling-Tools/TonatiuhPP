@@ -17,6 +17,7 @@ void ShapeSphere::initClass()
 ShapeSphere::ShapeSphere()
 {
 	SO_NODE_CONSTRUCTOR(ShapeSphere);
+    isBuiltIn = TRUE;
 }
 
 vec3d ShapeSphere::getPoint(double u, double v) const

@@ -143,12 +143,6 @@ QScriptValue NodeObject::insertArmature(const QString& name)
     return engine()->newQObject(ans);
 }
 
-void NodeObject::update()
-{
-    m_node->touch();
-    m_node->startNotify();
-}
-
 void NodeObject::setName(const QString& name)
 {
     m_node->setName(name.toLatin1().data());

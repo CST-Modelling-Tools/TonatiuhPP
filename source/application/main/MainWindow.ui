@@ -31,7 +31,7 @@ border:none;
 
 QTabBar::tab {
 border: none;
-padding: 3 5 3 5;
+padding: 1ex 2ex 1ex 2ex;
 color: gray;
 }
 
@@ -73,7 +73,7 @@ background-color: #d7e3ed;
          </font>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tabWorld">
          <attribute name="title">
@@ -138,6 +138,10 @@ background-color: #d7e3ed;
             <item>
              <property name="text">
               <string>Camera</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../resources.qrc">
+               <normaloff>:/images/scene/nodeCamera.png</normaloff>:/images/scene/nodeCamera.png</iconset>
              </property>
             </item>
            </widget>

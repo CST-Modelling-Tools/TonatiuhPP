@@ -13,7 +13,7 @@ TSceneKit {
       position 
       SunPosition {
         fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
-   
+
       }
       aperture 
       SunAperture {
@@ -36,341 +36,298 @@ TSceneKit {
 
   }
   group 
-
-
-    DEF Layout TSeparatorKit {
-      transform 
-      Transform {
-
-      }
-      group 
-      Group {
-
-        DEF ParabolaPM TSeparatorKit {
-          transform 
-          Transform {
-            translation 2 -2 0
-
-          }
-          group 
-          Group {
-
-            DEF Shape TShapeKit {
-              shapeRT 
-              DEF Parabolic ShapeParabolic {
-                fields [ SFDouble fX, SFDouble fY ]
-                fX 1
-                fY -1
-
-              }
-              profileRT 
-              DEF Circular ProfileCircular {
-                fields [ SFDouble rMin, SFDouble rMax, SFDouble phiMin, SFDouble phiMax ]
-
-              }
-              materialRT 
-              DEF Specular MaterialSpecular {
-                fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
-
-              }
-              appearance 
-              AppearanceKit {
-                material 
-                DEF MaterialGL Material {
-                  diffuseColor 0.80000001 0.80000001 0.5
-
-                }
-
-              }
-
-            }
-          }
-
-        }
-        DEF ParabolaPP TSeparatorKit {
-          transform 
-          Transform {
-            translation 2 2 0
-
-          }
-          group 
-          Group {
-
-            DEF Shape TShapeKit {
-              shapeRT 
-              DEF Parabolic ShapeParabolic {
-                fields [ SFDouble fX, SFDouble fY ]
-
-              }
-              profileRT 
-              DEF Box ProfileBox {
-                fields [ SFDouble uSize, SFDouble vSize ]
-
-              }
-              materialRT 
-              DEF Specular MaterialSpecular {
-                fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
-
-              }
-              appearance 
-              AppearanceKit {
-                material 
-                DEF MaterialGL Material {
-
-                }
-
-              }
-
-            }
-          }
-
-        }
-        DEF ParabolaMM TSeparatorKit {
-          transform 
-          Transform {
-            translation -2 -2 0
-
-          }
-          group 
-          Group {
-
-            DEF Shape TShapeKit {
-              shapeRT 
-              DEF Parabolic ShapeParabolic {
-                fields [ SFDouble fX, SFDouble fY ]
-                fX -1
-                fY -1
-
-              }
-              profileRT 
-              DEF Box ProfileBox {
-                fields [ SFDouble uSize, SFDouble vSize ]
-
-              }
-              materialRT 
-              DEF Specular MaterialSpecular {
-                fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
-
-              }
-              appearance 
-              AppearanceKit {
-                material 
-                DEF MaterialGL Material {
-
-                }
-
-              }
-
-            }
-          }
-
-        }
-        DEF ParabolaMP TSeparatorKit {
-          transform 
-          Transform {
-            translation -2 2 0
-
-          }
-          group 
-          Group {
-
-            DEF Shape TShapeKit {
-              shapeRT 
-              DEF Parabolic ShapeParabolic {
-                fields [ SFDouble fX, SFDouble fY ]
-                fX -1
-                fY 1
-
-              }
-              profileRT 
-              DEF Circular ProfileCircular {
-                fields [ SFDouble rMin, SFDouble rMax, SFDouble phiMin, SFDouble phiMax ]
-
-              }
-              materialRT 
-              DEF Specular MaterialSpecular {
-                fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
-
-              }
-              appearance 
-              AppearanceKit {
-                material 
-                DEF MaterialGL Material {
-                  diffuseColor 0.80000001 0.80000001 0.5
-
-                }
-
-              }
-
-            }
-          }
-
-        }
-        DEF Spherical TSeparatorKit {
-          transform 
-          Transform {
-            translation 5 0 0
-
-          }
-          group 
-          Group {
-
-            DEF Shape TShapeKit {
-              shapeRT 
-              DEF Spherical ShapeElliptic {
-                fields [ SFDouble aX, SFDouble aY, SFDouble aZ ]
-
-              }
-              profileRT 
-              DEF Box ProfileBox {
-                fields [ SFDouble uSize, SFDouble vSize ]
-                uSize 1
-                vSize 1.5
-
-              }
-              materialRT 
-              DEF Specular MaterialSpecular {
-                fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
-
-              }
-              appearance 
-              AppearanceKit {
-                material 
-                DEF MaterialGL Material {
-
-                }
-
-              }
-
-            }
-          }
-
-        }
-        DEF Hyperbolic TSeparatorKit {
-          transform 
-          Transform {
-            translation -5 0 0
-
-          }
-          group 
-          Group {
-
-            DEF Shape TShapeKit {
-              shapeRT 
-              DEF Hyperbolic ShapeHyperbolic {
-                fields [ SFDouble aX, SFDouble aY, SFDouble aZ ]
-
-              }
-              profileRT 
-              DEF Box ProfileBox {
-                fields [ SFDouble uSize, SFDouble vSize ]
-                uSize 1
-                vSize 1.5
-
-              }
-              materialRT 
-              DEF Specular MaterialSpecular {
-                fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
-
-              }
-              appearance 
-              AppearanceKit {
-                material 
-                DEF MaterialGL Material {
-
-                }
-
-              }
-
-            }
-          }
-
-        }
-        DEF SphericalM TSeparatorKit {
-          transform 
-          Transform {
-            translation 8 0 0
-            rotation 1 0 0  3.1400001
-
-          }
-          group 
-          Group {
-
-            DEF Shape TShapeKit {
-              shapeRT 
-              DEF Spherical ShapeElliptic {
-                fields [ SFDouble aX, SFDouble aY, SFDouble aZ ]
-
-              }
-              profileRT 
-              DEF Box ProfileBox {
-                fields [ SFDouble uSize, SFDouble vSize ]
-                uSize 1
-                vSize 1.5
-
-              }
-              materialRT 
-              DEF Specular MaterialSpecular {
-                fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
-
-              }
-              appearance 
-              AppearanceKit {
-                material 
-                DEF MaterialGL Material {
-
-                }
-
-              }
-
-            }
-          }
-
-        }
-        DEF HyperbolicM TSeparatorKit {
-          transform 
-          Transform {
-            translation -8 0 0
-            rotation 1 0 0  3.1400001
-
-          }
-          group 
-          Group {
-
-            DEF Shape TShapeKit {
-              shapeRT 
-              DEF Hyperbolic ShapeHyperbolic {
-                fields [ SFDouble aX, SFDouble aY, SFDouble aZ ]
-
-              }
-              profileRT 
-              DEF Box ProfileBox {
-                fields [ SFDouble uSize, SFDouble vSize ]
-                uSize 1
-                vSize 1.5
-
-              }
-              materialRT 
-              DEF Specular MaterialSpecular {
-                fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
-
-              }
-              appearance 
-              AppearanceKit {
-                material 
-                DEF MaterialGL Material {
-
-                }
-
-              }
-
-            }
-          }
-
-        }
-      }
+  DEF Node TSeparatorKit {
+    transform 
+    Transform {
 
     }
+    group 
+    Group {
 
+      DEF ParabolaPM TSeparatorKit {
+        transform 
+        Transform {
+          translation 2 -2 0
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Parabolic ShapeParabolic {
+              fields [ SFDouble fX, SFDouble fY ]
+              fX 1
+              fY -1
+
+            }
+            profileRT 
+            DEF Circular ProfileCircular {
+              fields [ SFDouble rMin, SFDouble rMax, SFDouble phiMin, SFDouble phiMax ]
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+
+            }
+            material 
+            Material {
+
+            }
+
+          }
+        }
+
+      }
+      DEF ParabolaPP TSeparatorKit {
+        transform 
+        Transform {
+          translation 2 2 0
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Parabolic ShapeParabolic {
+              fields [ SFDouble fX, SFDouble fY ]
+
+            }
+            profileRT 
+            DEF Box ProfileBox {
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+
+            }
+            material 
+            Material {
+
+            }
+
+          }
+        }
+
+      }
+      DEF ParabolaMM TSeparatorKit {
+        transform 
+        Transform {
+          translation -2 -2 0
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Parabolic ShapeParabolic {
+              fields [ SFDouble fX, SFDouble fY ]
+              fX -1
+              fY -1
+
+            }
+            profileRT 
+            DEF Box ProfileBox {
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+
+            }
+            material 
+            Material {
+
+            }
+
+          }
+        }
+
+      }
+      DEF ParabolaMP TSeparatorKit {
+        transform 
+        Transform {
+          translation -2 2 0
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Parabolic ShapeParabolic {
+              fields [ SFDouble fX, SFDouble fY ]
+              fX -1
+              fY 1
+
+            }
+            profileRT 
+            DEF Circular ProfileCircular {
+              fields [ SFDouble rMin, SFDouble rMax, SFDouble phiMin, SFDouble phiMax ]
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+
+            }
+            material 
+            Material {
+
+            }
+
+          }
+        }
+
+      }
+      DEF Spherical TSeparatorKit {
+        transform 
+        Transform {
+          translation 5 0 0
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Spherical ShapeElliptic {
+              fields [ SFDouble aX, SFDouble aY, SFDouble aZ ]
+
+            }
+            profileRT 
+            DEF Box ProfileBox {
+              uSize 1
+              vSize 1.5
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+
+            }
+            material 
+            Material {
+
+            }
+
+          }
+        }
+
+      }
+      DEF Hyperbolic TSeparatorKit {
+        transform 
+        Transform {
+          translation -5 0 0
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Hyperbolic ShapeHyperbolic {
+              fields [ SFDouble aX, SFDouble aY, SFDouble aZ ]
+
+            }
+            profileRT 
+            DEF Box ProfileBox {
+              uSize 1
+              vSize 1.5
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+
+            }
+            material 
+            Material {
+
+            }
+
+          }
+        }
+
+      }
+      DEF SphericalM TSeparatorKit {
+        transform 
+        Transform {
+          translation 8 0 0
+          rotation 1 0 0  3.1400001
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Spherical ShapeElliptic {
+              fields [ SFDouble aX, SFDouble aY, SFDouble aZ ]
+
+            }
+            profileRT 
+            DEF Box ProfileBox {
+              uSize 1
+              vSize 1.5
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+
+            }
+            material 
+            Material {
+
+            }
+
+          }
+        }
+
+      }
+      DEF HyperbolicM TSeparatorKit {
+        transform 
+        Transform {
+          translation -8 0 0
+          rotation 1 0 0  3.1400001
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Hyperbolic ShapeHyperbolic {
+              fields [ SFDouble aX, SFDouble aY, SFDouble aZ ]
+
+            }
+            profileRT 
+            DEF Box ProfileBox {
+              uSize 1
+              vSize 1.5
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
+
+            }
+            material 
+            Material {
+
+            }
+
+          }
+        }
+
+      }
+    }
+
+  }
 
 }

@@ -61,17 +61,18 @@ public:
     ~MainWindow();
 
     PluginManager* getPlugins() {return m_pluginManager;}
-    void FinishManipulation();
+
     void StartManipulation(SoDragger* dragger);
-//    void ExecuteScriptFile(QString fileName); // del?
+    void FinishManipulation();
+
+    //    void ExecuteScriptFile(QString fileName); // del?
 
 public slots:
-    void FileNew();
-    void FileOpen(QString fileName);
-    bool FileSave();
-    void FileSaveAs(QString fileName);
-    void nodeExport(QString fileName);
+    void fileNew();
     void Clear();
+    void fileOpen(QString fileName);
+    bool fileSave();
+    void fileSaveAs(QString fileName);
 
     void Copy();
     void Copy(QString url);
@@ -83,12 +84,14 @@ public slots:
     void PasteCopy();
     void PasteLink();
 
+    void nodeExport(QString fileName = "");
+    void nodeImport(QString fileName = "");
+
     void InsertNode();
     void InsertShape();
     void InsertTracker();
     void InsertShapeSurface(QString shapeType, int numberOfParameters, QVector<QVariant> parametersList);
     void CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector<QVariant> parametersList);
-    void InsertFileComponent(QString componentFileName = "");
     void InsertScene(QScriptValue v);
     QScriptValue FindInterception(QScriptValue surface, QScriptValue rays);
 
@@ -121,11 +124,9 @@ public slots:
     void SetPhotonBufferAppend(bool on) {m_photonBufferAppend = on;}
 
 private slots:
-    void onAbort(QString error);
-    void onUndoStack();
-    void FileOpen();
-    void FileOpenRecent();
-    bool FileSaveAs();
+    void fileOpen();
+    void fileOpenRecent();
+    bool fileSaveAs();
 
     void ChangeNodeName(const QModelIndex& index, const QString& name);
     void ChangeSelection(const QModelIndex& index);
@@ -134,15 +135,10 @@ private slots:
 //    void InsertShapeSurface(TFactory* f);
     void InsertShapeSurface(ShapeFactory* factory, int numberOfParameters, QVector<QVariant> parametersList);
 
-    bool nodeExport();
-    void nodeImport();
-
     void ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex& node);
     void ItemDragAndDropCopy(const QModelIndex& newParent, const QModelIndex& node);
 
-    void undo();
-    void redo();
-    void showUndoHistory();
+    void onUndoStack();
 
     void RunCompleteRayTracer();
     void RunFluxAnalysisDialog();
@@ -156,7 +152,9 @@ private slots:
     void showPhotons(bool on);
 
     void ShowMenu(const QModelIndex& index);
-    void ShowWarning(QString message);
+
+    void onAbort(QString error);
+    void showWarning(QString message);
 
 
     SbVec3f getTarget(SoCamera* camera);
@@ -204,18 +202,21 @@ protected:
 private:
     void ChangeModelScene();
     PhotonsAbstract* CreatePhotonMapExport() const;
-    bool Delete(QModelIndex index);
+
+    bool fileSave(const QString& fileName);
+    void SetCurrentFile(const QString& filePath);
     bool OkToContinue();
+    bool StartOver(const QString& fileName);
+    void setDocumentModified(bool value);
+
+    bool Delete(QModelIndex index);
     bool Paste(QModelIndex index, tgc::PasteType type);
 
     bool ReadyForRaytracing(InstanceNode*& instanceLayout,
                             InstanceNode* instanceSun,
                             AirTransmission*& air);
-    bool SaveFile(const QString& fileName);
-    void SetCurrentFile(const QString& fileName);
 
     void SetupDocument();
-
     void SetupViews();
     void SetupGraphicView();
     void SetupTreeView();
@@ -225,13 +226,9 @@ private:
 
     void SetupTriggers();
 
-    void ReadSettings();
-    void SetupRecentFiles();
-    void UpdateRecentFileActions();
-    void WriteSettings();
-
-    bool StartOver(const QString& fileName);
-    void setDocumentModified(bool value);
+    void readSettings();
+    void writeSettings();
+    void updateRecentFiles();
 
     void onSunDialog();
     void onAirDialog();
@@ -243,9 +240,9 @@ private:
     Ui::MainWindow* ui;
     PluginManager* m_pluginManager;
 
-    static const int m_maxRecentFiles = 7;
-    QStringList m_recentFiles;
-    QString m_currentFile;
+    QString m_fileName;
+    static const int m_filesRecentMax = 8;
+    QStringList m_filesRecent;
 
     QUndoStack* m_undoStack;
     UndoView* m_undoView;

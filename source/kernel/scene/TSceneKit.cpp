@@ -51,7 +51,7 @@ TSceneKit::TSceneKit()
 //    loc->name = "unknown";
 
     TSeparatorKit* nodeLayout = (TSeparatorKit*) getPart("group", true);
-    nodeLayout->setName("Layout");
+    nodeLayout->setName("Node");
 }
 
 TSeparatorKit* TSceneKit::getLayout()

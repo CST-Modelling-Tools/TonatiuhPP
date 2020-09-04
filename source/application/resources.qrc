@@ -40,5 +40,6 @@
         <file>images/edit/undoHistory.png</file>
         <file>images/scene/nodeExport.png</file>
         <file>images/scene/nodeImport.png</file>
+        <file>images/scene/nodeCamera.png</file>
     </qresource>
 </RCC>

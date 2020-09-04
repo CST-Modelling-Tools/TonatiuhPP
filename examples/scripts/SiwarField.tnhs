@@ -193,10 +193,12 @@ function makeField()
 
 	tn.InsertScene(nodeRoot);
 	tn.ChangeSunPosition(180., 90 - 11.27182); 
-	tn.SetSunParameter("aperture.disabledNodes", "//Layout/Script/Ground");
+	tn.SetSunParameter("aperture.disabledNodes", "//Node/Script/Ground");
 }
 
 
 var zReceiver = 25;
 var vRec = "0.0467 -2.0216 " + zReceiver;
+
+tn.Clear();
 makeField();

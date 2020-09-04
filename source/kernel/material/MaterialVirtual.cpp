@@ -15,6 +15,7 @@ void MaterialVirtual::initClass()
 MaterialVirtual::MaterialVirtual()
 {
     SO_NODE_CONSTRUCTOR(MaterialVirtual);
+    isBuiltIn = TRUE;
 }
 
 bool MaterialVirtual::OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& rand, Ray& rayOut) const

@@ -31,8 +31,6 @@ public slots:
     QScriptValue insertMaterial(const QString& name = "");
     QScriptValue insertArmature(const QString& name = "");
 
-    void update();
-
     void setName(const QString& name);
     void setParameter(const QString& name, const QString& value);
 

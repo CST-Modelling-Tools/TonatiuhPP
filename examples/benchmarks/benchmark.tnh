@@ -36,7 +36,7 @@ TSceneKit {
 
   }
   group 
-  DEF Layout TSeparatorKit {
+  DEF Node TSeparatorKit {
     transform 
     Transform {
 
@@ -52,7 +52,6 @@ TSceneKit {
         }
         profileRT 
         DEF Box ProfileBox {
-          fields [ SFDouble uSize, SFDouble vSize ]
 
         }
         materialRT 

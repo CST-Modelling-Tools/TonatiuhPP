@@ -3,10 +3,6 @@
 #include <QAction>
 
 class TFactory;
-class ShapeFactory;
-class ProfileFactory;
-class MaterialFactory;
-class TrackerFactory;
 class ComponentFactory;
 
 

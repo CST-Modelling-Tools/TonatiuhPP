@@ -2,20 +2,15 @@
 #include "ui_ScriptWindow.h"
 
 #include <iostream>
-//#include <stdio.h>
 
 #include <QDateTime>
 #include <QElapsedTimer>
 #include <QScriptEngine>
-#include <QString>
 #include <QDir>
-
 #include <QMessageBox>
 #include <QSettings>
 #include <QFileDialog>
 #include <QTextStream>
-#include "ScriptRayTracer.h"
-#include "tonatiuh_script.h"
 
 Q_DECLARE_METATYPE(QVector<QVariant>)
 
@@ -24,6 +19,8 @@ Q_DECLARE_METATYPE(QVector<QVariant>)
 #include "main/MainWindow.h"
 #include "main/PluginManager.h"
 #include "SyntaxHighlighter.h"
+#include "ScriptRayTracer.h"
+#include "tonatiuh_script.h"
 
 Q_SCRIPT_DECLARE_QMETAOBJECT(NodeObject, QObject*)
 Q_SCRIPT_DECLARE_QMETAOBJECT(FileObject, QObject*)
@@ -38,7 +35,6 @@ ScriptWindow::ScriptWindow(MainWindow* mw, QWidget* parent):
     ui(new Ui::ScriptWindow)
 {
     ui->setupUi(this);
-    ui->toolBarEdit->hide();
 
     int q = fontMetrics().height();
     resize(64*q, 48*q);
@@ -93,12 +89,6 @@ ScriptWindow::ScriptWindow(MainWindow* mw, QWidget* parent):
     connect(ui->actionFileSave, SIGNAL(triggered()), this, SLOT(fileSave()) );
     connect(ui->actionFileSaveAs, SIGNAL(triggered()), this, SLOT(fileSaveAs()) );
     connect(ui->actionRunScript, SIGNAL(triggered()), this, SLOT(runScript()) );
-
-    connect(ui->actionEditUndo, SIGNAL(triggered()), ui->codeEditor, SLOT(undo()) );
-    connect(ui->actionEditRedo, SIGNAL(triggered()), ui->codeEditor, SLOT(redo()) );
-    connect(ui->actionEditCut, SIGNAL(triggered()), ui->codeEditor, SLOT(cut()) );
-    connect(ui->actionEditCopy, SIGNAL(triggered()), ui->codeEditor, SLOT(copy()) );
-    connect(ui->actionEditPaste, SIGNAL(triggered()), ui->codeEditor, SLOT(paste()) );
 }
 
 ScriptWindow::~ScriptWindow()
@@ -141,7 +131,7 @@ void ScriptWindow::fileOpen(QString fileName)
     if (fileName.isEmpty())
     {
         QSettings settings("CyI", "Tonatiuh");
-        QString dirName = settings.value("script.openDirectory", "../examples").toString();
+        QString dirName = settings.value("dirScript", "../examples").toString();
 
         fileName = QFileDialog::getOpenFileName(
             this, "Open File", dirName,
@@ -150,7 +140,7 @@ void ScriptWindow::fileOpen(QString fileName)
         if (fileName.isEmpty()) return;
 
         QFileInfo fileInfo(fileName);
-        settings.setValue("script.openDirectory", fileInfo.path());
+        settings.setValue("dirScript", fileInfo.path());
     }
 
     QFile file(fileName);
@@ -187,7 +177,7 @@ bool ScriptWindow::fileSaveAs(QString fileName)
     if (fileName.isEmpty())
     {
         QSettings settings("CyI", "Tonatiuh");
-        QString dirName = settings.value("script.saveDirectory", "../examples").toString();
+        QString dirName = settings.value("dirScript", "../examples").toString();
 
         QString fileName = QFileDialog::getSaveFileName(
             this, "Save File", dirName,
@@ -196,7 +186,7 @@ bool ScriptWindow::fileSaveAs(QString fileName)
         if (fileName.isEmpty()) return false;
 
         QFileInfo fileInfo(fileName);
-        settings.setValue("script.saveDirectory", fileInfo.path());
+        settings.setValue("dirScript", fileInfo.path());
     }
 
     QFile file(fileName);

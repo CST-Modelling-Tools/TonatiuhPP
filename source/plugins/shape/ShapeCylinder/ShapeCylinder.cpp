@@ -17,6 +17,7 @@ void ShapeCylinder::initClass()
 ShapeCylinder::ShapeCylinder()
 {
     SO_NODE_CONSTRUCTOR(ShapeCylinder);
+    isBuiltIn = TRUE;
 }
 
 vec3d ShapeCylinder::getPoint(double u, double v) const

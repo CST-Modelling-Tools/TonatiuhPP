@@ -45,7 +45,7 @@ protected:
     virtual void setSelection(const QRect& rect, QItemSelectionModel::SelectionFlags flags);
     virtual int horizontalOffset() const;
     virtual int verticalOffset() const;
-    virtual bool isIndexHidden (const QModelIndex& index) const;
+    virtual bool isIndexHidden(const QModelIndex& index) const;
     virtual QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers);
     virtual QRegion visualRegionForSelection(const QItemSelection& selection) const;
 

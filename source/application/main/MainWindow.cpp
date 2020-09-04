@@ -98,14 +98,6 @@
 #include <QDebug>
 #include "kernel/scene/GridNode.h"
 
-/*!
- * Returns the \a fullFileName files name, without path.
- */
-QString StrippedName(const QString& fullFileName)
-{
-    return QFileInfo(fullFileName).fileName();
-}
-
 void startManipulator(void* data, SoDragger* dragger)
 {
     MainWindow* w = static_cast<MainWindow*>(data);
@@ -118,14 +110,10 @@ void finishManipulator(void* data, SoDragger* /*dragger*/)
     w->FinishManipulation();
 }
 
-/*!
- * Creates a new MainWindow object.
- */
+
 MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* parent, Qt::WindowFlags flags):
     QMainWindow(parent, flags),
     ui(new Ui::MainWindow),
-    m_recentFiles(""),
-    m_currentFile(""),
     m_document(0),
     m_graphicsRoot(0),
     m_modelScene(0),
@@ -168,7 +156,7 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
     SetupViews();
     SetupPluginManager();
     SetupTriggers();
-    ReadSettings();
+    readSettings();
 
     if (splash) splash->showMessage("Opening file", splashAlignment);
     if (!tonatiuhFile.isEmpty()) {
@@ -184,7 +172,7 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
         ui->sceneView->expandToDepth(1);
     }
 
-    Select("//Layout");
+    Select("//Node");
 
 //    m_graphicsRoot->deselectAll();
 //    qDebug() << "counter " << m_document->getSceneKit()->getRefCount();
@@ -246,7 +234,7 @@ void MainWindow::SetupDocument()
     m_document = new Document;
     connect(
         m_document, SIGNAL(Warning(QString)),
-        this, SLOT(ShowWarning(QString))
+        this, SLOT(showWarning(QString))
     );
 
     // graphic root
@@ -340,13 +328,13 @@ void MainWindow::SetupGraphicView()
     on_actionQuadView_toggled();
 }
 
-#include <QTreeWidget>
 void MainWindow::SetupTreeView()
 {
     // tree
     ui->sceneView->setModel(m_modelScene);
     ui->sceneView->setSelectionModel(m_modelSelection);
-    ui->sceneView->setRootIndex(m_modelScene->indexFromUrl("//Layout")); // also in ChangeModelScene
+//    ui->sceneView->setRootIndex(m_modelScene->indexFromUrl("//Layout")); // also in ChangeModelScene
+//    ui->sceneView->setRootIsDecorated(false);
 
     connect(ui->sceneView, SIGNAL(dragAndDrop(const QModelIndex&,const QModelIndex&)),
             this, SLOT(ItemDragAndDrop(const QModelIndex&,const QModelIndex&)) );
@@ -366,7 +354,6 @@ void MainWindow::SetupTreeView()
         ui->treeWorldWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
         this, SLOT(treeWorldDoubleClicked(QTreeWidgetItem*, int))
     );
-
 
     // parameters
     ui->parametersTabs->removeTab(1);
@@ -404,16 +391,16 @@ void MainWindow::SetupTriggers()
     connect(this, SIGNAL(Abort(QString)), this, SLOT(onAbort(QString)));
 
     // file
-    connect(ui->actionFileNew, SIGNAL(triggered()), this, SLOT(FileNew()) );
-    connect(ui->actionFileOpen, SIGNAL(triggered()), this, SLOT(FileOpen()) );
-    connect(ui->actionFileSave, SIGNAL(triggered()), this, SLOT(FileSave()) );
-    connect(ui->actionFileSaveAs, SIGNAL(triggered()), this, SLOT(FileSaveAs()) );
+    connect(ui->actionFileNew, SIGNAL(triggered()), this, SLOT(fileNew()) );
+    connect(ui->actionFileOpen, SIGNAL(triggered()), this, SLOT(fileOpen()) );
+    connect(ui->actionFileSave, SIGNAL(triggered()), this, SLOT(fileSave()) );
+    connect(ui->actionFileSaveAs, SIGNAL(triggered()), this, SLOT(fileSaveAs()) );
     connect(ui->actionFileExit, SIGNAL(triggered()), this, SLOT(close()) );
 
     // edit
-    connect(ui->actionEditUndo, SIGNAL(triggered()), this, SLOT(undo()) );
-    connect(ui->actionEditRedo, SIGNAL(triggered()), this, SLOT(redo()) );
-    connect(ui->actionEditUndoView, SIGNAL(triggered()), this, SLOT(showUndoHistory()) );
+    connect(ui->actionEditUndo, SIGNAL(triggered()), m_undoStack, SLOT(undo()) );
+    connect(ui->actionEditRedo, SIGNAL(triggered()), m_undoStack, SLOT(redo()) );
+    connect(ui->actionEditUndoView, SIGNAL(triggered()), m_undoView, SLOT(show()) );
     connect(ui->actionEditCut, SIGNAL(triggered()), this, SLOT(Cut()) );
     connect(ui->actionEditCopy, SIGNAL(triggered()), this, SLOT(Copy()) );
     connect(ui->actionEditPaste, SIGNAL(triggered()), this, SLOT(PasteCopy()) );
@@ -477,6 +464,7 @@ void MainWindow::onAbort(QString error)
 void MainWindow::onUndoStack()
 {
     ChangeSelection(m_modelSelection->currentIndex());
+    //    UpdateLightSize();
 }
 
 /*!
@@ -537,7 +525,7 @@ void MainWindow::onAirDialog()
     setFieldNode(m_document->getSceneKit()->getPart("world", false), "air", dialog.getAir());
 }
 
-void MainWindow::showGrid()
+void MainWindow::showGrid() //?
 {
     GridNode* node = (GridNode*) m_document->getSceneKit()->getPart("world.terrain.grid", false);
     if (node) node->show = ui->actionViewGrid->isChecked();
@@ -553,37 +541,6 @@ void MainWindow::showPhotons(bool on)
     m_graphicsRoot->showPhotons(on);
 }
 
-/*!
- * Inserts an existing tonatiuh component into the tonatiuh model as a selected node child.
- *
- * A open file dialog is opened to select the file where the existing component is saved.
- */
-void MainWindow::nodeImport()
-{
-    QModelIndex parentIndex;
-    if ((!ui->sceneView->currentIndex().isValid() ) || (ui->sceneView->currentIndex() == ui->sceneView->rootIndex() ) )
-        parentIndex = m_modelScene->index (0,0,ui->sceneView->rootIndex());
-    else
-        parentIndex = ui->sceneView->currentIndex();
-
-    SoNode* coinNode = m_modelScene->getInstance(parentIndex)->getNode();
-
-    if (!coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) return;
-
-    QSettings settings("CyI", "Tonatiuh");
-    QString openDirectory = settings.value("componentOpenDirectory", QString(".") ).toString();
-
-    QString fileName = QFileDialog::getOpenFileName(this,
-                                                    tr("Open Tonatiuh document"), openDirectory,
-                                                    tr("Tonatiuh component (*.tcmp)") );
-
-    if (fileName.isEmpty() ) return;
-
-    QFileInfo file(fileName);
-    settings.setValue("componentOpenDirectory", file.absolutePath() );
-
-    InsertFileComponent(fileName);
-}
 
 /*!
  * Moves the scene node with index \a node to the parent with index \a newParent.
@@ -629,60 +586,37 @@ void MainWindow::ItemDragAndDropCopy(const QModelIndex& newParent, const QModelI
     setDocumentModified(true);
 }
 
-/*!
- * Shows a dialog to the user to open a existing tonatiuh file.
- */
-void MainWindow::FileOpen()
+void MainWindow::fileOpen()
 {
     if (!OkToContinue()) return;
 
     // HKEY_CURRENT_USER\Software\CyI\Tonatiuh
     QSettings settings("CyI", "Tonatiuh");
-    QString dir = settings.value("openDirectory", "../examples").toString();
+    QString dirName = settings.value("dirProjects", "../examples").toString();
 
-    QString file = QFileDialog::getOpenFileName(
-                this, "Open", dir,
-                "Tonatiuh files (*.tnh *.tnpp)"
-//                "Tonatiuh++ files (*.tnpp);;Tonatiuh files (*.tnh)"
+    QString fileName = QFileDialog::getOpenFileName(
+        this, "Open File", dirName,
+        "Tonatiuh files (*.tnh *.tnpp)"
     );
-    if (file.isEmpty()) return;
+    if (fileName.isEmpty()) return;
+//    "Tonatiuh++ files (*.tnpp);;Tonatiuh files (*.tnh)"
 
-    QFileInfo info(file);
-    settings.setValue("openDirectory", info.path());
+    QFileInfo info(fileName);
+    settings.setValue("dirProjects", info.path());
 
-    StartOver(file);
+    StartOver(fileName);
 }
 
-/*!
- * Opens selected tonatiuh file from the recent file menu.
- */
-void MainWindow::FileOpenRecent()
+void MainWindow::fileOpenRecent()
 {
     if (!OkToContinue()) return;
+
     QAction* action = qobject_cast<QAction*>(sender());
     if (action)
     {
         QString fileName = action->data().toString();
         StartOver(fileName);
     }
-}
-
-/*!
- * Applies las reverted command action changes to Tonatiuh.
- */
-void MainWindow::redo()
-{
-    m_undoStack->redo();
-    UpdateLightSize();
-}
-
-/*!
- * Reverts a change to Tonatiuh model. The model is returne to the previous state before the command is applied.
- */
-void MainWindow::undo()
-{
-    m_undoStack->undo();
-    UpdateLightSize();
 }
 
 /*!
@@ -751,53 +685,12 @@ void MainWindow::RunFluxAnalysisDialog()
  *
  * \sa SaveAs, SaveFile.
  */
-bool MainWindow::FileSave()
+bool MainWindow::fileSave()
 {
-    if (m_currentFile.isEmpty() ) return FileSaveAs();
-    else return SaveFile(m_currentFile);
-}
-
-/*!
- * Saves current selected node as a component in the files named \a componentFileName.
- */
-void MainWindow::nodeExport(QString fileName)
-{
-    if (!m_modelSelection->hasSelection() ) return;
-    if (m_modelSelection->currentIndex() == ui->sceneView->rootIndex() ) return;
-
-    QModelIndex componentIndex = ui->sceneView->currentIndex();
-    SoNode* coinNode = m_modelScene->getInstance(componentIndex)->getNode();
-
-    if (!coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
-    {
-        QMessageBox::warning(0, tr("Tonatiuh"),
-                             tr("Selected node in not valid  for component node") );
-        return;
-    }
-
-    TSeparatorKit* componentRoot = dynamic_cast< TSeparatorKit* > (coinNode);
-    if (!componentRoot) return;
-
-    if (fileName.isEmpty() ) return;
-
-    QFileInfo componentFile(fileName);
-    if (componentFile.completeSuffix().compare("tcmp") ) fileName.append(".tcmp");
-
-    SoWriteAction SceneOuput;
-    if (!SceneOuput.getOutput()->openFile(fileName.toLatin1().constData() ) )
-    {
-        QMessageBox::warning(0, tr("Tonatiuh"),
-                             tr("Cannot open file %1. ")
-                             .arg(fileName));
-        return;
-    }
-
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    SceneOuput.getOutput()->setBinary(false);
-    SceneOuput.apply(componentRoot);
-    SceneOuput.getOutput()->closeFile();
-    QApplication::restoreOverrideCursor();
-    return;
+    if (m_fileName.isEmpty())
+        return fileSaveAs();
+    else
+        return fileSave(m_fileName);
 }
 
 /*!
@@ -805,71 +698,117 @@ void MainWindow::nodeExport(QString fileName)
  *
  * \sa Save, SaveFile.
  */
-bool MainWindow::FileSaveAs()
+bool MainWindow::fileSaveAs()
 {
     QSettings settings("CyI", "Tonatiuh");
-    QString dir = settings.value("saveDirectory", "../examples").toString();
+    QString dir = settings.value("dirProjects", "../examples").toString();
 
     QString file = QFileDialog::getSaveFileName(
         this, "Save", dir,
         "Tonatiuh++ files (*.tnpp);;Tonatiuh files (*.tnh);;Tonatiuh debug (*.tnhd)"
     );
-    if (file.isEmpty() ) return false;
+    if (file.isEmpty()) return false;
 
     QFileInfo info(file);
-    settings.setValue("saveDirectory", info.path());
+    settings.setValue("dirProjects", info.path());
 
-    return SaveFile(file);
+    return fileSave(file);
 }
 
-/*!
- * Saves selected node subtree as a component in a file.
- * A dialog is opened to select a file name and its location.
- */
-bool MainWindow::nodeExport()
+void MainWindow::nodeExport(QString fileName)
 {
-    if (!m_modelSelection->hasSelection() ) return false;
-    if (m_modelSelection->currentIndex() == ui->sceneView->rootIndex() ) return false;
+    if (!m_modelSelection->hasSelection()) return;
 
-    QModelIndex componentIndex = ui->sceneView->currentIndex();
-
-    SoNode* coinNode = m_modelScene->getInstance(componentIndex)->getNode();
-
-    if (!coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
+    QModelIndex index = ui->sceneView->currentIndex();
+    SoNode* node = m_modelScene->getInstance(index)->getNode();
+    if (!node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
     {
-        QMessageBox::warning(0, tr("Tonatiuh"),
-                             tr("Selected node in not valid  for component node") );
-        return false;
+        showWarning("Exported node shoud be TSeparatorKit");
+        return;
+    }
+    TSeparatorKit* kit = dynamic_cast< TSeparatorKit*>(node);
+    if (!kit) return;
+
+    // file
+    if (fileName.isEmpty()) {
+        QSettings settings("CyI", "Tonatiuh");
+        QString dirName = settings.value("dirNodes", "../examples").toString();
+
+        fileName = QFileDialog::getSaveFileName(
+            this, "Export Node", dirName,
+            "Tonatiuh component (*.tcmp)"
+        );
+        if (fileName.isEmpty()) return;
+
+        QFileInfo info(fileName);
+        settings.setValue("dirNodes", info.path());
     }
 
-    TSeparatorKit* componentRoot = dynamic_cast< TSeparatorKit* > (coinNode);
-    if (!componentRoot) return false;
-
-
-    QString fileName = QFileDialog::getSaveFileName(this,
-                                                    tr("Save Tonatiuh component"), ".",
-                                                    tr("Tonatiuh component (*.tcmp)") );
-    if (fileName.isEmpty() ) return false;
-
-    QFileInfo componentFile(fileName);
-    if (componentFile.completeSuffix().compare("tcmp") )
-        fileName.append(".tcmp");
-
-    SoWriteAction SceneOuput;
-    if (!SceneOuput.getOutput()->openFile(fileName.toLatin1().constData() ) )
+    // do
+    SoWriteAction action;
+    if (!action.getOutput()->openFile(fileName.toLatin1().constData()))
     {
-        QMessageBox::warning(0, tr("Tonatiuh"),
-                             tr("Cannot open file %1. ")
-                             .arg(fileName));
-        return false;
+        showWarning(tr("Cannot open file %1.").arg(fileName));
+        return;
     }
-
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    SceneOuput.getOutput()->setBinary(false);
-    SceneOuput.apply(componentRoot);
-    SceneOuput.getOutput()->closeFile();
+    action.getOutput()->setBinary(false);
+    action.apply(kit);
+    action.getOutput()->closeFile();
     QApplication::restoreOverrideCursor();
-    return true;
+}
+
+void MainWindow::nodeImport(QString fileName)
+{
+    QModelIndex index = ui->sceneView->currentIndex();
+    if (!index.isValid())
+        index = ui->sceneView->rootIndex();
+
+    SoNode* node = m_modelScene->getInstance(index)->getNode();
+    if (!node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
+    {
+        emit Abort(tr("Parent node should be TSeparatorKit"));
+        return;
+    }
+
+    // file
+    if (fileName.isEmpty()) {
+        QSettings settings("CyI", "Tonatiuh");
+        QString dirName = settings.value("dirNodes", "../examples").toString();
+
+        fileName = QFileDialog::getOpenFileName(
+            this, "Import Node", dirName,
+            "Tonatiuh component (*.tcmp)"
+        );
+        if (fileName.isEmpty()) return;
+
+        QFileInfo info(fileName);
+        settings.setValue("dirNodes", info.path());
+    }
+
+    // do
+    SoInput input;
+    if (!input.openFile(fileName.toLatin1().constData()))
+    {
+        emit Abort(tr("Cannot open file:\n%1.").arg(fileName));
+        return;
+    }
+    SoSeparator* separator = SoDB::readAll(&input);
+    input.closeFile();
+
+    if (!separator)
+    {
+        emit Abort(tr("Error reading file: \n%1.").arg(fileName));
+        return;
+    }
+    SoNode* nodeImported = separator->getChild(0);
+
+    CmdInsertNode* cmd = new CmdInsertNode(nodeImported, index);
+    cmd->setText("Insert Node from file");
+    m_undoStack->push(cmd);
+
+    UpdateLightSize();
+    setDocumentModified(true);
 }
 
 /*!
@@ -912,11 +851,6 @@ void MainWindow::setFieldNode(SoNode* node, QString field, SoNode* value)
     CmdSetFieldNode* cmd = new CmdSetFieldNode(node, field, value);
     m_undoStack->push(cmd);
     setDocumentModified(true);
-}
-
-void MainWindow::showUndoHistory()
-{
-    m_undoView->show();
 }
 
 /*!
@@ -971,7 +905,7 @@ void MainWindow::ShowMenu(const QModelIndex& index)
     popupmenu.exec(QCursor::pos());
 }
 
-void MainWindow::ShowWarning(QString message)
+void MainWindow::showWarning(QString message)
 {
     QMessageBox::warning(this, "Tonatiuh", message);
 }
@@ -1044,6 +978,8 @@ void MainWindow::treeWorldClicked(QTreeWidgetItem* item, int /*column*/)
         node = sceneKit->getPart("world.air", false);
     else if (name == "Terrain")
         node = sceneKit->getPart("world.terrain", false);
+    else if (name == "Camera")
+        node = m_graphicView[m_focusView]->getCamera();
 
     if (node)
         ui->parametersTabs->setNode(node);
@@ -1128,7 +1064,7 @@ void MainWindow::ChangeSunPosition(int year, int month, int day, double hours, d
          longitude < -180. || longitude > 180. ||
          latitude < -90. || latitude > 90. )
     {
-        QMessageBox::warning(this, "Tonatiuh warning", tr("ChangeSunPosition:: Not valid value define to new sun position.") );
+        showWarning("ChangeSunPosition:: Not valid value define to new sun position.");
         return;
     }
 
@@ -1142,13 +1078,6 @@ void MainWindow::ChangeSunPosition(int year, int month, int day, double hours, d
 //    ui->actionViewRays->setChecked(false);
 }
 
-/*!
- * Clears current design in Tonatiuh without verify if the changes have been saved.
- */
-void MainWindow::Clear()
-{
-    StartOver("");
-}
 
 /*!
  * Copies current node to the clipboard.
@@ -1267,15 +1196,18 @@ void MainWindow::Cut(QString url)
  */
 void MainWindow::Delete()
 {
-    if (!m_modelSelection->hasSelection() )
+    if (!m_modelSelection->hasSelection())
     {
         emit Abort("Delete: There is no node selected to delete");
         return;
     }
-
     QModelIndex index = m_modelSelection->currentIndex();
+    if (!index.isValid()) return;
+    if (index == ui->sceneView->rootIndex()) return;
+    if (index.parent() == ui->sceneView->rootIndex()) return;
+
     m_modelSelection->clearSelection();
-    if (index != ui->sceneView->rootIndex() ) {
+    if (index.parent() != ui->sceneView->rootIndex() ) {
         InstanceNode* instance = m_modelScene->getInstance(index);
         m_modelSelection->setCurrentIndex(m_modelScene->indexFromUrl(instance->getParent()->getURL()), QItemSelectionModel::ClearAndSelect);
     }
@@ -1298,7 +1230,8 @@ void MainWindow::Delete(QString url)
     }
 
     Delete(index);
-    if (m_modelSelection->isSelected(index)) m_modelSelection->clearSelection();
+    if (m_modelSelection->isSelected(index))
+        m_modelSelection->clearSelection();
 }
 
 /*!
@@ -1308,13 +1241,6 @@ void MainWindow::Delete(QString url)
  */
 bool MainWindow::Delete(QModelIndex index)
 {
-    if (!index.isValid()) return false;
-    if (index == ui->sceneView->rootIndex() ) return false;
-//    if (index.parent() == ui->sceneView->rootIndex() ) return false;
-
-    InstanceNode* instance = m_modelScene->getInstance(index);
-    SoNode* node = instance->getNode();
-
     CmdDelete* cmd = new CmdDelete(index, m_modelScene);
     m_undoStack->push(cmd);
 
@@ -1519,7 +1445,7 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
 
     //CreateComponent( pComponentFactory );
 
-    TSeparatorKit* componentLayout = pComponentFactory->CreateTComponent(m_pluginManager, numberofParameters, parametersList);
+    TSeparatorKit* componentLayout = pComponentFactory->create(m_pluginManager, numberofParameters, parametersList);
     if (!componentLayout) return;
 
 //    QString typeName = pComponentFactory->name();
@@ -1534,79 +1460,25 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
     setDocumentModified(true);
 }
 
-/*!
- *
- * Inserts an existing tonatiuh component into the tonatiuh model as a selected node child.
- *
- * The component is saved into \a componentFileName file.
- */
-void MainWindow::InsertFileComponent(QString componentFileName)
-{
-    QModelIndex parentIndex;
-    if ((!ui->sceneView->currentIndex().isValid() ) || (ui->sceneView->currentIndex() == ui->sceneView->rootIndex() ) )
-        parentIndex = m_modelScene->index (0,0,ui->sceneView->rootIndex());
-    else
-        parentIndex = ui->sceneView->currentIndex();
 
-    SoNode* coinNode = m_modelScene->getInstance(parentIndex)->getNode();
-    if (!coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
-    {
-        emit Abort(tr("InsertFileComponent: Parent node is not valid node type.") );
-        return;
-    }
-
-    if (componentFileName.isEmpty() )
-    {
-        emit Abort(tr("InsertFileComponent: Cannot open file:\n%1.").arg(componentFileName) );
-        return;
-    }
-
-    SoInput componentInput;
-    if (!componentInput.openFile(componentFileName.toLatin1().constData() ) )
-    {
-        emit Abort(tr("Cannot open file:\n%1.").arg(componentFileName) );
-        return;
-    }
-
-    SoSeparator* componentSeparator = SoDB::readAll(&componentInput);
-    componentInput.closeFile();
-
-    if (!componentSeparator)
-    {
-        emit Abort(tr("Error reading file: \n%1.").arg(componentFileName) );
-        return;
-    }
-
-    TSeparatorKit* componentLayout = static_cast<TSeparatorKit*>(componentSeparator->getChild(0) );
-
-    CmdInsertNode* cmdInsertSeparatorKit = new CmdInsertNode(componentLayout, parentIndex);
-    cmdInsertSeparatorKit->setText("Insert SeparatorKit node");
-    m_undoStack->push(cmdInsertSeparatorKit);
-
-    UpdateLightSize();
-    setDocumentModified(true);
-}
 
 #include "script/NodeObject.h"
 
 void MainWindow::InsertScene(QScriptValue v)
 {
-    QModelIndex parentIndex;
-    if (!ui->sceneView->currentIndex().isValid())
-        parentIndex = ui->sceneView->rootIndex();
-    else
-        parentIndex = ui->sceneView->currentIndex();
+    QModelIndex index = ui->sceneView->currentIndex();
+    if (!index.isValid())
+        index = m_modelScene->index(0, 0, ui->sceneView->rootIndex()); //! root is invisible
 
-    SoNode* coinNode = m_modelScene->getInstance(parentIndex)->getNode();
-    if (!coinNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
+    SoNode* node = m_modelScene->getInstance(index)->getNode();
+    if (!node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
     {
-        emit Abort(tr("InsertFileComponent: Parent node is not valid node type.") );
+        emit Abort("InsertFileComponent: Parent node is not valid node type.");
         return;
     }
-    NodeObject* no = (NodeObject*) v.toQObject();
-    TSeparatorKit* kit = (TSeparatorKit*) no->getNode();
-    CmdInsertNode* cmd = new CmdInsertNode(kit, parentIndex);
-    cmd->setText("Insert SeparatorKit node");
+    NodeObject* nodeObject = (NodeObject*) v.toQObject();
+    CmdInsertNode* cmd = new CmdInsertNode(nodeObject->getNode(), index);
+    cmd->setText("Insert Node from script");
     m_undoStack->push(cmd);
 
     UpdateLightSize();
@@ -1683,15 +1555,14 @@ void MainWindow::SetValue(QString url, QString parameter, QString value)
     if (node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) )
     {
         TSeparatorKit* separatorNode = static_cast< TSeparatorKit* >(node);
-        SoTransform* nodeTransform = static_cast< SoTransform* >(separatorNode->getPart("transform", true) );
+        SoTransform* nodeTransform = static_cast<SoTransform*>(separatorNode->getPart("transform", true) );
         node = nodeTransform;
     }
 
     SoField* parameterField = node->getField(parameter.toStdString().c_str() );
     if (!parameterField)
     {
-        QMessageBox::information(this, "Tonatiuh",
-            QString("Defined node has not contains the parameter %1.").arg(parameter), 1);
+        showWarning(tr("Defined node does not contain the parameter %1.").arg(parameter));
         return;
     }
 
@@ -1701,35 +1572,42 @@ void MainWindow::SetValue(QString url, QString parameter, QString value)
 /*!
  * Starts new tonatiuh empty model.
  */
-void MainWindow::FileNew()
+void MainWindow::fileNew()
 {
     if (!OkToContinue())
     {
-        emit Abort(tr("Current Tonatiuh model cannot be closed.") );
+        emit Abort("Current Tonatiuh model cannot be closed.");
         return;
     }
     StartOver("");
 }
 
 /*!
+ * Clears current design in Tonatiuh without verify if the changes have been saved.
+ */
+void MainWindow::Clear()
+{
+    StartOver("");
+}
+
+
+/*!
  * Opens \a fileName file is there is a valid tonatiuh file.
  */
-void MainWindow::FileOpen(QString fileName)
+void MainWindow::fileOpen(QString fileName)
 {
-    if (fileName.isEmpty() )
+    if (fileName.isEmpty())
     {
-        QMessageBox::warning(this, "Tonatiuh",
-                             tr("Open: Cannot open file:\n%1.").arg(fileName) );
-        emit Abort(tr("Open: Cannot open file:\n%1.").arg(fileName) );
+        showWarning(tr("Open: Cannot open file:\n%1.").arg(fileName));
+        emit Abort(tr("Open: Cannot open file:\n%1.").arg(fileName));
         return;
     }
 
-    QFileInfo file(fileName);
-    if (!file.exists() || !file.isFile() || file.suffix()!=QString("tnh") )
+    QFileInfo info(fileName);
+    if (!info.exists() || !info.isFile() || info.suffix() != "tnh") // todo
     {
-        QMessageBox::warning(this, "Tonatiuh",
-                             tr("Open: Cannot open file:\n%1.").arg(fileName) );
-        emit Abort(tr("Open: Cannot open file:\n%1.").arg(fileName) );
+        showWarning(tr("Open: Cannot open file:\n%1.").arg(fileName));
+        emit Abort(tr("Open: Cannot open file:\n%1.").arg(fileName));
         return;
     }
 
@@ -1869,20 +1747,20 @@ void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, uint nOfR
 /*!
  * Saves current tonatiuh model into \a fileName file.
  */
-void MainWindow::FileSaveAs(QString fileName)
+void MainWindow::fileSaveAs(QString fileName)
 {
     if (fileName.isEmpty())
     {
         emit Abort(tr("SaveAs: There is no file defined."));
         return;
     }
-    QFileInfo fileInfo (fileName);
-    if (fileInfo.completeSuffix() != "tnh" || fileInfo.completeSuffix() != "tnpp")
+    QFileInfo info(fileName);
+    if (info.completeSuffix() != "tnh" || info.completeSuffix() != "tnpp")
     {
         emit Abort(tr("SaveAs: The file defined is not a tonatiuh file. The suffix must be tnh.") );
         return;
     }
-    SaveFile(fileName);
+    fileSave(fileName);
 }
 
 /*!
@@ -2338,22 +2216,20 @@ void MainWindow::ChangeSelection(const QModelIndex& index)
  */
 void MainWindow::CreateComponent(ComponentFactory* factory)
 {
-    QModelIndex parentIndex = ( (!ui->sceneView->currentIndex().isValid() ) || (ui->sceneView->currentIndex() == ui->sceneView->rootIndex() ) ) ?
-                m_modelScene->index(0, 0, ui->sceneView->rootIndex()) :
-                ui->sceneView->currentIndex();
+    QModelIndex index = ui->sceneView->currentIndex();
+    if (!index.isValid())
+        index = ui->sceneView->rootIndex();
 
-    InstanceNode* parentInstance = m_modelScene->getInstance(parentIndex);
-    SoNode* parentNode = parentInstance->getNode();
-    if (!parentNode->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId() ) ) return;
+    SoNode* node = m_modelScene->getInstance(index)->getNode();
+    if (!node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId())) return;
 
-    TSeparatorKit* componentLayout = factory->CreateTComponent(m_pluginManager);
-    if (!componentLayout) return;
+    TSeparatorKit* nodeCreated = factory->create(m_pluginManager);
+    if (!nodeCreated) return;
+    nodeCreated->setName(factory->name().toLatin1().data());
 
-    QString typeName = factory->name();
-    componentLayout->setName(typeName.toStdString().c_str() );
-
-    CmdInsertNode* cmd = new CmdInsertNode(componentLayout, parentIndex);
-    QString text = QString("Create Component: %1").arg(factory->name().toLatin1().constData() );
+    // cmd
+    CmdInsertNode* cmd = new CmdInsertNode(nodeCreated, index);
+    QString text = QString("Create Component: %1").arg(factory->name());
     cmd->setText(text);
     m_undoStack->push(cmd);
 
@@ -2389,7 +2265,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
 {
     if (OkToContinue())
     {
-        WriteSettings();
+        writeSettings();
         event->accept();
         qApp->quit(); // closes script windows
     }
@@ -2441,8 +2317,8 @@ void MainWindow::ChangeModelScene()
     m_graphicsRoot->setDocument(m_document);
     m_modelScene->setDocument(m_document);
 
-    QModelIndex index = m_modelScene->indexFromUrl("//Layout");
-    ui->sceneView->setRootIndex(index);
+//    QModelIndex index = m_modelScene->indexFromUrl("//Layout");
+//    ui->sceneView->setRootIndex(index);
 
 //    InstanceNode* viewLayout = m_modelScene->getInstance(index);
 //    InstanceNode* concentratorRoot = viewLayout->children[0];
@@ -2482,7 +2358,7 @@ bool MainWindow::OkToContinue()
      );
 
     if (answer == QMessageBox::Yes)
-        return FileSave();
+        return fileSave();
     if (answer == QMessageBox::No)
         return true;
     return false;
@@ -2521,65 +2397,77 @@ bool MainWindow::Paste(QModelIndex index, tgc::PasteType type)
     return true;
 }
 
-/**
- * Restores application settings.
- **/
-void MainWindow::ReadSettings()
+void MainWindow::readSettings()
 {
     QSettings settings("CyI", "Tonatiuh");
+
+    // geometry
     QRect rect = settings.value("geometry", QRect(200, 200, 400, 400)).toRect();
-    move(rect.topLeft());
-    resize(rect.size());
+    setGeometry(rect);
 
-    setWindowState(Qt::WindowNoState);
-    if (settings.value("windowNoState", false).toBool() ) setWindowState(windowState() ^ Qt::WindowNoState);
-    if (settings.value("windowMinimized", false).toBool() ) setWindowState(windowState() ^ Qt::WindowMinimized);
-    if (settings.value("windowMaximized", true).toBool() ) setWindowState(windowState() ^ Qt::WindowMaximized);
-    if (settings.value("windowFullScreen", false).toBool() ) setWindowState(windowState() ^ Qt::WindowFullScreen);
-    if (settings.value("windowActive", false).toBool() ) setWindowState(windowState() ^ Qt::WindowActive);
+    // window state
+    Qt::WindowStates ws = Qt::WindowNoState;
+    if (settings.value("windowNoState", false).toBool())
+        ws ^= Qt::WindowNoState;
+    if (settings.value("windowMinimized", false).toBool())
+        ws ^= Qt::WindowMinimized;
+    if (settings.value("windowMaximized", true).toBool())
+        ws ^= Qt::WindowMaximized;
+    if (settings.value("windowFullScreen", false).toBool())
+        ws ^= Qt::WindowFullScreen;
+    if (settings.value("windowActive", false).toBool())
+        ws ^= Qt::WindowActive;
+    setWindowState(ws);
 
-    m_recentFiles = settings.value("recentFiles").toStringList();
-
-    SetupRecentFiles();
-    UpdateRecentFileActions();
-}
-
-/*!
- * Creates actions form recent files.
- */
-void MainWindow::SetupRecentFiles()
-{
-    for (int i = 0; i < m_maxRecentFiles; ++i) {
+    // recent files
+    for (int n = 0; n < m_filesRecentMax; ++n) {
         QAction* a = new QAction;
-        a->setVisible(false);
         connect(
             a, SIGNAL(triggered()),
-            this, SLOT(FileOpenRecent())
+            this, SLOT(fileOpenRecent())
         );
         ui->menuFileRecent->addAction(a);
     }
+    m_filesRecent = settings.value("recentFiles").toStringList();
+    updateRecentFiles();
+}
+
+void MainWindow::writeSettings()
+{
+    QSettings settings("CyI", "Tonatiuh");
+
+    settings.setValue("geometry", geometry());
+
+    Qt::WindowStates ws = windowState();
+    settings.setValue("windowNoState", ws.testFlag(Qt::WindowNoState));
+    settings.setValue("windowMinimized", ws.testFlag(Qt::WindowMinimized));
+    settings.setValue("windowMaximized", ws.testFlag(Qt::WindowMaximized));
+    settings.setValue("windowFullScreen", ws.testFlag(Qt::WindowFullScreen));
+    settings.setValue("windowActive", ws.testFlag(Qt::WindowActive));
+
+    settings.setValue("recentFiles", m_filesRecent);
 }
 
 /*!
  * Updates the recently opened files actions list.
  */
-void MainWindow::UpdateRecentFileActions()
+void MainWindow::updateRecentFiles()
 {
-    QMutableStringListIterator iterator(m_recentFiles);
+    QMutableStringListIterator iterator(m_filesRecent);
     while (iterator.hasNext())
         if (!QFile::exists(iterator.next()))
             iterator.remove();
 
     QList<QAction*> actions = ui->menuFileRecent->actions();
-    for (int n = 0; n < m_maxRecentFiles; ++n) {
-        if (n < m_recentFiles.count()) {
-            QString text = tr("&%1 |   %2")
-                    .arg(n + 1)
-                    .arg(StrippedName(m_recentFiles[n]));
+    for (int n = 0; n < m_filesRecentMax; ++n) {
+        if (n < m_filesRecent.count()) {
+            QString path = m_filesRecent[n];
+            QString name = QFileInfo(path).fileName();
+            QString text = tr("&%1 |   %2").arg(n + 1).arg(name);
             actions[n]->setText(text);
-            actions[n]->setToolTip(m_recentFiles[n]); // does not work
-            actions[n]->setStatusTip(m_recentFiles[n]);
-            actions[n]->setData(m_recentFiles[n]);
+            actions[n]->setToolTip(path); // if enabled in menu
+            actions[n]->setStatusTip(path);
+            actions[n]->setData(path);
             actions[n]->setVisible(true);
         } else
             actions[n]->setVisible(false);
@@ -2631,7 +2519,7 @@ bool MainWindow::ReadyForRaytracing(InstanceNode*& instanceLayout,
  *
  * \sa Save, SaveAs.
  */
-bool MainWindow::SaveFile(const QString& fileName)
+bool MainWindow::fileSave(const QString& fileName)
 {
     if (!m_document->WriteFile(fileName))
     {
@@ -2647,18 +2535,18 @@ bool MainWindow::SaveFile(const QString& fileName)
 /*!
  * Sets \a fileName files as current file.
  */
-void MainWindow::SetCurrentFile(const QString& fileName)
+void MainWindow::SetCurrentFile(const QString& filePath)
 {
-    m_currentFile = fileName;
+    m_fileName = filePath;
     setDocumentModified(false);
 
     QString title = "Untitled";
-    if (!m_currentFile.isEmpty() )
+    if (!m_fileName.isEmpty())
     {
-        title = StrippedName(m_currentFile);
-        m_recentFiles.removeAll(m_currentFile);
-        m_recentFiles.prepend(m_currentFile);
-        UpdateRecentFileActions();
+        title = QFileInfo(filePath).fileName();
+        m_filesRecent.removeAll(m_fileName);
+        m_filesRecent.prepend(m_fileName);
+        updateRecentFiles();
     }
 
     setWindowTitle(tr("%1[*] - Tonatiuh").arg(title));
@@ -2666,25 +2554,16 @@ void MainWindow::SetCurrentFile(const QString& fileName)
 
 void MainWindow::SetupActionsInsertComponent()
 {
-    QMenu* menu = ui->menuRun->findChild<QMenu*>("menuComponent");
+    QMenu* menu = ui->menuComponent;
     if (!menu) return;
-    if (menu->isEmpty() )
+    if (menu->isEmpty())
         menu->setEnabled(true);
 
-    if (!m_pluginManager) return;
-    QVector<ComponentFactory*> componentFactoryList = m_pluginManager->getComponentFactories();
-    if (!(componentFactoryList.size() > 0) ) return;
-
-    for (int i = 0; i < componentFactoryList.size(); ++i)
+    for (ComponentFactory* f : m_pluginManager->getComponentFactories())
     {
-        ComponentFactory* pComponentFactory = componentFactoryList[i];
-        ActionInsert* a = new ActionInsert(pComponentFactory, this);
+        ActionInsert* a = new ActionInsert(f, this);
         menu->addAction(a);
-        //m_materialsToolBar->addAction( actionInsertComponent );
-        //m_materialsToolBar->addSeparator();
-        connect(a, SIGNAL(triggered()),
-                a, SLOT(OnActionInsertComponentTriggered()) );
-        connect(a, SIGNAL(CreateComponent(ComponentFactory*)),
+        connect(a, SIGNAL(InsertComponent(ComponentFactory*)),
                 this, SLOT(CreateComponent(ComponentFactory*)) );
     }
 }
@@ -2760,7 +2639,7 @@ bool MainWindow::StartOver(const QString& fileName)
     ChangeModelScene();
 
     ui->sceneView->expandToDepth(1);
-    Select("//Layout");
+    Select("//Node"); // ?
     on_actionViewAll_triggered(); // discard sun
 
 
@@ -2786,29 +2665,6 @@ void MainWindow::UpdateLightSize()
 
     sunKit->setBox(sceneKit);
     m_modelScene->UpdateSceneModel();
-}
-
-/*!
- * Saves application settings.
- */
-void MainWindow::WriteSettings()
-{
-    QSettings settings("CyI", "Tonatiuh");
-    settings.setValue("geometry", geometry());
-
-    Qt::WindowStates states = windowState();
-    if (states.testFlag(Qt::WindowNoState) ) settings.setValue("windowNoState", true);
-    else settings.setValue("windowNoState", false);
-    if (states.testFlag(Qt::WindowMinimized) ) settings.setValue("windowMinimized", true);
-    else settings.setValue("windowMinimized", false);
-    if (states.testFlag(Qt::WindowMaximized) ) settings.setValue("windowMaximized", true);
-    else settings.setValue("windowMaximized", false);
-    if (states.testFlag(Qt::WindowFullScreen) ) settings.setValue("windowFullScreen", true);
-    else settings.setValue("windowFullScreen", false);
-    if (states.testFlag(Qt::WindowActive) ) settings.setValue("windowActive", true);
-    else settings.setValue("windowActive", false);
-
-    settings.setValue("recentFiles", m_recentFiles);
 }
 
 void MainWindow::on_actionViewAll_triggered()

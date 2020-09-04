@@ -56,8 +56,9 @@ void GraphicView::setSceneGraph(GraphicRoot* sceneGraphRoot)
 
     m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND);
 
-//    SoPerspectiveCamera* camera = dynamic_cast<SoPerspectiveCamera*>(m_myRenderArea->getCamera());
+//    SoPerspectiveCamera* camera = dynamic_cast<SoPerspectiveCamera*>(getCamera());
 //    camera->scaleHeight(-1.); // left-handed to right-handed
+//    camera->viewportMapping = SoCamera::LEAVE_ALONE;
 
     showAxes(true);
     m_viewer->setHeadlight(false);

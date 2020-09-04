@@ -6,7 +6,7 @@ for (var alpha = 10; alpha <= 90; alpha += 20)
 	// set azimuth and elevation of the sun in degrees
 	tn.ChangeSunPosition(gamma, alpha);
 	// find power intercepted by a node using a given number of rays
-	var w = tn.FindInterception("//Layout/Script/Receiver/Plate/Shape", 1000000);
+	var w = tn.FindInterception("//Node/Script/Receiver/Plate/Shape", 1000000);
 	var eta = w/wMax;
 	print("" + gamma + ", " + alpha + ", " + eta);
 }

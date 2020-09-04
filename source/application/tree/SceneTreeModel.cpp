@@ -274,7 +274,8 @@ Qt::DropActions SceneTreeModel::supportedDragActions() const
 
 InstanceNode* SceneTreeModel::getInstance(const QModelIndex& index) const
 {
-    if (!index.isValid()) return m_instanceScene;
+    if (!index.isValid())
+        return m_instanceScene;
     return (InstanceNode*) index.internalPointer();
 }
 
@@ -310,7 +311,6 @@ QModelIndex SceneTreeModel::indexFromUrl(QString url) const
     QStringList path = url.split("/", QString::SkipEmptyParts);
 
     if (path.size() == 0) return QModelIndex();
-    if (path.size() == 1 && path[0] == "Sun") return index(0, 0);
 
     QString nodeName = path.last();
     path.removeLast();
@@ -434,11 +434,6 @@ int SceneTreeModel::insertCoinNode(SoNode* node, SoBaseKit* parent)
 //                kit->setSearchingChildren(true);
                 group->addChild(kit);
             }
-    }
-    else // parent shapeKit
-    {
-        if (parent->getPart("shape", false)) row++; //?
-        if (parent->getPart("material", false)) row++;
     }
 
     for (InstanceNode* instanceParent : m_mapCoinQt[parent])
