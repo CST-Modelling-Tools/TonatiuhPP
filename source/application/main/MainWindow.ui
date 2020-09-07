@@ -73,7 +73,7 @@ background-color: #d7e3ed;
          </font>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="tabWorld">
          <attribute name="title">
@@ -148,9 +148,14 @@ background-color: #d7e3ed;
           </item>
          </layout>
         </widget>
+        <widget class="QWidget" name="tabResources">
+         <attribute name="title">
+          <string>Resources</string>
+         </attribute>
+        </widget>
         <widget class="QWidget" name="tabLayout">
          <attribute name="title">
-          <string>Layout</string>
+          <string>Scene</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,1">
           <property name="leftMargin">
@@ -305,11 +310,6 @@ background-color: #d7e3ed;
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tabResources">
-         <attribute name="title">
-          <string>Resources</string>
-         </attribute>
-        </widget>
        </widget>
        <widget class="ParametersTabs" name="parametersTabs">
         <property name="font">
@@ -404,6 +404,12 @@ border:none;
      <property name="title">
       <string>Camera</string>
      </property>
+     <property name="icon">
+      <iconset resource="../resources.qrc">
+       <normaloff>:/images/scene/nodeCamera.png</normaloff>:/images/scene/nodeCamera.png</iconset>
+     </property>
+     <addaction name="actionViewTop"/>
+     <addaction name="actionViewSun"/>
      <addaction name="separator"/>
      <addaction name="actionLookNorth"/>
      <addaction name="actionLookEast"/>
@@ -413,11 +419,9 @@ border:none;
     <addaction name="actionViewRays"/>
     <addaction name="actionViewPhotons"/>
     <addaction name="separator"/>
+    <addaction name="menuCamera"/>
     <addaction name="actionViewSelected"/>
     <addaction name="actionViewAll"/>
-    <addaction name="actionViewTop"/>
-    <addaction name="actionViewSun"/>
-    <addaction name="menuCamera"/>
     <addaction name="separator"/>
     <addaction name="actionQuadView"/>
    </widget>
@@ -437,7 +441,6 @@ border:none;
      <property name="title">
       <string>Plugins</string>
      </property>
-     <addaction name="separator"/>
     </widget>
     <addaction name="actionRun"/>
     <addaction name="actionRunFlux"/>
@@ -765,7 +768,7 @@ border:none;
      <normaloff>:/images/view/ViewTop.png</normaloff>:/images/view/ViewTop.png</iconset>
    </property>
    <property name="text">
-    <string>Top View</string>
+    <string>Top</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+5</string>
@@ -773,7 +776,7 @@ border:none;
   </action>
   <action name="actionLookNorth">
    <property name="text">
-    <string>Look North</string>
+    <string>North</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+8</string>
@@ -781,7 +784,7 @@ border:none;
   </action>
   <action name="actionLookEast">
    <property name="text">
-    <string>Look East</string>
+    <string>East</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+6</string>
@@ -789,7 +792,7 @@ border:none;
   </action>
   <action name="actionLookSouth">
    <property name="text">
-    <string>Look South</string>
+    <string>South</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+2</string>
@@ -797,7 +800,7 @@ border:none;
   </action>
   <action name="actionLookWest">
    <property name="text">
-    <string>Look West</string>
+    <string>West</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+4</string>
@@ -809,7 +812,7 @@ border:none;
      <normaloff>:/images/view/viewSun.png</normaloff>:/images/view/viewSun.png</iconset>
    </property>
    <property name="text">
-    <string>Sun View</string>
+    <string>Sun</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+0</string>
@@ -854,6 +857,10 @@ border:none;
    </property>
   </action>
   <action name="actionAbout">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/about/info.png</normaloff>:/images/about/info.png</iconset>
+   </property>
    <property name="text">
     <string>About...</string>
    </property>

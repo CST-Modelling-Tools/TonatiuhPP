@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>images/about/SplashScreen.png</file>
-        <file>images/about/Tonatiuh.png</file>
         <file>images/edit/copy.png</file>
         <file>images/edit/cut.png</file>
         <file>images/edit/delete.png</file>
@@ -41,5 +40,7 @@
         <file>images/scene/nodeExport.png</file>
         <file>images/scene/nodeImport.png</file>
         <file>images/scene/nodeCamera.png</file>
+        <file>images/about/info.png</file>
+        <file>images/about/Tonatiuh.ico</file>
     </qresource>
 </RCC>

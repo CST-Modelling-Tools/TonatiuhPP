@@ -29,26 +29,20 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.0099697"
-     inkscape:cx="1258.5547"
-     inkscape:cy="-421.20053"
+     inkscape:zoom="0.15378075"
+     inkscape:cx="858.52071"
+     inkscape:cy="-53.20335"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="2560"
-     inkscape:window-height="1377"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
+     inkscape:window-width="1505"
+     inkscape:window-height="1029"
+     inkscape:window-x="870"
+     inkscape:window-y="204"
+     inkscape:window-maximized="0"
      inkscape:snap-global="false"
      showguides="true"
-     inkscape:guide-bbox="true">
-    <sodipodi:guide
-       position="212.04464,287.26191"
-       orientation="0,1"
-       id="guide840"
-       inkscape:locked="false" />
-  </sodipodi:namedview>
+     inkscape:guide-bbox="true" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -526,5 +520,40 @@
        inkscape:export-filename="C:\Users\v.grigoriev\Desktop\camera.png"
        inkscape:export-xdpi="28.189966"
        inkscape:export-ydpi="28.189966" />
+    <rect
+       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\info.png"
+       style="opacity:1;fill:#96b8ab;fill-opacity:0.00392157;stroke:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       id="rect871"
+       width="57.665928"
+       height="57.665928"
+       x="490.43839"
+       y="490.20264"
+       inkscape:export-xdpi="28.189966"
+       inkscape:export-ydpi="28.189966" />
+    <rect
+       style="opacity:1;fill:#45759c;fill-opacity:0.94117647;stroke:none;stroke-width:4.4238286;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       id="rect4583"
+       width="48.341904"
+       height="48.341904"
+       x="495.1004"
+       y="494.86465"
+       ry="6.8177595"
+       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\info.png"
+       inkscape:export-xdpi="28.189966"
+       inkscape:export-ydpi="28.189966" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:25.93722153px;line-height:42.88832855px;font-family:Calibri;-inkscape-font-specification:Calibri;font-variant-ligatures:none;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.62107635"
+       x="518.34259"
+       y="534.81256"
+       id="text4581"
+       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\info.png"
+       inkscape:export-xdpi="28.189966"
+       inkscape:export-ydpi="28.189966"><tspan
+         sodipodi:role="line"
+         id="tspan4579"
+         x="518.34259"
+         y="534.81256"
+         style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:47.55157471px;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, ';fill:#ffffff;fill-opacity:1;stroke-width:1.62107635">i</tspan></text>
   </g>
 </svg>

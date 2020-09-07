@@ -2199,11 +2199,11 @@ void MainWindow::SoManip_to_SoTransform()
 
 void MainWindow::ChangeSelection(const QModelIndex& index)
 {
-    if (ui->tabWidget->currentIndex() == 1) {
+    if (ui->tabWidget->currentIndex() == 2) { // Layout
         InstanceNode* instance = m_modelScene->getInstance(index);
         SoNode* node = instance->getNode();
         ui->parametersTabs->setNode(node);
-    } else if (ui->tabWidget->currentIndex() == 0)
+    } else if (ui->tabWidget->currentIndex() == 0) // World
     {
         treeWorldClicked(ui->treeWorldWidget->currentItem(), 0); // redo
     }
