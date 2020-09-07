@@ -35,8 +35,8 @@ AirDialog::AirDialog(TSceneKit* sceneKit, QWidget* parent):
         this, SLOT(setFieldText(SoNode*, QString, QString))
     );
     connect(
-        ui->airParameters->getModel(), SIGNAL(fieldNodeModified(SoNode*, QString, TNode*)),
-        this, SLOT(setFieldNode(SoNode*, QString, TNode*))
+        ui->airParameters->getModel(), SIGNAL(fieldNodeModified(SoNode*, QString, SoNode*)),
+        this, SLOT(setFieldNode(SoNode*, QString, SoNode*))
     );
 
     setWindowFlag(Qt::WindowContextHelpButtonHint, false);
@@ -55,7 +55,7 @@ void AirDialog::setFieldText(SoNode* node, QString field, QString value)
     updateCustomPlot();
 }
 
-void AirDialog::setFieldNode(SoNode* node, QString field, TNode* value)
+void AirDialog::setFieldNode(SoNode* node, QString field, SoNode* value)
 {
     SoSFNode* f = (SoSFNode*) node->getField(field.toLatin1().data());
     f->setValue(value);

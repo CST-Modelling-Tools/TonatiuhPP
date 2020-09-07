@@ -5,7 +5,6 @@
 class TSceneKit;
 class AirKit;
 class SoNode;
-class TNode;
 
 namespace Ui {
 class AirDialog;
@@ -24,7 +23,7 @@ public:
 
 private slots:
     void setFieldText(SoNode* node, QString field, QString value);
-    void setFieldNode(SoNode* node, QString field, TNode* value);
+    void setFieldNode(SoNode* node, QString field, SoNode* value);
 
 private:
     void initCustomPlot();
