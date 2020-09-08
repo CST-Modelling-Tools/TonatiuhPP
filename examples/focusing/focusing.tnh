@@ -38,7 +38,8 @@ TSceneKit {
   group 
   DEF Node TSeparatorKit {
     transform 
-    Transform {
+    TTransform {
+      fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
 
     }
     group 
@@ -46,7 +47,8 @@ TSceneKit {
 
       DEF ParabolaPM TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
+          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
           translation 2 -2 0
 
         }
@@ -68,7 +70,6 @@ TSceneKit {
             }
             materialRT 
             DEF Specular MaterialSpecular {
-              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
             }
             material 
@@ -82,7 +83,8 @@ TSceneKit {
       }
       DEF ParabolaPP TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
+          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
           translation 2 2 0
 
         }
@@ -101,7 +103,6 @@ TSceneKit {
             }
             materialRT 
             DEF Specular MaterialSpecular {
-              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
             }
             material 
@@ -115,7 +116,8 @@ TSceneKit {
       }
       DEF ParabolaMM TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
+          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
           translation -2 -2 0
 
         }
@@ -136,7 +138,6 @@ TSceneKit {
             }
             materialRT 
             DEF Specular MaterialSpecular {
-              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
             }
             material 
@@ -150,7 +151,8 @@ TSceneKit {
       }
       DEF ParabolaMP TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
+          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
           translation -2 2 0
 
         }
@@ -172,7 +174,6 @@ TSceneKit {
             }
             materialRT 
             DEF Specular MaterialSpecular {
-              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
             }
             material 
@@ -186,7 +187,8 @@ TSceneKit {
       }
       DEF Spherical TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
+          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
           translation 5 0 0
 
         }
@@ -207,7 +209,6 @@ TSceneKit {
             }
             materialRT 
             DEF Specular MaterialSpecular {
-              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
             }
             material 
@@ -221,7 +222,8 @@ TSceneKit {
       }
       DEF Hyperbolic TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
+          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
           translation -5 0 0
 
         }
@@ -242,7 +244,6 @@ TSceneKit {
             }
             materialRT 
             DEF Specular MaterialSpecular {
-              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
             }
             material 
@@ -256,7 +257,8 @@ TSceneKit {
       }
       DEF SphericalM TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
+          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
           translation 8 0 0
           rotation 1 0 0  3.1400001
 
@@ -278,7 +280,6 @@ TSceneKit {
             }
             materialRT 
             DEF Specular MaterialSpecular {
-              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
             }
             material 
@@ -292,7 +293,8 @@ TSceneKit {
       }
       DEF HyperbolicM TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
+          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
           translation -8 0 0
           rotation 1 0 0  3.1400001
 
@@ -314,7 +316,6 @@ TSceneKit {
             }
             materialRT 
             DEF Specular MaterialSpecular {
-              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
             }
             material 

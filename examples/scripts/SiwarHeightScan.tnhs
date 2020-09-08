@@ -49,7 +49,7 @@ function makeHeliostat(parent, name, position, aiming, focus)
 	
 	// pylon
 	n = nm.createNode("pylon");
-	n.setParameter("scaleFactor", "0.05 0.05 1");
+	n.setParameter("scale", "0.05 0.05 1");
 	s = n.createShape();
 	q = s.insertSurface("Cylinder");
 	p = s.insertProfile("Rectangular");

@@ -46,7 +46,7 @@ TSceneKit {
   group 
   DEF Layout TSeparatorKit {
     transform 
-    Transform {
+    TTransform {
 
     }
     group 
@@ -54,9 +54,9 @@ TSceneKit {
 
       DEF Target TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
           translation 0 0 20
-          scaleFactor 0.5 0.5 0.5
+          scale 0.5 0.5 0.5
 
         }
         group 
@@ -89,7 +89,7 @@ TSceneKit {
       }
       DEF Heliostat TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
           translation 30 50 0
           rotation 0 0 1  2.5999999
 
@@ -121,7 +121,7 @@ TSceneKit {
           }
           DEF primary TSeparatorKit {
             transform 
-            Transform {
+            TTransform {
               translation 0 0 1.5
               rotation -0 -0 0.98263347  0.00119604
 
@@ -131,7 +131,7 @@ TSceneKit {
 
               DEF secondary TSeparatorKit {
                 transform 
-                Transform {
+                TTransform {
                   translation 0 0.1 0
                   rotation 0.99999988 0 0  0.93925923
 
@@ -141,7 +141,7 @@ TSceneKit {
 
                   DEF facet TSeparatorKit {
                     transform 
-                    Transform {
+                    TTransform {
                       translation 0 0 0
                       rotation 0 0.70710683 0.70710683  3.1415
 
@@ -178,9 +178,9 @@ TSceneKit {
                   }
                   DEF target TSeparatorKit {
                     transform 
-                    Transform {
+                    TTransform {
                       translation 0 10 10
-                      scaleFactor 0.2 0.2 0.2
+                      scale 0.2 0.2 0.2
 
                     }
                     group 
@@ -213,10 +213,10 @@ TSceneKit {
                   }
                   DEF axis TSeparatorKit {
                     transform 
-                    Transform {
+                    TTransform {
                       translation 0 0 0
                       rotation 0 0 1  0
-                      scaleFactor 0.029999999 0.029999999 1
+                      scale 0.029999999 0.029999999 1
 
                     }
                     group 
@@ -253,10 +253,10 @@ TSceneKit {
               }
               DEF axis TSeparatorKit {
                 transform 
-                Transform {
+                TTransform {
                   translation 0 0 0
                   rotation 0 1 0  1.5700002
-                  scaleFactor 0.029999999 0.029999999 1
+                  scale 0.029999999 0.029999999 1
 
                 }
                 group 

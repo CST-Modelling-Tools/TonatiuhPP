@@ -44,7 +44,7 @@ TSceneKit {
   group 
   DEF Layout TSeparatorKit {
     transform 
-    Transform {
+    TTransform {
 
     }
     group 
@@ -52,7 +52,7 @@ TSceneKit {
 
       DEF Primary TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
           translation 0 0 0
 
         }
@@ -97,7 +97,7 @@ TSceneKit {
       }
       DEF Secondary TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
           translation 0 0 6.6799998
 
         }
@@ -143,7 +143,7 @@ TSceneKit {
       }
       DEF Node TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
           translation 0 0 -1
 
         }

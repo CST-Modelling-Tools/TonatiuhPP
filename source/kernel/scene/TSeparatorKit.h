@@ -6,6 +6,8 @@
 #include <Inventor/fields/SoSFVec3f.h>
 #include <Inventor/fields/SoSFVec4f.h>
 
+#include "kernel/scene/TTransform.h"
+
 
 class TONATIUH_KERNEL TSeparatorKit: public SoBaseKit
 {

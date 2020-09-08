@@ -160,7 +160,7 @@ void InstanceNode::updateTree(const Transform& tParent)
 {
     if (TSeparatorKit* separatorKit = dynamic_cast<TSeparatorKit*>(m_node))
     {
-        SoTransform* t = SO_GET_PART(separatorKit, "transform", SoTransform);
+        TTransform* t = SO_GET_PART(separatorKit, "transform", TTransform);
 //        SoTransform* t = (SoTransform*) separatorKit->getPart("transform", true);
         m_transform = tParent*tgf::makeTransform(t);
 
@@ -176,15 +176,13 @@ void InstanceNode::updateTree(const Transform& tParent)
     {
         TShapeKit* kit = (TShapeKit*) m_node;
 
-        if (SoTransform* t = (SoTransform*) shapeKit->getPart("transform", false))
+        if (TTransform* t = (TTransform*) shapeKit->getPart("transform", false))
             m_transform = tParent*tgf::makeTransform(t);
         else
             m_transform = tParent;
 
         ShapeRT* shape = (ShapeRT*) kit->shapeRT.getValue();
         ProfileRT* profile = (ProfileRT*) kit->profileRT.getValue();
-//        ShapeRT* shape = (ShapeRT*) children[IndexShapeRT]->m_node;
-//        ProfileRT* profile = (ProfileRT*) children[IndexProfileRT]->m_node;
         m_box = m_transform(shape->getBox(profile));
     }
 }

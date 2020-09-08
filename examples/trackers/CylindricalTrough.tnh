@@ -13,8 +13,8 @@ TSceneKit {
       position 
       SunPosition {
         fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
-        azimuth 80
-        elevation 80
+        azimuth 90
+        elevation 70
         irradiance 1000
 
       }
@@ -26,7 +26,7 @@ TSceneKit {
       aperture 
       SunAperture {
         fields [ SFString disabledNodes ]
-        disabledNodes "//Layout/Target"
+        disabledNodes "//Node/Target"
 
       }
 
@@ -44,9 +44,10 @@ TSceneKit {
 
   }
   group 
-  DEF Layout TSeparatorKit {
+  DEF Node TSeparatorKit {
     transform 
-    Transform {
+    TTransform {
+      fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
 
     }
     group 
@@ -54,7 +55,8 @@ TSceneKit {
 
       DEF Trough TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
+          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
 
         }
         group 
@@ -78,9 +80,10 @@ TSceneKit {
           }
           DEF primary TSeparatorKit {
             transform 
-            Transform {
+            TTransform {
+              fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
               translation 0 0 1
-              rotation 0 0.99999183 0  0.073716857
+              rotation 0 1.0000004 0  0.14979334
 
             }
             group 
@@ -88,9 +91,10 @@ TSceneKit {
 
               DEF axis TSeparatorKit {
                 transform 
-                Transform {
+                TTransform {
+                  fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
                   rotation 1 0 0  1.5700002
-                  scaleFactor 0.050000001 0.050000001 5
+                  scale 0.050000001 0.050000001 5
 
                 }
                 group 
@@ -120,7 +124,8 @@ TSceneKit {
               }
               DEF facet TSeparatorKit {
                 transform 
-                Transform {
+                TTransform {
+                  fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
                   translation 0 0 1
 
                 }
@@ -167,9 +172,10 @@ TSceneKit {
       }
       DEF Target TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
+          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
           translation 0 0 5
-          rotation 0 0 1  0
+          rotation 0 1 0  3.1415
 
         }
         group 
@@ -192,6 +198,8 @@ TSceneKit {
             }
             material 
             Material {
+              ambientColor 0.5 0.5 0.5
+              diffuseColor 0.2 0.2 0.2
 
             }
 

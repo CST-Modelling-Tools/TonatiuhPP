@@ -20,6 +20,7 @@
 #include <QSplashScreen>
 #include <QElapsedTimer>
 #include <QPushButton>
+#include <QDebug>
 
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
@@ -95,7 +96,6 @@
 #include "widgets/NetworkConnectionsDialog.h"
 #include "widgets/SunDialog.h"
 #include "UndoView.h"
-#include <QDebug>
 #include "kernel/scene/GridNode.h"
 
 void startManipulator(void* data, SoDragger* dragger)
@@ -154,7 +154,6 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
     if (splash) splash->showMessage("Creating views", splashAlignment);
     SetupDocument();
     SetupViews();
-    SetupPluginManager();
     SetupTriggers();
     readSettings();
 
@@ -346,6 +345,7 @@ void MainWindow::SetupTreeView()
             this, SLOT(ChangeNodeName(const QModelIndex&,const QString&)) );
 
     // tree world
+    ui->treeWorldWidget->setCurrentItem(ui->treeWorldWidget->invisibleRootItem()->child(1)); // select sun
     connect(
         ui->treeWorldWidget, SIGNAL(itemClicked(QTreeWidgetItem*, int)),
         this, SLOT(treeWorldClicked(QTreeWidgetItem*, int))
@@ -353,6 +353,10 @@ void MainWindow::SetupTreeView()
     connect(
         ui->treeWorldWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
         this, SLOT(treeWorldDoubleClicked(QTreeWidgetItem*, int))
+    );
+    connect(
+        ui->tabWidget, SIGNAL(currentChanged(int)),
+        this, SLOT(tabChanged(int))
     );
 
     // parameters
@@ -375,19 +379,21 @@ void MainWindow::SetupTreeView()
 }
 
 /*!
- * Initializes plugin manager and load available plugins.
- */
-void MainWindow::SetupPluginManager()
-{
-    if (!m_pluginManager) return;
-    SetupActionsInsertComponent();
-}
-
-/*!
  * Defines slots function for main window signals.
  */
 void MainWindow::SetupTriggers()
 {
+    QMenu* menu = ui->menuComponent;
+    for (ComponentFactory* f : m_pluginManager->getComponentFactories())
+    {
+        ActionInsert* a = new ActionInsert(f, this);
+        menu->addAction(a);
+        connect(
+            a, SIGNAL(InsertComponent(ComponentFactory*)),
+            this, SLOT(CreateComponent(ComponentFactory*))
+        );
+    }
+
     connect(this, SIGNAL(Abort(QString)), this, SLOT(onAbort(QString)));
 
     // file
@@ -992,6 +998,18 @@ void MainWindow::treeWorldDoubleClicked(QTreeWidgetItem* item, int /*column*/)
         onSunDialog();
     else if (name == "Air")
         onAirDialog();
+}
+
+void MainWindow::tabChanged(int tab)
+{
+    if (tab == 2) { // Layout
+        InstanceNode* instance = m_modelScene->getInstance(ui->sceneView->currentIndex());
+        SoNode* node = instance->getNode();
+        ui->parametersTabs->setNode(node);
+    } else if (tab == 0) // World
+    {
+        treeWorldClicked(ui->treeWorldWidget->currentItem(), 0); // redo
+    }
 }
 
 void MainWindow::ChangeNodeName(const QModelIndex& index, const QString& name)
@@ -2552,45 +2570,8 @@ void MainWindow::SetCurrentFile(const QString& filePath)
     setWindowTitle(tr("%1[*] - Tonatiuh").arg(title));
 }
 
-void MainWindow::SetupActionsInsertComponent()
-{
-    QMenu* menu = ui->menuComponent;
-    if (!menu) return;
-    if (menu->isEmpty())
-        menu->setEnabled(true);
-
-    for (ComponentFactory* f : m_pluginManager->getComponentFactories())
-    {
-        ActionInsert* a = new ActionInsert(f, this);
-        menu->addAction(a);
-        connect(a, SIGNAL(InsertComponent(ComponentFactory*)),
-                this, SLOT(CreateComponent(ComponentFactory*)) );
-    }
-}
-
-//void MainWindow::SetupActionsInsertTracker()
-//{
-//    QMenu* menu = ui->menuInsert->findChild<QMenu*>("menuTracker");
-
-//    for (TrackerFactory* f : m_pluginManager->getTrackerFactories())
-//    {
-//        ActionInsert* a = new ActionInsert(f, this);
-//        menu->addAction(a);
-//        connect(
-//            a, SIGNAL(InsertTracker(TrackerFactory*)),
-//            this, SLOT(InsertTracker(TrackerFactory*))
-//        );
-//    }
-
-//    QPushButton* button = new QPushButton;
-//    button->setIcon(QIcon(":/images/scene/nodeTracker.png"));
-//    button->setToolTip("Trackers");
-//    button->setMenu(menu);
-//    findChild<QToolBar*>("insertToolBar")->addWidget(button);
-//}
-
 /*!
-->* Shows the rays and photons stored at the photon map in the 3D view.
+ * Shows the rays and photons stored at the photon map in the 3D view.
  */
 void MainWindow::ShowRaysIn3DView()
 {

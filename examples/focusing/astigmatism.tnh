@@ -18,10 +18,15 @@ TSceneKit {
         irradiance 1000
 
       }
+      shape 
+      SunShapePillbox {
+        fields [ SFDouble thetaMax ]
+
+      }
       aperture 
       SunAperture {
         fields [ SFString disabledNodes ]
-        disabledNodes "//Layout/Target"
+        disabledNodes "//Node/Target"
 
       }
 
@@ -41,7 +46,8 @@ TSceneKit {
   group 
   DEF Node TSeparatorKit {
     transform 
-    Transform {
+    TTransform {
+      fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
 
     }
     group 
@@ -49,7 +55,8 @@ TSceneKit {
 
       DEF Mirror TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
+          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
 
         }
         group 
@@ -71,7 +78,6 @@ TSceneKit {
             }
             materialRT 
             DEF Specular MaterialSpecular {
-              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
             }
             material 
@@ -85,8 +91,8 @@ TSceneKit {
       }
       DEF Target TSeparatorKit {
         transform 
-        Transform {
-          translation 0 0 0
+        TTransform {
+          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
           rotation 0 1 0  0.78500009
 
         }
@@ -95,9 +101,10 @@ TSceneKit {
 
           DEF tangential TSeparatorKit {
             transform 
-            Transform {
+            TTransform {
+              fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
               translation 0 0 7.0700002
-              scaleFactor 0.5 0.5 0.5
+              scale 0.5 0.5 0.5
 
             }
             group 
@@ -106,7 +113,6 @@ TSceneKit {
               DEF Shape TShapeKit {
                 shapeRT 
                 DEF Sphere ShapeSphere {
-                  fields [  ]
 
                 }
                 profileRT 
@@ -115,7 +121,6 @@ TSceneKit {
                 }
                 materialRT 
                 DEF Virtual MaterialVirtual {
-                  fields [  ]
 
                 }
                 material 
@@ -129,7 +134,8 @@ TSceneKit {
           }
           DEF skew TSeparatorKit {
             transform 
-            Transform {
+            TTransform {
+              fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
               translation 0 0 14.14
 
             }
@@ -139,7 +145,6 @@ TSceneKit {
               DEF Shape TShapeKit {
                 shapeRT 
                 DEF Sphere ShapeSphere {
-                  fields [  ]
 
                 }
                 profileRT 
@@ -148,7 +153,6 @@ TSceneKit {
                 }
                 materialRT 
                 DEF Virtual MaterialVirtual {
-                  fields [  ]
 
                 }
                 material 

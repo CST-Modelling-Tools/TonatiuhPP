@@ -191,6 +191,7 @@ private slots:
 
     void treeWorldClicked(QTreeWidgetItem* item, int column); // temporary
     void treeWorldDoubleClicked(QTreeWidgetItem* item, int column);
+    void tabChanged(int);
 
 signals:
     void Abort(QString error);
@@ -220,10 +221,6 @@ private:
     void SetupViews();
     void SetupGraphicView();
     void SetupTreeView();
-
-    void SetupPluginManager();
-    void SetupActionsInsertComponent();
-
     void SetupTriggers();
 
     void readSettings();

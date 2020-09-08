@@ -77,6 +77,9 @@ FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* sceneKit, SceneTreeModel* scen
 
     int q = fontMetrics().height();
     resize(64*q, 48*q);
+
+    setWindowFlag(Qt::WindowMinimizeButtonHint, false);
+    setWindowFlag(Qt::WindowMaximizeButtonHint, true);
 }
 
 FluxAnalysisDialog::~FluxAnalysisDialog()
@@ -289,9 +292,6 @@ void FluxAnalysisDialog::FormatChanged()
         ui->exportGridCheck->setEnabled(true);
 }
 
-/*
- * Select directory
- */
 void FluxAnalysisDialog::SelectDir()
 {
     QString path = QFileDialog::getExistingDirectory(this, "Choose a directory to save");

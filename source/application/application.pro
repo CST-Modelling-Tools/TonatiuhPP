@@ -58,7 +58,7 @@ HEADERS += \
     view/GridNode3D.h \
     view/SkyNode3D.h \
     view/SunNode3D.h \
-    view/trf.cpp \
+    view/trf.h \
     widgets/AboutDialog.h \
     widgets/AirDialog.h \
     widgets/NetworkConnectionsDialog.h \

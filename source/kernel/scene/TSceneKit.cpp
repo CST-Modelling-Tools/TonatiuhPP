@@ -76,7 +76,7 @@ TSceneKit::~TSceneKit()
  */
 void TSceneKit::updateTrackers(TSeparatorKit* parent, Transform toGlobal, const vec3d& vSun)
 {
-    SoTransform* tParent = (SoTransform*) parent->getPart("transform", true);
+    TTransform* tParent = (TTransform*) parent->getPart("transform", true);
     Transform t = toGlobal*tgf::makeTransform(tParent);
 
     SoGroup* nodes = (SoGroup*) parent->getPart("group", false);

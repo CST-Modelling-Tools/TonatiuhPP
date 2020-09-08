@@ -46,7 +46,7 @@ TSceneKit {
   group 
   DEF Layout TSeparatorKit {
     transform 
-    Transform {
+    TTransform {
 
     }
     group 
@@ -54,7 +54,7 @@ TSceneKit {
 
       DEF Trough TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
 
         }
         group 
@@ -78,7 +78,7 @@ TSceneKit {
           }
           DEF primary TSeparatorKit {
             transform 
-            Transform {
+            TTransform {
               translation 0 0 1
               rotation 0 0.99999869 0  0.29735109
 
@@ -88,9 +88,9 @@ TSceneKit {
 
               DEF axis TSeparatorKit {
                 transform 
-                Transform {
+                TTransform {
                   rotation 1 0 0  1.5700002
-                  scaleFactor 0.050000001 0.050000001 5
+                  scale 0.050000001 0.050000001 5
 
                 }
                 group 
@@ -123,7 +123,7 @@ TSceneKit {
               }
               DEF facet TSeparatorKit {
                 transform 
-                Transform {
+                TTransform {
                   translation 0 0 1
 
                 }
@@ -160,9 +160,8 @@ TSceneKit {
               }
               DEF target TSeparatorKit {
                 transform 
-                Transform {
+                TTransform {
                   translation 0 0 5
-                  rotation 0 0 1  0
 
                 }
                 group 
@@ -203,9 +202,8 @@ TSceneKit {
       }
       DEF Target TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
           translation 0 0 5
-          rotation 0 0 1  0
 
         }
         group 

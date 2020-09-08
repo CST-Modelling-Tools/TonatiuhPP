@@ -4,6 +4,7 @@
 #include <Inventor/nodes/SoTransform.h>
 
 #include "kernel/random/Random.h"
+#include "kernel/scene/TTransform.h"
 #include "TonatiuhFunctions.h"
 #include "libraries/math/3D/Transform.h"
 #include "libraries/math/3D/vec3d.h"
@@ -46,6 +47,19 @@ SbMatrix tgf::makeSbMatrix(const Transform& transform)
     );
 }
 
+SbMatrix tgf::makeSbMatrix(TTransform* t)
+{
+    SbMatrix ans;
+    ans.setTransform(
+        t->translation.getValue(),
+        t->rotation.getValue(),
+        t->scale.getValue(),
+        t->gScaleOrientation,
+        t->gCenter
+    );
+    return ans;
+}
+
 SbMatrix tgf::makeSbMatrix(SoTransform* t)
 {
     SbMatrix ans;
@@ -77,6 +91,11 @@ Transform tgf::makeTransform(const SbMatrix& m)
         m[0][2], m[1][2], m[2][2], m[3][2],
         m[0][3], m[1][3], m[2][3], m[3][3]
     );
+}
+
+Transform tgf::makeTransform(TTransform* soTransform)
+{
+    return makeTransform(makeSbMatrix(soTransform));
 }
 
 Transform tgf::makeTransform(SoTransform* soTransform)

@@ -38,7 +38,7 @@ nodeTower = nodeRoot.createNode("Tower");
 
 n = nodeTower.createNode("Base");
 n.setParameter("translation", "0 0 10");
-n.setParameter("scaleFactor", "1 1 20");
+n.setParameter("scale", "1 1 20");
 s = n.createShape();
 q = s.insertSurface("Cylinder");
 //mG = s.getPart("material");
@@ -47,7 +47,7 @@ q = s.insertSurface("Cylinder");
 
 n = nodeTower.createNode("Receiver");
 n.setParameter("translation", "0 0 21.5");
-n.setParameter("scaleFactor", "1 1 3");
+n.setParameter("scale", "1 1 3");
 s = n.createShape();
 q = s.insertSurface("Cylinder");
 //mG = s.getPart("material");
@@ -55,7 +55,7 @@ q = s.insertSurface("Cylinder");
 
 n = nodeTower.createNode("Cap");
 n.setParameter("translation", "0 0 23");
-n.setParameter("scaleFactor", "1 1 1");
+n.setParameter("scale", "1 1 1");
 s = n.createShape();
 q = s.insertSurface("Planar");
 p = s.insertProfile("Circular");

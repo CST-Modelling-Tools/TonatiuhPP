@@ -46,6 +46,7 @@ HEADERS += \
     scene/TSceneKit.h \
     scene/TSeparatorKit.h \
     scene/TShapeKit.h \
+    scene/TTransform.h \
     scene/TerrainKit.h \
     scene/WorldKit.h \
     shape/DifferentialGeometry.h \
@@ -102,6 +103,7 @@ SOURCES += \
     scene/TSceneKit.cpp \
     scene/TSeparatorKit.cpp \
     scene/TShapeKit.cpp \
+    scene/TTransform.cpp \
     scene/TerrainKit.cpp \
     scene/WorldKit.cpp \
     shape/DifferentialGeometry.cpp \

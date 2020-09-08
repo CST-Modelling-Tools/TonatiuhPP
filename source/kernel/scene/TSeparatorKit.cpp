@@ -6,6 +6,8 @@
 
 #include "kernel/trackers/TrackerKit.h"
 
+
+
 SO_KIT_SOURCE(TSeparatorKit)
 
 
@@ -14,6 +16,7 @@ void TSeparatorKit::initClass()
     SO_KIT_INIT_CLASS(TSeparatorKit, SoBaseKit, "BaseKit");
 
     TrackerKit::initClass();
+    TTransform::initClass();
 }
 
 TSeparatorKit::TSeparatorKit()
@@ -22,7 +25,7 @@ TSeparatorKit::TSeparatorKit()
     isBuiltIn = TRUE; // do not save the list of fields
 
     SO_KIT_ADD_CATALOG_ENTRY(topSeparator, SoSeparator, TRUE, this, "", FALSE);
-    SO_KIT_ADD_CATALOG_ENTRY(transform, SoTransform, FALSE, topSeparator, "", TRUE);
+    SO_KIT_ADD_CATALOG_ENTRY(transform, TTransform, FALSE, topSeparator, "", TRUE);
 
     SO_KIT_ADD_CATALOG_ENTRY(components, SoGroup, TRUE, topSeparator, "", TRUE);
     SO_KIT_ADD_CATALOG_ENTRY(group, SoGroup, TRUE, topSeparator, "", TRUE);

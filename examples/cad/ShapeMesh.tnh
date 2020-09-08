@@ -41,8 +41,7 @@ TSceneKit {
   group 
   DEF Node TSeparatorKit {
     transform 
-    Transform {
-      translation 0 0 0
+    TTransform {
 
     }
     group 
@@ -50,7 +49,7 @@ TSceneKit {
 
       DEF flat TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
           translation -1 0 0
 
         }
@@ -173,7 +172,7 @@ TSceneKit {
       }
       DEF smooth TSeparatorKit {
         transform 
-        Transform {
+        TTransform {
           translation 1 0 0
 
         }
