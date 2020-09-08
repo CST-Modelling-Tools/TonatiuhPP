@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kernel/scene/TNode.h"
+#include "kernel/node/TNode.h"
 
 
 class TONATIUH_KERNEL TrackerTarget: public SoNode

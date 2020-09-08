@@ -11,6 +11,6 @@ public:
     static void initClass();
     ShapePlanar();
 
-    NAME_ICON_FUNCTIONS("Planar", ":/images/ShapePlanar.png")
+    NAME_ICON_FUNCTIONS("Planar", ":/shape/ShapePlanar.png")
     void updateShapeGL(TShapeKit* parent);
 };

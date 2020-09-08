@@ -11,20 +11,20 @@
 #include <Inventor/nodekits/SoSceneKit.h>
 #include <Inventor/nodes/SoSelection.h>
 
-#include "main/Document.h"
-#include "view/GraphicRoot.h"
-#include "tree/SceneTreeModel.h"
+#include "kernel/air/AirTransmission.h"
+#include "kernel/node/TonatiuhFunctions.h"
+#include "kernel/photons/PhotonsBuffer.h"
 #include "kernel/random/Random.h"
 #include "kernel/run/RayTracer.h"
-#include "kernel/TonatiuhFunctions.h"
-#include "kernel/sun/SunKit.h"
-#include "kernel/sun/SunAperture.h"
-#include "kernel/photons/PhotonsBuffer.h"
-#include "kernel/trf.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/shape/ShapeRT.h"
+#include "kernel/sun/SunAperture.h"
+#include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunShape.h"
-#include "kernel/air/AirTransmission.h"
+#include "libraries/math/gcf.h"
+#include "main/Document.h"
+#include "tree/SceneTreeModel.h"
+#include "view/GraphicRoot.h"
 
 
 ScriptRayTracer::ScriptRayTracer(QVector<RandomFactory*> randomFactories):

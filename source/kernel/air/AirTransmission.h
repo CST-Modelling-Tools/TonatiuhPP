@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kernel/scene/TNode.h"
+#include "kernel/node/TNode.h"
 
 
 class TONATIUH_KERNEL AirTransmission: public TNode
@@ -17,7 +17,7 @@ public:
 
 
 
-#include "kernel/scene/TFactory.h"
+#include "kernel/node/TFactory.h"
 
 class AirFactory: public TFactory
 {

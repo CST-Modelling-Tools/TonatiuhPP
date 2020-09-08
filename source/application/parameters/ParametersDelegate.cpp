@@ -20,8 +20,8 @@
 #include "libraries/Coin3D/UserMField.h"
 #include "main/MainWindow.h"
 #include "main/PluginManager.h"
-#include "kernel/scene/TFactory.h"
-#include "kernel/scene/TNode.h"
+#include "kernel/node/TFactory.h"
+#include "kernel/node/TNode.h"
 
 #include "ParametersModel.h"
 #include "ParametersItemField.h"

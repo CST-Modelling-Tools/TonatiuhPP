@@ -1,7 +1,7 @@
 #pragma once
 
 #include "kernel/TonatiuhKernel.h"
-#include "kernel/scene/TNode.h"
+#include "kernel/node/TNode.h"
 
 #include <qglobal.h>
 #include <vector>
@@ -48,7 +48,7 @@ protected:
 
 
 
-#include "kernel/scene/TFactory.h"
+#include "kernel/node/TFactory.h"
 #include <QTime>
 
 class RandomFactory: public TFactory

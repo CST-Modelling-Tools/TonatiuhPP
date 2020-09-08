@@ -13,7 +13,7 @@ public:
 
     bool OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& rand, Ray& rayOut) const;
 
-    NAME_ICON_FUNCTIONS("Absorber", ":/images/MaterialAbsorber.png")
+    NAME_ICON_FUNCTIONS("Absorber", ":/material/MaterialAbsorber.png")
 
 protected:
     ~MaterialAbsorber() {}

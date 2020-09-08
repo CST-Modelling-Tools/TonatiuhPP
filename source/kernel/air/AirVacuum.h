@@ -13,7 +13,7 @@ public:
 
     double transmission(double /*distance*/) const {return 1.;}
 
-    NAME_ICON_FUNCTIONS("Vacuum", ":/images/AirAbstract.png")
+    NAME_ICON_FUNCTIONS("Vacuum", ":/air/AirAbstract.png")
 };
 
 

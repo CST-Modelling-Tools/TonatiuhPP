@@ -2,7 +2,7 @@
 
 #include <QStringList>
 
-#include "kernel/scene/TNode.h"
+#include "kernel/node/TNode.h"
 #include "Photon.h"
 
 struct PhotonsSettings;
@@ -24,7 +24,7 @@ public:
     static QStringList getParameterNames() {return QStringList();}
     virtual void setParameter(QString /*name*/, QString /*value*/) {}
 
-    NAME_ICON_FUNCTIONS("No export", ":/images/PhotonsDefault.png")
+    NAME_ICON_FUNCTIONS("No export", ":/photons/PhotonsDefault.png")
 
 protected:
     SceneTreeModel* m_sceneModel;
@@ -41,7 +41,7 @@ protected:
 
 
 
-#include "kernel/scene/TFactory.h"
+#include "kernel/node/TFactory.h"
 
 class PhotonsAbstract;
 class PhotonsWidget;

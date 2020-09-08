@@ -13,7 +13,7 @@ public:
 
     bool OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& rand, Ray& rayOut) const;
 
-    NAME_ICON_FUNCTIONS("Virtual", ":/images/MaterialVirtual.png")
+    NAME_ICON_FUNCTIONS("Virtual", ":/material/MaterialVirtual.png")
 
 protected:
     ~MaterialVirtual() {}

@@ -12,7 +12,7 @@
 #include "libraries/math/3D/Box3D.h"
 #include "libraries/math/3D/Ray.h"
 #include "libraries/auxiliary/tiny_obj_loader.h"
-#include "kernel/TonatiuhFunctions.h"
+#include "kernel/node/TonatiuhFunctions.h"
 using gcf::pow2;
 
 SO_NODE_SOURCE(ShapeMesh)

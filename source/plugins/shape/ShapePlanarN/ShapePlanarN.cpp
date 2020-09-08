@@ -2,7 +2,7 @@
 
 #include <Inventor/sensors/SoNodeSensor.h>
 
-#include "kernel/TonatiuhFunctions.h"
+#include "kernel/node/TonatiuhFunctions.h"
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"

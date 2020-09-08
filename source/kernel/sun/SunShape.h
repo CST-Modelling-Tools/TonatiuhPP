@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kernel/scene/TNode.h"
+#include "kernel/node/TNode.h"
 #include "kernel/random/Random.h"
 #include "libraries/math/3D/vec3d.h"
 
@@ -20,7 +20,7 @@ public:
 
 
 
-#include "kernel/scene/TFactory.h"
+#include "kernel/node/TFactory.h"
 
 class SunFactory: public TFactory
 {

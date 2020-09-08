@@ -18,5 +18,5 @@ public:
     bool isInside(double u, double v) const;
     QVector<vec2d> makeMesh(QSize& dims) const;
 
-    NAME_ICON_FUNCTIONS("Box", ":/images/ProfileBox.png")
+    NAME_ICON_FUNCTIONS("Box", ":/profiles/ProfileBox.png")
 };

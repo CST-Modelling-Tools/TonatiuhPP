@@ -5,7 +5,7 @@
 #include <Inventor/nodes/SoNode.h>
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
 
-#include "TonatiuhFunctions.h"
+#include "kernel/node/TonatiuhFunctions.h"
 #include "kernel/material/MaterialTransparent.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/shape/ShapeRT.h"
@@ -141,6 +141,7 @@ bool InstanceNode::intersect(const Ray& rayIn, Random& rand, bool& isFront, Inst
         }
         return hasRayOut;
     }
+    return false;
 }
 
 void InstanceNode::extendBoxForLight(SbBox3f* extendedBox)

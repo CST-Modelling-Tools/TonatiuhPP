@@ -14,6 +14,6 @@ public:
     Box3D getBox(ProfileRT* aperture) const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
 
-    NAME_ICON_FUNCTIONS("Cube", ":/images/ShapeCube.png")
+    NAME_ICON_FUNCTIONS("Cube", ":/shape/ShapeCube.png")
     void updateShapeGL(TShapeKit* parent);
 };

@@ -11,7 +11,7 @@
 #include <Inventor/fields/SoSFString.h>
 
 #include "kernel/shape/ShapeRT.h"
-#include "kernel/TonatiuhTypes.h"
+#include "kernel/node/TonatiuhTypes.h"
 #include "libraries/math/3D/vec3d.h"
 
 class Transform;

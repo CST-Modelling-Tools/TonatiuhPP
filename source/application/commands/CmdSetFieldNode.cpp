@@ -3,7 +3,7 @@
 #include <Inventor/nodes/SoNode.h>
 #include <Inventor/fields/SoSFNode.h>
 
-#include "kernel/scene/TNode.h"
+#include "kernel/node/TNode.h"
 #include "libraries/math/gcf.h"
 
 

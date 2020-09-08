@@ -1,3 +1,5 @@
+#include "trf.h"
+
 #include <cmath>
 #include <vector>
 
@@ -13,16 +15,15 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTransform.h>
 
-#include "run/InstanceNode.h"
+#include "kernel/node/TonatiuhFunctions.h"
+#include "kernel/photons/Photon.h"
+#include "kernel/photons/PhotonsBuffer.h"
+#include "kernel/random/Random.h"
+#include "kernel/run/InstanceNode.h"
+#include "kernel/scene/TShapeKit.h"
+#include "kernel/sun/SunKit.h"
 #include "libraries/math/3D/Matrix4x4.h"
-#include "photons/Photon.h"
-#include "photons/PhotonsBuffer.h"
-#include "random/Random.h"
 #include "libraries/math/3D/Ray.h"
-#include "TonatiuhFunctions.h"
-#include "sun/SunKit.h"
-#include "trf.h"
-#include "scene/TShapeKit.h"
 
 
 void trf::DrawRays(SoSeparator* parent, const PhotonsBuffer& map, long raysLimit)

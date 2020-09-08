@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kernel/scene/TNode.h"
+#include "kernel/node/TNode.h"
 
 struct vec2d;
 struct vec3d;
@@ -39,7 +39,7 @@ protected:
 
 
 
-#include "kernel/scene/TFactory.h"
+#include "kernel/node/TFactory.h"
 
 #include <QVector>
 #include <QVariant>

@@ -23,7 +23,7 @@ public:
     bool isInside(double u, double v) const;
     QVector<vec2d> makeMesh(QSize& dims) const;
 
-    NAME_ICON_FUNCTIONS("Polygon", ":/images/ProfilePolygon.png")
+    NAME_ICON_FUNCTIONS("Polygon", ":/profiles/ProfilePolygon.png")
 
 protected:
     QPolygonF m_polygon;

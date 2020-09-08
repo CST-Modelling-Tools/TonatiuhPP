@@ -1,5 +1,5 @@
 #include "ProfileTriangle.h"
-#include "kernel/TonatiuhFunctions.h"
+#include "kernel/node/TonatiuhFunctions.h"
 #include "libraries/math/gcf.h"
 
 #include <Inventor/sensors/SoNodeSensor.h>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kernel/scene/TNode.h"
+#include "kernel/node/TNode.h"
 
 struct DifferentialGeometry;
 class Random;
@@ -22,7 +22,7 @@ public:
 
 
 
-#include "kernel/scene/TFactory.h"
+#include "kernel/node/TFactory.h"
 
 class MaterialFactory: public TFactory
 {

@@ -38,7 +38,7 @@ public:
     ArmatureVertex facet;
     vec2d angles0;
 
-    NAME_ICON_FUNCTIONS("two-axes", ":/images/Tracker2A.png")
+    NAME_ICON_FUNCTIONS("two-axes", ":/trackers/Tracker2A.png")
 
 protected:
     ~TrackerArmature2A();

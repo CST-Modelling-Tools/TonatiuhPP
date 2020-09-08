@@ -33,7 +33,7 @@ public:
     ArmatureVertex facet;
     double angle0;
 
-    NAME_ICON_FUNCTIONS("one-axis", ":/images/Tracker1A.png")
+    NAME_ICON_FUNCTIONS("one-axis", ":/trackers/Tracker1A.png")
 
 protected:
     ~TrackerArmature1A();

@@ -7,7 +7,7 @@
 #include "libraries/math/3D/Transform.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "kernel/random/Random.h"
-#include "kernel/TonatiuhFunctions.h"
+#include "kernel/node/TonatiuhFunctions.h"
 
 
 SO_NODE_SOURCE(MaterialSpecular)

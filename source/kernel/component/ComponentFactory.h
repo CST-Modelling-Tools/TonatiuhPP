@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kernel/scene/TFactory.h"
+#include "kernel/node/TFactory.h"
 
 class TSeparatorKit;
 class PluginManager;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "kernel/scene/TNode.h"
+#include "kernel/node/TNode.h"
 
 #include <Inventor/nodekits/SoBaseKit.h>
 
@@ -25,7 +25,7 @@ public:
 
 
 
-#include "kernel/scene/TFactory.h"
+#include "kernel/node/TFactory.h"
 
 class TrackerFactory: public TFactory
 {

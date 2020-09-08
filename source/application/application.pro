@@ -25,21 +25,21 @@ HEADERS += \
     commands/CmdSetFieldNode.h \
     commands/CmdSetFieldText.h \
     commands/tgc.h \
-    parameters/ParametersItemField.h \
-    parameters/ParametersItemNode.h \
-    run/FluxAnalysis.h \
-    run/FluxAnalysisDialog.h \
-    run/RayTracingDialog.h \
-    run/SelectSurfaceDialog.h \
     main/Document.h \
     main/MainWindow.h \
     main/PluginManager.h \
     main/UndoView.h \
     parameters/ParametersDelegate.h \
     parameters/ParametersEditor.h \
+    parameters/ParametersItemField.h \
+    parameters/ParametersItemNode.h \
     parameters/ParametersModel.h \
     parameters/ParametersTabs.h \
     parameters/ParametersView.h \
+    run/FluxAnalysis.h \
+    run/FluxAnalysisDialog.h \
+    run/RayTracingDialog.h \
+    run/SelectSurfaceDialog.h \
     script/CodeEditor.h \
     script/FileObject.h \
     script/LineNumbers.h \
@@ -53,13 +53,12 @@ HEADERS += \
     tree/SceneTreeModel.h \
     tree/SceneTreeView.h \
     tree/SoPathVariant.h \
-    view/ExaminerViewer.h \
-    view/ExaminerViewer2.h \
     view/GraphicRoot.h \
     view/GraphicView.h \
     view/GridNode3D.h \
     view/SkyNode3D.h \
     view/SunNode3D.h \
+    view/trf.cpp \
     widgets/AboutDialog.h \
     widgets/AirDialog.h \
     widgets/NetworkConnectionsDialog.h \
@@ -80,22 +79,22 @@ SOURCES += \
     commands/CmdRename.cpp \
     commands/CmdSetFieldNode.cpp \
     commands/CmdSetFieldText.cpp \
+    main/Document.cpp \
+    main/MainWindow.cpp \
+    main/PluginManager.cpp \
+    main/UndoView.cpp \
+    main/main.cpp \
+    parameters/ParametersDelegate.cpp \
+    parameters/ParametersEditor.cpp \
     parameters/ParametersItemField.cpp \
     parameters/ParametersItemNode.cpp \
+    parameters/ParametersModel.cpp \
+    parameters/ParametersTabs.cpp \
+    parameters/ParametersView.cpp \
     run/FluxAnalysis.cpp \
     run/FluxAnalysisDialog.cpp \
     run/RayTracingDialog.cpp \
     run/SelectSurfaceDialog.cpp \
-    main/Document.cpp \
-    main/main.cpp \
-    main/MainWindow.cpp \
-    main/PluginManager.cpp \
-    main/UndoView.cpp \
-    parameters/ParametersDelegate.cpp \
-    parameters/ParametersEditor.cpp \
-    parameters/ParametersModel.cpp \
-    parameters/ParametersTabs.cpp \
-    parameters/ParametersView.cpp \
     script/CodeEditor.cpp \
     script/FileObject.cpp \
     script/LineNumbers.cpp \
@@ -109,13 +108,12 @@ SOURCES += \
     tree/SceneTreeModel.cpp \
     tree/SceneTreeView.cpp \
     tree/SoPathVariant.cpp \
-    view/ExaminerViewer.cpp \
-    view/ExaminerViewer2.cpp \
     view/GraphicRoot.cpp \
     view/GraphicView.cpp \
     view/GridNode3D.cpp \
     view/SkyNode3D.cpp \
     view/SunNode3D.cpp \
+    view/trf.cpp \
     widgets/AboutDialog.cpp \
     widgets/AirDialog.cpp \
     widgets/NetworkConnectionsDialog.cpp \

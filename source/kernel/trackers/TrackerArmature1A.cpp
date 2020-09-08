@@ -2,9 +2,10 @@
 
 #include <Inventor/sensors/SoNodeSensor.h>
 #include <Inventor/nodes/SoGroup.h>
+#include <Inventor/nodes/SoTransform.h>
 
 #include "kernel/scene/TSeparatorKit.h"
-#include "kernel/trf.h"
+#include "kernel/node/TonatiuhFunctions.h"
 #include "TrackerSolver1A.h"
 #include "TrackerTarget.h"
 

@@ -14,7 +14,6 @@
 //    ~ConstrainedViewer(){}
 //};
 
-#include "ExaminerViewer2.h"
 
 
 

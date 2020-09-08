@@ -22,7 +22,6 @@
 #include "kernel/run/RayTracer.h"
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TShapeKit.h"
-#include "kernel/trf.h"
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunKit.h"

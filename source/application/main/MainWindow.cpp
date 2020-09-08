@@ -58,7 +58,7 @@
 #include "commands/CmdPaste.h"
 
 #include "PluginManager.h"
-#include "kernel/TonatiuhFunctions.h"
+#include "kernel/node/TonatiuhFunctions.h"
 #include "kernel/air/AirVacuum.h"
 #include "kernel/air/AirKit.h"
 #include "kernel/component/ComponentFactory.h"
@@ -81,7 +81,7 @@
 #include "kernel/sun/SunKit.h"
 #include "kernel/trackers/TrackerKit.h"
 #include "kernel/trackers/TrackerArmature.h"
-#include "kernel/trf.h"
+#include "view/trf.h"
 #include "main/Document.h"
 #include "run/FluxAnalysis.h"
 #include "run/FluxAnalysisDialog.h"

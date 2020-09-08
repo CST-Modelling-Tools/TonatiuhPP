@@ -20,7 +20,7 @@ public:
     bool isInside(double u, double v) const;
     QVector<vec2d> makeMesh(QSize& dims) const;
 
-    NAME_ICON_FUNCTIONS("Triangle", ":/images/ProfileTriangle.png")
+    NAME_ICON_FUNCTIONS("Triangle", ":/profiles/ProfileTriangle.png")
 
 protected:
     ~ProfileTriangle();

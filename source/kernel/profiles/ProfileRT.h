@@ -3,7 +3,7 @@
 #include <QVector>
 #include <QSize>
 
-#include "kernel/scene/TNode.h"
+#include "kernel/node/TNode.h"
 #include "libraries/math/2D/vec2d.h"
 #include "libraries/math/2D/Box2D.h"
 
@@ -31,7 +31,7 @@ public:
 
 
 
-#include "kernel/scene/TFactory.h"
+#include "kernel/node/TFactory.h"
 
 class ProfileFactory: public TFactory
 {

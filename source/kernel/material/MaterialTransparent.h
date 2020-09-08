@@ -13,7 +13,7 @@ public:
 
     bool OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& rand, Ray& rayOut) const;
 
-    NAME_ICON_FUNCTIONS("Transparent", ":/images/MaterialTransparent.png")
+    NAME_ICON_FUNCTIONS("Transparent", ":/material/MaterialTransparent.png")
 
 protected:
     ~MaterialTransparent() {}

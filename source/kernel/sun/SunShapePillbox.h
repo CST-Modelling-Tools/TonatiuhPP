@@ -17,7 +17,7 @@ public:
 
     SoSFDouble thetaMax;
 
-    NAME_ICON_FUNCTIONS("Pillbox", ":/images/SunPillbox.png")
+    NAME_ICON_FUNCTIONS("Pillbox", ":/sun/SunShapePillbox.png")
 
 protected:
     ~SunShapePillbox();

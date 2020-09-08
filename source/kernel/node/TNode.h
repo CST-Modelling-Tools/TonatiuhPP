@@ -1,7 +1,7 @@
 #pragma once
 
 #include "kernel/TonatiuhKernel.h"
-#include "kernel/TonatiuhTypes.h"
+#include "kernel/node/TonatiuhTypes.h"
 
 class SoSensor;
 class SoFieldSensor;

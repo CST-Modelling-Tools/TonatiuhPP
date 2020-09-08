@@ -4,7 +4,7 @@
 
 #include <Inventor/nodekits/SoBaseKit.h>
 
-#include "kernel/TonatiuhTypes.h"
+#include "kernel/node/TonatiuhTypes.h"
 #include "libraries/math/3D/Box3D.h"
 
 class InstanceNode;

@@ -18,7 +18,7 @@ public:
     bool isInside(double u, double v) const;
     QVector<vec2d> makeMesh(QSize& dims) const;
 
-    NAME_ICON_FUNCTIONS("Regular", ":/images/ProfileRegular.png")
+    NAME_ICON_FUNCTIONS("Regular", ":/profiles/ProfileRegular.png")
 
 protected:
     ~ProfileRegular() {}

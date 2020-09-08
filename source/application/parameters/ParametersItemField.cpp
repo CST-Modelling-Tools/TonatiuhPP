@@ -7,7 +7,7 @@
 #include <Inventor/sensors/SoFieldSensor.h>
 
 #include "ParametersItemNode.h"
-#include "kernel/scene/TNode.h"
+#include "kernel/node/TNode.h"
 
 
 void ParametersItemField::updateItem(void* data, SoSensor*)

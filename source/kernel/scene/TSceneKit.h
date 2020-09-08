@@ -3,8 +3,8 @@
 #include <Inventor/nodekits/SoSceneKit.h>
 
 #include "kernel/TonatiuhKernel.h"
-#include "kernel/TonatiuhTypes.h"
-#include "kernel/TonatiuhFunctions.h"
+#include "kernel/node/TonatiuhTypes.h"
+#include "kernel/node/TonatiuhFunctions.h"
 
 class TSeparatorKit;
 class Transform;

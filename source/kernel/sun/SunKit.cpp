@@ -14,7 +14,7 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodekits/SoNodekitCatalog.h>
 
-#include "kernel/TonatiuhFunctions.h"
+#include "kernel/node/TonatiuhFunctions.h"
 #include "scene/TSceneKit.h"
 #include "scene/TSeparatorKit.h"
 #include "kernel/run/InstanceNode.h"
