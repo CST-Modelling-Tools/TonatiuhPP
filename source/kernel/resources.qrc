@@ -18,5 +18,6 @@
         <file>sun/SunShapePillbox.png</file>
         <file>trackers/Tracker1A.png</file>
         <file>trackers/Tracker2A.png</file>
+        <file>material/MaterialFresnel.png</file>
     </qresource>
 </RCC>

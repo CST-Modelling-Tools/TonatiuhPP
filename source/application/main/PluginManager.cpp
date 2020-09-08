@@ -11,6 +11,7 @@
 #include "kernel/material/MaterialAbsorber.h"
 #include "kernel/material/MaterialTransparent.h"
 #include "kernel/material/MaterialVirtual.h"
+#include "kernel/material/MaterialFresnel.h"
 #include "kernel/photons/PhotonsAbstract.h"
 #include "kernel/photons/PhotonsWidget.h"
 #include "kernel/profiles/ProfileBox.h"
@@ -74,6 +75,7 @@ void PluginManager::load(QDir dir)
     loadPlugin(new MaterialFactoryT<MaterialAbsorber>);
     loadPlugin(new MaterialFactoryT<MaterialVirtual>);
     loadPlugin(new MaterialFactoryT<MaterialTransparent>);
+    loadPlugin(new MaterialFactoryT<MaterialFresnel>);
 
     loadPlugin(new RandomFactoryT<RandomSTL>);
 
@@ -233,7 +235,8 @@ void PluginManager::sort()
         "Transparent",
         "Virtual",
         "Absorber",
-        "Specular"
+        "Specular",
+        "Fresnel"
     };
     sortFactories(materialNames, m_materialFactories);
 

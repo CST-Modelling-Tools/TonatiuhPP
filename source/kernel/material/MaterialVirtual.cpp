@@ -1,8 +1,8 @@
 #include "MaterialVirtual.h"
 
-#include "kernel/random/Random.h"
-#include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/math/3D/Ray.h"
+#include "kernel/shape/DifferentialGeometry.h"
+#include "kernel/random/Random.h"
 
 
 SO_NODE_SOURCE(MaterialVirtual)
