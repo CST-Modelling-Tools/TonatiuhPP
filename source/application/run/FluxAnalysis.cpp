@@ -217,19 +217,13 @@ void FluxAnalysis::setBins(int rows, int cols)
 /*
  * Export the flux distribution
  */
-void FluxAnalysis::write(QString directory, QString file, bool withCoords)
+void FluxAnalysis::write(QString fileName, bool withCoords)
 {
     if (!m_photons) return;
-    if (directory.isEmpty()) return;
-    if (file.isEmpty()) return;
 
-    QFileInfo info(file);
-    if (info.completeSuffix().compare("txt"))
-        file.append(".txt");
-
-    QFile fileOut(directory + "/" + file);
-    fileOut.open(QIODevice::WriteOnly);
-    QTextStream out(&fileOut);
+    QFile file(fileName);
+    file.open(QIODevice::WriteOnly);
+    QTextStream out(&file);
 
     double uStep = (m_uMax - m_uMin)/m_bins.cols();
     double vStep = (m_vMax - m_vMin)/m_bins.rows();
@@ -251,8 +245,6 @@ void FluxAnalysis::write(QString directory, QString file, bool withCoords)
             out << "\n";
         }
     }
-
-    fileOut.close();
 }
 
 /*

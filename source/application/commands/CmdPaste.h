@@ -20,7 +20,7 @@ class SoNode;
 class CmdPaste: public QUndoCommand
 {
 public:
-    CmdPaste(tgc::PasteType type, const QModelIndex& indexParent, SoNode*& node, SceneTreeModel* model, QUndoCommand* parent = 0 );
+    CmdPaste(tgc::PasteType type, const QModelIndex& index, SoNode*& node, SceneTreeModel* model, QUndoCommand* parent = 0);
     ~CmdPaste();
 
      void undo();
@@ -28,9 +28,9 @@ public:
 
 private:
     tgc::PasteType m_pasteType;
-    InstanceNode* m_parentInstance;
+    InstanceNode* m_instance;
     int m_row;
-    QString m_nameOld;
+    QString m_name;
     SoNode* m_node;
     SceneTreeModel* m_model;
 };

@@ -12,27 +12,26 @@
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
 CmdPaste::CmdPaste(tgc::PasteType type,
-                   const QModelIndex& indexParent,
+                   const QModelIndex& index,
                    SoNode*& node,
                    SceneTreeModel* model,
                    QUndoCommand* parent):
     QUndoCommand("Paste", parent),
     m_pasteType(type),
-    m_parentInstance(0),
     m_row(-1),
     m_node(node),
     m_model(model)
 {
-    m_nameOld = node->getName().getString();
+    m_name = node->getName().getString();
 
-    if (!indexParent.isValid())
+    if (!index.isValid())
         gcf::SevereError("CmdPaste called with invalid ModelIndex.");
 
-    m_parentInstance = m_model->getInstance(indexParent);
-    if (!m_parentInstance->getNode())
+    m_instance = m_model->getInstance(index);
+    if (!m_instance->getNode())
         gcf::SevereError("CmdPaste NULL m_coinParent.");
 
-    m_row = m_parentInstance->children.size();
+    m_row = m_instance->children.size();
 }
 
 CmdPaste::~CmdPaste()
@@ -42,22 +41,22 @@ CmdPaste::~CmdPaste()
 
 void CmdPaste::undo()
 {
-    SoBaseKit* nodeParent = static_cast<SoBaseKit*> ( m_parentInstance->getNode() );
+    SoBaseKit* nodeParent = static_cast<SoBaseKit*> (m_instance->getNode());
     m_model->Cut(*nodeParent, m_row);
-    m_parentInstance->children[m_row]->getNode()->unref();
-    m_model->setNodeName(m_node, m_nameOld);
+    m_instance->children[m_row]->getNode()->unref();
+    m_model->setNodeName(m_node, m_name);
 }
 
 void CmdPaste::redo()
 {
-    SoBaseKit* coinParent = static_cast<SoBaseKit*> ( m_parentInstance->getNode() );
-    if ( !m_model->Paste(m_pasteType, *coinParent, *m_node, m_row) ) return;
+    SoBaseKit* kit = static_cast<SoBaseKit*> ( m_instance->getNode() );
+    if (!m_model->Paste(m_pasteType, *kit, *m_node, m_row)) return;
 
-    SoNode* node = m_parentInstance->children[m_row]->getNode();
+    SoNode* node = m_instance->children[m_row]->getNode();
     node->ref();
 
-    QString name = m_nameOld;
+    QString name = m_name;
     int count = 0;
     while (!m_model->setNodeName(node, name))
-        name = m_nameOld + QString("_copy_%1").arg(++count);
+        name = m_name + QString("_copy_%1").arg(++count);
 }

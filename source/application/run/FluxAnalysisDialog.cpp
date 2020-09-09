@@ -34,7 +34,7 @@
 
 FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* sceneKit, SceneTreeModel* sceneModel,
                                        int sunWidthDivisions, int sunHeightDivisions,
-                                       Random* randomDeviate,  QWidget* parent):
+                                       Random* randomDeviate, QWidget* parent):
     QDialog(parent),
     ui(new Ui::FluxAnalysisDialog),
     m_sceneModel(sceneModel),
@@ -53,9 +53,6 @@ FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* sceneKit, SceneTreeModel* scen
 
     connect(ui->exportLengthEdit, SIGNAL(editingFinished()), this, SLOT(UnitsChanged()));
     connect(ui->exportPowerEdit, SIGNAL(editingFinished()), this, SLOT(UnitsChanged()));
-    connect(ui->exportFileButton, SIGNAL(clicked()), this, SLOT(SelectDir()));
-    connect(ui->exportFormatCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(FormatChanged()));
-    connect(ui->exportButton, SIGNAL(clicked()), this, SLOT(Export()) );
 
     connect(ui->spinX, SIGNAL(valueChanged(double)), this, SLOT(UpdateSectorPlotSlot()));
     connect(ui->spinY, SIGNAL(valueChanged(double)), this, SLOT(UpdateSectorPlotSlot()));
@@ -68,11 +65,11 @@ FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* sceneKit, SceneTreeModel* scen
     ui->plotFxy->yAxis->setLabel("y, m");
 
     ui->plotFx->xAxis->setLabel("x, m");
-    ui->plotFx->yAxis->setLabel("Flux, W/m^2");
+    ui->plotFx->yAxis->setLabel(m_fluxLabel);
     ui->plotFx->yAxis->setRange(0, 1.08);
 
     ui->plotFy->xAxis->setLabel("y, m");
-    ui->plotFy->yAxis->setLabel("Flux, W/m^2");
+    ui->plotFy->yAxis->setLabel(m_fluxLabel);
     ui->plotFy->yAxis->setRange(0, 1.08);
 
     int q = fontMetrics().height();
@@ -278,31 +275,34 @@ void FluxAnalysisDialog::UnitsChanged()
     ui->plotFy->replot();
 }
 
-/*
- * Set the coords check box according to the store type
- */
-void FluxAnalysisDialog::FormatChanged()
+void FluxAnalysisDialog::on_pushButton_clicked()
 {
-    if (ui->exportFormatCombo->currentText() == "png" || ui->exportFormatCombo->currentText() == "jpg")
-    {
-        ui->exportGridCheck->setChecked(false);
-        ui->exportGridCheck->setDisabled(true);
+    QString dirName;
+    QString selectedFilter;
+    if (m_path.isEmpty()) {
+        QSettings settings("CyI", "Tonatiuh");
+        dirName = settings.value("dirProjects", "../examples").toString();
+    } else {
+        dirName = m_path;
+        QFileInfo info(m_path);
+        if (info.suffix() == "jpg")
+            selectedFilter = "Image (*.jpg)";
+        else if (info.suffix() == "txt")
+            selectedFilter = "Data (*.txt)";
+        else if (info.suffix() == "dat")
+            selectedFilter = "Data with grid (*.dat)";
     }
-    else
-        ui->exportGridCheck->setEnabled(true);
-}
 
-void FluxAnalysisDialog::SelectDir()
-{
-    QString path = QFileDialog::getExistingDirectory(this, "Choose a directory to save");
-    ui->exportDirEdit->setText(path);
-}
+    QString fileName = QFileDialog::getSaveFileName(
+        this, "Export", dirName,
+        "Image (*.png);;Image (*.jpg);;Data (*.txt);;Data with grid (*.dat)",
+         &selectedFilter
+    );
+    if (fileName.isEmpty()) return;
 
-/*
- * Exports the flux distribution
- */
-void FluxAnalysisDialog::Export()
-{
+    m_path = fileName;
+
+
     const Matrix2D<int>& photonCounts = m_fluxAnalysis->getBins();
     if (photonCounts.data().isEmpty())
     {
@@ -311,52 +311,15 @@ void FluxAnalysisDialog::Export()
         return;
     }
 
-    if (ui->exportDirEdit->text().isEmpty())
-    {
-        QString message("Directory not valid");
-        QMessageBox::warning(this, "Tonatiuh", message);
-        return;
-    }
-
-    if (ui->exportFileEdit->text().isEmpty())
-    {
-        QString message("File name not valid");
-        QMessageBox::warning(this, "Tonatiuh", message);
-        return;
-    }
-
-    QString exportDirectory(ui->exportDirEdit->text());
-    QString exportFormat = ui->exportFormatCombo->currentText();
-    QString exportFileName = ui->exportFileEdit->text();
-
-    QFileInfo exportFileInfo(exportFileName);
-    if (exportFormat == "txt")
-    {
-        m_fluxAnalysis->write(exportDirectory, exportFileName, ui->exportGridCheck->isChecked());
-    }
-    else if (exportFormat == "jpg")
-    {
-        if (exportFileInfo.completeSuffix().compare("jpg") )
-            exportFileName.append(".jpg");
-
-        QFile exportFile(exportDirectory + "/" + exportFileName);
-        exportFile.open(QIODevice::WriteOnly);
-        ui->plotFxy->saveJpg(exportFile.fileName());
-        exportFile.close();
-    }
-    else if (exportFormat == "png")
-    {
-        if (exportFileInfo.completeSuffix().compare("png") )
-            exportFileName.append(".png");
-
-        QFile exportFile(exportDirectory + "/" + exportFileName);
-        exportFile.open(QIODevice::WriteOnly);
-        ui->plotFxy->savePng(exportFile.fileName());
-        exportFile.close();
-    }
-
-    QString message("Export done successfully");
-    QMessageBox::information(this, "Tonatiuh", message);
+    QFileInfo info(m_path);
+    if (info.suffix() == "txt")
+        m_fluxAnalysis->write(m_path, false);
+    else if (info.suffix() == "dat")
+        m_fluxAnalysis->write(m_path, true);
+    else if (info.suffix() == "jpg")
+        ui->plotFxy->saveJpg(m_path);
+    else if (info.suffix() == "png")
+        ui->plotFxy->savePng(m_path);
 }
 
 /*

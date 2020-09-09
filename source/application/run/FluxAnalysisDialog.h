@@ -34,11 +34,8 @@ private slots:
     void run();
 
     void UnitsChanged();
-    void FormatChanged();
-    void SelectDir();
-    void Export();
-
     void UpdateSectorPlotSlot();
+    void on_pushButton_clicked();
 
 private:
     void ClearAnalysis();
@@ -55,4 +52,5 @@ private:
     SceneTreeModel* m_sceneModel;
     QString m_fluxSurfaceURL;
     QString m_fluxLabel;
+    QString m_path;
 };

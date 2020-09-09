@@ -107,7 +107,7 @@ public slots:
     void SetAirParameter(QString parameter, QString value);
 
     void Run();
-    void RunFluxAnalysis(QString nodeURL, QString surfaceSide, uint nOfRays, int heightDivisions, int widthDivisions, QString directory, QString file, bool saveCoords);
+    void RunFluxAnalysis(QString nodeURL, QString surfaceSide, uint nOfRays, int heightDivisions, int widthDivisions, QString fileName, bool saveCoords);
     void SetExportAllPhotonMap();
     void SetExportCoordinates(bool enabled, bool global);
     void SetExportIntersectionSurface(bool enabled);
@@ -213,9 +213,7 @@ private:
     bool Delete(QModelIndex index);
     bool Paste(QModelIndex index, tgc::PasteType type);
 
-    bool ReadyForRaytracing(InstanceNode*& instanceLayout,
-                            InstanceNode* instanceSun,
-                            AirTransmission*& air);
+    bool ReadyForRaytracing(InstanceNode*& instanceLayout, InstanceNode* instanceSun, AirTransmission*& air);
 
     void SetupDocument();
     void SetupViews();

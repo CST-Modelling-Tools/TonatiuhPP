@@ -544,41 +544,41 @@ bool SceneTreeModel::Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& c
 
     if (!child->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId()))
     { // material, tracker, shape
-        if (child->getTypeId().isDerivedFrom(TrackerKit::getClassTypeId()))
-        {
-            TSeparatorKit* separatorKit = static_cast<TSeparatorKit*>(pCoinParent);
-            TrackerKit* tracker = static_cast<TrackerKit*>(separatorKit->getPart("tracker", false));
-            if (tracker)
-            {
-                QMessageBox::warning(0, "Tonatiuh warning", "This TSeparatorKit already contains a tracker");
-                return false;
-            }
-            coinParent.setPart("tracker", child);
-        }
-        if (child->getTypeId().isDerivedFrom(ShapeRT::getClassTypeId()))
-        {
-            TShapeKit* shapeKit = static_cast<TShapeKit*>(pCoinParent);
-            if (!shapeKit) return false;
-            ShapeRT* shape = static_cast<ShapeRT*>(shapeKit->getPart("shape", false));
-            if (shape)
-            {
-                QMessageBox::warning(0, "Tonatiuh warning", "This TShapeKit already contains a shape");
-                return false;
-            }
-            coinParent.setPart("shape", child);
-        }
-        if (child->getTypeId().isDerivedFrom(MaterialRT::getClassTypeId()))
-        {
-            TShapeKit* shapeKit = static_cast<TShapeKit*>(pCoinParent);
-            if (!shapeKit) return false;
-            MaterialRT* material = static_cast<MaterialRT*>(shapeKit->getPart("material", false));
-            if (material)
-            {
-                QMessageBox::warning(0, "Tonatiuh warning", "This TShapeKit already contains a material");
-                return false;
-            }
-            coinParent.setPart("material", child);
-        }
+//        if (child->getTypeId().isDerivedFrom(TrackerKit::getClassTypeId()))
+//        {
+//            TSeparatorKit* separatorKit = static_cast<TSeparatorKit*>(pCoinParent);
+//            TrackerKit* tracker = static_cast<TrackerKit*>(separatorKit->getPart("tracker", false));
+//            if (tracker)
+//            {
+//                QMessageBox::warning(0, "Tonatiuh warning", "This TSeparatorKit already contains a tracker");
+//                return false;
+//            }
+//            coinParent.setPart("tracker", child);
+//        }
+//        if (child->getTypeId().isDerivedFrom(ShapeRT::getClassTypeId()))
+//        {
+//            TShapeKit* shapeKit = static_cast<TShapeKit*>(pCoinParent);
+//            if (!shapeKit) return false;
+//            ShapeRT* shape = static_cast<ShapeRT*>(shapeKit->getPart("shape", false));
+//            if (shape)
+//            {
+//                QMessageBox::warning(0, "Tonatiuh warning", "This TShapeKit already contains a shape");
+//                return false;
+//            }
+//            coinParent.setPart("shape", child);
+//        }
+//        if (child->getTypeId().isDerivedFrom(MaterialRT::getClassTypeId()))
+//        {
+//            TShapeKit* shapeKit = static_cast<TShapeKit*>(pCoinParent);
+//            if (!shapeKit) return false;
+//            MaterialRT* material = static_cast<MaterialRT*>(shapeKit->getPart("material", false));
+//            if (material)
+//            {
+//                QMessageBox::warning(0, "Tonatiuh warning", "This TShapeKit already contains a material");
+//                return false;
+//            }
+//            coinParent.setPart("material", child);
+//        }
     }
     else
     {

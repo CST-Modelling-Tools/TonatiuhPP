@@ -1119,8 +1119,8 @@ void MainWindow::Copy()
         return;
     }
 
-    CmdCopy* command = new CmdCopy(m_modelSelection->currentIndex(), m_coinNode_Buffer, m_modelScene);
-    m_undoStack->push(command);
+    CmdCopy* cmd = new CmdCopy(m_modelSelection->currentIndex(), m_coinNode_Buffer, m_modelScene);
+    m_undoStack->push(cmd);
 
     setDocumentModified(true);
 }
@@ -1749,7 +1749,7 @@ void MainWindow::Run()
  * The map will be calculated with the parameters \a nOfRays, \a heightDivisions and \a heightDivisions.
  * The results will save in a file \a directory \a QString fileName, the coordinates of the cells depending on the variable \a saveCoord.
  */
-void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, uint nOfRays, int heightDivisions, int widthDivisions, QString dirName, QString fileName, bool saveCoords)
+void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, uint nOfRays, int heightDivisions, int widthDivisions, QString fileName, bool saveCoords)
 {
     TSceneKit* sceneKit = m_document->getSceneKit();
     if (!sceneKit) return;
@@ -1759,7 +1759,7 @@ void MainWindow::RunFluxAnalysis(QString nodeURL, QString surfaceSide, uint nOfR
 
     FluxAnalysis fa(sceneKit, m_modelScene, m_raysGridWidth, m_raysGridHeight, m_rand);
     fa.run(nodeURL, surfaceSide, nOfRays, false, heightDivisions, widthDivisions); //?
-    fa.write(dirName, fileName, saveCoords);
+    fa.write(fileName, saveCoords);
 }
 
 /*!
@@ -2390,21 +2390,23 @@ bool MainWindow::OkToContinue()
  */
 bool MainWindow::Paste(QModelIndex index, tgc::PasteType type)
 {
-    if (!index.isValid() ) return false;
+    if (!index.isValid()) return false;
     if (!m_coinNode_Buffer) return false;
 
-    InstanceNode* ancestor = m_modelScene->getInstance(index);
-    SoNode* selectedCoinNode = ancestor->getNode();
+    InstanceNode* instance = m_modelScene->getInstance(index);
+    SoNode* node = instance->getNode();
 
-    if (!selectedCoinNode->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) ) return false;
-    if ( (selectedCoinNode->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) ) &&
-         (m_coinNode_Buffer->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) ) ) return false;
+    if (!node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
+        return false;
+//    if (node->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId()) &&
+//         m_coinNode_Buffer->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId()))
+//        return false;
 
-    if (ancestor->getNode() == m_coinNode_Buffer) return false;
-    while (ancestor->getParent() )
-    {
-        if (ancestor->getParent()->getNode() == m_coinNode_Buffer) return false;
-        ancestor = ancestor->getParent();
+    if (instance->getNode() == m_coinNode_Buffer) return false;
+
+    while (instance->getParent()) {
+        if (instance->getParent()->getNode() == m_coinNode_Buffer) return false;
+        instance = instance->getParent();
     }
 
     CmdPaste* cmd = new CmdPaste(type, m_modelSelection->currentIndex(), m_coinNode_Buffer, m_modelScene);

@@ -19,7 +19,7 @@ public:
     QString getShapeType(QString nodeURL);
     void run(QString nodeURL, QString surfaceSide, ulong nRays, bool increasePhotonMap, int uDivs, int vDivs);
     void setBins(int rows, int cols);
-    void write(QString directory, QString file, bool withCoords);
+    void write(QString fileName, bool withCoords);
     void clear();
 
     Matrix2D<int>& getBins() {return m_bins;}

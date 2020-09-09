@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>807</width>
-    <height>594</height>
+    <width>824</width>
+    <height>607</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,7 +34,7 @@
         <property name="title">
          <string>Analysis</string>
         </property>
-        <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,0,0">
+        <layout class="QGridLayout" name="gridLayout">
          <item row="2" column="0">
           <widget class="QLabel" name="surfaceXLabel">
            <property name="text">
@@ -47,20 +47,6 @@
            <property name="text">
             <string>Select</string>
            </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QComboBox" name="surfaceSideCombo">
-           <item>
-            <property name="text">
-             <string>front</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>back</string>
-            </property>
-           </item>
           </widget>
          </item>
          <item row="4" column="2">
@@ -80,13 +66,6 @@
           <widget class="QLabel" name="surfaceSideLabel">
            <property name="text">
             <string>Side:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="3">
-          <widget class="QPushButton" name="raysButton">
-           <property name="text">
-            <string>Run</string>
            </property>
           </widget>
          </item>
@@ -112,9 +91,32 @@
           </widget>
          </item>
          <item row="0" column="1" colspan="2">
-          <widget class="QLineEdit" name="surfaceEdit">
-           <property name="text">
-            <string/>
+          <widget class="QLineEdit" name="surfaceEdit"/>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="surfaceSideCombo">
+           <item>
+            <property name="text">
+             <string>front</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>back</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QSpinBox" name="surfaceXSpin">
+           <property name="minimum">
+            <number>2</number>
+           </property>
+           <property name="maximum">
+            <number>10000</number>
+           </property>
+           <property name="value">
+            <number>25</number>
            </property>
           </widget>
          </item>
@@ -131,16 +133,10 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
-          <widget class="QSpinBox" name="surfaceXSpin">
-           <property name="minimum">
-            <number>2</number>
-           </property>
-           <property name="maximum">
-            <number>10000</number>
-           </property>
-           <property name="value">
-            <number>25</number>
+         <item row="4" column="3">
+          <widget class="QPushButton" name="raysButton">
+           <property name="text">
+            <string>Run</string>
            </property>
           </widget>
          </item>
@@ -165,41 +161,18 @@
         <property name="title">
          <string>Export</string>
         </property>
-        <layout class="QGridLayout" name="gridLayout_8" columnstretch="0,1,0,0">
-         <item row="2" column="0">
-          <widget class="QLabel" name="exportFormatLabel">
+        <layout class="QGridLayout" name="gridLayout_8" columnstretch="0,0,0">
+         <item row="0" column="0">
+          <widget class="QLabel" name="exportLengthLabel">
            <property name="text">
-            <string>Format:</string>
+            <string>Length:</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="1" colspan="2">
-          <widget class="QLineEdit" name="exportDirEdit"/>
-         </item>
-         <item row="3" column="3">
-          <widget class="QPushButton" name="exportFileButton">
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
+         <item row="1" column="0">
+          <widget class="QLabel" name="exportPowerLabel">
            <property name="text">
-            <string>Open</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="exportPowerEdit">
-           <property name="text">
-            <string>W</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="2">
-          <widget class="QCheckBox" name="exportGridCheck">
-           <property name="text">
-            <string>Grid</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
+            <string>Power:</string>
            </property>
           </widget>
          </item>
@@ -210,63 +183,17 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="exportDirLabel">
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="exportPowerEdit">
            <property name="text">
-            <string>Directory:</string>
+            <string>W</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
-          <widget class="QComboBox" name="exportFormatCombo">
-           <item>
-            <property name="text">
-             <string>txt</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>png</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>jpg</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="exportPowerLabel">
-           <property name="text">
-            <string>Power:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="exportFileLabel">
-           <property name="text">
-            <string>File:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="3">
-          <widget class="QPushButton" name="exportButton">
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
+         <item row="1" column="2">
+          <widget class="QPushButton" name="pushButton">
            <property name="text">
             <string>Export</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1" colspan="2">
-          <widget class="QLineEdit" name="exportFileEdit"/>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="exportLengthLabel">
-           <property name="text">
-            <string>Length:</string>
            </property>
           </widget>
          </item>
@@ -521,9 +448,6 @@
  <tabstops>
   <tabstop>surfaceEdit</tabstop>
   <tabstop>surfaceSideCombo</tabstop>
-  <tabstop>exportFormatCombo</tabstop>
-  <tabstop>exportDirEdit</tabstop>
-  <tabstop>exportFileEdit</tabstop>
   <tabstop>spinY</tabstop>
  </tabstops>
  <resources/>

@@ -37,8 +37,9 @@ TShapeKit::TShapeKit()
     SO_NODE_ADD_FIELD( material, (0) );
     SO_KIT_INIT_INSTANCE();
 
-    SoGroup* g = (SoGroup*) topSeparator.getValue();
     m_shapeKit = new SoShapeKit;
+    m_shapeKit->ref();
+    SoGroup* g = (SoGroup*) topSeparator.getValue();
     g->addChild(m_shapeKit);
 
     profileRT = new ProfileBox;
@@ -55,10 +56,21 @@ TShapeKit::TShapeKit()
     shapeRT = new ShapePlanar;
 }
 
+//TShapeKit* TShapeKit::copy(SbBool copyConnections) const
+//{
+//    TShapeKit* kit = dynamic_cast<TShapeKit*>(SoBaseKit::copy(copyConnections));
+//    kit->m_shapeKit = new SoShapeKit;
+//    SoGroup* g = (SoGroup*) kit->topSeparator.getValue();
+//    g->addChild(kit->m_shapeKit);
+//    kit->m_shapeKit->setPart("material", kit->material.getValue());
+//    return kit;
+//}
+
 TShapeKit::~TShapeKit()
 {
     delete m_sensorShape;
     delete m_sensorProfile;
+    m_shapeKit->unref();
 }
 
 void TShapeKit::onSensor(void* data, SoSensor*)
