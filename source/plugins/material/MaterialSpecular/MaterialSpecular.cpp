@@ -59,7 +59,7 @@ bool MaterialSpecular::OutputRay(const Ray& rayIn, const DifferentialGeometry& d
             normal.y = sinTheta*sin(phi);
             normal.z = cosTheta;
         }
-        else if (distribution.getValue() == Distribution::Gaussian)
+        else //if (distribution.getValue() == Distribution::Gaussian)
         {
             // https://en.wikipedia.org/wiki/Marsaglia_polar_method
             double u, v, s;
@@ -78,10 +78,11 @@ bool MaterialSpecular::OutputRay(const Ray& rayIn, const DifferentialGeometry& d
         vec3d vy = dg.dpdv.normalized();
         vec3d vz = dg.normal.normalized(); // always normalized?
         normal = vx*normal.x + vy*normal.y + vz*normal.z;
+        normal.normalize();
     } else
         normal = dg.normal;
 
-    vec3d d = normal.reflect(rayIn.direction());
+    vec3d d = rayIn.direction().reflected(normal);
     rayOut.setDirection(d); // double sided
     return true;
 }

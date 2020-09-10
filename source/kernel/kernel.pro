@@ -16,7 +16,7 @@ HEADERS += \
     air/AirVacuum.h \
     component/ComponentFactory.h \
     material/MaterialAbsorber.h \
-    material/MaterialFresnel.h \
+    material/MaterialFresnelUnpolarized.h \
     material/MaterialRT.h \
     material/MaterialTransparent.h \
     material/MaterialVirtual.h \
@@ -76,7 +76,7 @@ SOURCES += \
     air/AirTransmission.cpp \
     air/AirVacuum.cpp \
     material/MaterialAbsorber.cpp \
-    material/MaterialFresnel.cpp \
+    material/MaterialFresnelUnpolarized.cpp \
     material/MaterialRT.cpp \
     material/MaterialTransparent.cpp \
     material/MaterialVirtual.cpp \

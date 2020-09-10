@@ -138,6 +138,7 @@ struct TONATIUH_LIBRARIES vec3d
         return false;
     }
 
+    vec3d projected(const vec3d& n) const;
     vec3d reflected(const vec3d& n) const;
     vec3d reflect(const vec3d& v) const;
 
@@ -189,6 +190,12 @@ inline vec3d cross(const vec3d& a, const vec3d& b)
         a.z*b.x - a.x*b.z,
         a.x*b.y - a.y*b.x
     );
+}
+
+// this != normal
+inline vec3d vec3d::projected(const vec3d& n) const
+{
+    return *this - n*dot(*this, n);
 }
 
 // this != normal
