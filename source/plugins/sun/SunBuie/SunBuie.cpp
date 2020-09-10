@@ -21,7 +21,7 @@ SunBuie::SunBuie()
     SO_NODE_ADD_FIELD( csr, (0.02) );
 
     m_sensor = new SoNodeSensor(onSensor, this);
-//    m_sensor->setPriority(0); // does not help
+    m_sensor->setPriority(0); // does not help?
     m_sensor->attach(this);
 
 	double csrValue = csr.getValue();
@@ -45,7 +45,7 @@ void SunBuie::updateState(double csrValue)
     double m_integralB = (exp(m_k)*pow(1000, m_gamma)/gammaPlusTwo) * ( pow(m_thetaCS, gammaPlusTwo) - pow(m_thetaSD, gammaPlusTwo) );
     m_alpha = 1./(m_integralA + m_integralB);
 
-    m_heightSD = 1.001 * pdfTheta(0.0038915695846209047);
+    m_heightSD = 1.001*pdfTheta(0.0038915695846209047);
     m_heightCS = pdfTheta(m_thetaSD);
 
     double areaA = m_thetaSD*m_heightSD;
@@ -77,6 +77,13 @@ vec3d SunBuie::generateRay(Random& rand) const
 double SunBuie::getThetaMax() const
 {
     return m_thetaCS;
+}
+
+double SunBuie::shape(double theta) const
+{
+    if (std::abs(theta) > m_thetaCS)
+        return 0;
+    return phi(theta);
 }
 
 SoNode* SunBuie::copy(SbBool copyConnections) const

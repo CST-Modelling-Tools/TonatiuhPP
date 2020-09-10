@@ -19,6 +19,7 @@ SunShapePillbox::SunShapePillbox()
     onSensor(this, 0);
 
     m_sensor = new SoNodeSensor(onSensor, this);
+    m_sensor->setPriority(0);
     m_sensor->attach(this);
 }
 
@@ -44,13 +45,20 @@ vec3d SunShapePillbox::generateRay(Random& rand) const
 
 double SunShapePillbox::getThetaMax() const
 {
-	return thetaMax.getValue();
+    return thetaMax.getValue();
+}
+
+double SunShapePillbox::shape(double theta) const
+{
+    if (std::abs(theta) > thetaMax.getValue())
+        return 0;
+    return 1.;
 }
 
 SoNode* SunShapePillbox::copy(SbBool copyConnections) const
 {
-	// Use the standard version of the copy method to create
-	// a copy of this instance, including its field data
+    // Use the standard version of the copy method to create
+    // a copy of this instance, including its field data
     SunShapePillbox* sun = dynamic_cast<SunShapePillbox*>(SoNode::copy(copyConnections));
     sun->m_sinThetaMax = m_sinThetaMax;
     return sun;

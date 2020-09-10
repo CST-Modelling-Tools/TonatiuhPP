@@ -519,7 +519,7 @@ void MainWindow::StartManipulation(SoDragger* dragger)
 
 void MainWindow::onSunDialog()
 {
-    SunDialog dialog(m_modelScene, m_pluginManager->getSunMap(), this);
+    SunDialog dialog(m_modelScene, this);
     if (!dialog.exec()) return;
     setFieldNode(m_document->getSceneKit()->getPart("world", false), "sun", dialog.getSun());
 }
@@ -912,10 +912,10 @@ void MainWindow::showWarning(QString message)
 //View menu actions
 void MainWindow::on_actionViewAxes_toggled()
 {
-    m_graphicView[0]->showAxes(ui->actionViewAxes->isChecked() );
-    m_graphicView[1]->showAxes(ui->actionViewAxes->isChecked() );
-    m_graphicView[2]->showAxes(ui->actionViewAxes->isChecked() );
-    m_graphicView[3]->showAxes(ui->actionViewAxes->isChecked() );
+    m_graphicView[0]->showAxes(ui->actionViewAxes->isChecked());
+    m_graphicView[1]->showAxes(ui->actionViewAxes->isChecked());
+    m_graphicView[2]->showAxes(ui->actionViewAxes->isChecked());
+    m_graphicView[3]->showAxes(ui->actionViewAxes->isChecked());
 }
 
 void MainWindow::on_actionQuadView_toggled()

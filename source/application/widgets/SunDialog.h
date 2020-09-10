@@ -18,27 +18,32 @@ class SunDialog: public QDialog
     Q_OBJECT
 
 public:
-    SunDialog(SceneTreeModel* sceneModel, QMap<QString, SunFactory*> sunShapeMap, QWidget* parent = 0);
+    SunDialog(SceneTreeModel* sceneModel, QWidget* parent = 0);
     ~SunDialog();
 
     SunKit* getSun() {return m_sun;}
+
+private slots:
+    void on_buttonSunCalc_clicked();
+
+    void setFieldText(SoNode* node, QString field, QString value);
+    void setFieldNode(SoNode* node, QString field, SoNode* value);
+    void onPressed(const QModelIndex& index);
+
+    void addNode();
+    void removeNode();
 
 private:
     void makeSunPositionTab();
     void makeSunShapeTab();
     void makeSunApertureTab();
+    void updateAperture();
 
-protected slots:
-    void on_buttonSunCalc_clicked();
-    void setShape(int index);
-    void setValue(SoNode* node, QString field, QString value);
-    void addNode();
-    void removeNode();
-    void onAccept();
+    void initCustomPlot();
+    void updateCustomPlot();
 
 private:
     Ui::SunDialog* ui;
     SceneTreeModel* m_sceneModel;
-    QMap<QString, SunFactory*> m_sunShapeMap;
     SunKit* m_sun;
 };

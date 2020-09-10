@@ -14,6 +14,7 @@ public:
 
     vec3d generateRay(Random& rand) const;
     double getThetaMax() const;
+    double shape(double theta) const;
 
     SoSFDouble thetaMax;
 
