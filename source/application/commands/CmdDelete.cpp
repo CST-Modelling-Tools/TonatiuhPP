@@ -26,7 +26,7 @@ CmdDelete::~CmdDelete()
 
 void CmdDelete::undo()
 {
-    m_model->Paste(tgc::Shared, *m_parent, *m_node, m_row);
+    m_model->Paste(m_parent, m_node, m_row, true);
 }
 
 void CmdDelete::redo()

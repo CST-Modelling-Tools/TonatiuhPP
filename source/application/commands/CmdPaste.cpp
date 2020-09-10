@@ -11,13 +11,13 @@
  *
  * If \a parent is not null, this command is appended to parent's child list and then owns this command.
  */
-CmdPaste::CmdPaste(tgc::PasteType type,
+CmdPaste::CmdPaste(bool isShared,
                    const QModelIndex& index,
                    SoNode*& node,
                    SceneTreeModel* model,
                    QUndoCommand* parent):
     QUndoCommand("Paste", parent),
-    m_pasteType(type),
+    m_isShared(isShared),
     m_row(-1),
     m_node(node),
     m_model(model)
@@ -50,7 +50,7 @@ void CmdPaste::undo()
 void CmdPaste::redo()
 {
     SoBaseKit* kit = static_cast<SoBaseKit*> ( m_instance->getNode() );
-    if (!m_model->Paste(m_pasteType, *kit, *m_node, m_row)) return;
+    m_model->Paste(kit, m_node, m_row, m_isShared);
 
     SoNode* node = m_instance->children[m_row]->getNode();
     node->ref();

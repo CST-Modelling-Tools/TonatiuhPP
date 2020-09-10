@@ -10,8 +10,6 @@ class QSplashScreen;
 
 #include <Inventor/SbVec3f.h>
 
-#include "commands/tgc.h"
-
 class Document;
 class GraphicRoot;
 class GraphicView;
@@ -135,8 +133,8 @@ private slots:
 //    void InsertShapeSurface(TFactory* f);
     void InsertShapeSurface(ShapeFactory* factory, int numberOfParameters, QVector<QVariant> parametersList);
 
-    void ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex& node);
-    void ItemDragAndDropCopy(const QModelIndex& newParent, const QModelIndex& node);
+    void ItemDragAndDrop(const QModelIndex& indexParent, const QModelIndex& index);
+    void ItemDragAndDropCopy(const QModelIndex& indexParent, const QModelIndex& index);
 
     void onUndoStack();
 
@@ -211,7 +209,7 @@ private:
     void setDocumentModified(bool value);
 
     bool Delete(QModelIndex index);
-    bool Paste(QModelIndex index, tgc::PasteType type);
+    bool Paste(QModelIndex index, bool isShared);
 
     bool ReadyForRaytracing(InstanceNode*& instanceLayout, InstanceNode* instanceSun, AirTransmission*& air);
 

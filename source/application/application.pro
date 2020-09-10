@@ -24,7 +24,6 @@ HEADERS += \
     commands/CmdRename.h \
     commands/CmdSetFieldNode.h \
     commands/CmdSetFieldText.h \
-    commands/tgc.h \
     main/Document.h \
     main/MainWindow.h \
     main/PluginManager.h \

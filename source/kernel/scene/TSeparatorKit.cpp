@@ -30,10 +30,6 @@ TSeparatorKit::TSeparatorKit()
     SO_KIT_ADD_CATALOG_ENTRY(components, SoGroup, TRUE, topSeparator, "", TRUE);
     SO_KIT_ADD_CATALOG_ENTRY(group, SoGroup, TRUE, topSeparator, "", TRUE);
 
-//    SO_NODE_ADD_FIELD( translation, (0.f, 0.f, 0.f) );
-//    SO_NODE_ADD_FIELD( rotation, (0.f, 0.f, 1.f, 0.f) );
-//    SO_NODE_ADD_FIELD( scale, (1.f, 1.f, 1.f) );
-
     SO_KIT_INIT_INSTANCE();
 }
 

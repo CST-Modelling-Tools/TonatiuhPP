@@ -24,8 +24,9 @@ CmdSetFieldText::CmdSetFieldText(SoNode* node, QString field, QString value, QUn
     f->get(valueOld);
     m_valueOld = valueOld.getString();
 
-    QString name = node->getTypeId().getName().getString();
-    QString text = QString("%1.%2 = %3").arg(name, m_field, m_value);
+//    QString name = node->getTypeId().getName().getString();
+//    QString text = QString("%1.%2 = %3").arg(name, m_field, m_value);
+    QString text = QString("node.setParameter(\"%1\", \"%2\");").arg(m_field, m_value);
     setText(text);
 }
 

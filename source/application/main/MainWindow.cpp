@@ -551,42 +551,35 @@ void MainWindow::showPhotons(bool on)
 /*!
  * Moves the scene node with index \a node to the parent with index \a newParent.
  */
-void MainWindow::ItemDragAndDrop(const QModelIndex& newParent, const QModelIndex& node)
+void MainWindow::ItemDragAndDrop(const QModelIndex& indexParent, const QModelIndex& index)
 {
-    if (node == ui->sceneView->rootIndex() ) return;
+    if (index == ui->sceneView->rootIndex()) return;
+    InstanceNode* instance = m_modelScene->getInstance(index);
+    if (!instance->getParent()) return;
+    if (!instance->getParent()->getNode()->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId())) return;
+    SoNode* node = instance->getNode();
 
-    InstanceNode* nodeInstnace = m_modelScene->getInstance(node);
-    if (nodeInstnace->getParent()&&nodeInstnace->getParent()->getNode()->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId() ) )
-    {
-        SoNode* coinNode = nodeInstnace->getNode();
-        //if( coinNode->getTypeId().isDerivedFrom( TTracker::getClassTypeId() ) ) return;
+    QUndoCommand* cmd = new QUndoCommand("Drag and Drop: move node");
+    new CmdCut(index, m_coinNode_Buffer, m_modelScene, cmd);
+    new CmdPaste(false, indexParent, node, m_modelScene, cmd);
+    m_undoStack->push(cmd);
 
-        QUndoCommand* dragAndDrop = new QUndoCommand();
-        dragAndDrop->setText("Drag and Drop node");
-        new CmdCut(node, m_coinNode_Buffer, m_modelScene, dragAndDrop);
-
-        new CmdPaste(tgc::Copied, newParent, coinNode, m_modelScene, dragAndDrop);
-        m_undoStack->push(dragAndDrop);
-
-        UpdateLightSize();
-        setDocumentModified(true);
-    }
+    UpdateLightSize();
+    setDocumentModified(true);
 }
 
 /*!
  * Inserts a copy of the node \a node as a \a newParent child.
  */
-void MainWindow::ItemDragAndDropCopy(const QModelIndex& newParent, const QModelIndex& node)
+void MainWindow::ItemDragAndDropCopy(const QModelIndex& indexParent, const QModelIndex& index)
 {
-    InstanceNode* nodeInstnace = m_modelScene->getInstance(node);
-    SoNode* coinNode = nodeInstnace->getNode();
-    //if( coinNode->getTypeId().isDerivedFrom( TTracker::getClassTypeId() ) ) return;
+    InstanceNode* instance = m_modelScene->getInstance(index);
+    SoNode* node = instance->getNode();
 
-    QUndoCommand* dragAndDropCopy = new QUndoCommand();
-    dragAndDropCopy->setText("Drag and Drop Copy");
-    new CmdCopy(node, m_coinNode_Buffer, m_modelScene);
-    new CmdPaste(tgc::Shared, newParent, coinNode, m_modelScene, dragAndDropCopy);
-    m_undoStack->push(dragAndDropCopy);
+    QUndoCommand* cmd = new QUndoCommand("Drag and Drop: copy node");
+    new CmdCopy(index, m_coinNode_Buffer, m_modelScene, cmd);
+    new CmdPaste(true, indexParent, node, m_modelScene, cmd);
+    m_undoStack->push(cmd);
 
     UpdateLightSize();
     setDocumentModified(true);
@@ -1286,10 +1279,7 @@ void MainWindow::Paste(QString url, QString pasteType)
         return;
     }
 
-    if (pasteType == "Shared")
-        Paste(nodeIndex, tgc::Shared);
-    else
-        Paste(nodeIndex, tgc::Copied);
+    Paste(nodeIndex, pasteType == "Shared");
 }
 
 /*!
@@ -1302,7 +1292,7 @@ void MainWindow::PasteCopy()
         emit Abort("PasteCopy: There is not node copied.");
         return;
     }
-    Paste(m_modelSelection->currentIndex(), tgc::Copied);
+    Paste(m_modelSelection->currentIndex(), false);
 }
 
 /*!
@@ -1315,10 +1305,9 @@ void MainWindow::PasteLink()
         emit Abort("PasteCopy: There is not node copied.");
         return;
     }
-    Paste(m_modelSelection->currentIndex(), tgc::Shared);
+    Paste(m_modelSelection->currentIndex(), true);
 }
 
-#include <QDebug>
 /*!
  * Creates a new group node as a selected node child.
  */
@@ -1357,9 +1346,6 @@ void MainWindow::InsertNode()
     setDocumentModified(true);
 }
 
-/*!
- * Creates a surface node as selected node child.
- */
 void MainWindow::InsertShape()
 {
     QModelIndex index = ui->sceneView->currentIndex();
@@ -2388,7 +2374,7 @@ bool MainWindow::OkToContinue()
  *
  * Returns \a true if the node was successfully pasted, otherwise returns \a false.
  */
-bool MainWindow::Paste(QModelIndex index, tgc::PasteType type)
+bool MainWindow::Paste(QModelIndex index, bool isShared)
 {
     if (!index.isValid()) return false;
     if (!m_coinNode_Buffer) return false;
@@ -2409,7 +2395,7 @@ bool MainWindow::Paste(QModelIndex index, tgc::PasteType type)
         instance = instance->getParent();
     }
 
-    CmdPaste* cmd = new CmdPaste(type, m_modelSelection->currentIndex(), m_coinNode_Buffer, m_modelScene);
+    CmdPaste* cmd = new CmdPaste(isShared, m_modelSelection->currentIndex(), m_coinNode_Buffer, m_modelScene);
     m_undoStack->push(cmd);
 
     UpdateLightSize();

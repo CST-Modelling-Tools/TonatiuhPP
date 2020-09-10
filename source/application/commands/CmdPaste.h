@@ -2,8 +2,6 @@
 
 #include <QUndoCommand>
 
-#include "commands/tgc.h"
-
 class InstanceNode;
 class QModelIndex;
 class SceneTreeModel;
@@ -20,14 +18,14 @@ class SoNode;
 class CmdPaste: public QUndoCommand
 {
 public:
-    CmdPaste(tgc::PasteType type, const QModelIndex& index, SoNode*& node, SceneTreeModel* model, QUndoCommand* parent = 0);
+    CmdPaste(bool isShared, const QModelIndex& index, SoNode*& node, SceneTreeModel* model, QUndoCommand* parent = 0);
     ~CmdPaste();
 
      void undo();
      void redo();
 
 private:
-    tgc::PasteType m_pasteType;
+    bool m_isShared;
     InstanceNode* m_instance;
     int m_row;
     QString m_name;

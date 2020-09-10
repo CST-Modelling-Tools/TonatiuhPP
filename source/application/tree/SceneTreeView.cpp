@@ -48,13 +48,13 @@ void SceneTreeView::mouseMoveEvent(QMouseEvent* event)
    // QTreeView::mouseMoveEvent(event);
 }
 
-void SceneTreeView::dragEnterEvent(QDragEnterEvent *event)
+void SceneTreeView::dragEnterEvent(QDragEnterEvent* event)
 {
     event->setDropAction(Qt::MoveAction);
     event->accept();
 }
 
-void SceneTreeView::dragMoveEvent(QDragMoveEvent *event)
+void SceneTreeView::dragMoveEvent(QDragMoveEvent* event)
 {
     event->setDropAction(Qt::MoveAction);
     event->accept();
@@ -62,56 +62,50 @@ void SceneTreeView::dragMoveEvent(QDragMoveEvent *event)
 
 void SceneTreeView::dropEvent(QDropEvent* event)
 {
-    QModelIndex newParent = indexAt(event->pos());
-    if (newParent.isValid())
+    QModelIndex indexParent = indexAt(event->pos());
+    if (indexParent.isValid())
     {
-        SceneTreeModel* modelScene = static_cast< SceneTreeModel* >(model());
-        QString type = modelScene->getInstance(newParent)->getNode()->getTypeId().getName().getString();
-        
-        SoNode* parentNode = modelScene->getInstance(newParent)->getNode();
-        if (!parentNode->getTypeId().isDerivedFrom( SoBaseKit::getClassTypeId() ) ) return;
+        SceneTreeModel* modelScene = (SceneTreeModel*) model();
+        SoNode* nodeParent = modelScene->getInstance(indexParent)->getNode();
+        if (!nodeParent->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId())) return;
     
-        QByteArray data = event->mimeData()->data("text/objetID");
+        QByteArray data = event->mimeData()->data("text/objectID");
         QDataStream stream(&data, QIODevice::ReadOnly);
         QPoint position;
         stream >> position;
             
-        QModelIndex nodeIndex = indexAt(position);
+        QModelIndex index = indexAt(position);
         
-        if (modelScene->parent(nodeIndex) == newParent) return;
+        if (modelScene->parent(index) == indexParent) return;
         
-        SoNode* childNode = modelScene->getInstance(nodeIndex)->getNode();
+        SoNode* node = modelScene->getInstance(index)->getNode();
         
-            
-        if ( ( parentNode->getTypeId().isDerivedFrom( TSeparatorKit::getClassTypeId() ) ) && 
-             !( childNode->getTypeId().isDerivedFrom( SoSeparatorKit::getClassTypeId() ) ) )  return;
+        if (nodeParent->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()) &&
+            !node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId())) return;
              
-        if ( ( parentNode->getTypeId().isDerivedFrom( TShapeKit::getClassTypeId() ) ) && 
-             ( childNode->getTypeId().isDerivedFrom( SoBaseKit::getClassTypeId() ) ) )  return;
+        if (nodeParent->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId()) &&
+            node->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId())) return;
              
-        if ( ( parentNode->getTypeId().isDerivedFrom( TShapeKit::getClassTypeId() ) ) &&
-             !( childNode->getTypeId().isDerivedFrom( SoBaseKit::getClassTypeId() ) ) ) 
+        if (nodeParent->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId()) &&
+            !node->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId()))
         {
-            
-            TShapeKit* shapeKit = static_cast<TShapeKit*>(parentNode);
+            TShapeKit* shapeKit = static_cast<TShapeKit*>(nodeParent);
             if (shapeKit->getPart("shape", false)) return;
         }
             
-        QModelIndex ancestor = newParent;
+        QModelIndex ancestor = indexParent;
         while (ancestor.parent().isValid())
         {
-            if (ancestor.parent() == nodeIndex)
-                return;
-            else
-                ancestor = ancestor.parent();    
+            if (ancestor.parent() == index) return;
+            ancestor = ancestor.parent();
         }
             
-        if (nodeIndex != newParent)
+        if (index != indexParent)
         {
             if (event->keyboardModifiers () == Qt::ControlModifier)
-                 emit dragAndDropCopy(newParent, nodeIndex);
-             else
-                 emit dragAndDrop(newParent, nodeIndex);
+                 emit dragAndDropCopy(indexParent, index);
+            else
+                 emit dragAndDrop(indexParent, index);
              
             event->acceptProposedAction();
             event->accept();
@@ -134,15 +128,13 @@ void SceneTreeView::startDrag(QMouseEvent* event)
 {
     QPoint position = event->pos();
     QModelIndex index = indexAt(position);
-    
     if (index.parent() == rootIndex()) return;
     
-    QByteArray itemPos;
-    QDataStream stream(&itemPos, QIODevice::WriteOnly);
+    QByteArray data;
+    QDataStream stream(&data, QIODevice::WriteOnly);
     stream << position;
-        
     QMimeData* mimeData = new QMimeData;
-    mimeData->setData("text/objetID", itemPos);
+    mimeData->setData("text/objectID", data);
       
     QDrag* drag = new QDrag(this);
     drag->setMimeData(mimeData);

@@ -2,8 +2,6 @@
 
 #include <QAbstractItemModel>
 
-#include "commands/tgc.h"
-
 class InstanceNode;
 class QModelIndex;
 class SoBaseKit;
@@ -51,7 +49,7 @@ public:
     void removeCoinNode(int row, SoBaseKit* parent);
 
     bool Cut(SoBaseKit& parent, int row);
-    bool Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinChild, int row);
+    bool Paste(SoBaseKit* parent, SoNode* node, int row, bool isShared = false);
 
     void UpdateSceneModel();
 

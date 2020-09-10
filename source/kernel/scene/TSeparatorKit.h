@@ -22,10 +22,6 @@ public:
     static void initClass();
     TSeparatorKit();
 
-//    SoSFVec3f translation;
-//    SoSFVec4f rotation;
-//    SoSFVec3f scale;
-
     void getBoundingBox(SoGetBoundingBoxAction* action);
 
 protected:

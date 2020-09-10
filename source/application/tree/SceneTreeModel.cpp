@@ -528,66 +528,25 @@ bool SceneTreeModel::Cut(SoBaseKit& parent, int row)
     return true;
 }
 
-/**
- * Adds a child to \a coinParent as \a row child. If \a type is tgc::Copied, the added child is a copy of \a coinNode. But the type is tgc::Shared the node is shared with previous parent.
- * Return true if the paste action is correctly done. Otherwise returns false.
-**/
-bool SceneTreeModel::Paste(tgc::PasteType type, SoBaseKit& coinParent, SoNode& coinNode, int row) // bugs
+bool SceneTreeModel::Paste(SoBaseKit* parent, SoNode* node, int row, bool isShared) // bugs
 {
     SoNode* child;
-    SoNode* pCoinParent = &coinParent;
-
-    if (type == tgc::Copied)
-        child = static_cast<SoNode*>(coinNode.copy(true));
+    if (isShared)
+        child = node;
     else
-        child = &coinNode;
+        child = node->copy(true);
 
     if (!child->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId()))
     { // material, tracker, shape
-//        if (child->getTypeId().isDerivedFrom(TrackerKit::getClassTypeId()))
-//        {
-//            TSeparatorKit* separatorKit = static_cast<TSeparatorKit*>(pCoinParent);
-//            TrackerKit* tracker = static_cast<TrackerKit*>(separatorKit->getPart("tracker", false));
-//            if (tracker)
-//            {
-//                QMessageBox::warning(0, "Tonatiuh warning", "This TSeparatorKit already contains a tracker");
-//                return false;
-//            }
-//            coinParent.setPart("tracker", child);
-//        }
-//        if (child->getTypeId().isDerivedFrom(ShapeRT::getClassTypeId()))
-//        {
-//            TShapeKit* shapeKit = static_cast<TShapeKit*>(pCoinParent);
-//            if (!shapeKit) return false;
-//            ShapeRT* shape = static_cast<ShapeRT*>(shapeKit->getPart("shape", false));
-//            if (shape)
-//            {
-//                QMessageBox::warning(0, "Tonatiuh warning", "This TShapeKit already contains a shape");
-//                return false;
-//            }
-//            coinParent.setPart("shape", child);
-//        }
-//        if (child->getTypeId().isDerivedFrom(MaterialRT::getClassTypeId()))
-//        {
-//            TShapeKit* shapeKit = static_cast<TShapeKit*>(pCoinParent);
-//            if (!shapeKit) return false;
-//            MaterialRT* material = static_cast<MaterialRT*>(shapeKit->getPart("material", false));
-//            if (material)
-//            {
-//                QMessageBox::warning(0, "Tonatiuh warning", "This TShapeKit already contains a material");
-//                return false;
-//            }
-//            coinParent.setPart("material", child);
-//        }
+
     }
     else
     {
-        SoGroup* parts = static_cast<SoGroup*>(coinParent.getPart("group", true));
-        if (!parts) gcf::SevereError( "SceneModel::Paste Null coinPartList pointer");
+        SoGroup* parts = (SoGroup*) parent->getPart("group", true);
         parts->insertChild(child, row);
     }
 
-    for (InstanceNode* instanceParent : m_mapCoinQt[&coinParent])
+    for (InstanceNode* instanceParent : m_mapCoinQt[parent])
     {
         InstanceNode* instance = new InstanceNode(child);
         instanceParent->insertChild(row, instance);

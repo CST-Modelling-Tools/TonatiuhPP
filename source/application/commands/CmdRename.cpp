@@ -36,7 +36,7 @@ CmdRename::CmdRename(
     m_node = instance->getNode();
     m_nameOld = m_node->getName().getString();
 
-    QString text = QString("Node renamed: %1").arg(name);
+    QString text = QString("node.setName(\"%1\");").arg(name);
     setText(text);
 }
 
