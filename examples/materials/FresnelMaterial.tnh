@@ -52,7 +52,6 @@ TSceneKit {
       DEF Incident TSeparatorKit {
         transform 
         TTransform {
-          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
           translation 0 0 0
           rotation 0 0 1  0
 
@@ -86,7 +85,6 @@ TSceneKit {
       DEF Reflected TSeparatorKit {
         transform 
         TTransform {
-          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
           translation 1 0 2
 
         }

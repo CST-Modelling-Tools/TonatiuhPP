@@ -185,7 +185,7 @@ void FluxAnalysisDialog::UpdateAnalysis()
     double vStep = (vMax - vMin)/yDivs;
     double areaCell = uStep*vStep;
     double fluxMin = 0.;
-    double fluxAverage = powerTotal/(areaCell*xDivs*yDivs);
+    double fluxAverage = powerTotal/(areaCell*xDivs*yDivs); // wrong
     double fluxMax = m_fluxAnalysis->photonsMax()*powerPhoton/areaCell;
     double fluxMaxU = uMin + (m_fluxAnalysis->photonsMaxRow() + 0.5)*uStep;
     double fluxMaxV = vMin + (m_fluxAnalysis->photonsMaxCol() + 0.5)*vStep;

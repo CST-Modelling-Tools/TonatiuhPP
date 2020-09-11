@@ -26,7 +26,7 @@ TSceneKit {
       aperture 
       SunAperture {
         fields [ SFString disabledNodes ]
-        disabledNodes "//Layout/Target;//Layout/Heliostat/primary/secondary/target"
+        disabledNodes "//Node/Target;//Node/Heliostat/primary/secondary/target"
 
       }
 
@@ -44,7 +44,7 @@ TSceneKit {
 
   }
   group 
-  DEF Layout TSeparatorKit {
+  DEF Node TSeparatorKit {
     transform 
     TTransform {
 
@@ -65,17 +65,14 @@ TSceneKit {
           DEF Shape TShapeKit {
             shapeRT 
             DEF Sphere ShapeSphere {
-              fields [  ]
 
             }
             profileRT 
             DEF Box ProfileBox {
-              fields [ SFDouble uSize, SFDouble vSize ]
 
             }
             materialRT 
             DEF Absorber MaterialAbsorber {
-              fields [  ]
 
             }
             material 
@@ -91,17 +88,15 @@ TSceneKit {
         transform 
         TTransform {
           translation 30 50 0
-          rotation 0 0 1  2.5999999
+          rotation 0 0 1  148.96
 
         }
         group 
         Group {
 
           DEF Tracker TrackerKit {
-            fields [ SFNode armature, SFNode target, SFNode callbackList ]
             armature 
             TrackerArmature2A {
-              fields [ SFVec3f primaryShift, SFVec3f primaryAxis, SFVec2f primaryAngles, SFVec3f secondaryShift, SFVec3f secondaryAxis, SFVec2f secondaryAngles, SFVec3f facetShift, SFVec3f facetNormal, SFVec2f anglesDefault ]
               primaryShift 0 0 1.5
               primaryAxis 0 0 -1
               secondaryShift 0 0.1 0
@@ -112,7 +107,6 @@ TSceneKit {
             }
             target 
             TrackerTarget {
-              fields [ SFEnum aimingFrame, SFVec3f aimingPoint ]
               aimingFrame global
               aimingPoint 0 0 20
 
@@ -123,7 +117,7 @@ TSceneKit {
             transform 
             TTransform {
               translation 0 0 1.5
-              rotation -0 -0 0.98263347  0.00119604
+              rotation -0 -0 0.965129  0.0791294
 
             }
             group 
@@ -133,7 +127,7 @@ TSceneKit {
                 transform 
                 TTransform {
                   translation 0 0.1 0
-                  rotation 0.99999988 0 0  0.93925923
+                  rotation 1 0 0  53.8156
 
                 }
                 group 
@@ -143,7 +137,7 @@ TSceneKit {
                     transform 
                     TTransform {
                       translation 0 0 0
-                      rotation 0 0.70710683 0.70710683  3.1415
+                      rotation 0 0.707107 0.707107  180
 
                     }
                     group 
@@ -159,12 +153,10 @@ TSceneKit {
                         }
                         profileRT 
                         DEF Box ProfileBox {
-                          fields [ SFDouble uSize, SFDouble vSize ]
 
                         }
                         materialRT 
                         DEF Specular MaterialSpecular {
-                          fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
                         }
                         material 
@@ -189,17 +181,14 @@ TSceneKit {
                       DEF Shape TShapeKit {
                         shapeRT 
                         DEF Sphere ShapeSphere {
-                          fields [  ]
 
                         }
                         profileRT 
                         DEF Box ProfileBox {
-                          fields [ SFDouble uSize, SFDouble vSize ]
 
                         }
                         materialRT 
                         DEF Absorber MaterialAbsorber {
-                          fields [  ]
 
                         }
                         material 
@@ -216,7 +205,7 @@ TSceneKit {
                     TTransform {
                       translation 0 0 0
                       rotation 0 0 1  0
-                      scale 0.029999999 0.029999999 1
+                      scale 0.03 0.03 1
 
                     }
                     group 
@@ -225,22 +214,21 @@ TSceneKit {
                       DEF Shape TShapeKit {
                         shapeRT 
                         DEF Cylinder ShapeCylinder {
-                          fields [  ]
 
                         }
                         profileRT 
                         DEF Box ProfileBox {
-                          fields [ SFDouble uSize, SFDouble vSize ]
                           vSize 0.2
 
                         }
                         materialRT 
                         DEF Absorber MaterialAbsorber {
-                          fields [  ]
 
                         }
                         material 
                         Material {
+                          ambientColor 0.2 0.5 0.5
+                          diffuseColor 0.2 0.2 0.2
 
                         }
 
@@ -255,8 +243,8 @@ TSceneKit {
                 transform 
                 TTransform {
                   translation 0 0 0
-                  rotation 0 1 0  1.5700002
-                  scale 0.029999999 0.029999999 1
+                  rotation 0 1 0  90
+                  scale 0.03 0.03 1
 
                 }
                 group 
@@ -265,22 +253,21 @@ TSceneKit {
                   DEF Shape TShapeKit {
                     shapeRT 
                     DEF Cylinder ShapeCylinder {
-                      fields [  ]
 
                     }
                     profileRT 
                     DEF Box ProfileBox {
-                      fields [ SFDouble uSize, SFDouble vSize ]
                       vSize 0.2
 
                     }
                     materialRT 
                     DEF Absorber MaterialAbsorber {
-                      fields [  ]
 
                     }
                     material 
                     Material {
+                      ambientColor 0.5 0.2 0.5
+                      diffuseColor 0.2 0.2 0.2
 
                     }
 

@@ -47,7 +47,6 @@ TSceneKit {
       DEF Shape TShapeKit {
         shapeRT 
         DEF Sphere ShapeSphere {
-          fields [  ]
 
         }
         profileRT 
@@ -56,7 +55,6 @@ TSceneKit {
         }
         materialRT 
         DEF Specular MaterialSpecular {
-          fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
 
         }
         material 

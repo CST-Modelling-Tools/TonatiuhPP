@@ -18,7 +18,7 @@ TSceneKit {
       shape 
       SunShapePillbox {
         fields [ SFDouble thetaMax ]
-        thetaMax 4.650000000000002e-006
+        thetaMax 0
 
       }
       aperture 
@@ -42,7 +42,7 @@ TSceneKit {
 
   }
   group 
-  DEF Layout TSeparatorKit {
+  DEF Node TSeparatorKit {
     transform 
     TTransform {
 
@@ -72,22 +72,17 @@ TSceneKit {
               fields [ SFDouble rMin, SFDouble rMax, SFDouble phiMin, SFDouble phiMax ]
               rMin 0.3
               rMax 1
-              phiMin -3.141592653589793
-              phiMax 3.141592653589793
+              phiMin -3.14159265359
+              phiMax 3.14159265359
 
             }
             materialRT 
             DEF Specular MaterialSpecular {
-              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
               slope 0
 
             }
-            appearance 
-            AppearanceKit {
-              material 
-              DEF MaterialGL Material {
-
-              }
+            material 
+            Material {
 
             }
 
@@ -98,7 +93,7 @@ TSceneKit {
       DEF Secondary TSeparatorKit {
         transform 
         TTransform {
-          translation 0 0 6.6799998
+          translation 0 0 6.68
 
         }
         group 
@@ -117,23 +112,18 @@ TSceneKit {
             DEF Circular ProfileCircular {
               fields [ SFDouble rMin, SFDouble rMax, SFDouble phiMin, SFDouble phiMax ]
               rMax 0.3
-              phiMin -3.141592653589793
-              phiMax 3.141592653589793
+              phiMin -3.14159265359
+              phiMax 3.14159265359
 
             }
             materialRT 
             DEF Specular MaterialSpecular {
-              fields [ SFDouble reflectivity, SFEnum distribution, SFDouble slope ]
               distribution Gaussian
               slope 0
 
             }
-            appearance 
-            AppearanceKit {
-              material 
-              DEF MaterialGL Material {
-
-              }
+            material 
+            Material {
 
             }
 
@@ -153,25 +143,18 @@ TSceneKit {
           DEF Shape TShapeKit {
             shapeRT 
             DEF Planar ShapePlanar {
-              fields [  ]
 
             }
             profileRT 
             DEF Box ProfileBox {
-              fields [ SFDouble uSize, SFDouble vSize ]
 
             }
             materialRT 
             DEF Absorber MaterialAbsorber {
-              fields [  ]
 
             }
-            appearance 
-            AppearanceKit {
-              material 
-              DEF MaterialGL Material {
-
-              }
+            material 
+            Material {
 
             }
 

@@ -14,7 +14,7 @@ TSceneKit {
       SunPosition {
         fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
         azimuth 90
-        elevation 55
+        elevation 65
         irradiance 1000
 
       }
@@ -47,7 +47,6 @@ TSceneKit {
   DEF Node TSeparatorKit {
     transform 
     TTransform {
-      fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
       scale 1 5 1
 
     }
@@ -57,7 +56,6 @@ TSceneKit {
       DEF absorber TSeparatorKit {
         transform 
         TTransform {
-          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
 
         }
         group 
@@ -80,7 +78,7 @@ TSceneKit {
             }
             material 
             Material {
-              ambientColor 0.80000001 0.80000001 0.80000001
+              ambientColor 0.7 0.7 0.7
               diffuseColor 0.2 0.2 0.2
 
             }
@@ -92,9 +90,8 @@ TSceneKit {
       DEF left TSeparatorKit {
         transform 
         TTransform {
-          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
           translation 0.1666 0 -0.866
-          rotation 0 1 0  0.52359891
+          rotation 0 1 0  30
 
         }
         group 
@@ -103,7 +100,6 @@ TSceneKit {
           DEF parabola TSeparatorKit {
             transform 
             TTransform {
-              fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
 
             }
             group 
@@ -132,7 +128,7 @@ TSceneKit {
                 }
                 material 
                 Material {
-                  ambientColor 0.5 0.5 0.80000001
+                  ambientColor 0.5 0.5 0.8
                   diffuseColor 0.2 0.2 0.2
 
                 }
@@ -144,7 +140,6 @@ TSceneKit {
           DEF center TSeparatorKit {
             transform 
             TTransform {
-              fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
 
             }
             group 
@@ -167,7 +162,7 @@ TSceneKit {
                 }
                 material 
                 Material {
-                  ambientColor 0.5 0.5 0.80000001
+                  ambientColor 0.5 0.5 0.8
                   diffuseColor 0.2 0.2 0.2
 
                 }
@@ -182,9 +177,8 @@ TSceneKit {
       DEF right TSeparatorKit {
         transform 
         TTransform {
-          fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
           translation -0.1666 0 -0.866
-          rotation -0 -1 -0  0.52359891
+          rotation -0 -1 -0  30
 
         }
         group 
@@ -193,7 +187,6 @@ TSceneKit {
           DEF parabola TSeparatorKit {
             transform 
             TTransform {
-              fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
 
             }
             group 
@@ -222,7 +215,7 @@ TSceneKit {
                 }
                 material 
                 Material {
-                  ambientColor 0.80000001 0.5 0.5
+                  ambientColor 0.8 0.5 0.5
                   diffuseColor 0.2 0.2 0.2
 
                 }
@@ -234,7 +227,6 @@ TSceneKit {
           DEF center TSeparatorKit {
             transform 
             TTransform {
-              fields [ SFVec3f translation, SFRotation rotation, SFVec3f scale ]
 
             }
             group 
@@ -257,7 +249,7 @@ TSceneKit {
                 }
                 material 
                 Material {
-                  ambientColor 0.80000001 0.5 0.5
+                  ambientColor 0.8 0.5 0.5
                   diffuseColor 0.2 0.2 0.2
 
                 }
