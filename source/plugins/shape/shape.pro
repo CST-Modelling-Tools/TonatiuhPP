@@ -10,6 +10,7 @@ SUBDIRS += ShapeCone
 
 SUBDIRS += ShapePlanarN
 SUBDIRS += ShapeMesh
+SUBDIRS += ShapeFunctionZ
 
 #SUBDIRS += ShapeBezierSurface
 #SUBDIRS += ShapeCAD

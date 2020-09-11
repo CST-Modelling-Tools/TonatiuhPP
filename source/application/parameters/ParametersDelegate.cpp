@@ -135,8 +135,8 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
     {
         QString text = model->data(index, Qt::DisplayRole).toString();
 
-        if (text.indexOf('\n') >= 0 || text.size() > 50) {
-//            text = text.trimmed();
+        if (text == "...") {
+            text = model->data(index, Qt::EditRole).toString();
             ParametersEditor* editor = new ParametersEditor;
             editor->setText(text);
             return editor;
@@ -236,6 +236,7 @@ void ParametersDelegate::setModelData(QWidget* editor, QAbstractItemModel* model
     }
 
     QString text = model->data(index, Qt::DisplayRole).toString();
+    if (text == "...") text = model->data(index, Qt::EditRole).toString();
     if (value == text) return;
     modelP->setData(index, value);
 }

@@ -1,7 +1,10 @@
 #include "AboutDialog.h"
 #include "ui_AboutDialog.h"
 
+#include <QSettings>
 #include <QDate>
+#include <QIcon>
+
 
 AboutDialog::AboutDialog(QWidget* parent):
     QDialog(parent),
@@ -22,12 +25,49 @@ AboutDialog::AboutDialog(QWidget* parent):
     setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     setWindowFlag(Qt::MSWindowsFixedSizeDialogHint, true);
 
-    QPixmap pixmap(":/images/about/SplashScreen.png");
-    int q = fontMetrics().height();
-    ui->label->setPixmap(pixmap.scaledToWidth(42*q, Qt::SmoothTransformation));
+    updateLabel();
 }
 
 AboutDialog::~AboutDialog()
 {
     delete ui;
+}
+
+void AboutDialog::updateLabel()
+{
+    QSettings settings("CyI", "Tonatiuh");
+    QString theme = settings.value("theme", "").toString();
+
+    QString fileIcon;
+    QString filePixmap;
+    if (theme == "") {
+        fileIcon = ":/images/about/Tonatiuh.ico";
+        filePixmap = ":/images/about/SplashScreen.png";
+    } else {
+        fileIcon = ":/images/about/TonatiuhCy.ico";
+        filePixmap = ":/images/about/SplashScreenCy.png";
+    }
+
+    qApp->setWindowIcon(QIcon(fileIcon));
+
+    QPixmap pixmap(filePixmap);
+    int q = fontMetrics().height();
+    ui->label->setPixmap(pixmap.scaledToWidth(42*q, Qt::SmoothTransformation));
+}
+
+void AboutDialog::on_label_customContextMenuRequested(const QPoint& pos)
+{
+    Q_UNUSED(pos)
+
+    QSettings settings("CyI", "Tonatiuh");
+    QString theme = settings.value("theme", "").toString();
+
+    if (theme == "")
+        theme = "Cyprus";
+    else
+        theme = "";
+
+    settings.setValue("theme", theme);
+
+    updateLabel();
 }

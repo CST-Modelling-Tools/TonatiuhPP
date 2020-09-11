@@ -16,5 +16,11 @@ public:
     ~AboutDialog();
 
 private:
+    void updateLabel();
+
+private slots:
+    void on_label_customContextMenuRequested(const QPoint& pos);
+
+private:
     Ui::AboutDialog* ui;
 };

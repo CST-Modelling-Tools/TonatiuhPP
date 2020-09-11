@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QStyleFactory>
 #include <QCommandLineParser>
+#include <QSettings>
 #include <QSplashScreen>
 
 #include <QFileInfo>
@@ -54,23 +55,21 @@ int main(int argc, char** argv)
     );
     parser.addOption(optionTest);
 
-    QCommandLineOption optionEdition( // --cy
-        "cy", "Edition"
-    );
-    parser.addOption(optionEdition);
-
     // processing
     parser.process(app);
+//    bool isTest = parser.isSet(optionTest);
 
-    bool isCy = parser.isSet(optionEdition);
+    QSettings settings("CyI", "Tonatiuh");
+    QString theme = settings.value("theme", "").toString();
+
     QString fileIcon;
     QString filePixmap;
-    if (isCy) {
-        fileIcon = ":/images/about/TonatiuhCy.ico";
-        filePixmap = ":/images/about/SplashScreenCy.png";
-    } else {
+    if (theme == "") {
         fileIcon = ":/images/about/Tonatiuh.ico";
         filePixmap = ":/images/about/SplashScreen.png";
+    } else {
+        fileIcon = ":/images/about/TonatiuhCy.ico";
+        filePixmap = ":/images/about/SplashScreenCy.png";
     }
     app.setWindowIcon(QIcon(fileIcon));
 

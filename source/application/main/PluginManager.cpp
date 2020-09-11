@@ -227,6 +227,7 @@ void PluginManager::sort()
         "Cone",
         "",
         "PlanarN",
+        "FunctionZ",
         "Mesh"
     };
     sortFactories(shapeNames, m_shapeFactories);
