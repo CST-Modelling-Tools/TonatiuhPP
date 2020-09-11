@@ -42,6 +42,8 @@ void TSeparatorKit::getBoundingBox(SoGetBoundingBoxAction* action)
 //    box.setTransform(SbMatrix::identity());
 }
 
+
+
 //    SbViewportRegion vpr;// = m_graphicView[m_focusView]->getViewportRegion();
 //    SbViewportRegion vr;
 //    SoGetBoundingBoxAction action(vr);

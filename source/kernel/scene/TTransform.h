@@ -9,6 +9,8 @@
 #include <Inventor/SbMatrix.h>
 #include <Inventor/SbVec3f.h>
 
+#include "kernel/scene/TSFRotation.h"
+
 
 class TONATIUH_KERNEL TTransform: public SoTransformation
 {
@@ -21,10 +23,10 @@ public:
   TTransform(void);
 
   SoSFVec3f translation;
-  SoSFRotation rotation;
+  TSFRotation rotation;
   SoSFVec3f scale;
-  static SbRotation gScaleOrientation;
-  static SbVec3f gCenter;
+  static const SbRotation gScaleOrientation;
+  static const SbVec3f gCenter;
 
   void pointAt(const SbVec3f & frompoint, const SbVec3f & topoint);
   void getScaleSpaceMatrix(SbMatrix & mat, SbMatrix & inv) const;

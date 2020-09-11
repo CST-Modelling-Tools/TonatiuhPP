@@ -43,6 +43,7 @@ HEADERS += \
     run/RayTracer.h \
     scene/GridNode.h \
     scene/LocationNode.h \
+    scene/TSFRotation.h \
     scene/TSceneKit.h \
     scene/TSeparatorKit.h \
     scene/TShapeKit.h \
@@ -100,6 +101,7 @@ SOURCES += \
     run/RayTracer.cpp \
     scene/GridNode.cpp \
     scene/LocationNode.cpp \
+    scene/TSFRotation.cpp \
     scene/TSceneKit.cpp \
     scene/TSeparatorKit.cpp \
     scene/TShapeKit.cpp \

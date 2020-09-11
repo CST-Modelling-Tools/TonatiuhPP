@@ -89,6 +89,8 @@ bool Document::WriteFile(const QString& fileName)
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     action.getOutput()->setBinary(false);
+    action.getOutput()->setFloatPrecision(6);
+    // by default %.8g for floats and %.16lg for double
 
     if (fileName.endsWith(".tnh") || fileName.endsWith(".tnpp")) // normal
         action.apply(m_scene);

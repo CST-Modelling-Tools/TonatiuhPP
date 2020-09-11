@@ -20,6 +20,7 @@ void TrackerArmature2A::initClass()
 TrackerArmature2A::TrackerArmature2A()
 {
     SO_NODE_CONSTRUCTOR(TrackerArmature2A);
+    isBuiltIn = TRUE;
 
     SO_NODE_ADD_FIELD( primaryShift, (0.f, 0.f, 1.f) );
     SO_NODE_ADD_FIELD( primaryAxis, (0.f, 0.f, -1.f) ); // azimuth
@@ -68,7 +69,7 @@ void TrackerArmature2A::update(TSeparatorKit* parent, const Transform& toGlobal,
     for (int q = 0; q < childList->getNumChildren(); ++q) {
         TSeparatorKit* nodePrimary = dynamic_cast<TSeparatorKit*>(childList->getChild(q));
         if (!nodePrimary) continue;
-        SoTransform* tPrimary = (SoTransform*) nodePrimary->getPart("transform", true);
+        TTransform* tPrimary = (TTransform*) nodePrimary->getPart("transform", true);
         tPrimary->translation = primaryShift.getValue();
         tPrimary->rotation.setValue(primaryAxis.getValue(), solution.x);
 
@@ -76,7 +77,7 @@ void TrackerArmature2A::update(TSeparatorKit* parent, const Transform& toGlobal,
     //    auto nodeSecondary = static_cast<TSeparatorKit*>(nodePrimary->getPart("group[0]", false));
         auto nodeSecondary = static_cast<TSeparatorKit*>(childList->getChild(0));
         if (!nodeSecondary) return;
-        SoTransform* tSecondary = (SoTransform*) nodeSecondary->getPart("transform", true);
+        TTransform* tSecondary = (TTransform*) nodeSecondary->getPart("transform", true);
         tSecondary->translation = secondaryShift.getValue();
         tSecondary->rotation.setValue(secondaryAxis.getValue(), solution.y);
         break;

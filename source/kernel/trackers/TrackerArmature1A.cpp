@@ -20,6 +20,7 @@ void TrackerArmature1A::initClass()
 TrackerArmature1A::TrackerArmature1A()
 {
     SO_NODE_CONSTRUCTOR(TrackerArmature1A);
+    isBuiltIn = TRUE;
 
     SO_NODE_ADD_FIELD( primaryShift, (0.f, 0.f, 1.f) );
     SO_NODE_ADD_FIELD( primaryAxis, (0.f, 1.f, 0.f) );
@@ -68,7 +69,7 @@ void TrackerArmature1A::update(TSeparatorKit* parent, const Transform& toGlobal,
     for (int q = 0; q < childList->getNumChildren(); ++q) {
         TSeparatorKit* node = dynamic_cast<TSeparatorKit*>(childList->getChild(q));
         if (!node) continue;
-        SoTransform* tPrimary = (SoTransform*) node->getPart("transform", true);
+        TTransform* tPrimary = (TTransform*) node->getPart("transform", true);
         tPrimary->translation = primaryShift.getValue();
         tPrimary->rotation.setValue(primaryAxis.getValue(), angle);
         break;

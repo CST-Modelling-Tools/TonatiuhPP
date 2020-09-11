@@ -12,6 +12,7 @@ void TrackerTarget::initClass()
 TrackerTarget::TrackerTarget()
 {
     SO_NODE_CONSTRUCTOR(TrackerTarget);
+    isBuiltIn = TRUE;
 
     SO_NODE_DEFINE_ENUM_VALUE(AimingFrame, global);
     SO_NODE_DEFINE_ENUM_VALUE(AimingFrame, facets);

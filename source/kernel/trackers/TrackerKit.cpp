@@ -17,7 +17,7 @@ void TrackerKit::initClass()
 TrackerKit::TrackerKit()
 {
     SO_KIT_CONSTRUCTOR(TrackerKit);
-//    isBuiltIn = TRUE;
+    isBuiltIn = TRUE;
 
     SO_NODE_ADD_FIELD( armature, (0) );
     SO_NODE_ADD_FIELD( target, (0) );

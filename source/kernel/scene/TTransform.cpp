@@ -5,21 +5,19 @@
 #include <Inventor/elements/SoModelMatrixElement.h>
 #include <Inventor/nodes/SoSubNode.h>
 
-//#include "nodes/SoSubNodeP.h"
-
 SO_NODE_SOURCE(TTransform)
 
 
-SbRotation TTransform::gScaleOrientation(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-SbVec3f TTransform::gCenter(0.0f, 0.0f, 0.0f);
+const SbRotation TTransform::gScaleOrientation(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+const SbVec3f TTransform::gCenter(0.0f, 0.0f, 0.0f);
 
 TTransform::TTransform()
 {
-  SO_NODE_CONSTRUCTOR(TTransform);
-
-  SO_NODE_ADD_FIELD(translation, (0.0f, 0.0f, 0.0f));
-  SO_NODE_ADD_FIELD(rotation, (SbRotation(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f)));
-  SO_NODE_ADD_FIELD(scale, (1.0f, 1.0f, 1.0f));
+    SO_NODE_CONSTRUCTOR(TTransform);
+    isBuiltIn = TRUE;
+    SO_NODE_ADD_FIELD(translation, (0.0f, 0.0f, 0.0f));
+    SO_NODE_ADD_FIELD(rotation, (SbRotation(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f)));
+    SO_NODE_ADD_FIELD(scale, (1.0f, 1.0f, 1.0f));
 }
 
 TTransform::~TTransform()
@@ -27,10 +25,11 @@ TTransform::~TTransform()
 
 }
 
-void
-TTransform::initClass(void)
+void TTransform::initClass(void)
 {
-  SO_NODE_INIT_CLASS(TTransform,  SoTransformation, "Transformation");
+    SO_NODE_INIT_CLASS(TTransform,  SoTransformation, "Transformation");
+
+    TSFRotation::initClass();
 } 
 
 /*!
@@ -40,8 +39,8 @@ TTransform::initClass(void)
 */
 void TTransform::pointAt(const SbVec3f & frompoint, const SbVec3f & topoint)
 {
-  this->scale = SbVec3f(1.0f, 1.0f, 1.0f);
-  this->translation = frompoint;
+  scale = SbVec3f(1.0f, 1.0f, 1.0f);
+  translation = frompoint;
   SbVec3f dir = topoint - frompoint;
   if (dir.normalize() != 0.0f) {
     SbRotation rot(SbVec3f(0.0f, 0.0f, -1.0f), dir);
@@ -68,9 +67,9 @@ void
 TTransform::getRotationSpaceMatrix(SbMatrix & mat, SbMatrix & inv) const
 {
   SbMatrix tmp;
-  tmp.setScale(this->scale.getValue());
+  tmp.setScale(scale.getValue());
   mat.multRight(tmp);
-  tmp.setRotate(this->rotation.getValue());
+  tmp.setRotate(rotation.getValue());
   mat.multRight(tmp);
   inv = mat.inverse();
 }
@@ -82,11 +81,11 @@ void
 TTransform::getTranslationSpaceMatrix(SbMatrix & mat, SbMatrix & inv) const
 {
   SbMatrix tmp;
-  tmp.setScale(this->scale.getValue());
+  tmp.setScale(scale.getValue());
   mat.multRight(tmp);
-  tmp.setRotate(this->rotation.getValue());
+  tmp.setRotate(rotation.getValue());
   mat.multRight(tmp);
-  tmp.setTranslate(this->translation.getValue());
+  tmp.setTranslate(translation.getValue());
   mat.multRight(tmp);
   inv = mat.inverse();
 }
@@ -94,142 +93,114 @@ TTransform::getTranslationSpaceMatrix(SbMatrix & mat, SbMatrix & inv) const
 /*!
   Premultiplies this transformation by \a mat.
 */
-void
-TTransform::multLeft(const SbMatrix & mat)
+void TTransform::multLeft(const SbMatrix & mat)
 {
-  SbMatrix matrix;
-  matrix.setTransform(this->translation.getValue(),
-                      this->rotation.getValue(),
-                      this->scale.getValue(),
-                      gScaleOrientation,
-                      gCenter);
-
-  matrix.multLeft(mat);
-  this->setMatrix(matrix);
+  SbMatrix m;
+  m.setTransform(translation.getValue(), rotation.getValue(), scale.getValue());
+  m.multLeft(mat);
+  setMatrix(m);
 }
 
 /*!
   Postmultiplies this transformation by \a mat.
 */
-void
-TTransform::multRight(const SbMatrix & mat)
+void TTransform::multRight(const SbMatrix & mat)
 {
-  SbMatrix matrix;
-  matrix.setTransform(this->translation.getValue(),
-                      this->rotation.getValue(),
-                      this->scale.getValue(),
-                      gScaleOrientation,
-                      gCenter);
-  matrix.multRight(mat);
-  this->setMatrix(matrix);
+  SbMatrix m;
+  m.setTransform(translation.getValue(), rotation.getValue(), scale.getValue());
+  m.multRight(mat);
+  setMatrix(m);
 }
 
 /*!
   Premultiplies this transformation by the transformation in \a nodeonright.
 */
-void
-TTransform::combineLeft(SoTransformation * nodeonright)
+void TTransform::combineLeft(SoTransformation * nodeonright)
 {
   SoGetMatrixAction ma(SbViewportRegion(100,100));
   ma.apply(nodeonright);
-  this->multLeft(ma.getMatrix());
+  multLeft(ma.getMatrix());
 }
 
 /*!
   Postmultiplies this transformation by the transformation in \a nodeonleft.
 */
-void
-TTransform::combineRight(SoTransformation * nodeonleft)
+void TTransform::combineRight(SoTransformation * nodeonleft)
 {
   SoGetMatrixAction ma(SbViewportRegion(100,100));
   ma.apply(nodeonleft);
-  this->multRight(ma.getMatrix());
+  multRight(ma.getMatrix());
 }
 
 /*!
   Sets the fields to create a transformation equal to \a mat.
 */
-void
-TTransform::setMatrix(const SbMatrix & mat)
+void TTransform::setMatrix(const SbMatrix & mat)
 {  
-  SbVec3f t,s,c = gCenter;
+  SbVec3f t, s, c = gCenter;
   SbRotation r, so;
-  mat.getTransform(t,r,s,so,c);
+  mat.getTransform(t, r, s, so, c);
   
-  this->translation = t;
-  this->rotation = r;
-  this->scale = s;
+  translation = t;
+  rotation = r;
+  scale = s;
 }
 
 /*!  
   Sets the \e center field to \a newcenter. This might affect one
   or more of the other fields.  
 */
-void
-TTransform::recenter(const SbVec3f & newcenter)
+void TTransform::recenter(const SbVec3f & newcenter)
 {
   SbMatrix matrix;
-  matrix.setTransform(this->translation.getValue(),
-                      this->rotation.getValue(),
-                      this->scale.getValue(),
-                      gScaleOrientation,
-                      gCenter);
-  SbVec3f t,s;
+  matrix.setTransform(translation.getValue(), rotation.getValue(), scale.getValue());
+  SbVec3f t, s;
   SbRotation r, so;
   matrix.getTransform(t, r, s, so, newcenter);
-  this->translation = t;
-  this->rotation = r;
-  this->scale = s;
+  translation = t;
+  rotation = r;
+  scale = s;
 }
 
 
-void TTransform::doAction(SoAction * action)
+void TTransform::doAction(SoAction* action)
 {
-  SbMatrix matrix;
-  matrix.setTransform(this->translation.getValue(),
-                      this->rotation.getValue(),
-                      this->scale.getValue(),
-                      gScaleOrientation,
-                      gCenter);
-  
-  SoModelMatrixElement::mult(action->getState(), this, matrix);
+    SbMatrix m;
+    m.setTransform(translation.getValue(), rotation.getValue(), scale.getValue());
+    SoModelMatrixElement::mult(action->getState(), this, m);
 }
 
-void TTransform::GLRender(SoGLRenderAction * action)
+void TTransform::GLRender(SoGLRenderAction* action)
 {
-  TTransform::doAction((SoAction *)action);
+    TTransform::doAction(action);
 }
 
-void TTransform::getBoundingBox(SoGetBoundingBoxAction * action)
+void TTransform::getBoundingBox(SoGetBoundingBoxAction* action)
 {
-  TTransform::doAction((SoAction *)action);
+    TTransform::doAction((SoAction*) action);
 }
 
-void TTransform::getMatrix(SoGetMatrixAction * action)
+void TTransform::getMatrix(SoGetMatrixAction* action)
 {
-  SbMatrix m;
-  m.setTransform(this->translation.getValue(),
-                 this->rotation.getValue(),
-                 this->scale.getValue(),
-                 gScaleOrientation,
-                 gCenter);
-  action->getMatrix().multLeft(m);
-  
-  SbMatrix mi = m.inverse();
-  action->getInverse().multRight(mi);
+    SbMatrix m;
+    m.setTransform(translation.getValue(), rotation.getValue(), scale.getValue());
+    action->getMatrix().multLeft(m);
+
+    SbMatrix mi = m.inverse();
+    action->getInverse().multRight(mi);
 }
 
-void TTransform::callback(SoCallbackAction * action)
+void TTransform::callback(SoCallbackAction* action)
 {
-  TTransform::doAction((SoAction *)action);
+    TTransform::doAction((SoAction*) action);
 }
 
-void TTransform::pick(SoPickAction * action)
+void TTransform::pick(SoPickAction* action)
 {
-  TTransform::doAction((SoAction *)action);
+    TTransform::doAction((SoAction*) action);
 }
 
-void TTransform::getPrimitiveCount(SoGetPrimitiveCountAction * action)
+void TTransform::getPrimitiveCount(SoGetPrimitiveCountAction* action)
 {
-  TTransform::doAction((SoAction *)action);
+    TTransform::doAction((SoAction*) action);
 }

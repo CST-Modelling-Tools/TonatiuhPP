@@ -2,10 +2,7 @@
 
 #include "kernel/TonatiuhKernel.h"
 
-#include <Inventor/nodekits/SoSeparatorKit.h>
-#include <Inventor/fields/SoSFVec3f.h>
-#include <Inventor/fields/SoSFVec4f.h>
-
+#include <Inventor/nodekits/SoBaseKit.h>
 #include "kernel/scene/TTransform.h"
 
 
