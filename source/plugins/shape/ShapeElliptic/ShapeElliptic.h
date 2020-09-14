@@ -35,21 +35,21 @@ class ShapeEllipticFactory:
 };
 
 // main equation
-// (x/rX)^2 + (y/rY)^2 + (z/rZ - 1)^2 = 1
+// (x/aX)^2 + (y/aY)^2 + (z/aZ - 1)^2 = 1
 
 // points
-// z/rZ = 1 - sqrt[1 - (x/rX)^2 - (y/rY)^2]
+// z/aZ = 1 - sqrt[1 - (x/aX)^2 - (y/aY)^2]
 
 // dpdx
-// z/rZ = x/rX^2/sqrt[1 - (x/rX)^2 - (y/rY)^2]
+// z/aZ = x/aX^2/sqrt[1 - (x/aX)^2 - (y/aY)^2]
 
 // normals
-// [x/rx^2, y/rY^2, (z/rZ - 1)/rZ]
+// [x/aX^2, y/aY^2, (z/aZ - 1)/aZ]
 
 // relation to parabola
-// z/rZ = [(x/rX)^2 + (y/rY)^2]/[1 + sqrt[1 - (x/rX)^2 - (y/rY)^2]]
+// z/aZ = [(x/aX)^2 + (y/aY)^2]/[1 + sqrt[1 - (x/aX)^2 - (y/aY)^2]]
 // 4*fX*z = x^2
-// fX = rX^2/(2*rZ)
+// fX = aX^2/(2*aZ)
 
 // ray substitution
 // r = r0 + d*t

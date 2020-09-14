@@ -217,17 +217,17 @@ void PluginManager::sort()
 
     QStringList shapeNames = {
         "Planar",
+        "PlanarN",
         "Parabolic",
         "Hyperbolic",
         "Elliptic",
+        "FunctionZ",
         "",
         "Cube",
         "Sphere",
         "Cylinder",
         "Cone",
         "",
-        "PlanarN",
-        "FunctionZ",
         "Mesh"
     };
     sortFactories(shapeNames, m_shapeFactories);

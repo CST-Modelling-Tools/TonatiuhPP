@@ -69,7 +69,8 @@ QVector<vec2d> ProfileCircular::makeMesh(QSize& dims) const
 {
     double s = (phiMax.getValue() - phiMin.getValue())/gcf::TwoPi;
     int iMax = 1 + ceil(48*s);
-    int jMax = std::max(dims.width(), dims.height());
+//    int jMax = std::max(dims.width(), dims.height());//?
+    int jMax = dims.width();
     dims = QSize(iMax, jMax);
 
     QVector<vec2d> ans;

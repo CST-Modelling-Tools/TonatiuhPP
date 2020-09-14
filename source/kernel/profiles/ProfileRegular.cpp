@@ -13,8 +13,8 @@ void ProfileRegular::initClass()
 ProfileRegular::ProfileRegular()
 {
     SO_NODE_CONSTRUCTOR(ProfileRegular);
-    SO_NODE_ADD_FIELD( n, (6) );
     SO_NODE_ADD_FIELD( r, (1.) );
+    SO_NODE_ADD_FIELD( n, (6) );
 }
 
 Box2D ProfileRegular::getBox() const
@@ -47,7 +47,8 @@ QVector<vec2d> ProfileRegular::makeMesh(QSize& dims) const
     int nV = n.getValue();
     double phiStep = gcf::TwoPi/nV;
     const int iMax = nV + 1;
-    int jMax = std::max(dims.width(), dims.height());
+//    int jMax = std::max(dims.width(), dims.height());
+    int jMax = dims.width();
     dims = QSize(iMax, jMax);
 
     QVector<vec2d> ans;

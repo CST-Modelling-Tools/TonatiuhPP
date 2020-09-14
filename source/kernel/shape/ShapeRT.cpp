@@ -91,8 +91,10 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNor
         QSizeF rect = qpolygon.boundingRect().size();
         double s = std::min(rect.width()/(dims.width() - 1), rect.height()/(dims.height() - 1));
 
-        for (int n = 1; n < qpolygon.size(); ++n) {
-            QPointF ed = qpolygon[n] - qpolygon[n - 1];
+        QPointF prev = qpolygon[qpolygon.size() - 1];
+        for (int n = 0; n < qpolygon.size(); ++n) {
+            QPointF ed = qpolygon[n] - prev;
+            prev = qpolygon[n];
             double se = 0.3*sqrt(ed.x()*ed.x() + ed.y()*ed.y());
             if (se < s) s = se;
         }
@@ -125,7 +127,6 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNor
         SoNormal* sNormals = new SoNormal;
         sNormals->vector.setValues(0, normals.size(), normals.data());
         shapeKit->setPart("normal", sNormals);
-
 
         SoIndexedFaceSet* sMesh = new SoIndexedFaceSet;
         sMesh->coordIndex.setValues(0, faces.size(), faces.data());

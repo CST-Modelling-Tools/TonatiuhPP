@@ -1,0 +1,74 @@
+#Inventor V2.1 ascii
+
+
+TSceneKit {
+  fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
+  version "2020"
+  world 
+  DEF World WorldKit {
+    fields [ SFNode callbackList, SFNode location, SFNode sun, SFNode air, SFNode terrain ]
+    sun 
+    DEF Sun SunKit {
+      fields [ SFNode callbackList, SFNode position, SFNode shape, SFNode aperture ]
+      aperture 
+      SunAperture {
+        fields [ SFString disabledNodes ]
+        disabledNodes ""
+
+      }
+
+    }
+    terrain 
+    DEF Terrain TerrainKit {
+      fields [ SFNode callbackList, SFNode grid ]
+      grid 
+      DEF Grid GridNode {
+        fields [ SFBool show, SFDouble step, SFInt32 divisions, SFVec2d xRange, SFVec2d yRange ]
+        show TRUE
+
+      }
+
+    }
+
+  }
+  group 
+  DEF Node TSeparatorKit {
+    group 
+    Group {
+
+      DEF Shape TShapeKit {
+        shapeRT 
+        ShapeFunctionZ {
+          fields [ SFString functionZ, SFVec2i32 dims ]
+          functionZ "Math.sin(x)*Math.exp(-y*y)"
+          dims 30 10
+
+        }
+        profileRT 
+        ProfileRectangular {
+          fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
+          uMin -3
+          uMax 3
+          vMin -1
+          vMax 1
+
+        }
+        materialRT 
+        MaterialSpecular {
+
+        }
+        material 
+        Material {
+          ambientColor 0.65 0.72 0.79
+          diffuseColor 0.05 0.05 0.05
+          specularColor 0.22 0.17 0.12
+          shininess 0.3
+
+        }
+
+      }
+    }
+
+  }
+
+}

@@ -11,8 +11,8 @@ public:
     static void initClass();
     ProfileRegular();
 
-    SoSFInt32 n;
     SoSFDouble r;
+    SoSFInt32 n;
 
     Box2D getBox() const;
     bool isInside(double u, double v) const;

@@ -48,9 +48,11 @@ TShapeKit::TShapeKit()
     m_shapeKit->setPart("material", material.getValue());
 
     m_sensorShape = new SoFieldSensor(onSensor, this);
+    m_sensorShape->setPriority(0);
     m_sensorShape->attach(&shapeRT);
 
     m_sensorProfile = new SoFieldSensor(onSensor, this);
+    m_sensorProfile->setPriority(0);
     m_sensorProfile->attach(&profileRT);
 
     shapeRT = new ShapePlanar;

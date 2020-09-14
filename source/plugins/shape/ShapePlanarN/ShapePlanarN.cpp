@@ -22,10 +22,6 @@ ShapePlanarN::ShapePlanarN()
 {
     SO_NODE_CONSTRUCTOR(ShapePlanarN);
 
-    SO_NODE_ADD_FIELD( xLimits, (-0.5f, 0.5f) );
-    SO_NODE_ADD_FIELD( yLimits, (-0.5f, 0.5f) );
-    SO_NODE_ADD_FIELD( dims, (2, 2) );
-
     float ns[][3] = {
         {0., 0., 1.},
         {0., 0., 1.},
@@ -35,6 +31,10 @@ ShapePlanarN::ShapePlanarN()
     normals.setValues(0, 4, ns);
     normals.setContainer(this);
     fieldData->addField(this, "normals", &normals);
+
+    SO_NODE_ADD_FIELD( dims, (2, 2) );
+    SO_NODE_ADD_FIELD( xLimits, (-0.5f, 0.5f) );
+    SO_NODE_ADD_FIELD( yLimits, (-0.5f, 0.5f) );
 
     m_sensor = QSharedPointer<SoNodeSensor>::create(onSensor, this);
     m_sensor->attach(this);
