@@ -132,6 +132,53 @@ function makeTower(nT, xSize, ySize, zSize, zWindow)
 	makeTowerMaterial(s);
 }
 
+function makeTower2(nT, xSize, ySize, zSize, zWindow)
+{
+	var wall = 0.2;
+	
+	n = nT.createNode("North");
+	n.setParameter("translation", "0 " + (-wall/2) + " " + (zSize - zWindow)/2);
+	n.setParameter("scale", "" + xSize + " " + wall + " " + (zSize - zWindow));
+	s = n.createShape();
+	s.insertSurface("Cube");
+	makeTowerMaterial(s);
+	
+	n = nT.createNode("South");
+	n.setParameter("translation", "0 " + (-ySize + wall/2) + " " + zSize/2);
+	n.setParameter("scale", "" + xSize + " " + wall + " " + zSize);
+	s = n.createShape();
+	s.insertSurface("Cube");
+	makeTowerMaterial(s);
+
+	n = nT.createNode("Top");
+	n.setParameter("translation", "0 " + (-ySize/2) + " " + (zSize - wall/2));
+	n.setParameter("scale", "" + xSize + " " + ySize + " " + wall);
+	s = n.createShape();
+	s.insertSurface("Cube");
+	makeTowerMaterial(s);
+
+	n = nT.createNode("Floor");
+	n.setParameter("translation", "0 " + (-ySize/2) + " " + (zSize - zWindow - wall/2));
+	n.setParameter("scale", "" + xSize + " " + ySize + " " + wall);
+	s = n.createShape();
+	s.insertSurface("Cube");
+	makeTowerMaterial(s);
+
+	n = nT.createNode("East");
+	n.setParameter("translation", "" + (xSize/2 - wall/2) + " " + (-ySize/2) + " " + zSize/2);
+	n.setParameter("scale", "" + wall + " " + ySize + " " + zSize);
+	s = n.createShape();
+	s.insertSurface("Cube");
+	makeTowerMaterial(s);
+
+	n = nT.createNode("West");
+	n.setParameter("translation", "" - (xSize/2 - wall/2) + " " + (-ySize/2) + " " + zSize/2);
+	n.setParameter("scale", "" + wall + " " + ySize + " " + zSize);
+	s = n.createShape();
+	s.insertSurface("Cube");
+	makeTowerMaterial(s);
+}
+
 function findFocalDistance(pA, pB)
 {
 	vA = pA.split(' ');
@@ -177,7 +224,7 @@ function makeField()
 	var nT = nodeRoot.createNode("Tower");
 	nT.setParameter("translation", "0 0 0");
 	nT.setParameter("rotation", "0 0 1 5");
-	makeTower(nT, 6, 6, zReceiver + 5, 10);
+	makeTower2(nT, 6, 6, zReceiver + 5, 10);
 
 	var nR = nodeRoot.createNode("Receiver");
 	nR.setParameter("translation", vRec);

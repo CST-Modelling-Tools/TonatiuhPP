@@ -63,54 +63,34 @@ void SceneTreeView::dragMoveEvent(QDragMoveEvent* event)
 void SceneTreeView::dropEvent(QDropEvent* event)
 {
     QModelIndex indexParent = indexAt(event->pos());
-    if (indexParent.isValid())
-    {
-        SceneTreeModel* modelScene = (SceneTreeModel*) model();
-        SoNode* nodeParent = modelScene->getInstance(indexParent)->getNode();
-        if (!nodeParent->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId())) return;
-    
-        QByteArray data = event->mimeData()->data("text/objectID");
-        QDataStream stream(&data, QIODevice::ReadOnly);
-        QPoint position;
-        stream >> position;
-            
-        QModelIndex index = indexAt(position);
-        
-        if (modelScene->parent(index) == indexParent) return;
-        
-        SoNode* node = modelScene->getInstance(index)->getNode();
-        
-        if (nodeParent->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()) &&
-            !node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId())) return;
-             
-        if (nodeParent->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId()) &&
-            node->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId())) return;
-             
-        if (nodeParent->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId()) &&
-            !node->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId()))
-        {
-            TShapeKit* shapeKit = static_cast<TShapeKit*>(nodeParent);
-            if (shapeKit->getPart("shape", false)) return;
-        }
-            
-        QModelIndex ancestor = indexParent;
-        while (ancestor.parent().isValid())
-        {
-            if (ancestor.parent() == index) return;
-            ancestor = ancestor.parent();
-        }
-            
-        if (index != indexParent)
-        {
-            if (event->keyboardModifiers () == Qt::ControlModifier)
-                 emit dragAndDropCopy(indexParent, index);
-            else
-                 emit dragAndDrop(indexParent, index);
-             
-            event->acceptProposedAction();
-            event->accept();
-        }
+    if (!indexParent.isValid()) return;
+    SceneTreeModel* modelScene = (SceneTreeModel*) model();
+    SoNode* nodeParent = modelScene->getInstance(indexParent)->getNode();
+    if (!nodeParent->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId())) return;
+
+    QByteArray data = event->mimeData()->data("text/objectID");
+    QDataStream stream(&data, QIODevice::ReadOnly);
+    QPoint position;
+    stream >> position;
+    QModelIndex index = indexAt(position);
+
+    if (index == rootIndex()) return;
+    if (index == indexParent) return;
+    if (modelScene->parent(index) == indexParent) return;
+
+    QModelIndex ancestor = indexParent;
+    while (ancestor.parent().isValid()) {
+        if (ancestor.parent() == index) return;
+        ancestor = ancestor.parent();
     }
+
+    bool isMove = true;
+    if (event->keyboardModifiers() == Qt::ControlModifier)
+        isMove = false;
+    emit dragAndDrop(indexParent, index, isMove);
+
+    event->acceptProposedAction();
+    event->accept();
 }
 
 void SceneTreeView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditHint hint)
@@ -120,7 +100,7 @@ void SceneTreeView::closeEditor(QWidget* editor, QAbstractItemDelegate::EndEditH
     QLineEdit* textEdit = qobject_cast<QLineEdit*>(editor);
     QString name = textEdit->text();
 
-    emit nodeNameModificated(currentIndex(), name);
+    emit nodeRenamed(currentIndex(), name);
     QTreeView::closeEditor(editor, hint);
 }
 

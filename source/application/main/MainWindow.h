@@ -133,8 +133,7 @@ private slots:
 //    void InsertShapeSurface(TFactory* f);
     void InsertShapeSurface(ShapeFactory* factory, int numberOfParameters, QVector<QVariant> parametersList);
 
-    void ItemDragAndDrop(const QModelIndex& indexParent, const QModelIndex& index);
-    void ItemDragAndDropCopy(const QModelIndex& indexParent, const QModelIndex& index);
+    void onNodeDragAndDrop(const QModelIndex& indexParent, const QModelIndex& index, bool isMove = true);
 
     void onUndoStack();
 
@@ -249,8 +248,7 @@ private:
     QString m_lastExportSurfaceUrl;
     bool m_lastExportInGlobal;
 
-    SoNode* m_coinNode_Buffer;
-    QStringList* m_manipulators_Buffer;
+    SoNode* m_clipboardNodes;
 
     ulong m_raysNumber;
     ulong m_raysScreen;

@@ -472,11 +472,11 @@ void SceneTreeModel::removeCoinNode(int row, SoBaseKit* parent)
  *
  * Returns whether the cut is successfully done.
 **/
-bool SceneTreeModel::Cut(SoBaseKit& parent, int row)
+bool SceneTreeModel::Cut(SoBaseKit* parent, int row)
 {
     if (row < 0) return false;
 
-    QList<InstanceNode*> instancesParent = m_mapCoinQt[&parent];
+    QList<InstanceNode*> instancesParent = m_mapCoinQt[parent];
     InstanceNode* instanceParent = instancesParent[0]; //?
     QModelIndex indexParent = createIndex(instanceParent->getParent()->children.indexOf(instanceParent), 0, instanceParent);
     beginRemoveRows(indexParent, row, row);
@@ -484,15 +484,15 @@ bool SceneTreeModel::Cut(SoBaseKit& parent, int row)
     SoNode* node = instanceParent->children[row]->getNode();
     if (!node->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId()))
     {
-        SbString partName = parent.getPartString(node);
-        if (partName.getLength() == 0) partName = "material"; //?
-        parent.setPart(partName, 0);
+//        SbString partName = parent->getPartString(node);
+//        if (partName.getLength() == 0) partName = "material"; //?
+//        parent->setPart(partName, 0);
     }
     else
     {
-        if (parent.getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
+        if (parent->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
         {
-            SoGroup* childList = (SoGroup*) parent.getPart("group", false);
+            SoGroup* childList = (SoGroup*) parent->getPart("group", false);
             if (!childList) return false;
 
             int r = row;
@@ -514,7 +514,7 @@ bool SceneTreeModel::Cut(SoBaseKit& parent, int row)
     }
     else
     {
-        for (InstanceNode* instanceParent : m_mapCoinQt[&parent])
+        for (InstanceNode* instanceParent : m_mapCoinQt[parent])
         {
             InstanceNode* instance = instanceParent->children[row];
             deleteInstanceTree(instance);

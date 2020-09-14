@@ -48,7 +48,7 @@ public:
     int insertCoinNode(SoNode* coinChild, SoBaseKit* coinParent);
     void removeCoinNode(int row, SoBaseKit* parent);
 
-    bool Cut(SoBaseKit& parent, int row);
+    bool Cut(SoBaseKit* parent, int row);
     bool Paste(SoBaseKit* parent, SoNode* node, int row, bool isShared = false);
 
     void UpdateSceneModel();

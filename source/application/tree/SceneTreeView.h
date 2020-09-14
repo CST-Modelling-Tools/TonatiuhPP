@@ -13,9 +13,8 @@ public:
     SceneTreeView(QWidget* parent = 0);
 
 signals:
-    void dragAndDrop(const QModelIndex& newParent, const QModelIndex& item);
-    void dragAndDropCopy(const QModelIndex& newParent, const QModelIndex& item);
-    void nodeNameModificated(const QModelIndex& index, const QString& newName);
+    void nodeRenamed(const QModelIndex& index, const QString& newName);
+    void dragAndDrop(const QModelIndex& indexParent, const QModelIndex& index, bool isMove);
     void showMenu(const QModelIndex& index);
 
 protected:

@@ -31,5 +31,5 @@ void CmdDelete::undo()
 
 void CmdDelete::redo()
 {
-    m_model->Cut(*m_parent, m_row);
+    m_model->Cut(m_parent, m_row);
 }

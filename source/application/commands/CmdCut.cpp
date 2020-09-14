@@ -36,5 +36,5 @@ void CmdCut::undo()
 void CmdCut::redo()
 {
     m_clipboard = m_node;
-    m_model->Cut(*m_parent, m_row);
+    m_model->Cut(m_parent, m_row);
 }

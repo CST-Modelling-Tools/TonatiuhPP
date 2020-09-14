@@ -42,7 +42,7 @@ CmdPaste::~CmdPaste()
 void CmdPaste::undo()
 {
     SoBaseKit* nodeParent = static_cast<SoBaseKit*> (m_instance->getNode());
-    m_model->Cut(*nodeParent, m_row);
+    m_model->Cut(nodeParent, m_row);
     m_instance->children[m_row]->getNode()->unref();
     m_model->setNodeName(m_node, m_name);
 }

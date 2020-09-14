@@ -121,8 +121,7 @@ MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* par
     m_lastExportFileName(""),
     m_lastExportSurfaceUrl(""),
     m_lastExportInGlobal(true),
-    m_coinNode_Buffer(0),
-    m_manipulators_Buffer(0),
+    m_clipboardNodes(0),
 
     m_raysNumber(10'000),
     m_raysScreen(1'000),
@@ -335,14 +334,18 @@ void MainWindow::SetupTreeView()
 //    ui->sceneView->setRootIndex(m_modelScene->indexFromUrl("//Layout")); // also in ChangeModelScene
 //    ui->sceneView->setRootIsDecorated(false);
 
-    connect(ui->sceneView, SIGNAL(dragAndDrop(const QModelIndex&,const QModelIndex&)),
-            this, SLOT(ItemDragAndDrop(const QModelIndex&,const QModelIndex&)) );
-    connect(ui->sceneView, SIGNAL(dragAndDropCopy(const QModelIndex&,const QModelIndex&)),
-            this, SLOT(ItemDragAndDropCopy(const QModelIndex&,const QModelIndex&)) );
-    connect(ui->sceneView, SIGNAL(showMenu(const QModelIndex&)),
-            this, SLOT(ShowMenu(const QModelIndex&)) );
-    connect(ui->sceneView, SIGNAL(nodeNameModificated(const QModelIndex&,const QString&)),
-            this, SLOT(ChangeNodeName(const QModelIndex&,const QString&)) );
+    connect(
+        ui->sceneView, SIGNAL(nodeRenamed(const QModelIndex&,const QString&)),
+        this, SLOT(ChangeNodeName(const QModelIndex&,const QString&))
+    );
+    connect(
+        ui->sceneView, SIGNAL(dragAndDrop(const QModelIndex&,const QModelIndex&, bool)),
+        this, SLOT(onNodeDragAndDrop(const QModelIndex&,const QModelIndex&, bool))
+    );
+    connect(
+        ui->sceneView, SIGNAL(showMenu(const QModelIndex&)),
+        this, SLOT(ShowMenu(const QModelIndex&))
+    );
 
     // tree world
     ui->treeWorldWidget->setCurrentItem(ui->treeWorldWidget->invisibleRootItem()->child(1)); // select sun
@@ -498,7 +501,7 @@ void MainWindow::StartManipulation(SoDragger* dragger)
     m_modelSelection->setCurrentIndex(nodeIndex, QItemSelectionModel::ClearAndSelect);
 
     SoNode* manipulator = coinNode->getPart("transform", true);
-    m_manipulators_Buffer = new QStringList();
+    QStringList m_manipulators_Buffer;
 
     SoFieldList fieldList;
     int totalFields = manipulator->getFields(fieldList);
@@ -512,7 +515,7 @@ void MainWindow::StartManipulation(SoDragger* dragger)
         if (pField)
         {
             pField->get(fieldValue);
-            m_manipulators_Buffer->push_back(QString(fieldValue.getString() ) );
+            m_manipulators_Buffer << fieldValue.getString();
         }
     }
 }
@@ -551,34 +554,20 @@ void MainWindow::showPhotons(bool on)
 /*!
  * Moves the scene node with index \a node to the parent with index \a newParent.
  */
-void MainWindow::ItemDragAndDrop(const QModelIndex& indexParent, const QModelIndex& index)
-{
-    if (index == ui->sceneView->rootIndex()) return;
-    InstanceNode* instance = m_modelScene->getInstance(index);
-    if (!instance->getParent()) return;
-    if (!instance->getParent()->getNode()->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId())) return;
-    SoNode* node = instance->getNode();
-
-    QUndoCommand* cmd = new QUndoCommand("Drag and Drop: move node");
-    new CmdCut(index, m_coinNode_Buffer, m_modelScene, cmd);
-    new CmdPaste(false, indexParent, node, m_modelScene, cmd);
-    m_undoStack->push(cmd);
-
-    UpdateLightSize();
-    setDocumentModified(true);
-}
-
-/*!
- * Inserts a copy of the node \a node as a \a newParent child.
- */
-void MainWindow::ItemDragAndDropCopy(const QModelIndex& indexParent, const QModelIndex& index)
+void MainWindow::onNodeDragAndDrop(const QModelIndex& indexParent, const QModelIndex& index, bool isMove)
 {
     InstanceNode* instance = m_modelScene->getInstance(index);
     SoNode* node = instance->getNode();
 
-    QUndoCommand* cmd = new QUndoCommand("Drag and Drop: copy node");
-    new CmdCopy(index, m_coinNode_Buffer, m_modelScene, cmd);
-    new CmdPaste(true, indexParent, node, m_modelScene, cmd);
+    QUndoCommand* cmd = new QUndoCommand;
+    if (isMove)
+        cmd->setText("Drag and Drop: move node");
+    else
+        cmd->setText("Drag and Drop: copy node");
+
+    new CmdCut(index, m_clipboardNodes, m_modelScene, cmd);
+    new CmdPaste(!isMove, indexParent, node, m_modelScene, cmd);
+
     m_undoStack->push(cmd);
 
     UpdateLightSize();
@@ -1112,7 +1101,7 @@ void MainWindow::Copy()
         return;
     }
 
-    CmdCopy* cmd = new CmdCopy(m_modelSelection->currentIndex(), m_coinNode_Buffer, m_modelScene);
+    CmdCopy* cmd = new CmdCopy(m_modelSelection->currentIndex(), m_clipboardNodes, m_modelScene);
     m_undoStack->push(cmd);
 
     setDocumentModified(true);
@@ -1138,7 +1127,7 @@ void MainWindow::Copy(QString url)
         return;
     }
 
-    CmdCopy* command = new CmdCopy(nodeIndex, m_coinNode_Buffer, m_modelScene);
+    CmdCopy* command = new CmdCopy(nodeIndex, m_clipboardNodes, m_modelScene);
     m_undoStack->push(command);
 
     setDocumentModified(true);
@@ -1158,7 +1147,7 @@ void MainWindow::Cut()
         emit Abort(tr("Cut: No valid node selected to cut.") );
         return;
     }
-    CmdCut* cmd = new CmdCut(m_modelSelection->currentIndex(), m_coinNode_Buffer, m_modelScene);
+    CmdCut* cmd = new CmdCut(m_modelSelection->currentIndex(), m_clipboardNodes, m_modelScene);
     m_undoStack->push(cmd);
 
     UpdateLightSize();
@@ -1195,7 +1184,7 @@ void MainWindow::Cut(QString url)
         return;
     }
 
-    CmdCut* command = new CmdCut(nodeIndex, m_coinNode_Buffer, m_modelScene);
+    CmdCut* command = new CmdCut(nodeIndex, m_clipboardNodes, m_modelScene);
     m_undoStack->push(command);
 
     UpdateLightSize();
@@ -1266,7 +1255,7 @@ bool MainWindow::Delete(QModelIndex index)
  */
 void MainWindow::Paste(QString url, QString pasteType)
 {
-    if (!m_coinNode_Buffer)
+    if (!m_clipboardNodes)
     {
         emit Abort(tr("Paste: There is not node copied.") );
         return;
@@ -2000,8 +1989,8 @@ void MainWindow::SoTransform_to_SoCenterballManip()
     QModelIndex currentIndex = ui->sceneView->currentIndex();
 
     InstanceNode* instanceNode = m_modelScene->getInstance(currentIndex);
-    SoBaseKit* coinNode = static_cast< SoBaseKit* >(instanceNode->getNode() );
-    SoTransform* transform = static_cast< SoTransform* >(coinNode->getPart("transform", false) );
+    SoBaseKit* coinNode = static_cast<SoBaseKit*>(instanceNode->getNode() );
+    SoTransform* transform = static_cast<SoTransform*>(coinNode->getPart("transform", false) );
 
     SoCenterballManip* manipulator = new SoCenterballManip;
     manipulator->rotation.setValue(transform->rotation.getValue());
@@ -2377,7 +2366,7 @@ bool MainWindow::OkToContinue()
 bool MainWindow::Paste(QModelIndex index, bool isShared)
 {
     if (!index.isValid()) return false;
-    if (!m_coinNode_Buffer) return false;
+    if (!m_clipboardNodes) return false;
 
     InstanceNode* instance = m_modelScene->getInstance(index);
     SoNode* node = instance->getNode();
@@ -2388,14 +2377,14 @@ bool MainWindow::Paste(QModelIndex index, bool isShared)
 //         m_coinNode_Buffer->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId()))
 //        return false;
 
-    if (instance->getNode() == m_coinNode_Buffer) return false;
+    if (instance->getNode() == m_clipboardNodes) return false;
 
     while (instance->getParent()) {
-        if (instance->getParent()->getNode() == m_coinNode_Buffer) return false;
+        if (instance->getParent()->getNode() == m_clipboardNodes) return false;
         instance = instance->getParent();
     }
 
-    CmdPaste* cmd = new CmdPaste(isShared, m_modelSelection->currentIndex(), m_coinNode_Buffer, m_modelScene);
+    CmdPaste* cmd = new CmdPaste(isShared, m_modelSelection->currentIndex(), m_clipboardNodes, m_modelScene);
     m_undoStack->push(cmd);
 
     UpdateLightSize();
