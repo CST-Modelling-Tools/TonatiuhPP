@@ -46,5 +46,15 @@ XCOPY %PROJECT%\examples %DATA%\examples /E
 MD %DATA%\images
 XCOPY %PROJECT%\images %DATA%\images /E
 
+
+SET PACKAGE=%PROJECT%\packages\examples
+SET DATA=%PACKAGE%\data
+SET META=%PACKAGE%\meta
+MD %DATA%
+COPY %PROJECT%\source\installer\packages\examples\data\* %DATA%
+MD %META%
+COPY %PROJECT%\source\installer\packages\examples\meta\* %META%
+
+
 @ECHO ON
 @PAUSE

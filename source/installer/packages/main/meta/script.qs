@@ -10,7 +10,9 @@ Component.prototype.createOperations = function()
     component.createOperations();
 
     if (systemInfo.productType === "windows") {
-        component.addOperation("CreateShortcut", "@TargetDir@/bin/Tonatiuh.exe", "@StartMenuDir@/Tonatiuh.lnk",
+        component.addOperation("CreateShortcut", 
+			"@TargetDir@/bin/Tonatiuh.exe",
+			"@StartMenuDir@/Tonatiuh.lnk",
             "workingDirectory=@TargetDir@/bin");
     }
 }
