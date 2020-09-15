@@ -7,10 +7,12 @@ LIBS += -L..
 # Coin3D
 gcc {
 COINDIR = $$PWD/../libraries/Coin3D
+#COINDIR = $$PWD/../../../Libraries/Coin/debug
 INCLUDEPATH += $$COINDIR/include
 DEFINES += COIN_NOT_DLL SOQT_NOT_DLL
 LIBS += -L$$COINDIR/lib # for linking
 LIBS += -lCoin -lSoQt
+#LIBS += -lCoind -lSoQtd
 LIBS += -L$$COINDIR/bin # for running
 
 QMAKE_CXXFLAGS_RELEASE -= -O2

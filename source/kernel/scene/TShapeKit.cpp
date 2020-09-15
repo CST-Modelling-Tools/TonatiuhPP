@@ -44,29 +44,35 @@ TShapeKit::TShapeKit()
 
     profileRT = new ProfileBox;
     materialRT = new MaterialAbsorber;
-    material = new SoMaterial;
+    SoMaterial* sm = new SoMaterial;
+    sm->ambientColor = SbVec3f(0.3, 0.4, 0.5);
+    sm->diffuseColor = SbVec3f(0.3, 0.3, 0.3);
+    sm->specularColor = SbVec3f(0.1, 0.1, 0.1);
+    sm->shininess = 0.1;
+    material = sm;
     m_shapeKit->setPart("material", material.getValue());
 
     m_sensorShape = new SoFieldSensor(onSensor, this);
-    m_sensorShape->setPriority(0);
+//    m_sensorShape->setPriority(0);
     m_sensorShape->attach(&shapeRT);
 
     m_sensorProfile = new SoFieldSensor(onSensor, this);
-    m_sensorProfile->setPriority(0);
+//    m_sensorProfile->setPriority(0);
     m_sensorProfile->attach(&profileRT);
 
     shapeRT = new ShapePlanar;
 }
 
-//TShapeKit* TShapeKit::copy(SbBool copyConnections) const
-//{
-//    TShapeKit* kit = dynamic_cast<TShapeKit*>(SoBaseKit::copy(copyConnections));
-//    kit->m_shapeKit = new SoShapeKit;
-//    SoGroup* g = (SoGroup*) kit->topSeparator.getValue();
-//    g->addChild(kit->m_shapeKit);
-//    kit->m_shapeKit->setPart("material", kit->material.getValue());
-//    return kit;
-//}
+TShapeKit* TShapeKit::copy(SbBool copyConnections) const
+{
+    TShapeKit* kit = dynamic_cast<TShapeKit*>(SoBaseKit::copy(copyConnections));
+    kit->m_shapeKit = new SoShapeKit;
+    SoGroup* g = (SoGroup*) kit->topSeparator.getValue();
+    g->removeAllChildren();
+    g->addChild(kit->m_shapeKit);
+    kit->m_shapeKit->setPart("material", kit->material.getValue());
+    return kit;
+}
 
 TShapeKit::~TShapeKit()
 {

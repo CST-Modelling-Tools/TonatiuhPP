@@ -36,13 +36,15 @@ MD %DATA%\bin\platforms
 COPY %QT%\plugins\platforms\qwindows.dll %DATA%\bin\platforms\qwindows.dll
 MD %DATA%\bin\styles
 COPY %QT%\plugins\styles\qwindowsvistastyle.dll %DATA%\bin\styles\qwindowsvistastyle.dll
-
+MD %DATA%\bin\imageformats
+COPY %QT%\plugins\imageformats\qico.dll %DATA%\bin\imageformats\qico.dll
 
 
 MD %DATA%\examples
 XCOPY %PROJECT%\examples %DATA%\examples /E
 
-
+MD %DATA%\images
+XCOPY %PROJECT%\images %DATA%\images /E
 
 @ECHO ON
 @PAUSE

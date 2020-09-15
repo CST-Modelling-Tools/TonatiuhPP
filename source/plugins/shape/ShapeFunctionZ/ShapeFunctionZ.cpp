@@ -2,6 +2,8 @@
 
 #include <QScriptEngine>
 
+#include <QDebug>
+
 #include <Inventor/sensors/SoFieldSensor.h>
 #include <Inventor/nodes/SoCoordinate3.h>
 #include <Inventor/nodes/SoNormal.h>
@@ -31,7 +33,7 @@ ShapeFunctionZ::ShapeFunctionZ()
     SO_NODE_CONSTRUCTOR(ShapeFunctionZ);
 
     SO_NODE_ADD_FIELD( functionZ, ("(x*x + y*y)/4") );
-    SO_NODE_ADD_FIELD( dims, (5, 5) );
+    SO_NODE_ADD_FIELD( dims, (10, 10) );
 }
 
 Box3D ShapeFunctionZ::getBox(ProfileRT* profile) const
@@ -110,8 +112,10 @@ void ShapeFunctionZ::buildMesh(TShapeKit* parent)
             if (se < resolution) resolution = se;
         }
 
+//        qDebug() << "Start polygon meshing";
         PolygonMesh polygonMesh(qpolygon);
         polygonMesh.makeMesh(resolution);
+//        qDebug() << "Finished polygon meshing";
 
         for (const vec2d& uv : polygonMesh.getPoints()) {
             vertices << SbVec3f(uv.x, uv.y, 0.);

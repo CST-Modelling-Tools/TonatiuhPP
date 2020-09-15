@@ -15,8 +15,11 @@ void ParametersTabs::setNode(SoNode* node)
 {
     m_view->getModel()->setNode(node);
 
-    QString name = node->getName().getString();
-    if (name.isEmpty())
-        name = node->getTypeId().getName().getString();
+    QString name;
+    if (node) {
+        name = node->getName().getString();
+        if (name.isEmpty())
+            name = node->getTypeId().getName().getString();
+    }
     setTabText(0, name);
 }

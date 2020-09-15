@@ -16,13 +16,17 @@ bool PolygonMesh::makeMesh(double step)
         polygon(n, 1) = m_polygon[n].y();
     }
 
+    QRectF rect = m_polygon.boundingRect();
+    Eigen::ArrayXXd boundingBox(2, 2);
+    boundingBox << rect.left(), rect.top(), rect.right(), rect.bottom();
+
     Eigen::ArrayXXd points;
     Eigen::ArrayXXi elements;
     std::tie(points, elements) = distmesh::distmesh(
         distmesh::distanceFunction::polygon(polygon),
         step,
         1.0,
-        distmesh::utils::boundingBox(2),
+        boundingBox,
         polygon);
 
     m_points.clear();

@@ -1138,15 +1138,20 @@ void MainWindow::Copy(QString url)
  */
 void MainWindow::Cut()
 {
-    int validNode = 1;
-    if (!m_modelSelection->hasSelection() ) validNode = 0;
-    if (m_modelSelection->currentIndex() == ui->sceneView->rootIndex() ) validNode = 0;
-    if (m_modelSelection->currentIndex().parent() == ui->sceneView->rootIndex() ) validNode = 0;
-    if (!validNode)
+    bool isValid = true;
+    if (!m_modelSelection->hasSelection())
+        isValid = false;
+    if (m_modelSelection->currentIndex() == ui->sceneView->rootIndex())
+        isValid = false;
+    if (m_modelSelection->currentIndex().parent() == ui->sceneView->rootIndex())
+        isValid = false;
+
+    if (!isValid)
     {
-        emit Abort(tr("Cut: No valid node selected to cut.") );
+        emit Abort("Cut: No valid node selected to cut.");
         return;
     }
+
     CmdCut* cmd = new CmdCut(m_modelSelection->currentIndex(), m_clipboardNodes, m_modelScene);
     m_undoStack->push(cmd);
 
@@ -2195,6 +2200,8 @@ void MainWindow::ChangeSelection(const QModelIndex& index)
     if (ui->tabWidget->currentIndex() == 2) { // Layout
         InstanceNode* instance = m_modelScene->getInstance(index);
         SoNode* node = instance->getNode();
+        if (index == ui->sceneView->rootIndex())
+            node = 0;
         ui->parametersTabs->setNode(node);
     } else if (ui->tabWidget->currentIndex() == 0) // World
     {

@@ -56,6 +56,11 @@ function makeHeliostat(parent, name, position, aiming, focus)
 	p = s.insertProfile("Rectangular");
 	p.setParameter("vMin", 0.);
 	p.setParameter("vMax", 1.5);
+	var mG = s.getPart("material");
+	mG.setParameter("ambientColor", "0.5 0.5 0.5");
+	mG.setParameter("diffuseColor", "0.3 0.3 0.3");
+	mG.setParameter("specularColor", "0.2 0.2 0.2");
+	mG.setParameter("shininess", "0.1");
 }
 
 function makeTowerMaterial(shape)
@@ -220,6 +225,8 @@ function makeField()
 	mG = s.getPart("material");
 	mG.setParameter("ambientColor", "0.85 0.85 0.8");	
 	mG.setParameter("diffuseColor", "0.05 0.05 0.05");
+	mG.setParameter("specularColor", "0. 0. 0.");
+	mG.setParameter("shininess", "0.1");
 
 	var nT = nodeRoot.createNode("Tower");
 	nT.setParameter("translation", "0 0 0");
@@ -237,6 +244,11 @@ function makeField()
 	p = s.insertProfile("Box");
 	p.setParameter("uSize", 5);
 	p.setParameter("vSize", 5);
+	var mG = s.getPart("material");
+	mG.setParameter("ambientColor", "0.3 0.3 0.3");
+	mG.setParameter("diffuseColor", "0.1 0.1 0.1");
+	mG.setParameter("specularColor", "0. 0. 0.");
+	mG.setParameter("shininess", "0.1");
 
 	tn.InsertScene(nodeRoot);
 	tn.ChangeSunPosition(180., 90 - 11.27182); 

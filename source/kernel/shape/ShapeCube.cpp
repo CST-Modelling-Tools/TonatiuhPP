@@ -1,6 +1,9 @@
 #include "ShapeCube.h"
 
 #include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoNormal.h>
+#include <Inventor/nodes/SoIndexedFaceSet.h>
 
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
@@ -146,4 +149,49 @@ void ShapeCube::updateShapeGL(TShapeKit* parent)
     cube->height = 1.;
     cube->depth = 1.;
     shapeKit->setPart("shape", cube);
+
+//    float sv[][3] = {
+//        {-0.5, -0.5, -0.5},
+//        {-0.5, -0.5, 0.5},
+//        {-0.5, 0.5, -0.5},
+//        {-0.5, 0.5, 0.5},
+//        {0.5, -0.5, -0.5},
+//        {0.5, -0.5, 0.5},
+//        {0.5, 0.5, -0.5},
+//        {0.5, 0.5, 0.5}
+//    };
+//    SoCoordinate3* sVertices = new SoCoordinate3;
+//    sVertices->point.setValues(0, 8, sv);
+//    shapeKit->setPart("coordinate3", sVertices);
+
+//    float nv[][3] = {
+//        {0, 0, -1},
+//        {0, 0, 1},
+//        {0, -1, 0},
+//        {0, 1, 0},
+//        {-1, 0, 0},
+//        {1, 0, 0}
+//    };
+//    SoNormal* sNormals = new SoNormal;
+//    sNormals->vector.setValues(0, 6, nv);
+//    shapeKit->setPart("normal", sNormals);
+
+//    SoNormalBinding* sb = new SoNormalBinding;
+//    sb->value = SoNormalBinding::PER_FACE;
+//    shapeKit->setPart("normalBinding", sb);
+
+//    int faces[] = {
+//        0, 2, 6, 4, -1,
+//        1, 3, 7, 5, -1,
+
+//        0, 1, 5, 4, -1,
+//        2, 3, 7, 6, -1,
+
+//        0, 1, 3, 2, -1,
+//        4, 5, 7, 6, -1
+//    };
+
+//    SoIndexedFaceSet* sMesh = new SoIndexedFaceSet;
+//    sMesh->coordIndex.setValues(0, 5*6, faces);
+//    shapeKit->setPart("shape", sMesh);
 }
