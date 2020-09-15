@@ -1,0 +1,10 @@
+repository
+https://github.com/coin3d new
+https://bitbucket.org/Coin3D old
+
+documentation
+https://grey.colorado.edu/coin3d/
+http://www-evasion.imag.fr/Membres/Francois.Faure/doc/inventorMentor/sgi_html/ch05.html
+
+commercial
+https://www.openinventor.com/

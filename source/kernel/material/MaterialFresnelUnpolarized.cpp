@@ -72,7 +72,10 @@ bool MaterialFresnelUnpolarized::OutputRay(const Ray& rayIn, const DifferentialG
     double dIn = dot(dI, normal);
     double nI = nFront.getValue();
     double nT = nBack.getValue();
-    if (dIn > 0.) std::swap(nI, nT);
+    if (dIn > 0.) {
+        std::swap(nI, nT);
+        normal = -normal;
+    }
     dIn = std::abs(dIn);
 
     // reflection law

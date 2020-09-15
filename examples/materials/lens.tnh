@@ -1,0 +1,176 @@
+#Inventor V2.1 ascii
+
+
+TSceneKit {
+  fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
+  version "2020"
+  world 
+  DEF World WorldKit {
+    fields [ SFNode callbackList, SFNode location, SFNode sun, SFNode air, SFNode terrain ]
+    sun 
+    DEF Sun SunKit {
+      fields [ SFNode callbackList, SFNode position, SFNode shape, SFNode aperture ]
+      position 
+      SunPosition {
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
+
+      }
+      shape 
+      SunShapePillbox {
+        fields [ SFDouble thetaMax ]
+
+      }
+      aperture 
+      SunAperture {
+        fields [ SFString disabledNodes ]
+        disabledNodes "//Node/focus"
+
+      }
+
+    }
+    terrain 
+    DEF Terrain TerrainKit {
+      fields [ SFNode callbackList, SFNode grid ]
+      grid 
+      DEF Grid GridNode {
+        fields [ SFBool show, SFDouble step, SFInt32 divisions, SFVec2d xRange, SFVec2d yRange ]
+        show TRUE
+
+      }
+
+    }
+
+  }
+  group 
+  DEF Node TSeparatorKit {
+    group 
+    Group {
+
+      DEF lens TSeparatorKit {
+        transform 
+        TTransform {
+          translation 0 0 2
+          scale 1 1 1
+
+        }
+        group 
+        Group {
+
+          DEF front TSeparatorKit {
+            transform 
+            TTransform {
+              translation 0 0 -1.9
+              scale 2 2 2
+
+            }
+            group 
+            Group {
+
+              DEF Shape TShapeKit {
+                shapeRT 
+                ShapeSphere {
+
+                }
+                profileRT 
+                ProfileRectangular {
+                  fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
+                  vMin 0.45
+
+                }
+                materialRT 
+                MaterialFresnelUnpolarized {
+                  fields [ SFDouble nFront, SFDouble nBack, SFEnum distribution, SFDouble slope ]
+
+                }
+                material 
+                Material {
+                  ambientColor 0.3 0.4 0.5
+                  diffuseColor 0.3 0.3 0.3
+                  specularColor 0.1 0.1 0.1
+                  shininess 0.1
+
+                }
+
+              }
+            }
+
+          }
+          DEF back TSeparatorKit {
+            transform 
+            TTransform {
+              translation 0 0 1.9
+              scale 2 2 2
+
+            }
+            group 
+            Group {
+
+              DEF Shape TShapeKit {
+                shapeRT 
+                ShapeSphere {
+
+                }
+                profileRT 
+                ProfileRectangular {
+                  fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
+                  vMax -0.45
+
+                }
+                materialRT 
+                MaterialFresnelUnpolarized {
+                  fields [ SFDouble nFront, SFDouble nBack, SFEnum distribution, SFDouble slope ]
+
+                }
+                material 
+                Material {
+                  ambientColor 0.3 0.4 0.5
+                  diffuseColor 0.3 0.3 0.3
+                  specularColor 0.1 0.1 0.1
+                  shininess 0.1
+
+                }
+
+              }
+            }
+
+          }
+        }
+
+      }
+      DEF focus TSeparatorKit {
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            ShapePlanar {
+
+            }
+            profileRT 
+            ProfileBox {
+              uSize 0.1
+              vSize 0.1
+
+            }
+            materialRT 
+            MaterialVirtual {
+
+            }
+            material 
+            Material {
+              ambientColor 0.3 0.4 0.5
+              diffuseColor 0.3 0.3 0.3
+              specularColor 0.1 0.1 0.1
+              shininess 0.1
+
+            }
+
+          }
+        }
+
+      }
+    }
+
+  }
+
+}
