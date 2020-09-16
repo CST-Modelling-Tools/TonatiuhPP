@@ -13,8 +13,8 @@ TSceneKit {
       position 
       SunPosition {
         fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
-        azimuth 90
-        elevation 30
+        azimuth 150
+        elevation 60
         irradiance 1000
 
       }
@@ -26,7 +26,7 @@ TSceneKit {
       aperture 
       SunAperture {
         fields [ SFString disabledNodes ]
-        disabledNodes "//Node/Target;//Node/Trough/primary/axis"
+        disabledNodes "//Node/Target;//Node/Trough/primary/axis;//Node/Ground"
 
       }
 
@@ -37,6 +37,8 @@ TSceneKit {
       grid 
       DEF Grid GridNode {
         fields [ SFBool show, SFDouble step, SFInt32 divisions, SFVec2d xRange, SFVec2d yRange ]
+        xRange -15 15
+        yRange -20 20
 
       }
 
@@ -55,6 +57,7 @@ TSceneKit {
       DEF Trough TSeparatorKit {
         transform 
         TTransform {
+          translation 2 0 0
 
         }
         group 
@@ -77,7 +80,7 @@ TSceneKit {
             transform 
             TTransform {
               translation 0 0 1
-              rotation 0 1 0  25.981
+              rotation -0 -0.999994 -0  7.83433
 
             }
             group 
@@ -180,7 +183,7 @@ TSceneKit {
             profileRT 
             DEF Box ProfileBox {
               uSize 0.5
-              vSize 5
+              vSize 10
 
             }
             materialRT 
@@ -191,6 +194,158 @@ TSceneKit {
             Material {
               ambientColor 0.5 0.5 0.5
               diffuseColor 0.2 0.2 0.2
+
+            }
+
+          }
+        }
+
+      }
+      DEF Trough_copy_1 TSeparatorKit {
+        transform 
+        TTransform {
+          translation -2 0 0
+
+        }
+        group 
+        Group {
+
+          DEF Tracker TrackerKit {
+            armature 
+            TrackerArmature1A {
+              facetShift 0 0 1
+
+            }
+            target 
+            TrackerTarget {
+              aimingPoint 0 0 5
+
+            }
+
+          }
+          DEF primary TSeparatorKit {
+            transform 
+            TTransform {
+              translation 0 0 1
+              rotation 0 0.999999 0  21.9921
+
+            }
+            group 
+            Group {
+
+              DEF axis TSeparatorKit {
+                transform 
+                TTransform {
+                  rotation 1 0 0  90
+                  scale 0.05 0.05 5
+
+                }
+                group 
+                Group {
+
+                  DEF Shape TShapeKit {
+                    shapeRT 
+                    DEF Cylinder ShapeCylinder {
+
+                    }
+                    profileRT 
+                    DEF Box ProfileBox {
+
+                    }
+                    materialRT 
+                    DEF Absorber MaterialAbsorber {
+
+                    }
+                    material 
+                    Material {
+
+                    }
+
+                  }
+                }
+
+              }
+              DEF facet TSeparatorKit {
+                transform 
+                TTransform {
+                  translation 0 0 1
+
+                }
+                group 
+                Group {
+
+                  DEF Shape TShapeKit {
+                    shapeRT 
+                    ShapeElliptic {
+                      fields [ SFDouble aX, SFDouble aY, SFDouble aZ ]
+                      aX 5
+                      aY 1000000
+                      aZ 5
+
+                    }
+                    profileRT 
+                    ProfileBox {
+                      uSize 0.5
+                      vSize 3
+
+                    }
+                    materialRT 
+                    MaterialSpecular {
+
+                    }
+                    material 
+                    Material {
+                      ambientColor 0.65 0.72 0.79
+                      diffuseColor 0.05 0.05 0.05
+                      specularColor 0.3 0.25 0.2
+                      shininess 0.5
+
+                    }
+
+                  }
+                }
+
+              }
+            }
+
+          }
+        }
+
+      }
+      DEF Ground TSeparatorKit {
+        transform 
+        TTransform {
+          translation 0 0 -0.05
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            ShapePlanar {
+
+            }
+            profileRT 
+            ProfileRectangular {
+              fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
+              uMin -10
+              uMax 10
+              vMin -15
+              vMax 15
+
+            }
+            materialRT 
+            MaterialTransparent {
+              fields [  ]
+
+            }
+            material 
+            Material {
+              ambientColor 0.85 0.85 0.8
+              diffuseColor 0.05 0.05 0.05
+              specularColor 0 0 0
+              shininess 0.1
 
             }
 

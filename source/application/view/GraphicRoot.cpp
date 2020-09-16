@@ -3,6 +3,7 @@
 #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoSwitch.h>
+#include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/nodes/SoPointSet.h>
 #include <Inventor/nodes/SoLineSet.h>
 #include <Inventor/nodes/SoTransform.h>
@@ -103,6 +104,14 @@ GraphicRoot::GraphicRoot()
     shadow->direction = SbVec3f(0., 0., 1.);
     ts2->addChild(shadow);
     group->addChild(ts2);
+
+
+//    SoDrawStyle* wireStyle;
+//    wireStyle = new SoDrawStyle;
+//    wireStyle->style = SoDrawStyle::LINES + SoDrawStyleElement::FILLED;
+//    wireStyle->setOverride(TRUE);
+//    group->addChild(wireStyle);
+
 
     m_selection = new SoSelection;
     m_selection->policy = SoSelection::SINGLE;

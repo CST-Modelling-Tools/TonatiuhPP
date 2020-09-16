@@ -179,7 +179,7 @@ bool ScriptWindow::fileSaveAs(QString fileName)
         QSettings settings("CyI", "Tonatiuh");
         QString dirName = settings.value("dirScript", "../examples").toString();
 
-        QString fileName = QFileDialog::getSaveFileName(
+        fileName = QFileDialog::getSaveFileName(
             this, "Save File", dirName,
             "Tonatiuh script file (*.tnhs)"
         );
@@ -198,7 +198,7 @@ bool ScriptWindow::fileSaveAs(QString fileName)
         );
         return false;
     }
-    QTextStream out(&file);//? without stream
+    QTextStream out(&file); //? without stream
 
     QTextDocument* document = ui->codeEditor->document();
     out << document->toPlainText();
