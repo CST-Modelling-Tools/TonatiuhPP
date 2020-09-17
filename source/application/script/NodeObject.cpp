@@ -7,15 +7,18 @@
 
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
+#include "kernel/scene/TSceneKit.h"
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/material/MaterialRT.h"
 #include "kernel/trackers/TrackerArmature.h"
 #include "kernel/trackers/TrackerKit.h"
 
+#include "main/MainWindow.h"
 #include "main/PluginManager.h"
 
-PluginManager* NodeObject::m_plugins = 0;
+
+MainWindow* NodeObject::m_mainWindow = 0;
 
 
 NodeObject::NodeObject(QObject* parent):
@@ -25,9 +28,22 @@ NodeObject::NodeObject(QObject* parent):
 }
 
 NodeObject::NodeObject(SoNode* node):
+    QObject(0),
     m_node(node)
 {
 
+}
+
+QScriptValue NodeObject::getScene()
+{
+    NodeObject* ans = new NodeObject(m_mainWindow->getSceneKit());
+    return engine()->newQObject(ans);
+}
+
+QScriptValue NodeObject::getRoot()
+{
+    NodeObject* ans = new NodeObject(m_mainWindow->getSceneKit()->getLayout());
+    return engine()->newQObject(ans);
 }
 
 QScriptValue NodeObject::createNode(const QString& name)
@@ -75,8 +91,8 @@ QScriptValue NodeObject::getPart(const QString& name)
 {
     if (!m_node->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId())) return 0;
 
-    SoBaseKit* parent = (SoBaseKit*)(m_node);
-    SoNode* node = parent->getPart(name.toLatin1().data(), true);
+    SoBaseKit* kit = (SoBaseKit*)(m_node);
+    SoNode* node = kit->getPart(name.toLatin1().data(), true);
     if (!node) {
         SoField* field = m_node->getField(name.toLatin1().data());
         SoSFNode* fnode = dynamic_cast<SoSFNode*>(field);
@@ -91,7 +107,7 @@ QScriptValue NodeObject::insertSurface(const QString& name)
 {
     if (m_node->getTypeId() != TShapeKit::getClassTypeId()) return 0;
 
-    ShapeFactory* f = m_plugins->getShapeMap().value(name, 0);
+    ShapeFactory* f = m_mainWindow->getPlugins()->getShapeMap().value(name, 0);
     ShapeRT* shape = f->create();
 
     TShapeKit* parent = (TShapeKit*)(m_node);
@@ -105,7 +121,7 @@ QScriptValue NodeObject::insertProfile(const QString& name)
 {
     if (m_node->getTypeId() != TShapeKit::getClassTypeId()) return 0;
 
-    ProfileFactory* f = m_plugins->getProfileMap().value(name, 0);
+    ProfileFactory* f = m_mainWindow->getPlugins()->getProfileMap().value(name, 0);
     ProfileRT* profile = f->create();
 
     TShapeKit* parent = (TShapeKit*)(m_node);
@@ -119,7 +135,7 @@ QScriptValue NodeObject::insertMaterial(const QString& name)
 {
     if (m_node->getTypeId() != TShapeKit::getClassTypeId()) return 0;
 
-    MaterialFactory* f = m_plugins->getMaterialMap().value(name, 0);
+    MaterialFactory* f = m_mainWindow->getPlugins()->getMaterialMap().value(name, 0);
     MaterialRT* material = f->create();
 
     TShapeKit* parent = (TShapeKit*)(m_node);
@@ -133,7 +149,7 @@ QScriptValue NodeObject::insertArmature(const QString& name)
 {
     if (m_node->getTypeId() != TrackerKit::getClassTypeId()) return 0;
 
-    TrackerFactory* f = m_plugins->getTrackerMap().value(name, 0);
+    TrackerFactory* f = m_mainWindow->getPlugins()->getTrackerMap().value(name, 0);
     TrackerArmature* tracker = f->create();
 
     TrackerKit* parent = (TrackerKit*)(m_node);

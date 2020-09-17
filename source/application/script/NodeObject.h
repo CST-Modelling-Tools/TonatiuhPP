@@ -5,7 +5,8 @@
 #include <QScriptValue>
 #include <Inventor/nodes/SoNode.h>
 
-class PluginManager;
+
+class MainWindow;
 
 
 class NodeObject: public QObject, protected QScriptable
@@ -18,9 +19,12 @@ public:
 
     SoNode* getNode() const {return m_node;}
 
-    static void setPlugins(PluginManager* plugins) {m_plugins = plugins;}
+    static void setMainWindow(MainWindow* w) {m_mainWindow = w;}
 
 public slots:
+    QScriptValue getScene();
+    QScriptValue getRoot();
+
     QScriptValue createNode(const QString& name = "");
     QScriptValue createShape();
     QScriptValue createTracker();
@@ -36,6 +40,6 @@ public slots:
 
 private:
     SoNode* m_node;
-    static PluginManager* m_plugins;
+    static MainWindow* m_mainWindow;
 };
 

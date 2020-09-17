@@ -13,7 +13,10 @@ for (var n = 1; n < nMax; n++) {
 	var irradiance = file.part(n, 6);
 	if (irradiance <= 0) continue;
 	
-	tn.ChangeSunPosition(gamma, alpha); 
+	var sp = NodeObject().getScene().getPart("world.sun.position");
+	sp.setParameter("azimuth", gamma);
+	sp.setParameter("elevation", alpha);
+
 	var w = tn.FindInterception("//Node/Script/Receiver/Plate/Shape", 100000);
 	var eta = w/wMax;
 	print("" + gamma + ", " + alpha + ", " + eta);

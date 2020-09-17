@@ -1,11 +1,9 @@
-var posX = [0, 0.466, 0.933, 1.399, 1.865, 2.328, 2.786, 3.236, 3.675,
-	4.125, 4.564, 5.014, 5.472, 5.935, 6.401, 6.867, 7.334, 7.8]; 
-var posY = [0, 4.0746, 8.136, 12.2106, 16.272, 20.3466, 24.408, 28.4826]; 
-var radiuses = [2.6, 2.45, 2.4, 2.35, 2.3, 2.25, 2.2, 2.1,
-	1.95, 2, 2.15, 2.2, 2.25, 2.3, 2.35, 2.4, 2.5, 2.75]; 
+var useCylinder = !true;
+var posX = [-3.900, -3.434, -2.967, -2.501, -2.035, -1.572, -1.114, -0.664, -0.225,	0.225, 0.664, 1.114, 1.572, 2.035, 2.501, 2.967, 3.434,  3.900]; 
+var focuses = [5.2, 4.9, 4.8, 4.7, 4.6, 4.5, 4.4, 4.2, 3.9, 4.0 , 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 5.0, 5.5]; 
+var posY = [0.000, 4.075, 8.136, 12.211, 16.272, 20.347, 24.408, 28.483]; 
+var flangesY = [0., 4.068 , 8.136, 12.204, 16.272, 20.340, 24.408, 28.476, 32.544];
 var beamsY = [-0.0373001, 4.0373, 8.1119, 12.1865, 16.2611, 20.3357, 24.4103, 28.4849, 32.5595];
-var sealsY = [0., 4.068 , 8.136, 12.204, 16.272, 20.34, 24.408, 28.476, 32.544];
-
 
 function setMaterialGray(shape)
 {
@@ -16,40 +14,64 @@ function setMaterialGray(shape)
 	mG.setParameter("shininess", "0.1");
 }
 
-
-function makeFacet(parent, index, shiftY, radius)
+function setMaterialTransparent(shape)
 {
-	var nodeM = parent.createNode("Mirror_" + index);
-	nodeM.setParameter("translation", "0 " + shiftY + " 0");
+	var mG = shape.getPart("material");
+	mG.setParameter("ambientColor", "0.5 0.5 0.5");	
+	mG.setParameter("diffuseColor", "0.3 0.3 0.3");
+	mG.setParameter("specularColor", "0. 0. 0.");
+	mG.setParameter("shininess", "0.1");
+	mG.setParameter("transparency", "0.9");
+}
 
+function makeFacet(nodeM, radius)
+{
 	var t = nodeM.createTracker();
 	var ta = t.insertArmature("one-axis");
-	ta.setParameter("primaryShift", "0 0 0.62816");
+	ta.setParameter("primaryShift", "0 0 0.628");
 	ta.setParameter("primaryAxis", "0 1 0");
 	ta.setParameter("primaryAngles", "-90 90");
 	ta.setParameter("facetShift", "0 0 0.045");
 	ta.setParameter("facetNormal", "0 0 1");
 	var tt = t.getPart("target");
 	tt.setParameter("aimingFrame", "global");
-	tt.setParameter("aimingPoint", "0 0 4.27291");
+	tt.setParameter("aimingPoint", "0 0 4.273");
 						
 	var nodeP = nodeM.createNode("primary");
 
-	var nodeF = nodeP.createNode("facet");
-	nodeF.setParameter("translation", "0 0 0.045");
-	var s = nodeF.createShape();
-	var q = s.insertSurface("Elliptic");
-	q.setParameter("aX", radius);
-	q.setParameter("aY", 1e8);
-	q.setParameter("aZ", radius);
-	var p = s.insertProfile("Rectangular");
-	p.setParameter("uMin", -0.16);
-	p.setParameter("uMax", 0.16);
-	p.setParameter("vMin", 0);
-	p.setParameter("vMax", 4);
-	var m = s.insertMaterial("Specular");
-	m.setParameter("slope", "0.002");
-
+	if (!useCylinder) {
+		var nodeF = nodeP.createNode("facet");
+		nodeF.setParameter("translation", "0 0 0.045");
+		var s = nodeF.createShape();
+		var q = s.insertSurface("Elliptic");
+		q.setParameter("aX", radius);
+		q.setParameter("aY", 1e8);
+		q.setParameter("aZ", radius);
+		var p = s.insertProfile("Rectangular");
+		p.setParameter("uMin", -0.16);
+		p.setParameter("uMax", 0.16);
+		p.setParameter("vMin", 0);
+		p.setParameter("vMax", 4);
+		var m = s.insertMaterial("Specular");
+		m.setParameter("slope", "0.002");
+	}
+	else {
+		var nodeF = nodeP.createNode("facet");
+		nodeF.setParameter("translation", "0 0 " + (radius + 0.045));
+		nodeF.setParameter("rotation", "1 0 0 -90");
+		nodeF.setParameter("scale", "" + radius + " " + radius + " 1");
+		var s = nodeF.createShape();
+		var q = s.insertSurface("Cylinder");
+		var p = s.insertProfile("Rectangular");
+		var phi = (0.5*0.32/radius)/(2*Math.PI); 
+		p.setParameter("uMin", 0.25 - phi);
+		p.setParameter("uMax", 0.25 + phi);
+		p.setParameter("vMin", 0);
+		p.setParameter("vMax", 4);
+		var m = s.insertMaterial("Specular");
+		m.setParameter("slope", "0.002");
+	}
+	
 	var nodeA = nodeP.createNode("axis");
 	nodeA.setParameter("rotation", "1 0 0 -90");
 	nodeA.setParameter("scale", "0.01 0.01 1");
@@ -63,6 +85,128 @@ function makeFacet(parent, index, shiftY, radius)
 }
 
 
+function makeFlange(nodeF)
+{
+	var node = nodeF.createNode("Inner");
+	node.setParameter("scale", "0.0625 0.0625 0.168");
+	var s = node.createShape();
+	var q = s.insertSurface("Cylinder");
+	setMaterialGray(s);
+
+	node = nodeF.createNode("Outer");
+	node.setParameter("scale", "0.095 0.095 0.024");
+	s = node.createShape();
+	q = s.insertSurface("Cylinder");
+	setMaterialGray(s);
+
+	node = nodeF.createNode("Top");
+	node.setParameter("translation", "0 0 0.012");
+	node.setParameter("scale", "0.095 0.095 1");
+	s = node.createShape();
+	p = s.insertProfile("Circular");
+	setMaterialGray(s);
+
+	node = nodeF.createNode("Bottom");
+	node.setParameter("translation", "0 0 -0.012");
+	//node.setParameter("rotation", "1 0 0 180");
+	node.setParameter("scale", "0.095 0.095 1");
+	s = node.createShape();
+	p = s.insertProfile("Circular");
+	setMaterialGray(s);
+}
+
+
+function makePipe(nodeP)
+{
+	var node = nodeP.createNode("Inner");
+	node.setParameter("scale", "0.059 0.059 3.9");
+	var s = node.createShape();
+	var q = s.insertSurface("Cylinder");
+	var m = s.insertMaterial("Fresnel (unpolarized)");
+	m.setParameter("nFront", "1.5");
+	m.setParameter("nBack", "1.");
+	m.setParameter("slope", "0.002");
+	setMaterialTransparent(s);
+
+	node = nodeP.createNode("Outer");
+	node.setParameter("scale", "0.0625 0.0625 3.9");
+	var s = node.createShape();
+	var q = s.insertSurface("Cylinder");
+	var m = s.insertMaterial("Fresnel (unpolarized)");
+	m.setParameter("nFront", "1.");
+	m.setParameter("nBack", "1.5");
+	setMaterialTransparent(s);
+}
+
+
+function makeOutlet(parent)
+{
+	var node = parent.createNode("Part1");
+	node.setParameter("translation", "0 -0.082 4.27291");
+	node.setParameter("rotation", "1 0 0  -90");
+	node.setParameter("scale", "0.10663 0.10663 0.228");
+	var s = node.createShape();	
+	var q = s.insertSurface("Cylinder");
+	setMaterialGray(s);
+
+	var nodeP = parent.createNode("Part2");
+	nodeP.setParameter("translation", "-0.1 -0.26 4.37291");
+	nodeP.setParameter("rotation", "0 1 0  134");
+	
+	var node = nodeP.createNode("Main");
+	node.setParameter("scale", "0.10663 0.10663 1");
+	var s = node.createShape();
+	var q = s.insertSurface("Cylinder");
+	var p = s.insertProfile("Rectangular");
+	p.setParameter("vMin", 0);
+	p.setParameter("vMax", 0.91);
+	setMaterialGray(s);
+	
+	var node = nodeP.createNode("Bottom");
+	node.setParameter("scale", "0.10663 0.10663 1");
+	var s = node.createShape();
+	var p = s.insertProfile("Circular");
+	setMaterialGray(s);
+	
+	var nodeF = nodeP.createNode("Flange");
+	nodeF.setParameter("translation", "0 0 0.385");
+	var s = node.createShape();
+	var p = s.insertProfile("Circular");
+	setMaterialGray(s);
+	
+	var node = nodeF.createNode("Main");
+	node.setParameter("scale", "0.15 0.15 0.2");
+	var s = node.createShape();
+	var q = s.insertSurface("Cylinder");
+	setMaterialGray(s);
+	
+	var node = nodeF.createNode("Bottom");
+	node.setParameter("translation", "0 0 -0.1");
+	node.setParameter("scale", "0.15 0.15 1");
+	var s = node.createShape();
+	var q = s.insertProfile("Circular");
+	setMaterialGray(s);
+	
+	var node = nodeF.createNode("Top");
+	node.setParameter("translation", "0 0 0.1");
+	node.setParameter("scale", "0.15 0.15 1");
+	var s = node.createShape();
+	var q = s.insertProfile("Circular");
+	setMaterialGray(s);
+	
+	var node = parent.createNode("Part3");
+	node.setParameter("translation", "1.69 -0.26 0");
+	node.setParameter("rotation", "0 -1 0  16.9639");
+	node.setParameter("scale", "0.1 0.1 1");
+	var s = node.createShape();
+	var q = s.insertSurface("Cylinder");
+	var p = s.insertProfile("Rectangular");
+	p.setParameter("vMin", 0);
+	p.setParameter("vMax", 3.96);
+	setMaterialGray(s);
+}
+
+
 tn.Clear();
 var nodeFresnel = NodeObject();
 nodeFresnel.setName("Fresnel_CSP");
@@ -70,103 +214,77 @@ nodeFresnel.setName("Fresnel_CSP");
 
 var nodePR = nodeFresnel.createNode("Primary_Reflector");
 for (var i = 0; i < posX.length; i++) {
-	var nodeR = nodePR.createNode("Row_" + i);
-	nodeR.setParameter("translation", "" + (posX[i] - 3.9) + " 0 0");
+	var nodeR = nodePR.createNode("Row_" + (i + 1));
+	nodeR.setParameter("translation", "" + posX[i] + " 0 0");
 	for (var j = 0; j < posY.length; j++) {
-		makeFacet(nodeR, j, posY[j], radiuses[i]);
-	}
-}
+		var nodeM = nodeR.createNode("Mirror_" + (j + 1));
+		nodeM.setParameter("translation", "0 " + posY[j] + " 0");
+		makeFacet(nodeM, 2*focuses[i]);
 
-var nodeMB = nodeFresnel.createNode("Motor_Boxes");
-nodeMB.setParameter("translation", "0 0 0.67316");
-for (var i = 0; i < posX.length; i++) {
-	var nodeR = nodeMB.createNode("Row_" + i);
-	nodeR.setParameter("translation", "" + (posX[i] - 3.9) + " 0");
-	for (var j = 1; j < posY.length; j += 2) {
-		var nodeB = nodeR.createNode("Box_" + j);
-		nodeB.setParameter("translation", "0 " + (posY[j] - 0.0366) + " 0.0085");
-		nodeB.setParameter("scale", "0.216 0.060 0.097");
-		s = nodeB.createShape();
+		if (j%2 == 0) {
+		var nodeD = nodeR.createNode("Drive_" + (j/2 + 1));
+		nodeD.setParameter("translation", "0 " + (posY[j + 1] - 0.037) + " 0.682");
+		nodeD.setParameter("scale", "0.216 0.060 0.097");
+		var s = nodeD.createShape();
 		var q = s.insertSurface("Cube");
 		setMaterialGray(s);
+		}
 	}
 }
 
 
-var nodeB = nodeFresnel.createNode("Beams_West");
-nodeB.setParameter("translation", "-0.11941 0 4.55");
-nodeB.setParameter("rotation", "0 1 0  16.8");
-for (var j = 0; j < beamsY.length; j++) {
-	var nodeBW = nodeB.createNode("BeamW_" + j);
-	nodeBW.setParameter("translation", "0 " + beamsY[j] + " 0");
-	var nodeBC = nodeBW.createNode("Cube");
-	nodeBC.setParameter("translation", "0 0 -2.385");
-	nodeBC.setParameter("scale", "0.07 0.037 4.77");
-	s = nodeBC.createShape();
-	var q = s.insertSurface("Cube");
-	setMaterialGray(s);
-}
-
-var nodeB = nodeFresnel.createNode("Beams_East");
-nodeB.setParameter("translation", "0.11941 0 4.55");
-nodeB.setParameter("rotation", "0 1 0  -16.8");
-for (var j = 0; j < beamsY.length; j++) {
-	var nodeBE = nodeB.createNode("BeamE_" + j);
-	nodeBE.setParameter("translation", "0 " + beamsY[j] + " 0");
-	var nodeBC = nodeBE.createNode("Cube");
-	nodeBC.setParameter("translation", "0 0 -2.385");
-	nodeBC.setParameter("scale", "0.07 0.037 4.77");
-	s = nodeBC.createShape();
-	var q = s.insertSurface("Cube");
-	setMaterialGray(s);
-}
-
-var nodeA = nodeFresnel.createNode("Absorber");
-nodeA.setParameter("translation", "0 0 4.27291");
-nodeA.setParameter("rotation", "1 0 0 -90");
+var nodeReceiver = nodeFresnel.createNode("Receiver");
+nodeReceiver.setParameter("translation", "0 0 4.273");
+nodeReceiver.setParameter("rotation", "1 0 0 -90");
+var nodeA = nodeReceiver.createNode("Absorber");
 nodeA.setParameter("scale", "0.035 0.035 1");
-s = nodeA.createShape();
-q = s.insertSurface("Cylinder");
-p = s.insertProfile("Rectangular");
+var s = nodeA.createShape();
+s.setName("Shape");
+var q = s.insertSurface("Cylinder");
+var p = s.insertProfile("Rectangular");
 p.setParameter("vMin", 0);
 p.setParameter("vMax", 32.544);
 setMaterialGray(s);
+for (var j = 0; j < flangesY.length; j++) {
+	var nodeF = nodeReceiver.createNode("Flange_" + (j + 1));
+	nodeF.setParameter("translation", "0 0 " + flangesY[j]);
+	makeFlange(nodeF);
+	if (j == flangesY.length - 1) continue; 
 
-
-var nodeS = nodeFresnel.createNode("Seals");
-nodeS.setParameter("translation", "0 0 4.27291");
-for (var j = 0; j < sealsY.length; j++) {
-	var nodeSJ = nodeS.createNode("Seal_" + j);
-	nodeSJ.setParameter("translation", "0 " + sealsY[j] + " 0");
-	nodeSJ.setParameter("rotation", "1 0 0  -90");
-	nodeSJ.setParameter("scale", "0.0625 0.0625 0.168");
-	s = nodeSJ.createShape();
-	q = s.insertSurface("Cylinder");
-	setMaterialGray(s);
+	var nodeP = nodeReceiver.createNode("Pipe_" + (j + 1));
+	nodeP.setParameter("translation", "0 0 " + (flangesY[j] + 3.9/2 + 0.168/2));
+	makePipe(nodeP);
 }
 
 
+var nodeOut = nodeFresnel.createNode("Outlet");
+makeOutlet(nodeOut);
+var nodeIn = nodeFresnel.createNode("Inlet");
+nodeIn.setParameter("translation", "0 32.54 0");
+nodeIn.setParameter("rotation", "0 0 1  180");
+makeOutlet(nodeIn);
+
+
 var nodeSR = nodeFresnel.createNode("Secondary_Reflector");
-nodeSR.setParameter("translation", "0 0 4.34565");
+var nodeM = nodeSR.createNode("Mirror");
+nodeM.setParameter("translation", "0 0 4.346");
 //nodeSR.setParameter("rotation", "0 1 0 180");
-s = nodeSR.createShape();
+var s = nodeM.createShape();
 var q = s.insertSurface("FunctionZ");
 q.setParameter("functionZ", "\"-33.0618*x*x*x*x + 0.0568046*x*x*x - 2.00404*x*x - 0.00608155*x + 0.132069\"");
 q.setParameter("dims", "20 2");
-p = s.insertProfile("Rectangular");
-p.setParameter("uMin", -0.199445);
-p.setParameter("uMax", 0.199445);
+var p = s.insertProfile("Rectangular");
+p.setParameter("uMin", -0.199);
+p.setParameter("uMax", 0.199);
 p.setParameter("vMin", 0);
 p.setParameter("vMax", 32.544);
 var m = s.insertMaterial("Specular");
 m.setParameter("slope", "0.002");
-
-
-
-var nodeC = nodeFresnel.createNode("Cover");
+//
+var nodeC = nodeSR.createNode("Cover");
 nodeC.setParameter("translation", "0 -0.0185 4.56647");
 nodeC.setParameter("scale", "1 32.581 1");
-
+//
 node = nodeC.createNode("Top");
 s = node.createShape();
 p = s.insertProfile("Rectangular");
@@ -175,7 +293,7 @@ p.setParameter("uMax", 0.15941);
 p.setParameter("vMin", 0);
 p.setParameter("vMax", 1);
 setMaterialGray(s);
-
+//
 node = nodeC.createNode("East");
 node.setParameter("translation", "0.15941 0 0");
 node.setParameter("rotation", "0 1 0  73.2");
@@ -186,7 +304,7 @@ p.setParameter("uMax", 0.231362);
 p.setParameter("vMin", 0);
 p.setParameter("vMax", 1);
 setMaterialGray(s);
-
+//
 node = nodeC.createNode("EastEdge");
 node.setParameter("translation", "0.22628 0 -0.22082");
 s = node.createShape();
@@ -196,7 +314,7 @@ p.setParameter("uMax", 0);
 p.setParameter("vMin", 0);
 p.setParameter("vMax", 1);
 setMaterialGray(s);
-
+//
 node = nodeC.createNode("West");
 node.setParameter("translation", "-0.15941 0 0");
 node.setParameter("rotation", "0 1 0  -73.2");
@@ -207,7 +325,7 @@ p.setParameter("uMax", 0);
 p.setParameter("vMin", 0);
 p.setParameter("vMax", 1);
 setMaterialGray(s);
-
+//
 node = nodeC.createNode("WestEdge");
 node.setParameter("translation", "-0.22628 0 -0.22082");
 s = node.createShape();
@@ -217,22 +335,40 @@ p.setParameter("uMax", 0.025555);
 p.setParameter("vMin", 0);
 p.setParameter("vMax", 1);
 setMaterialGray(s);
+//
+var nodeBeams = nodeSR.createNode("Beams");
+var nodeBE = nodeBeams.createNode("East");
+nodeBE.setParameter("translation", "0.15941 0 4.56647");
+nodeBE.setParameter("rotation", "0 1 0  -16.8");
+var nodeBW = nodeBeams.createNode("East");
+nodeBW.setParameter("translation", "-0.15941 0 4.56647");
+nodeBW.setParameter("rotation", "0 1 0  16.8");
+for (var j = 0; j < beamsY.length; j++) {
+	var nodeB = nodeBE.createNode("Beam_" + j);
+	nodeB.setParameter("translation", "-0.035 " + beamsY[j] + " -2.385");
+	nodeB.setParameter("scale", "0.070 0.037 4.770");
+	var s = nodeB.createShape();
+	var q = s.insertSurface("Cube");
+	setMaterialGray(s);
+	var nodeB = nodeBW.createNode("Beam_" + j);
+	nodeB.setParameter("translation", "0.035 " + beamsY[j] + " -2.385");
+	nodeB.setParameter("scale", "0.07 0.037 4.77");
+	var s = nodeB.createShape();
+	var q = s.insertSurface("Cube");
+	setMaterialGray(s);
+}
 
-var nodeSR = nodeFresnel.createNode("Glass_Pipes");
-var nodeSR = nodeFresnel.createNode("Flanges");
-var nodeSR = nodeFresnel.createNode("Outlet");
-var nodeSR = nodeFresnel.createNode("Inlet");
 
 var nodeG = nodeFresnel.createNode("Ground");
 nodeG.setParameter("translation", "0 0 -0.1");
-s = nodeG.createShape();
-p = s.insertProfile("Rectangular");
+var s = nodeG.createShape();
+var p = s.insertProfile("Rectangular");
 p.setParameter("uMin", -10);
 p.setParameter("uMax", 10);
-p.setParameter("vMin", -10);
+p.setParameter("vMin", -5);
 p.setParameter("vMax", 40);
-m = s.insertMaterial("Transparent");
-mG = s.getPart("material");
+var m = s.insertMaterial("Transparent");
+var mG = s.getPart("material");
 mG.setParameter("ambientColor", "0.85 0.85 0.8");	
 mG.setParameter("diffuseColor", "0.05 0.05 0.05");
 mG.setParameter("specularColor", "0. 0. 0.");
@@ -240,4 +376,16 @@ mG.setParameter("shininess", "0.1");
 
 
 tn.InsertScene(nodeFresnel);
-tn.SetSunParameter("aperture.disabledNodes", "//Node/Fresnel_CSP/Ground");
+
+
+var scene = nodeFresnel.getScene();
+var sp = scene.getPart("world.sun.position");
+sp.setParameter("azimuth", 160);
+sp.setParameter("elevation", 70);
+
+var sa = scene.getPart("world.sun.aperture");
+sa.setParameter("disabledNodes", "\"//Node/Fresnel_CSP/Ground\"");
+
+var tg = scene.getPart("world.terrain.grid");
+tg.setParameter("xRange", "-10 10");
+tg.setParameter("yRange", "-5 40");

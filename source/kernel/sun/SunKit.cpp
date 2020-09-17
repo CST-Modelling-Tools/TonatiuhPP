@@ -46,6 +46,7 @@ SunKit::SunKit()
     SO_KIT_ADD_CATALOG_ENTRY(aperture, SunAperture, FALSE, this, "", TRUE);
 
     SO_KIT_INIT_INSTANCE();
+    setSearchingChildren(true);
 
     // temp
     m_transform = new SoTransform;

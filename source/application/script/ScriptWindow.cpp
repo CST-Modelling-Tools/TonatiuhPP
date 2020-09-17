@@ -17,6 +17,7 @@ Q_DECLARE_METATYPE(QVector<QVariant>)
 #include "NodeObject.h"
 #include "FileObject.h"
 #include "main/MainWindow.h"
+#include "kernel/scene/TSceneKit.h"
 #include "main/PluginManager.h"
 #include "SyntaxHighlighter.h"
 #include "ScriptRayTracer.h"
@@ -62,7 +63,7 @@ ScriptWindow::ScriptWindow(MainWindow* mw, QWidget* parent):
     QScriptValue rayTracerObject = m_engine->newQObject(rayTracer);
     m_engine->globalObject().setProperty("rayTracer", rayTracerObject);
 
-    NodeObject::setPlugins(static_cast<MainWindow*>(mw)->getPlugins());
+    NodeObject::setMainWindow(mw);
     QScriptValue nodeObjectClass = m_engine->scriptValueFromQMetaObject<NodeObject>();
     m_engine->globalObject().setProperty("NodeObject", nodeObjectClass);
 

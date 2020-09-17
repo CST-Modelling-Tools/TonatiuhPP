@@ -251,8 +251,14 @@ function makeField()
 	mG.setParameter("shininess", "0.1");
 
 	tn.InsertScene(nodeRoot);
-	tn.ChangeSunPosition(180., 90 - 11.27182); 
-	tn.SetSunParameter("aperture.disabledNodes", "//Node/Script/Ground");
+	
+	var scene = nodeRoot.getScene();
+	var sp = scene.getPart("world.sun.position");
+	sp.setParameter("azimuth", 180.);
+	sp.setParameter("elevation", 90. - 11.27182);
+
+	var sa = scene.getPart("world.sun.aperture");
+	sa.setParameter("disabledNodes", "\"//Node/Script/Ground\"");
 }
 
 

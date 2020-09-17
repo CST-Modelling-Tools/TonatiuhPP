@@ -1,0 +1,716 @@
+#Inventor V2.1 ascii
+
+
+TSceneKit {
+  fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
+  version "2020"
+  world 
+  DEF World WorldKit {
+    fields [ SFNode callbackList, SFNode location, SFNode sun, SFNode air, SFNode terrain ]
+    sun 
+    DEF Sun SunKit {
+      fields [ SFNode callbackList, SFNode position, SFNode shape, SFNode aperture ]
+      position 
+      SunPosition {
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
+        azimuth 210
+        elevation 60
+        irradiance 1000
+
+      }
+      shape 
+      SunShapePillbox {
+        fields [ SFDouble thetaMax ]
+
+      }
+      aperture 
+      SunAperture {
+        fields [ SFString disabledNodes ]
+        disabledNodes "//Node/Target;//Node/Ground;//Node/HeliostatB/primary/secondary/target"
+
+      }
+
+    }
+    terrain 
+    DEF Terrain TerrainKit {
+      fields [ SFNode callbackList, SFNode grid ]
+      grid 
+      DEF Grid GridNode {
+        fields [ SFBool show, SFDouble step, SFInt32 divisions, SFVec2d xRange, SFVec2d yRange ]
+        xRange -15 15
+        yRange -10 30
+
+      }
+
+    }
+
+  }
+  group 
+  DEF Node TSeparatorKit {
+    transform 
+    TTransform {
+
+    }
+    group 
+    Group {
+
+      DEF Target TSeparatorKit {
+        transform 
+        TTransform {
+          translation 0 0 10
+          rotation 0 0.707107 0.707107  180
+          scale 1 1 1
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            ShapePlanar {
+
+            }
+            profileRT 
+            DEF Box ProfileBox {
+              uSize 5
+              vSize 4
+
+            }
+            materialRT 
+            MaterialVirtual {
+
+            }
+            material 
+            Material {
+              ambientColor 0.5 0.5 0.55
+              diffuseColor 0.3 0.3 0.3
+              shininess 0.1
+
+            }
+
+          }
+        }
+
+      }
+      DEF HeliostatA TSeparatorKit {
+        transform 
+        TTransform {
+          translation 5 20 0
+          rotation 0 0 1  180
+
+        }
+        group 
+        Group {
+
+          DEF Tracker TrackerKit {
+            armature 
+            TrackerArmature2A {
+              primaryAxis 0 0 1
+              primaryAngles -120 120
+              secondaryShift 0 0 0.1
+              secondaryAxis -1 0 0
+              secondaryAngles -10 90
+              facetShift 0 0 0.1
+
+            }
+            target 
+            TrackerTarget {
+              aimingFrame global
+              aimingPoint 0 0 10
+
+            }
+
+          }
+          DEF primary TSeparatorKit {
+            transform 
+            TTransform {
+              translation 0 0 1
+              rotation -0 -0 -1  19.6354
+
+            }
+            group 
+            Group {
+
+              DEF secondary TSeparatorKit {
+                transform 
+                TTransform {
+                  translation 0 0 0.1
+                  rotation -1 0 0  48.1121
+
+                }
+                group 
+                Group {
+
+                  DEF facets TSeparatorKit {
+                    transform 
+                    TTransform {
+                      translation 0 0 0.1
+                      rotation 0 0 1  0
+
+                    }
+                    group 
+                    Group {
+
+                      DEF left TSeparatorKit {
+                        transform 
+                        TTransform {
+                          translation -0.41 0 0
+
+                        }
+                        group 
+                        Group {
+
+                          DEF Shape TShapeKit {
+                            shapeRT 
+                            DEF Parabolic ShapeParabolic {
+                              fields [ SFDouble fX, SFDouble fY ]
+                              fX 20
+                              fY 20
+
+                            }
+                            profileRT 
+                            DEF Box ProfileBox {
+                              uSize 0.8
+                              vSize 1.2
+
+                            }
+                            materialRT 
+                            DEF Specular MaterialSpecular {
+
+                            }
+                            material 
+                            Material {
+                              ambientColor 0.65 0.72 0.79
+                              diffuseColor 0.05 0.05 0.05
+                              specularColor 0.3 0.25 0.2
+                              shininess 0.5
+
+                            }
+
+                          }
+                        }
+
+                      }
+                      DEF right TSeparatorKit {
+                        transform 
+                        TTransform {
+                          translation 0.41 0 0
+
+                        }
+                        group 
+                        Group {
+
+                          DEF Shape TShapeKit {
+                            shapeRT 
+                            DEF Parabolic ShapeParabolic {
+                              fields [ SFDouble fX, SFDouble fY ]
+                              fX 20
+                              fY 20
+
+                            }
+                            profileRT 
+                            DEF Box ProfileBox {
+                              uSize 0.8
+                              vSize 1.2
+
+                            }
+                            materialRT 
+                            DEF Specular MaterialSpecular {
+
+                            }
+                            material 
+                            Material {
+                              ambientColor 0.65 0.72 0.79
+                              diffuseColor 0.05 0.05 0.05
+                              specularColor 0.3 0.25 0.2
+                              shininess 0.5
+
+                            }
+
+                          }
+                        }
+
+                      }
+                    }
+
+                  }
+                  DEF axis TSeparatorKit {
+                    transform 
+                    TTransform {
+                      translation 0 0 0
+                      rotation 0 1 0  90
+                      scale 0.02 0.02 0.8
+
+                    }
+                    group 
+                    Group {
+
+                      DEF Shape TShapeKit {
+                        shapeRT 
+                        DEF Cylinder ShapeCylinder {
+
+                        }
+                        profileRT 
+                        DEF Box ProfileBox {
+                          vSize 1
+
+                        }
+                        materialRT 
+                        MaterialTransparent {
+                          fields [  ]
+
+                        }
+                        material 
+                        Material {
+                          ambientColor 0.2 0.5 0.4
+                          diffuseColor 0.3 0.3 0.3
+                          shininess 0.1
+
+                        }
+
+                      }
+                    }
+
+                  }
+                }
+
+              }
+              DEF axis TSeparatorKit {
+                transform 
+                TTransform {
+                  translation 0 0 0
+                  rotation 0 0 1  0
+                  scale 0.04 0.04 1
+
+                }
+                group 
+                Group {
+
+                  DEF Shape TShapeKit {
+                    shapeRT 
+                    DEF Cylinder ShapeCylinder {
+
+                    }
+                    profileRT 
+                    ProfileRectangular {
+                      fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
+                      vMin 0
+                      vMax 0.05
+
+                    }
+                    materialRT 
+                    MaterialTransparent {
+                      fields [  ]
+
+                    }
+                    material 
+                    Material {
+                      ambientColor 0.5 0.2 0.4
+                      diffuseColor 0.3 0.3 0.3
+                      shininess 0.1
+
+                    }
+
+                  }
+                }
+
+              }
+            }
+
+          }
+          DEF post TSeparatorKit {
+            transform 
+            TTransform {
+              translation 0 0 0
+              scale 0.035 0.035 1
+
+            }
+            group 
+            Group {
+
+              DEF Shape TShapeKit {
+                shapeRT 
+                ShapeCylinder {
+
+                }
+                profileRT 
+                ProfileRectangular {
+                  fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
+                  vMin 0
+                  vMax 1
+
+                }
+                materialRT 
+                MaterialTransparent {
+                  fields [  ]
+
+                }
+                material 
+                Material {
+                  ambientColor 0.5 0.5 0.5
+                  diffuseColor 0.3 0.3 0.3
+                  specularColor 0 0 0
+                  shininess 0.1
+
+                }
+
+              }
+            }
+
+          }
+        }
+
+      }
+      DEF HeliostatB TSeparatorKit {
+        transform 
+        TTransform {
+          translation -5 20 0
+          rotation 0 0 1  180
+
+        }
+        group 
+        Group {
+
+          DEF Tracker TrackerKit {
+            armature 
+            TrackerArmature2A {
+              primaryAxis 0 0 1
+              primaryAngles -120 120
+              secondaryShift 0 0 0.1
+              secondaryAxis -1 0 0
+              secondaryAngles -10 90
+              facetShift 0 0 0.1
+
+            }
+            target 
+            TrackerTarget {
+              aimingFrame facets
+              aimingPoint 0 5 10
+
+            }
+
+          }
+          DEF primary TSeparatorKit {
+            transform 
+            TTransform {
+              translation 0 0 1
+              rotation -0 -0 -1  30
+
+            }
+            group 
+            Group {
+
+              DEF secondary TSeparatorKit {
+                transform 
+                TTransform {
+                  translation 0 0 0.1
+                  rotation -1 0 0  56.7961
+
+                }
+                group 
+                Group {
+
+                  DEF facets TSeparatorKit {
+                    transform 
+                    TTransform {
+                      translation 0 0 0.1
+                      rotation 0 0 1  0
+
+                    }
+                    group 
+                    Group {
+
+                      DEF left TSeparatorKit {
+                        transform 
+                        TTransform {
+                          translation -0.41 0 0
+
+                        }
+                        group 
+                        Group {
+
+                          DEF Shape TShapeKit {
+                            shapeRT 
+                            DEF Parabolic ShapeParabolic {
+                              fields [ SFDouble fX, SFDouble fY ]
+                              fX 20
+                              fY 20
+
+                            }
+                            profileRT 
+                            DEF Box ProfileBox {
+                              uSize 0.8
+                              vSize 1.2
+
+                            }
+                            materialRT 
+                            DEF Specular MaterialSpecular {
+
+                            }
+                            material 
+                            Material {
+                              ambientColor 0.65 0.72 0.79
+                              diffuseColor 0.05 0.05 0.05
+                              specularColor 0.3 0.25 0.2
+                              shininess 0.5
+
+                            }
+
+                          }
+                        }
+
+                      }
+                      DEF right TSeparatorKit {
+                        transform 
+                        TTransform {
+                          translation 0.41 0 0
+
+                        }
+                        group 
+                        Group {
+
+                          DEF Shape TShapeKit {
+                            shapeRT 
+                            DEF Parabolic ShapeParabolic {
+                              fields [ SFDouble fX, SFDouble fY ]
+                              fX 20
+                              fY 20
+
+                            }
+                            profileRT 
+                            DEF Box ProfileBox {
+                              uSize 0.8
+                              vSize 1.2
+
+                            }
+                            materialRT 
+                            DEF Specular MaterialSpecular {
+
+                            }
+                            material 
+                            Material {
+                              ambientColor 0.65 0.72 0.79
+                              diffuseColor 0.05 0.05 0.05
+                              specularColor 0.3 0.25 0.2
+                              shininess 0.5
+
+                            }
+
+                          }
+                        }
+
+                      }
+                    }
+
+                  }
+                  DEF axis TSeparatorKit {
+                    transform 
+                    TTransform {
+                      translation 0 0 0
+                      rotation 0 1 0  90
+                      scale 0.02 0.02 0.8
+
+                    }
+                    group 
+                    Group {
+
+                      DEF Shape TShapeKit {
+                        shapeRT 
+                        DEF Cylinder ShapeCylinder {
+
+                        }
+                        profileRT 
+                        DEF Box ProfileBox {
+                          vSize 1
+
+                        }
+                        materialRT 
+                        MaterialTransparent {
+                          fields [  ]
+
+                        }
+                        material 
+                        Material {
+                          ambientColor 0.2 0.5 0.4
+                          diffuseColor 0.3 0.3 0.3
+                          shininess 0.1
+
+                        }
+
+                      }
+                    }
+
+                  }
+                  DEF target TSeparatorKit {
+                    transform 
+                    TTransform {
+                      translation 0 5 10
+                      rotation 1 0 0  153.4
+                      scale 1 1 1
+
+                    }
+                    group 
+                    Group {
+
+                      DEF Shape TShapeKit {
+                        shapeRT 
+                        ShapePlanar {
+
+                        }
+                        profileRT 
+                        DEF Box ProfileBox {
+                          uSize 2
+                          vSize 2
+
+                        }
+                        materialRT 
+                        MaterialVirtual {
+
+                        }
+                        material 
+                        Material {
+                          ambientColor 0.5 0.55 0.5
+                          diffuseColor 0.3 0.3 0.3
+                          shininess 0.1
+
+                        }
+
+                      }
+                    }
+
+                  }
+                }
+
+              }
+              DEF axis TSeparatorKit {
+                transform 
+                TTransform {
+                  translation 0 0 0
+                  rotation 0 0 1  0
+                  scale 0.04 0.04 1
+
+                }
+                group 
+                Group {
+
+                  DEF Shape TShapeKit {
+                    shapeRT 
+                    DEF Cylinder ShapeCylinder {
+
+                    }
+                    profileRT 
+                    ProfileRectangular {
+                      fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
+                      vMin 0
+                      vMax 0.05
+
+                    }
+                    materialRT 
+                    MaterialTransparent {
+                      fields [  ]
+
+                    }
+                    material 
+                    Material {
+                      ambientColor 0.5 0.2 0.4
+                      diffuseColor 0.3 0.3 0.3
+                      shininess 0.1
+
+                    }
+
+                  }
+                }
+
+              }
+            }
+
+          }
+          DEF post TSeparatorKit {
+            transform 
+            TTransform {
+              translation 0 0 0
+              scale 0.035 0.035 1
+
+            }
+            group 
+            Group {
+
+              DEF Shape TShapeKit {
+                shapeRT 
+                ShapeCylinder {
+
+                }
+                profileRT 
+                ProfileRectangular {
+                  fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
+                  vMin 0
+                  vMax 1
+
+                }
+                materialRT 
+                MaterialTransparent {
+                  fields [  ]
+
+                }
+                material 
+                Material {
+                  ambientColor 0.5 0.5 0.5
+                  diffuseColor 0.3 0.3 0.3
+                  specularColor 0 0 0
+                  shininess 0.1
+
+                }
+
+              }
+            }
+
+          }
+        }
+
+      }
+      DEF Ground TSeparatorKit {
+        transform 
+        TTransform {
+          translation 0 0 -0.05
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            ShapePlanar {
+
+            }
+            profileRT 
+            ProfileRectangular {
+              fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
+              uMin -10
+              uMax 10
+              vMin -5
+              vMax 25
+
+            }
+            materialRT 
+            MaterialTransparent {
+              fields [  ]
+
+            }
+            material 
+            Material {
+              ambientColor 0.85 0.85 0.8
+              diffuseColor 0.05 0.05 0.05
+              specularColor 0.1 0.1 0.1
+              shininess 0.1
+
+            }
+
+          }
+        }
+
+      }
+    }
+
+  }
+
+}

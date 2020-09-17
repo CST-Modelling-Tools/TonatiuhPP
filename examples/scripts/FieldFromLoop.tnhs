@@ -93,4 +93,6 @@ for (i = -iMax; i <= iMax; i++) {
 
 tn.InsertScene(nodeRoot);
 
-tn.ChangeSunPosition(180., 60.);
+var sp = nodeRoot.getScene().getPart("world.sun.position");
+sp.setParameter("azimuth", 180);
+sp.setParameter("elevation", 60);

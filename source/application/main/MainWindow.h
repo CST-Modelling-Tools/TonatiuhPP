@@ -44,6 +44,7 @@ class TFactory;
 class SoBaseKit;
 class TNode;
 class QTreeWidgetItem;
+class TSceneKit;
 
 namespace Ui {
 class MainWindow;
@@ -59,6 +60,7 @@ public:
     ~MainWindow();
 
     PluginManager* getPlugins() {return m_pluginManager;}
+    TSceneKit* getSceneKit();
 
     void StartManipulation(SoDragger* dragger);
     void FinishManipulation();
@@ -92,6 +94,7 @@ public slots:
     void CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector<QVariant> parametersList);
     void InsertScene(QScriptValue v);
     QScriptValue FindInterception(QScriptValue surface, QScriptValue rays);
+//    QScriptValue getSceneKit()
 
     void Select(QString url);
     void SetName(QString name);
@@ -100,7 +103,6 @@ public slots:
     void ChangeSunPosition(double azimuth, double elevation);
     void ChangeSunPosition(int year, int month, int day, double hours, double minutes, double seconds, double latitude, double longitude);
     void SetSunshape(QString name);
-    void SetSunParameter(QString parameter, QString value);
     void SetAir(QString name);
     void SetAirParameter(QString parameter, QString value);
 

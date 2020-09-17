@@ -227,6 +227,11 @@ MainWindow::~MainWindow()
     delete m_photonsBuffer;
 }
 
+TSceneKit* MainWindow::getSceneKit()
+{
+    return m_document->getSceneKit();
+}
+
 void MainWindow::SetupDocument()
 {
     m_document = new Document;
@@ -1913,38 +1918,6 @@ void MainWindow::SetSunshape(QString name)
 //    UpdateLightSize();
 
 //    ui->parametersTabs->UpdateView();
-//    setDocumentModified(true);
-}
-
-/*!
- * Set the \a value for the sunshape parameter \a parameter.
- */
-void MainWindow::SetSunParameter(QString parameter, QString value)
-{
-    TSceneKit* scene = m_document->getSceneKit();
-    SunKit* sk = (SunKit*) scene->getPart("world.sun", false);
-    SunAperture* sp = (SunAperture*) sk->getPart("aperture", false);
-
-    if (parameter == "aperture.disabledNodes")
-        sp->disabledNodes = value.toLatin1().data();
-
-//    TSceneKit* sceneKit = m_document->getSceneKit();
-//    SunKit* sunKit = static_cast<SunKit*>(sceneKit->getPart("lightList[0]", false) );
-//    if (!sunKit)
-//    {
-//        emit Abort(tr("SetSunshapeParameter: There is not light defined.") );
-//        return;
-//    }
-
-//    SunShape* sunshape = static_cast<SunShape*>(sunKit->getPart("tsunshape", false));
-//    if (!sunshape)
-//    {
-//        emit Abort(tr("SetSunshapeParameter: There is not sunshape defined.") );
-//        return;
-//    }
-
-//    CmdModifyParameter* cmd = new CmdModifyParameter(sunshape, parameter, value, m_modelScene);
-//    if (m_undoStack) m_undoStack->push(cmd);
 //    setDocumentModified(true);
 }
 
