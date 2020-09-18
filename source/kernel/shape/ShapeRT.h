@@ -34,7 +34,7 @@ public:
     virtual void updateShapeGL(TShapeKit* /*parent*/) {}
 
 protected:
-    void makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals = false, bool reverseClock = false);
+    void makeQuadMesh(TShapeKit* parent, const QSize& dims, bool forceIndexed = false);
 };
 
 

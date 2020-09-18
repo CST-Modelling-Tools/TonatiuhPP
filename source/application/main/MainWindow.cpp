@@ -698,7 +698,7 @@ bool MainWindow::fileSaveAs()
 
     QString file = QFileDialog::getSaveFileName(
         this, "Save", dir,
-        "Tonatiuh++ files (*.tnpp);;Tonatiuh files (*.tnh);;Tonatiuh debug (*.tnhd)"
+        "Tonatiuh files (*.tnh);;Tonatiuh++ files (*.tnpp);;Tonatiuh debug (*.tnhd)"
     );
     if (file.isEmpty()) return false;
 

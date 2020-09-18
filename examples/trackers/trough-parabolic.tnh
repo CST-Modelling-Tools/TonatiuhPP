@@ -107,7 +107,7 @@ TSceneKit {
 
                     }
                     material 
-                    Material {
+                    MaterialGL {
 
                     }
 
@@ -142,7 +142,7 @@ TSceneKit {
 
                     }
                     material 
-                    Material {
+                    MaterialGL {
                       ambientColor 0.65 0.72 0.79
                       diffuseColor 0.05 0.05 0.05
                       specularColor 0.3 0.25 0.2
@@ -179,7 +179,7 @@ TSceneKit {
 
                     }
                     material 
-                    Material {
+                    MaterialGL {
 
                     }
 
@@ -218,7 +218,7 @@ TSceneKit {
 
             }
             material 
-            Material {
+            MaterialGL {
 
             }
 

@@ -18,7 +18,8 @@
 #include "main/PluginManager.h"
 
 
-MainWindow* NodeObject::m_mainWindow = 0;
+MainWindow* NodeObject::s_mainWindow = 0;
+QScriptEngine* NodeObject::s_engine = 0;
 
 
 NodeObject::NodeObject(QObject* parent):
@@ -36,14 +37,14 @@ NodeObject::NodeObject(SoNode* node):
 
 QScriptValue NodeObject::getScene()
 {
-    NodeObject* ans = new NodeObject(m_mainWindow->getSceneKit());
-    return engine()->newQObject(ans);
+    NodeObject* ans = new NodeObject(s_mainWindow->getSceneKit());
+    return s_engine->newQObject(ans);
 }
 
 QScriptValue NodeObject::getRoot()
 {
-    NodeObject* ans = new NodeObject(m_mainWindow->getSceneKit()->getLayout());
-    return engine()->newQObject(ans);
+    NodeObject* ans = new NodeObject(s_mainWindow->getSceneKit()->getLayout());
+    return s_engine->newQObject(ans);
 }
 
 QScriptValue NodeObject::createNode(const QString& name)
@@ -107,7 +108,7 @@ QScriptValue NodeObject::insertSurface(const QString& name)
 {
     if (m_node->getTypeId() != TShapeKit::getClassTypeId()) return 0;
 
-    ShapeFactory* f = m_mainWindow->getPlugins()->getShapeMap().value(name, 0);
+    ShapeFactory* f = s_mainWindow->getPlugins()->getShapeMap().value(name, 0);
     ShapeRT* shape = f->create();
 
     TShapeKit* parent = (TShapeKit*)(m_node);
@@ -121,7 +122,7 @@ QScriptValue NodeObject::insertProfile(const QString& name)
 {
     if (m_node->getTypeId() != TShapeKit::getClassTypeId()) return 0;
 
-    ProfileFactory* f = m_mainWindow->getPlugins()->getProfileMap().value(name, 0);
+    ProfileFactory* f = s_mainWindow->getPlugins()->getProfileMap().value(name, 0);
     ProfileRT* profile = f->create();
 
     TShapeKit* parent = (TShapeKit*)(m_node);
@@ -135,7 +136,7 @@ QScriptValue NodeObject::insertMaterial(const QString& name)
 {
     if (m_node->getTypeId() != TShapeKit::getClassTypeId()) return 0;
 
-    MaterialFactory* f = m_mainWindow->getPlugins()->getMaterialMap().value(name, 0);
+    MaterialFactory* f = s_mainWindow->getPlugins()->getMaterialMap().value(name, 0);
     MaterialRT* material = f->create();
 
     TShapeKit* parent = (TShapeKit*)(m_node);
@@ -149,7 +150,7 @@ QScriptValue NodeObject::insertArmature(const QString& name)
 {
     if (m_node->getTypeId() != TrackerKit::getClassTypeId()) return 0;
 
-    TrackerFactory* f = m_mainWindow->getPlugins()->getTrackerMap().value(name, 0);
+    TrackerFactory* f = s_mainWindow->getPlugins()->getTrackerMap().value(name, 0);
     TrackerArmature* tracker = f->create();
 
     TrackerKit* parent = (TrackerKit*)(m_node);

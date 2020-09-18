@@ -13,7 +13,7 @@ void ProfileRegular::initClass()
 ProfileRegular::ProfileRegular()
 {
     SO_NODE_CONSTRUCTOR(ProfileRegular);
-    SO_NODE_ADD_FIELD( r, (1.) );
+    SO_NODE_ADD_FIELD( r, (0.5) );
     SO_NODE_ADD_FIELD( n, (6) );
 }
 

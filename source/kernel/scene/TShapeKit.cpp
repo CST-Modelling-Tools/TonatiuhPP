@@ -11,7 +11,7 @@
 #include "kernel/shape/DifferentialGeometry.h"
 #include "kernel/shape/ShapePlanar.h"
 #include "libraries/math/3D/Ray.h"
-
+#include "scene/MaterialGL.h"
 
 SO_KIT_SOURCE(TShapeKit)
 
@@ -23,6 +23,7 @@ void TShapeKit::initClass()
     ShapeRT::initClass();
     ProfileRT::initClass();
     MaterialRT::initClass();
+    MaterialGL::initClass();
 }
 
 TShapeKit::TShapeKit()
@@ -44,11 +45,7 @@ TShapeKit::TShapeKit()
 
     profileRT = new ProfileBox;
     materialRT = new MaterialAbsorber;
-    SoMaterial* sm = new SoMaterial;
-    sm->ambientColor = SbVec3f(0.3, 0.4, 0.5);
-    sm->diffuseColor = SbVec3f(0.3, 0.3, 0.3);
-    sm->specularColor = SbVec3f(0.1, 0.1, 0.1);
-    sm->shininess = 0.1;
+    SoMaterial* sm = new MaterialGL;
     material = sm;
     m_shapeKit->setPart("material", material.getValue());
 
@@ -59,6 +56,10 @@ TShapeKit::TShapeKit()
     m_sensorProfile = new SoFieldSensor(onSensor, this);
 //    m_sensorProfile->setPriority(0);
     m_sensorProfile->attach(&profileRT);
+
+    m_sensorMaterial = new SoFieldSensor(onSensor, this);
+//    m_sensorProfile->setPriority(0);
+    m_sensorMaterial->attach(&material);
 
     shapeRT = new ShapePlanar;
 }
@@ -78,6 +79,7 @@ TShapeKit::~TShapeKit()
 {
     delete m_sensorShape;
     delete m_sensorProfile;
+    delete m_sensorMaterial;
     m_shapeKit->unref();
 }
 

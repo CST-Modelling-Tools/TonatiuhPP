@@ -161,7 +161,7 @@ TSceneKit {
 
             }
             material 
-            Material {
+            MaterialGL {
 
             }
 
@@ -276,7 +276,7 @@ TSceneKit {
 
             }
             material 
-            Material {
+            MaterialGL {
 
             }
 

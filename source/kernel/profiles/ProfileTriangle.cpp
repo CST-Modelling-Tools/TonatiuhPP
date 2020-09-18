@@ -15,8 +15,8 @@ void ProfileTriangle::initClass()
 ProfileTriangle::ProfileTriangle()
 {
     SO_NODE_CONSTRUCTOR(ProfileTriangle);
-    SO_NODE_ADD_FIELD( a, (1., 0.) );
-    SO_NODE_ADD_FIELD( b, (0., 1.) );
+    SO_NODE_ADD_FIELD( a, (0.5, 0.) );
+    SO_NODE_ADD_FIELD( b, (0., 0.5) );
     SO_NODE_ADD_FIELD( c, (0., 0.) );
 
     m_sensor = new SoNodeSensor(onSensor, this);

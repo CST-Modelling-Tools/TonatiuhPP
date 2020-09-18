@@ -19,11 +19,12 @@ public:
 
     SoNode* getNode() const {return m_node;}
 
-    static void setMainWindow(MainWindow* w) {m_mainWindow = w;}
+    static void setMainWindow(MainWindow* w) {s_mainWindow = w;}
+    static void setEngine(QScriptEngine* engine) {s_engine = engine;}
 
 public slots:
-    QScriptValue getScene();
-    QScriptValue getRoot();
+    static QScriptValue getScene();
+    static QScriptValue getRoot();
 
     QScriptValue createNode(const QString& name = "");
     QScriptValue createShape();
@@ -40,6 +41,7 @@ public slots:
 
 private:
     SoNode* m_node;
-    static MainWindow* m_mainWindow;
+    static MainWindow* s_mainWindow;
+    static QScriptEngine* s_engine;
 };
 

@@ -8,6 +8,13 @@ class ShapeCylinder: public ShapeRT
 	SO_NODE_HEADER(ShapeCylinder);
 
 public:
+    enum Caps {
+        none = 0,
+        bottom,
+        top,
+        both
+    };
+
     static void initClass();
     ShapeCylinder();
 
@@ -16,6 +23,8 @@ public:
     vec2d getUV(const vec3d& p) const;
     Box3D getBox(ProfileRT* profile) const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
+
+    SoSFEnum caps;
 
     NAME_ICON_FUNCTIONS("Cylinder", ":/ShapeCylinder.png")
     void updateShapeGL(TShapeKit* parent);

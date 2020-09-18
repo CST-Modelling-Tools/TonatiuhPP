@@ -47,10 +47,7 @@ TSceneKit {
       DEF Shape TShapeKit {
         shapeRT 
         DEF PlanarN ShapePlanarN {
-          fields [ SFVec2f xLimits, SFVec2f yLimits, SFVec2i32 dims, MFVec3f normals ]
-          xLimits -0.5 0.5
-          yLimits -0.5 0.5
-          dims 3 3
+          fields [ MFVec3f normals, SFVec2i32 dims, SFVec2f xLimits, SFVec2f yLimits ]
           normals [ 0.235702 0.235702 0.942809,
               0.242536 -0 0.970143,
               0.235702 -0.235702 0.942809,
@@ -60,13 +57,16 @@ TSceneKit {
               -0.235702 0.235702 0.942809,
               -0.242536 -0 0.970143,
               -0.235702 -0.235702 0.942809 ]
+          dims 3 3
+          xLimits -0.5 0.5
+          yLimits -0.5 0.5
 
         }
         profileRT 
         DEF Regular ProfileRegular {
-          fields [ SFInt32 n, SFDouble r ]
-          n 5
+          fields [ SFDouble r, SFInt32 n ]
           r 0.5
+          n 5
 
         }
         materialRT 
@@ -75,7 +75,7 @@ TSceneKit {
 
         }
         material 
-        Material {
+        MaterialGL {
 
         }
 

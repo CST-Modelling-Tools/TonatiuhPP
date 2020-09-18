@@ -64,6 +64,7 @@ ScriptWindow::ScriptWindow(MainWindow* mw, QWidget* parent):
     m_engine->globalObject().setProperty("rayTracer", rayTracerObject);
 
     NodeObject::setMainWindow(mw);
+    NodeObject::setEngine(m_engine);
     QScriptValue nodeObjectClass = m_engine->scriptValueFromQMetaObject<NodeObject>();
     m_engine->globalObject().setProperty("NodeObject", nodeObjectClass);
 

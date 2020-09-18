@@ -16,6 +16,7 @@
 #include "libraries/math/3D/Ray.h"
 #include "kernel/profiles/ProfilePolygon.h"
 #include "libraries/DistMesh/PolygonMesh.h"
+#include "scene/MaterialGL.h"
 
 SO_NODE_ABSTRACT_SOURCE(ShapeRT)
 
@@ -79,12 +80,14 @@ bool ShapeRT::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, 
     return true;
 }
 
-void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNormals, bool /*reverseClock*/)
+void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool forceIndexed)
 {
+    MaterialGL* mGL = (MaterialGL*) parent->material.getValue();
+    bool reverseNormals = mGL->reverseNormals.getValue();
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
     SoShapeKit* shapeKit = parent->m_shapeKit;
-//    SoShapeKit* shapeKit = (SoShapeKit*) parent->getPart("shapeKit", false);
-//    SoShapeKit* shapeKit = (SoShapeKit*) parent->shapeKit2.getValue();
+    shapeKit->setPart("normalBinding", new SoNormalBinding);
+
     if (ProfilePolygon* profilePolygon = dynamic_cast<ProfilePolygon*>(profile))
     {
         const QPolygonF& qpolygon = profilePolygon->getPolygon();
@@ -130,7 +133,6 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNor
 
         SoIndexedFaceSet* sMesh = new SoIndexedFaceSet;
         sMesh->coordIndex.setValues(0, faces.size(), faces.data());
-
         shapeKit->setPart("shape", sMesh);
     }
     else
@@ -156,10 +158,25 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool reverseNor
         sNormals->vector.setValues(0, normals.size(), normals.data());
         shapeKit->setPart("normal", sNormals);
 
-        SoQuadMesh* sMesh = new SoQuadMesh;
-        sMesh->verticesPerRow = dimensions.height();
-        sMesh->verticesPerColumn = dimensions.width();
-
-        shapeKit->setPart("shape", sMesh);
+        if (!forceIndexed) {
+            SoQuadMesh* sMesh = new SoQuadMesh;
+            sMesh->verticesPerRow = dimensions.height();
+            sMesh->verticesPerColumn = dimensions.width();
+            shapeKit->setPart("shape", sMesh);
+        }
+        else {
+            QVector<int> faces;
+            for (int n = 0; n < dimensions.width() - 1; n++)
+                for (int m = 0; m < dimensions.height() - 1; ++m) {
+                    int iA = n * dimensions.height() + m;
+                    int iB = iA + dimensions.height();
+                    int iC = iB + 1;
+                    int iD = iA + 1;
+                    faces << iA << iD << iC << iB << -1;
+                }
+            SoIndexedFaceSet* sMesh = new SoIndexedFaceSet;
+            sMesh->coordIndex.setValues(0, faces.size(), faces.data());
+            shapeKit->setPart("shape", sMesh);
+        }
     }
 }

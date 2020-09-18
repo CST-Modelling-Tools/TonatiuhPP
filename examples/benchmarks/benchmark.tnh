@@ -46,19 +46,20 @@ TSceneKit {
 
       DEF Shape TShapeKit {
         shapeRT 
-        DEF Sphere ShapeSphere {
+        ShapeSphere {
 
         }
         profileRT 
-        DEF Box ProfileBox {
+        ProfileBox {
 
         }
         materialRT 
-        DEF Specular MaterialSpecular {
+        MaterialSpecular {
 
         }
         material 
-        Material {
+        MaterialGL {
+
 
         }
 

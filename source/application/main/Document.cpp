@@ -47,7 +47,7 @@ bool Document::ReadFile(const QString& fileName)
 
     if (!input.isValidFile())
     {
-        QString message = QString("Error reading file %1.\n").arg(fileName);
+        QString message = QString("Error reading file %1.").arg(fileName);
         emit Warning(message);
         return false;
     }
@@ -57,13 +57,20 @@ bool Document::ReadFile(const QString& fileName)
 
     if (!separator)
     {
-        QString message = QString("Error reading file %1.\n").arg(fileName);
+        QString message = QString("Error reading file %1.").arg(fileName);
         emit Warning(message);
         return false;
     }
 
     TSceneKit* scene = dynamic_cast<TSceneKit*>(separator->getChild(0));
     if (!scene) return false;
+
+    QString version = ((SoSFString*)scene->getField("version"))->getValue().getString();
+    if (version != "2020") {
+        QString message = QString("Version %1 is not compatible.").arg(version);
+        emit Warning(message);
+        return false;
+    }
 
     if (m_scene) ClearScene();
     m_scene = scene;

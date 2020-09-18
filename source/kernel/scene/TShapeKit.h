@@ -31,6 +31,7 @@ protected:
 
     SoFieldSensor* m_sensorShape;
     SoFieldSensor* m_sensorProfile;
+    SoFieldSensor* m_sensorMaterial;
     static void onSensor(void* data, SoSensor*);
 
     void setDefaultOnNonWritingFields();

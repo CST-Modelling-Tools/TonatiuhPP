@@ -10,6 +10,7 @@
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/math/3D/Box3D.h"
 #include "libraries/math/3D/Ray.h"
+#include "kernel/scene/MaterialGL.h"
 
 SO_NODE_SOURCE(ShapeCube)
 
@@ -143,55 +144,60 @@ bool ShapeCube::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
 
 void ShapeCube::updateShapeGL(TShapeKit* parent)
 {
+    MaterialGL* mGL = (MaterialGL*) parent->material.getValue();
+    bool reverseNormals = mGL->reverseNormals.getValue();
+
     SoShapeKit* shapeKit = parent->m_shapeKit;
-    SoCube* cube = new SoCube;
-    cube->width = 1.;
-    cube->height = 1.;
-    cube->depth = 1.;
-    shapeKit->setPart("shape", cube);
+//    SoCube* cube = new SoCube;
+//    cube->width = 1.;
+//    cube->height = 1.;
+//    cube->depth = 1.;
+//    shapeKit->setPart("shape", cube);
 
-//    float sv[][3] = {
-//        {-0.5, -0.5, -0.5},
-//        {-0.5, -0.5, 0.5},
-//        {-0.5, 0.5, -0.5},
-//        {-0.5, 0.5, 0.5},
-//        {0.5, -0.5, -0.5},
-//        {0.5, -0.5, 0.5},
-//        {0.5, 0.5, -0.5},
-//        {0.5, 0.5, 0.5}
-//    };
-//    SoCoordinate3* sVertices = new SoCoordinate3;
-//    sVertices->point.setValues(0, 8, sv);
-//    shapeKit->setPart("coordinate3", sVertices);
+    float sv[][3] = {
+        {-0.5, -0.5, -0.5},
+        {-0.5, -0.5, 0.5},
+        {-0.5, 0.5, -0.5},
+        {-0.5, 0.5, 0.5},
+        {0.5, -0.5, -0.5},
+        {0.5, -0.5, 0.5},
+        {0.5, 0.5, -0.5},
+        {0.5, 0.5, 0.5}
+    };
+    SoCoordinate3* sVertices = new SoCoordinate3;
+    sVertices->point.setValues(0, 8, sv);
+    shapeKit->setPart("coordinate3", sVertices);
 
-//    float nv[][3] = {
-//        {0, 0, -1},
-//        {0, 0, 1},
-//        {0, -1, 0},
-//        {0, 1, 0},
-//        {-1, 0, 0},
-//        {1, 0, 0}
-//    };
-//    SoNormal* sNormals = new SoNormal;
-//    sNormals->vector.setValues(0, 6, nv);
-//    shapeKit->setPart("normal", sNormals);
+    float q = reverseNormals ? -1 : 1;
+    float nv[][3] = {
+        {0, 0, -q},
+        {0, 0, q},
+        {0, -q, 0},
+        {0, q, 0},
+        {-q, 0, 0},
+        {q, 0, 0}
+    };
 
-//    SoNormalBinding* sb = new SoNormalBinding;
-//    sb->value = SoNormalBinding::PER_FACE;
-//    shapeKit->setPart("normalBinding", sb);
+    SoNormal* sNormals = new SoNormal;
+    sNormals->vector.setValues(0, 6, nv);
+    shapeKit->setPart("normal", sNormals);
 
-//    int faces[] = {
-//        0, 2, 6, 4, -1,
-//        1, 3, 7, 5, -1,
+    SoNormalBinding* sb = new SoNormalBinding;
+    sb->value = SoNormalBinding::PER_FACE;
+    shapeKit->setPart("normalBinding", sb);
 
-//        0, 1, 5, 4, -1,
-//        2, 3, 7, 6, -1,
+    int faces[] = {
+        0, 2, 6, 4, -1,
+        1, 3, 7, 5, -1,
 
-//        0, 1, 3, 2, -1,
-//        4, 5, 7, 6, -1
-//    };
+        0, 1, 5, 4, -1,
+        2, 3, 7, 6, -1,
 
-//    SoIndexedFaceSet* sMesh = new SoIndexedFaceSet;
-//    sMesh->coordIndex.setValues(0, 5*6, faces);
-//    shapeKit->setPart("shape", sMesh);
+        0, 1, 3, 2, -1,
+        4, 5, 7, 6, -1
+    };
+
+    SoIndexedFaceSet* sMesh = new SoIndexedFaceSet;
+    sMesh->coordIndex.setValues(0, 5*6, faces);
+    shapeKit->setPart("shape", sMesh);
 }

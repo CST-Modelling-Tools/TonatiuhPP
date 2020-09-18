@@ -1,5 +1,10 @@
 #include "ShapeCylinder.h"
 
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoNormal.h>
+#include <Inventor/nodes/SoQuadMesh.h>
+#include <Inventor/nodes/SoIndexedFaceSet.h>
+
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
@@ -18,6 +23,14 @@ ShapeCylinder::ShapeCylinder()
 {
     SO_NODE_CONSTRUCTOR(ShapeCylinder);
     isBuiltIn = TRUE;
+
+    SO_NODE_DEFINE_ENUM_VALUE(Caps, none);
+    SO_NODE_DEFINE_ENUM_VALUE(Caps, bottom);
+    SO_NODE_DEFINE_ENUM_VALUE(Caps, top);
+    SO_NODE_DEFINE_ENUM_VALUE(Caps, both);
+
+    SO_NODE_SET_SF_ENUM_TYPE(caps, Caps);
+    SO_NODE_ADD_FIELD(caps, (none) );
 }
 
 vec3d ShapeCylinder::getPoint(double u, double v) const
@@ -80,6 +93,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
     double ts[2];
     if (!gcf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
 
+    bool ans = false;
     for (int i = 0; i < 2; ++i)
     {
         double t = ts[i];
@@ -92,7 +106,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
         if (!profile->isInside(u, v)) continue;
 
         if (tHit == 0 && dg == 0)
-            return true;
+            {ans = true; break;}
         else if (tHit == 0 || dg == 0)
             gcf::SevereError("ShapeCylinder::intersect");
 
@@ -105,9 +119,58 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
         dg->normal = vec3d(pHit.x, pHit.y, 0.);
         dg->shape = this;
         dg->isFront = dot(dg->normal, rayD) <= 0.;
-        return true;
+        {ans = true; break;}
     }
-    return false;
+
+    if (caps.getValue() != Caps::none) {
+        Box2D box2d = profile->getBox();
+        if (caps.getValue() & Caps::top) {
+            double t = (box2d.max().y - rayO.z)*ray.invDirection().z;
+            if (t < ray.tMin + 1e-5 || t > ray.tMax || (ans && t > *tHit)) {}
+            else {
+                vec3d pHit = ray.point(t);
+                if (pHit.x*pHit.x + pHit.y*pHit.y <= 1) {
+                    double phi = atan2(pHit.y, pHit.x)/gcf::TwoPi;
+                    if (phi <= box2d.max().x && phi >= box2d.min().x) {
+                        *tHit = t;
+                        dg->point = pHit;
+                        dg->u = phi;
+                        dg->v = box2d.max().y;
+                        dg->dpdu = vec3d(1., 0., 0.);
+                        dg->dpdv = vec3d(0., 1., 0.);
+                        dg->normal = vec3d(0., 0., 1.);
+                        dg->shape = this;
+                        dg->isFront = dot(dg->normal, rayD) <= 0.;
+                        ans = true;
+                    }
+                }
+            }
+        }
+        if (caps.getValue() & Caps::bottom) {
+            double t = (box2d.min().y - rayO.z)*ray.invDirection().z;
+            if (t < ray.tMin + 1e-5 || t > ray.tMax || (ans && t > *tHit)) {}
+            else {
+                vec3d pHit = ray.point(t);
+                if (pHit.x*pHit.x + pHit.y*pHit.y <= 1) {
+                    double phi = atan2(pHit.y, pHit.x)/gcf::TwoPi;
+                    if (phi <= box2d.max().x && phi >= box2d.min().x) {
+                        *tHit = t;
+                        dg->point = pHit;
+                        dg->u = phi;
+                        dg->v = box2d.min().y;
+                        dg->dpdu = vec3d(1., 0., 0.);
+                        dg->dpdv = vec3d(0., -1., 0.);
+                        dg->normal = vec3d(0., 0., -1.);
+                        dg->shape = this;
+                        dg->isFront = dot(dg->normal, rayD) <= 0.;
+                        ans = true;
+                    }
+                }
+            }
+        }
+    }
+
+    return ans;
 }
 
 void ShapeCylinder::updateShapeGL(TShapeKit* parent)
@@ -120,5 +183,34 @@ void ShapeCylinder::updateShapeGL(TShapeKit* parent)
     if (s > 1.) s = 1.;
     int rows = 1 + ceil(48*s);
 
-    makeQuadMesh(parent, QSize(rows, 2));
+    makeQuadMesh(parent, QSize(rows, 2), true);
+
+    // add
+    if (caps.getValue() != Caps::none) {
+        SoShapeKit* shapeKit = parent->m_shapeKit;
+        SoCoordinate3* sCoords = (SoCoordinate3*) shapeKit->getPart("coordinate3", false);
+        SoNormal* sNormals = (SoNormal*) shapeKit->getPart("normal", false);
+        SoIndexedFaceSet* sMesh = (SoIndexedFaceSet*) shapeKit->getPart("shape", false);
+        int iVertices = sCoords->point.getNum() - 1;
+        int iFaces = sMesh->coordIndex.getNum() - 1;
+        Box2D box2d = profile->getBox();
+        if (caps.getValue() & Caps::top) {
+            for (int r = 0; r < rows; ++r) {
+                vec3d p = getPoint(r/(rows - 1.) - 0.5, box2d.max().y);
+                sCoords->point.set1Value(++iVertices, p.x, p.y, p.z);
+                sNormals->vector.set1Value(iVertices, 0, 0, 1);
+                sMesh->coordIndex.set1Value(++iFaces, iVertices);
+            }
+            sMesh->coordIndex.set1Value(++iFaces, -1);
+        }
+        if (caps.getValue() & Caps::bottom) {
+            for (int r = 0; r < rows; ++r) {
+                vec3d p = getPoint(r/(rows - 1.) - 0.5, box2d.min().y);
+                sCoords->point.set1Value(++iVertices, p.x, p.y, p.z);
+                sNormals->vector.set1Value(iVertices, 0, 0, -1);
+                sMesh->coordIndex.set1Value(++iFaces, iVertices);
+            }
+            sMesh->coordIndex.set1Value(++iFaces, -1);
+        }
+    }
 }

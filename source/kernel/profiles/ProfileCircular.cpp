@@ -14,7 +14,7 @@ ProfileCircular::ProfileCircular()
 {
     SO_NODE_CONSTRUCTOR(ProfileCircular);
     SO_NODE_ADD_FIELD( rMin, (0.) );
-    SO_NODE_ADD_FIELD( rMax, (1.) );
+    SO_NODE_ADD_FIELD( rMax, (0.5) );
     SO_NODE_ADD_FIELD( phiMin, (-gcf::pi) );
     SO_NODE_ADD_FIELD( phiMax, (gcf::pi) );
 }

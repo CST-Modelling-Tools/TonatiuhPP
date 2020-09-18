@@ -252,13 +252,13 @@ function makeField()
 
 	tn.InsertScene(nodeRoot);
 	
-	var scene = nodeRoot.getScene();
+	var scene = NodeObject().getScene();
 	var sp = scene.getPart("world.sun.position");
 	sp.setParameter("azimuth", 180.);
 	sp.setParameter("elevation", 90. - 11.27182);
 
 	var sa = scene.getPart("world.sun.aperture");
-	sa.setParameter("disabledNodes", "\"//Node/Script/Ground\"");
+	sa.setParameter("disabledNodes", "//Node/Script/Ground");
 }
 
 

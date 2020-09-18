@@ -82,7 +82,11 @@ TSceneKit {
 
             }
             material 
-            Material {
+            MaterialGL {
+              ambientColor 0.3 0.4 0.5
+              diffuseColor 0.3 0.3 0.3
+              specularColor 0.1 0.1 0.1
+              shininess 0.1
 
             }
 
@@ -94,6 +98,7 @@ TSceneKit {
         transform 
         TTransform {
           translation 0 0 6.68
+          rotation 0 0 1  0
 
         }
         group 
@@ -123,7 +128,10 @@ TSceneKit {
 
             }
             material 
-            Material {
+            MaterialGL {
+
+              shininess 0.1
+              reverseNormals TRUE
 
             }
 
@@ -154,7 +162,8 @@ TSceneKit {
 
             }
             material 
-            Material {
+            MaterialGL {
+
 
             }
 
