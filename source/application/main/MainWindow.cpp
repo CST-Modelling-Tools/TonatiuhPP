@@ -17,7 +17,7 @@
 #include <QTime>
 #include <QUndoStack>
 #include <QUndoView>
-#include <QSplashScreen>
+#include "CustomSplashScreen.h"
 #include <QElapsedTimer>
 #include <QPushButton>
 #include <QDebug>
@@ -111,7 +111,7 @@ void finishManipulator(void* data, SoDragger* /*dragger*/)
 }
 
 
-MainWindow::MainWindow(QString tonatiuhFile, QSplashScreen* splash, QWidget* parent, Qt::WindowFlags flags):
+MainWindow::MainWindow(QString tonatiuhFile, CustomSplashScreen* splash, QWidget* parent, Qt::WindowFlags flags):
     QMainWindow(parent, flags),
     ui(new Ui::MainWindow),
     m_document(0),
@@ -284,6 +284,26 @@ void MainWindow::SetupGraphicView()
 {
     QSplitter* splitter = ui->splitterH;
 
+    m_graphicView << ui->widgetView3D;
+    m_graphicView[0]->setSceneGraph(m_graphicsRoot);
+
+    connect(
+        m_modelSelection, SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+        m_graphicView[0],SLOT(currentChanged(QModelIndex,QModelIndex))
+    );
+
+    m_focusView = 0;
+
+//    delete splitter->widget(0);
+//    splitter->insertWidget(0, m_graphicView[0]);
+
+    QList<int> sizes;
+    sizes << 700 << 200;
+    splitter->setSizes(sizes);
+
+/*
+    QSplitter* splitter = ui->splitterH;
+
     QSplitter* splitterV = new QSplitter();
     splitterV->setObjectName("graphicSplitterV");
     splitterV->setOrientation(Qt::Vertical);
@@ -328,7 +348,8 @@ void MainWindow::SetupGraphicView()
     // 0 splitterH1 1              tree
     //   splitterV      splitter
     // 2 spliter H2 3              parameters
-    on_actionQuadView_toggled();
+    on_actionQuadView_toggled();*/
+
 }
 
 void MainWindow::SetupTreeView()
@@ -596,6 +617,19 @@ void MainWindow::fileOpen()
 
     QFileInfo info(fileName);
     settings.setValue("dirProjects", info.path());
+
+    StartOver(fileName);
+}
+
+void MainWindow::on_actionExamples_triggered()
+{
+    if (!OkToContinue()) return;
+
+    QString fileName = QFileDialog::getOpenFileName(
+        this, "Open File", "../examples",
+        "Tonatiuh files (*.tnh *.tnpp)"
+    );
+    if (fileName.isEmpty()) return;
 
     StartOver(fileName);
 }
@@ -1631,7 +1665,7 @@ void MainWindow::Run()
     QElapsedTimer timer;
     timer.start();
 
-    UpdateLightSize();
+    UpdateLightSize();// better use tree below
 
     if (!ReadyForRaytracing(instanceLayout, &instanceSun, air) ) return;
 
@@ -2249,38 +2283,38 @@ void MainWindow::closeEvent(QCloseEvent* event)
 /*!
  * Receives mouse press event \a e, an sets as active 3D view the view that contains the mouse press position.
  */
-void MainWindow::mousePressEvent(QMouseEvent* e)
-{
-    QPoint pos = e->pos();
-    int x = pos.x();
-    int y = pos.y() - 64;
+//void MainWindow::mousePressEvent(QMouseEvent* e)
+//{
+//    QPoint pos = e->pos();
+//    int x = pos.x();
+//    int y = pos.y() - 64;
 
-    QSplitter* pSplitter = findChild<QSplitter*>("graphicSplitterV");
-    QRect mainViewRect = pSplitter->geometry();
+//    QSplitter* pSplitter = findChild<QSplitter*>("graphicSplitterV");
+//    QRect mainViewRect = pSplitter->geometry();
 
-    if (mainViewRect.contains(x, y))
-    {
-        QSplitter* pvSplitter1 = findChild<QSplitter*>("graphicSplitterH1");
-        QSplitter* pvSplitter2 = findChild<QSplitter*>("graphicSplitterH1");
-        QRect vViewRect1 = pvSplitter1->geometry();
-        if (vViewRect1.contains(x,y))
-        {
-            QList<int> size(pvSplitter2->sizes());
-            if (x < size[0])
-                m_focusView = 0;
-            else
-                m_focusView = 1;
-        }
-        else
-        {
-            QList<int> size(pvSplitter1->sizes());
-            if (x < size[0])
-                m_focusView = 2;
-            else
-                m_focusView = 3;
-        }
-    }
-}
+//    if (mainViewRect.contains(x, y))
+//    {
+//        QSplitter* pvSplitter1 = findChild<QSplitter*>("graphicSplitterH1");
+//        QSplitter* pvSplitter2 = findChild<QSplitter*>("graphicSplitterH1");
+//        QRect vViewRect1 = pvSplitter1->geometry();
+//        if (vViewRect1.contains(x,y))
+//        {
+//            QList<int> size(pvSplitter2->sizes());
+//            if (x < size[0])
+//                m_focusView = 0;
+//            else
+//                m_focusView = 1;
+//        }
+//        else
+//        {
+//            QList<int> size(pvSplitter1->sizes());
+//            if (x < size[0])
+//                m_focusView = 2;
+//            else
+//                m_focusView = 3;
+//        }
+//    }
+//}
 
 /*!
  * Set current document coin scene into Tonatiuh Models and views.
@@ -2700,3 +2734,4 @@ void MainWindow::on_actionViewSun_triggered()
     camera->position = target + shift;
     camera->pointAt(target, SbVec3f(0., 0., 1.));
 }
+

@@ -333,7 +333,7 @@ TSceneKit {
             target 
             TrackerTarget {
               aimingFrame facets
-              aimingPoint 0 5 10
+              aimingPoint 0 0.5 2
 
             }
 
@@ -352,7 +352,7 @@ TSceneKit {
                 transform 
                 TTransform {
                   translation 0 0 0.1
-                  rotation -1 0 0  56.7961
+                  rotation -1 0 0  44.7436
 
                 }
                 group 
@@ -372,14 +372,14 @@ TSceneKit {
                         shapeRT 
                         DEF Parabolic ShapeParabolic {
                           fields [ SFDouble fX, SFDouble fY ]
-                          fX 20
-                          fY 20
+                          fX 2
+                          fY 2
 
                         }
                         profileRT 
-                        DEF Box ProfileBox {
-                          uSize 1.2
-                          vSize 1.2
+                        ProfileCircular {
+                          fields [ SFDouble rMin, SFDouble rMax, SFDouble phiMin, SFDouble phiMax ]
+                          rMax 1
 
                         }
                         materialRT 
@@ -440,8 +440,8 @@ TSceneKit {
                   DEF target TSeparatorKit {
                     transform 
                     TTransform {
-                      translation 0 5 10
-                      rotation 1 0 0  153.4
+                      translation 0 0.5 2
+                      rotation -1 -0 -0  14.036
                       scale 1 1 1
 
                     }
@@ -455,8 +455,8 @@ TSceneKit {
                         }
                         profileRT 
                         DEF Box ProfileBox {
-                          uSize 2
-                          vSize 2
+                          uSize 0.3
+                          vSize 0.3
 
                         }
                         materialRT 

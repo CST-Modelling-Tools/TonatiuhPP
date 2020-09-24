@@ -50,16 +50,8 @@ background-color: #d7e3ed;
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QWidget" name="widget" native="true">
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>3D View</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+      <widget class="GraphicView" name="widgetView3D" native="true">
+       <layout class="QHBoxLayout" name="horizontalLayout_3"/>
       </widget>
       <widget class="QSplitter" name="splitterV">
        <property name="orientation">
@@ -422,8 +414,6 @@ border:none;
     <addaction name="menuCamera"/>
     <addaction name="actionViewSelected"/>
     <addaction name="actionViewAll"/>
-    <addaction name="separator"/>
-    <addaction name="actionQuadView"/>
    </widget>
    <widget class="QMenu" name="menuRun">
     <property name="title">
@@ -453,6 +443,7 @@ border:none;
     <property name="title">
      <string>&amp;Help</string>
     </property>
+    <addaction name="actionExamples"/>
     <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
@@ -915,6 +906,11 @@ border:none;
     <string>C</string>
    </property>
   </action>
+  <action name="actionExamples">
+   <property name="text">
+    <string>Examples...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="9"/>
  <customwidgets>
@@ -927,6 +923,12 @@ border:none;
    <class>ParametersTabs</class>
    <extends>QTabWidget</extends>
    <header>parameters/ParametersTabs.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GraphicView</class>
+   <extends>QWidget</extends>
+   <header>view/GraphicView.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

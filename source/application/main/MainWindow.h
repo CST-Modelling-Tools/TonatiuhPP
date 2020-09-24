@@ -6,7 +6,7 @@
 
 class QItemSelectionModel;
 class QSplitter;
-class QSplashScreen;
+class CustomSplashScreen;
 
 #include <Inventor/SbVec3f.h>
 
@@ -56,7 +56,7 @@ class MainWindow: public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QString tonatiuhFile = "", QSplashScreen* splash = 0, QWidget* parent = 0, Qt::WindowFlags flags = 0);
+    MainWindow(QString tonatiuhFile = "", CustomSplashScreen* splash = 0, QWidget* parent = 0, Qt::WindowFlags flags = 0);
     ~MainWindow();
 
     PluginManager* getPlugins() {return m_pluginManager;}
@@ -192,12 +192,14 @@ private slots:
     void treeWorldDoubleClicked(QTreeWidgetItem* item, int column);
     void tabChanged(int);
 
+    void on_actionExamples_triggered();
+
 signals:
     void Abort(QString error);
 
 protected:
     void closeEvent(QCloseEvent* event);
-    void mousePressEvent(QMouseEvent* e);
+//    void mousePressEvent(QMouseEvent* e);
 
 private:
     void ChangeModelScene();

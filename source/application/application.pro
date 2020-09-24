@@ -24,6 +24,7 @@ HEADERS += \
     commands/CmdRename.h \
     commands/CmdSetFieldNode.h \
     commands/CmdSetFieldText.h \
+    main/CustomSplashScreen.h \
     main/Document.h \
     main/MainWindow.h \
     main/PluginManager.h \
@@ -78,6 +79,7 @@ SOURCES += \
     commands/CmdRename.cpp \
     commands/CmdSetFieldNode.cpp \
     commands/CmdSetFieldText.cpp \
+    main/CustomSplashScreen.cpp \
     main/Document.cpp \
     main/MainWindow.cpp \
     main/PluginManager.cpp \

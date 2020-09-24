@@ -2,7 +2,7 @@
 #include <QStyleFactory>
 #include <QCommandLineParser>
 #include <QSettings>
-#include <QSplashScreen>
+#include "CustomSplashScreen.h"
 
 #include <QFileInfo>
 #include <QScriptEngine>
@@ -73,13 +73,14 @@ int main(int argc, char** argv)
     }
     app.setWindowIcon(QIcon(fileIcon));
 
+//    QString fileName = parser.positionalArguments()[0];
     QString fileName = parser.value(optionInput);
     QFileInfo fileInfo(fileName);
     if (fileInfo.completeSuffix() != "tnhs")
     {
         QPixmap pixmap(filePixmap);
         pixmap = pixmap.scaledToHeight(256, Qt::SmoothTransformation);
-        QSplashScreen splash(pixmap);
+        CustomSplashScreen splash(pixmap);
         int splashAlignment = Qt::AlignLeft | Qt::AlignBottom;
         splash.show();
 

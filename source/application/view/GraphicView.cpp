@@ -27,26 +27,11 @@
  * Use setModel() to set the model.
  */
 GraphicView::GraphicView(QWidget* parent):
-    QAbstractItemView(parent),
+    QWidget(parent),
     m_graphicRoot(0),
     m_viewer(0)
 {
-
-}
-
-GraphicView::~GraphicView()
-{
-    delete m_viewer;
-}
-
-#include <Inventor/nodes/SoPerspectiveCamera.h>
-void GraphicView::setSceneGraph(GraphicRoot* sceneGraphRoot)
-{
     m_viewer = new SoQtExaminerViewer(this);
-//    m_viewer = new ExaminerViewer2(this);
-
-    m_graphicRoot = sceneGraphRoot;
-    m_viewer->setSceneGraph(m_graphicRoot->getRoot());
 
     SoBoxHighlightRenderAction* highlighter = new SoBoxHighlightRenderAction();
     highlighter->setColor(SbColor(100/255., 180/255., 120/255.));
@@ -65,6 +50,19 @@ void GraphicView::setSceneGraph(GraphicRoot* sceneGraphRoot)
     m_viewer->setAntialiasing(true, 1); // disable if slow
 }
 
+GraphicView::~GraphicView()
+{
+    delete m_viewer;
+}
+
+#include <Inventor/nodes/SoPerspectiveCamera.h>
+void GraphicView::setSceneGraph(GraphicRoot* sceneGraphRoot)
+{
+//    m_viewer = new ExaminerViewer2(this);
+    m_graphicRoot = sceneGraphRoot;
+    m_viewer->setSceneGraph(m_graphicRoot->getRoot());
+}
+
 SbViewportRegion GraphicView::getViewportRegion() const
 {
     return m_viewer->getViewportRegion();
@@ -75,20 +73,6 @@ SoCamera* GraphicView::getCamera() const
     return m_viewer->getCamera();
 }
 
-QModelIndex GraphicView::indexAt(const QPoint& /*point*/) const
-{
-    return QModelIndex();
-}
-
-void GraphicView::scrollTo(const QModelIndex& /*index*/, ScrollHint /*hint*/)
-{
-
-}
-
-QRect GraphicView::visualRect(const QModelIndex& /*index*/) const
-{
-    return QRect();
-}
 
 void GraphicView::showAxes(bool on)
 {
@@ -100,50 +84,7 @@ void GraphicView::showDecoration(bool on)
     m_viewer->setDecoration(on);
 }
 
-void GraphicView::dataChanged(const QModelIndex& /*topLeft*/, const QModelIndex& /*bottomRight*/)
-{
 
-}
-
-void GraphicView::rowsInserted(const QModelIndex& /*parent*/, int /*start*/, int /*end*/)
-{
-
-}
-
-void GraphicView::rowsAboutToBeRemoved(const QModelIndex& /*parent*/, int /*start*/, int /*end*/)
-{
-
-}
-
-void GraphicView::setSelection(const QRect& /*rect*/, QItemSelectionModel::SelectionFlags /*flags*/)
-{
-
-}
-
-int GraphicView::horizontalOffset() const
-{
-    return 0;
-}
-
-int GraphicView::verticalOffset() const
-{
-    return 0;
-}
-
-bool GraphicView::isIndexHidden(const QModelIndex& /*index*/) const
-{
-    return false;
-}
-
-QModelIndex GraphicView::moveCursor(CursorAction /*cursorAction*/, Qt::KeyboardModifiers /*modifiers*/)
-{
-    return QModelIndex();
-}
-
-QRegion GraphicView::visualRegionForSelection(const QItemSelection& /*selection*/) const
-{
-    return QRegion();
-}
 
 #include "tree/SceneTreeModel.h"
 #include "kernel/run/InstanceNode.h"
@@ -168,7 +109,10 @@ void GraphicView::currentChanged(const QModelIndex& current, const QModelIndex& 
             path->unref();
             return;
         }
-        m_graphicRoot->select(path);
+        if (!m_viewer->isViewing())
+            m_graphicRoot->select(path);
+        else
+            m_graphicRoot->deselectAll();
         path->unref();
     }
 
