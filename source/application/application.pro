@@ -1,4 +1,4 @@
-TARGET = Tonatiuh
+TARGET = Tonatiuh-Application
 DESTDIR = ..
 include(../config.pri)
 
@@ -139,8 +139,8 @@ FORMS += \
 RESOURCES += resources.qrc
 
 win32 { # icons for windows explorer
-    RC_ICONS += images/about/Tonatiuh.ico
     RC_ICONS += images/about/TonatiuhCy.ico
+    RC_ICONS += images/about/Tonatiuh.ico
 }
 
 #DISTFILES += \

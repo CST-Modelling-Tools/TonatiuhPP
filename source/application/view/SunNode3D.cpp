@@ -1,5 +1,8 @@
 #include "SunNode3D.h"
 
+#include <QApplication>
+#include <QDir>
+
 #include "kernel/sun/SunPosition.h"
 
 #include <Inventor/sensors/SoNodeSensor.h>
@@ -46,7 +49,8 @@ void SunNode3D::create()
     addChild(sTransform);
 
     SoTexture2* texture = new SoTexture2;
-    texture->filename.setValue("../images/sun.png"); // relative to exe file
+    QDir dir(QCoreApplication::applicationDirPath()); // relative to exe file
+    texture->filename.setValue(dir.filePath("../images/sun.png").toLatin1().data());
     texture->model = SoTexture2::REPLACE;
     addChild(texture);
 

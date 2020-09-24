@@ -79,15 +79,14 @@ int main(int argc, char** argv)
     if (fileInfo.completeSuffix() != "tnhs")
     {
         QPixmap pixmap(filePixmap);
-        pixmap = pixmap.scaledToHeight(256, Qt::SmoothTransformation);
         CustomSplashScreen splash(pixmap);
-        int splashAlignment = Qt::AlignLeft | Qt::AlignBottom;
+        splash.setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
         splash.show();
 
-        splash.showMessage("Launching Coin3D", splashAlignment);
+        splash.setMessage("Launching Coin3D");
         SoQt::init((QWidget*) NULL);
 
-        splash.showMessage("Creating window", splashAlignment);
+        splash.setMessage("Creating window");
         MainWindow mw(fileName, &splash);
         mw.show();
         splash.finish(&mw);

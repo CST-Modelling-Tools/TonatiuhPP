@@ -142,21 +142,19 @@ MainWindow::MainWindow(QString tonatiuhFile, CustomSplashScreen* splash, QWidget
 {
     ui->setupUi(this);
 
-    int splashAlignment = Qt::AlignLeft | Qt::AlignBottom; // make a custom splash
-
-    if (splash) splash->showMessage("Loading plugins", splashAlignment);
+    if (splash) splash->setMessage("Loading plugins");
     m_pluginManager = new PluginManager;
     QDir dir(qApp->applicationDirPath());
     dir.cd("plugins");
     m_pluginManager->load(dir);
 
-    if (splash) splash->showMessage("Creating views", splashAlignment);
+    if (splash) splash->setMessage("Creating views");
     SetupDocument();
     SetupViews();
     SetupTriggers();
     readSettings();
 
-    if (splash) splash->showMessage("Opening file", splashAlignment);
+    if (splash) splash->setMessage("Opening file");
     if (!tonatiuhFile.isEmpty()) {
         StartOver(tonatiuhFile);
     } else {
@@ -606,7 +604,9 @@ void MainWindow::fileOpen()
 
     // HKEY_CURRENT_USER\Software\CyI\Tonatiuh
     QSettings settings("CyI", "Tonatiuh");
-    QString dirName = settings.value("dirProjects", "../examples").toString();
+    QDir dirUser = QDir::home();
+    dirUser.cd("Desktop");
+    QString dirName = settings.value("dirProjects", dirUser.absolutePath()).toString();
 
     QString fileName = QFileDialog::getOpenFileName(
         this, "Open File", dirName,
@@ -728,18 +728,20 @@ bool MainWindow::fileSave()
 bool MainWindow::fileSaveAs()
 {
     QSettings settings("CyI", "Tonatiuh");
-    QString dir = settings.value("dirProjects", "../examples").toString();
+    QDir dirUser = QDir::home();
+    dirUser.cd("Desktop");
+    QString dirName = settings.value("dirProjects", dirUser.absolutePath()).toString();
 
-    QString file = QFileDialog::getSaveFileName(
-        this, "Save", dir,
-        "Tonatiuh files (*.tnh);;Tonatiuh++ files (*.tnpp);;Tonatiuh debug (*.tnhd)"
+    QString fileName = QFileDialog::getSaveFileName(
+        this, "Save", dirName,
+        "Tonatiuh files (*.tnh *.tnpp);;Tonatiuh debug (*.tnhd)"
     );
-    if (file.isEmpty()) return false;
+    if (fileName.isEmpty()) return false;
 
-    QFileInfo info(file);
+    QFileInfo info(fileName);
     settings.setValue("dirProjects", info.path());
 
-    return fileSave(file);
+    return fileSave(fileName);
 }
 
 void MainWindow::nodeExport(QString fileName)

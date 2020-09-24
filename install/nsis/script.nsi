@@ -6,8 +6,10 @@
 !define VERSIONMAJOR 0
 !define VERSIONMINOR 1
 !define VERSIONNAME "${VERSIONMAJOR}.${VERSIONMINOR}"
+!define /date VERSIONDATE "%Y.%m.%d"
+!define /date DATENAME "%d %B %Y"
 
-!define ISBUILDTEST 
+#!define ISBUILDTEST 
 # SetCompressor /SOLID lzma 
 
 !include MUI2.nsh
@@ -24,14 +26,12 @@ BrandingText " "
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_RIGHT
 !define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\orange-r.bmp"
-!define /date VERSIONDATE "%Y-%m-%d"
-OutFile "${APPNAME}-Installer-Win64-${VERSIONDATE}.exe"
+OutFile "${APPNAME}-Installer-Win64-v${VERSIONNAME}-${VERSIONDATE}.exe"
 InstallDir "$LOCALAPPDATA\${COMPANYNAME}\${APPNAME}"
 InstallDirRegKey HKCU "Software\${COMPANYNAME}\${APPNAME}" ""
 
 
 !define MUI_WELCOMEPAGE_TITLE "Welcome to ${APPNAME} Installer"
-!define /date VERSIONDATEFULL "%d %B %Y"
 !define MUI_WELCOMEPAGE_TEXT "\
 Setup will guide you through the installation of ${APPNAME}.$\n\
 $\n\
@@ -39,7 +39,7 @@ Click Next to continue.$\n\
 $\n$\n$\n$\n$\n$\n$\n$\n\
 Desription: ${DESCRIPTION}$\n$\n\
 Edition: ${EDITIONNAME}$\n$\n\
-Version: ${VERSIONDATEFULL}\
+Version: ${VERSIONNAME} (${DATENAME})\
 "
 !define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange.bmp"
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange-uninstall.bmp"
@@ -86,7 +86,7 @@ Function .onInit
 FunctionEnd
 
 Function nsDialogsPage
-	!insertmacro MUI_HEADER_TEXT "Preferences" "Select icon for application and project files."
+	!insertmacro MUI_HEADER_TEXT "Preferences" "Select a preferred theme."
 	nsDialogs::Create 1018
 	Pop $0
 
@@ -140,7 +140,7 @@ Click Next to continue.$\n\
 $\n$\n$\n$\n$\n\
 Desription: ${DESCRIPTION}$\n$\n\
 Edition: ${EDITIONNAME}$\n$\n\
-Version: ${VERSIONDATEFULL}\
+Version: ${VERSIONNAME} (${DATENAME})\
 "
 !insertmacro MUI_UNPAGE_WELCOME
 
@@ -170,7 +170,7 @@ Section "Tonatiuh" SectionTonatiuh
 	file /r "..\packages\main\data\images*"
 		
     writeRegStr HKCU "Software\${COMPANYNAME}\${APPNAME}" "" $INSTDIR
-	writeRegStr HKCU "${REGUNINSTALL}" "DisplayName" "${APPNAME}"
+	writeRegStr HKCU "${REGUNINSTALL}" "DisplayName" "${APPNAMEFULL}"
 	writeRegStr HKCU "${REGUNINSTALL}" "DisplayVersion" "${VERSIONNAME}"
 	writeRegStr HKCU "${REGUNINSTALL}" "Publisher" "${COMPANYNAME}"
 	writeRegStr HKCU "${REGUNINSTALL}" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
@@ -183,23 +183,26 @@ Section "Tonatiuh" SectionTonatiuh
 	writeRegStr HKCU "Software\Classes\.tnh" "" "tnhfile"
 	writeRegStr HKCU "Software\Classes\.tnhs" "" "tnhfile"
 	writeRegStr HKCU "Software\Classes\.tnpp" "" "tnhfile"	
-	writeRegStr HKCU "Software\Classes\tnhfile\shell\Open\Command" "" "$\"$INSTDIR\bin\${APPNAME}.exe$\" -i=$\"%1$\""	
 	exec '$WinDir\SysNative\ie4uinit.exe -show'
 	
 	#!insertmacro MUI_STARTMENU_WRITE_BEGIN pageApplication
 		strCpy $StartMenuFolder "."
 		createDirectory "$SMPROGRAMS\$StartMenuFolder"
 		setOutPath "$INSTDIR\bin"
-		${If} $RadioRising_State == 0
-			createShortcut "$SMPROGRAMS\$StartMenuFolder\${APPNAMEFULL}.lnk" "$INSTDIR\bin\${APPNAME}.exe" "" "$INSTDIR\bin\${APPNAME}.exe" 0
-			writeRegStr HKCU "Software\${COMPANYNAME}\${APPNAME}" "theme" ""
-			writeRegStr HKCU "Software\Classes\tnhfile\DefaultIcon" "" "$INSTDIR\bin\${APPNAME}.exe,0"
-			writeRegStr HKCU "${REGUNINSTALL}" "DisplayIcon" "$INSTDIR\bin\${APPNAME}.exe,0"
-		${Else}
-			createShortcut "$SMPROGRAMS\$StartMenuFolder\${APPNAMEFULL}.lnk" "$INSTDIR\bin\${APPNAME}.exe" "" "$INSTDIR\bin\${APPNAME}.exe" 1
+		var /GLOBAL AppPath
+		strCpy $AppPath "$INSTDIR\bin\${APPNAME}-Application.exe"
+		# add -Application because Windows indexing shows old icon
+		writeRegStr HKCU "Software\Classes\tnhfile\shell\Open\Command" "" "$\"$AppPath$\" -i=$\"%1$\""	
+		${If} $RadioClassic_State == 0
+			createShortcut "$SMPROGRAMS\$StartMenuFolder\${APPNAMEFULL}.lnk" $AppPath
 			writeRegStr HKCU "Software\${COMPANYNAME}\${APPNAME}" "theme" "Cyprus"
-			writeRegStr HKCU "Software\Classes\tnhfile\DefaultIcon" "" "$INSTDIR\bin\${APPNAME}.exe,1"
-			writeRegStr HKCU "${REGUNINSTALL}" "DisplayIcon" "$INSTDIR\bin\${APPNAME}.exe,1"
+			writeRegStr HKCU "Software\Classes\tnhfile\DefaultIcon" "" $AppPath 
+			writeRegStr HKCU "${REGUNINSTALL}" "DisplayIcon" $AppPath
+		${Else}
+			createShortcut "$SMPROGRAMS\$StartMenuFolder\${APPNAMEFULL}.lnk" $AppPath "" $AppPath 1
+			writeRegStr HKCU "Software\${COMPANYNAME}\${APPNAME}" "theme" ""
+			writeRegStr HKCU "Software\Classes\tnhfile\DefaultIcon" "" "$AppPath,1"
+			writeRegStr HKCU "${REGUNINSTALL}" "DisplayIcon" "$AppPath,1"
 		${EndIf}
 		setOutPath $INSTDIR
 		#WriteINIStr "$SMPROGRAMS\$StartMenuFolder\support.url" "InternetShortcut" "URL" "https://scmt.cyi.ac.cy/bitbucket/projects/tnh/repos/main"
