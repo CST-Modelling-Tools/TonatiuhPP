@@ -92,9 +92,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.8468019"
-     inkscape:cx="-505.51853"
-     inkscape:cy="200.45553"
+     inkscape:zoom="0.65294307"
+     inkscape:cx="-27.306404"
+     inkscape:cy="-160.13524"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -893,14 +893,110 @@
        inkscape:export-xdpi="46.746624"
        id="text929"
        y="290.28943"
-       x="-179.03113"
+       x="-173.08237"
        style="font-style:normal;font-weight:normal;font-size:15.72660446px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#4e4e56;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"><tspan
-         style="fill:#4e4e56;fill-opacity:1;stroke-width:0.26458332"
+         style="text-align:center;text-anchor:middle;fill:#4e4e56;fill-opacity:1;stroke-width:0.26458332"
          y="290.28943"
-         x="-179.03113"
+         x="-173.08237"
          id="tspan927"
          sodipodi:role="line">N</tspan></text>
+    <rect
+       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\bitmap.png"
+       style="opacity:1;fill:#34871b;fill-opacity:0.00392157;stroke:none;stroke-width:0.0656594;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       id="rect927"
+       width="34.774704"
+       height="34.774704"
+       x="-254.62109"
+       y="222.86592"
+       inkscape:export-xdpi="46.746624"
+       inkscape:export-ydpi="46.746624" />
+    <rect
+       inkscape:export-ydpi="46.746624"
+       inkscape:export-xdpi="46.746624"
+       y="269.19708"
+       x="-250.77153"
+       height="34.774704"
+       width="34.774704"
+       id="rect969"
+       style="opacity:1;fill:#34871b;fill-opacity:0.00392157;stroke:none;stroke-width:0.0656594;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\bitmap.png" />
+    <rect
+       style="fill:#a5abbd;fill-opacity:0.96862745;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:66.3714447;stroke-opacity:0.99607843"
+       id="rect971"
+       width="27.689816"
+       height="25.598896"
+       x="-246.90288"
+       y="273.78192"
+       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\bitmap.png"
+       inkscape:export-xdpi="46.746624"
+       inkscape:export-ydpi="46.746624" />
+    <rect
+       style="fill:#656f8a;fill-opacity:0.96862745;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:66.3714447;stroke-opacity:0.99607843"
+       id="rect973"
+       width="27.669617"
+       height="6.0335321"
+       x="-246.91106"
+       y="293.29382"
+       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\bitmap.png"
+       inkscape:export-xdpi="46.746624"
+       inkscape:export-ydpi="46.746624" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:15.72660446px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#4e4e56;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="-233.05441"
+       y="290.18811"
+       id="text977"
+       inkscape:export-xdpi="46.746624"
+       inkscape:export-ydpi="46.746624"><tspan
+         sodipodi:role="line"
+         id="tspan975"
+         x="-233.05441"
+         y="290.18811"
+         style="text-align:center;text-anchor:middle;fill:#4e4e56;fill-opacity:1;stroke-width:0.26458332">Z</tspan></text>
+    <rect
+       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\bitmap.png"
+       style="opacity:1;fill:#34871b;fill-opacity:0.00392157;stroke:none;stroke-width:0.0656594;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       id="rect979"
+       width="34.774704"
+       height="34.774704"
+       x="-242.86981"
+       y="308.09787"
+       inkscape:export-xdpi="46.746624"
+       inkscape:export-ydpi="46.746624" />
+    <rect
+       inkscape:export-ydpi="46.746624"
+       inkscape:export-xdpi="46.746624"
+       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\bitmap.png"
+       y="312.68271"
+       x="-239.00116"
+       height="25.598896"
+       width="27.689816"
+       id="rect981"
+       style="fill:#a5abbd;fill-opacity:0.96862745;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:66.3714447;stroke-opacity:0.99607843" />
+    <rect
+       inkscape:export-ydpi="46.746624"
+       inkscape:export-xdpi="46.746624"
+       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\bitmap.png"
+       y="332.19461"
+       x="-239.00934"
+       height="6.0335321"
+       width="27.669617"
+       id="rect983"
+       style="fill:#656f8a;fill-opacity:0.96862745;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:66.3714447;stroke-opacity:0.99607843" />
+    <text
+       inkscape:export-ydpi="46.746624"
+       inkscape:export-xdpi="46.746624"
+       id="text987"
+       y="329.0889"
+       x="-225.15269"
+       style="font-style:normal;font-weight:normal;font-size:15.72660446px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#4e4e56;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="text-align:center;text-anchor:middle;fill:#4e4e56;fill-opacity:1;stroke-width:0.26458332"
+         y="329.0889"
+         x="-225.15269"
+         id="tspan985"
+         sodipodi:role="line">F</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"

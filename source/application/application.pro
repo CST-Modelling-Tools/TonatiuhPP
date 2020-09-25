@@ -138,9 +138,10 @@ FORMS += \
 
 RESOURCES += resources.qrc
 
-win32 { # icons for windows explorer
+win32 { # icons for windows
     RC_ICONS += images/about/TonatiuhCy.ico
     RC_ICONS += images/about/Tonatiuh.ico
+    RC_ICONS += images/about/tnhs.ico
 }
 
 #DISTFILES += \

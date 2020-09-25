@@ -59,7 +59,7 @@ int main(int argc, char** argv)
     parser.process(app);
 //    bool isTest = parser.isSet(optionTest);
 
-    QSettings settings("CyI", "Tonatiuh");
+    QSettings settings("Tonatiuh", "Cyprus");
     QString theme = settings.value("theme", "").toString();
 
     QString fileIcon;
@@ -87,9 +87,10 @@ int main(int argc, char** argv)
         SoQt::init((QWidget*) NULL);
 
         splash.setMessage("Creating window");
+
         MainWindow mw(fileName, &splash);
         mw.show();
-        splash.finish(&mw);
+        splash.setFinishWindow();
 
         return app.exec();
     }

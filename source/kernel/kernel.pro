@@ -52,9 +52,13 @@ HEADERS += \
     scene/TerrainKit.h \
     scene/WorldKit.h \
     shape/DifferentialGeometry.h \
+    shape/ShapeCone.h \
     shape/ShapeCube.h \
+    shape/ShapeCylinder.h \
+    shape/ShapeParabolic.h \
     shape/ShapePlanar.h \
     shape/ShapeRT.h \
+    shape/ShapeSphere.h \
     sun/SunAperture.h \
     sun/SunKit.h \
     sun/SunPosition.h \
@@ -111,9 +115,13 @@ SOURCES += \
     scene/TerrainKit.cpp \
     scene/WorldKit.cpp \
     shape/DifferentialGeometry.cpp \
+    shape/ShapeCone.cpp \
     shape/ShapeCube.cpp \
+    shape/ShapeCylinder.cpp \
+    shape/ShapeParabolic.cpp \
     shape/ShapePlanar.cpp \
     shape/ShapeRT.cpp \
+    shape/ShapeSphere.cpp \
     sun/SunAperture.cpp \
     sun/SunKit.cpp \
     sun/SunPosition.cpp \
@@ -131,3 +139,4 @@ SOURCES += \
 
 
 RESOURCES += resources.qrc
+

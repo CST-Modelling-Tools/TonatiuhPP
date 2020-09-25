@@ -9,32 +9,36 @@
 #include "kernel/air/AirVacuum.h"
 #include "kernel/component/ComponentFactory.h"
 #include "kernel/material/MaterialAbsorber.h"
+#include "kernel/material/MaterialFresnelUnpolarized.h"
 #include "kernel/material/MaterialTransparent.h"
 #include "kernel/material/MaterialVirtual.h"
-#include "kernel/material/MaterialFresnelUnpolarized.h"
 #include "kernel/photons/PhotonsAbstract.h"
 #include "kernel/photons/PhotonsWidget.h"
 #include "kernel/profiles/ProfileBox.h"
 #include "kernel/profiles/ProfileCircular.h"
-#include "kernel/profiles/ProfileRegular.h"
-#include "kernel/profiles/ProfileTriangle.h"
 #include "kernel/profiles/ProfilePolygon.h"
 #include "kernel/profiles/ProfileRectangular.h"
+#include "kernel/profiles/ProfileRegular.h"
+#include "kernel/profiles/ProfileTriangle.h"
 #include "kernel/random/RandomSTL.h"
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
+#include "kernel/shape/ShapeCone.h"
 #include "kernel/shape/ShapeCube.h"
+#include "kernel/shape/ShapeCylinder.h"
+#include "kernel/shape/ShapeParabolic.h"
 #include "kernel/shape/ShapePlanar.h"
+#include "kernel/shape/ShapeSphere.h"
 #include "kernel/sun/SunAperture.h"
 #include "kernel/sun/SunKit.h"
 #include "kernel/sun/SunShapePillbox.h"
 #include "kernel/trackers/TrackerArmature.h"
 #include "kernel/trackers/TrackerArmature1A.h"
 #include "kernel/trackers/TrackerArmature2A.h"
+#include "libraries/Coin3D/MFVec2.h"
 #include "libraries/Coin3D/UserMField.h"
 #include "libraries/Coin3D/UserSField.h"
-#include "libraries/Coin3D/MFVec2.h"
 #include "libraries/math/gcf.h"
 #include "view/SkyNode3D.h"
 
@@ -64,6 +68,10 @@ void PluginManager::load(QDir dir)
 
     loadPlugin(new ShapeFactoryT<ShapePlanar>);
     loadPlugin(new ShapeFactoryT<ShapeCube>);
+    loadPlugin(new ShapeFactoryT<ShapeCone>);
+    loadPlugin(new ShapeFactoryT<ShapeCylinder>);
+    loadPlugin(new ShapeFactoryT<ShapeSphere>);
+    loadPlugin(new ShapeFactoryT<ShapeParabolic>);
 
     loadPlugin(new ProfileFactoryT<ProfileBox>);
     loadPlugin(new ProfileFactoryT<ProfileRectangular>);
@@ -217,18 +225,19 @@ void PluginManager::sort()
 
     QStringList shapeNames = {
         "Planar",
-        "PlanarN",
         "Parabolic",
         "Hyperbolic",
         "Elliptic",
-        "FunctionZ",
         "",
         "Cube",
         "Sphere",
         "Cylinder",
         "Cone",
         "",
-        "Mesh"
+        "Mesh",
+        "FunctionN",
+        "FunctionZ",
+        "FunctionXYZ"
     };
     sortFactories(shapeNames, m_shapeFactories);
 

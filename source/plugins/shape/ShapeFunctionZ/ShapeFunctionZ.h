@@ -41,7 +41,7 @@ protected:
 
 
 
-class ShapeMeshFactory:
+class ShapeFunctionZFactory:
     public QObject, public ShapeFactoryT<ShapeFunctionZ>
 {
     Q_OBJECT

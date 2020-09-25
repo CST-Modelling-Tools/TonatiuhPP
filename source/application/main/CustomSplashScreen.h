@@ -12,10 +12,16 @@ public:
 
     void drawContents(QPainter* painter);
 
+public slots:
+    void setFinishTime();
+    void setFinishWindow();
+
 private:
     QRect m_rect;
     int m_alignment;
     QString m_message;
     QColor m_color;
+    bool m_readyTime;
+    bool m_readyWindow;
 };
 

@@ -19,5 +19,9 @@
         <file>trackers/Tracker1A.png</file>
         <file>trackers/Tracker2A.png</file>
         <file>material/MaterialFresnel.png</file>
+        <file>shape/ShapeCone.png</file>
+        <file>shape/ShapeCylinder.png</file>
+        <file>shape/ShapeParabolic.png</file>
+        <file>shape/ShapeSphere.png</file>
     </qresource>
 </RCC>

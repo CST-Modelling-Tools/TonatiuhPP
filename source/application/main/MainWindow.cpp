@@ -602,8 +602,8 @@ void MainWindow::fileOpen()
 {
     if (!OkToContinue()) return;
 
-    // HKEY_CURRENT_USER\Software\CyI\Tonatiuh
-    QSettings settings("CyI", "Tonatiuh");
+    // HKEY_CURRENT_USER\Software\Tonatiuh\Cyprus
+    QSettings settings("Tonatiuh", "Cyprus");
     QDir dirUser = QDir::home();
     dirUser.cd("Desktop");
     QString dirName = settings.value("dirProjects", dirUser.absolutePath()).toString();
@@ -625,8 +625,9 @@ void MainWindow::on_actionExamples_triggered()
 {
     if (!OkToContinue()) return;
 
+    QDir dir(QCoreApplication::applicationDirPath());
     QString fileName = QFileDialog::getOpenFileName(
-        this, "Open File", "../examples",
+        this, "Open File", dir.filePath("../examples"),
         "Tonatiuh files (*.tnh *.tnpp)"
     );
     if (fileName.isEmpty()) return;
@@ -727,7 +728,7 @@ bool MainWindow::fileSave()
  */
 bool MainWindow::fileSaveAs()
 {
-    QSettings settings("CyI", "Tonatiuh");
+    QSettings settings("Tonatiuh", "Cyprus");
     QDir dirUser = QDir::home();
     dirUser.cd("Desktop");
     QString dirName = settings.value("dirProjects", dirUser.absolutePath()).toString();
@@ -760,8 +761,10 @@ void MainWindow::nodeExport(QString fileName)
 
     // file
     if (fileName.isEmpty()) {
-        QSettings settings("CyI", "Tonatiuh");
-        QString dirName = settings.value("dirNodes", "../examples").toString();
+        QSettings settings("Tonatiuh", "Cyprus");
+        QDir dirUser = QDir::home();
+        dirUser.cd("Desktop");
+        QString dirName = settings.value("dirNodes", dirUser.absolutePath()).toString();
 
         fileName = QFileDialog::getSaveFileName(
             this, "Export Node", dirName,
@@ -802,8 +805,10 @@ void MainWindow::nodeImport(QString fileName)
 
     // file
     if (fileName.isEmpty()) {
-        QSettings settings("CyI", "Tonatiuh");
-        QString dirName = settings.value("dirNodes", "../examples").toString();
+        QSettings settings("Tonatiuh", "Cyprus");
+        QDir dirUser = QDir::home();
+        dirUser.cd("Desktop");
+        QString dirName = settings.value("dirNodes", dirUser.absolutePath()).toString();
 
         fileName = QFileDialog::getOpenFileName(
             this, "Import Node", dirName,
@@ -2410,10 +2415,10 @@ bool MainWindow::Paste(QModelIndex index, bool isShared)
 
 void MainWindow::readSettings()
 {
-    QSettings settings("CyI", "Tonatiuh");
+    QSettings settings("Tonatiuh", "Cyprus");
 
     // geometry
-    QRect rect = settings.value("geometry", QRect(200, 200, 400, 400)).toRect();
+    QRect rect = settings.value("windowGeometry", QRect(200, 200, 400, 400)).toRect();
     setGeometry(rect);
 
     // window state
@@ -2445,9 +2450,9 @@ void MainWindow::readSettings()
 
 void MainWindow::writeSettings()
 {
-    QSettings settings("CyI", "Tonatiuh");
+    QSettings settings("Tonatiuh", "Cyprus");
 
-    settings.setValue("geometry", geometry());
+    settings.setValue("windowGeometry", geometry());
 
     Qt::WindowStates ws = windowState();
     settings.setValue("windowNoState", ws.testFlag(Qt::WindowNoState));

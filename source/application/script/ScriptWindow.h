@@ -47,6 +47,8 @@ private slots:
     void writeMessage(QString message);
     void abortScript(QString error);
 
+    void on_actionExamples_triggered();
+
 private:
     Ui::ScriptWindow* ui;
 

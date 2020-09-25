@@ -42,5 +42,6 @@
         <file>images/scene/nodeCamera.png</file>
         <file>images/about/info.png</file>
         <file>images/about/Tonatiuh.ico</file>
+        <file>images/about/tnhs.ico</file>
     </qresource>
 </RCC>

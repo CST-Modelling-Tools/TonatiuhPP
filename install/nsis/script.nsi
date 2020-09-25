@@ -1,45 +1,47 @@
-!define COMPANYNAME "CyI"
-!define APPNAME "Tonatiuh"
-!define EDITIONNAME "Cyprus"
-!define APPNAMEFULL "Tonatiuh (Cy)"
-!define DESCRIPTION "Ray tracing for Solar Energy"
-!define VERSIONMAJOR 0
-!define VERSIONMINOR 1
-!define VERSIONNAME "${VERSIONMAJOR}.${VERSIONMINOR}"
-!define /date VERSIONDATE "%Y.%m.%d"
-!define /date DATENAME "%d %B %Y"
+!define APP_NAME "Tonatiuh"
+!define EDITION_NAME "Cyprus"
+!define APP_NAME_FULL "${APP_NAME} (${EDITION_NAME})"
+!define DESCRIPTION "Ray tracing for Solar Energy (Open Source)"
+!define VERSION_MAJOR 0
+!define VERSION_MINOR 1
+!define VERSION_NAME "${VERSION_MAJOR}.${VERSION_MINOR}"
+!define /date VERSION_DATE "%Y.%m.%d"
+!define /date DATE_NAME "%d %B %Y"
 
 #!define ISBUILDTEST 
 # SetCompressor /SOLID lzma 
 
 !include MUI2.nsh
-!include nsDialogs.nsh
+!include nsDialogs.nsh ; for custom pages
+!include "FileFunc.nsh" ; for estimated file size ${GetSize}
+
 
 RequestExecutionLevel user
 ManifestDPIAware true  
 Unicode True
-Name "${APPNAME}"
-Caption "${APPNAME} - Installer"
+Name "${APP_NAME}"
+Caption "${APP_NAME} - Installer"
+#BrandingText "Ray tracing for Solar Energy (Open Source)"
 BrandingText " "
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\orange-install.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\orange-uninstall.ico"
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_RIGHT
 !define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\orange-r.bmp"
-OutFile "${APPNAME}-Installer-Win64-v${VERSIONNAME}-${VERSIONDATE}.exe"
-InstallDir "$LOCALAPPDATA\${COMPANYNAME}\${APPNAME}"
-InstallDirRegKey HKCU "Software\${COMPANYNAME}\${APPNAME}" ""
+OutFile "${APP_NAME}-Installer-Win64-${EDITION_NAME}-v${VERSION_NAME}-${VERSION_DATE}.exe"
+InstallDir "$LOCALAPPDATA\${APP_NAME}\${EDITION_NAME}"
+InstallDirRegKey HKCU "Software\${APP_NAME}\${EDITION_NAME}" ""
 
 
-!define MUI_WELCOMEPAGE_TITLE "Welcome to ${APPNAME} Installer"
+!define MUI_WELCOMEPAGE_TITLE "Welcome to ${APP_NAME} Installer"
 !define MUI_WELCOMEPAGE_TEXT "\
-Setup will guide you through the installation of ${APPNAME}.$\n\
+Setup will guide you through the installation of ${APP_NAME}.$\n\
 $\n\
 Click Next to continue.$\n\
 $\n$\n$\n$\n$\n$\n$\n$\n\
 Desription: ${DESCRIPTION}$\n$\n\
-Edition: ${EDITIONNAME}$\n$\n\
-Version: ${VERSIONNAME} (${DATENAME})\
+Edition: ${EDITION_NAME}$\n$\n\
+Version: ${VERSION_NAME} (${DATE_NAME})\
 "
 !define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange.bmp"
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\orange-uninstall.bmp"
@@ -69,7 +71,7 @@ Version: ${VERSIONNAME} (${DATENAME})\
 Var StartMenuFolder
 #!define MUI_STARTMENUPAGE_DEFAULTFOLDER "."
 #!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
-#!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${COMPANYNAME}\${APPNAME}" 
+#!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${APP_NAME}\${EDITION_NAME}" 
 #!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 #!insertmacro MUI_PAGE_STARTMENU pageApplication $StartMenuFolder
 
@@ -77,12 +79,13 @@ Var RadioClassic
 Var RadioClassic_State
 Var RadioRising
 Var RadioRising_State
+Var AppNameFull
 
 Page custom nsDialogsPage nsDialogsPageLeave
 
 Function .onInit
-	strCpy $RadioClassic_State 1
-	strCpy $RadioRising_State 0
+	StrCpy $RadioClassic_State 1
+	StrCpy $RadioRising_State 0
 FunctionEnd
 
 Function nsDialogsPage
@@ -116,31 +119,39 @@ FunctionEnd
 Function nsDialogsPageLeave
 	${NSD_GetState} $RadioClassic $RadioClassic_State	
 	${NSD_GetState} $RadioRising $RadioRising_State
+	
+	${If} $RadioClassic_State == 1
+		StrCpy $AppNameFull "${APP_NAME}++"
+	${Else}
+		StrCpy $AppNameFull "${APP_NAME} (${EDITION_NAME})"
+	${EndIf}
 FunctionEnd
 
 
 !insertmacro MUI_PAGE_INSTFILES
-!include "FileFunc.nsh" ; for ${GetSize} for EstimatedSize registry entry
+
 
 #!define MUI_ABORTWARNING
 #!define MUI_ABORTWARNING_TEXT "text"
 #!define MUI_UNABORTWARNING
+!define MUI_FINISHPAGE_RUN "$INSTDIR\bin\${APP_NAME}-Application.exe"
+!define MUI_FINISHPAGE_RUN_TEXT "Run ${APP_NAME} now"
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !insertmacro MUI_PAGE_FINISH
 
 
-UninstallCaption "${APPNAME} - Uninstaller"
-!define MUI_WELCOMEPAGE_TITLE "Welcome to ${APPNAME} Uninstaller"
+UninstallCaption "${APP_NAME} - Uninstaller"
+!define MUI_WELCOMEPAGE_TITLE "Welcome to ${APP_NAME} Uninstaller"
 !define MUI_WELCOMEPAGE_TEXT "\
-Setup will guide you through the uninstallation of ${APPNAME}.$\n\
+Setup will guide you through the uninstallation of ${APP_NAME}.$\n\
 $\n\
-Before starting the uninstallation, make sure ${APPNAME} is not runnning.$\n\
+Before starting the uninstallation, make sure ${APP_NAME} is not runnning.$\n\
 $\n\
 Click Next to continue.$\n\
 $\n$\n$\n$\n$\n\
 Desription: ${DESCRIPTION}$\n$\n\
-Edition: ${EDITIONNAME}$\n$\n\
-Version: ${VERSIONNAME} (${DATENAME})\
+Edition: ${EDITION_NAME}$\n$\n\
+Version: ${VERSION_NAME} (${DATE_NAME})\
 "
 !insertmacro MUI_UNPAGE_WELCOME
 
@@ -157,70 +168,73 @@ Version: ${VERSIONNAME} (${DATENAME})\
   
 !insertmacro MUI_LANGUAGE "English" ; must be after pages
  
+!define REG_KEY_UNINSTALL "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME_FULL}" ; keep space		
+Var AppPath
 
-!define REGUNINSTALL "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" ; keep space
 Section "Tonatiuh" SectionTonatiuh
-	sectionIn RO ; read only, always installed
-	setOutPath $INSTDIR
+	SectionIn RO ; read only, always installed
+	SetOutPath $INSTDIR
 	!ifdef ISBUILDTEST
-		file /r "bin*"
+		File /r "bin*"
 	!else
-		file /r "..\packages\main\data\bin*"
+		File /r "..\packages\main\data\bin*"
 	!endif
-	file /r "..\packages\main\data\images*"
-		
-    writeRegStr HKCU "Software\${COMPANYNAME}\${APPNAME}" "" $INSTDIR
-	writeRegStr HKCU "${REGUNINSTALL}" "DisplayName" "${APPNAMEFULL}"
-	writeRegStr HKCU "${REGUNINSTALL}" "DisplayVersion" "${VERSIONNAME}"
-	writeRegStr HKCU "${REGUNINSTALL}" "Publisher" "${COMPANYNAME}"
-	writeRegStr HKCU "${REGUNINSTALL}" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
-	writeRegStr HKCU "${REGUNINSTALL}" "QuietUninstallString" "$\"$INSTDIR\uninstall.exe$\" /S"	
+	File /r "..\packages\main\data\images*"
+
+    WriteRegStr HKCU "Software\${APP_NAME}\${EDITION_NAME}" "" $INSTDIR
+	WriteRegStr HKCU "${REG_KEY_UNINSTALL}" "DisplayName" $AppNameFull
+	WriteRegStr HKCU "${REG_KEY_UNINSTALL}" "DisplayVersion" "${VERSION_NAME}"
+	WriteRegStr HKCU "${REG_KEY_UNINSTALL}" "Publisher" "${EDITION_NAME}"
+	WriteRegStr HKCU "${REG_KEY_UNINSTALL}" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
+	WriteRegStr HKCU "${REG_KEY_UNINSTALL}" "QuietUninstallString" "$\"$INSTDIR\uninstall.exe$\" /S"	
 	
-	writeRegDWORD HKCU "${REGUNINSTALL}" "NoModify" 1
-	writeRegDWORD HKCU "${REGUNINSTALL}" "NoRepair" 1
-	writeUninstaller "$INSTDIR\uninstall.exe"
+	WriteRegDWORD HKCU "${REG_KEY_UNINSTALL}" "NoModify" 1
+	WriteRegDWORD HKCU "${REG_KEY_UNINSTALL}" "NoRepair" 1
+	WriteUninstaller "$INSTDIR\uninstall.exe"
     
-	writeRegStr HKCU "Software\Classes\.tnh" "" "tnhfile"
-	writeRegStr HKCU "Software\Classes\.tnhs" "" "tnhfile"
-	writeRegStr HKCU "Software\Classes\.tnpp" "" "tnhfile"	
-	exec '$WinDir\SysNative\ie4uinit.exe -show'
+	WriteRegStr HKCU "Software\Classes\.tnh" "" "tnhfile"
+	WriteRegStr HKCU "Software\Classes\.tnpp" "" "tnhfile"	
+	WriteRegStr HKCU "Software\Classes\.tnhs" "" "tnhsfile"
 	
 	#!insertmacro MUI_STARTMENU_WRITE_BEGIN pageApplication
-		strCpy $StartMenuFolder "."
-		createDirectory "$SMPROGRAMS\$StartMenuFolder"
-		setOutPath "$INSTDIR\bin"
-		var /GLOBAL AppPath
-		strCpy $AppPath "$INSTDIR\bin\${APPNAME}-Application.exe"
+		StrCpy $StartMenuFolder "."
+		CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
+		SetOutPath "$INSTDIR\bin"
+		StrCpy $AppPath "$INSTDIR\bin\${APP_NAME}-Application.exe"
 		# add -Application because Windows indexing shows old icon
-		writeRegStr HKCU "Software\Classes\tnhfile\shell\Open\Command" "" "$\"$AppPath$\" -i=$\"%1$\""	
-		${If} $RadioClassic_State == 0
-			createShortcut "$SMPROGRAMS\$StartMenuFolder\${APPNAMEFULL}.lnk" $AppPath
-			writeRegStr HKCU "Software\${COMPANYNAME}\${APPNAME}" "theme" "Cyprus"
-			writeRegStr HKCU "Software\Classes\tnhfile\DefaultIcon" "" $AppPath 
-			writeRegStr HKCU "${REGUNINSTALL}" "DisplayIcon" $AppPath
+		WriteRegStr HKCU "Software\Classes\tnhfile\shell\Open\Command" "" "$\"$AppPath$\" -i=$\"%1$\""	
+		WriteRegStr HKCU "Software\Classes\tnhsfile\shell\Open\Command" "" "$\"$AppPath$\" -i=$\"%1$\" -s"	
+		${If} $RadioClassic_State == 1
+			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$AppNameFull.lnk" $AppPath "" $AppPath 1
+			WriteRegStr HKCU "Software\${APP_NAME}\${EDITION_NAME}" "theme" ""
+			WriteRegStr HKCU "Software\Classes\tnhfile\DefaultIcon" "" "$AppPath,1"
+			WriteRegStr HKCU "Software\Classes\tnhsfile\DefaultIcon" "" "$AppPath,1" 
+			WriteRegStr HKCU "${REG_KEY_UNINSTALL}" "DisplayIcon" "$AppPath,1"
 		${Else}
-			createShortcut "$SMPROGRAMS\$StartMenuFolder\${APPNAMEFULL}.lnk" $AppPath "" $AppPath 1
-			writeRegStr HKCU "Software\${COMPANYNAME}\${APPNAME}" "theme" ""
-			writeRegStr HKCU "Software\Classes\tnhfile\DefaultIcon" "" "$AppPath,1"
-			writeRegStr HKCU "${REGUNINSTALL}" "DisplayIcon" "$AppPath,1"
+			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$AppNameFull.lnk" $AppPath
+			WriteRegStr HKCU "Software\${APP_NAME}\${EDITION_NAME}" "theme" "Cyprus"
+			WriteRegStr HKCU "Software\Classes\tnhfile\DefaultIcon" "" $AppPath 
+			WriteRegStr HKCU "Software\Classes\tnhsfile\DefaultIcon" "" "$AppPath,2" 
+			WriteRegStr HKCU "${REG_KEY_UNINSTALL}" "DisplayIcon" $AppPath
 		${EndIf}
-		setOutPath $INSTDIR
+		SetOutPath $INSTDIR
 		#WriteINIStr "$SMPROGRAMS\$StartMenuFolder\support.url" "InternetShortcut" "URL" "https://scmt.cyi.ac.cy/bitbucket/projects/tnh/repos/main"
 	#!insertmacro MUI_STARTMENU_WRITE_END
 	
 	${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
 	IntFmt $0 "0x%08X" $0
-	WriteRegDWORD HKCU "${REGUNINSTALL}" "EstimatedSize" "$0"
-	DetailPrint ""
+	WriteRegDWORD HKCU "${REG_KEY_UNINSTALL}" "EstimatedSize" "$0"
+	#DetailPrint ""
+	Exec '$WinDir\SysNative\ie4uinit.exe -show' ; refresh icon cash on Windows 10
 SectionEnd
  
  
 Section "Examples" SectionExamples
-	setOutPath $INSTDIR
+	SetOutPath $INSTDIR
 	!ifdef ISBUILDTEST
-		file /r "examples*"
+		File /r "examples*"
 	!else
-		file /r "..\packages\main\data\examples*"
+		File /r "..\packages\main\data\examples*"
 	!endif
 
 	#!insertmacro MUI_STARTMENU_WRITE_BEGIN pageApplication
@@ -229,34 +243,37 @@ Section "Examples" SectionExamples
 	
 	${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
 	IntFmt $0 "0x%08X" $0
-	WriteRegDWORD HKCU "${REGUNINSTALL}" "EstimatedSize" "$0"
-	DetailPrint ""
+	WriteRegDWORD HKCU "${REG_KEY_UNINSTALL}" "EstimatedSize" "$0"
+	#DetailPrint ""
 SectionEnd
  
  
 Section "Uninstall"
-	rmDir /r "$INSTDIR\bin"
-	rmDir /r "$INSTDIR\examples"
-	rmDir /r "$INSTDIR\images"	
-	delete "$INSTDIR\uninstall.exe"
-	rmDir "$INSTDIR"
-	rmDir "$INSTDIR\.."
+	ReadRegStr $AppNameFull HKCU "${REG_KEY_UNINSTALL}" "DisplayName"
+		  
+	RMDir /r "$INSTDIR\bin"
+	RMDir /r "$INSTDIR\examples"
+	RMDir /r "$INSTDIR\images"	
+	Delete "$INSTDIR\uninstall.exe"
+	RMDir "$INSTDIR"
+	RMDir "$INSTDIR\.."
 	
     #!insertmacro MUI_STARTMENU_GETFOLDER pageApplication $StartMenuFolder
-	delete "$SMPROGRAMS\$StartMenuFolder\${APPNAMEFULL}.lnk"
-    #delete "$SMPROGRAMS\$StartMenuFolder\examples.lnk"
-    #delete "$SMPROGRAMS\$StartMenuFolder\support.url"
-	rmDir "$SMPROGRAMS\$StartMenuFolder"
+	Delete "$SMPROGRAMS\$StartMenuFolder\$AppNameFull.lnk"
+    #Delete "$SMPROGRAMS\$StartMenuFolder\examples.lnk"
+    #Delete "$SMPROGRAMS\$StartMenuFolder\support.url"
+	RMDir "$SMPROGRAMS\$StartMenuFolder"
 	
-  	deleteRegKey HKCU "Software\Classes\.tnh" 
-	deleteRegKey HKCU "Software\Classes\.tnhs"
-	deleteRegKey HKCU "Software\Classes\.tnpp"
-	deleteRegKey HKCU "Software\Classes\tnhfile"	
-	exec '$WinDir\SysNative\ie4uinit.exe -show'
+  	DeleteRegKey HKCU "Software\Classes\.tnh" 
+	DeleteRegKey HKCU "Software\Classes\.tnhs"
+	DeleteRegKey HKCU "Software\Classes\.tnpp"
+	DeleteRegKey HKCU "Software\Classes\tnhfile"	
+	DeleteRegKey HKCU "Software\Classes\tnhsfile"	
+	Exec '$WinDir\SysNative\ie4uinit.exe -show'
 	
-    deleteRegKey HKCU "Software\${COMPANYNAME}\${APPNAME}"
-    deleteRegKey /ifempty HKCU "Software\${COMPANYNAME}"
-	deleteRegKey HKCU "${REGUNINSTALL}"
+    DeleteRegKey HKCU "Software\${APP_NAME}\${EDITION_NAME}"
+    DeleteRegKey /ifempty HKCU "Software\${APP_NAME}"
+	DeleteRegKey HKCU "${REG_KEY_UNINSTALL}"
 SectionEnd
 
 

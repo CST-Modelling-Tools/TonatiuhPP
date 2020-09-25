@@ -132,8 +132,10 @@ void ScriptWindow::fileOpen(QString fileName)
 
     if (fileName.isEmpty())
     {
-        QSettings settings("CyI", "Tonatiuh");
-        QString dirName = settings.value("dirScript", "../examples").toString();
+        QSettings settings("Tonatiuh", "Cyprus");
+        QDir dirUser = QDir::home();
+        dirUser.cd("Desktop");
+        QString dirName = settings.value("dirScript", dirUser.absolutePath()).toString();
 
         fileName = QFileDialog::getOpenFileName(
             this, "Open File", dirName,
@@ -178,8 +180,10 @@ bool ScriptWindow::fileSaveAs(QString fileName)
 {
     if (fileName.isEmpty())
     {
-        QSettings settings("CyI", "Tonatiuh");
-        QString dirName = settings.value("dirScript", "../examples").toString();
+        QSettings settings("Tonatiuh", "Cyprus");
+        QDir dirUser = QDir::home();
+        dirUser.cd("Desktop");
+        QString dirName = settings.value("dirScript", dirUser.absolutePath()).toString();
 
         fileName = QFileDialog::getSaveFileName(
             this, "Save File", dirName,
@@ -337,4 +341,18 @@ QScriptValue ScriptWindow::PrintMessageTimed(QScriptContext* context, QScriptEng
     if (!console) return false;
     console->appendPlainText(msg);
     return true;
+}
+
+void ScriptWindow::on_actionExamples_triggered()
+{
+    if (!isReady()) return;
+
+    QDir dir(QCoreApplication::applicationDirPath());
+    QString fileName = QFileDialog::getOpenFileName(
+        this, "Open File", dir.filePath("../examples/scripts"),
+        "Tonatiuh script file (*.tnhs)"
+    );
+    if (fileName.isEmpty()) return;
+
+    fileOpen(fileName);
 }

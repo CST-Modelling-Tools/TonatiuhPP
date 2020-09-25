@@ -3,7 +3,7 @@
 #include "kernel/shape/ShapeRT.h"
 
 
-class ShapeCone: public ShapeRT
+class TONATIUH_KERNEL ShapeCone: public ShapeRT
 {
     SO_NODE_HEADER(ShapeCone);
 
@@ -19,15 +19,6 @@ public:
 
     SoSFDouble dr;
 
-    NAME_ICON_FUNCTIONS("Cone", ":/ShapeCone.png")
+    NAME_ICON_FUNCTIONS("Cone", ":/shape/ShapeCone.png")
     void updateShapeGL(TShapeKit* parent);
-};
-
-
-
-class ShapeConeFactory: public QObject, public ShapeFactoryT<ShapeCone>
-{
-    Q_OBJECT
-    Q_INTERFACES(ShapeFactory)
-    Q_PLUGIN_METADATA(IID "tonatiuh.ShapeFactory")
 };

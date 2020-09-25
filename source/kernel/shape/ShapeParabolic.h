@@ -3,7 +3,7 @@
 #include "kernel/shape/ShapeRT.h"
 
 
-class ShapeParabolic: public ShapeRT
+class TONATIUH_KERNEL ShapeParabolic: public ShapeRT
 {
     SO_NODE_HEADER(ShapeParabolic);
 
@@ -19,16 +19,6 @@ public:
     SoSFDouble fX;
     SoSFDouble fY;
 
-    NAME_ICON_FUNCTIONS("Parabolic", ":/ShapeParabolic.png")
+    NAME_ICON_FUNCTIONS("Parabolic", ":/shape/ShapeParabolic.png")
     void updateShapeGL(TShapeKit* parent);
-};
-
-
-
-class ShapeParabolicFactory:
-    public QObject, public ShapeFactoryT<ShapeParabolic>
-{
-    Q_OBJECT
-    Q_INTERFACES(ShapeFactory)
-    Q_PLUGIN_METADATA(IID "tonatiuh.ShapeFactory")
 };

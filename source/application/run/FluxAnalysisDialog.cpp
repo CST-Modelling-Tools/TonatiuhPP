@@ -279,9 +279,11 @@ void FluxAnalysisDialog::on_pushButton_clicked()
 {
     QString dirName;
     QString selectedFilter;
+    QSettings settings("Tonatiuh", "Cyprus");
     if (m_path.isEmpty()) {
-        QSettings settings("CyI", "Tonatiuh");
-        dirName = settings.value("dirProjects", "../examples").toString();
+        QDir dirUser = QDir::home();
+        dirUser.cd("Desktop");
+        dirName = settings.value("dirResults", dirUser.absolutePath()).toString();
     } else {
         dirName = m_path;
         QFileInfo info(m_path);
@@ -299,7 +301,7 @@ void FluxAnalysisDialog::on_pushButton_clicked()
          &selectedFilter
     );
     if (fileName.isEmpty()) return;
-
+    settings.setValue("dirResults", dirName);
     m_path = fileName;
 
 

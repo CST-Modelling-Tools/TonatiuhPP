@@ -35,7 +35,7 @@ AboutDialog::~AboutDialog()
 
 void AboutDialog::updateLabel()
 {
-    QSettings settings("CyI", "Tonatiuh");
+    QSettings settings("Tonatiuh", "Cyprus");
     QString theme = settings.value("theme", "").toString();
 
     QString fileIcon;
@@ -59,7 +59,7 @@ void AboutDialog::on_label_customContextMenuRequested(const QPoint& pos)
 {
     Q_UNUSED(pos)
 
-    QSettings settings("CyI", "Tonatiuh");
+    QSettings settings("Tonatiuh", "Cyprus");
     QString theme = settings.value("theme", "").toString();
 
     if (theme == "")

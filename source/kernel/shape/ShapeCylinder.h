@@ -3,7 +3,7 @@
 #include "kernel/shape/ShapeRT.h"
 
 
-class ShapeCylinder: public ShapeRT
+class TONATIUH_KERNEL ShapeCylinder: public ShapeRT
 {
 	SO_NODE_HEADER(ShapeCylinder);
 
@@ -26,15 +26,6 @@ public:
 
     SoSFEnum caps;
 
-    NAME_ICON_FUNCTIONS("Cylinder", ":/ShapeCylinder.png")
+    NAME_ICON_FUNCTIONS("Cylinder", ":/shape/ShapeCylinder.png")
     void updateShapeGL(TShapeKit* parent);
-};
-
-
-
-class ShapeCylinderFactory: public QObject, public ShapeFactoryT<ShapeCylinder>
-{
-    Q_OBJECT
-    Q_INTERFACES(ShapeFactory)
-    Q_PLUGIN_METADATA(IID "tonatiuh.ShapeFactory")
 };

@@ -1,15 +1,21 @@
 #include "CustomSplashScreen.h"
 
+#include <QTimer>
 #include <QPainter>
 //#include <QDebug>
 
 
 CustomSplashScreen::CustomSplashScreen(const QPixmap& p)
 {
+    setWindowFlag(Qt::WindowStaysOnTopHint, true);
+    m_readyTime = false;
+    m_readyWindow = false;
+    QTimer::singleShot(1000, this, &CustomSplashScreen::setFinishTime);
+
     int q = fontMetrics().height(); // 25
 //    qDebug() << q;
     QPixmap pScaled = p.scaledToHeight(12*q, Qt::SmoothTransformation);
-    int h = 1.8*q;
+    int h = 1.6*q;
 
     QPixmap pCustom(pScaled.width(), pScaled.height() + h);
     pCustom.fill();
@@ -34,4 +40,16 @@ void CustomSplashScreen::drawContents(QPainter* painter)
 {
     painter->setPen(m_color);
     painter->drawText(m_rect, m_alignment, m_message);
+}
+
+void CustomSplashScreen::setFinishTime()
+{
+    m_readyTime = true;
+    if (m_readyWindow) close();
+}
+
+void CustomSplashScreen::setFinishWindow()
+{
+    m_readyWindow = true;
+    if (m_readyTime) close();
 }
