@@ -604,9 +604,7 @@ void MainWindow::fileOpen()
 
     // HKEY_CURRENT_USER\Software\Tonatiuh\Cyprus
     QSettings settings("Tonatiuh", "Cyprus");
-    QDir dirUser = QDir::home();
-    dirUser.cd("Desktop");
-    QString dirName = settings.value("dirProjects", dirUser.absolutePath()).toString();
+    QString dirName = settings.value("dirProjects", "").toString();
 
     QString fileName = QFileDialog::getOpenFileName(
         this, "Open File", dirName,
@@ -627,7 +625,7 @@ void MainWindow::on_actionExamples_triggered()
 
     QDir dir(QCoreApplication::applicationDirPath());
     QString fileName = QFileDialog::getOpenFileName(
-        this, "Open File", dir.filePath("../examples"),
+        this, "Open File", dir.filePath("../examples/projects"),
         "Tonatiuh files (*.tnh *.tnpp)"
     );
     if (fileName.isEmpty()) return;
@@ -729,9 +727,7 @@ bool MainWindow::fileSave()
 bool MainWindow::fileSaveAs()
 {
     QSettings settings("Tonatiuh", "Cyprus");
-    QDir dirUser = QDir::home();
-    dirUser.cd("Desktop");
-    QString dirName = settings.value("dirProjects", dirUser.absolutePath()).toString();
+    QString dirName = settings.value("dirProjects", "").toString();
 
     QString fileName = QFileDialog::getSaveFileName(
         this, "Save", dirName,
@@ -762,9 +758,7 @@ void MainWindow::nodeExport(QString fileName)
     // file
     if (fileName.isEmpty()) {
         QSettings settings("Tonatiuh", "Cyprus");
-        QDir dirUser = QDir::home();
-        dirUser.cd("Desktop");
-        QString dirName = settings.value("dirNodes", dirUser.absolutePath()).toString();
+        QString dirName = settings.value("dirProjects", "").toString();
 
         fileName = QFileDialog::getSaveFileName(
             this, "Export Node", dirName,
@@ -773,7 +767,7 @@ void MainWindow::nodeExport(QString fileName)
         if (fileName.isEmpty()) return;
 
         QFileInfo info(fileName);
-        settings.setValue("dirNodes", info.path());
+        settings.setValue("dirProjects", info.path());
     }
 
     // do
@@ -806,9 +800,7 @@ void MainWindow::nodeImport(QString fileName)
     // file
     if (fileName.isEmpty()) {
         QSettings settings("Tonatiuh", "Cyprus");
-        QDir dirUser = QDir::home();
-        dirUser.cd("Desktop");
-        QString dirName = settings.value("dirNodes", dirUser.absolutePath()).toString();
+        QString dirName = settings.value("dirProjects", "").toString();
 
         fileName = QFileDialog::getOpenFileName(
             this, "Import Node", dirName,
@@ -817,7 +809,7 @@ void MainWindow::nodeImport(QString fileName)
         if (fileName.isEmpty()) return;
 
         QFileInfo info(fileName);
-        settings.setValue("dirNodes", info.path());
+        settings.setValue("dirProjects", info.path());
     }
 
     // do

@@ -47,9 +47,7 @@ QString PhotonsFileWidget::getParameterValue(QString name) const
 void PhotonsFileWidget::selectDirectory()
 {
     QSettings settings("Tonatiuh", "Cyprus");
-    QDir dirUser = QDir::home();
-    dirUser.cd("Desktop");
-    QString dirName = settings.value("dirResults", dirUser.absolutePath()).toString();
+    QString dirName = settings.value("dirProjects", "").toString();
 
     dirName = QFileDialog::getExistingDirectory(this, "Save Directory", dirName);
     if (dirName.isEmpty()) return;
@@ -61,6 +59,6 @@ void PhotonsFileWidget::selectDirectory()
 		return;
 	}
 
-    settings.setValue("dirResults", dirName);
+    settings.setValue("dirProjects", dirName);
     ui->directoryEdit->setText(dirName);
 }

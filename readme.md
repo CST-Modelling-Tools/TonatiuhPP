@@ -3,5 +3,5 @@
 
 ## Tonatiuh++ is under development! ##
 
-![Logo](./documentation/SplashScreen.png)
+![Logo](./help/images/SplashScreen.png)
 

@@ -171,8 +171,13 @@ Version: ${VERSION_NAME} (${DATE_NAME})\
 !define REG_KEY_UNINSTALL "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME_FULL}" ; keep space		
 Var AppPath
 
+InstType "Full"
+InstType "Minimal"
+
+
 Section "Tonatiuh" SectionTonatiuh
 	SectionIn RO ; read only, always installed
+	#SectionIn 1 2
 	SetOutPath $INSTDIR
 	!ifdef ISBUILDTEST
 		File /r "bin*"
@@ -230,6 +235,7 @@ SectionEnd
  
  
 Section "Examples" SectionExamples
+	SectionIn 1
 	SetOutPath $INSTDIR
 	!ifdef ISBUILDTEST
 		File /r "examples*"
