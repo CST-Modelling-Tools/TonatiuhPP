@@ -1,15 +1,90 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Log in - Bitbucket</title><script>
-window.WRM=window.WRM||{};window.WRM._unparsedData=window.WRM._unparsedData||{};window.WRM._unparsedErrors=window.WRM._unparsedErrors||{};
-WRM._unparsedData["com.atlassian.plugins.atlassian-plugins-webresource-plugin:context-path.context-path"]="\u0022\u005C/bitbucket\u0022";
-WRM._unparsedData["com.atlassian.bitbucket.server.bitbucket-webpack-INTERNAL:date-format-preference.data"]="\u0022\u0022";
-WRM._unparsedData["com.atlassian.analytics.analytics-client:policy-update-init.policy-update-data-provider"]="false";
-WRM._unparsedData["com.atlassian.analytics.analytics-client:programmatic-analytics-init.programmatic-analytics-data-provider"]="false";
-WRM._unparsedData["com.atlassian.bitbucket.server.feature-wrm-data:user.time.zone.onboarding.data"]="true";
-if(window.WRM._dataArrived)window.WRM._dataArrived();</script>
-<link type="text/css" rel="stylesheet" href="/bitbucket/s/26c1294b62d42286d3a552a052aeefbf-CDN/874844696/3d84ac1/1/7ffaa23f612df69467f160b585b19419/_/download/contextbatch/css/_super/batch.css" data-wrm-key="_super" data-wrm-batch-type="context" media="all">
-<link type="text/css" rel="stylesheet" href="/bitbucket/s/4a5393399f4c76b36226eb26157eb97f-CDN/874844696/3d84ac1/1/35279485dbf16b8ccb088f889334b46f/_/download/contextbatch/css/bitbucket.page.login,-_super/batch.css" data-wrm-key="bitbucket.page.login,-_super" data-wrm-batch-type="context" media="all">
-<link type="text/css" rel="stylesheet" href="/bitbucket/s/33209a2df98c7eb171bdc0914b26c376-CDN/874844696/3d84ac1/1/d5da475339e72b67483a622c62cd9a15/_/download/contextbatch/css/bitbucket.layout.focused,bitbucket.layout.base,atl.general,-_super/batch.css" data-wrm-key="bitbucket.layout.focused,bitbucket.layout.base,atl.general,-_super" data-wrm-batch-type="context" media="all">
-<script type="text/javascript" src="/bitbucket/s/1615391332314a730c3ea7d43cc69f4f-CDN/874844696/3d84ac1/1/7ffaa23f612df69467f160b585b19419/_/download/contextbatch/js/_super/batch.js?locale=en-US" data-wrm-key="_super" data-wrm-batch-type="context" data-initially-rendered></script>
-<script type="text/javascript" src="/bitbucket/s/7783ca176cb27642463c6e5440c80f58-CDN/874844696/3d84ac1/1/35279485dbf16b8ccb088f889334b46f/_/download/contextbatch/js/bitbucket.page.login,-_super/batch.js?locale=en-US" data-wrm-key="bitbucket.page.login,-_super" data-wrm-batch-type="context" data-initially-rendered></script>
-<script type="text/javascript" src="/bitbucket/s/07e6c3956c1adb38fa9f64786b099756-CDN/874844696/3d84ac1/1/d5da475339e72b67483a622c62cd9a15/_/download/contextbatch/js/bitbucket.layout.focused,bitbucket.layout.base,atl.general,-_super/batch.js?locale=en-US" data-wrm-key="bitbucket.layout.focused,bitbucket.layout.base,atl.general,-_super" data-wrm-batch-type="context" data-initially-rendered></script>
-<meta name="application-name" content="Bitbucket"><link rel="shortcut icon" type="image/x-icon" href="/bitbucket/s/874844696/3d84ac1/1/1.0/_/download/resources/com.atlassian.bitbucket.server.bitbucket-webpack-INTERNAL:favicon/favicon.ico" /><link rel="search" href="https://scmt.cyi.ac.cy/bitbucket/plugins/servlet/opensearch-descriptor" type="application/opensearchdescription+xml" title="Bitbucket code search"/></head><body class="aui-page-focused aui-page-focused-small aui-page-size-small bitbucket-theme user-login"><ul id="assistive-skip-links" class="assistive"><li><a href="#content">Skip to content</a></li></ul><div id="page"><!-- start #header --><header id="header" role="banner"><section class="notifications"></section><nav class="aui-header aui-dropdown2-trigger-group" role="navigation"><div class="aui-header-inner"><div class="aui-header-before"><a class=" aui-dropdown2-trigger app-switcher-trigger" aria-controls="app-switcher" aria-haspopup="true" role="button" tabindex="0" data-aui-trigger href="#app-switcher"><span class="aui-icon aui-icon-small aui-iconfont-appswitcher">Linked Applications</span></a><div id="app-switcher" class="aui-dropdown2 aui-style-default" role="menu" aria-hidden="true" data-is-switcher="true" data-environment="{&quot;isUserAdmin&quot;:false,&quot;isAppSuggestionAvailable&quot;:false,&quot;isSiteAdminUser&quot;:false}"><div role="application"><div class="app-switcher-loading">Loading&hellip;</div></div></div></div><div class="aui-header-primary"><h1 id="logo" class="bitbucket-header-logo"><a href="https://scmt.cyi.ac.cy/bitbucket">Bitbucket</a></h1><ul class="aui-nav"></ul></div><div class="aui-header-secondary"><ul class="aui-nav"><li class=" help-link"title="Help"><a class=" aui-dropdown2-trigger aui-dropdown2-trigger-arrowless" aria-controls="com.atlassian.bitbucket.server.bitbucket-server-web-fragments-help-menu" aria-haspopup="true" role="button" tabindex="0" data-aui-trigger><span class="aui-icon aui-icon-small aui-icon-small aui-iconfont-question-circle">Help</span></a><div id="com.atlassian.bitbucket.server.bitbucket-server-web-fragments-help-menu" class="aui-dropdown2 aui-style-default" role="menu" aria-hidden="true"><div role="application"><div class="aui-dropdown2-section help-items-section"><ul class="aui-list-truncate" role="presentation"><li role="presentation"><a href="http://docs.atlassian.com/bitbucketserver/docs-071/Bitbucket+Server+documentation?utm_campaign=in-app-help&amp;amp;utm_medium=in-app-help&amp;amp;utm_source=stash" title="Go to the online documentation for Bitbucket" data-web-item-key="com.atlassian.bitbucket.server.bitbucket-server-web-fragments:general-help">Online help</a></li><li role="presentation"><a href="https://www.atlassian.com/git?utm_campaign=learn-git&amp;utm_medium=in-app-help&amp;utm_source=stash" title="Learn about Git commands &amp; workflows" data-web-item-key="com.atlassian.bitbucket.server.bitbucket-server-web-fragments:learn-git">Learn Git</a></li><li role="presentation"><a href="/bitbucket/getting-started" class="getting-started-page-link" title="Overview of Bitbucket features" data-web-item-key="com.atlassian.bitbucket.server.bitbucket-server-web-fragments:getting-started-page-help-link">Welcome to Bitbucket</a></li><li role="presentation"><a href="/bitbucket/#" class="keyboard-shortcut-link" title="Discover keyboard shortcuts in Bitbucket" data-web-item-key="com.atlassian.bitbucket.server.bitbucket-server-web-fragments:keyboard-shortcuts-help-link">Keyboard shortcuts</a></li><li role="presentation"><a href="http://go.atlassian.com/bitbucket-server-whats-new?utm_campaign=in-app-help&amp;utm_medium=in-app-help&amp;utm_source=stash" title="Learn about what&#39;s new in Bitbucket" data-web-item-key="com.atlassian.bitbucket.server.bitbucket-server-web-fragments:whats-new-link">What&#39;s new</a></li><li role="presentation"><a href="http://go.atlassian.com/bitbucket-server-community?utm_campaign=in-app-help&amp;utm_medium=in-app-help&amp;utm_source=stash" title="Explore the Atlassian community" data-web-item-key="com.atlassian.bitbucket.server.bitbucket-server-web-fragments:community-link">Community</a></li></ul></div></div></div></li><li class=" alerts-menu"title="View system alerts"><a href="#alerts" id="alerts-trigger" class="alerts-menu" title="View system alerts" data-web-item-key="com.atlassian.bitbucket.server.bitbucket-server-web-fragments:global-alerts-menu-item">Alerts</a></li></ul></div></div> <!-- End .aui-header-inner --></nav> <!-- End .aui-header --></header><!-- End #header --><!-- Start #content --><section id="content" role="main" tabindex="-1" data-timezone="-180" ><div class="aui-page-panel content-body"><div class="aui-page-panel-inner"><section class="aui-page-panel-content"><h2>Log in</h2><form class="aui top-label prevent-double-submit " action="/bitbucket/j_atl_security_check" method="post" accept-charset="UTF-8"><div class="field-group"><label for="j_username" >Username</label><input class="text long-field" type="text" id="j_username"  name="j_username"  autofocus accesskey="u"/></div><div class="field-group"><label for="j_password" >Password</label><input class="text long-field" type="password" id="j_password"  name="j_password"  accesskey="p"/></div><div class="aui-group"><fieldset class="group checkbox"><div class="checkbox"><input class="checkbox" type="checkbox" id="_atl_remember_me"  name="_atl_remember_me"  checked="checked"  accesskey="r"/><label for="_atl_remember_me" >Keep me logged in</label></div></fieldset></div><div class="aui-group"><input name="next" type="hidden" value="/projects/TNH/repos/main/raw/examples/cad/parabolaFlat.obj?at=refs%2Fheads%2Fmaster"/><input name="queryString" type="hidden" value="next=/projects/TNH/repos/main/raw/examples/cad/parabolaFlat.obj?at%3Drefs%252Fheads%252Fmaster"/><input class="aui-button aui-button-primary" type="submit" id="submit"  name="submit"  value="Log in" accesskey="s"/><a id="forgot" class="aui-button aui-button-link"  name="forgot" href="/bitbucket/passwordreset" autocomplete="off" tabindex="0">Unable to access your account?</a></div></form></section><!-- .aui-page-panel-content --></div><!-- .aui-page-panel-inner --></div><!-- .aui-page-panel --></section><!-- End #content --><!-- Start #footer --><footer id="footer" role="contentinfo"><section class="notifications"></section><section class="footer-body"><ul><li data-key="footer.license.message">Git repository management for enterprise teams powered by <a href="http://www.atlassian.com/software/bitbucket/">Atlassian Bitbucket</a></li></ul><ul><li>Atlassian Bitbucket <span title="3d84ac10772fec220947fa547b4fec6ca941af0f" id="product-version" data-commitid="3d84ac10772fec220947fa547b4fec6ca941af0f" data-system-build-number="3d84ac1"> v7.1.0</span></li><li data-key="footer.links.documentation"><a href="http://docs.atlassian.com/bitbucketserver/docs-071/Bitbucket+Server+documentation?utm_campaign=in-app-help&amp;utm_medium=in-app-help&amp;utm_source=stash" target="_blank">Documentation</a></li><li data-key="footer.links.jac"><a href="https://jira.atlassian.com/browse/BSERV" target="_blank">Request a feature</a></li><li data-key="footer.links.about"><a href="/bitbucket/about">About</a></li><li data-key="footer.links.contact.atlassian"><a href="http://www.atlassian.com/company/contact/" target="_blank">Contact Atlassian</a></li></ul><div id="footer-logo"><a href="http://www.atlassian.com/" target="_blank">Atlassian</a></div></section></footer><!-- End #footer --></div><script>require('bitbucket/internal/layout/base/base').onReady(null, "Bitbucket" ); require('bitbucket/internal/widget/keyboard-shortcuts/keyboard-shortcuts').onReady();</script><script type="text/javascript">require('bitbucket/internal/page/login/login').onReady();</script></body></html>
+v -0.5 -0.5 0.125
+v -0.5 -0.25 0.078125
+v -0.5 0.0 0.0625
+v -0.5 0.25 0.078125
+v -0.5 0.5 0.125
+v -0.25 -0.5 0.078125
+v -0.25 -0.25 0.03125
+v -0.25 0.0 0.015625
+v -0.25 0.25 0.03125
+v -0.25 0.5 0.078125
+v 0.0 -0.5 0.0625
+v 0.0 -0.25 0.015625
+v 0.0 0.0 0.0
+v 0.0 0.25 0.015625
+v 0.0 0.5 0.0625
+v 0.25 -0.5 0.078125
+v 0.25 -0.25 0.03125
+v 0.25 0.0 0.015625
+v 0.25 0.25 0.03125
+v 0.25 0.5 0.078125
+v 0.5 -0.5 0.125
+v 0.5 -0.25 0.078125
+v 0.5 0.0 0.0625
+v 0.5 0.25 0.078125
+v 0.5 0.5 0.125
+vn 0.19958020746707916 0.19958020746707916 0.9593411684036255
+vn 0.1619356870651245 0.1619356870651245 0.9734236598014832
+vn 0.20279310643672943 0.08142417669296265 0.9758304357528687
+vn 0.1637616753578186 0.041166506707668304 0.9856405854225159
+vn 0.2031034231185913 -0.04025866091251373 0.9783293008804321
+vn 0.16316385567188263 -0.08142420649528503 0.9832333326339722
+vn 0.20047065615653992 -0.16021844744682312 0.966509997844696
+vn 0.16021844744682312 -0.20047065615653992 0.966509997844696
+vn 0.08142417669296265 0.20279310643672943 0.9758304357528687
+vn 0.041166506707668304 0.1637616753578186 0.9856405854225159
+vn 0.0826568678021431 0.0826568678021431 0.9931443929672241
+vn 0.04148726537823677 0.04148726537823677 0.9982772469520569
+vn 0.0826568752527237 -0.041170693933963776 0.9957273006439209
+vn 0.041170693933963776 -0.0826568752527237 0.9957273006439209
+vn 0.08142420649528503 -0.16316385567188263 0.9832333326339722
+vn 0.04025866091251373 -0.2031034380197525 0.9783293008804321
+vn -0.04025866091251373 0.2031034380197525 0.9783293008804321
+vn -0.08142420649528503 0.16316385567188263 0.9832333326339722
+vn -0.041170693933963776 0.0826568752527237 0.9957273006439209
+vn -0.0826568752527237 0.041170693933963776 0.9957273006439209
+vn -0.04148726537823677 -0.04148726537823677 0.9982772469520569
+vn -0.0826568678021431 -0.0826568678021431 0.9931443929672241
+vn -0.041166506707668304 -0.1637616753578186 0.9856405854225159
+vn -0.08142417669296265 -0.20279310643672943 0.9758304357528687
+vn -0.16021844744682312 0.20047065615653992 0.966509997844696
+vn -0.20047065615653992 0.16021844744682312 0.966509997844696
+vn -0.16316385567188263 0.08142420649528503 0.9832333326339722
+vn -0.2031034231185913 0.04025866091251373 0.9783293008804321
+vn -0.1637616753578186 -0.041166506707668304 0.9856405854225159
+vn -0.20279310643672943 -0.08142417669296265 0.9758304357528687
+vn -0.1619356870651245 -0.1619356870651245 0.9734236598014832
+vn -0.19958020746707916 -0.19958020746707916 0.9593411684036255
+s off
+f 1//1 6//1 2//1
+f 7//2 2//2 6//2
+f 2//3 7//3 3//3
+f 8//4 3//4 7//4
+f 3//5 8//5 4//5
+f 9//6 4//6 8//6
+f 4//7 9//7 5//7
+f 10//8 5//8 9//8
+f 6//9 11//9 7//9
+f 12//10 7//10 11//10
+f 7//11 12//11 8//11
+f 13//12 8//12 12//12
+f 8//13 13//13 9//13
+f 14//14 9//14 13//14
+f 9//15 14//15 10//15
+f 15//16 10//16 14//16
+f 11//17 16//17 12//17
+f 17//18 12//18 16//18
+f 12//19 17//19 13//19
+f 18//20 13//20 17//20
+f 13//21 18//21 14//21
+f 19//22 14//22 18//22
+f 14//23 19//23 15//23
+f 20//24 15//24 19//24
+f 16//25 21//25 17//25
+f 22//26 17//26 21//26
+f 17//27 22//27 18//27
+f 23//28 18//28 22//28
+f 18//29 23//29 19//29
+f 24//30 19//30 23//30
+f 19//31 24//31 20//31
+f 25//32 20//32 24//32

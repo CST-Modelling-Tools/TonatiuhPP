@@ -100,16 +100,18 @@ Function nsDialogsPage
 	${NSD_CreateRadioButton} 15u 12u 35u 20u "&Classic"
 	Pop $RadioClassic
 	
-
-	${NSD_CreateIcon} 57u 11u 32u 32u "images\Tonatiuh.ico"
+	#${NSD_CreateIcon} 57u 11u 32u 32u "images\Tonatiuh.ico"
+	${NSD_CreateIcon} 57u 11u 32u 32u ""
 	Pop $0
+	${NSD_SetIcon} $0 "images\Tonatiuh.ico" $0
 
 	${NSD_CreateRadioButton} 15u 45u 35u 20u "&Rising"
 	Pop $RadioRising
 	
-	${NSD_CreateIcon} 57u 43u 32u 32u "images\TonatiuhCy.ico"
+	${NSD_CreateIcon} 57u 43u 32u 32u ""
 	Pop $0
-
+	${NSD_SetIcon} $0 "images\TonatiuhCy.ico" $0
+	
 	${NSD_SetState} $RadioClassic $RadioClassic_State	
 	${NSD_SetState} $RadioRising $RadioRising_State
 	
@@ -222,6 +224,7 @@ Section "Tonatiuh" SectionTonatiuh
 			WriteRegStr HKCU "Software\Classes\tnhsfile\DefaultIcon" "" "$AppPath,2" 
 			WriteRegStr HKCU "${REG_KEY_UNINSTALL}" "DisplayIcon" $AppPath
 		${EndIf}
+		WriteRegStr HKCU "Software\${APP_NAME}\${EDITION_NAME}" "dirProjects" "$DESKTOP"
 		SetOutPath $INSTDIR
 		#WriteINIStr "$SMPROGRAMS\$StartMenuFolder\support.url" "InternetShortcut" "URL" "https://scmt.cyi.ac.cy/bitbucket/projects/tnh/repos/main"
 	#!insertmacro MUI_STARTMENU_WRITE_END
