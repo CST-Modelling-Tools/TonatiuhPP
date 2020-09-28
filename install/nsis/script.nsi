@@ -208,7 +208,7 @@ Section "Tonatiuh" SectionTonatiuh
 		StrCpy $AppPath "$INSTDIR\bin\${APP_NAME}-Application.exe"
 		# add -Application because Windows indexing shows old icon
 		WriteRegStr HKCU "Software\Classes\tnhfile\shell\Open\Command" "" "$\"$AppPath$\" -i=$\"%1$\""	
-		WriteRegStr HKCU "Software\Classes\tnhsfile\shell\Open\Command" "" "$\"$AppPath$\" -i=$\"%1$\" -s"	
+		WriteRegStr HKCU "Software\Classes\tnhsfile\shell\Open\Command" "" "$\"$AppPath$\" -i=$\"%1$\" -w"	
 		${If} $RadioClassic_State == 1
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$AppNameFull.lnk" $AppPath "" $AppPath 1
 			WriteRegStr HKCU "Software\${APP_NAME}\${EDITION_NAME}" "theme" ""

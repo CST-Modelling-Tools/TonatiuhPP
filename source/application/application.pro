@@ -29,6 +29,7 @@ HEADERS += \
     main/MainWindow.h \
     main/PluginManager.h \
     main/UndoView.h \
+    parameters/ComboBoxDelegate.h \
     parameters/ParametersDelegate.h \
     parameters/ParametersEditor.h \
     parameters/ParametersItemField.h \
@@ -40,6 +41,7 @@ HEADERS += \
     run/FluxAnalysisDialog.h \
     run/RayTracingDialog.h \
     run/SelectSurfaceDialog.h \
+    script/AboutScriptDialog.h \
     script/CodeEditor.h \
     script/FileObject.h \
     script/LineNumbers.h \
@@ -85,6 +87,7 @@ SOURCES += \
     main/PluginManager.cpp \
     main/UndoView.cpp \
     main/main.cpp \
+    parameters/ComboBoxDelegate.cpp \
     parameters/ParametersDelegate.cpp \
     parameters/ParametersEditor.cpp \
     parameters/ParametersItemField.cpp \
@@ -96,6 +99,7 @@ SOURCES += \
     run/FluxAnalysisDialog.cpp \
     run/RayTracingDialog.cpp \
     run/SelectSurfaceDialog.cpp \
+    script/AboutScriptDialog.cpp \
     script/CodeEditor.cpp \
     script/FileObject.cpp \
     script/LineNumbers.cpp \
@@ -129,6 +133,7 @@ FORMS += \
     main/MainWindow.ui \
     main/UndoView.ui \
     parameters/ParametersEditor.ui \
+    script/AboutScriptDialog.ui \
     script/ScriptWindow.ui \
     widgets/AboutDialog.ui \
     widgets/AirDialog.ui \

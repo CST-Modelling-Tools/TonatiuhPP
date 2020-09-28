@@ -27,7 +27,7 @@
 #include "ParametersItemField.h"
 #include "ParametersItemNode.h"
 #include "ParametersEditor.h"
-
+#include "ComboBoxDelegate.h"
 
 ParametersDelegate::ParametersDelegate(QObject* parent):
     QStyledItemDelegate(parent)
@@ -55,6 +55,7 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
             editor,  SIGNAL(activated(int)),
             editor, SLOT(close())
         );
+        editor->setItemDelegate(new ComboBoxDelegate);
         return editor;
     }
     else if (SoSFBool* f = dynamic_cast<SoSFBool*>(field))
@@ -66,6 +67,7 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
             editor, SIGNAL(activated(int)),
             this, SLOT(onCloseEditor())
         );
+        editor->setItemDelegate(new ComboBoxDelegate);
         return editor;
     }
     else if (SoSFNode* f = dynamic_cast<SoSFNode*>(field))
@@ -89,6 +91,11 @@ QWidget* ParametersDelegate::createEditor(QWidget* parent, const QStyleOptionVie
             editor, SIGNAL(activated(int)),
             this, SLOT(onCloseEditor())
         );
+        editor->setItemDelegate(new ComboBoxDelegate);
+        editor->setMaxVisibleItems(16);
+//        editor->setFont(((QWidget*)this->parent())->font());
+//        editor->setFont(QFont("Segoe UI", 9));
+//        editor->setFont(QFont("MS Shell Dlg 2", 8));
         return editor;
     }
     else if (SoSFInt32* f = dynamic_cast<SoSFInt32*>(field))
@@ -169,6 +176,7 @@ void ParametersDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptio
     }
 }
 
+#include <QListView>
 void ParametersDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
     ParametersModel* modelP = static_cast<ParametersModel*>(model);
@@ -205,6 +213,7 @@ void ParametersDelegate::setModelData(QWidget* editor, QAbstractItemModel* model
         MainWindow* main = modelP->getMain();
         TFactory* tf = main->getPlugins()->getFactories(node)[w->currentIndex()];
         modelP->setData(kit, name, tf->create());
+
         return;
     }
     else if (dynamic_cast<SoSFInt32*>(field))

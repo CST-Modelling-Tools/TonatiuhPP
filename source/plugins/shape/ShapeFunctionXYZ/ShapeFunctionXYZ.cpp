@@ -34,7 +34,7 @@ ShapeFunctionXYZ::ShapeFunctionXYZ()
 
     SO_NODE_ADD_FIELD( functionX, ("u") );
     SO_NODE_ADD_FIELD( functionY, ("v") );
-    SO_NODE_ADD_FIELD( functionZ, ("(x*x + y*y)/4") );
+    SO_NODE_ADD_FIELD( functionZ, ("(u*u + v*v)/4") );
     SO_NODE_ADD_FIELD( dims, (10, 10) );
 }
 
@@ -96,7 +96,9 @@ void ShapeFunctionXYZ::buildMesh(TShapeKit* parent)
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
     QSize dimensions(dims.getValue()[0], dims.getValue()[1]);
     vec2d wh = profile->getBox().size();
-    double resolution = std::min(wh.x/(dimensions.width() - 1), wh.y/(dimensions.height() - 1));
+    double resolutionU = wh.x/(dimensions.width() - 1);
+    double resolutionV = wh.y/(dimensions.height() - 1);
+    double resolution = std::min(resolutionU, resolutionV);
 
     vertices.clear();
     normals.clear();
@@ -148,37 +150,60 @@ void ShapeFunctionXYZ::buildMesh(TShapeKit* parent)
 
     // fill z
     QScriptEngine engine;
-    QString fZ = functionZ.getValue().getString();
+    QString textX = functionX.getValue().getString();
+    QString textY = functionY.getValue().getString();
+    QString textZ = functionZ.getValue().getString();
     QScriptValue object = engine.evaluate(QString(
         "({ unitName: 'Shape', "
-        "findZ: function(x, y) {return %1;}"
+        "fX: function(u, v) {return %1;}, "
+        "fY: function(u, v) {return %2;}, "
+        "fZ: function(u, v) {return %3;} "
         " })"
-    ).arg(fZ));
-    QScriptValue findZ = object.property("findZ");
-
-
-    for (SbVec3f& v : vertices) {
-        QScriptValue ansZ = findZ.call(object, QScriptValueList() << v[0] << v[1]);
-        v[2] = ansZ.toNumber();
-    }
+    ).arg(textX, textY, textZ));
+    QScriptValue fX = object.property("fX");
+    QScriptValue fY = object.property("fY");
+    QScriptValue fZ = object.property("fZ");
 
     normals = vertices;
-    double h = resolution/100;
-    for (SbVec3f& v : normals) {
-        double x0 = v[0];
-        double y0 = v[1];
+    for (SbVec3f& p : vertices) {
+        QScriptValue ansX = fX.call(object, QScriptValueList() << p[0] << p[1]);
+        QScriptValue ansY = fY.call(object, QScriptValueList() << p[0] << p[1]);
+        QScriptValue ansZ = fZ.call(object, QScriptValueList() << p[0] << p[1]);
+        p.setValue(ansX.toNumber(), ansY.toNumber(), ansZ.toNumber());
+    }
 
-        double zL = findZ.call(object, QScriptValueList() << x0 - h << y0).toNumber();
-        double zR = findZ.call(object, QScriptValueList() << x0 + h << y0).toNumber();
-        double dfx = (zR - zL)/(2*h);
+    double hu = resolutionU/100;
+    double hv = resolutionV/100;
+    for (SbVec3f& p : normals) {
+        double u0 = p[0];
+        double v0 = p[1];
+        double pL, pR;
 
-        zL = findZ.call(object, QScriptValueList() << x0 << y0 - h).toNumber();
-        zR = findZ.call(object, QScriptValueList() << x0 << y0 + h).toNumber();
-        double dfy = (zR - zL)/(2*h);
+        vec3d dfdu;
+        pL = fX.call(object, QScriptValueList() << u0 - hu << v0).toNumber();
+        pR = fX.call(object, QScriptValueList() << u0 + hu << v0).toNumber();
+        dfdu.x = (pR - pL)/(2*hu);
+        pL = fY.call(object, QScriptValueList() << u0 - hu << v0).toNumber();
+        pR = fY.call(object, QScriptValueList() << u0 + hu << v0).toNumber();
+        dfdu.y = (pR - pL)/(2*hu);
+        pL = fZ.call(object, QScriptValueList() << u0 - hu << v0).toNumber();
+        pR = fZ.call(object, QScriptValueList() << u0 + hu << v0).toNumber();
+        dfdu.z = (pR - pL)/(2*hu);
 
-        vec3d nv(-dfx, -dfy, 1);
+        vec3d dfdv;
+        pL = fX.call(object, QScriptValueList() << u0 << v0 - hv).toNumber();
+        pR = fX.call(object, QScriptValueList() << u0 << v0 + hv).toNumber();
+        dfdv.x = (pR - pL)/(2*hv);
+        pL = fY.call(object, QScriptValueList() << u0 << v0 - hv).toNumber();
+        pR = fY.call(object, QScriptValueList() << u0 << v0 + hv).toNumber();
+        dfdv.y = (pR - pL)/(2*hv);
+        pL = fZ.call(object, QScriptValueList() << u0 << v0 - hv).toNumber();
+        pR = fZ.call(object, QScriptValueList() << u0 << v0 + hv).toNumber();
+        dfdv.z = (pR - pL)/(2*hv);
+
+        vec3d nv = cross(dfdu, dfdv);
         nv.normalize();
-        v.setValue(nv.x, nv.y, nv.z);
+        p.setValue(nv.x, nv.y, nv.z);
     }
 
     // fill triangles

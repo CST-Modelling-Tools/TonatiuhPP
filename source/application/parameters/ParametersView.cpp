@@ -1,6 +1,7 @@
 #include "ParametersView.h"
 
 #include "ParametersDelegate.h"
+#include <QApplication>
 
 
 ParametersView::ParametersView(QWidget* parent):
@@ -20,11 +21,27 @@ ParametersView::ParametersView(QWidget* parent):
 
     setStyleSheet(R"(
 QLineEdit {
-border: 1px solid #c8dbe5;
-selection-background-color: #c8dbe5;
-selection-color: black;
+    border: 1px solid #c8dbe5;
+    selection-background-color: #c8dbe5;
+    selection-color: black;
 }
-     )");
+
+QComboBox QAbstractItemView::item {
+  padding-bottom: 0.2ex;
+}
+
+    )");
+// border: 2px solid darkgray;
+// selection-background-color: lightgray;
+//    QComboBox QAbstractItemView::item {
+//      padding-bottom: 0.2ex;
+//    }
+
+//    QComboBox QAbstractItemView::separator {
+//      padding-bottom: 0.2ex;
+//    }
+
+//    QApplication::setEffectEnabled(Qt::UI_AnimateCombo, false);
 }
 
 ParametersModel* ParametersView::getModel()

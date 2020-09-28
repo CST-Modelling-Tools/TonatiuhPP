@@ -55,6 +55,11 @@ int main(int argc, char** argv)
     );
     parser.addOption(optionTest);
 
+    QCommandLineOption optionWindow( // -w
+        "w", "Window mode"
+    );
+    parser.addOption(optionWindow);
+
     // processing
     parser.process(app);
 //    bool isTest = parser.isSet(optionTest);
@@ -76,7 +81,7 @@ int main(int argc, char** argv)
 //    QString fileName = parser.positionalArguments()[0];
     QString fileName = parser.value(optionInput);
     QFileInfo fileInfo(fileName);
-    if (fileInfo.completeSuffix() != "tnhs")
+    if (fileInfo.completeSuffix() != "tnhs" || parser.isSet(optionWindow))
     {
         QPixmap pixmap(filePixmap);
         CustomSplashScreen splash(pixmap);

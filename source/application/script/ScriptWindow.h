@@ -49,6 +49,8 @@ private slots:
 
     void on_actionExamples_triggered();
 
+    void on_actionAbout_triggered();
+
 private:
     Ui::ScriptWindow* ui;
 

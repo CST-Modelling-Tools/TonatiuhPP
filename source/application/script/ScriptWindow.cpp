@@ -22,6 +22,7 @@ Q_DECLARE_METATYPE(QVector<QVariant>)
 #include "SyntaxHighlighter.h"
 #include "ScriptRayTracer.h"
 #include "tonatiuh_script.h"
+#include "AboutScriptDialog.h"
 
 Q_SCRIPT_DECLARE_QMETAOBJECT(NodeObject, QObject*)
 Q_SCRIPT_DECLARE_QMETAOBJECT(FileObject, QObject*)
@@ -351,4 +352,10 @@ void ScriptWindow::on_actionExamples_triggered()
     if (fileName.isEmpty()) return;
 
     fileOpen(fileName);
+}
+
+void ScriptWindow::on_actionAbout_triggered()
+{
+    AboutScriptDialog dialog;
+    dialog.exec();
 }

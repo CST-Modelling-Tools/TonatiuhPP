@@ -88,6 +88,7 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="actionExamples"/>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Run"/>
@@ -160,6 +161,15 @@
    </property>
    <property name="text">
     <string>Examples...</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/about/info.png</normaloff>:/images/about/info.png</iconset>
+   </property>
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

@@ -111,7 +111,7 @@ void finishManipulator(void* data, SoDragger* /*dragger*/)
 }
 
 
-MainWindow::MainWindow(QString tonatiuhFile, CustomSplashScreen* splash, QWidget* parent, Qt::WindowFlags flags):
+MainWindow::MainWindow(QString fileName, CustomSplashScreen* splash, QWidget* parent, Qt::WindowFlags flags):
     QMainWindow(parent, flags),
     ui(new Ui::MainWindow),
     m_document(0),
@@ -155,8 +155,9 @@ MainWindow::MainWindow(QString tonatiuhFile, CustomSplashScreen* splash, QWidget
     readSettings();
 
     if (splash) splash->setMessage("Opening file");
-    if (!tonatiuhFile.isEmpty()) {
-        StartOver(tonatiuhFile);
+    QFileInfo fileInfo(fileName);
+    if (!fileName.isEmpty() && fileInfo.completeSuffix() != "tnhs") {
+        StartOver(fileName);
     } else {
         SetCurrentFile("");
         SoPerspectiveCamera* camera = (SoPerspectiveCamera*) m_graphicView[0]->getCamera();
@@ -213,6 +214,13 @@ border-width: 0 0 1 0;
 }
 
     )");
+
+    if (fileInfo.completeSuffix() == "tnhs") {
+        ScriptWindow* window = new ScriptWindow(this, 0);
+        window->setAttribute(Qt::WA_DeleteOnClose);
+        window->show();
+        window->fileOpen(fileName);
+    }
 }
 
 MainWindow::~MainWindow()
