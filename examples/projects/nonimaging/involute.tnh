@@ -14,7 +14,7 @@ TSceneKit {
       SunPosition {
         fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
         azimuth 0
-        elevation 0
+        elevation 5
 
       }
       aperture 
@@ -51,7 +51,9 @@ TSceneKit {
         ProfileRectangular {
           fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
           uMin 0
-          uMax 3.14
+          uMax 6.28
+          vMin -0.5
+          vMax 0.5
 
         }
         materialRT 

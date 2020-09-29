@@ -18,10 +18,18 @@ ProfilePolygon::ProfilePolygon()
     SO_NODE_CONSTRUCTOR(ProfilePolygon);
 
 //    SO_NODE_ADD_FIELD( points, (0., 0.) ); // single value only
-    float vs[][2] = {
+//    float vs[][2] = { // rhombus
+//        {0.5, 0.},
+//        {0., 0.5},
+//        {-0.5, 0.},
+//        {0., -0.5}
+//    };
+    float vs[][2] = { // chevron
+        {0., 0.},
         {0.5, 0.},
-        {0., 0.5},
-        {-0.5, 0.},
+        {0.5, 0.5},
+        {-0.5, 0.5},
+        {-0.5, -0.5},
         {0., -0.5}
     };
     points.setValues(0, 4, vs);

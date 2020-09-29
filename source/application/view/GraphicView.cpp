@@ -1,5 +1,6 @@
 #include <iostream>
 #include <QVariant>
+#include <QVBoxLayout>
 
 #include <Inventor/actions/SoBoxHighlightRenderAction.h>
 #include <Inventor/nodes/SoSeparator.h>
@@ -31,6 +32,9 @@ GraphicView::GraphicView(QWidget* parent):
     m_graphicRoot(0),
     m_viewer(0)
 {
+    QVBoxLayout* layout = new QVBoxLayout;
+    setLayout(layout);
+
     m_viewer = new SoQtExaminerViewer(this);
 
     SoBoxHighlightRenderAction* highlighter = new SoBoxHighlightRenderAction();
@@ -65,7 +69,8 @@ void GraphicView::setSceneGraph(GraphicRoot* sceneGraphRoot)
 
 SbViewportRegion GraphicView::getViewportRegion() const
 {
-    return m_viewer->getViewportRegion();
+    return SbViewportRegion();
+//    return m_viewer->getViewportRegion();
 }
 
 SoCamera* GraphicView::getCamera() const

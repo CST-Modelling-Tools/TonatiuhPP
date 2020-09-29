@@ -160,12 +160,12 @@ MainWindow::MainWindow(QString fileName, CustomSplashScreen* splash, QWidget* pa
         StartOver(fileName);
     } else {
         SetCurrentFile("");
-        SoPerspectiveCamera* camera = (SoPerspectiveCamera*) m_graphicView[0]->getCamera();
-//        camera->focalDistance = 0.5;
-        SbVec3f target(0., 0., 0.);
-        camera->position = target + SbVec3f(0, 0, camera->focalDistance.getValue());
-        camera->pointAt(target, SbVec3f(0., 1., 0.));
-        camera->heightAngle = 30.*gcf::degree;
+//        SoPerspectiveCamera* camera = (SoPerspectiveCamera*) m_graphicView[0]->getCamera();
+////        camera->focalDistance = 0.5;
+//        SbVec3f target(0., 0., 0.);
+//        camera->position = target + SbVec3f(0, 0, camera->focalDistance.getValue());
+//        camera->pointAt(target, SbVec3f(0., 1., 0.));
+//        camera->heightAngle = 30.*gcf::degree;
         ui->sceneView->expandToDepth(1);
     }
 
@@ -214,13 +214,6 @@ border-width: 0 0 1 0;
 }
 
     )");
-
-    if (fileInfo.completeSuffix() == "tnhs") {
-        ScriptWindow* window = new ScriptWindow(this, 0);
-        window->setAttribute(Qt::WA_DeleteOnClose);
-        window->show();
-        window->fileOpen(fileName);
-    }
 }
 
 MainWindow::~MainWindow()
@@ -236,6 +229,14 @@ MainWindow::~MainWindow()
 TSceneKit* MainWindow::getSceneKit()
 {
     return m_document->getSceneKit();
+}
+
+void MainWindow::openFileScript(QString fileName)
+{
+    ScriptWindow* window = new ScriptWindow(this, 0);
+    window->setAttribute(Qt::WA_DeleteOnClose);
+    window->show();
+    window->fileOpen(fileName);
 }
 
 void MainWindow::SetupDocument()
@@ -945,13 +946,13 @@ void MainWindow::showWarning(QString message)
 }
 
 //View menu actions
-void MainWindow::on_actionViewAxes_toggled()
-{
-    m_graphicView[0]->showAxes(ui->actionViewAxes->isChecked());
-    m_graphicView[1]->showAxes(ui->actionViewAxes->isChecked());
-    m_graphicView[2]->showAxes(ui->actionViewAxes->isChecked());
-    m_graphicView[3]->showAxes(ui->actionViewAxes->isChecked());
-}
+//void MainWindow::on_actionViewAxes_toggled()
+//{
+//    m_graphicView[0]->showAxes(ui->actionViewAxes->isChecked());
+//    m_graphicView[1]->showAxes(ui->actionViewAxes->isChecked());
+//    m_graphicView[2]->showAxes(ui->actionViewAxes->isChecked());
+//    m_graphicView[3]->showAxes(ui->actionViewAxes->isChecked());
+//}
 
 void MainWindow::on_actionQuadView_toggled()
 {
@@ -2619,7 +2620,7 @@ bool MainWindow::StartOver(const QString& fileName)
 
     ui->sceneView->expandToDepth(1);
     Select("//Node"); // ?
-    on_actionViewAll_triggered(); // discard sun
+//    on_actionViewAll_triggered(); // discard sun
 
 
     GridNode* node = (GridNode*) m_document->getSceneKit()->getPart("world.terrain.grid", true);

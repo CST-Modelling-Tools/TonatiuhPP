@@ -23,7 +23,7 @@ public:
     virtual bool isInside(double /*x*/, double /*y*/) const {return true;}
     virtual QVector<vec2d> makeMesh(QSize& /*dims*/) const {return {};}
 
-    NAME_ICON_FUNCTIONS("X", ":/MaterialX.png") // use some default icon
+    NAME_ICON_FUNCTIONS("X", ":/profiles/ProfileX.png") // use some default icon
 
     static vec2d getAbsMin(const Box2D& b);
     static vec2d getAbsMax(const Box2D& b);

@@ -220,8 +220,8 @@ Section "Tonatiuh" SectionTonatiuh
 		${Else}
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$AppNameFull.lnk" $AppPath
 			WriteRegStr HKCU "Software\${APP_NAME}\${EDITION_NAME}" "theme" "Cyprus"
-			WriteRegStr HKCU "Software\Classes\tnhfile\DefaultIcon" "" $AppPath 
-			WriteRegStr HKCU "Software\Classes\tnhsfile\DefaultIcon" "" "$AppPath,2" 
+			WriteRegStr HKCU "Software\Classes\tnhfile\DefaultIcon" "" "$AppPath,2" 
+			WriteRegStr HKCU "Software\Classes\tnhsfile\DefaultIcon" "" "$AppPath,3" 
 			WriteRegStr HKCU "${REG_KEY_UNINSTALL}" "DisplayIcon" $AppPath
 		${EndIf}
 		WriteRegStr HKCU "Software\${APP_NAME}\${EDITION_NAME}" "dirProjects" "$DESKTOP"

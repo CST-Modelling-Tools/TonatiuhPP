@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -14,7 +12,7 @@
    viewBox="0 0 210 297"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
    sodipodi:docname="materials.svg"
    inkscape:export-filename="C:\Neo\Programming\Qt\Projects\TonatiuhProject\images\MetaShapes\MaterialVirtual.png"
    inkscape:export-xdpi="14.66079"
@@ -591,16 +589,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.0871767"
-     inkscape:cx="80.927161"
-     inkscape:cy="679.44296"
+     inkscape:zoom="0.54358835"
+     inkscape:cx="61.771625"
+     inkscape:cy="358.31851"
      inkscape:document-units="mm"
      inkscape:current-layer="svg8"
      showgrid="false"
-     inkscape:window-width="2560"
-     inkscape:window-height="1377"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-width="1500"
+     inkscape:window-height="938"
+     inkscape:window-x="-6"
+     inkscape:window-y="-6"
      inkscape:window-maximized="1"
      inkscape:snap-global="false"
      inkscape:snap-bbox="true"
@@ -609,7 +607,8 @@
      inkscape:snap-bbox-edge-midpoints="true"
      inkscape:snap-bbox-midpoints="true"
      showguides="false"
-     inkscape:guide-bbox="true">
+     inkscape:guide-bbox="true"
+     inkscape:document-rotation="0">
     <sodipodi:guide
        position="-945.27517,-541.36295"
        orientation="1,0"
@@ -643,87 +642,10 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <rect
-     style="opacity:1;fill:#805d5d;fill-opacity:0.00392157;stroke:none;stroke-width:1.16848326;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.79527664;stroke-opacity:1;paint-order:markers fill stroke"
-     id="rect4637"
-     width="25.604984"
-     height="25.599998"
-     x="159.64555"
-     y="14.341442"
-     inkscape:export-xdpi="63.500031"
-     inkscape:export-ydpi="63.500031"
-     inkscape:export-filename="C:\Users\v.grigoriev\Desktop\material.png" />
-  <path
-     style="fill:none;fill-opacity:1;stroke:#bababa;stroke-width:1.60463929;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     d="m 174.24904,19.056588 9.97957,-0.009 -0.009,7.06382 -12.28012,0.0531 -0.0255,12.54724"
-     id="path4635"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="ccccc"
-     inkscape:export-filename="C:\Users\v.grigoriev\Desktop\material.png"
-     inkscape:export-xdpi="63.500031"
-     inkscape:export-ydpi="63.500031" />
   <g
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Layer 2" />
-  <rect
-     style="opacity:1;fill:#805d5d;fill-opacity:0.00392157;stroke:none;stroke-width:1.16848326;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.79527664;stroke-opacity:1;paint-order:markers fill stroke"
-     id="rect929"
-     width="25.604984"
-     height="18.637646"
-     x="19.916389"
-     y="16.276272"
-     inkscape:export-xdpi="14.66079"
-     inkscape:export-ydpi="14.66079"
-     inkscape:export-filename="C:\Users\Victor\Desktop\nodeMaterial.png" />
-  <path
-     inkscape:connector-curvature="0"
-     id="path931"
-     d="M 43.61668,18.761671 30.804244,33.30603"
-     style="fill:#d45500;stroke:#bf7f00;stroke-width:1.11240804;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     inkscape:export-xdpi="14.66079"
-     inkscape:export-ydpi="14.66079"
-     sodipodi:nodetypes="cc"
-     inkscape:export-filename="C:\Users\Victor\Desktop\nodeMaterial.png" />
-  <path
-     style="fill:#000000;fill-opacity:0;stroke:#bf7f00;stroke-width:1.14330924;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     d="M 21.205262,18.136752 34.906394,34.091403"
-     id="path934"
-     inkscape:connector-curvature="0"
-     inkscape:export-xdpi="14.66079"
-     inkscape:export-ydpi="14.66079"
-     sodipodi:nodetypes="cc"
-     inkscape:export-filename="C:\Users\Victor\Desktop\nodeMaterial.png" />
-  <path
-     style="opacity:1;fill:#bf7f00;fill-opacity:1;stroke:none;stroke-width:0.34367782;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.79527664;stroke-opacity:1;paint-order:markers fill stroke"
-     inkscape:transform-center-x="1.6681781"
-     inkscape:transform-center-y="-0.41335819"
-     d="m 28.762107,26.878669 -6.893474,-3.163087 2.798779,-1.591872 1.88013,-2.49184 z"
-     id="path936"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="ccccc"
-     inkscape:export-xdpi="14.66079"
-     inkscape:export-ydpi="14.66079"
-     inkscape:export-filename="C:\Users\Victor\Desktop\nodeMaterial.png" />
-  <rect
-     style="opacity:1;fill:#bfc7ce;fill-opacity:1;stroke:none;stroke-width:0.05490883;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.79527664;stroke-opacity:1;paint-order:markers fill stroke"
-     id="rect944"
-     width="25.711237"
-     height="10.599833"
-     x="19.865761"
-     y="31.384653"
-     inkscape:export-xdpi="14.66079"
-     inkscape:export-ydpi="14.66079"
-     inkscape:export-filename="C:\Users\Victor\Desktop\nodeMaterial.png" />
-  <path
-     inkscape:export-ydpi="14.66079"
-     inkscape:export-xdpi="14.66079"
-     sodipodi:nodetypes="ccccc"
-     inkscape:connector-curvature="0"
-     id="path964"
-     d="m 33.271519,31.372406 -1.381023,-0.02102 3.752558,10.610997 1.381569,-0.0035 z"
-     style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#bf7f00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.25253582;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
-     inkscape:export-filename="C:\Users\Victor\Desktop\nodeMaterial.png" />
   <rect
      inkscape:export-filename="C:\Users\Victor\Desktop\MaterialSpecular.png"
      inkscape:export-ydpi="14.66079"
@@ -928,29 +850,6 @@
      cx="170.78247"
      cy="84.877678"
      r="2.3963547" />
-  <rect
-     style="opacity:1;fill:#94a6b6;fill-opacity:1;stroke:none;stroke-width:0.55270594;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-     id="rect4623"
-     width="21.287109"
-     height="8.8433723"
-     x="160.65112"
-     y="14.630871"
-     ry="1.4769002"
-     rx="1.292758"
-     inkscape:export-filename="C:\Users\v.grigoriev\Desktop\material.png"
-     inkscape:export-xdpi="63.500031"
-     inkscape:export-ydpi="63.500031" />
-  <rect
-     y="-173.98149"
-     x="30.300701"
-     height="4.1346583"
-     width="9.5884228"
-     id="rect4625"
-     style="opacity:1;fill:#6c6c6c;fill-opacity:1;stroke:none;stroke-width:0.35775432;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-     transform="rotate(90)"
-     inkscape:export-filename="C:\Users\v.grigoriev\Desktop\material.png"
-     inkscape:export-xdpi="63.500031"
-     inkscape:export-ydpi="63.500031" />
   <rect
      style="opacity:1;fill:#805d5d;fill-opacity:0.00392157;stroke:none;stroke-width:1.16848326;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.79527664;stroke-opacity:1;paint-order:markers fill stroke"
      id="rect914"

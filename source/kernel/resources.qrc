@@ -6,7 +6,6 @@
         <file>air/AirAbstract.png</file>
         <file>air/AirVacuum.png</file>
         <file>photons/PhotonsDefault.png</file>
-        <file>profiles/Profile.png</file>
         <file>profiles/ProfileBox.png</file>
         <file>profiles/ProfileCircular.png</file>
         <file>profiles/ProfilePolygon.png</file>

@@ -50,9 +50,7 @@ background-color: #d7e3ed;
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="GraphicView" name="widgetView3D" native="true">
-       <layout class="QHBoxLayout" name="horizontalLayout_3"/>
-      </widget>
+      <widget class="GraphicView" name="widgetView3D" native="true"/>
       <widget class="QSplitter" name="splitterV">
        <property name="orientation">
         <enum>Qt::Vertical</enum>

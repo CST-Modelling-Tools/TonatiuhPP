@@ -4,7 +4,7 @@ SUBDIRS += ShapeHyperbolic
 SUBDIRS += ShapeElliptic
 
 SUBDIRS += ShapeMesh
-SUBDIRS += ShapeFunctionN
+SUBDIRS += ShapeMapN
 SUBDIRS += ShapeFunctionZ
 SUBDIRS += ShapeFunctionXYZ
 

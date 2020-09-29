@@ -61,6 +61,7 @@ public:
 
     PluginManager* getPlugins() {return m_pluginManager;}
     TSceneKit* getSceneKit();
+    void openFileScript(QString fileName);
 
     void StartManipulation(SoDragger* dragger);
     void FinishManipulation();
@@ -169,7 +170,7 @@ private slots:
     void SoManip_to_SoTransform();
 
     // view actions
-    void on_actionViewAxes_toggled();
+//    void on_actionViewAxes_toggled();
     void on_actionViewAll_triggered();
     void on_actionViewSelected_triggered();
     void on_actionViewTop_triggered();

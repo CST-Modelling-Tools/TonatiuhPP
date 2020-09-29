@@ -12,6 +12,7 @@ class TSeparatorKit;
 
 //!  GraphicView class implements a 3D representation of items from a model.
 
+
 class GraphicView: public QWidget
 {
     Q_OBJECT

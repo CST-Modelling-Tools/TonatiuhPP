@@ -235,7 +235,7 @@ void PluginManager::sort()
         "Cone",
         "",
         "Mesh",
-        "FunctionN",
+        "MapN",
         "FunctionZ",
         "FunctionXYZ"
     };

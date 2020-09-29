@@ -9,7 +9,6 @@
 #include <QTextStream>
 
 #include <Inventor/Qt/SoQt.h>
-
 #include "MainWindow.h"
 
 QTextStream cerr(stderr);
@@ -96,8 +95,11 @@ int main(int argc, char** argv)
         MainWindow mw(fileName, &splash);
         mw.show();
         splash.setFinishWindow();
+        if (fileInfo.completeSuffix() == "tnhs")
+            mw.openFileScript(fileName);
 
-        return app.exec();
+        int code = app.exec();
+        return code;
     }
     else
     {

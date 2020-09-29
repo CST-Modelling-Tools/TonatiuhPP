@@ -10,7 +10,7 @@ CustomSplashScreen::CustomSplashScreen(const QPixmap& p)
     setWindowFlag(Qt::WindowStaysOnTopHint, true);
     m_readyTime = false;
     m_readyWindow = false;
-    QTimer::singleShot(1000, this, &CustomSplashScreen::setFinishTime);
+    QTimer::singleShot(1'000, this, &CustomSplashScreen::setFinishTime);
 
     int q = fontMetrics().height(); // 25
 //    qDebug() << q;
