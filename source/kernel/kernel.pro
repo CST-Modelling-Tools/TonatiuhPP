@@ -44,6 +44,7 @@ HEADERS += \
     scene/GridNode.h \
     scene/LocationNode.h \
     scene/MaterialGL.h \
+    scene/TCameraKit.h \
     scene/TSFRotation.h \
     scene/TSceneKit.h \
     scene/TSeparatorKit.h \
@@ -107,6 +108,7 @@ SOURCES += \
     scene/GridNode.cpp \
     scene/LocationNode.cpp \
     scene/MaterialGL.cpp \
+    scene/TCameraKit.cpp \
     scene/TSFRotation.cpp \
     scene/TSceneKit.cpp \
     scene/TSeparatorKit.cpp \

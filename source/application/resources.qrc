@@ -44,5 +44,8 @@
         <file>images/about/Tonatiuh.ico</file>
         <file>images/about/tnhs.ico</file>
         <file>images/about/tnh.ico</file>
+        <file>images/cursors/cursorOrbit.png</file>
+        <file>images/cursors/cursorRotation.png</file>
+        <file>images/cursors/cursorShift.png</file>
     </qresource>
 </RCC>

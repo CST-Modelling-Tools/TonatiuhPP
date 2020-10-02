@@ -58,8 +58,12 @@ HEADERS += \
     view/GraphicRoot.h \
     view/GraphicView.h \
     view/GridNode3D.h \
+    view/KeyFilter.h \
+    view/KeyboardHook.h \
+    view/MenuStyle.h \
     view/SkyNode3D.h \
     view/SunNode3D.h \
+    view/TPerspectiveCamera.h \
     view/trf.h \
     widgets/AboutDialog.h \
     widgets/AirDialog.h \
@@ -116,8 +120,12 @@ SOURCES += \
     view/GraphicRoot.cpp \
     view/GraphicView.cpp \
     view/GridNode3D.cpp \
+    view/KeyFilter.cpp \
+    view/KeyboardHook.cpp \
+    view/MenuStyle.cpp \
     view/SkyNode3D.cpp \
     view/SunNode3D.cpp \
+    view/TPerspectiveCamera.cpp \
     view/trf.cpp \
     widgets/AboutDialog.cpp \
     widgets/AirDialog.cpp \

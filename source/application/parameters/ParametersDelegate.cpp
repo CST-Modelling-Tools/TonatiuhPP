@@ -257,3 +257,52 @@ void ParametersDelegate::onCloseEditor()
 //    emit closeEditor(editor);
     editor->close();
 }
+
+void ParametersDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    QStyledItemDelegate::paint(painter, option, index);
+
+    ParametersModel* modelP = (ParametersModel*) index.model();
+    ParametersItemField* item = dynamic_cast<ParametersItemField*>(modelP->itemFromIndex(index));
+    if (item)
+    {
+        SoField* field = item->field();
+        SoSFNode* f = dynamic_cast<SoSFNode*>(field);
+        if (f) {
+            QStyleOptionButton optionButton;
+            QRect r = option.rect;
+            r.setLeft(r.right() - 1.5*r.height());
+            optionButton.rect = r;
+            optionButton.text = "...";
+            optionButton.state = QStyle::State_Enabled;
+            QApplication::style()->drawControl(QStyle::CE_PushButton, &optionButton, painter);
+        }
+    }
+}
+
+#include <QMessageBox>
+bool ParametersDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option, const QModelIndex& index)
+{
+    if (event->type() == QEvent::MouseButtonPress)
+    {
+        ParametersModel* modelP = (ParametersModel*) index.model();
+        ParametersItemField* item = dynamic_cast<ParametersItemField*>(modelP->itemFromIndex(index));
+        if (item)
+        {
+            SoField* field = item->field();
+            SoSFNode* f = dynamic_cast<SoSFNode*>(field);
+            if (f) {
+                QRect r = option.rect;
+                r.setLeft(r.right() - 1.5*r.height());
+                QMouseEvent * e = (QMouseEvent*) event;
+                if (r.contains(e->pos()))
+                {
+                        QMessageBox::information(0, "reserved", "");
+                        return true;
+                }
+            }
+        }
+
+    }
+    QStyledItemDelegate::editorEvent(event, model, option, index);
+}

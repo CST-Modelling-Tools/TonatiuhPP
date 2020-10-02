@@ -39,7 +39,13 @@ void TSeparatorKit::getBoundingBox(SoGetBoundingBoxAction* action)
     SoBaseKit::getBoundingBox(action);
     SbXfBox3f& box = action->getXfBoundingBox();
     box = box.project(); // not optimal
-//    box.setTransform(SbMatrix::identity());
+    //    box.setTransform(SbMatrix::identity());
+}
+
+void TSeparatorKit::setCulling(bool on)
+{
+    SoSeparator* sep = (SoSeparator*) topSeparator.getValue();
+    sep->renderCulling = on ? SoSeparator::ON : SoSeparator::OFF;
 }
 
 

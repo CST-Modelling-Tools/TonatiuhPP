@@ -13,6 +13,9 @@ class SoTransform;
 class TSceneKit;
 class SoSensor;
 class SoFieldSensor;
+class SoCamera;
+class SoPerspectiveCamera;
+class TCameraKit;
 
 class GraphicRoot: public QObject
 {
@@ -23,8 +26,12 @@ public:
     ~GraphicRoot();
 
     SoSeparator* getRoot() const {return m_root;}
+    TCameraKit* getCameraKit();
+//    void setCamera(SoCamera* camera);
+
     void setDocument(Document* document);
     void updateScene(TSceneKit* scene);
+    TSceneKit* getScene() {return m_scene;}
     void removeScene();
 
     GridNode3D* grid() {return m_grid;}
@@ -37,6 +44,8 @@ public:
     void select(const SoPath* path);
     void deselectAll();
     void onSelectionChanged(SoSelection* selection);
+
+    void updateSkyCamera(SoPerspectiveCamera* camera);
 
 signals:
     void selectionChanged(SoSelection* selection);

@@ -65,9 +65,15 @@ void selectionFinishCallback(void* userData, SoSelection* selection)
    SoSeparator m_rays
 */
 
+#include <Inventor/nodes/SoPerspectiveCamera.h>
+
+#include <Inventor/nodes/SoCube.h>
+
 GraphicRoot::GraphicRoot()
 {
     m_root = new SoSeparator;
+    m_root->renderCulling = SoSeparator::OFF;
+    m_root->renderCaching = SoSeparator::OFF;
     m_root->ref();
 
     m_sky = new SkyNode3D;
@@ -83,27 +89,18 @@ GraphicRoot::GraphicRoot()
     environment->ambientIntensity = 1.;
     m_root->addChild(environment);
 
-//    SoTransformSeparator* ts = new SoTransformSeparator;
-//    ts->addChild(m_sun->getTransform());
-//    SoDirectionalLight* light = new SoDirectionalLight;
-//    light->intensity = 0.;
-//    light->direction = SbVec3f(0., 0., 1.);
-//    ts->addChild(light);
-//    m_root->addChild(ts);
-
-    //? GLSL shader must have version, Coin bug
     SoShadowGroup* group = new SoShadowGroup;
     group->precision = 1.;
     group->quality = 1.;
     m_root->addChild(group);
 
-    SoTransformSeparator* ts2 = new SoTransformSeparator;
-    ts2->addChild(m_sun->getTransform());
+    SoTransformSeparator* ts = new SoTransformSeparator;
+    ts->addChild(m_sun->getTransform());
     SoShadowDirectionalLight* shadow = new SoShadowDirectionalLight;
     shadow->intensity = 1.;
     shadow->direction = SbVec3f(0., 0., 1.);
-    ts2->addChild(shadow);
-    group->addChild(ts2);
+    ts->addChild(shadow);
+    group->addChild(ts);
 
 
 //    SoDrawStyle* wireStyle;
@@ -130,6 +127,27 @@ GraphicRoot::~GraphicRoot()
     m_root->unref();
     delete m_sensor;
 }
+
+#include "kernel/scene/TCameraKit.h"
+
+TCameraKit* GraphicRoot::getCameraKit()
+{
+    return (TCameraKit*) m_scene->getPart("world.camera", false);
+}
+
+//void GraphicRoot::setCamera(SoCamera* camera)
+//{
+//    TCameraKit* ck = (TCameraKit*) m_scene->getPart("world.camera", false);
+//    ck->setCamera(camera);
+//}
+
+//SoCamera* GraphicRoot::getCamera()
+//{
+////    return 0;
+//    TCameraKit* ck = (TCameraKit*) m_scene->getPart("world.camera", false);
+//    return ck->m_camera;
+////    return (SoCamera*) ck->m_cameraKit->getPart("camera", false);
+//}
 
 void GraphicRoot::setDocument(Document* document)
 {
@@ -210,6 +228,11 @@ void GraphicRoot::deselectAll()
 void GraphicRoot::onSelectionChanged(SoSelection* selection)
 {
     emit selectionChanged(selection);
+}
+
+void GraphicRoot::updateSkyCamera(SoPerspectiveCamera* camera)
+{
+    m_sky->updateSkyCamera(camera);
 }
 
 void GraphicRoot::update(void* data, SoSensor*)

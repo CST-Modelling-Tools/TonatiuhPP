@@ -148,11 +148,13 @@ void ShapeCube::updateShapeGL(TShapeKit* parent)
     bool reverseNormals = mGL->reverseNormals.getValue();
 
     SoShapeKit* shapeKit = parent->m_shapeKit;
+
 //    SoCube* cube = new SoCube;
 //    cube->width = 1.;
 //    cube->height = 1.;
 //    cube->depth = 1.;
 //    shapeKit->setPart("shape", cube);
+//    return;
 
     float sv[][3] = {
         {-0.5, -0.5, -0.5},

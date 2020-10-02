@@ -58,19 +58,22 @@ void SkyNode3D::initClass()
     SO_NODE_INIT_CLASS(SkyNode3D, SoNode, "Node");
 }
 
+const double zoom = 10;
 SkyNode3D::SkyNode3D(void)
 {
     SO_NODE_CONSTRUCTOR(SkyNode3D);
 
     m_root = new SoSeparator;
+    m_root->renderCulling = SoSeparator::OFF;
+    m_root->renderCaching = SoSeparator::OFF;
     m_root->ref();
 
     m_camera = new SoPerspectiveCamera;
     m_camera->position = SbVec3f(0., 0., 0.);
 //    m_camera->focalDistance = 0.5f;
     m_camera->nearDistance = 0.1;
-    m_camera->farDistance = 10.f;
-    m_camera->heightAngle = 30.*gcf::degree; // 30 deg
+    m_camera->farDistance = zoom*10.f;
+//    m_camera->heightAngle = 30.*gcf::degree; // 30 deg
     m_camera->enableNotify(FALSE);
     m_root->addChild(m_camera);
 
@@ -90,7 +93,8 @@ SkyNode3D::~SkyNode3D()
 SoSeparator* SkyNode3D::makeSky()
 {
     SoSeparator* ans = new SoSeparator;
-//    ans->renderCulling = SoSeparator::OFF;
+    ans->renderCulling = SoSeparator::OFF; // does not work
+    ans->renderCaching = SoSeparator::OFF;
 
     SkyGradient grSky;
     grSky.cH = QColor("#b2c3d2");
@@ -126,7 +130,7 @@ SoSeparator* SkyNode3D::makeSky()
             float y = sin(phi)*cos(alpha);
             float z = sin(alpha);
             float r = alpha >= 0. ? 1.2 : 0.8; // for sun set
-            vertices << r*SbVec3f(x, y, z);
+            vertices << zoom*r*SbVec3f(x, y, z);
 
             if (alpha > 0.)
                 c = grSky.find(alpha);
@@ -162,7 +166,7 @@ SoSeparator* SkyNode3D::makeLabels()
 
     SoFont* font = new SoFont;
     font->name = "Arial:Bold";
-    font->size = 0.010;
+    font->size = zoom*0.010;
     ans->addChild(font);
 
     SoMaterial* material = new SoMaterial;
@@ -190,7 +194,7 @@ void SkyNode3D::makeLabelAE(SoSeparator* parent, double azimuth, double elevatio
     ans->addChild(sTransform);
 
     sTransform = new SoTransform;
-    sTransform->translation = SbVec3f(0., 0., -1.);
+    sTransform->translation = SbVec3f(0., 0., -1.*zoom);
     ans->addChild(sTransform);
 
     SoText3* sText = new SoText3;
@@ -199,6 +203,14 @@ void SkyNode3D::makeLabelAE(SoSeparator* parent, double azimuth, double elevatio
     ans->addChild(sText);
 
     parent->addChild(ans);
+}
+
+#include <Inventor/actions/SoGetBoundingBoxAction.h>
+void SkyNode3D::getBoundingBox(SoGetBoundingBoxAction* action)
+{
+    SbXfBox3f& box = action->getXfBoundingBox();
+    double s = 1000; // temp fake for renderCulling
+    box.setBounds(-SbVec3f(s, s, s), SbVec3f(s, s, s));
 }
 
 #include <Inventor/nodes/SoDepthBuffer.h>
@@ -216,6 +228,7 @@ void SkyNode3D::GLRender(SoGLRenderAction* action)
   SbVec2f range_out;
   SoDepthBufferElement::get(state, test_out, write_out, function_out, range_out);
   range_out[0] = 0.99999f;
+//  range_out[0] = 0.9f;
   range_out[1] = 1.0f;
   SoDepthBufferElement::set(state, test_out, write_out, function_out, range_out);
 
@@ -223,4 +236,9 @@ void SkyNode3D::GLRender(SoGLRenderAction* action)
 //  glClear(GL_DEPTH_BUFFER_BIT);
 
   state->pop();
+}
+
+void SkyNode3D::updateSkyCamera(SoPerspectiveCamera* camera)
+{
+    m_camera->heightAngle = camera->heightAngle.getValue();
 }

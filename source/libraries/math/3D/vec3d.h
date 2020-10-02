@@ -1,7 +1,7 @@
 #pragma once
 
 #include "libraries/math/2D/vec2d.h"
-
+#include <QString>
 
 struct TONATIUH_LIBRARIES vec3d
 {
@@ -169,6 +169,11 @@ struct TONATIUH_LIBRARIES vec3d
             std::max(a.y, b.y),
             std::max(a.z, b.z)
         );
+    }
+
+    operator QString()
+    {
+        return QString("{%1, %2, %3}").arg(x).arg(y).arg(z);
     }
 };
 

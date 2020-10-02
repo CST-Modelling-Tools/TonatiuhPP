@@ -63,7 +63,7 @@ background-color: #d7e3ed;
          </font>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tabWorld">
          <attribute name="title">
@@ -132,6 +132,11 @@ background-color: #d7e3ed;
              <property name="icon">
               <iconset resource="../resources.qrc">
                <normaloff>:/images/scene/nodeCamera.png</normaloff>:/images/scene/nodeCamera.png</iconset>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>SoCamera</string>
              </property>
             </item>
            </widget>
@@ -349,6 +354,9 @@ border:none;
      <width>726</width>
      <height>21</height>
     </rect>
+   </property>
+   <property name="nativeMenuBar">
+    <bool>false</bool>
    </property>
    <widget class="QMenu" name="menuEdit">
     <property name="title">

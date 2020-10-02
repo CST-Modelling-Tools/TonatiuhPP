@@ -50,7 +50,6 @@ namespace Ui {
 class MainWindow;
 }
 
-
 class MainWindow: public QMainWindow
 {
     Q_OBJECT
@@ -274,3 +273,4 @@ private:
     bool m_saveCoordinates;
     bool m_saveSide;
 };
+

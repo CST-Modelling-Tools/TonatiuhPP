@@ -31,6 +31,8 @@ void TSceneKit::initClass()
     TShapeKit::initClass();
 }
 
+#include <Inventor/nodes/SoSphere.h>
+#include <Inventor/nodekits/SoCameraKit.h>
 TSceneKit::TSceneKit()
 {
     SO_KIT_CONSTRUCTOR(TSceneKit);
@@ -51,7 +53,11 @@ TSceneKit::TSceneKit()
 //    loc->name = "unknown";
 
     TSeparatorKit* nodeLayout = (TSeparatorKit*) getPart("group", true);
+    nodeLayout->setCulling(false);
     nodeLayout->setName("Node");
+
+//    setPart("cameraList[0]", new SoCameraKit);
+//    setCameraNumber(0);
 }
 
 TSeparatorKit* TSceneKit::getLayout()

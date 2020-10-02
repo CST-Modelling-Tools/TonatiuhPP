@@ -103,3 +103,10 @@ SbBool TShapeKit::setUpConnections(SbBool onoff, SbBool doitalways)
     m_shapeKit->setPart("material", material.getValue());
     return SoBaseKit::setUpConnections(onoff, doitalways);
 }
+
+//#include <Inventor/actions/SoRayPickAction.h>
+//void TShapeKit::rayPick(SoRayPickAction* action)
+//{
+//    action->p
+//    m_shapeKit->rayPick(action);
+//}

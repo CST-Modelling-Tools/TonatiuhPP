@@ -18,6 +18,7 @@ public:
 
     SoSeparator* getRoot() {return m_root;}
     void GLRender(SoGLRenderAction* action);
+    void updateSkyCamera(SoPerspectiveCamera* camera);
 
 protected:
     SoSeparator* m_root;
@@ -29,6 +30,10 @@ protected:
     SoSeparator* makeSky();
     SoSeparator* makeLabels();
     void makeLabelAE(SoSeparator* parent, double azimuth, double elevation, const QString& text);
+
+    // SoBase interface
+public:
+    void getBoundingBox(SoGetBoundingBoxAction* action);
 };
 
 

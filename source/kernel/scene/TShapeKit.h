@@ -36,4 +36,8 @@ protected:
 
     void setDefaultOnNonWritingFields();
     SbBool setUpConnections(SbBool onoff, SbBool doitalways);
+
+    // SoNode interface
+//public:
+//    void rayPick(SoRayPickAction* action);
 };

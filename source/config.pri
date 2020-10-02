@@ -1,18 +1,21 @@
 # Tonatiuh
-VERSION = 0.1.0
+VERSION = 0.1.0.0
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 INCLUDEPATH += $$PWD
 LIBS += -L..
 
 # Coin3D
 gcc {
-    COINDIR = $$PWD/../libraries/Coin3D
-    #COINDIR = $$PWD/../../../Libraries/Coin/debug
+    CONFIG(debug, debug|release) {
+        COINDIR = $$PWD/../../../Libraries/Coin/debug
+        LIBS += -lCoind -lSoQtd
+    } else {
+        COINDIR = $$PWD/../libraries/Coin3D
+        LIBS += -lCoin -lSoQt
+    }
     INCLUDEPATH += $$COINDIR/include
     DEFINES += COIN_NOT_DLL SOQT_NOT_DLL
     LIBS += -L$$COINDIR/lib # for linking
-    LIBS += -lCoin -lSoQt
-    #LIBS += -lCoind -lSoQtd
     LIBS += -L$$COINDIR/bin # for running
 
     QMAKE_CXXFLAGS_RELEASE -= -O2

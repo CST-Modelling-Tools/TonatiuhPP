@@ -110,7 +110,6 @@ void finishManipulator(void* data, SoDragger* /*dragger*/)
     w->FinishManipulation();
 }
 
-
 MainWindow::MainWindow(QString fileName, CustomSplashScreen* splash, QWidget* parent, Qt::WindowFlags flags):
     QMainWindow(parent, flags),
     ui(new Ui::MainWindow),
@@ -181,7 +180,7 @@ MainWindow::MainWindow(QString fileName, CustomSplashScreen* splash, QWidget* pa
 
     ui->centralWidget->setFocus();
 
-    qApp->setStyleSheet(R"(
+    setStyleSheet(R"(
 QAbstractItemView {
 outline: 0;
 }
@@ -293,6 +292,7 @@ void MainWindow::SetupGraphicView()
 
     m_graphicView << ui->widgetView3D;
     m_graphicView[0]->setSceneGraph(m_graphicsRoot);
+    m_graphicView[0]->m_window = this;
 
     connect(
         m_modelSelection, SIGNAL(currentChanged(QModelIndex,QModelIndex)),
@@ -1014,6 +1014,8 @@ void MainWindow::treeWorldClicked(QTreeWidgetItem* item, int /*column*/)
     else if (name == "Terrain")
         node = sceneKit->getPart("world.terrain", false);
     else if (name == "Camera")
+        node = sceneKit->getPart("world.camera", false);
+    else if (name == "SoCamera")
         node = m_graphicView[m_focusView]->getCamera();
 
     if (node)
@@ -2620,7 +2622,7 @@ bool MainWindow::StartOver(const QString& fileName)
 
     ui->sceneView->expandToDepth(1);
     Select("//Node"); // ?
-//    on_actionViewAll_triggered(); // discard sun
+    on_actionViewAll_triggered(); // discard sun
 
 
     GridNode* node = (GridNode*) m_document->getSceneKit()->getPart("world.terrain.grid", true);

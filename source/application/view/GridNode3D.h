@@ -23,5 +23,10 @@ protected:
 
     SoNodeSensor* m_sensor;
     static void update(void* data, SoSensor*);
+
+    // SoSeparator interface
+protected:
+    SbBool cullTest(SoState* state) {return 0;}
+    SbBool cullTest(SoGLRenderAction* action, int& cullresults) {return 0;}
 };
 
