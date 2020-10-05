@@ -47,5 +47,8 @@
         <file>images/cursors/cursorOrbit.png</file>
         <file>images/cursors/cursorRotation.png</file>
         <file>images/cursors/cursorShift.png</file>
+        <file>images/cursors/cursorShiftHold.png</file>
+        <file>images/cursors/cursorRotationHold.png</file>
+        <file>images/cursors/cursorOrbitHold.png</file>
     </qresource>
 </RCC>

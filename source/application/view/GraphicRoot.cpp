@@ -20,6 +20,7 @@
 #include "main/Document.h"
 #include "SkyNode3D.h"
 #include "SunNode3D.h"
+#include "OverlayNode.h"
 #include "kernel/scene/GridNode.h"
 #include "kernel/sun/SunPosition.h"
 
@@ -117,6 +118,10 @@ GraphicRoot::GraphicRoot()
 
     m_rays = new SoSeparator; // order important for antialiasing
     m_root->addChild(m_rays);
+
+    m_overlayNode = new OverlayNode;
+    m_overlayNode->showAim(false);
+    m_root->addChild(m_overlayNode);
 
     m_sensor = new SoFieldSensor(update, this);
     m_sensor->setPriority(0);
@@ -233,7 +238,10 @@ void GraphicRoot::onSelectionChanged(SoSelection* selection)
 void GraphicRoot::updateSkyCamera(SoPerspectiveCamera* camera)
 {
     m_sky->updateSkyCamera(camera);
+    m_overlayNode->updateSkyCamera(camera);
 }
+
+
 
 void GraphicRoot::update(void* data, SoSensor*)
 {

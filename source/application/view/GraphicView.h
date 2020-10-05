@@ -13,8 +13,9 @@ class SoPerspectiveCamera;
 //!  GraphicView class implements a 3D representation of items from a model.
 
 class TPerspectiveCamera;
+class QPushButton;
 
-class GraphicView: public QWidget
+class GraphicView: public QFrame
 {
     Q_OBJECT
 
@@ -45,6 +46,7 @@ private:
 public:
 QWidget* m_window;
 QObject* m_filter;
+//QPushButton* m_label;
 
     // QWidget interface
 protected:
@@ -59,4 +61,6 @@ protected:
     void focusInEvent(QFocusEvent* event);
     void focusOutEvent(QFocusEvent* event);
     void resizeEvent(QResizeEvent* event);
+
+//    void paintEvent(QPaintEvent* event);
 };

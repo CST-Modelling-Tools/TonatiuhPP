@@ -6,6 +6,7 @@ QT += concurrent # for multithreading
 QT += script # for scripting
 QT += printsupport # for customplot
 QT += gui # QVector3D
+#QT += opengl
 
 LIBS += -lTonatiuh-Kernel -lTonatiuh-Libraries -lOpengl32
 
@@ -61,6 +62,7 @@ HEADERS += \
     view/KeyFilter.h \
     view/KeyboardHook.h \
     view/MenuStyle.h \
+    view/OverlayNode.h \
     view/SkyNode3D.h \
     view/SunNode3D.h \
     view/TPerspectiveCamera.h \
@@ -123,6 +125,7 @@ SOURCES += \
     view/KeyFilter.cpp \
     view/KeyboardHook.cpp \
     view/MenuStyle.cpp \
+    view/OverlayNode.cpp \
     view/SkyNode3D.cpp \
     view/SunNode3D.cpp \
     view/TPerspectiveCamera.cpp \

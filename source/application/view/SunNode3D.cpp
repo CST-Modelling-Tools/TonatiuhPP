@@ -44,6 +44,16 @@ void SunNode3D::create()
     m_transform->setName("transformSun");
     addChild(m_transform);
 
+//        SoShapeHints* hints = new SoShapeHints;
+//        hints->shapeType = SoShapeHints::SOLID;
+//        addChild(hints);
+
+//         transparent textures do not check depth buffer?
+//    SoMaterial* material = new SoMaterial;
+//    material->diffuseColor = SbVec3f(1, 1, 1);
+//    material->transparency = 0.;
+//    addChild(material);
+
     SoTransform* sTransform = new SoTransform;
     sTransform->translation = SbVec3f(0., 0., -1.);
     addChild(sTransform);

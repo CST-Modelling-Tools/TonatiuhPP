@@ -50,7 +50,7 @@ background-color: #d7e3ed;
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="GraphicView" name="widgetView3D" native="true"/>
+      <widget class="GraphicView" name="widgetView3D"/>
       <widget class="QSplitter" name="splitterV">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -941,7 +941,7 @@ border:none;
   </customwidget>
   <customwidget>
    <class>GraphicView</class>
-   <extends>QWidget</extends>
+   <extends>QFrame</extends>
    <header>view/GraphicView.h</header>
    <container>1</container>
   </customwidget>

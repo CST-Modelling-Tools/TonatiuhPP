@@ -16,6 +16,8 @@ class SoFieldSensor;
 class SoCamera;
 class SoPerspectiveCamera;
 class TCameraKit;
+class OverlayNode;
+
 
 class GraphicRoot: public QObject
 {
@@ -47,6 +49,8 @@ public:
 
     void updateSkyCamera(SoPerspectiveCamera* camera);
 
+    OverlayNode* getOverlayNode() const {return m_overlayNode;}
+
 signals:
     void selectionChanged(SoSelection* selection);
 
@@ -55,6 +59,7 @@ private:
     SkyNode3D* m_sky;
     SunNode3D* m_sun;
     GridNode3D* m_grid;
+    OverlayNode* m_overlayNode;
     SoSelection* m_selection;
     SoSeparator* m_rays;
 

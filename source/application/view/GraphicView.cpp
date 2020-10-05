@@ -47,26 +47,35 @@
 #include "TPerspectiveCamera.h"
 #include "KeyFilter.h"
 #include "kernel/scene/TSceneKit.h"
+#include <QLabel>
+#include <QPushButton>
+//#include <QGLWidget>
 /**
  * Creates a new GraphicView with a \a parerent for the model data 3D representation.
  *
  * Use setModel() to set the model.
  */
 GraphicView::GraphicView(QWidget* parent):
-    QWidget(parent),
+    QFrame(parent),
     m_graphicRoot(0),
     m_viewer(0)
 {
     QVBoxLayout* layout = new QVBoxLayout;
+    layout->setContentsMargins(0, 0, 0, 0);
     setLayout(layout);
 
-    m_viewer = new SoQtExaminerViewer(this);
+    QWidget* w = new QWidget;
+    layout->addWidget(w);
+
+
+    m_viewer = new SoQtExaminerViewer(w);
+    m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND); // do not move
+
     SoBoxHighlightRenderAction* highlighter = new SoBoxHighlightRenderAction();
     highlighter->setColor(SbColor(100/255., 180/255., 120/255.));
     highlighter->setLineWidth(1.);
     m_viewer->setGLRenderAction(highlighter);
     m_viewer->setViewing(false);
-    m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND);
 
 //    SoPerspectiveCamera* camera = dynamic_cast<SoPerspectiveCamera*>(getCamera());
 //    camera->scaleHeight(-1.); // left-handed to right-handed
@@ -84,17 +93,50 @@ GraphicView::GraphicView(QWidget* parent):
     m_filter = new KeyFilter(this);
 
     QPixmap pixmap;
+
     pixmap.load(":/images/cursors/cursorShift.png");
     pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
     m_cursors["shift"] = QCursor(pixmap);
+
+    pixmap.load(":/images/cursors/cursorShiftHold.png");
+    pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
+    m_cursors["shiftHold"] = QCursor(pixmap);
+
     pixmap.load(":/images/cursors/cursorRotation.png");
     pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
     m_cursors["rotation"] = QCursor(pixmap);
+
+    pixmap.load(":/images/cursors/cursorRotationHold.png");
+    pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
+    m_cursors["rotationHold"] = QCursor(pixmap);
+
     pixmap.load(":/images/cursors/cursorOrbit.png");
     pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
     m_cursors["orbit"] = QCursor(pixmap);
 
-    m_modifiersKeys = Qt::NoModifier;
+    pixmap.load(":/images/cursors/cursorOrbitHold.png");
+    pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
+    m_cursors["orbitHold"] = QCursor(pixmap);
+
+
+    m_modifiersKeys = Qt::NoModifier; //delete
+
+    setStyleSheet(R"(
+QFrame {
+    border: 1px solid lightgray;
+}
+
+QFrame[inFocus=true] {
+    border: 1px solid #828790;
+}
+    )");
+
+//    QGLWidget* gw = () m_viewer->getGLWidget();
+
+//    QPushButton* label  = new QPushButton("asdvasdv", w);
+//    m_label  = new QPushButton("asdvasdv", w);
+//    label->setGeometry(QRect(0, 0, 504, 14));
+//    connect(m_viewer->getGLWidget(),SIGNAL()
 }
 
 GraphicView::~GraphicView()
@@ -117,7 +159,7 @@ void GraphicView::setSceneGraph(GraphicRoot* sceneGraphRoot)
 
 SbViewportRegion GraphicView::getViewportRegion() const
 {
-    return SbViewportRegion();
+    return SbViewportRegion();//?
     return m_viewer->getViewportRegion();
 }
 
@@ -178,6 +220,7 @@ void GraphicView::currentChanged(const QModelIndex& current, const QModelIndex& 
 #include "kernel/scene/TCameraKit.h"
 #include <Inventor/nodes/SoTransform.h>
 #include "libraries/math/gcf.h"
+#include "view/OverlayNode.h"
 
 void GraphicView::mousePressEvent(QMouseEvent* event)
 {
@@ -185,28 +228,52 @@ void GraphicView::mousePressEvent(QMouseEvent* event)
     m_mousePressed = event->pos();
     m_modifiersPressed = event->modifiers();
     m_camera->saveTransform();
-    event->accept();
 
     if (m_modifiersPressed & Qt::AltModifier)
     {
-
+        SbVec2s vs = m_viewer->getViewportRegion().getViewportSizePixels();
+        m_camera->findMoveAnchor(m_viewer, QPoint(vs[0]/2, vs[1]/2), m_graphicRoot->getScene()->getLayout());
+        if (m_modifiersPressed & Qt::ShiftModifier) {
+            qApp->changeOverrideCursor(m_cursors["orbitHold"]);
+            m_camera->findOrbitAnchor(m_viewer, m_mousePressed, m_graphicRoot->getScene()->getLayout());
+        }
     }
     else if (m_modifiersPressed & Qt::ControlModifier)
     {
-        if (m_modifiersPressed & Qt::ShiftModifier)
-           m_camera->findRotationAnchor(m_viewer, m_mousePressed);
+        if (m_modifiersPressed & Qt::ShiftModifier) {
+            qApp->changeOverrideCursor(m_cursors["rotationHold"]);
+            m_camera->findRotationAnchor(m_viewer, m_mousePressed);
+        }
     }
     else if (m_modifiersPressed & Qt::ShiftModifier)
     {
-        m_camera->findShiftAnchor(m_viewer, m_mousePressed, m_graphicRoot->getScene()->getLayout());
+        qApp->changeOverrideCursor(m_cursors["shiftHold"]);
+        m_camera->findMoveAnchor(m_viewer, m_mousePressed, m_graphicRoot->getScene()->getLayout());
     }
+    event->accept();
 }
 
 void GraphicView::mouseReleaseEvent(QMouseEvent* event)
 {
-    qDebug() << "release" << event->pos();
-    event->accept();
+//    qDebug() << "release" << event->pos();
+    if (m_modifiersPressed & Qt::AltModifier)
+    {
+        if (m_modifiersPressed & Qt::ShiftModifier) {
+            qApp->changeOverrideCursor(m_cursors["orbit"]);
+        }
+    }
+    else if (m_modifiersPressed & Qt::ControlModifier)
+    {
+        if (m_modifiersPressed & Qt::ShiftModifier) {
+            qApp->changeOverrideCursor(m_cursors["rotation"]);
+        }
+    }
+    else if (m_modifiersPressed & Qt::ShiftModifier)
+    {
+        qApp->changeOverrideCursor(m_cursors["shift"]);
+    }
     m_modifiersPressed = Qt::NoModifier;
+    event->accept();
 }
 
 void GraphicView::mouseMoveEvent(QMouseEvent* event)
@@ -214,7 +281,15 @@ void GraphicView::mouseMoveEvent(QMouseEvent* event)
 //    qDebug() << "move " << diff;
     if (m_modifiersPressed & Qt::AltModifier)
     {
-
+        if (m_modifiersPressed & Qt::ShiftModifier) {
+            m_camera->moveOrbitAnchor(m_viewer, event->pos());
+        } else {
+            QPoint diff = event->pos() - m_mousePressed;
+            double s = 0.25;
+            double dAz = s*diff.x();
+            double dEl = -s*diff.y();
+            m_camera->orbit(dAz, dEl);
+        }
     }
     else if (m_modifiersPressed & Qt::ControlModifier)
     {
@@ -228,7 +303,6 @@ void GraphicView::mouseMoveEvent(QMouseEvent* event)
             m_camera->rotate(dAz, dEl);
         }
     }
-
     else if (m_modifiersPressed & Qt::ShiftModifier)
     {
         m_camera->moveShiftAnchor(m_viewer, event->pos());
@@ -238,14 +312,13 @@ void GraphicView::mouseMoveEvent(QMouseEvent* event)
     event->accept();
 }
 
-
 void GraphicView::wheelEvent(QWheelEvent* event)
 {
     if (!event->modifiers())
     {
         double z = event->angleDelta().y()/120.; // 15 degrees * 8 units
         m_camera->saveTransform();
-        m_camera->findShiftAnchor(m_viewer, event->pos(), m_graphicRoot->getScene()->getLayout());
+        m_camera->findMoveAnchor(m_viewer, event->pos(), m_graphicRoot->getScene()->getLayout());
         m_camera->moveShiftAnchor(m_viewer, event->pos(), z);
     }
     event->accept();
@@ -271,9 +344,9 @@ void GraphicView::keyPressEvent(QKeyEvent* event)
 //              m_modifiersKeys |= Qt::ShiftModifier;
 
     QCursor* cursor = 0;
-    if (event->modifiers() & Qt::AltModifier)
+    if (event->modifiers() & Qt::AltModifier) {
         cursor = &m_cursors["orbit"];
-    else if (event->modifiers() & Qt::ControlModifier)
+    } else if (event->modifiers() & Qt::ControlModifier)
         cursor = &m_cursors["rotation"];
     else if (event->modifiers() & Qt::ShiftModifier)
         cursor = &m_cursors["shift"];
@@ -286,9 +359,13 @@ void GraphicView::keyPressEvent(QKeyEvent* event)
             qApp->changeOverrideCursor(*cursor);
         else
             qApp->setOverrideCursor(*cursor);
-    } else
+        m_graphicRoot->getOverlayNode()->showAim(true);
+        m_viewer->render();
+    } else {
         qApp->restoreOverrideCursor();
-
+        m_graphicRoot->getOverlayNode()->showAim(false);
+        m_viewer->render();
+    }
 //    if (event->key() == Qt::Key_Shift)
 //        QApplication::setOverrideCursor(m_cursors["shift"]);
 }
@@ -308,8 +385,12 @@ void GraphicView::keyReleaseEvent(QKeyEvent* event)
 
 void GraphicView::focusInEvent(QFocusEvent* event)
 {
+    setProperty("inFocus", true);
+    style()->unpolish(this);
+    update();
+
 //        setHook();
-    qDebug() << "disa";
+//    qDebug() << "disa";
 
     qApp->installEventFilter(m_filter);
 
@@ -337,7 +418,11 @@ void GraphicView::focusInEvent(QFocusEvent* event)
 
 void GraphicView::focusOutEvent(QFocusEvent* event)
 {
-    qDebug() << "ena";
+    setProperty("inFocus", false);
+    style()->unpolish(this);
+    update();
+
+//    qDebug() << "ena";
     qApp->removeEventFilter(m_filter);
 //    MenuStyle* ms = dynamic_cast<MenuStyle*> (m_window->style());
 //    if (ms)
@@ -355,10 +440,20 @@ void GraphicView::focusOutEvent(QFocusEvent* event)
 
 void GraphicView::resizeEvent(QResizeEvent* event)
 {
-    QWidget::resizeEvent(event);
+    QFrame::resizeEvent(event);
     int hMax = QApplication::desktop()->screenGeometry().height();
-    SbVec2s vs = m_viewer->getViewportRegion().getViewportSizePixels();
-    int h = std::min(vs[0], vs[1]);
+//    SbVec2s vs = m_viewer->getViewportRegion().getViewportSizePixels();
+//    int h = std::min(vs[0], vs[1]);
+    QSize size = event->size();
+    int h = std::min(size.width(), size.height());
     m_camera->camera()->heightAngle = 30*gcf::degree*h/hMax;
     m_graphicRoot->updateSkyCamera(m_camera->camera());
 }
+
+//#include <QPainter>
+//void GraphicView::paintEvent(QPaintEvent* event)
+//{
+//    QPainter painter(this);
+//    painter.drawText(0, 20 ," XVXV");
+//    qDebug()<<"painter";
+//}

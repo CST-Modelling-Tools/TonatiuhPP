@@ -18,19 +18,28 @@ public:
     vec3d m_rotation; // {azimuth, elevation, 0}
     vec3d m_anchor;
     bool m_isAnchored;
-    vec3d m_rotationAnchor;
+    vec3d m_rotationAnchor; // direction
 
-    void findShiftAnchor(SoQtExaminerViewer* viewer, QPoint pos, SoNode* root);
+    vec3d m_orbitAnchor;
+    bool m_isOrbitAnchored;
+    bool m_useNear;
+
+    void findMoveAnchor(SoQtExaminerViewer* viewer, QPoint pos, SoNode* root);
     void moveShiftAnchor(SoQtExaminerViewer* viewer, QPoint pos, double zoom = 0.);
+
     void findRotationAnchor(SoQtExaminerViewer* viewer, QPoint pos);
     void moveRotationAnchor(SoQtExaminerViewer* viewer, QPoint pos);
+
+    void findOrbitAnchor(SoQtExaminerViewer* viewer, QPoint pos, SoNode* root);
+    void moveOrbitAnchor(SoQtExaminerViewer* viewer, QPoint pos);
 
     void saveTransform();
     void updateTransform();
 
     void shift(vec3d s);
     void rotate(double dAz, double dEl);
-    void rotateAnchored(double dAz, double dEl);
+    void orbit(double dAz, double dEl);
+//    void rotateAnchored(double dAz, double dEl);
 
 protected:
     SoPerspectiveCamera* m_camera;

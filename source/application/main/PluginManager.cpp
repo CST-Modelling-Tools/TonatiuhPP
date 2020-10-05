@@ -41,6 +41,7 @@
 #include "libraries/Coin3D/UserSField.h"
 #include "libraries/math/gcf.h"
 #include "view/SkyNode3D.h"
+#include "view/OverlayNode.h"
 
 
 PluginManager::PluginManager()
@@ -52,6 +53,7 @@ PluginManager::PluginManager()
 
     TSceneKit::initClass();
     SkyNode3D::initClass();
+    OverlayNode::initClass();
 }
 
 /*!

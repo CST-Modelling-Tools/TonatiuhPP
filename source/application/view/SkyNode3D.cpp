@@ -58,8 +58,9 @@ void SkyNode3D::initClass()
     SO_NODE_INIT_CLASS(SkyNode3D, SoNode, "Node");
 }
 
-const double zoom = 10;
-SkyNode3D::SkyNode3D(void)
+const double zoom = 1.;
+
+SkyNode3D::SkyNode3D()
 {
     SO_NODE_CONSTRUCTOR(SkyNode3D);
 
@@ -93,8 +94,8 @@ SkyNode3D::~SkyNode3D()
 SoSeparator* SkyNode3D::makeSky()
 {
     SoSeparator* ans = new SoSeparator;
-    ans->renderCulling = SoSeparator::OFF; // does not work
-    ans->renderCaching = SoSeparator::OFF;
+//    ans->renderCulling = SoSeparator::OFF; // does not work
+//    ans->renderCaching = SoSeparator::OFF;
 
     SkyGradient grSky;
     grSky.cH = QColor("#b2c3d2");
@@ -146,6 +147,7 @@ SoSeparator* SkyNode3D::makeSky()
 
     SoMaterial* material = new SoMaterial;
     material->diffuseColor.setValues(0, colors.size(), colors.data());
+//    material->transparency = 0.01;
     ans->addChild(material);
 
     SoMaterialBinding* binding = new SoMaterialBinding;
@@ -209,7 +211,7 @@ void SkyNode3D::makeLabelAE(SoSeparator* parent, double azimuth, double elevatio
 void SkyNode3D::getBoundingBox(SoGetBoundingBoxAction* action)
 {
     SbXfBox3f& box = action->getXfBoundingBox();
-    double s = 1000; // temp fake for renderCulling
+    double s = 100; // temp fake for renderCulling
     box.setBounds(-SbVec3f(s, s, s), SbVec3f(s, s, s));
 }
 
@@ -228,7 +230,6 @@ void SkyNode3D::GLRender(SoGLRenderAction* action)
   SbVec2f range_out;
   SoDepthBufferElement::get(state, test_out, write_out, function_out, range_out);
   range_out[0] = 0.99999f;
-//  range_out[0] = 0.9f;
   range_out[1] = 1.0f;
   SoDepthBufferElement::set(state, test_out, write_out, function_out, range_out);
 
