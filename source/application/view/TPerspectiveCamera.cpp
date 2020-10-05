@@ -4,7 +4,12 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
 #include "libraries/math/gcf.h"
-
+#include <QDebug>
+#include <Inventor/SoPickedPoint.h>
+#include "libraries/math/3D/Transform.h"
+#include "kernel/node/TonatiuhFunctions.h"
+//#include "GraphicRoot.h"
+#include "kernel/scene/TSeparatorKit.h"
 
 TPerspectiveCamera::TPerspectiveCamera()
 {
@@ -18,15 +23,10 @@ void TPerspectiveCamera::setCamera(SoPerspectiveCamera* camera)
     m_rotation = vec3d(0., 0., 0.);
     updateTransform();
 }
-#include <QDebug>
-#include <Inventor/SoPickedPoint.h>
-#include "libraries/math/3D/Transform.h"
-#include "kernel/node/TonatiuhFunctions.h"
-//#include "GraphicRoot.h"
-#include "kernel/scene/TSeparatorKit.h"
 
-void TPerspectiveCamera::setRayPressed(SoQtExaminerViewer* viewer, QPoint pos, SoNode* root)
+void TPerspectiveCamera::findShiftAnchor(SoQtExaminerViewer* viewer, QPoint pos, SoNode* root)
 {
+    // find ray
     SbVec2s vs = viewer->getViewportRegion().getViewportSizePixels();
     double x = pos.x()/double(vs[0])*2 - 1;
     double y = pos.y()/double(vs[1])*2 - 1;
@@ -41,20 +41,19 @@ void TPerspectiveCamera::setRayPressed(SoQtExaminerViewer* viewer, QPoint pos, S
     rd = Transform::rotateX((m_rotation.y + 90.)*gcf::degree).transformVector(rd);
     rd = Transform::rotateZ(-m_rotation.x*gcf::degree).transformVector(rd);
 
+    // pick object
+    SoRayPickAction rpa(viewer->getViewportRegion());
+//    rpa.setPoint(SbVec2s(pos.x(), pos.y())); // does not work
+//    rpa.setRadius(3.);
+    rpa.setRay(SbVec3f(m_position0.x, m_position0.y, m_position0.z), SbVec3f(rd.x, rd.y, rd.z));
+    rpa.apply(root);
 
-
-    // pick obj
-    SoRayPickAction* rpa = new SoRayPickAction(viewer->getViewportRegion());
-
-    rpa->setPoint(SbVec2s(pos.x(), pos.y()));
-    rpa->setRadius(8.);
-    rpa->setRay(SbVec3f(m_position0.x,m_position0.y,m_position0.z),SbVec3f(rd.x,rd.y,rd.z));
-    rpa->apply(root);
-
-
-    const SoPickedPoint* picked = rpa->getPickedPoint();
-    if (picked == NULL) {
-
+    const SoPickedPoint* picked = rpa.getPickedPoint();
+    if (picked) {
+        m_anchor = tgf::makeVector3D(picked->getPoint());
+        m_isAnchored = true;
+//        qDebug() << "anch " << m_anchor;
+    } else {
         // horizon ro + trd = 0
         double t = -m_position0.z/rd.z;
         if (t > 0) {
@@ -62,27 +61,12 @@ void TPerspectiveCamera::setRayPressed(SoQtExaminerViewer* viewer, QPoint pos, S
             m_isAnchored = true;
         } else
             m_isAnchored = false;
-
-
-    } else {
-        m_anchor = tgf::makeVector3D(picked->getPoint());
-        qDebug() << "anch " << m_anchor;
-                m_isAnchored = true;
     }
-    delete rpa;
 }
 
-void TPerspectiveCamera::setRayMove(SoQtExaminerViewer* viewer, QPoint pos, double zoom)
+void TPerspectiveCamera::moveShiftAnchor(SoQtExaminerViewer* viewer, QPoint pos, double zoom)
 {
     if (!m_isAnchored) return;
-//    SoRayPickAction rpa(viewer->getViewportRegion());
-//    rpa.setPoint(SbVec2s(pos.x(), pos.y()));
-//    rpa.setRadius(8.);
-//    rpa.apply(viewer->getSceneGraph());
-//    rpa.computeWorldSpaceRay();
-//    SbLine ray = rpa.getLine();
-//    vec3d ro = tgf::makeVector3D(ray.getPosition());
-//    vec3d rd = tgf::makeVector3D(ray.getDirection());
 
     SbVec2s vs = viewer->getViewportRegion().getViewportSizePixels();
     double x = pos.x()/double(vs[0])*2 - 1;
@@ -102,6 +86,61 @@ void TPerspectiveCamera::setRayMove(SoQtExaminerViewer* viewer, QPoint pos, doub
     t *= std::pow(0.7, -zoom);
     m_position = m_anchor - t*rd;
     m_position0.z = m_position.z;
+
+    updateTransform();
+}
+
+void TPerspectiveCamera::findRotationAnchor(SoQtExaminerViewer* viewer, QPoint pos)
+{
+    // find ray
+    SbVec2s vs = viewer->getViewportRegion().getViewportSizePixels();
+    double x = pos.x()/double(vs[0])*2 - 1;
+    double y = pos.y()/double(vs[1])*2 - 1;
+    if (vs[0] > vs[1])
+        x *= double(vs[0])/vs[1];
+    else
+        y *= double(vs[1])/vs[0];
+
+    double z = 1./std::tan(m_camera->heightAngle.getValue()/2);
+    vec3d rd(x, -y, -z);
+    rd.normalize();
+    rd = Transform::rotateX((m_rotation.y + 90.)*gcf::degree).transformVector(rd);
+    rd = Transform::rotateZ(-m_rotation.x*gcf::degree).transformVector(rd);
+
+    m_rotationAnchor = rd;
+}
+
+void TPerspectiveCamera::moveRotationAnchor(SoQtExaminerViewer* viewer, QPoint pos)
+{
+    // find ray
+    SbVec2s vs = viewer->getViewportRegion().getViewportSizePixels();
+    double x = pos.x()/double(vs[0])*2 - 1;
+    double y = pos.y()/double(vs[1])*2 - 1;
+    if (vs[0] > vs[1])
+        x *= double(vs[0])/vs[1];
+    else
+        y *= double(vs[1])/vs[0];
+
+    double z = 1./std::tan(m_camera->heightAngle.getValue()/2);
+    vec3d d0(x, -y, -z);
+    d0.normalize();
+
+    //findAngles
+    // Rcamera(gamma, alpha) d0 = d
+
+    double ma = -m_rotationAnchor.z;
+    double mb = d0.x;
+    double mk = 1. - ma*ma - mb*mb;
+    if (mk < 0) return;
+    mk = -std::sqrt(mk);
+
+    vec3d a(0., 0., -1.);
+    vec3d b(1., 0., 0.);
+//    vec3d k(0., -1., 0.);
+    vec3d m(mb, -mk, -ma);
+
+    m_rotation.x = std::atan2(triple(a, m, m_rotationAnchor), dot(m, m_rotationAnchor) - ma*ma)/gcf::degree;
+    m_rotation.y = std::atan2(triple(b, d0, m), dot(m, d0) - mb*mb)/gcf::degree-90;
 
     updateTransform();
 }

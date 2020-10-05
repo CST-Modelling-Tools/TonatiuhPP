@@ -18,9 +18,13 @@ public:
     vec3d m_rotation; // {azimuth, elevation, 0}
     vec3d m_anchor;
     bool m_isAnchored;
+    vec3d m_rotationAnchor;
 
-    void setRayPressed(SoQtExaminerViewer* viewer, QPoint pos, SoNode* root);
-    void setRayMove(SoQtExaminerViewer* viewer, QPoint pos, double zoom = 0.);
+    void findShiftAnchor(SoQtExaminerViewer* viewer, QPoint pos, SoNode* root);
+    void moveShiftAnchor(SoQtExaminerViewer* viewer, QPoint pos, double zoom = 0.);
+    void findRotationAnchor(SoQtExaminerViewer* viewer, QPoint pos);
+    void moveRotationAnchor(SoQtExaminerViewer* viewer, QPoint pos);
+
     void saveTransform();
     void updateTransform();
 

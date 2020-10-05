@@ -197,6 +197,11 @@ inline vec3d cross(const vec3d& a, const vec3d& b)
     );
 }
 
+inline double triple(const vec3d& a, const vec3d& b, const vec3d& c)
+{
+    return dot(a, cross(b, c));
+}
+
 // this != normal
 inline vec3d vec3d::projected(const vec3d& n) const
 {

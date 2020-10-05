@@ -93,6 +93,8 @@ GraphicView::GraphicView(QWidget* parent):
     pixmap.load(":/images/cursors/cursorOrbit.png");
     pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
     m_cursors["orbit"] = QCursor(pixmap);
+
+    m_modifiersKeys = Qt::NoModifier;
 }
 
 GraphicView::~GraphicView()
@@ -172,30 +174,31 @@ void GraphicView::currentChanged(const QModelIndex& current, const QModelIndex& 
 
 #include <QMouseEvent>
 #include <QDebug>
-#include "kernel/scene/TCameraKit.h"
-
 #include <QApplication>
+#include "kernel/scene/TCameraKit.h"
+#include <Inventor/nodes/SoTransform.h>
+#include "libraries/math/gcf.h"
+
 void GraphicView::mousePressEvent(QMouseEvent* event)
 {
-    qDebug() << "pressed" << event->localPos();
+//    qDebug() << "pressed" << event->localPos();
     m_mousePressed = event->pos();
     m_modifiersPressed = event->modifiers();
     m_camera->saveTransform();
     event->accept();
 
-    if (m_modifiersPressed & Qt::ShiftModifier)
+    if (m_modifiersPressed & Qt::AltModifier)
     {
-//        setCursor();// coin overrides?
-        QApplication::setOverrideCursor(m_cursors["shift"]);
-        m_camera->setRayPressed(m_viewer, m_mousePressed, m_graphicRoot->getScene()->getLayout());
+
     }
     else if (m_modifiersPressed & Qt::ControlModifier)
     {
-        QApplication::setOverrideCursor(m_cursors["rotation"]);
+        if (m_modifiersPressed & Qt::ShiftModifier)
+           m_camera->findRotationAnchor(m_viewer, m_mousePressed);
     }
-    else if (m_modifiersPressed & Qt::AltModifier)
+    else if (m_modifiersPressed & Qt::ShiftModifier)
     {
-        QApplication::setOverrideCursor(m_cursors["orbit"]);
+        m_camera->findShiftAnchor(m_viewer, m_mousePressed, m_graphicRoot->getScene()->getLayout());
     }
 }
 
@@ -203,41 +206,33 @@ void GraphicView::mouseReleaseEvent(QMouseEvent* event)
 {
     qDebug() << "release" << event->pos();
     event->accept();
-    unsetCursor();
-    QApplication::restoreOverrideCursor();
     m_modifiersPressed = Qt::NoModifier;
 }
 
-#include <Inventor/nodes/SoTransform.h>
-#include "libraries/math/gcf.h"
-
 void GraphicView::mouseMoveEvent(QMouseEvent* event)
 {
-    if (m_modifiersPressed & Qt::ShiftModifier)
+//    qDebug() << "move " << diff;
+    if (m_modifiersPressed & Qt::AltModifier)
     {
-//        double s = 0.1;
-//        vec3d shift;
-//        shift.x = diff.x()*s;
-//        shift.y = -diff.y()*s;
-//        shift.z = 0.;
-//        m_camera->shift(shift);
-        m_camera->setRayMove(m_viewer, event->pos());
+
     }
     else if (m_modifiersPressed & Qt::ControlModifier)
     {
-        QPoint diff = event->pos() - m_mousePressed;
-        qDebug() << "move " << diff;
-
-        double s = 0.25;
-        double dAz = diff.x()*s;
-        double dEl = -diff.y()*s;
-        m_camera->rotate(dAz, dEl);
+        if (m_modifiersPressed & Qt::ShiftModifier) {
+            m_camera->moveRotationAnchor(m_viewer, event->pos());
+        } else {
+            QPoint diff = event->pos() - m_mousePressed;
+            double s = 0.25;
+            double dAz = s*diff.x();
+            double dEl = -s*diff.y();
+            m_camera->rotate(dAz, dEl);
+        }
     }
-    else if (m_modifiersPressed & Qt::AltModifier)
+
+    else if (m_modifiersPressed & Qt::ShiftModifier)
     {
-
+        m_camera->moveShiftAnchor(m_viewer, event->pos());
     }
-
 
     //    m_viewer->render();
     event->accept();
@@ -250,8 +245,8 @@ void GraphicView::wheelEvent(QWheelEvent* event)
     {
         double z = event->angleDelta().y()/120.; // 15 degrees * 8 units
         m_camera->saveTransform();
-        m_camera->setRayPressed(m_viewer, event->pos(), m_graphicRoot->getScene()->getLayout());
-        m_camera->setRayMove(m_viewer, event->pos(), z);
+        m_camera->findShiftAnchor(m_viewer, event->pos(), m_graphicRoot->getScene()->getLayout());
+        m_camera->moveShiftAnchor(m_viewer, event->pos(), z);
     }
     event->accept();
 }
@@ -266,19 +261,42 @@ void GraphicView::keyPressEvent(QKeyEvent* event)
 //    qDebug()<< "nm " << event->nativeModifiers() ;
 //    qDebug()<< "qk " << event->key() ;
 //    qDebug()<< "qm " << event->modifiers() ;
-    if (event->modifiers() == Qt::ShiftModifier)
-        QApplication::setOverrideCursor(m_cursors["shift"]);
+
+
+//    if (event->key() == Qt::AltModifier) {
+//        m_modifiersKeys |= Qt::AltModifier;
+//    } else if (event->modifiers() == Qt::ControlModifier)
+//           m_modifiersKeys |= Qt::ControlModifier;
+//    else if (event->modifiers() == Qt::ShiftModifier)
+//              m_modifiersKeys |= Qt::ShiftModifier;
+
+    QCursor* cursor = 0;
+    if (event->modifiers() & Qt::AltModifier)
+        cursor = &m_cursors["orbit"];
+    else if (event->modifiers() & Qt::ControlModifier)
+        cursor = &m_cursors["rotation"];
+    else if (event->modifiers() & Qt::ShiftModifier)
+        cursor = &m_cursors["shift"];
+
+    //        setCursor();// coin overrides?
+    //    unsetCursor();
+    //    QApplication::restoreOverrideCursor();
+    if (cursor) {
+        if (qApp->overrideCursor())
+            qApp->changeOverrideCursor(*cursor);
+        else
+            qApp->setOverrideCursor(*cursor);
+    } else
+        qApp->restoreOverrideCursor();
 
 //    if (event->key() == Qt::Key_Shift)
 //        QApplication::setOverrideCursor(m_cursors["shift"]);
-    event->accept();
 }
 
 void GraphicView::keyReleaseEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_Shift)
-        QApplication::restoreOverrideCursor();
-    event->accept();
+    keyPressEvent(event);
+//    if (event->modifiers())
 }
 
 #include <QApplication>

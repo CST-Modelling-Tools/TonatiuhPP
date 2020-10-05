@@ -38,6 +38,7 @@ private:
 
     QPoint m_mousePressed;
     Qt::KeyboardModifiers m_modifiersPressed;
+    Qt::KeyboardModifiers m_modifiersKeys;
     TPerspectiveCamera* m_camera;
     QMap<QString, QCursor> m_cursors;
 
