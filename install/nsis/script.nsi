@@ -6,7 +6,8 @@
 !define VERSION_MINOR 1
 !define VERSION_NAME "${VERSION_MAJOR}.${VERSION_MINOR}"
 !define /date VERSION_DATE "%Y.%m.%d"
-!define /date DATE_NAME "%d %B %Y"
+#!define /date DATE_NAME "%d %B %Y"
+!define /date DATE_NAME "5 October 2020"
 
 #!define ISBUILDTEST 
 # SetCompressor /SOLID lzma 
@@ -28,9 +29,32 @@ BrandingText " "
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_RIGHT
 !define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\orange-r.bmp"
-OutFile "${APP_NAME}-Installer-Win64-${EDITION_NAME}-v${VERSION_NAME}-${VERSION_DATE}.exe"
+OutFile "${APP_NAME}-Installer-Win64-${EDITION_NAME}-v${VERSION_NAME}.exe"
 InstallDir "$LOCALAPPDATA\${APP_NAME}\${EDITION_NAME}"
 InstallDirRegKey HKCU "Software\${APP_NAME}\${EDITION_NAME}" ""
+
+
+Function Trim
+    Exch $R1 ; Original string
+    Push $R2
+Loop:
+    StrCpy $R2 "$R1" 1
+    StrCmp "$R2" "0" TrimLeft
+	Goto Done
+TrimLeft:
+    StrCpy $R1 "$R1" "" 1
+    Goto Loop
+Done:
+    Pop $R2
+    Exch $R1
+FunctionEnd
+!define Trim "!insertmacro Trim"
+ !macro Trim ResultVar String
+  Push "${String}"
+  Call Trim
+  Pop "${ResultVar}"
+!macroend
+
 
 
 !define MUI_WELCOMEPAGE_TITLE "Welcome to ${APP_NAME} Installer"
