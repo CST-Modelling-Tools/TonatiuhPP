@@ -7,6 +7,7 @@
 #include <Inventor/actions/SoBoxHighlightRenderAction.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+#include <Inventor/actions/SoGetMatrixAction.h>
 //#include <Inventor/Qt/viewers/SoQtConstrainedViewer.h>
 
 
@@ -71,19 +72,18 @@ GraphicView::GraphicView(QWidget* parent):
 
 
     m_viewer = new SoQtExaminerViewer(w);
+    m_viewer->setAntialiasing(true, 1); // disable if slow
     m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND); // do not move
     m_viewer->setViewing(false);
 
-    SoBoxHighlightRenderAction* highlighter = new SoBoxHighlightRenderAction();
+    SoBoxHighlightRenderAction* highlighter = new SoBoxHighlightRenderAction(m_viewer->getViewportRegion());
     highlighter->setColor(SbColor(100/255., 180/255., 120/255.));
-    highlighter->setLineWidth(1.);
+    highlighter->setLineWidth(2.);
     m_viewer->setGLRenderAction(highlighter);
 
     showAxes(true);
     m_viewer->setHeadlight(false);
-//    m_viewer->setPopupMenuEnabled(true);
     m_viewer->setDecoration(false);
-    m_viewer->setAntialiasing(true, 1); // disable if slow
     m_camera = new TPerspectiveCamera;
 
     // do not propogate key and mouse events
@@ -252,7 +252,7 @@ void GraphicView::showDecoration(bool on)
 void GraphicView::currentChanged(const QModelIndex& current, const QModelIndex& /*previous*/)
 {
     if (!m_graphicRoot) return;
-//    m_graphicRoot->deselectAll();
+    m_graphicRoot->deselectAll();
 
     QVariant variant = current.data(Qt::UserRole);
     if (!variant.canConvert<SoPathVariant>()) return;
@@ -352,7 +352,7 @@ void GraphicView::mouseMoveEvent(QMouseEvent* event)
     if (m_modifiersPressed & Qt::AltModifier)
     {
         if (m_modifiersPressed & Qt::ShiftModifier) {
-            m_camera->moveOrbitAnchor(m_viewer, event->pos());
+             m_camera->moveOrbitAnchor(m_viewer, event->pos());
         } else {
             QPoint diff = event->pos() - m_mousePressed;
             double s = 0.25;
@@ -375,7 +375,10 @@ void GraphicView::mouseMoveEvent(QMouseEvent* event)
     }
     else if (m_modifiersPressed & Qt::ShiftModifier)
     {
-        m_camera->moveShiftAnchor(m_viewer, event->pos());
+       if (GetKeyState(VK_LSHIFT) < 0)
+           m_camera->movePanAnchor(m_viewer, event->pos());
+       else
+           m_camera->moveShiftAnchor(m_viewer, event->pos());
     }
 
     //    m_viewer->render();
@@ -392,9 +395,15 @@ void GraphicView::wheelEvent(QWheelEvent* event)
     } else if (event->modifiers() & Qt::AltModifier) {
         double z = event->angleDelta().x()/120.;
         m_camera->zoomCenter(m_viewer, m_graphicRoot->getScene()->getLayout(), z);
-    } else {
+    } else if (event->modifiers() & Qt::ControlModifier)  {
         double z = event->angleDelta().y()/120.;
         m_camera->zoomCenter(m_viewer, m_graphicRoot->getScene()->getLayout(), z);
+    } else if (event->modifiers() & Qt::ShiftModifier)  {//recenter
+        double z = event->angleDelta().y()/120.;
+//        m_camera->zoomCenter(m_viewer, m_graphicRoot->getScene()->getLayout(), z);
+        m_camera->saveTransform();
+        m_camera->moveCameraPlane(m_viewer, event->pos(), m_graphicRoot->getScene()->getLayout(),z);
+        cursor().setPos(mapToGlobal(geometry().center()));
     }
     event->accept();
 }
@@ -483,6 +492,7 @@ void GraphicView::focusOutEvent(QFocusEvent* event)
     setProperty("inFocus", false);
     style()->unpolish(this);
     update();
+    qApp->restoreOverrideCursor();
 
 //    qDebug() << "ena";
     qApp->removeEventFilter(m_filter);
@@ -514,10 +524,6 @@ void GraphicView::resizeEvent(QResizeEvent* event)
 
 void GraphicView::showContextMenu(QPoint pos)
 {
-//    QMenu* menu = new QMenu(this);
-//    menu->addAction(new QAction("Action 1", this));
-//    menu->addAction(new QAction("Action 2", this));
-//    menu->addAction(new QAction("Action 3", this));
     m_menu->popup(mapToGlobal(pos));
 }
 
@@ -528,7 +534,6 @@ void GraphicView::showContextMenu(QPoint pos)
 //    painter.drawText(0, 20 ," XVXV");
 //    qDebug()<<"painter";
 //}
-
 
 void GraphicView::on_actionViewAll_triggered()
 {
@@ -542,7 +547,7 @@ void GraphicView::on_actionViewAll_triggered()
     SbRotation q = camera->orientation.getValue();
     SbVec3f d(0, 0, -1);
     q.multVec(d, d);
-    qDebug() << d.toString().getString();
+//    qDebug() << d.toString().getString();
     double alpha = asin(d[2])/gcf::degree;
     double gamma = atan2(d[0], d[1])/gcf::degree;
     m_camera->m_rotation = vec3d(gamma, alpha, 0);
@@ -550,6 +555,7 @@ void GraphicView::on_actionViewAll_triggered()
     m_camera->updateTransform();
 }
 
+#include <Inventor/nodes/SoSelection.h>
 void GraphicView::on_actionViewSelected_triggered()
 {
 //    QModelIndex index = ui->sceneView->currentIndex();
@@ -563,27 +569,44 @@ void GraphicView::on_actionViewSelected_triggered()
 //    actionSearch.apply(m_document->getSceneKit()->getLayout());
 //    SoPath* path = actionSearch.getPath();
 
-//    SbViewportRegion vpr;
-//    SoGetMatrixAction actionMatrix(vpr);
-//    actionMatrix.apply(path);
-//    SbMatrix matrix = actionMatrix.getMatrix();
+    int c = m_graphicRoot->getSelection()->getNumSelected();
+    if (c == 0) return;
+    SoPath* path = m_graphicRoot->getSelection()->getPath(0);
 
-//    SbVec3f vL(0., 0., 0.);
-//    SbVec3f vG;
-//    matrix.multVecMatrix(vL, vG);
+    SbViewportRegion vpr;
+    SoGetMatrixAction actionMatrix(vpr);
+    actionMatrix.apply(path);
+    SbMatrix matrix = actionMatrix.getMatrix();
 
-//    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
+    SbVec3f vL(0., 0., 0.);
+    SbVec3f vG;
+    matrix.multVecMatrix(vL, vG);
+
+//    SoCamera* camera = m_viewer->getCamera();
 //    camera->pointAt(vG, SbVec3f(0., 0., 1.));
+
+//    SbVec3f pos = camera->position.getValue();
+//    m_camera->m_position = vec3d(pos[0], pos[1], pos[2]);
+
+//    SbRotation q = camera->orientation.getValue();
+//    SbVec3f d(0, 0, -1);
+//    q.multVec(d, d);
+//    qDebug() << d.toString().getString();
+//    double alpha = asin(d[2])/gcf::degree;
+//    double gamma = atan2(d[0], d[1])/gcf::degree;
+//    m_camera->m_rotation = vec3d(gamma, alpha, 0);
+
+    m_camera->lookAt(tgf::makeVector3D(vG));
 }
 
-SbVec3f getTarget(SoCamera* camera)
-{
-    SbRotation rotation = camera->orientation.getValue();
-    SbVec3f target;
-    rotation.multVec(SbVec3f(0., 0., -camera->focalDistance.getValue()), target);
-    target += camera->position.getValue();
-    return target;
-}
+//SbVec3f getTarget(SoCamera* camera)
+//{
+//    SbRotation rotation = camera->orientation.getValue();
+//    SbVec3f target;
+//    rotation.multVec(SbVec3f(0., 0., -camera->focalDistance.getValue()), target);
+//    target += camera->position.getValue();
+//    return target;
+//}
 
 void GraphicView::on_actionViewTop_triggered()
 {

@@ -24,7 +24,6 @@
 
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
-#include <Inventor/actions/SoGetMatrixAction.h>
 #include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/draggers/SoDragger.h>
@@ -296,7 +295,7 @@ void MainWindow::SetupGraphicView()
 
     connect(
         m_modelSelection, SIGNAL(currentChanged(QModelIndex,QModelIndex)),
-        m_graphicView[0],SLOT(currentChanged(QModelIndex,QModelIndex))
+        m_graphicView[0], SLOT(currentChanged(QModelIndex,QModelIndex))
     );
 
     m_focusView = 0;
@@ -644,8 +643,6 @@ void MainWindow::on_actionExamples_triggered()
 
 void MainWindow::on_actionScripts_triggered()
 {
-    if (!OkToContinue()) return;
-
     QDir dir(QCoreApplication::applicationDirPath());
     QString fileName = QFileDialog::getOpenFileName(
         this, "Open File", dir.filePath("../examples/scripts"),
@@ -1999,7 +1996,7 @@ void MainWindow::SetAir(QString /*name*/)
 /*!
  * Set the \a value for the transmissivity parameter \a parameter.
  */
-void MainWindow::SetAirParameter(QString parameter, QString value)
+void MainWindow::SetAirParameter(QString /*parameter*/, QString /*value*/)
 {
 //    TSceneKit* sceneKit = m_document->getSceneKit();
 //    AirTransmission* air = static_cast<AirTransmission*>(sceneKit->getPart("world.air.transmission", false));

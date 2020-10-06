@@ -89,8 +89,7 @@ GraphicRoot::GraphicRoot()
     m_sun = new SunNode3D;
     m_sky->getRoot()->addChild(m_sun);
 
-    m_grid = new GridNode3D;
-    sep->addChild(m_grid);
+
 
     SoEnvironment* environment = new SoEnvironment;
     environment->ambientIntensity = 1.;
@@ -121,6 +120,9 @@ GraphicRoot::GraphicRoot()
     m_selection->policy = SoSelection::SINGLE;
     m_selection->addFinishCallback(selectionFinishCallback, (void*) this);
     group->addChild(m_selection);
+
+    m_grid = new GridNode3D; // better here for antialiasing
+    m_root->addChild(m_grid);
 
     m_rays = new SoSeparator; // order important for antialiasing
     m_root->addChild(m_rays);

@@ -26,6 +26,7 @@ public:
 
     void findMoveAnchor(SoQtExaminerViewer* viewer, QPoint pos, SoNode* root);
     void moveShiftAnchor(SoQtExaminerViewer* viewer, QPoint pos, double zoom = 0.);
+    void movePanAnchor(SoQtExaminerViewer* viewer, QPoint pos, double zoom = 0.);
 
     void findRotationAnchor(SoQtExaminerViewer* viewer, QPoint pos);
     void moveRotationAnchor(SoQtExaminerViewer* viewer, QPoint pos);
@@ -34,6 +35,7 @@ public:
     void moveOrbitAnchor(SoQtExaminerViewer* viewer, QPoint pos);
 
     void zoomCenter(SoQtExaminerViewer* viewer, SoNode* root, double zoom = 0.);
+    void moveCameraPlane(SoQtExaminerViewer* viewer, QPoint pos, SoNode* root, double zoom);
 
     void saveTransform();
     void updateTransform();
@@ -42,6 +44,7 @@ public:
     void rotate(double dAz, double dEl);
     void orbit(double dAz, double dEl);
     void setRotation(double az, double el);
+    void lookAt(vec3d aim);
 //    void rotateAnchored(double dAz, double dEl);
 
 protected:

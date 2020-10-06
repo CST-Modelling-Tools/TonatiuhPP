@@ -47,6 +47,7 @@ public:
     void select(const SoPath* path);
     void deselectAll();
     void onSelectionChanged(SoSelection* selection);
+    SoSelection* getSelection() {return m_selection;}
 
     void updateSkyCamera(SoPerspectiveCamera* camera);
 

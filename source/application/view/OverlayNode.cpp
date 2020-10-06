@@ -121,14 +121,14 @@ void OverlayNode::GLRender(SoGLRenderAction* action)
 //  const SbMatrix& tmp = SoViewingMatrixElement::get(state);
 //  m_camera->orientation = SbRotation(tmp).inverse();
 
-//  SbBool test_out, write_out;
-//  SoDepthBufferElement::DepthWriteFunction function_out;
-//  SbVec2f range_out;
-//  SoDepthBufferElement::get(state, test_out, write_out, function_out, range_out);
-//  range_out[0] = 0.00000f;
-//  range_out[1] = 0.00001f;
-//  SoDepthBufferElement::set(state, test_out, write_out, function_out, range_out);
-  glClear(GL_DEPTH_BUFFER_BIT);
+  SbBool test_out, write_out;
+  SoDepthBufferElement::DepthWriteFunction function_out;
+  SbVec2f range_out;
+  SoDepthBufferElement::get(state, test_out, write_out, function_out, range_out);
+  range_out[0] = 0.0000f;
+  range_out[1] = 0.0000f;
+  SoDepthBufferElement::set(state, test_out, write_out, function_out, range_out);
+//  glClear(GL_DEPTH_BUFFER_BIT);
 
   m_root->GLRender(action);
 
