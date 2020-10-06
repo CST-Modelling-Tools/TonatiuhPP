@@ -65,8 +65,6 @@ SkyNode3D::SkyNode3D()
     SO_NODE_CONSTRUCTOR(SkyNode3D);
 
     m_root = new SoSeparator;
-    m_root->renderCulling = SoSeparator::OFF;
-    m_root->renderCaching = SoSeparator::OFF;
     m_root->ref();
 
     m_camera = new SoPerspectiveCamera;

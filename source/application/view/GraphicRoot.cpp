@@ -77,14 +77,20 @@ GraphicRoot::GraphicRoot()
     m_root->renderCaching = SoSeparator::OFF;
     m_root->ref();
 
+    SoSeparator* sep = new SoSeparator;
+    sep->renderCulling = SoSeparator::OFF;
+    sep->renderCaching = SoSeparator::OFF;
+    sep->pickCulling = SoSeparator::OFF;
+    m_root->addChild(sep);
+
     m_sky = new SkyNode3D;
-    m_root->addChild(m_sky);
+    sep->addChild(m_sky);
 
     m_sun = new SunNode3D;
     m_sky->getRoot()->addChild(m_sun);
 
     m_grid = new GridNode3D;
-    m_root->addChild(m_grid);
+    sep->addChild(m_grid);
 
     SoEnvironment* environment = new SoEnvironment;
     environment->ambientIntensity = 1.;
@@ -219,6 +225,11 @@ void GraphicRoot::showPhotons(bool on)
     group->whichChild = on ? SO_SWITCH_ALL : SO_SWITCH_NONE;
 }
 
+void GraphicRoot::enableSelection(bool on)
+{
+    m_selection->policy = on ? SoSelection::SINGLE : SoSelection::DISABLE;
+}
+
 void GraphicRoot::select(const SoPath* path)
 {
     m_selection->select(path);
@@ -240,8 +251,6 @@ void GraphicRoot::updateSkyCamera(SoPerspectiveCamera* camera)
     m_sky->updateSkyCamera(camera);
     m_overlayNode->updateSkyCamera(camera);
 }
-
-
 
 void GraphicRoot::update(void* data, SoSensor*)
 {

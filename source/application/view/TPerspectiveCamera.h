@@ -33,12 +33,15 @@ public:
     void findOrbitAnchor(SoQtExaminerViewer* viewer, QPoint pos, SoNode* root);
     void moveOrbitAnchor(SoQtExaminerViewer* viewer, QPoint pos);
 
+    void zoomCenter(SoQtExaminerViewer* viewer, SoNode* root, double zoom = 0.);
+
     void saveTransform();
     void updateTransform();
 
     void shift(vec3d s);
     void rotate(double dAz, double dEl);
     void orbit(double dAz, double dEl);
+    void setRotation(double az, double el);
 //    void rotateAnchored(double dAz, double dEl);
 
 protected:

@@ -63,7 +63,7 @@ background-color: #d7e3ed;
          </font>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="tabWorld">
          <attribute name="title">
@@ -402,28 +402,8 @@ border:none;
     <property name="title">
      <string>&amp;View</string>
     </property>
-    <widget class="QMenu" name="menuCamera">
-     <property name="title">
-      <string>Camera</string>
-     </property>
-     <property name="icon">
-      <iconset resource="../resources.qrc">
-       <normaloff>:/images/scene/nodeCamera.png</normaloff>:/images/scene/nodeCamera.png</iconset>
-     </property>
-     <addaction name="actionViewTop"/>
-     <addaction name="actionViewSun"/>
-     <addaction name="separator"/>
-     <addaction name="actionLookNorth"/>
-     <addaction name="actionLookEast"/>
-     <addaction name="actionLookSouth"/>
-     <addaction name="actionLookWest"/>
-    </widget>
     <addaction name="actionViewRays"/>
     <addaction name="actionViewPhotons"/>
-    <addaction name="separator"/>
-    <addaction name="menuCamera"/>
-    <addaction name="actionViewSelected"/>
-    <addaction name="actionViewAll"/>
    </widget>
    <widget class="QMenu" name="menuRun">
     <property name="title">
@@ -453,7 +433,9 @@ border:none;
     <property name="title">
      <string>&amp;Help</string>
     </property>
+    <addaction name="actionDocumentation"/>
     <addaction name="actionExamples"/>
+    <addaction name="actionScripts"/>
     <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
@@ -510,8 +492,6 @@ border:none;
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionViewTop"/>
-   <addaction name="actionViewSun"/>
   </widget>
   <widget class="QToolBar" name="runToolBar">
    <property name="windowTitle">
@@ -619,7 +599,7 @@ border:none;
      <normaloff>:/images/edit/undoHistory.png</normaloff>:/images/edit/undoHistory.png</iconset>
    </property>
    <property name="text">
-    <string>Undo History...</string>
+    <string>&amp;History...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+Z</string>
@@ -631,7 +611,7 @@ border:none;
      <normaloff>:/images/edit/cut.png</normaloff>:/images/edit/cut.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Cut</string>
+    <string>Cu&amp;t</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+X</string>
@@ -670,7 +650,7 @@ border:none;
      <normaloff>:/images/edit/pasteLink.png</normaloff>:/images/edit/pasteLink.png</iconset>
    </property>
    <property name="text">
-    <string>Paste Link</string>
+    <string>Paste &amp;Link</string>
    </property>
    <property name="toolTip">
     <string>Paste a link to the clipboard node</string>
@@ -685,7 +665,7 @@ border:none;
      <normaloff>:/images/edit/delete.png</normaloff>:/images/edit/delete.png</iconset>
    </property>
    <property name="text">
-    <string>Delete</string>
+    <string>&amp;Delete</string>
    </property>
    <property name="shortcut">
     <string>Del</string>
@@ -730,7 +710,7 @@ border:none;
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Rays</string>
+    <string>&amp;Rays</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+E, R</string>
@@ -741,82 +721,10 @@ border:none;
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Photons</string>
+    <string>&amp;Photons</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+E, P</string>
-   </property>
-  </action>
-  <action name="actionViewAll">
-   <property name="text">
-    <string>View All</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+.</string>
-   </property>
-  </action>
-  <action name="actionViewSelected">
-   <property name="text">
-    <string>View Selected</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+.</string>
-   </property>
-  </action>
-  <action name="actionViewTop">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/images/view/ViewTop.png</normaloff>:/images/view/ViewTop.png</iconset>
-   </property>
-   <property name="text">
-    <string>Top</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+5</string>
-   </property>
-  </action>
-  <action name="actionLookNorth">
-   <property name="text">
-    <string>North</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+8</string>
-   </property>
-  </action>
-  <action name="actionLookEast">
-   <property name="text">
-    <string>East</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+6</string>
-   </property>
-  </action>
-  <action name="actionLookSouth">
-   <property name="text">
-    <string>South</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+2</string>
-   </property>
-  </action>
-  <action name="actionLookWest">
-   <property name="text">
-    <string>West</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+4</string>
-   </property>
-  </action>
-  <action name="actionViewSun">
-   <property name="icon">
-    <iconset resource="../resources.qrc">
-     <normaloff>:/images/view/viewSun.png</normaloff>:/images/view/viewSun.png</iconset>
-   </property>
-   <property name="text">
-    <string>Sun</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+0</string>
    </property>
   </action>
   <action name="actionQuadView">
@@ -848,7 +756,7 @@ border:none;
      <normaloff>:/images/run/runFluxAnalysis.png</normaloff>:/images/run/runFluxAnalysis.png</iconset>
    </property>
    <property name="text">
-    <string>Flux Analysis...</string>
+    <string>Flux &amp;Analysis...</string>
    </property>
    <property name="toolTip">
     <string>Run Flux Analysis</string>
@@ -863,7 +771,7 @@ border:none;
      <normaloff>:/images/about/info.png</normaloff>:/images/about/info.png</iconset>
    </property>
    <property name="text">
-    <string>About...</string>
+    <string>&amp;About...</string>
    </property>
   </action>
   <action name="actionRunScript">
@@ -872,7 +780,7 @@ border:none;
      <normaloff>:/images/run/runScript.png</normaloff>:/images/run/runScript.png</iconset>
    </property>
    <property name="text">
-    <string>Script...</string>
+    <string>&amp;Script...</string>
    </property>
    <property name="toolTip">
     <string>Run Script</string>
@@ -919,10 +827,28 @@ border:none;
   <action name="actionExamples">
    <property name="icon">
     <iconset resource="../resources.qrc">
-     <normaloff>:/images/file/open.png</normaloff>:/images/file/open.png</iconset>
+     <normaloff>:/images/about/tnh.ico</normaloff>:/images/about/tnh.ico</iconset>
    </property>
    <property name="text">
-    <string>Examples...</string>
+    <string>&amp;Projects...</string>
+   </property>
+  </action>
+  <action name="actionScripts">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/about/tnhs.ico</normaloff>:/images/about/tnhs.ico</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Scripts...</string>
+   </property>
+  </action>
+  <action name="actionDocumentation">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/about/docs.png</normaloff>:/images/about/docs.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Documentation...</string>
    </property>
   </action>
  </widget>

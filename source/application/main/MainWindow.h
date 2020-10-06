@@ -155,9 +155,6 @@ private slots:
     void onAbort(QString error);
     void showWarning(QString message);
 
-
-    SbVec3f getTarget(SoCamera* camera);
-
     // manipulators actions
     void SoTransform_to_SoCenterballManip();
     void SoTransform_to_SoJackManip();
@@ -170,15 +167,6 @@ private slots:
 
     // view actions
 //    void on_actionViewAxes_toggled();
-    void on_actionViewAll_triggered();
-    void on_actionViewSelected_triggered();
-    void on_actionViewTop_triggered();
-    void on_actionLookNorth_triggered();
-    void on_actionLookEast_triggered();
-    void on_actionLookSouth_triggered();
-    void on_actionLookWest_triggered();
-    void on_actionViewSun_triggered();
-
     void on_actionQuadView_toggled();
 
     // automation menu actions
@@ -193,6 +181,7 @@ private slots:
     void tabChanged(int);
 
     void on_actionExamples_triggered();
+    void on_actionScripts_triggered();
 
 signals:
     void Abort(QString error);

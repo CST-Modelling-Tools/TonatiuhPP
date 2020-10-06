@@ -11,8 +11,10 @@ KeyFilter::KeyFilter(QObject* parent):
 bool KeyFilter::eventFilter(QObject* object, QEvent* event)
 {
 //    https://bugreports.qt.io/browse/QTBUG-46812?attachmentOrder=asc
+
     if (event->type() == QEvent::ShortcutOverride)
     {
+//        return QObject::eventFilter(object, event);
         return true;
     }
 //    else if (event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)

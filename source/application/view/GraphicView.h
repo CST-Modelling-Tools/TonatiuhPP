@@ -29,6 +29,7 @@ public:
     SoCamera* getCamera() const;
     void showDecoration(bool on);
     void showAxes(bool on);
+    void render();
 
 public slots:
     void currentChanged(const QModelIndex& current, const QModelIndex& previous);
@@ -63,4 +64,30 @@ protected:
     void resizeEvent(QResizeEvent* event);
 
 //    void paintEvent(QPaintEvent* event);
+
+private:
+    QMenu* m_menu;
+    QAction *actionViewAll;
+    QAction *actionViewSelected;
+
+    QAction *actionViewTop;
+    QAction *actionViewSun;
+    QAction *actionLookNorth;
+    QAction *actionLookEast;
+    QAction *actionLookSouth;
+    QAction *actionLookWest;
+
+public slots:
+    void showContextMenu(QPoint);
+
+    void on_actionViewAll_triggered();
+    void on_actionViewSelected_triggered();
+
+    void on_actionViewTop_triggered();
+    void on_actionViewSun_triggered();
+
+    void on_actionLookNorth_triggered();
+    void on_actionLookEast_triggered();
+    void on_actionLookSouth_triggered();
+    void on_actionLookWest_triggered();
 };

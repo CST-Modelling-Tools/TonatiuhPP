@@ -57,17 +57,15 @@ OverlayNode::OverlayNode()
     myMaterial->transparency = 0.5; // corners
     sep->addChild(myMaterial);
 
-    SoFont *myFont = new SoFont;
-    myFont->name.setValue("Times-Roman");
-    myFont->size.setValue(24.0);
-    sep->addChild(myFont);
+//    SoFont *myFont = new SoFont;
+//    myFont->name.setValue("Times-Roman");
+//    myFont->size.setValue(24.0);
+//    sep->addChild(myFont);
 
-    SoText2* text = new SoText2;
-    text->string = "XVXV";
-    text->justification = SoText2::CENTER;
-    sep->addChild(text);
-
-
+//    SoText2* text = new SoText2;
+//    text->string = "XVXV";
+//    text->justification = SoText2::CENTER;
+//    sep->addChild(text);
 
     SoDrawStyle* sStyle = new SoDrawStyle;
     sStyle->lineWidth = 2;
@@ -75,29 +73,29 @@ OverlayNode::OverlayNode()
 //    sStyle->style = SoDrawStyle::FILLED;
     sep->addChild(sStyle);
 
-    float scale = 0.0005;
+    float scale = 0.0007;
     float w = 64/2*scale;
     float h = 48/2*scale;
     float s = 12*scale;
     float pts[][3] = {
-        {w, h-s, 0},
+        {w, h - s, 0},
         {w, h, 0},
-        {w-s, h, 0},
+        {w - s, h, 0},
 
-        {-w+s, h, 0},
+        {-w + s, h, 0},
         {-w, h, 0},
-        {-w, h-s, 0},
+        {-w, h - s, 0},
 
-        {-w, -h+s, 0},
+        {-w, -h + s, 0},
         {-w, -h, 0},
-        {-w+s, -h, 0},
+        {-w + s, -h, 0},
 
-        {w-s, -h, 0},
+        {w - s, -h, 0},
         {w, -h, 0},
-        {w, -h+s, 0}
+        {w, -h + s, 0}
     };
 
-    int szs[] = {3, 3, 3 ,3};
+    int szs[] = {3, 3, 3, 3};
 
     SoCoordinate3* sPoints = new SoCoordinate3;
     sPoints->point.setValues(0, 12, pts);
@@ -106,15 +104,12 @@ OverlayNode::OverlayNode()
     SoLineSet* sLines = new SoLineSet;
     sLines->numVertices.setValues(0, 4, szs);
     sep->addChild(sLines);
-
-
 }
 
 OverlayNode::~OverlayNode()
 {
     m_root->unref();
 }
-
 
 #include <Inventor/nodes/SoDepthBuffer.h>
 void OverlayNode::GLRender(SoGLRenderAction* action)
@@ -139,7 +134,6 @@ void OverlayNode::GLRender(SoGLRenderAction* action)
 
   state->pop();
 }
-
 
 void OverlayNode::updateSkyCamera(SoPerspectiveCamera* camera)
 {

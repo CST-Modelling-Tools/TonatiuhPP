@@ -261,6 +261,38 @@ void TPerspectiveCamera::moveOrbitAnchor(SoQtExaminerViewer* viewer, QPoint pos)
     updateTransform();
 }
 
+void TPerspectiveCamera::zoomCenter(SoQtExaminerViewer* viewer, SoNode* root, double zoom)
+{
+    // find ray
+    vec3d rd(0, 0, -1);
+    rd = Transform::rotateX((m_rotation.y + 90.)*gcf::degree).transformVector(rd);
+    rd = Transform::rotateZ(-m_rotation.x*gcf::degree).transformVector(rd);
+
+    // pick object
+    SoRayPickAction rpa(viewer->getViewportRegion());
+    rpa.setRay(SbVec3f(m_position.x, m_position.y, m_position.z), SbVec3f(rd.x, rd.y, rd.z));
+    rpa.apply(root);
+
+    vec3d anchor;
+    const SoPickedPoint* picked = rpa.getPickedPoint();
+    if (picked) {
+        anchor = tgf::makeVector3D(picked->getPoint());
+    } else {
+        // horizon ro + trd = 0
+        double t = -m_position.z/rd.z;
+        if (t > 0) {
+            anchor = m_position + t*rd;
+        } else
+            return;
+    }
+
+    vec3d q = anchor - m_position;
+    q *= std::pow(0.7, -zoom);
+    m_position = anchor - q;
+//    qDebug() << zoom << " " << m_position;
+    updateTransform();
+}
+
 void TPerspectiveCamera::saveTransform()
 {
     m_position0 = m_position;
@@ -305,5 +337,12 @@ void TPerspectiveCamera::orbit(double dAz, double dEl)
     );
     m_position = m_anchor - distance*direction;
 
+    updateTransform();
+}
+
+void TPerspectiveCamera::setRotation(double az, double el)
+{
+    m_rotation.x = az;
+    m_rotation.y = el;
     updateTransform();
 }

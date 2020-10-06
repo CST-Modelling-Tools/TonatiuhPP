@@ -168,9 +168,9 @@ MainWindow::MainWindow(QString fileName, CustomSplashScreen* splash, QWidget* pa
         ui->sceneView->expandToDepth(1);
     }
 
-    Select("//Node");
-
+//    Select("//Node");
 //    m_graphicsRoot->deselectAll();
+
 //    qDebug() << "counter " << m_document->getSceneKit()->getRefCount();
 //    qDebug() << "layout " << m_modelScene->getInstance(m_modelScene->indexFromUrl("//Layout"))->getNode()->getRefCount();
 
@@ -642,6 +642,20 @@ void MainWindow::on_actionExamples_triggered()
     StartOver(fileName);
 }
 
+void MainWindow::on_actionScripts_triggered()
+{
+    if (!OkToContinue()) return;
+
+    QDir dir(QCoreApplication::applicationDirPath());
+    QString fileName = QFileDialog::getOpenFileName(
+        this, "Open File", dir.filePath("../examples/scripts"),
+        "Tonatiuh script files (*.tnhs)"
+    );
+    if (fileName.isEmpty()) return;
+
+    openFileScript(fileName);
+}
+
 void MainWindow::fileOpenRecent()
 {
     if (!OkToContinue()) return;
@@ -851,22 +865,26 @@ void MainWindow::nodeImport(QString fileName)
  */
 void MainWindow::SelectionFinish(SoSelection* selection)
 {
-    if (selection->getNumSelected() == 0) return;
-
+    if (selection->getNumSelected() == 0) {
+        m_graphicsRoot->deselectAll();
+        m_modelSelection->clearSelection();
+        m_graphicView[0]->render();
+        return;
+    }
     SoPath* path = selection->getPath(0);
     if (!path) return;
     if (!path->containsNode(m_document->getSceneKit())) return;
 
     SoNodeKitPath* nodeKitPath = static_cast<SoNodeKitPath*>(path);
-    if (nodeKitPath->getTail()->getTypeId().isDerivedFrom(SunKit::getClassTypeId() ) )
-    {
-        selection->deselectAll();
-        QModelIndex currentIndex = m_modelSelection->currentIndex();
-        m_modelSelection->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-        return;
-    }
-    if (nodeKitPath->getTail()->getTypeId().isDerivedFrom(SoDragger::getClassTypeId() ) )
-        return;
+//    if (nodeKitPath->getTail()->getTypeId().isDerivedFrom(SunKit::getClassTypeId() ) )
+//    {
+//        selection->deselectAll();
+//        QModelIndex currentIndex = m_modelSelection->currentIndex();
+//        m_modelSelection->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+//        return;
+//    }
+//    if (nodeKitPath->getTail()->getTypeId().isDerivedFrom(SoDragger::getClassTypeId() ) )
+//        return;
 
     QModelIndex index = m_modelScene->indexFromPath(*nodeKitPath);
     if (!index.isValid()) return;
@@ -973,15 +991,6 @@ void MainWindow::on_actionQuadView_toggled()
     }
 }
 
-SbVec3f MainWindow::getTarget(SoCamera* camera)
-{ 
-    SbRotation rotation = camera->orientation.getValue();
-    SbVec3f target;
-    rotation.multVec(SbVec3f(0., 0., -camera->focalDistance.getValue()), target);
-    target += camera->position.getValue();
-    return target;
-}
-
 void MainWindow::on_actionRunScript_triggered()
 {
 //    m_undoStack->setActive(false);
@@ -1001,7 +1010,6 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::treeWorldClicked(QTreeWidgetItem* item, int /*column*/)
 {
-    m_graphicsRoot->deselectAll();
     TSceneKit* sceneKit = m_document->getSceneKit();
     SoNode* node = 0;
     QString name = item->text(0);
@@ -1037,9 +1045,11 @@ void MainWindow::tabChanged(int tab)
         InstanceNode* instance = m_modelScene->getInstance(ui->sceneView->currentIndex());
         SoNode* node = instance->getNode();
         ui->parametersTabs->setNode(node);
+        m_graphicsRoot->enableSelection(true);
     } else if (tab == 0) // World
     {
         treeWorldClicked(ui->treeWorldWidget->currentItem(), 0); // redo
+        m_graphicsRoot->enableSelection(false);
     }
 }
 
@@ -1935,7 +1945,7 @@ void MainWindow::SetRaysGrid(int width, int height)
 /*!
  *    Set selected sunshape, \a sunshapeType, to the sun.
  */
-void MainWindow::SetSunshape(QString name)
+void MainWindow::SetSunshape(QString /*name*/)
 {
 //    SunFactory* f = m_pluginManager->getSunMap().value(name, 0);
 //    if (!f)
@@ -1968,7 +1978,7 @@ void MainWindow::SetSunshape(QString name)
 /*!
  *    Set selected transmissivity, \a transmissivityType, to the scene.
  */
-void MainWindow::SetAir(QString name)
+void MainWindow::SetAir(QString /*name*/)
 {
 //    AirFactory* f = m_pluginManager->getAirMap().value(name, 0);
 //    if (!f)
@@ -2621,9 +2631,9 @@ bool MainWindow::StartOver(const QString& fileName)
     ChangeModelScene();
 
     ui->sceneView->expandToDepth(1);
-    Select("//Node"); // ?
-    on_actionViewAll_triggered(); // discard sun
 
+//    Select("//Node"); // ?
+//    on_actionViewAll_triggered(); // discard sun
 
     GridNode* node = (GridNode*) m_document->getSceneKit()->getPart("world.terrain.grid", true);
     if (node) ui->actionViewGrid->setChecked(node->show.getValue());
@@ -2648,100 +2658,3 @@ void MainWindow::UpdateLightSize()
     sunKit->setBox(sceneKit);
     m_modelScene->UpdateSceneModel();
 }
-
-void MainWindow::on_actionViewAll_triggered()
-{
-    SbViewportRegion vpr = m_graphicView[m_focusView]->getViewportRegion();
-    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
-    camera->viewAll(m_graphicsRoot->getRoot(), vpr);
-}
-
-void MainWindow::on_actionViewSelected_triggered()
-{
-    QModelIndex index = ui->sceneView->currentIndex();
-    InstanceNode* instance = m_modelScene->getInstance(index);
-    SoNode* node = instance->getNode();
-    TSeparatorKit* kit = dynamic_cast<TSeparatorKit*>(node);
-    if (kit) node = kit->getPart("group", false);
-
-    SoSearchAction actionSearch;
-    actionSearch.setNode(node);
-    actionSearch.apply(m_document->getSceneKit()->getLayout());
-    SoPath* path = actionSearch.getPath();
-
-    SbViewportRegion vpr;
-    SoGetMatrixAction actionMatrix(vpr);
-    actionMatrix.apply(path);
-    SbMatrix matrix = actionMatrix.getMatrix();
-
-    SbVec3f vL(0., 0., 0.);
-    SbVec3f vG;
-    matrix.multVecMatrix(vL, vG);
-
-    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
-    camera->pointAt(vG, SbVec3f(0., 0., 1.));
-}
-
-void MainWindow::on_actionViewTop_triggered()
-{
-    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
-    SbVec3f target = getTarget(camera);
-
-    camera->position = target + SbVec3f(0, 0, camera->focalDistance.getValue());
-    camera->pointAt(target, SbVec3f(0., 1., 0.) );
-}
-
-void MainWindow::on_actionLookNorth_triggered()
-{
-    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
-    SbVec3f target = getTarget(camera);
-
-    camera->position = target + SbVec3f(0., -camera->focalDistance.getValue(), 0.);
-    camera->pointAt(target, SbVec3f(0., 0., 1.));
-}
-
-void MainWindow::on_actionLookEast_triggered()
-{
-    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
-    SbVec3f target = getTarget(camera);
-
-    camera->position = target + SbVec3f(-camera->focalDistance.getValue(), 0., 0.);
-    camera->pointAt(target, SbVec3f(0., 0., 1.));
-}
-
-void MainWindow::on_actionLookSouth_triggered()
-{
-    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
-    SbVec3f target = getTarget(camera);
-
-    camera->position = target + SbVec3f(0., camera->focalDistance.getValue(), 0.);
-    camera->pointAt(target, SbVec3f(0., 0., 1.));
-}
-
-void MainWindow::on_actionLookWest_triggered()
-{
-    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
-    SbVec3f target = getTarget(camera);
-
-    camera->position = target + SbVec3f(camera->focalDistance.getValue(), 0., 0.);
-    camera->pointAt(target, SbVec3f(0., 0., 1.));
-}
-
-void MainWindow::on_actionViewSun_triggered()
-{
-    SoSceneKit* sceneKit = m_document->getSceneKit();
-    if (!sceneKit) return;
-    SunKit* lightKit = static_cast<SunKit*>(sceneKit->getPart("world.sun", false));
-    if (!lightKit) return;
-    SoTransform* transform = lightKit->m_transform;
-
-    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
-    SbVec3f target = getTarget(camera);
-
-    SbVec3f shift;
-    transform->rotation.getValue().multVec(SbVec3f(0., 0., -camera->focalDistance.getValue()), shift);
-
-    camera->position = target + shift;
-    camera->pointAt(target, SbVec3f(0., 0., 1.));
-}
-

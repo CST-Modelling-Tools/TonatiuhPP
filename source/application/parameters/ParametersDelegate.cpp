@@ -297,12 +297,12 @@ bool ParametersDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, c
                 QMouseEvent * e = (QMouseEvent*) event;
                 if (r.contains(e->pos()))
                 {
-                        QMessageBox::information(0, "reserved", "");
+//                        QMessageBox::information(0, "reserved", "");
                         return true;
                 }
             }
         }
 
     }
-    QStyledItemDelegate::editorEvent(event, model, option, index);
+    return QStyledItemDelegate::editorEvent(event, model, option, index);
 }

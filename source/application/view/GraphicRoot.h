@@ -43,6 +43,7 @@ public:
     void showRays(bool on);
     void showPhotons(bool on);
 
+    void enableSelection(bool on);
     void select(const SoPath* path);
     void deselectAll();
     void onSelectionChanged(SoSelection* selection);

@@ -46,9 +46,12 @@
         <file>images/about/tnh.ico</file>
         <file>images/cursors/cursorOrbit.png</file>
         <file>images/cursors/cursorRotation.png</file>
-        <file>images/cursors/cursorShift.png</file>
-        <file>images/cursors/cursorShiftHold.png</file>
-        <file>images/cursors/cursorRotationHold.png</file>
-        <file>images/cursors/cursorOrbitHold.png</file>
+        <file>images/cursors/cursorOrbitA.png</file>
+        <file>images/cursors/cursorOrbitB.png</file>
+        <file>images/cursors/cursorRotationA.png</file>
+        <file>images/cursors/cursorRotationB.png</file>
+        <file>images/cursors/cursorShiftA.png</file>
+        <file>images/cursors/cursorShiftB.png</file>
+        <file>images/about/docs.png</file>
     </qresource>
 </RCC>

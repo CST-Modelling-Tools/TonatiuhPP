@@ -48,7 +48,6 @@ private slots:
     void abortScript(QString error);
 
     void on_actionExamples_triggered();
-
     void on_actionAbout_triggered();
 
 private:
