@@ -153,11 +153,15 @@ QFrame[inFocus=true] {
     // actions
     actionViewAll = new QAction("All", this);
     actionViewAll->setObjectName("actionViewAll");
-    actionViewAll->setShortcut(QKeySequence("Ctrl+Alt+."));
+    actionViewAll->setShortcut(QKeySequence("Ctrl+/"));
 
     actionViewSelected = new QAction("Selected", this);
     actionViewSelected->setObjectName("actionViewSelected");
     actionViewSelected->setShortcut(QKeySequence("Ctrl+."));
+
+    actionViewHome = new QAction("Default", this);
+    actionViewHome->setObjectName("actionViewHome");
+    actionViewHome->setShortcut(QKeySequence("Ctrl+,"));
 
     actionViewTop = new QAction(QIcon(":/images/view/ViewTop.png"), "Top", this);
     actionViewTop->setObjectName("actionViewTop");
@@ -184,6 +188,7 @@ QFrame[inFocus=true] {
     menuCamera->setIcon(QIcon(":/images/scene/nodeCamera.png"));
     menuCamera->addAction(actionViewAll);
     menuCamera->addAction(actionViewSelected);
+    menuCamera->addAction(actionViewHome);
     menuCamera->addSeparator();
     menuCamera->addAction(actionViewTop);
     menuCamera->addAction(actionViewSun);
@@ -597,6 +602,12 @@ void GraphicView::on_actionViewSelected_triggered()
 //    m_camera->m_rotation = vec3d(gamma, alpha, 0);
 
     m_camera->lookAt(tgf::makeVector3D(vG));
+}
+
+void GraphicView::on_actionViewHome_triggered()
+{
+    m_camera->m_position = vec3d(0, -10, 1);
+    m_camera->setRotation(0., -5.);
 }
 
 //SbVec3f getTarget(SoCamera* camera)

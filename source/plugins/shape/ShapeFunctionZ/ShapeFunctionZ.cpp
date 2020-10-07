@@ -89,12 +89,16 @@ ShapeFunctionZ::~ShapeFunctionZ()
         delete t;
 }
 
+#include "kernel/scene/MaterialGL.h"
 void ShapeFunctionZ::buildMesh(TShapeKit* parent)
 {
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
     QSize dimensions(dims.getValue()[0], dims.getValue()[1]);
     vec2d wh = profile->getBox().size();
     double resolution = std::min(wh.x/(dimensions.width() - 1), wh.y/(dimensions.height() - 1));
+
+    MaterialGL* mGL = (MaterialGL*) parent->material.getValue();
+    bool reverseNormals = mGL->reverseNormals.getValue();
 
     vertices.clear();
     normals.clear();
@@ -176,6 +180,7 @@ void ShapeFunctionZ::buildMesh(TShapeKit* parent)
 
         vec3d nv(-dfx, -dfy, 1);
         nv.normalize();
+        if (reverseNormals) nv = -nv;
         v.setValue(nv.x, nv.y, nv.z);
     }
 

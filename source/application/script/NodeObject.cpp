@@ -13,6 +13,10 @@
 #include "kernel/material/MaterialRT.h"
 #include "kernel/trackers/TrackerArmature.h"
 #include "kernel/trackers/TrackerKit.h"
+#include "kernel/sun/SunKit.h"
+#include "kernel/air/AirKit.h"
+#include "kernel/sun/SunShape.h"
+#include "kernel/air/AirTransmission.h"
 
 #include "main/MainWindow.h"
 #include "main/PluginManager.h"
@@ -171,6 +175,16 @@ void NodeObject::setParameter(const QString& name, const QString& value)
     if (m_node->getTypeId() == TSeparatorKit::getClassTypeId()) {
         TSeparatorKit* parent = (TSeparatorKit*) m_node;
         node = parent->getPart("transform", true);
+    } else if (m_node->getTypeId() == SunKit::getClassTypeId()) {
+        SunFactory* sf = s_mainWindow->getPlugins()->getSunMap().value(value, 0);
+        SunShape* s = sf->create();
+        SoSFNode* f = (SoSFNode*) m_node->getField(name.toLatin1().data());
+        f->setValue(s);
+    } else if (m_node->getTypeId() == AirKit::getClassTypeId()) {
+        AirFactory* sf = s_mainWindow->getPlugins()->getAirMap().value(value, 0);
+        AirTransmission* s = sf->create();
+        SoSFNode* f = (SoSFNode*) m_node->getField(name.toLatin1().data());
+        f->setValue(s);
     }
 
     SoField* field = node->getField(name.toLatin1().data());

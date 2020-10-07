@@ -122,7 +122,7 @@ GraphicRoot::GraphicRoot()
     group->addChild(m_selection);
 
     m_grid = new GridNode3D; // better here for antialiasing
-    m_root->addChild(m_grid);
+    group->addChild(m_grid);
 
     m_rays = new SoSeparator; // order important for antialiasing
     m_root->addChild(m_rays);

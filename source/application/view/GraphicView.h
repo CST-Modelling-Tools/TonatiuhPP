@@ -67,21 +67,23 @@ protected:
 
 private:
     QMenu* m_menu;
-    QAction *actionViewAll;
-    QAction *actionViewSelected;
+    QAction* actionViewAll;
+    QAction* actionViewSelected;
+    QAction* actionViewHome;
 
-    QAction *actionViewTop;
-    QAction *actionViewSun;
-    QAction *actionLookNorth;
-    QAction *actionLookEast;
-    QAction *actionLookSouth;
-    QAction *actionLookWest;
+    QAction* actionViewTop;
+    QAction* actionViewSun;
+    QAction* actionLookNorth;
+    QAction* actionLookEast;
+    QAction* actionLookSouth;
+    QAction* actionLookWest;
 
 public slots:
     void showContextMenu(QPoint);
 
     void on_actionViewAll_triggered();
     void on_actionViewSelected_triggered();
+    void on_actionViewHome_triggered();
 
     void on_actionViewTop_triggered();
     void on_actionViewSun_triggered();

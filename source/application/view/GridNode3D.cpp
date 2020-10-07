@@ -59,6 +59,11 @@ void GridNode3D::create()
     transform->translation.setValue(0., 0., -0.01);
     m_grid->addChild(transform);
 
+
+    // ground
+    if (grid->fill.getValue())
+        makeGround(xMin, xMax, yMin, yMax);
+
     // points
     QVector<SbVec3f> pointsMajor;
     QVector<SbVec3f> pointsMinor;
@@ -124,6 +129,8 @@ void GridNode3D::create()
     // axes
     makeAxes(xMin - dx, xMax + dx, yMin - dx, yMax + dx);
 
+
+
     m_grid->whichChild = grid->show.getValue() ? SO_SWITCH_ALL : SO_SWITCH_NONE;
 }
 
@@ -157,6 +164,51 @@ void GridNode3D::makeAxes(double xMin, double xMax, double yMin, double yMax)
     SoLineSet* sLines = new SoLineSet;
     sLines->numVertices.setValues(0, sizes.size(), sizes.data());
     m_grid->addChild(sLines);
+}
+
+#include <Inventor/nodekits/SoShapeKit.h>
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoNormal.h>
+#include <Inventor/nodes/SoShapeHints.h>
+#include <Inventor/nodes/SoIndexedFaceSet.h>
+
+void GridNode3D::makeGround(double xMin, double xMax, double yMin, double yMax)
+{
+    SoShapeKit* shapeKit = new SoShapeKit;
+
+    float z0 = -0.01;
+    float sv[][3] = {
+        {float(xMin), float(yMin), z0},
+        {float(xMax), float(yMin), z0},
+        {float(xMax), float(yMax), z0},
+        {float(xMin), float(yMax), z0}
+    };
+    SoCoordinate3* sVertices = new SoCoordinate3;
+    sVertices->point.setValues(0, 4, sv);
+    shapeKit->setPart("coordinate3", sVertices);
+
+    int faces[] = {
+        0, 1, 2, 3, -1
+    };
+    SoIndexedFaceSet* sMesh = new SoIndexedFaceSet;
+    sMesh->coordIndex.setValues(0, 5, faces);
+    shapeKit->setPart("shape", sMesh);
+
+    SoMaterial* material = new SoMaterial;
+    shapeKit->setPart("material", material);
+    material->ambientColor = SbColor(0.85, 0.85, 0.8);
+    material->diffuseColor = SbColor(0.05, 0.05, 0.05);
+    material->specularColor = SbColor(0.1, 0.1, 0.1);
+    material->emissiveColor = SbColor(0, 0, 0);
+    material->shininess = 0.1;
+    material->transparency = 0.;
+
+    SoShapeHints* hints = new SoShapeHints;
+    hints->shapeType = SoShapeHints::SOLID;
+    hints->vertexOrdering = SoShapeHints::COUNTERCLOCKWISE;
+    shapeKit->setPart("shapeHints", hints);
+
+    m_grid->addChild(shapeKit);
 }
 
 void GridNode3D::update(void* data, SoSensor*)

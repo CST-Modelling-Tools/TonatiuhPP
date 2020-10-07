@@ -17,6 +17,7 @@ public:
     GridNode();
 
     SoSFBool show;
+    SoSFBool fill;
     SoSFDouble step;
     SoSFInt32 divisions;
     SoSFVec2d xRange;

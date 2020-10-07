@@ -102,9 +102,6 @@ public slots:
 
     void ChangeSunPosition(double azimuth, double elevation);
     void ChangeSunPosition(int year, int month, int day, double hours, double minutes, double seconds, double latitude, double longitude);
-    void SetSunshape(QString name);
-    void SetAir(QString name);
-    void SetAirParameter(QString parameter, QString value);
 
     void Run();
     void RunFluxAnalysis(QString nodeURL, QString surfaceSide, uint nOfRays, int heightDivisions, int widthDivisions, QString fileName, bool saveCoords);
@@ -156,7 +153,7 @@ private slots:
     void showWarning(QString message);
 
     // manipulators actions
-    void SoTransform_to_SoCenterballManip();
+    void SoTransform_to_SoCenterballManip(); // move to view
     void SoTransform_to_SoJackManip();
     void SoTransform_to_SoHandleBoxManip();
     void SoTransform_to_SoTabBoxManip();
@@ -168,20 +165,15 @@ private slots:
     // view actions
 //    void on_actionViewAxes_toggled();
     void on_actionQuadView_toggled();
-
-    // automation menu actions
     void on_actionRunScript_triggered();
-
-    // help menu actions
     void on_actionAbout_triggered();
+    void on_actionExamples_triggered();
+    void on_actionScripts_triggered();
     //void on_actionCheckForUpdates_triggered();
 
     void treeWorldClicked(QTreeWidgetItem* item, int column); // temporary
     void treeWorldDoubleClicked(QTreeWidgetItem* item, int column);
     void tabChanged(int);
-
-    void on_actionExamples_triggered();
-    void on_actionScripts_triggered();
 
 signals:
     void Abort(QString error);
@@ -262,4 +254,3 @@ private:
     bool m_saveCoordinates;
     bool m_saveSide;
 };
-

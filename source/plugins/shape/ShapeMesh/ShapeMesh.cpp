@@ -91,8 +91,12 @@ bool ShapeMesh::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
     return true;
 }
 
+//#include "kernel/scene/MaterialGL.h"
 void ShapeMesh::updateShapeGL(TShapeKit* parent)
 {
+//    MaterialGL* mGL = (MaterialGL*) parent->material.getValue();
+//    bool reverseNormals = mGL->reverseNormals.getValue();
+
     SoShapeKit* shapeKit = parent->m_shapeKit;
 
     SoCoordinate3* sVertices = new SoCoordinate3;

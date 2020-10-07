@@ -19,6 +19,7 @@ public:
 
 protected:
     void makeAxes(double xMin, double xMax, double yMin, double yMax);
+    void makeGround(double xMin, double xMax, double yMin, double yMax);
     SoSwitch* m_grid;
 
     SoNodeSensor* m_sensor;
