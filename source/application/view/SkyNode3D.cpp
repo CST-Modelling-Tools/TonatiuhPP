@@ -52,10 +52,25 @@ struct SkyGradient
    }
 };
 
+#include <Inventor/actions/SoGetBoundingBoxAction.h>
+#include <Inventor/elements/SoCacheElement.h>
+// dummy callback for SoGetBoundingBoxAction. A background node has no
+// boundingbox, so we just invalidate the bbox cache so stop the node
+// from being culled.
+static void
+background_bbfix(SoAction * action, SoNode * node)
+{
+  SoCacheElement::invalidate(action->getState());
+}
 
 void SkyNode3D::initClass()
 {
     SO_NODE_INIT_CLASS(SkyNode3D, SoNode, "Node");
+//    SO_NODE_INIT_CLASS(SkyNode3D, SoSeparator, "Separator");
+
+    SoGetBoundingBoxAction::addMethod(SkyNode3D::getClassTypeId(),
+                                      background_bbfix);
+
 }
 
 const double zoom = 1.;
@@ -83,6 +98,7 @@ SkyNode3D::SkyNode3D()
 
     m_root->addChild(makeSky());
     m_root->addChild(makeLabels());
+//    addChild(m_root);
 }
 
 SkyNode3D::~SkyNode3D()
