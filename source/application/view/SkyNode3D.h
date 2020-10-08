@@ -32,8 +32,8 @@ protected:
     void makeLabelAE(SoSeparator* parent, double azimuth, double elevation, const QString& text);
 
     // SoBase interface
-public:
-    void getBoundingBox(SoGetBoundingBoxAction* action);
+//public:
+//    void getBoundingBox(SoGetBoundingBoxAction* action);
 };
 
 

@@ -74,12 +74,10 @@ GraphicRoot::GraphicRoot()
 {
     m_root = new SoSeparator;
     m_root->renderCulling = SoSeparator::OFF;
-    m_root->renderCaching = SoSeparator::OFF;
     m_root->ref();
 
     SoSeparator* sep = new SoSeparator;
     sep->renderCulling = SoSeparator::OFF;
-    sep->renderCaching = SoSeparator::OFF;
     sep->pickCulling = SoSeparator::OFF;
     m_root->addChild(sep);
 
@@ -96,6 +94,7 @@ GraphicRoot::GraphicRoot()
     m_root->addChild(environment);
 
     SoShadowGroup* group = new SoShadowGroup;
+    group->renderCulling = SoSeparator::OFF;
     group->precision = 1.;
     group->quality = 1.;
     m_root->addChild(group);
@@ -117,11 +116,13 @@ GraphicRoot::GraphicRoot()
 
 
     m_selection = new SoSelection;
+    m_selection->renderCulling = SoSeparator::OFF;
     m_selection->policy = SoSelection::SINGLE;
     m_selection->addFinishCallback(selectionFinishCallback, (void*) this);
     group->addChild(m_selection);
 
     m_grid = new GridNode3D; // better here for antialiasing
+    m_grid->renderCulling = SoSeparator::OFF;
     group->addChild(m_grid);
 
     m_rays = new SoSeparator; // order important for antialiasing

@@ -91,7 +91,7 @@ QString FluxAnalysis::getShapeType(QString nodeURL)
 /*
  * Fun flux analysis
  */
-void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool photonBufferAppend, int uDivs, int vDivs)
+void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool photonBufferAppend, int uDivs, int vDivs, bool silent)
 {
     m_surfaceURL = nodeURL;
     m_surfaceSide = surfaceSide;
@@ -165,12 +165,13 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
     Transform lightToWorld = tgf::makeTransform(sunTransform);
     instanceSun.setTransform(lightToWorld);
 
+//    QThreadPool::globalInstance()->setMaxThreadCount(1);
     // Create a progress dialog.
     QProgressDialog dialog;
     dialog.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     dialog.setLabelText(QString("Progressing using %1 thread(s)...").arg(QThread::idealThreadCount() ) );
 
-    // Create a QFutureWatcher and conncect signals and slots.
+    // Create a QFutureWatcher and connect signals and slots.
     QFutureWatcher<void> watcher;
     QObject::connect(&watcher, SIGNAL(finished()), &dialog, SLOT(reset()));
     QObject::connect(&dialog, SIGNAL(canceled()), &watcher, SLOT(cancel()));
@@ -193,7 +194,10 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
     watcher.setFuture(photonMap);
 
     // Display the dialog and start the event loop.
-    dialog.exec();
+//    if (!silent) {
+        dialog.exec();
+//    dialog.setModal(false);
+//    dialog.show();
     watcher.waitForFinished();
 
     m_tracedRays += nRays;

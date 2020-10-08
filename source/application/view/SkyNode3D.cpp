@@ -65,6 +65,7 @@ SkyNode3D::SkyNode3D()
     SO_NODE_CONSTRUCTOR(SkyNode3D);
 
     m_root = new SoSeparator;
+    m_root->renderCulling = SoSeparator::OFF;
     m_root->ref();
 
     m_camera = new SoPerspectiveCamera;
@@ -92,8 +93,7 @@ SkyNode3D::~SkyNode3D()
 SoSeparator* SkyNode3D::makeSky()
 {
     SoSeparator* ans = new SoSeparator;
-//    ans->renderCulling = SoSeparator::OFF; // does not work
-//    ans->renderCaching = SoSeparator::OFF;
+    ans->renderCulling = SoSeparator::OFF;
 
     SkyGradient grSky;
     grSky.cH = QColor("#b2c3d2");
@@ -205,14 +205,15 @@ void SkyNode3D::makeLabelAE(SoSeparator* parent, double azimuth, double elevatio
     parent->addChild(ans);
 }
 
-#include <Inventor/actions/SoGetBoundingBoxAction.h>
-void SkyNode3D::getBoundingBox(SoGetBoundingBoxAction* action)
-{
-    SbXfBox3f& box = action->getXfBoundingBox();
-    double s = 100; // temp fake for renderCulling
-    box.setBounds(-SbVec3f(s, s, s), SbVec3f(s, s, s));
-}
+//#include <Inventor/actions/SoGetBoundingBoxAction.h>
+//void SkyNode3D::getBoundingBox(SoGetBoundingBoxAction* action)
+//{
+//    SbXfBox3f& box = action->getXfBoundingBox();
+//    double s = 100; // temp fake for renderCulling
+//    box.setBounds(-SbVec3f(s, s, s), SbVec3f(s, s, s));
+//}
 
+#include <QDebug>
 #include <Inventor/nodes/SoDepthBuffer.h>
 void SkyNode3D::GLRender(SoGLRenderAction* action)
 {

@@ -65,7 +65,6 @@ HEADERS += \
     view/OverlayNode.h \
     view/SkyNode3D.h \
     view/SunNode3D.h \
-    view/TPerspectiveCamera.h \
     view/trf.h \
     widgets/AboutDialog.h \
     widgets/AirDialog.h \
@@ -128,7 +127,6 @@ SOURCES += \
     view/OverlayNode.cpp \
     view/SkyNode3D.cpp \
     view/SunNode3D.cpp \
-    view/TPerspectiveCamera.cpp \
     view/trf.cpp \
     widgets/AboutDialog.cpp \
     widgets/AirDialog.cpp \

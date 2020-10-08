@@ -198,7 +198,7 @@ void GridNode3D::makeGround(double xMin, double xMax, double yMin, double yMax)
     shapeKit->setPart("material", material);
     material->ambientColor = SbColor(0.85, 0.85, 0.8);
     material->diffuseColor = SbColor(0.05, 0.05, 0.05);
-    material->specularColor = SbColor(0.1, 0.1, 0.1);
+    material->specularColor = SbColor(0.02, 0.02, 0.02);
     material->emissiveColor = SbColor(0, 0, 0);
     material->shininess = 0.1;
     material->transparency = 0.;

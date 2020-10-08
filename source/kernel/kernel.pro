@@ -45,6 +45,7 @@ HEADERS += \
     scene/LocationNode.h \
     scene/MaterialGL.h \
     scene/TCameraKit.h \
+    scene/TPerspectiveCamera.h \
     scene/TSFRotation.h \
     scene/TSceneKit.h \
     scene/TSeparatorKit.h \
@@ -109,6 +110,7 @@ SOURCES += \
     scene/LocationNode.cpp \
     scene/MaterialGL.cpp \
     scene/TCameraKit.cpp \
+    scene/TPerspectiveCamera.cpp \
     scene/TSFRotation.cpp \
     scene/TSceneKit.cpp \
     scene/TSeparatorKit.cpp \

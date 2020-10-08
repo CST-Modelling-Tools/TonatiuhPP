@@ -39,6 +39,8 @@ public slots:
     void setName(const QString& name);
     void setParameter(const QString& name, const QString& value);
 
+    static QScriptValue FindInterception(QScriptValue surface, QScriptValue rays);
+
 private:
     SoNode* m_node;
     static MainWindow* s_mainWindow;

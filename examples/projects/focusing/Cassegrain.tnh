@@ -6,7 +6,7 @@ TSceneKit {
   version "2020"
   world 
   DEF World WorldKit {
-    fields [ SFNode callbackList, SFNode location, SFNode sun, SFNode air, SFNode terrain ]
+    fields [ SFNode callbackList, SFNode location, SFNode sun, SFNode air, SFNode terrain, SFNode camera ]
     sun 
     DEF Sun SunKit {
       fields [ SFNode callbackList, SFNode position, SFNode shape, SFNode aperture ]
@@ -34,9 +34,16 @@ TSceneKit {
       fields [ SFNode callbackList, SFNode grid ]
       grid 
       DEF Grid GridNode {
-        fields [ SFBool show, SFDouble step, SFInt32 divisions, SFVec2d xRange, SFVec2d yRange ]
+        fields [ SFBool show, SFBool fill, SFDouble step, SFInt32 divisions, SFVec2d xRange, SFVec2d yRange ]
 
       }
+
+    }
+    camera 
+    DEF Camera TCameraKit {
+      fields [ SFVec3f position, SFVec2f rotation, SFDouble angle, SFBool perspective, SFNode callbackList, SFNode topSeparator ]
+      position -5.71101 -33.954 8.12621
+      rotation 10 -10
 
     }
 
@@ -129,7 +136,6 @@ TSceneKit {
             }
             material 
             MaterialGL {
-
               shininess 0.1
               reverseNormals TRUE
 
@@ -163,7 +169,6 @@ TSceneKit {
             }
             material 
             MaterialGL {
-
 
             }
 

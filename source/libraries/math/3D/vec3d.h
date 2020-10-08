@@ -175,6 +175,8 @@ struct TONATIUH_LIBRARIES vec3d
     {
         return QString("{%1, %2, %3}").arg(x).arg(y).arg(z);
     }
+
+    static vec3d directionAE(double azimuth, double elevation);
 };
 
 

@@ -30,6 +30,16 @@ int vec3d::maxDimension() const
     return 2;
 }
 
+vec3d vec3d::directionAE(double azimuth, double elevation)// in radians
+{
+    double cosAlpha = cos(elevation);
+    return vec3d(
+        cosAlpha*sin(azimuth),
+        cosAlpha*cos(azimuth),
+        sin(elevation)
+    );
+}
+
 std::ostream& operator<<(std::ostream& os, const vec3d& v)
 {
     os << v.x << ", " << v.y << ", " << v.z;

@@ -328,6 +328,9 @@ sp.setParameter("elevation", 70);
 var sa = sun.getPart("aperture");
 sa.setParameter("disabledNodes", "");
 
+var cm = scene.getPart("world.camera");
+cm.setParameter("position", "-3.27155 -14.6367 5.29688");
+cm.setParameter("rotation", "10.25 -10.5");
 
 var tg = scene.getPart("world.terrain.grid");
 tg.setParameter("xRange", "-10 10");

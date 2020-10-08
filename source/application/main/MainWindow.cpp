@@ -158,14 +158,9 @@ MainWindow::MainWindow(QString fileName, CustomSplashScreen* splash, QWidget* pa
         StartOver(fileName);
     } else {
         SetCurrentFile("");
-//        SoPerspectiveCamera* camera = (SoPerspectiveCamera*) m_graphicView[0]->getCamera();
-////        camera->focalDistance = 0.5;
-//        SbVec3f target(0., 0., 0.);
-//        camera->position = target + SbVec3f(0, 0, camera->focalDistance.getValue());
-//        camera->pointAt(target, SbVec3f(0., 1., 0.));
-//        camera->heightAngle = 30.*gcf::degree;
-        ui->sceneView->expandToDepth(1);
+        m_graphicView[0]->on_actionViewHome_triggered();
     }
+    ui->parametersTabs->setNode(0);
 
 //    Select("//Node");
 //    m_graphicsRoot->deselectAll();
@@ -212,6 +207,8 @@ border-width: 0 0 1 0;
 }
 
     )");
+
+     setAcceptDrops(true);
 }
 
 MainWindow::~MainWindow()
@@ -343,10 +340,10 @@ void MainWindow::SetupGraphicView()
     }
 
     m_focusView = 1;
-    on_actionLookNorth_triggered();
+    on_actionViewY_triggered();
 
     m_focusView = 2;
-    on_actionLookEast_triggered();
+    on_actionViewX_triggered();
 
     m_focusView = 3;
     on_actionLookWest_triggered();
@@ -644,11 +641,24 @@ void MainWindow::on_actionExamples_triggered()
 void MainWindow::on_actionScripts_triggered()
 {
     QDir dir(QCoreApplication::applicationDirPath());
+
+//    QFileDialog dialog(this);
+//    dialog.setAcceptMode(QFileDialog::AcceptOpen);
+//    dialog.setWindowTitle("Open File");
+//    dialog.setDirectory(dir.filePath("../examples/scripts"));
+//    dialog.setNameFilter("Tonatiuh script files (*.tnhs)");
+////    dialog.setOption(QFileDialog::DontUseNativeDialog);
+//    dialog.exec();
+
+//    if (dialog.selectedFiles().isEmpty()) return;
+//    QString fileName = dialog.selectedFiles().first();
+
     QString fileName = QFileDialog::getOpenFileName(
         this, "Open File", dir.filePath("../examples/scripts"),
         "Tonatiuh script files (*.tnhs)"
     );
     if (fileName.isEmpty()) return;
+
 
     openFileScript(fileName);
 }
@@ -1541,12 +1551,7 @@ void MainWindow::InsertScene(QScriptValue v)
 
 QScriptValue MainWindow::FindInterception(QScriptValue surface, QScriptValue rays)
 {
-    if (!m_rand)
-        m_rand = m_pluginManager->getRandomFactories()[m_raysRandomFactoryIndex]->create(0);
-
-    FluxAnalysis fa(m_document->getSceneKit(), m_modelScene, m_raysGridWidth, m_raysGridHeight, m_rand);
-    fa.run(surface.toString(), "front", rays.toUInt32(), false, 5, 5);
-    return fa.powerTotal();
+    return findInterception(surface.toString(), rays.toUInt32(), this);
 }
 
 /*!
@@ -2268,6 +2273,7 @@ void MainWindow::ChangeModelScene()
 {
     m_graphicsRoot->setDocument(m_document);
     m_modelScene->setDocument(m_document);
+    m_graphicView[0]->setSceneGraph(m_graphicsRoot);
 
 //    QModelIndex index = m_modelScene->indexFromUrl("//Layout");
 //    ui->sceneView->setRootIndex(index);
@@ -2412,16 +2418,19 @@ void MainWindow::updateRecentFiles()
         if (!QFile::exists(iterator.next()))
             iterator.remove();
 
+    QIcon icon(":/images/about/tnh.ico");
     QList<QAction*> actions = ui->menuFileRecent->actions();
     for (int n = 0; n < m_filesRecentMax; ++n) {
         if (n < m_filesRecent.count()) {
             QString path = m_filesRecent[n];
             QString name = QFileInfo(path).fileName();
-            QString text = tr("&%1 |   %2").arg(n + 1).arg(name);
+            QString text = tr("%2 \t&%1").arg(n + 1).arg(name);
+//            QString text = tr("%1").arg(name);
             actions[n]->setText(text);
             actions[n]->setToolTip(path); // if enabled in menu
             actions[n]->setStatusTip(path);
             actions[n]->setData(path);
+            actions[n]->setIcon(icon);
             actions[n]->setVisible(true);
         } else
             actions[n]->setVisible(false);
@@ -2538,6 +2547,7 @@ bool MainWindow::StartOver(const QString& fileName)
     m_undoStack->clear();
     m_modelScene->clear();
     m_graphicsRoot->removeScene();
+    ui->parametersTabs->setNode(0);
 
 //    SetSunPositionCalculatorEnabled(0);
 
@@ -2554,6 +2564,9 @@ bool MainWindow::StartOver(const QString& fileName)
     }
 
     ChangeModelScene();
+    if (fileName.isEmpty()) {
+     m_graphicView[0]->on_actionViewHome_triggered();
+    }
 
     ui->sceneView->expandToDepth(1);
 
@@ -2582,4 +2595,31 @@ void MainWindow::UpdateLightSize()
 
     sunKit->setBox(sceneKit);
     m_modelScene->UpdateSceneModel();
+}
+#include <QMimeData>
+
+void MainWindow::dragEnterEvent(QDragEnterEvent* event)
+{
+    if (event->mimeData()->hasUrls())
+        event->acceptProposedAction();
+}
+
+void MainWindow::dropEvent(QDropEvent* event)
+{
+    QString url = event->mimeData()->urls()[0].toLocalFile();
+
+    if (OkToContinue())
+        StartOver(url);
+
+    event->acceptProposedAction();
+}
+
+double findInterception(QString surface, uint rays, MainWindow* mw)
+{
+    if (!mw->m_rand)
+        mw->m_rand = mw->m_pluginManager->getRandomFactories()[mw->m_raysRandomFactoryIndex]->create(0);
+
+    FluxAnalysis fa(mw->m_document->getSceneKit(), mw->m_modelScene, mw->m_raysGridWidth, mw->m_raysGridHeight, mw->m_rand);
+    fa.run(surface, "front", rays, false, 5, 5, true);
+    return fa.powerTotal();
 }

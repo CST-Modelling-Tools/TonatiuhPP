@@ -47,12 +47,20 @@
 #include "GraphicRoot.h"
 #include "GraphicView.h"
 #include "tree/SoPathVariant.h"
-#include "TPerspectiveCamera.h"
+#include "kernel/scene/TPerspectiveCamera.h"
 #include "KeyFilter.h"
 #include "kernel/scene/TSceneKit.h"
 #include <QLabel>
 #include <QPushButton>
 //#include <QGLWidget>
+#include <QDebug>
+
+SbVec2f myfunc(void * data, const SbVec2f & nearfar)
+{
+    qDebug() << nearfar[0]<<" "<<nearfar[1];
+    return SbVec2f(0.1, 10);
+    return nearfar;
+}
 /**
  * Creates a new GraphicView with a \a parerent for the model data 3D representation.
  *
@@ -80,6 +88,7 @@ GraphicView::GraphicView(QWidget* parent):
     highlighter->setColor(SbColor(100/255., 180/255., 120/255.));
     highlighter->setLineWidth(2.);
     m_viewer->setGLRenderAction(highlighter);
+    m_viewer->setDrawStyle(SoQtViewer::INTERACTIVE, SoQtViewer::VIEW_SAME_AS_STILL);
 
     showAxes(true);
     m_viewer->setHeadlight(false);
@@ -150,10 +159,14 @@ QFrame[inFocus=true] {
 //    label->setGeometry(QRect(0, 0, 504, 14));
 //    connect(m_viewer->getGLWidget(),SIGNAL()
 
-    // actions
+    // actions  
     actionViewAll = new QAction("All", this);
     actionViewAll->setObjectName("actionViewAll");
     actionViewAll->setShortcut(QKeySequence("Ctrl+/"));
+//    connect(
+//        actionViewAll, SIGNAL(triggered(bool)),
+//        this, SLOT(on_actionViewAll_triggered())
+//    );
 
     actionViewSelected = new QAction("Selected", this);
     actionViewSelected->setObjectName("actionViewSelected");
@@ -163,45 +176,91 @@ QFrame[inFocus=true] {
     actionViewHome->setObjectName("actionViewHome");
     actionViewHome->setShortcut(QKeySequence("Ctrl+,"));
 
-    actionViewTop = new QAction(QIcon(":/images/view/ViewTop.png"), "Top", this);
-    actionViewTop->setObjectName("actionViewTop");
-    actionViewTop->setShortcut(QKeySequence("Ctrl+5"));
-    actionViewSun = new QAction(QIcon(":/images/view/viewSun.png"), "Sun", this);
-    actionViewSun->setObjectName("actionViewSun");
-    actionViewSun->setShortcut(QKeySequence("Ctrl+0"));
+    actionViewX = new QAction("X (East)", this);
+    actionViewX->setObjectName("actionViewX");
+    actionViewX->setShortcuts(QKeySequence::listFromString(
+        "Ctrl+3; Ctrl+Shift+3; Ctrl+Alt+3; Ctrl+Alt+Shift+3"));
 
-    actionLookNorth = new QAction("North", this);
-    actionLookNorth->setObjectName("actionLookNorth");
-    actionLookNorth->setShortcut(QKeySequence("Ctrl+8"));
-    actionLookEast = new QAction("East", this);
-    actionLookEast->setObjectName("actionLookEast");
-    actionLookEast->setShortcut(QKeySequence("Ctrl+6"));
-    actionLookSouth = new QAction("South", this);
-    actionLookSouth->setObjectName("actionLookSouth");
-    actionLookSouth->setShortcut(QKeySequence("Ctrl+2"));
-    actionLookWest = new QAction("West", this);
-    actionLookWest->setObjectName("actionLookWest");
-    actionLookWest->setShortcut(QKeySequence("Ctrl+4"));
+    actionViewY = new QAction("Y (North)", this);
+    actionViewY->setObjectName("actionViewY");
+    actionViewY->setShortcuts(QKeySequence::listFromString(
+        "Ctrl+7; Ctrl+Shift+7; Ctrl+Alt+7; Ctrl+Alt+Shift+7"));
+
+    actionViewZ = new QAction(/*QIcon(":/images/view/viewTop.png"),*/ "Z (Zenith)", this);
+    actionViewZ->setObjectName("actionViewZ");
+    actionViewZ->setShortcuts(QKeySequence::listFromString(
+        "Ctrl+1; Ctrl+Shift+1; Ctrl+Alt+1; Ctrl+Alt+Shift+1"));
+
+//    actionViewSun = new QAction(QIcon(":/images/view/viewSun.png"), "to Sun", this);
+    actionViewSun = new QAction("Sun (to)", this);
+    actionViewSun->setObjectName("actionViewSun");
+    actionViewSun->setShortcuts(QKeySequence::listFromString(
+        "Ctrl+9; Ctrl+Alt+Shift+9")); // 0?
+
+    actionViewSunFrom = new QAction("Sun (from)", this);
+    actionViewSunFrom->setObjectName("actionViewSunFrom");
+    actionViewSunFrom->setShortcut(QKeySequence("Ctrl+Shift+9"));
+
+    actionViewSunOrbit = new QAction("Sun (anchored)", this);
+    actionViewSunOrbit->setObjectName("actionViewSunOrbit");
+    actionViewSunOrbit->setShortcut(QKeySequence("Ctrl+Alt+9"));
 
     m_menu = new QMenu(this);
+
     QMenu* menuCamera = new QMenu("Camera", this);
     menuCamera->setIcon(QIcon(":/images/scene/nodeCamera.png"));
-    menuCamera->addAction(actionViewAll);
-    menuCamera->addAction(actionViewSelected);
     menuCamera->addAction(actionViewHome);
+    menuCamera->addAction(actionViewSelected);
+    menuCamera->addAction(actionViewAll);
     menuCamera->addSeparator();
-    menuCamera->addAction(actionViewTop);
+    menuCamera->addAction(actionViewX);
+    menuCamera->addAction(actionViewY);
+    menuCamera->addAction(actionViewZ);
+    menuCamera->addSeparator();
     menuCamera->addAction(actionViewSun);
-    menuCamera->addSeparator();
-    menuCamera->addAction(actionLookNorth);
-    menuCamera->addAction(actionLookEast);
-    menuCamera->addAction(actionLookSouth);
-    menuCamera->addAction(actionLookWest);
+    menuCamera->addAction(actionViewSunFrom);
+    menuCamera->addAction(actionViewSunOrbit);
     m_menu->addMenu(menuCamera);
 
-    addActions(m_menu->actions()); // for shortcuts
 
+    actionDrawMesh = new QAction("Wireframe", this);
+    actionDrawMesh->setObjectName("actionDrawMesh");
+    actionDrawMesh->setCheckable(true);
+
+    actionDrawFull = new QAction("Normal", this);
+    actionDrawFull->setObjectName("actionDrawFull");
+    actionDrawFull->setCheckable(true);
+
+    actionDrawMeshOverlay = new QAction("Meshed", this);
+    actionDrawMeshOverlay->setObjectName("actionDrawMeshOverlay");
+    actionDrawMeshOverlay->setCheckable(true);
+
+    actionDrawSwitch = new QAction("actionDrawSwitch", this);
+    actionDrawSwitch->setObjectName("actionDrawSwitch");
+    actionDrawSwitch->setShortcut(QKeySequence("Ctrl+Tab"));
+
+    actionViewGroup = new QActionGroup(this);
+    actionViewGroup->setObjectName("actionViewGroup");
+//    actionViewGroup->addAction(actionDrawMesh);
+    actionViewGroup->addAction(actionDrawFull);
+    actionViewGroup->addAction(actionDrawMeshOverlay);
+    actionDrawFull->setChecked(true);
+
+//    actionViewGroup->setExclusive(false);
+
+    QMenu* menuDraw = new QMenu("Draw Style", this);
+//    menuDraw->addAction(actionViewGroup);
+//    menuDraw->addAction(actionDrawMesh);
+    menuDraw->addActions(actionViewGroup->actions());
+    m_menu->addMenu(menuDraw);
+
+    addActions(m_menu->actions()); // for shortcuts
+    addAction(actionDrawSwitch);
     QMetaObject::connectSlotsByName(this);
+
+//    m_viewer->setAutoClippingStrategy(SoQtViewer::CONSTANT_NEAR_PLANE, 0.1, myfunc);
+    m_viewer->setAutoClippingStrategy(SoQtViewer::CONSTANT_NEAR_PLANE, 0.2);
+    m_viewer->setAutoClipping(true);
 }
 
 GraphicView::~GraphicView()
@@ -212,13 +271,18 @@ GraphicView::~GraphicView()
 
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodekits/SoCameraKit.h>
+#include "kernel/scene/TCameraKit.h"
 void GraphicView::setSceneGraph(GraphicRoot* sceneGraphRoot)
 {
 //    m_viewer = new ExaminerViewer2(this);
     m_graphicRoot = sceneGraphRoot;
     m_viewer->setSceneGraph(m_graphicRoot->getRoot());
     SoPerspectiveCamera* camera = (SoPerspectiveCamera*) m_viewer->getCamera();
+
     m_camera->setCamera(camera);
+
+    TCameraKit* cameraKit = (TCameraKit*) m_graphicRoot->getScene()->getPart("world.camera", true);
+    cameraKit->setCamera(m_camera);
 //    m_cameraKit = m_graphicRoot->getCameraKit();
 }
 
@@ -308,14 +372,14 @@ void GraphicView::mousePressEvent(QMouseEvent* event)
     {
         SbVec2s vs = m_viewer->getViewportRegion().getViewportSizePixels();
         m_camera->findMoveAnchor(m_viewer, QPoint(vs[0]/2, vs[1]/2), m_graphicRoot->getScene()->getLayout());
-        if (m_modifiersPressed & Qt::ShiftModifier) {
+        if (!(m_modifiersPressed & Qt::ShiftModifier)) {
             qApp->changeOverrideCursor(m_cursors["orbitB"]);
             m_camera->findOrbitAnchor(m_viewer, m_mousePressed, m_graphicRoot->getScene()->getLayout());
         }
     }
     else if (m_modifiersPressed & Qt::ControlModifier)
     {
-        if (m_modifiersPressed & Qt::ShiftModifier) {
+        if (!(m_modifiersPressed & Qt::ShiftModifier)) {
             qApp->changeOverrideCursor(m_cursors["rotationB"]);
             m_camera->findRotationAnchor(m_viewer, m_mousePressed);
         }
@@ -333,13 +397,13 @@ void GraphicView::mouseReleaseEvent(QMouseEvent* event)
 //    qDebug() << "release" << event->pos();
     if (m_modifiersPressed & Qt::AltModifier)
     {
-        if (m_modifiersPressed & Qt::ShiftModifier) {
+        if (!(m_modifiersPressed & Qt::ShiftModifier)) {
             qApp->changeOverrideCursor(m_cursors["orbitA"]);
         }
     }
     else if (m_modifiersPressed & Qt::ControlModifier)
     {
-        if (m_modifiersPressed & Qt::ShiftModifier) {
+        if (!(m_modifiersPressed & Qt::ShiftModifier)) {
             qApp->changeOverrideCursor(m_cursors["rotationA"]);
         }
     }
@@ -356,7 +420,7 @@ void GraphicView::mouseMoveEvent(QMouseEvent* event)
 //    qDebug() << "move " << diff;
     if (m_modifiersPressed & Qt::AltModifier)
     {
-        if (m_modifiersPressed & Qt::ShiftModifier) {
+        if (!(m_modifiersPressed & Qt::ShiftModifier)) {
              m_camera->moveOrbitAnchor(m_viewer, event->pos());
         } else {
             QPoint diff = event->pos() - m_mousePressed;
@@ -368,7 +432,7 @@ void GraphicView::mouseMoveEvent(QMouseEvent* event)
     }
     else if (m_modifiersPressed & Qt::ControlModifier)
     {
-        if (m_modifiersPressed & Qt::ShiftModifier) {
+        if (!(m_modifiersPressed & Qt::ShiftModifier)) {
             m_camera->moveRotationAnchor(m_viewer, event->pos());
         } else {
             QPoint diff = event->pos() - m_mousePressed;
@@ -380,7 +444,7 @@ void GraphicView::mouseMoveEvent(QMouseEvent* event)
     }
     else if (m_modifiersPressed & Qt::ShiftModifier)
     {
-       if (GetKeyState(VK_LSHIFT) < 0)
+       if (GetKeyState(VK_LSHIFT) < 0) // left pressed
            m_camera->movePanAnchor(m_viewer, event->pos());
        else
            m_camera->moveShiftAnchor(m_viewer, event->pos());
@@ -418,11 +482,11 @@ void GraphicView::keyPressEvent(QKeyEvent* event)
     QString nc;
     if (event->modifiers() & Qt::AltModifier) {
         nc = "orbit";
-        if (event->modifiers() & Qt::ShiftModifier)
+        if (!(event->modifiers() & Qt::ShiftModifier))
             nc += "A";
     } else if (event->modifiers() & Qt::ControlModifier) {
         nc = "rotation";
-        if (event->modifiers() & Qt::ShiftModifier)
+        if (!(event->modifiers() & Qt::ShiftModifier))
             nc += "A";
     } else if (event->modifiers() & Qt::ShiftModifier)
         nc = "shiftA";
@@ -601,63 +665,104 @@ void GraphicView::on_actionViewSelected_triggered()
 //    double gamma = atan2(d[0], d[1])/gcf::degree;
 //    m_camera->m_rotation = vec3d(gamma, alpha, 0);
 
-    m_camera->lookAt(tgf::makeVector3D(vG));
+    m_camera->setRotationAt(tgf::makeVector3D(vG));
 }
 
 void GraphicView::on_actionViewHome_triggered()
 {
-    m_camera->m_position = vec3d(0, -10, 1);
-    m_camera->setRotation(0., -5.);
+    double gamma = 10;
+    double alpha = -10.;
+    vec3d d = vec3d::directionAE(gamma*gcf::degree, alpha*gcf::degree);
+    d *= 2./d.z;   // look at origin from 2 m height
+
+//    m_camera->m_position = d;
+//    m_camera->setRotation(gamma, alpha);
+
+    TCameraKit* cameraKit = (TCameraKit*) m_graphicRoot->getScene()->getPart("world.camera", true);
+    cameraKit->position.setValue(d[0], d[1], d[2]);
+    cameraKit->rotation.setValue(gamma, alpha);
 }
 
-//SbVec3f getTarget(SoCamera* camera)
-//{
-//    SbRotation rotation = camera->orientation.getValue();
-//    SbVec3f target;
-//    rotation.multVec(SbVec3f(0., 0., -camera->focalDistance.getValue()), target);
-//    target += camera->position.getValue();
-//    return target;
-//}
-
-void GraphicView::on_actionViewTop_triggered()
-{
-    m_camera->setRotation(0., -90.);
-}
-
-void GraphicView::on_actionLookNorth_triggered()
-{
-    m_camera->setRotation(0., 0.);
-}
-
-void GraphicView::on_actionLookEast_triggered()
-{
-    m_camera->setRotation(90., 0.);
-}
-
-void GraphicView::on_actionLookSouth_triggered()
-{
-    m_camera->setRotation(180., 0.);
-}
-
-void GraphicView::on_actionLookWest_triggered()
-{
-    m_camera->setRotation(270., 0.);
-}
-
+#include "kernel/sun/SunPosition.h"
 void GraphicView::on_actionViewSun_triggered()
 {
-//    SoSceneKit* sceneKit = m_document->getSceneKit();
-//    if (!sceneKit) return;
-//    SunKit* lightKit = static_cast<SunKit*>(sceneKit->getPart("world.sun", false));
-//    if (!lightKit) return;
-//    SoTransform* transform = lightKit->m_transform;
-
-//    SoCamera* camera = m_graphicView[m_focusView]->getCamera();
-//    SbVec3f target = getTarget(camera);
-
-//    SbVec3f shift;
-//    transform->rotation.getValue().multVec(SbVec3f(0., 0., -camera->focalDistance.getValue()), shift);
-
-//    camera->position = target + shift;
-//    camera->pointAt(target, SbVec3f(0., 0., 1.));
+    SunPosition* sp = (SunPosition*) m_graphicRoot->getScene()->getPart("world.sun.position", false);
+    double gamma = sp->azimuth.getValue();
+    double alpha = sp->elevation.getValue();
+    setCameraViewTemp(gamma, alpha);
 }
+
+void GraphicView::on_actionViewSunFrom_triggered()
+{
+    SunPosition* sp = (SunPosition*) m_graphicRoot->getScene()->getPart("world.sun.position", false);
+    double gamma = sp->azimuth.getValue();
+    double alpha = sp->elevation.getValue();
+    setCameraView(gamma, alpha, true, false);
+}
+
+void GraphicView::on_actionViewSunOrbit_triggered()
+{
+    SunPosition* sp = (SunPosition*) m_graphicRoot->getScene()->getPart("world.sun.position", false);
+    double gamma = sp->azimuth.getValue();
+    double alpha = sp->elevation.getValue();
+    setCameraView(gamma, alpha, false, true);
+}
+
+void GraphicView::on_actionViewX_triggered()
+{
+    setCameraViewTemp(90., 0.);
+}
+
+void GraphicView::on_actionViewY_triggered()
+{
+    setCameraViewTemp(0., 0.);
+}
+
+void GraphicView::on_actionViewZ_triggered()
+{
+    setCameraViewTemp(0., 90.);
+}
+
+void GraphicView::setCameraView(double azimuth, double elevation, bool shift, bool alt)
+{
+    if (shift) {
+        azimuth = azimuth - 180.;
+        elevation = -elevation;
+    }
+
+    if (alt) {
+        vec3d anchor;
+        bool isAnchored = m_camera->findAnchor0(m_viewer, m_graphicRoot->getScene()->getLayout(), anchor);
+        if (isAnchored) {
+            m_camera->setOrbit(azimuth, elevation, anchor);
+            return;
+        }
+    }
+    m_camera->setRotation(azimuth, elevation);
+}
+
+void GraphicView::setCameraViewTemp(double azimuth, double elevation)
+{
+    bool shift = GetKeyState(VK_SHIFT) < 0;
+    bool alt = GetKeyState(VK_MENU) < 0;
+    setCameraView(azimuth, elevation, shift, alt);
+}
+
+void GraphicView::on_actionViewGroup_triggered(QAction* action)
+{
+    if (action == actionDrawFull)
+        m_viewer->setDrawStyle(SoQtViewer::STILL, SoQtViewer::VIEW_AS_IS);
+    else if (action == actionDrawMeshOverlay)
+        m_viewer->setDrawStyle(SoQtViewer::STILL, SoQtViewer::VIEW_WIREFRAME_OVERLAY);
+    else if (action == actionDrawMesh)
+            m_viewer->setDrawStyle(SoQtViewer::STILL, SoQtViewer::VIEW_LINE);
+}
+
+void GraphicView::on_actionDrawSwitch_triggered()
+{
+    static int s = 0;
+    s++;
+    if (s == actionViewGroup->actions().size()) s = 0;
+    actionViewGroup->actions()[s]->trigger();
+}
+

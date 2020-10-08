@@ -19,7 +19,7 @@ ParametersModel::ParametersModel(QObject* parent):
 
 void ParametersModel::setNode(SoNode* node)
 {
-    if (m_node == node) return; // important to keep selection
+    if (m_node == node && node) return; // important to keep selection
     m_node = node;
 
     beginResetModel();

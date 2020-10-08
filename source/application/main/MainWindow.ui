@@ -134,11 +134,6 @@ background-color: #d7e3ed;
                <normaloff>:/images/scene/nodeCamera.png</normaloff>:/images/scene/nodeCamera.png</iconset>
              </property>
             </item>
-            <item>
-             <property name="text">
-              <string>SoCamera</string>
-             </property>
-            </item>
            </widget>
           </item>
          </layout>
@@ -395,8 +390,6 @@ border:none;
     <addaction name="separator"/>
     <addaction name="actionFileSave"/>
     <addaction name="actionFileSaveAs"/>
-    <addaction name="separator"/>
-    <addaction name="actionFileExit"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">

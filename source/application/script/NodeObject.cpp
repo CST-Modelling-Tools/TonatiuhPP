@@ -91,9 +91,12 @@ QScriptValue NodeObject::createTracker()
     NodeObject* ans = new NodeObject(kit);
     return engine()->newQObject(ans);
 }
-
+#include <QDebug>
 QScriptValue NodeObject::getPart(const QString& name)
 {
+    if (name == "world.camera")
+        qDebug() << 2;
+
     if (!m_node->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId())) return 0;
 
     SoBaseKit* kit = (SoBaseKit*)(m_node);
@@ -189,4 +192,9 @@ void NodeObject::setParameter(const QString& name, const QString& value)
 
     SoField* field = node->getField(name.toLatin1().data());
     if (field) field->set(value.toLatin1().data());
+}
+
+QScriptValue NodeObject::FindInterception(QScriptValue surface, QScriptValue rays)
+{
+    return ::findInterception(surface.toString(), rays.toUInt32(), s_mainWindow);
 }

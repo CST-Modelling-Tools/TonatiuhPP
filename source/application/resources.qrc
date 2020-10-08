@@ -1,6 +1,21 @@
 <RCC>
     <qresource prefix="/">
         <file>images/about/SplashScreen.png</file>
+        <file>images/about/SplashScreenCy.png</file>
+        <file>images/about/Tonatiuh.ico</file>
+        <file>images/about/TonatiuhCy.ico</file>
+        <file>images/about/docs.png</file>
+        <file>images/about/info.png</file>
+        <file>images/about/tnh.ico</file>
+        <file>images/about/tnhs.ico</file>
+        <file>images/cursors/cursorOrbit.png</file>
+        <file>images/cursors/cursorOrbitA.png</file>
+        <file>images/cursors/cursorOrbitB.png</file>
+        <file>images/cursors/cursorRotation.png</file>
+        <file>images/cursors/cursorRotationA.png</file>
+        <file>images/cursors/cursorRotationB.png</file>
+        <file>images/cursors/cursorShiftA.png</file>
+        <file>images/cursors/cursorShiftB.png</file>
         <file>images/edit/copy.png</file>
         <file>images/edit/cut.png</file>
         <file>images/edit/delete.png</file>
@@ -8,50 +23,35 @@
         <file>images/edit/pasteLink.png</file>
         <file>images/edit/redo.png</file>
         <file>images/edit/undo.png</file>
-        <file>images/scene/nodeAir.png</file>
-        <file>images/scene/nodeSun.png</file>
+        <file>images/edit/undoHistory.png</file>
         <file>images/file/new.png</file>
         <file>images/file/open.png</file>
         <file>images/file/save.png</file>
         <file>images/file/saveas.png</file>
-        <file>images/run/runFluxAnalysis.png</file>
         <file>images/map/position.png</file>
         <file>images/map/sun.png</file>
         <file>images/map/worldMap.bmp</file>
         <file>images/map/worldMapGray.bmp</file>
-        <file>images/scene/nodeGroup.png</file>
-        <file>images/scene/nodeShape.png</file>
-        <file>images/scene/nodeSurface.png</file>
+        <file>images/run/runFluxAnalysis.png</file>
         <file>images/run/runRayTracing.png</file>
+        <file>images/run/runScript.png</file>
+        <file>images/scene/nodeAir.png</file>
+        <file>images/scene/nodeCamera.png</file>
+        <file>images/scene/nodeExport.png</file>
+        <file>images/scene/nodeFolder.png</file>
+        <file>images/scene/nodeGroup.png</file>
+        <file>images/scene/nodeImport.png</file>
+        <file>images/scene/nodeLocation.png</file>
+        <file>images/scene/nodeMaterial.png</file>
+        <file>images/scene/nodeMaterialGL.png</file>
+        <file>images/scene/nodeProfile.png</file>
+        <file>images/scene/nodeShape.png</file>
+        <file>images/scene/nodeSun.png</file>
+        <file>images/scene/nodeSurface.png</file>
+        <file>images/scene/nodeTerrain.png</file>
+        <file>images/scene/nodeTracker.png</file>
+        <file>images/view/viewTop.png</file>
         <file>images/view/viewGrid.png</file>
         <file>images/view/viewSun.png</file>
-        <file>images/run/runScript.png</file>
-        <file>images/scene/nodeMaterial.png</file>
-        <file>images/scene/nodeTracker.png</file>
-        <file>images/view/ViewTop.png</file>
-        <file>images/scene/nodeProfile.png</file>
-        <file>images/scene/nodeMaterialGL.png</file>
-        <file>images/about/SplashScreenCy.png</file>
-        <file>images/about/TonatiuhCy.ico</file>
-        <file>images/scene/nodeFolder.png</file>
-        <file>images/scene/nodeTerrain.png</file>
-        <file>images/scene/nodeLocation.png</file>
-        <file>images/edit/undoHistory.png</file>
-        <file>images/scene/nodeExport.png</file>
-        <file>images/scene/nodeImport.png</file>
-        <file>images/scene/nodeCamera.png</file>
-        <file>images/about/info.png</file>
-        <file>images/about/Tonatiuh.ico</file>
-        <file>images/about/tnhs.ico</file>
-        <file>images/about/tnh.ico</file>
-        <file>images/cursors/cursorOrbit.png</file>
-        <file>images/cursors/cursorRotation.png</file>
-        <file>images/cursors/cursorOrbitA.png</file>
-        <file>images/cursors/cursorOrbitB.png</file>
-        <file>images/cursors/cursorRotationA.png</file>
-        <file>images/cursors/cursorRotationB.png</file>
-        <file>images/cursors/cursorShiftA.png</file>
-        <file>images/cursors/cursorShiftB.png</file>
-        <file>images/about/docs.png</file>
     </qresource>
 </RCC>

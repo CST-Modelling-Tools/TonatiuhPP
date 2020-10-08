@@ -50,6 +50,9 @@ namespace Ui {
 class MainWindow;
 }
 
+class MainWindow;
+double findInterception(QString surface, uint rays, MainWindow* mw);
+
 class MainWindow: public QMainWindow
 {
     Q_OBJECT
@@ -66,6 +69,7 @@ public:
     void FinishManipulation();
 
     //    void ExecuteScriptFile(QString fileName); // del?
+friend double findInterception(QString surface, uint rays, MainWindow *mw);
 
 public slots:
     void fileNew();
@@ -253,4 +257,9 @@ private:
     int m_focusView;
     bool m_saveCoordinates;
     bool m_saveSide;
+
+    // QWidget interface
+protected:
+    void dragEnterEvent(QDragEnterEvent* event);
+    void dropEvent(QDropEvent* event);
 };

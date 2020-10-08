@@ -11,9 +11,10 @@ class SoQtExaminerViewer;
 class TSeparatorKit;
 class SoPerspectiveCamera;
 //!  GraphicView class implements a 3D representation of items from a model.
-
+class QActionGroup;
 class TPerspectiveCamera;
 class QPushButton;
+
 
 class GraphicView: public QFrame
 {
@@ -65,18 +66,28 @@ protected:
 
 //    void paintEvent(QPaintEvent* event);
 
+    void setCameraView(double azimuth, double elevation, bool shift = false, bool alt = false);
+    void setCameraViewTemp(double azimuth, double elevation);
+
 private:
     QMenu* m_menu;
-    QAction* actionViewAll;
-    QAction* actionViewSelected;
-    QAction* actionViewHome;
 
-    QAction* actionViewTop;
+    QAction* actionViewHome;
+    QAction* actionViewSelected;
+    QAction* actionViewAll;
+
+    QAction* actionViewX;
+    QAction* actionViewY;
+    QAction* actionViewZ;
     QAction* actionViewSun;
-    QAction* actionLookNorth;
-    QAction* actionLookEast;
-    QAction* actionLookSouth;
-    QAction* actionLookWest;
+    QAction* actionViewSunFrom;
+    QAction* actionViewSunOrbit;
+
+    QActionGroup* actionViewGroup;
+    QAction* actionDrawFull;
+    QAction* actionDrawMeshOverlay;
+    QAction* actionDrawMesh;
+    QAction* actionDrawSwitch;
 
 public slots:
     void showContextMenu(QPoint);
@@ -85,11 +96,14 @@ public slots:
     void on_actionViewSelected_triggered();
     void on_actionViewHome_triggered();
 
-    void on_actionViewTop_triggered();
-    void on_actionViewSun_triggered();
+    void on_actionViewX_triggered();
+    void on_actionViewY_triggered();
+    void on_actionViewZ_triggered();
 
-    void on_actionLookNorth_triggered();
-    void on_actionLookEast_triggered();
-    void on_actionLookSouth_triggered();
-    void on_actionLookWest_triggered();
+    void on_actionViewSun_triggered();
+    void on_actionViewSunFrom_triggered();
+    void on_actionViewSunOrbit_triggered();
+
+    void on_actionViewGroup_triggered(QAction* action);
+    void on_actionDrawSwitch_triggered();
 };
