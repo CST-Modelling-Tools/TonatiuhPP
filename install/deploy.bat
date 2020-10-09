@@ -46,6 +46,9 @@ XCOPY %PROJECT%\examples %DATA%\examples /E
 MD %DATA%\images
 XCOPY %PROJECT%\images %DATA%\images /E
 
+MD %DATA%\help\Sphinx
+XCOPY %PROJECT%\help\Sphinx %DATA%\help\Sphinx /E
+
 
 SET PACKAGE=%PROJECT%\install\packages\examples
 SET DATA=%PACKAGE%\data

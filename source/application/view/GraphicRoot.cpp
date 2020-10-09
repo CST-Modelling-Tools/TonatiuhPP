@@ -116,11 +116,12 @@ GraphicRoot::GraphicRoot()
     ts->addChild(shadow);
     groupLit->addChild(ts);
 
-    SoPolygonOffset* po = new SoPolygonOffset;
-    po->styles = SoPolygonOffset::FILLED;
-    po->factor = 1.;
-    po->units = 1.;
-    groupLit->addChild(po);
+    m_offset = new SoPolygonOffset;
+    m_offset->styles = SoPolygonOffset::FILLED;
+    m_offset->factor = 1.;
+    m_offset->units = 1.;
+    m_offset->on = FALSE;
+    groupLit->addChild(m_offset);
 
     m_selection = new SoSelection;
     m_selection->renderCulling = SoSeparator::OFF;
@@ -241,6 +242,7 @@ void GraphicRoot::showPhotons(bool on)
 
 void GraphicRoot::showMesh(bool on)
 {
+    m_offset->on = on;
     m_sepStyle->showMesh = on;
 }
 

@@ -18,7 +18,7 @@ class SoPerspectiveCamera;
 class TCameraKit;
 class OverlayNode;
 class SeparatorStyle;
-
+class SoPolygonOffset;
 
 class GraphicRoot: public QObject
 {
@@ -69,6 +69,7 @@ private:
     SoSelection* m_selection;
     SoSeparator* m_rays;
     SeparatorStyle* m_sepStyle;
+    SoPolygonOffset* m_offset;
 
     TSceneKit* m_scene;
     SoFieldSensor* m_sensor;

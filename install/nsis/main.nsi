@@ -255,13 +255,34 @@ Section "Examples" SectionExamples
 	#DetailPrint ""
 SectionEnd
  
+
+Section "Documentation" SectionDocumentations
+	SectionIn 1
+	SetOutPath $INSTDIR
+	!ifdef ISBUILDTEST
+		File /r "examples*"
+	!else
+		File /r "..\packages\main\data\help*"
+	!endif
+
+	#!insertmacro MUI_STARTMENU_WRITE_BEGIN pageApplication
+	#	createShortcut "$SMPROGRAMS\$StartMenuFolder\examples.lnk" "$INSTDIR\examples"
+	#!insertmacro MUI_STARTMENU_WRITE_END
+	
+	${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
+	IntFmt $0 "0x%08X" $0
+	WriteRegDWORD HKCU "${REG_KEY_UNINSTALL}" "EstimatedSize" "$0"
+	#DetailPrint ""
+SectionEnd
+
  
 Section "Uninstall"
 	ReadRegStr $AppNameFull HKCU "${REG_KEY_UNINSTALL}" "DisplayName"
 		  
 	RMDir /r "$INSTDIR\bin"
-	RMDir /r "$INSTDIR\examples"
 	RMDir /r "$INSTDIR\images"	
+	RMDir /r "$INSTDIR\examples"
+	RMDir /r "$INSTDIR\help"
 	Delete "$INSTDIR\uninstall.exe"
 	RMDir "$INSTDIR"
 	RMDir "$INSTDIR\.."

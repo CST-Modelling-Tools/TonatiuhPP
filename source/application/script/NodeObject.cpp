@@ -175,16 +175,18 @@ void NodeObject::setParameter(const QString& name, const QString& value)
     if (m_node->getTypeId() == TSeparatorKit::getClassTypeId()) {
         TSeparatorKit* parent = (TSeparatorKit*) m_node;
         node = parent->getPart("transform", true);
-    } else if (m_node->getTypeId() == SunKit::getClassTypeId()) {
+    } else if (m_node->getTypeId() == SunKit::getClassTypeId() && name == "shape") {
         SunFactory* sf = s_mainWindow->getPlugins()->getSunMap().value(value, 0);
         SunShape* s = sf->create();
         SoSFNode* f = (SoSFNode*) m_node->getField(name.toLatin1().data());
         f->setValue(s);
-    } else if (m_node->getTypeId() == AirKit::getClassTypeId()) {
+        return;
+    } else if (m_node->getTypeId() == AirKit::getClassTypeId() && name == "transmission") {
         AirFactory* sf = s_mainWindow->getPlugins()->getAirMap().value(value, 0);
         AirTransmission* s = sf->create();
         SoSFNode* f = (SoSFNode*) m_node->getField(name.toLatin1().data());
         f->setValue(s);
+        return;
     }
 
     SoField* field = node->getField(name.toLatin1().data());

@@ -2625,7 +2625,7 @@ double findInterception(QString surface, uint rays, MainWindow* mw)
 #include <QDesktopServices>
 void MainWindow::on_actionDocumentation_triggered()
 {
-    QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/../help/contents.html"));
+    QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/../help/Sphinx/html/Quick/index.html"));
 //    HelpDialog dialog(this);
 //    dialog.exec();
 }
