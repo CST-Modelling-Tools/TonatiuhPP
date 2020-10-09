@@ -320,6 +320,7 @@ tn.InsertScene(nodeFresnel);
 
 
 var scene = NodeObject().getScene();
+
 var sun = scene.getPart("world.sun");
 sun.setParameter("shape", "Buie");
 var sp = sun.getPart("position");

@@ -81,7 +81,8 @@ private:
     QAction* actionViewZ;
     QAction* actionViewSun;
     QAction* actionViewSunFrom;
-    QAction* actionViewSunOrbit;
+    QAction* actionViewSunAnchoredTo;
+    QAction* actionViewSunAnchoredFrom;
 
     QActionGroup* actionViewGroup;
     QAction* actionDrawFull;
@@ -102,7 +103,8 @@ public slots:
 
     void on_actionViewSun_triggered();
     void on_actionViewSunFrom_triggered();
-    void on_actionViewSunOrbit_triggered();
+    void on_actionViewSunAnchoredTo_triggered();
+    void on_actionViewSunAnchoredFrom_triggered();
 
     void on_actionViewGroup_triggered(QAction* action);
     void on_actionDrawSwitch_triggered();

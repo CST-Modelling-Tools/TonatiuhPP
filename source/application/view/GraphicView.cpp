@@ -89,6 +89,7 @@ GraphicView::GraphicView(QWidget* parent):
     highlighter->setLineWidth(2.);
     m_viewer->setGLRenderAction(highlighter);
     m_viewer->setDrawStyle(SoQtViewer::INTERACTIVE, SoQtViewer::VIEW_SAME_AS_STILL);
+    m_viewer->setWireframeOverlayColor(SbColor(96/255., 123/255., 155/255.));
 
     showAxes(true);
     m_viewer->setHeadlight(false);
@@ -195,15 +196,19 @@ QFrame[inFocus=true] {
     actionViewSun = new QAction("Sun (to)", this);
     actionViewSun->setObjectName("actionViewSun");
     actionViewSun->setShortcuts(QKeySequence::listFromString(
-        "Ctrl+9; Ctrl+Alt+Shift+9")); // 0?
+        "Ctrl+9")); // 0?
 
     actionViewSunFrom = new QAction("Sun (from)", this);
     actionViewSunFrom->setObjectName("actionViewSunFrom");
     actionViewSunFrom->setShortcut(QKeySequence("Ctrl+Shift+9"));
 
-    actionViewSunOrbit = new QAction("Sun (anchored)", this);
-    actionViewSunOrbit->setObjectName("actionViewSunOrbit");
-    actionViewSunOrbit->setShortcut(QKeySequence("Ctrl+Alt+9"));
+    actionViewSunAnchoredTo = new QAction("Sun (to, anchored)", this);
+    actionViewSunAnchoredTo->setObjectName("actionViewSunAnchoredTo");
+    actionViewSunAnchoredTo->setShortcut(QKeySequence("Ctrl+Alt+9"));
+
+    actionViewSunAnchoredFrom = new QAction("Sun (from, anchored)", this);
+    actionViewSunAnchoredFrom->setObjectName("actionViewSunAnchoredFrom");
+    actionViewSunAnchoredFrom->setShortcut(QKeySequence("Ctrl+Alt+Shift+9"));
 
     m_menu = new QMenu(this);
 
@@ -219,7 +224,8 @@ QFrame[inFocus=true] {
     menuCamera->addSeparator();
     menuCamera->addAction(actionViewSun);
     menuCamera->addAction(actionViewSunFrom);
-    menuCamera->addAction(actionViewSunOrbit);
+    menuCamera->addAction(actionViewSunAnchoredTo);
+    menuCamera->addAction(actionViewSunAnchoredFrom);
     m_menu->addMenu(menuCamera);
 
 
@@ -259,8 +265,8 @@ QFrame[inFocus=true] {
     QMetaObject::connectSlotsByName(this);
 
 //    m_viewer->setAutoClippingStrategy(SoQtViewer::CONSTANT_NEAR_PLANE, 0.1, myfunc);
-    m_viewer->setAutoClippingStrategy(SoQtViewer::CONSTANT_NEAR_PLANE, 0.2);
-    m_viewer->setAutoClipping(true);
+//    m_viewer->setAutoClippingStrategy(SoQtViewer::CONSTANT_NEAR_PLANE, 0.2);
+//    m_viewer->setAutoClipping(true);
 }
 
 GraphicView::~GraphicView()
@@ -577,12 +583,12 @@ void GraphicView::focusOutEvent(QFocusEvent* event)
 //    QWidget::focusOutEvent(event);
 }
 
-#include <QDesktopWidget>
-
+//#include <QDesktopWidget>
+#include <QScreen>
 void GraphicView::resizeEvent(QResizeEvent* event)
 {
     QFrame::resizeEvent(event);
-    int hMax = QApplication::desktop()->screenGeometry().height();
+    int hMax = qApp->screens()[0]->geometry().height();
 //    SbVec2s vs = m_viewer->getViewportRegion().getViewportSizePixels();
 //    int h = std::min(vs[0], vs[1]);
     QSize size = event->size();
@@ -700,12 +706,20 @@ void GraphicView::on_actionViewSunFrom_triggered()
     setCameraView(gamma, alpha, true, false);
 }
 
-void GraphicView::on_actionViewSunOrbit_triggered()
+void GraphicView::on_actionViewSunAnchoredTo_triggered()
 {
     SunPosition* sp = (SunPosition*) m_graphicRoot->getScene()->getPart("world.sun.position", false);
     double gamma = sp->azimuth.getValue();
     double alpha = sp->elevation.getValue();
     setCameraView(gamma, alpha, false, true);
+}
+
+void GraphicView::on_actionViewSunAnchoredFrom_triggered()
+{
+    SunPosition* sp = (SunPosition*) m_graphicRoot->getScene()->getPart("world.sun.position", false);
+    double gamma = sp->azimuth.getValue();
+    double alpha = sp->elevation.getValue();
+    setCameraView(gamma, alpha, true, true);
 }
 
 void GraphicView::on_actionViewX_triggered()
@@ -751,11 +765,13 @@ void GraphicView::setCameraViewTemp(double azimuth, double elevation)
 void GraphicView::on_actionViewGroup_triggered(QAction* action)
 {
     if (action == actionDrawFull)
-        m_viewer->setDrawStyle(SoQtViewer::STILL, SoQtViewer::VIEW_AS_IS);
+        m_graphicRoot->showMesh(false);
     else if (action == actionDrawMeshOverlay)
-        m_viewer->setDrawStyle(SoQtViewer::STILL, SoQtViewer::VIEW_WIREFRAME_OVERLAY);
+        m_graphicRoot->showMesh(true);
     else if (action == actionDrawMesh)
-            m_viewer->setDrawStyle(SoQtViewer::STILL, SoQtViewer::VIEW_LINE);
+        m_viewer->setDrawStyle(SoQtViewer::STILL, SoQtViewer::VIEW_LINE);
+
+    m_viewer->render();
 }
 
 void GraphicView::on_actionDrawSwitch_triggered()

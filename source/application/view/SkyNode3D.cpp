@@ -93,7 +93,7 @@ SkyNode3D::SkyNode3D()
     m_root->addChild(m_camera);
 
     SoLightModel* lightmodel = new SoLightModel;
-    lightmodel->model.setValue(SoLightModel::BASE_COLOR);
+    lightmodel->model = SoLightModel::BASE_COLOR;
     m_root->addChild(lightmodel);
 
     m_root->addChild(makeSky());
@@ -244,8 +244,7 @@ void SkyNode3D::GLRender(SoGLRenderAction* action)
   SoDepthBufferElement::DepthWriteFunction function_out;
   SbVec2f range_out;
   SoDepthBufferElement::get(state, test_out, write_out, function_out, range_out);
-  range_out[0] = 0.99999f;
-  range_out[1] = 1.0f;
+  range_out.setValue(0.99999f, 1.0f);
   SoDepthBufferElement::set(state, test_out, write_out, function_out, range_out);
 
   m_root->GLRender(action);

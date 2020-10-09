@@ -179,6 +179,8 @@ private slots:
     void treeWorldDoubleClicked(QTreeWidgetItem* item, int column);
     void tabChanged(int);
 
+    void on_actionDocumentation_triggered();
+
 signals:
     void Abort(QString error);
 

@@ -284,8 +284,6 @@ void MainWindow::SetupViews()
 
 void MainWindow::SetupGraphicView()
 {
-    QSplitter* splitter = ui->splitterH;
-
     m_graphicView << ui->widgetView3D;
     m_graphicView[0]->setSceneGraph(m_graphicsRoot);
     m_graphicView[0]->m_window = this;
@@ -300,9 +298,8 @@ void MainWindow::SetupGraphicView()
 //    delete splitter->widget(0);
 //    splitter->insertWidget(0, m_graphicView[0]);
 
-    QList<int> sizes;
-    sizes << 700 << 200;
-    splitter->setSizes(sizes);
+    QList<int> sizes = {700, 200};
+    ui->splitterH->setSizes(sizes);
 
 /*
     QSplitter* splitter = ui->splitterH;
@@ -2622,4 +2619,13 @@ double findInterception(QString surface, uint rays, MainWindow* mw)
     FluxAnalysis fa(mw->m_document->getSceneKit(), mw->m_modelScene, mw->m_raysGridWidth, mw->m_raysGridHeight, mw->m_rand);
     fa.run(surface, "front", rays, false, 5, 5, true);
     return fa.powerTotal();
+}
+
+//#include "widgets/HelpDialog.h"
+#include <QDesktopServices>
+void MainWindow::on_actionDocumentation_triggered()
+{
+    QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/../help/contents.html"));
+//    HelpDialog dialog(this);
+//    dialog.exec();
 }

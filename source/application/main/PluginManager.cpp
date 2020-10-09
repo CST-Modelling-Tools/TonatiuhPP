@@ -42,6 +42,7 @@
 #include "libraries/math/gcf.h"
 #include "view/SkyNode3D.h"
 #include "view/OverlayNode.h"
+#include "view/SeparatorStyle.h"
 
 
 PluginManager::PluginManager()
@@ -54,6 +55,7 @@ PluginManager::PluginManager()
     TSceneKit::initClass();
     SkyNode3D::initClass();
     OverlayNode::initClass();
+    SeparatorStyle::initClass();
 }
 
 /*!

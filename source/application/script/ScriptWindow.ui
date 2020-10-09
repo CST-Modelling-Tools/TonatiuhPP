@@ -83,16 +83,8 @@
     </property>
     <addaction name="actionRunScript"/>
    </widget>
-   <widget class="QMenu" name="menu_Help">
-    <property name="title">
-     <string>&amp;Help</string>
-    </property>
-    <addaction name="actionExamples"/>
-    <addaction name="actionAbout"/>
-   </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Run"/>
-   <addaction name="menu_Help"/>
   </widget>
   <action name="actionRunScript">
    <property name="icon">

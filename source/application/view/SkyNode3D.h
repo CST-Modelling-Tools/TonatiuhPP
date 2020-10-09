@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Inventor/nodes/SoSubNode.h>
-#include <Inventor/nodes/SoSeparator.h>
 
 class SoSeparator;
 class SoPerspectiveCamera;

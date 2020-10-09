@@ -63,11 +63,13 @@ HEADERS += \
     view/KeyboardHook.h \
     view/MenuStyle.h \
     view/OverlayNode.h \
+    view/SeparatorStyle.h \
     view/SkyNode3D.h \
     view/SunNode3D.h \
     view/trf.h \
     widgets/AboutDialog.h \
     widgets/AirDialog.h \
+    widgets/HelpDialog.h \
     widgets/NetworkConnectionsDialog.h \
     widgets/SunDialog.h
 
@@ -125,11 +127,13 @@ SOURCES += \
     view/KeyboardHook.cpp \
     view/MenuStyle.cpp \
     view/OverlayNode.cpp \
+    view/SeparatorStyle.cpp \
     view/SkyNode3D.cpp \
     view/SunNode3D.cpp \
     view/trf.cpp \
     widgets/AboutDialog.cpp \
     widgets/AirDialog.cpp \
+    widgets/HelpDialog.cpp \
     widgets/NetworkConnectionsDialog.cpp \
     widgets/SunDialog.cpp
 
@@ -146,6 +150,7 @@ FORMS += \
     script/ScriptWindow.ui \
     widgets/AboutDialog.ui \
     widgets/AirDialog.ui \
+    widgets/HelpDialog.ui \
     widgets/NetworkConnectionsDialog.ui \
     widgets/SunDialog.ui
 

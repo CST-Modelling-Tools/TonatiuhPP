@@ -91,12 +91,9 @@ QScriptValue NodeObject::createTracker()
     NodeObject* ans = new NodeObject(kit);
     return engine()->newQObject(ans);
 }
-#include <QDebug>
+
 QScriptValue NodeObject::getPart(const QString& name)
 {
-    if (name == "world.camera")
-        qDebug() << 2;
-
     if (!m_node->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId())) return 0;
 
     SoBaseKit* kit = (SoBaseKit*)(m_node);

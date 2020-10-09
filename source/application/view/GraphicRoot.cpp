@@ -1,17 +1,22 @@
 #include "GraphicRoot.h"
 
+#include <Inventor/actions/SoSearchAction.h>
+#include <Inventor/annex/FXViz/nodes/SoShadowDirectionalLight.h>
+#include <Inventor/annex/FXViz/nodes/SoShadowGroup.h>
+#include <Inventor/nodes/SoBaseColor.h>
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoDrawStyle.h>
+#include <Inventor/nodes/SoEnvironment.h>
+#include <Inventor/nodes/SoLightModel.h>
+#include <Inventor/nodes/SoLineSet.h>
+#include <Inventor/nodes/SoPerspectiveCamera.h>
+#include <Inventor/nodes/SoPointSet.h>
+#include <Inventor/nodes/SoPolygonOffset.h>
 #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoSwitch.h>
-#include <Inventor/nodes/SoDrawStyle.h>
-#include <Inventor/nodes/SoPointSet.h>
-#include <Inventor/nodes/SoLineSet.h>
 #include <Inventor/nodes/SoTransform.h>
-#include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/nodes/SoTransformSeparator.h>
-#include <Inventor/nodes/SoEnvironment.h>
-#include <Inventor/annex/FXViz/nodes/SoShadowGroup.h>
-#include <Inventor/annex/FXViz/nodes/SoShadowDirectionalLight.h>
 #include <Inventor/sensors/SoFieldSensor.h>
 
 #include "libraries/math/gcf.h"
@@ -23,7 +28,7 @@
 #include "OverlayNode.h"
 #include "kernel/scene/GridNode.h"
 #include "kernel/sun/SunPosition.h"
-
+#include "SeparatorStyle.h"
 /*
 SoSelection
 selectionFinishCallback
@@ -66,38 +71,42 @@ void selectionFinishCallback(void* userData, SoSelection* selection)
    SoSeparator m_rays
 */
 
-#include <Inventor/nodes/SoPerspectiveCamera.h>
-
-#include <Inventor/nodes/SoCube.h>
-
+/*
+SoSeparator m_root
+    SkyNode3D m_sky
+        SunNode3D m_sun
+    SoEnvironment environment
+    SoShadowGroup groupLit
+        SoTransformSeparator ts
+           SoShadowDirectionalLight
+        SoGroup groupStyle
+            SoSwitch sWires
+            SoSelection m_selection
+                TSceneKit
+        GridNode3D m_grid
+     SoSeparator m_rays
+     OverlayNode m_overlayNode
+*/
 GraphicRoot::GraphicRoot()
 {
     m_root = new SoSeparator;
     m_root->renderCulling = SoSeparator::OFF;
     m_root->ref();
 
-    SoSeparator* sep = new SoSeparator;
-    sep->renderCulling = SoSeparator::OFF;
-    sep->pickCulling = SoSeparator::OFF;
-    m_root->addChild(sep);
-
     m_sky = new SkyNode3D;
-    sep->addChild(m_sky);
-
+    m_root->addChild(m_sky);
     m_sun = new SunNode3D;
     m_sky->getRoot()->addChild(m_sun);
-
-
 
     SoEnvironment* environment = new SoEnvironment;
     environment->ambientIntensity = 1.;
     m_root->addChild(environment);
 
-    SoShadowGroup* group = new SoShadowGroup;
-    group->renderCulling = SoSeparator::OFF;
-    group->precision = 1.;
-    group->quality = 1.;
-    m_root->addChild(group);
+    SoShadowGroup* groupLit = new SoShadowGroup;
+    groupLit->renderCulling = SoSeparator::OFF;
+    groupLit->precision = 1.;
+    groupLit->quality = 1.;
+    m_root->addChild(groupLit);
 
     SoTransformSeparator* ts = new SoTransformSeparator;
     ts->addChild(m_sun->getTransform());
@@ -105,25 +114,27 @@ GraphicRoot::GraphicRoot()
     shadow->intensity = 1.;
     shadow->direction = SbVec3f(0., 0., 1.);
     ts->addChild(shadow);
-    group->addChild(ts);
+    groupLit->addChild(ts);
 
-
-//    SoDrawStyle* wireStyle;
-//    wireStyle = new SoDrawStyle;
-//    wireStyle->style = SoDrawStyle::LINES + SoDrawStyleElement::FILLED;
-//    wireStyle->setOverride(TRUE);
-//    group->addChild(wireStyle);
-
+    SoPolygonOffset* po = new SoPolygonOffset;
+    po->styles = SoPolygonOffset::FILLED;
+    po->factor = 1.;
+    po->units = 1.;
+    groupLit->addChild(po);
 
     m_selection = new SoSelection;
     m_selection->renderCulling = SoSeparator::OFF;
     m_selection->policy = SoSelection::SINGLE;
     m_selection->addFinishCallback(selectionFinishCallback, (void*) this);
-    group->addChild(m_selection);
+    groupLit->addChild(m_selection);
+
+    m_sepStyle = new SeparatorStyle;
+    m_sepStyle->m_root->addChild(m_selection);
+    m_root->addChild(m_sepStyle);
 
     m_grid = new GridNode3D; // better here for antialiasing
     m_grid->renderCulling = SoSeparator::OFF;
-    group->addChild(m_grid);
+    groupLit->addChild(m_grid);
 
     m_rays = new SoSeparator; // order important for antialiasing
     m_root->addChild(m_rays);
@@ -226,6 +237,11 @@ void GraphicRoot::showPhotons(bool on)
     if (!path) return;
     SoSwitch* group = (SoSwitch*) path->getTail();
     group->whichChild = on ? SO_SWITCH_ALL : SO_SWITCH_NONE;
+}
+
+void GraphicRoot::showMesh(bool on)
+{
+    m_sepStyle->showMesh = on;
 }
 
 void GraphicRoot::enableSelection(bool on)

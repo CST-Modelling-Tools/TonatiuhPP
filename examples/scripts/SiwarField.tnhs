@@ -213,21 +213,6 @@ function makeField()
 		makeHeliostat(nodeHeliostats, name, position, vRec, focus);
 	}
 
-	n = nodeRoot.createNode("Ground");
-	n.setParameter("translation", "0 0 -0.1");
-	s = n.createShape();
-	p = s.insertProfile("Rectangular");
-	p.setParameter("uMin", -70);
-	p.setParameter("uMax", 70);
-	p.setParameter("vMin", -20);
-	p.setParameter("vMax", 100);
-	m = s.insertMaterial("Transparent");
-	mG = s.getPart("material");
-	mG.setParameter("ambientColor", "0.85 0.85 0.8");	
-	mG.setParameter("diffuseColor", "0.05 0.05 0.05");
-	mG.setParameter("specularColor", "0. 0. 0.");
-	mG.setParameter("shininess", "0.1");
-
 	var nT = nodeRoot.createNode("Tower");
 	nT.setParameter("translation", "0 0 0");
 	nT.setParameter("rotation", "0 0 1 5");
@@ -267,3 +252,14 @@ var vRec = "0.0467 -2.0216 " + zReceiver;
 
 tn.Clear();
 makeField();
+
+var scene = NodeObject().getScene();
+
+var cm = scene.getPart("world.camera");
+cm.setParameter("position", "-105.303 -119.109 117.728");
+cm.setParameter("rotation", "33.9011 -31.417");
+
+var tg = scene.getPart("world.terrain.grid");
+tg.setParameter("step", "5");
+tg.setParameter("xRange", "-50 50");
+tg.setParameter("yRange", "-25 100");

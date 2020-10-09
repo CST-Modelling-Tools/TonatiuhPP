@@ -17,6 +17,7 @@ class SoCamera;
 class SoPerspectiveCamera;
 class TCameraKit;
 class OverlayNode;
+class SeparatorStyle;
 
 
 class GraphicRoot: public QObject
@@ -43,6 +44,8 @@ public:
     void showRays(bool on);
     void showPhotons(bool on);
 
+    void showMesh(bool on);
+
     void enableSelection(bool on);
     void select(const SoPath* path);
     void deselectAll();
@@ -52,6 +55,7 @@ public:
     void updateSkyCamera(SoPerspectiveCamera* camera);
 
     OverlayNode* getOverlayNode() const {return m_overlayNode;}
+
 
 signals:
     void selectionChanged(SoSelection* selection);
@@ -64,6 +68,7 @@ private:
     OverlayNode* m_overlayNode;
     SoSelection* m_selection;
     SoSeparator* m_rays;
+    SeparatorStyle* m_sepStyle;
 
     TSceneKit* m_scene;
     SoFieldSensor* m_sensor;

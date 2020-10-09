@@ -56,7 +56,7 @@ void GridNode3D::create()
     yMax = nyMax*dx;
 
     SoTransform* transform = new SoTransform;
-    transform->translation.setValue(0., 0., -0.01);
+    transform->translation.setValue(0., 0., 0*-0.01);
     m_grid->addChild(transform);
 
 
@@ -171,12 +171,13 @@ void GridNode3D::makeAxes(double xMin, double xMax, double yMin, double yMax)
 #include <Inventor/nodes/SoNormal.h>
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoIndexedFaceSet.h>
+#include <Inventor/nodes/SoPolygonOffset.h>
 
 void GridNode3D::makeGround(double xMin, double xMax, double yMin, double yMax)
 {
     SoShapeKit* shapeKit = new SoShapeKit;
 
-    float z0 = -0.01;
+    float z0 = -0.01*0;
     float sv[][3] = {
         {float(xMin), float(yMin), z0},
         {float(xMax), float(yMin), z0},
@@ -202,6 +203,12 @@ void GridNode3D::makeGround(double xMin, double xMax, double yMin, double yMax)
     material->emissiveColor = SbColor(0, 0, 0);
     material->shininess = 0.1;
     material->transparency = 0.;
+
+    SoPolygonOffset* po = new SoPolygonOffset;
+    po->styles = SoPolygonOffset::FILLED;
+    po->factor = 1.;
+    po->units = 1.;
+    m_grid->addChild(po);
 
     SoShapeHints* hints = new SoShapeHints;
     hints->shapeType = SoShapeHints::SOLID;
