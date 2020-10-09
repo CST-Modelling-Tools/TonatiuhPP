@@ -46,8 +46,8 @@ private:
     QMap<QString, QCursor> m_cursors;
 
 public:
-QWidget* m_window;
-QObject* m_filter;
+    QWidget* m_window;
+    QObject* m_filter;
 //QPushButton* m_label;
 
     // QWidget interface

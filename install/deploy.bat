@@ -1,5 +1,7 @@
 @ECHO OFF
 
+RMDIR /s /q packages
+
 SET PROJECT=%CD%\..
 SET BUILD=%PROJECT%\build-Tonatiuh-Desktop_Qt_5_14_2_MinGW_64_bit-Release
 SET PACKAGE=%PROJECT%\install\packages\main

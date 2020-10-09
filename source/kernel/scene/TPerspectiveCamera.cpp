@@ -145,6 +145,7 @@ bool TPerspectiveCamera::findAnchor(SoQtExaminerViewer* viewer, QPoint pos, SoNo
 {
     vec3d rd = findRayGlobal(viewer, pos);
     double tMin = viewer->getCamera()->nearDistance.getValue();
+    tMin = std::min(0.1, tMin);
 
     SoRayPickAction rpa(viewer->getViewportRegion());
 //    rpa.setPoint(SbVec2s(pos.x(), pos.y())); // does not work
@@ -183,7 +184,7 @@ void TPerspectiveCamera::moveShiftAnchor(SoQtExaminerViewer* viewer, QPoint pos,
     // keep z
     // (ro + trd).z = m_anchor.z
     double t = (m_anchor.z - m_position0.z)/rd.z;
-    t *= std::pow(0.7, -zoom);
+    t *= std::pow(0.7, zoom);
     m_position = m_anchor - t*rd;
 
     updateTransform();
@@ -285,11 +286,13 @@ void TPerspectiveCamera::zoomCenter(SoQtExaminerViewer* viewer, SoNode* root, do
 {
     // find ray
     vec3d rd = findRayGlobal0();
+    double tMin = viewer->getCamera()->nearDistance.getValue();
+    tMin = std::min(0.1, tMin);
 
     // pick object
     SoRayPickAction rpa(viewer->getViewportRegion());
     rpa.setRadius(1.);
-    rpa.setRay(SbVec3f(m_position.x, m_position.y, m_position.z), SbVec3f(rd.x, rd.y, rd.z), viewer->getCamera()->nearDistance.getValue());
+    rpa.setRay(SbVec3f(m_position.x, m_position.y, m_position.z), SbVec3f(rd.x, rd.y, rd.z), tMin);
     rpa.apply(root);
 
     vec3d anchor;
@@ -306,7 +309,7 @@ void TPerspectiveCamera::zoomCenter(SoQtExaminerViewer* viewer, SoNode* root, do
     }
 
     vec3d q = anchor - m_position;
-    q *= std::pow(0.7, -zoom);
+    q *= std::pow(0.7, zoom);
     m_position = anchor - q;
 //    qDebug() << zoom << " " << m_position;
     updateTransform();
@@ -323,7 +326,7 @@ void TPerspectiveCamera::moveCameraPlane(SoQtExaminerViewer* viewer, QPoint pos,
 
     // keep orientation, pan camera
     double t = dot(m_anchor - m_position0, rd);
-    t *= std::pow(0.7, -zoom);
+    t *= std::pow(0.7, zoom);
     m_position = m_anchor - t*rd;
 
     updateTransform();

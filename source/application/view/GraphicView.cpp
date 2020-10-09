@@ -71,6 +71,7 @@ GraphicView::GraphicView(QWidget* parent):
     m_graphicRoot(0),
     m_viewer(0)
 {
+    m_window = 0;
     QVBoxLayout* layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
     setLayout(layout);
@@ -102,6 +103,7 @@ GraphicView::GraphicView(QWidget* parent):
     m_viewer->getGLWidget()->setEnabled(false);
     setFocusPolicy(Qt::StrongFocus);
     m_filter = new KeyFilter(this);
+
 
     QPixmap pixmap;
 
@@ -160,7 +162,8 @@ QFrame[inFocus=true] {
 //    label->setGeometry(QRect(0, 0, 504, 14));
 //    connect(m_viewer->getGLWidget(),SIGNAL()
 
-    // actions  
+
+    // actions
     actionViewAll = new QAction("All", this);
     actionViewAll->setObjectName("actionViewAll");
     actionViewAll->setShortcut(QKeySequence("Ctrl+/"));
@@ -187,7 +190,8 @@ QFrame[inFocus=true] {
     actionViewY->setShortcuts(QKeySequence::listFromString(
         "Ctrl+7; Ctrl+Shift+7; Ctrl+Alt+7; Ctrl+Alt+Shift+7"));
 
-    actionViewZ = new QAction(/*QIcon(":/images/view/viewTop.png"),*/ "Z (Zenith)", this);
+//    actionViewZ = new QAction(QIcon(":/images/view/viewTop.png"), "Z (Zenith)", this);
+    actionViewZ = new QAction("Z (Zenith)", this);
     actionViewZ->setObjectName("actionViewZ");
     actionViewZ->setShortcuts(QKeySequence::listFromString(
         "Ctrl+1; Ctrl+Shift+1; Ctrl+Alt+1; Ctrl+Alt+Shift+1"));
@@ -267,6 +271,7 @@ QFrame[inFocus=true] {
 //    m_viewer->setAutoClippingStrategy(SoQtViewer::CONSTANT_NEAR_PLANE, 0.1, myfunc);
 //    m_viewer->setAutoClippingStrategy(SoQtViewer::CONSTANT_NEAR_PLANE, 0.2);
 //    m_viewer->setAutoClipping(true);
+
 }
 
 GraphicView::~GraphicView()
@@ -514,13 +519,15 @@ void GraphicView::keyPressEvent(QKeyEvent* event)
         m_graphicRoot->getOverlayNode()->showAim(false);
         m_viewer->render();
     }
-    QFrame::keyPressEvent(event);
+//    QFrame::keyPressEvent(event);
+    event->accept();
 }
 
 void GraphicView::keyReleaseEvent(QKeyEvent* event)
 {
     keyPressEvent(event);
-    QFrame::keyReleaseEvent(event);
+    event->accept();
+//    QFrame::keyReleaseEvent(event);
 }
 
 #include <QApplication>
@@ -529,8 +536,23 @@ void GraphicView::keyReleaseEvent(QKeyEvent* event)
 #include <QMainWindow>
 #include <QMenuBar>
 
+#include "main/MainWindow.h"
 void GraphicView::focusInEvent(QFocusEvent* event)
 {
+//    MainWindow* mw = (MainWindow*) m_window;
+//    if (mw) {
+//            mw->menuBar()->installEventFilter(m_filter);
+//       qApp->removeEventFilter(mw->menuBar());
+//    }
+
+//
+//    ((QMainWindow*)m_window)->menuBar();
+//    qApp->removeEventFilter();
+//    if (m_window)
+//        m_window->installEventFilter(m_filter);
+    qApp->installEventFilter(m_filter);
+//    installEventFilter(m_filter);
+
     setProperty("inFocus", true);
     style()->unpolish(this);
     update();
@@ -538,7 +560,6 @@ void GraphicView::focusInEvent(QFocusEvent* event)
 //        setHook();
 //    qDebug() << "disa";
 
-    qApp->installEventFilter(m_filter);
 
 //    MenuStyle* ms = dynamic_cast<MenuStyle*>( m_window->style());
 //    if (ms)
@@ -564,13 +585,17 @@ void GraphicView::focusInEvent(QFocusEvent* event)
 
 void GraphicView::focusOutEvent(QFocusEvent* event)
 {
+//        qApp->installEventFilter(((QMainWindow*)m_window)->menuBar());
     setProperty("inFocus", false);
     style()->unpolish(this);
     update();
+
     qApp->restoreOverrideCursor();
 
 //    qDebug() << "ena";
-    qApp->removeEventFilter(m_filter);
+//    if (m_window)
+        qApp->removeEventFilter(m_filter);
+
 //    MenuStyle* ms = dynamic_cast<MenuStyle*> (m_window->style());
 //    if (ms)
 //    {
