@@ -53,5 +53,9 @@
         <file>images/view/viewTop.png</file>
         <file>images/view/viewGrid.png</file>
         <file>images/view/viewSun.png</file>
+        <file>images/view/viewX.png</file>
+        <file>images/view/viewY.png</file>
+        <file>images/view/viewZ.png</file>
+        <file>images/view/viewSunFrom.png</file>
     </qresource>
 </RCC>

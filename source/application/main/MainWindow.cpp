@@ -158,7 +158,7 @@ MainWindow::MainWindow(QString fileName, CustomSplashScreen* splash, QWidget* pa
         StartOver(fileName);
     } else {
         SetCurrentFile("");
-        m_graphicView[0]->on_actionViewHome_triggered();
+        m_graphicView[0]->onViewHome();
     }
     ui->parametersTabs->setNode(0);
 
@@ -245,8 +245,6 @@ void MainWindow::SetupDocument()
     // graphic root
     m_graphicsRoot = new GraphicRoot;
     m_graphicsRoot->setDocument(m_document);
-
-    showGrid();
 
     connect(
         m_graphicsRoot, SIGNAL(selectionChanged(SoSelection*)),
@@ -446,11 +444,6 @@ void MainWindow::SetupTriggers()
     connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(RunCompleteRayTracer()) );
     connect(ui->actionRunFlux, SIGNAL(triggered()), this, SLOT(RunFluxAnalysisDialog()) );
 
-    // view
-    connect(ui->actionViewGrid, SIGNAL(triggered()), this, SLOT(showGrid()));
-    connect(ui->actionViewRays, SIGNAL(toggled(bool)), this, SLOT(showRays(bool)));
-    connect(ui->actionViewPhotons, SIGNAL(toggled(bool)), this, SLOT(showPhotons(bool)));
-
     // layout
     connect(ui->buttonInsertNode, SIGNAL(pressed()), this, SLOT(InsertNode()) );
     connect(ui->buttonInsertShape, SIGNAL(pressed()), this, SLOT(InsertShape()) );
@@ -559,23 +552,6 @@ void MainWindow::onAirDialog()
     if (!dialog.exec()) return;
     setFieldNode(m_document->getSceneKit()->getPart("world", false), "air", dialog.getAir());
 }
-
-void MainWindow::showGrid() //?
-{
-    GridNode* node = (GridNode*) m_document->getSceneKit()->getPart("world.terrain.grid", false);
-    if (node) node->show = ui->actionViewGrid->isChecked();
-}
-
-void MainWindow::showRays(bool on)
-{
-    m_graphicsRoot->showRays(on);
-}
-
-void MainWindow::showPhotons(bool on)
-{
-    m_graphicsRoot->showPhotons(on);
-}
-
 
 /*!
  * Moves the scene node with index \a node to the parent with index \a newParent.
@@ -2562,7 +2538,7 @@ bool MainWindow::StartOver(const QString& fileName)
 
     ChangeModelScene();
     if (fileName.isEmpty()) {
-     m_graphicView[0]->on_actionViewHome_triggered();
+     m_graphicView[0]->onViewHome();
     }
 
     ui->sceneView->expandToDepth(1);
@@ -2625,7 +2601,7 @@ double findInterception(QString surface, uint rays, MainWindow* mw)
 #include <QDesktopServices>
 void MainWindow::on_actionDocumentation_triggered()
 {
-    QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/../help/Sphinx/html/Quick/index.html"));
+    QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/../help/html/index.html"));
 //    HelpDialog dialog(this);
 //    dialog.exec();
 }

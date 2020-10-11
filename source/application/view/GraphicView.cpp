@@ -8,6 +8,7 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #include <Inventor/actions/SoGetMatrixAction.h>
+#include <Inventor/nodes/SoSelection.h>
 //#include <Inventor/Qt/viewers/SoQtConstrainedViewer.h>
 
 
@@ -50,17 +51,19 @@
 #include "kernel/scene/TPerspectiveCamera.h"
 #include "KeyFilter.h"
 #include "kernel/scene/TSceneKit.h"
+#include "kernel/sun/SunPosition.h"
 #include <QLabel>
 #include <QPushButton>
 //#include <QGLWidget>
 #include <QDebug>
 
-SbVec2f myfunc(void * data, const SbVec2f & nearfar)
-{
-    qDebug() << nearfar[0]<<" "<<nearfar[1];
-    return SbVec2f(0.1, 10);
-    return nearfar;
-}
+//SbVec2f myfunc(void* data, const SbVec2f& nearfar)
+//{
+//    qDebug() << nearfar[0]<<" "<<nearfar[1];
+//    return SbVec2f(0.1, 10);
+//    return nearfar;
+//}
+
 /**
  * Creates a new GraphicView with a \a parerent for the model data 3D representation.
  *
@@ -68,10 +71,10 @@ SbVec2f myfunc(void * data, const SbVec2f & nearfar)
  */
 GraphicView::GraphicView(QWidget* parent):
     QFrame(parent),
-    m_graphicRoot(0),
-    m_viewer(0)
+    m_graphicRoot(0)
 {
     m_window = 0;
+
     QVBoxLayout* layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
     setLayout(layout);
@@ -79,32 +82,39 @@ GraphicView::GraphicView(QWidget* parent):
     QWidget* w = new QWidget;
     layout->addWidget(w);
 
-
     m_viewer = new SoQtExaminerViewer(w);
     m_viewer->setAntialiasing(true, 1); // disable if slow
     m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND); // do not move
     m_viewer->setViewing(false);
-
     SoBoxHighlightRenderAction* highlighter = new SoBoxHighlightRenderAction(m_viewer->getViewportRegion());
     highlighter->setColor(SbColor(100/255., 180/255., 120/255.));
     highlighter->setLineWidth(2.);
     m_viewer->setGLRenderAction(highlighter);
     m_viewer->setDrawStyle(SoQtViewer::INTERACTIVE, SoQtViewer::VIEW_SAME_AS_STILL);
-    m_viewer->setWireframeOverlayColor(SbColor(96/255., 123/255., 155/255.));
-
-    showAxes(true);
-    m_viewer->setHeadlight(false);
+//    m_viewer->setWireframeOverlayColor(SbColor(96/255., 123/255., 155/255.));
+    m_viewer->setFeedbackVisibility(true); // axes
     m_viewer->setDecoration(false);
+    m_viewer->setHeadlight(false);
+    //    m_viewer->setAutoClipping(true);
+    //    m_viewer->setAutoClippingStrategy(SoQtViewer::CONSTANT_NEAR_PLANE, 0.1, myfunc);
     m_camera = new TPerspectiveCamera;
 
+    //    QGLWidget* gw = () m_viewer->getGLWidget();
+
+    //    QPushButton* label  = new QPushButton("asdvasdv", w);
+    //    m_label  = new QPushButton("asdvasdv", w);
+    //    label->setGeometry(QRect(0, 0, 504, 14));
+    //    connect(m_viewer->getGLWidget(),SIGNAL()
+
     // do not propogate key and mouse events
-//    m_viewer->getGLWidget()->setFocusPolicy(Qt::NoFocus);
 //    w->setFocusPolicy(Qt::NoFocus);
+//    m_viewer->getGLWidget()->setFocusPolicy(Qt::NoFocus);
     m_viewer->getGLWidget()->setEnabled(false);
     setFocusPolicy(Qt::StrongFocus);
     m_filter = new KeyFilter(this);
+    m_modifiersKeys = Qt::NoModifier; //delete
 
-
+    // cursors
     QPixmap pixmap;
 
     pixmap.load(":/images/cursors/cursorShiftA.png");
@@ -139,110 +149,132 @@ GraphicView::GraphicView(QWidget* parent):
     pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
     m_cursors["orbitB"] = QCursor(pixmap);
 
-    m_modifiersKeys = Qt::NoModifier; //delete
+    // menu
     setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(
+        this, SIGNAL(customContextMenuRequested(QPoint)),
+        this, SLOT(showContextMenu(QPoint))
+    );
+    m_menu = new QMenu(this);
 
-    connect(this, SIGNAL(customContextMenuRequested(QPoint)),
-            this, SLOT(showContextMenu(QPoint)));
+    // menu camera
+    QMenu* menuCamera = new QMenu("Camera", this);
+    menuCamera->setIcon(QIcon(":/images/scene/nodeCamera.png"));
+    m_menu->addMenu(menuCamera);
 
-    setStyleSheet(R"(
-QFrame {
-    border: 1px solid lightgray;
-}
+    m_actionViewHome = new QAction("Default", this);
+    m_actionViewHome->setShortcut(QKeySequence("Ctrl+,"));
+    connect(
+        m_actionViewHome, SIGNAL(triggered()),
+        this, SLOT(onViewHome())
+    );
+    menuCamera->addAction(m_actionViewHome);
 
-QFrame[inFocus=true] {
-    border: 1px solid #828790;
-}
-    )");
+    m_actionViewSelected = new QAction("Selected", this);
+    m_actionViewSelected->setShortcut(QKeySequence("Ctrl+."));
+    connect(
+        m_actionViewSelected, SIGNAL(triggered()),
+        this, SLOT(onViewSelected())
+    );
+    menuCamera->addAction(m_actionViewSelected);
 
-//    QGLWidget* gw = () m_viewer->getGLWidget();
+    m_actionViewAll = new QAction("All", this);
+    m_actionViewAll->setShortcut(QKeySequence("Ctrl+/"));
+    connect(
+        m_actionViewAll, SIGNAL(triggered()),
+        this, SLOT(onViewAll())
+    );
+    menuCamera->addAction(m_actionViewAll);
 
-//    QPushButton* label  = new QPushButton("asdvasdv", w);
-//    m_label  = new QPushButton("asdvasdv", w);
-//    label->setGeometry(QRect(0, 0, 504, 14));
-//    connect(m_viewer->getGLWidget(),SIGNAL()
+    menuCamera->addSeparator();
 
-
-    // actions
-    actionViewAll = new QAction("All", this);
-    actionViewAll->setObjectName("actionViewAll");
-    actionViewAll->setShortcut(QKeySequence("Ctrl+/"));
-//    connect(
-//        actionViewAll, SIGNAL(triggered(bool)),
-//        this, SLOT(on_actionViewAll_triggered())
-//    );
-
-    actionViewSelected = new QAction("Selected", this);
-    actionViewSelected->setObjectName("actionViewSelected");
-    actionViewSelected->setShortcut(QKeySequence("Ctrl+."));
-
-    actionViewHome = new QAction("Default", this);
-    actionViewHome->setObjectName("actionViewHome");
-    actionViewHome->setShortcut(QKeySequence("Ctrl+,"));
-
-    actionViewX = new QAction("X (East)", this);
+    actionViewX = new QAction("East", this);
     actionViewX->setObjectName("actionViewX");
+    actionViewX->setIcon(QIcon(":/images/view/viewX.png"));
     actionViewX->setShortcuts(QKeySequence::listFromString(
         "Ctrl+3; Ctrl+Shift+3; Ctrl+Alt+3; Ctrl+Alt+Shift+3"));
+    menuCamera->addAction(actionViewX);
 
-    actionViewY = new QAction("Y (North)", this);
+    actionViewY = new QAction("North", this);
     actionViewY->setObjectName("actionViewY");
+    actionViewY->setIcon(QIcon(":/images/view/viewY.png"));
     actionViewY->setShortcuts(QKeySequence::listFromString(
         "Ctrl+7; Ctrl+Shift+7; Ctrl+Alt+7; Ctrl+Alt+Shift+7"));
+    menuCamera->addAction(actionViewY);
 
-//    actionViewZ = new QAction(QIcon(":/images/view/viewTop.png"), "Z (Zenith)", this);
-    actionViewZ = new QAction("Z (Zenith)", this);
+    actionViewZ = new QAction("Zenith", this);
     actionViewZ->setObjectName("actionViewZ");
+    actionViewZ->setIcon(QIcon(":/images/view/viewZ.png"));
     actionViewZ->setShortcuts(QKeySequence::listFromString(
         "Ctrl+1; Ctrl+Shift+1; Ctrl+Alt+1; Ctrl+Alt+Shift+1"));
+    menuCamera->addAction(actionViewZ);
+
+    menuCamera->addSeparator();
 
 //    actionViewSun = new QAction(QIcon(":/images/view/viewSun.png"), "to Sun", this);
     actionViewSun = new QAction("Sun (to)", this);
     actionViewSun->setObjectName("actionViewSun");
+    actionViewSun->setIcon(QIcon(":/images/view/viewSun.png"));
     actionViewSun->setShortcuts(QKeySequence::listFromString(
         "Ctrl+9")); // 0?
+    menuCamera->addAction(actionViewSun);
 
     actionViewSunFrom = new QAction("Sun (from)", this);
     actionViewSunFrom->setObjectName("actionViewSunFrom");
+    actionViewSunFrom->setIcon(QIcon(":/images/view/viewSunFrom.png"));
     actionViewSunFrom->setShortcut(QKeySequence("Ctrl+Shift+9"));
+    menuCamera->addAction(actionViewSunFrom);
 
     actionViewSunAnchoredTo = new QAction("Sun (to, anchored)", this);
     actionViewSunAnchoredTo->setObjectName("actionViewSunAnchoredTo");
+    actionViewSunAnchoredTo->setIcon(QIcon(":/images/view/viewSun.png"));
     actionViewSunAnchoredTo->setShortcut(QKeySequence("Ctrl+Alt+9"));
+    menuCamera->addAction(actionViewSunAnchoredTo);
 
     actionViewSunAnchoredFrom = new QAction("Sun (from, anchored)", this);
     actionViewSunAnchoredFrom->setObjectName("actionViewSunAnchoredFrom");
+    actionViewSunAnchoredFrom->setIcon(QIcon(":/images/view/viewSunFrom.png"));
     actionViewSunAnchoredFrom->setShortcut(QKeySequence("Ctrl+Alt+Shift+9"));
-
-    m_menu = new QMenu(this);
-
-    QMenu* menuCamera = new QMenu("Camera", this);
-    menuCamera->setIcon(QIcon(":/images/scene/nodeCamera.png"));
-    menuCamera->addAction(actionViewHome);
-    menuCamera->addAction(actionViewSelected);
-    menuCamera->addAction(actionViewAll);
-    menuCamera->addSeparator();
-    menuCamera->addAction(actionViewX);
-    menuCamera->addAction(actionViewY);
-    menuCamera->addAction(actionViewZ);
-    menuCamera->addSeparator();
-    menuCamera->addAction(actionViewSun);
-    menuCamera->addAction(actionViewSunFrom);
-    menuCamera->addAction(actionViewSunAnchoredTo);
     menuCamera->addAction(actionViewSunAnchoredFrom);
-    m_menu->addMenu(menuCamera);
 
+
+    // menu show
+    QMenu* menuShow = new QMenu("Show", this);
+    m_menu->addMenu(menuShow);
+
+    actionShowRays = new QAction("Rays", this);
+    actionShowRays->setCheckable(true);
+    actionShowRays->setChecked(true);
+    actionShowRays->setShortcut(QKeySequence("Ctrl+E,R"));
+    connect(
+        actionShowRays, SIGNAL(triggered(bool)),
+        this, SLOT(onShowRays(bool))
+    );
+    menuShow->addAction(actionShowRays);
+
+    actionShowPhotons = new QAction("Photons", this);
+    actionShowPhotons->setCheckable(true);
+    actionShowPhotons->setChecked(true);
+    actionShowPhotons->setShortcut(QKeySequence("Ctrl+E,P"));
+    connect(
+        actionShowPhotons, SIGNAL(triggered(bool)),
+        this, SLOT(onShowPhotons(bool))
+    );
+    menuShow->addAction(actionShowPhotons);
+
+
+    // menu render
+    QMenu* menuDraw = new QMenu("Rendering", this);
+    m_menu->addMenu(menuDraw);
 
     actionDrawMesh = new QAction("Wireframe", this);
-    actionDrawMesh->setObjectName("actionDrawMesh");
     actionDrawMesh->setCheckable(true);
 
     actionDrawFull = new QAction("Normal", this);
-    actionDrawFull->setObjectName("actionDrawFull");
     actionDrawFull->setCheckable(true);
+    actionDrawFull->setChecked(true);
 
     actionDrawMeshOverlay = new QAction("Meshed", this);
-    actionDrawMeshOverlay->setObjectName("actionDrawMeshOverlay");
     actionDrawMeshOverlay->setCheckable(true);
 
     actionDrawSwitch = new QAction("actionDrawSwitch", this);
@@ -254,24 +286,24 @@ QFrame[inFocus=true] {
 //    actionViewGroup->addAction(actionDrawMesh);
     actionViewGroup->addAction(actionDrawFull);
     actionViewGroup->addAction(actionDrawMeshOverlay);
-    actionDrawFull->setChecked(true);
-
 //    actionViewGroup->setExclusive(false);
 
-    QMenu* menuDraw = new QMenu("Draw Style", this);
-//    menuDraw->addAction(actionViewGroup);
-//    menuDraw->addAction(actionDrawMesh);
     menuDraw->addActions(actionViewGroup->actions());
-    m_menu->addMenu(menuDraw);
+
 
     addActions(m_menu->actions()); // for shortcuts
     addAction(actionDrawSwitch);
     QMetaObject::connectSlotsByName(this);
 
-//    m_viewer->setAutoClippingStrategy(SoQtViewer::CONSTANT_NEAR_PLANE, 0.1, myfunc);
-//    m_viewer->setAutoClippingStrategy(SoQtViewer::CONSTANT_NEAR_PLANE, 0.2);
-//    m_viewer->setAutoClipping(true);
+    setStyleSheet(R"(
+QFrame {
+    border: 1px solid lightgray;
+}
 
+QFrame[inFocus=true] {
+    border: 1px solid #828790;
+}
+    )");
 }
 
 GraphicView::~GraphicView()
@@ -299,7 +331,7 @@ void GraphicView::setSceneGraph(GraphicRoot* sceneGraphRoot)
 
 SbViewportRegion GraphicView::getViewportRegion() const
 {
-    return SbViewportRegion();//?
+    return SbViewportRegion(); //?
     return m_viewer->getViewportRegion();
 }
 
@@ -308,23 +340,10 @@ SoCamera* GraphicView::getCamera() const
     return m_viewer->getCamera();
 }
 
-
-void GraphicView::showAxes(bool on)
-{
-    m_viewer->setFeedbackVisibility(on);
-}
-
 void GraphicView::render()
 {
     m_viewer->render();
 }
-
-void GraphicView::showDecoration(bool on)
-{
-    m_viewer->setDecoration(on);
-}
-
-
 
 #include "tree/SceneTreeModel.h"
 #include "kernel/run/InstanceNode.h"
@@ -635,28 +654,22 @@ void GraphicView::showContextMenu(QPoint pos)
 //    qDebug()<<"painter";
 //}
 
-void GraphicView::on_actionViewAll_triggered()
+void GraphicView::onViewHome()
 {
-    SbViewportRegion vpr = m_viewer->getViewportRegion();
-    SoCamera* camera = m_viewer->getCamera();
-    camera->viewAll(m_graphicRoot->getScene()->getLayout(), vpr);
+    double gamma = 10;
+    double alpha = -10.;
+    vec3d d = vec3d::directionAE(gamma*gcf::degree, alpha*gcf::degree);
+    d *= 2./d.z;   // look at origin from 2 m height
 
-    SbVec3f pos = camera->position.getValue();
-    m_camera->m_position = vec3d(pos[0], pos[1], pos[2]);
+//    m_camera->m_position = d;
+//    m_camera->setRotation(gamma, alpha);
 
-    SbRotation q = camera->orientation.getValue();
-    SbVec3f d(0, 0, -1);
-    q.multVec(d, d);
-//    qDebug() << d.toString().getString();
-    double alpha = asin(d[2])/gcf::degree;
-    double gamma = atan2(d[0], d[1])/gcf::degree;
-    m_camera->m_rotation = vec3d(gamma, alpha, 0);
-
-    m_camera->updateTransform();
+    TCameraKit* cameraKit = (TCameraKit*) m_graphicRoot->getScene()->getPart("world.camera", true);
+    cameraKit->position.setValue(d[0], d[1], d[2]);
+    cameraKit->rotation.setValue(gamma, alpha);
 }
 
-#include <Inventor/nodes/SoSelection.h>
-void GraphicView::on_actionViewSelected_triggered()
+void GraphicView::onViewSelected()
 {
 //    QModelIndex index = ui->sceneView->currentIndex();
 //    InstanceNode* instance = m_modelScene->getInstance(index);
@@ -699,22 +712,24 @@ void GraphicView::on_actionViewSelected_triggered()
     m_camera->setRotationAt(tgf::makeVector3D(vG));
 }
 
-void GraphicView::on_actionViewHome_triggered()
+void GraphicView::onViewAll()
 {
-    double gamma = 10;
-    double alpha = -10.;
-    vec3d d = vec3d::directionAE(gamma*gcf::degree, alpha*gcf::degree);
-    d *= 2./d.z;   // look at origin from 2 m height
+    SbViewportRegion vpr = m_viewer->getViewportRegion();
+    SoCamera* camera = m_viewer->getCamera();
+    camera->viewAll(m_graphicRoot->getScene()->getLayout(), vpr);
 
-//    m_camera->m_position = d;
-//    m_camera->setRotation(gamma, alpha);
+    SbVec3f pos = camera->position.getValue();
+    m_camera->m_position = vec3d(pos[0], pos[1], pos[2]);
 
-    TCameraKit* cameraKit = (TCameraKit*) m_graphicRoot->getScene()->getPart("world.camera", true);
-    cameraKit->position.setValue(d[0], d[1], d[2]);
-    cameraKit->rotation.setValue(gamma, alpha);
+    SbRotation q = camera->orientation.getValue();
+    SbVec3f d(0, 0, -1);
+    q.multVec(d, d);
+
+    double alpha = asin(d[2])/gcf::degree;
+    double gamma = atan2(d[0], d[1])/gcf::degree;
+    m_camera->setRotation(gamma, alpha);
 }
 
-#include "kernel/sun/SunPosition.h"
 void GraphicView::on_actionViewSun_triggered()
 {
     SunPosition* sp = (SunPosition*) m_graphicRoot->getScene()->getPart("world.sun.position", false);
@@ -807,3 +822,18 @@ void GraphicView::on_actionDrawSwitch_triggered()
     actionViewGroup->actions()[s]->trigger();
 }
 
+void GraphicView::onShowRays(bool on)
+{
+     m_graphicRoot->showRays(on);
+}
+
+void GraphicView::onShowPhotons(bool on)
+{
+     m_graphicRoot->showPhotons(on);
+}
+
+//void MainWindow::showGrid() //?
+//{
+//    GridNode* node = (GridNode*) m_document->getSceneKit()->getPart("world.terrain.grid", false);
+//    if (node) node->show = ui->actionViewGrid->isChecked();
+//}

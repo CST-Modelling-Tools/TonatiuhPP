@@ -391,13 +391,6 @@ border:none;
     <addaction name="actionFileSave"/>
     <addaction name="actionFileSaveAs"/>
    </widget>
-   <widget class="QMenu" name="menuView">
-    <property name="title">
-     <string>&amp;View</string>
-    </property>
-    <addaction name="actionViewRays"/>
-    <addaction name="actionViewPhotons"/>
-   </widget>
    <widget class="QMenu" name="menuRun">
     <property name="title">
      <string>&amp;Run</string>
@@ -433,7 +426,6 @@ border:none;
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
-   <addaction name="menuView"/>
    <addaction name="menuRun"/>
    <addaction name="menuHelp"/>
   </widget>

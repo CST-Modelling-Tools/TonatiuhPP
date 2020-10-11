@@ -28,29 +28,34 @@ public:
 
     SbViewportRegion getViewportRegion() const;
     SoCamera* getCamera() const;
-    void showDecoration(bool on);
-    void showAxes(bool on);
     void render();
 
 public slots:
     void currentChanged(const QModelIndex& current, const QModelIndex& previous);
+    void showContextMenu(QPoint);
 
-private:
-    GraphicRoot* m_graphicRoot;
-    SoQtExaminerViewer* m_viewer;
+    void onViewHome();
+    void onViewSelected();
+    void onViewAll();
 
-    QPoint m_mousePressed;
-    Qt::KeyboardModifiers m_modifiersPressed;
-    Qt::KeyboardModifiers m_modifiersKeys;
-    TPerspectiveCamera* m_camera;
-    QMap<QString, QCursor> m_cursors;
+    void on_actionViewX_triggered();
+    void on_actionViewY_triggered();
+    void on_actionViewZ_triggered();
+
+    void on_actionViewSun_triggered();
+    void on_actionViewSunFrom_triggered();
+    void on_actionViewSunAnchoredTo_triggered();
+    void on_actionViewSunAnchoredFrom_triggered();
+
+    void on_actionViewGroup_triggered(QAction* action);
+    void on_actionDrawSwitch_triggered();
+    void onShowRays(bool on);
+    void onShowPhotons(bool on);
 
 public:
     QWidget* m_window;
     QObject* m_filter;
-//QPushButton* m_label;
 
-    // QWidget interface
 protected:
     void mousePressEvent(QMouseEvent* event);
     void mouseReleaseEvent(QMouseEvent* event);
@@ -70,11 +75,20 @@ protected:
     void setCameraViewTemp(double azimuth, double elevation);
 
 private:
+    GraphicRoot* m_graphicRoot;
+    SoQtExaminerViewer* m_viewer;
+
+    QPoint m_mousePressed;
+    Qt::KeyboardModifiers m_modifiersPressed;
+    Qt::KeyboardModifiers m_modifiersKeys;
+    TPerspectiveCamera* m_camera;
+    QMap<QString, QCursor> m_cursors;
+
     QMenu* m_menu;
 
-    QAction* actionViewHome;
-    QAction* actionViewSelected;
-    QAction* actionViewAll;
+    QAction* m_actionViewHome;
+    QAction* m_actionViewSelected;
+    QAction* m_actionViewAll;
 
     QAction* actionViewX;
     QAction* actionViewY;
@@ -90,22 +104,6 @@ private:
     QAction* actionDrawMesh;
     QAction* actionDrawSwitch;
 
-public slots:
-    void showContextMenu(QPoint);
-
-    void on_actionViewAll_triggered();
-    void on_actionViewSelected_triggered();
-    void on_actionViewHome_triggered();
-
-    void on_actionViewX_triggered();
-    void on_actionViewY_triggered();
-    void on_actionViewZ_triggered();
-
-    void on_actionViewSun_triggered();
-    void on_actionViewSunFrom_triggered();
-    void on_actionViewSunAnchoredTo_triggered();
-    void on_actionViewSunAnchoredFrom_triggered();
-
-    void on_actionViewGroup_triggered(QAction* action);
-    void on_actionDrawSwitch_triggered();
+    QAction* actionShowRays;
+    QAction* actionShowPhotons;
 };

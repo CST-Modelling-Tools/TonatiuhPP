@@ -147,10 +147,6 @@ private slots:
     void setFieldText(SoNode* node, QString field, QString value);
     void setFieldNode(SoNode* node, QString field, SoNode* value);
 
-    void showGrid();
-    void showRays(bool on);
-    void showPhotons(bool on);
-
     void ShowMenu(const QModelIndex& index);
 
     void onAbort(QString error);
@@ -167,19 +163,20 @@ private slots:
     void SoManip_to_SoTransform();
 
     // view actions
-//    void on_actionViewAxes_toggled();
     void on_actionQuadView_toggled();
     void on_actionRunScript_triggered();
-    void on_actionAbout_triggered();
+
+    void on_actionDocumentation_triggered();
     void on_actionExamples_triggered();
     void on_actionScripts_triggered();
-    //void on_actionCheckForUpdates_triggered();
+    void on_actionAbout_triggered();
+
+//    void on_actionViewAxes_toggled();
+//    void on_actionCheckForUpdates_triggered();
 
     void treeWorldClicked(QTreeWidgetItem* item, int column); // temporary
     void treeWorldDoubleClicked(QTreeWidgetItem* item, int column);
     void tabChanged(int);
-
-    void on_actionDocumentation_triggered();
 
 signals:
     void Abort(QString error);
