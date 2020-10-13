@@ -2496,6 +2496,7 @@ void MainWindow::ShowRaysIn3DView()
 //    if (true || ui->actionViewRays->isChecked() || ui->actionViewPhotons->isChecked())
 //    {
         trf::DrawRays(m_graphicsRoot->rays(), *m_photonsBuffer, m_raysScreen);
+        m_graphicView[0]->showRays();
 //        m_graphicsRoot->showRays(ui->actionViewRays->isChecked());
 //        m_graphicsRoot->showPhotons(ui->actionViewPhotons->isChecked());
 //    } else {

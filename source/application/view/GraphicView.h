@@ -28,6 +28,7 @@ public:
 
     SbViewportRegion getViewportRegion() const;
     SoCamera* getCamera() const;
+    void showRays();
     void render();
 
 public slots:

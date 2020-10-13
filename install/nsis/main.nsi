@@ -99,17 +99,14 @@ Function nsDialogsPage
 	${NSD_CreateRadioButton} 15u 12u 35u 20u "&Classic"
 	Pop $RadioClassic
 	
-	#${NSD_CreateIcon} 57u 11u 32u 32u "images\Tonatiuh.ico"
-	${NSD_CreateIcon} 57u 11u 32u 32u ""
-	Pop $0
-	${NSD_SetIcon} $0 "images\Tonatiuh.ico" $0
+	File "/oname=$PLUGINSDIR\Tonatiuh.ico" "images\Tonatiuh.ico"
+	${NSD_CreateIcon} 57u 11u 32u 32u "$PLUGINSDIR\Tonatiuh.ico"
 
 	${NSD_CreateRadioButton} 15u 45u 35u 20u "&Rising"
 	Pop $RadioRising
-	
-	${NSD_CreateIcon} 57u 43u 32u 32u ""
-	Pop $0
-	${NSD_SetIcon} $0 "images\TonatiuhCy.ico" $0
+
+	File "/oname=$PLUGINSDIR\TonatiuhCy.ico" "images\TonatiuhCy.ico"	
+	${NSD_CreateIcon} 57u 43u 32u 32u "$PLUGINSDIR\TonatiuhCy.ico"
 	
 	${NSD_SetState} $RadioClassic $RadioClassic_State	
 	${NSD_SetState} $RadioRising $RadioRising_State

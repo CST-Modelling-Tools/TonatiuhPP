@@ -254,7 +254,7 @@ GraphicView::GraphicView(QWidget* parent):
 
     actionShowPhotons = new QAction("Photons", this);
     actionShowPhotons->setCheckable(true);
-    actionShowPhotons->setChecked(true);
+    actionShowPhotons->setChecked(false);
     actionShowPhotons->setShortcut(QKeySequence("Ctrl+E,P"));
     connect(
         actionShowPhotons, SIGNAL(triggered(bool)),
@@ -338,6 +338,12 @@ SbViewportRegion GraphicView::getViewportRegion() const
 SoCamera* GraphicView::getCamera() const
 {
     return m_viewer->getCamera();
+}
+
+void GraphicView::showRays()
+{
+    m_graphicRoot->showRays(actionShowRays->isChecked());
+    m_graphicRoot->showPhotons(actionShowPhotons->isChecked());
 }
 
 void GraphicView::render()

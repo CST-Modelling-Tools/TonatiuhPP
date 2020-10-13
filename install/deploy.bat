@@ -40,7 +40,7 @@ MD %DATA%\bin\styles
 COPY %QT%\plugins\styles\qwindowsvistastyle.dll %DATA%\bin\styles\qwindowsvistastyle.dll
 MD %DATA%\bin\imageformats
 COPY %QT%\plugins\imageformats\qico.dll %DATA%\bin\imageformats\qico.dll
-
+COPY %QT%\plugins\imageformats\qjpeg.dll %DATA%\bin\imageformats\qjpeg.dll
 
 MD %DATA%\examples
 XCOPY %PROJECT%\examples %DATA%\examples /E
