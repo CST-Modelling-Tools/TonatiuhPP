@@ -5,42 +5,47 @@
 #include <QWidget>
 
 #include "libraries/sun/sunpos.h"
+#include "Image.h"
 
-class Image;
-class QLabel;
-class QMouseEvent;
-class QPaintEvent;
-class QPoint;
+class QGraphicsView;
+class QGraphicsPixmapItem;
+class QGraphicsPolygonItem;
+
 
 class WorldMap: public QWidget
 {
     Q_OBJECT
 
 public:
-    WorldMap(QWidget* widget);
+    WorldMap(QWidget* parent = 0);
     ~WorldMap();
 
 public slots:
-    void mouseMoveEvent(QMouseEvent* e);
-    void LocalLatitudeChanged(double latitude);
-    void LocalLongitudeChanged(double longitude);
+    void LatitudeChanged(double latitude);
+    void LongitudeChanged(double longitude);
     void SunChanged(cSunCoordinates coordinates);
 
 protected:
-    void paintEvent(QPaintEvent* event);
+//    void paintEvent(QPaintEvent* event);
+//    void mouseMoveEvent(QMouseEvent* e);
+    void resizeEvent(QResizeEvent* event);
 
 private:
-    Image* m_gray;
-    QImage m_map;
-    QImage m_sun;
-    QImage m_position;
+//    Image m_gray;
+//    QImage m_map;
 
-    QVector<QPoint> m_points;
     double m_hourAngle;
     double m_rightAscension;
     double m_declination;
+
     double m_azimuth;
     double m_zenith;
+
     double m_latitude;
     double m_longitude;
+
+    QGraphicsView* m_graphicsView;
+    QGraphicsPixmapItem* m_itemLocation;
+    QGraphicsPixmapItem* m_itemSun;
+    QGraphicsPolygonItem* m_itemShadow;
 };

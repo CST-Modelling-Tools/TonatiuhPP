@@ -57,5 +57,7 @@
         <file>images/view/viewY.png</file>
         <file>images/view/viewZ.png</file>
         <file>images/view/viewSunFrom.png</file>
+        <file>images/run/runCalendar.png</file>
+        <file>images/map/worldMap.jpg</file>
     </qresource>
 </RCC>

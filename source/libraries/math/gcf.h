@@ -48,7 +48,7 @@ namespace gcf
         return (U(1) - u)*a + u*b;
     }
 
-    double normalizeAngle(double phi, double phi0);
+    TONATIUH_LIBRARIES double normalizeAngle(double phi, double phi0);
 
     TONATIUH_LIBRARIES void SevereError(std::string errorMessage);
     TONATIUH_LIBRARIES void Warning(std::string warningMessage);

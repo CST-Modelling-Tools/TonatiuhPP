@@ -414,6 +414,8 @@ border:none;
     <addaction name="separator"/>
     <addaction name="menuTest"/>
     <addaction name="menuComponent"/>
+    <addaction name="separator"/>
+    <addaction name="actionSunPosition"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -687,31 +689,6 @@ border:none;
     <string>Ctrl+Shift+G</string>
    </property>
   </action>
-  <action name="actionViewRays">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Rays</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+E, R</string>
-   </property>
-  </action>
-  <action name="actionViewPhotons">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Photons</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+E, P</string>
-   </property>
-  </action>
   <action name="actionQuadView">
    <property name="checkable">
     <bool>true</bool>
@@ -834,6 +811,15 @@ border:none;
    </property>
    <property name="text">
     <string>&amp;Documentation...</string>
+   </property>
+  </action>
+  <action name="actionSunPosition">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/run/runCalendar.png</normaloff>:/images/run/runCalendar.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sun Position...</string>
    </property>
   </action>
  </widget>

@@ -34,9 +34,9 @@
      showgrid="false"
      inkscape:current-layer="layer1"
      inkscape:document-units="mm"
-     inkscape:cy="390.14544"
-     inkscape:cx="152.99422"
-     inkscape:zoom="0.25000001"
+     inkscape:cy="467.98582"
+     inkscape:cx="311.7116"
+     inkscape:zoom="0.70710681"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      borderopacity="1.0"
@@ -221,6 +221,89 @@
        width="28.115345"
        id="rect897"
        style="fill:#90a099;fill-opacity:1;stroke:none;stroke-width:5;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:66.3714447;stroke-opacity:1" />
+    <rect
+       style="fill:#f3f3f3;fill-opacity:1;stroke:#6b7d89;stroke-width:3.9;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:75.5906;stroke-opacity:1;paint-order:markers stroke fill"
+       id="rect863"
+       width="30.123554"
+       height="34.527927"
+       x="109.58601"
+       y="126.69798"
+       inkscape:export-xdpi="35.576675"
+       inkscape:export-ydpi="35.576675" />
+    <rect
+       style="fill:#6b7d89;fill-opacity:1;stroke-width:0.499998;stroke-linecap:square;stroke-dashoffset:75.5906;paint-order:markers stroke fill"
+       id="rect881"
+       width="33.966541"
+       height="7.1499257"
+       x="107.66035"
+       y="124.29601"
+       inkscape:export-xdpi="35.576675"
+       inkscape:export-ydpi="35.576675" />
+    <rect
+       style="fill:#ced5dc;fill-opacity:1;stroke-width:0.499995;stroke-linecap:square;stroke-dashoffset:75.5906;paint-order:markers stroke fill"
+       id="rect883"
+       width="24.584026"
+       height="24.815369"
+       x="112.34032"
+       y="133.97173"
+       inkscape:export-xdpi="35.576675"
+       inkscape:export-ydpi="35.576675" />
+    <g
+       id="g948"
+       style="stroke:#f3f3f3;stroke-width:1.23504;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       transform="matrix(1,0,0,0.94406385,0,8.5065752)"
+       inkscape:export-xdpi="35.576675"
+       inkscape:export-ydpi="35.576675">
+      <path
+         style="fill:none;stroke:#f3f3f3;stroke-width:1.23503;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 110.23242,139.24484 h 28.9052"
+         id="path896" />
+      <path
+         style="fill:none;stroke:#f3f3f3;stroke-width:1.23503;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 110.23242,146.43033 h 28.9052"
+         id="path898" />
+      <path
+         style="fill:none;stroke:#f3f3f3;stroke-width:1.23503;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 110.23242,154.04481 h 28.9052"
+         id="path900" />
+      <path
+         style="fill:none;stroke:#f3f3f3;stroke-width:1.23503;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 120.13189,132.63152 v 28.9052"
+         id="path939" />
+      <path
+         style="fill:none;stroke:#f3f3f3;stroke-width:1.23503;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 129.28429,132.63152 v 28.9052"
+         id="path941" />
+    </g>
+    <rect
+       style="fill:#e6e6e6;fill-opacity:1;stroke:#6b7d89;stroke-width:2.9;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:75.5906;stroke-opacity:1;paint-order:markers stroke fill"
+       id="rect950"
+       width="5.7943387"
+       height="3.1416206"
+       x="121.77129"
+       y="-117.9307"
+       transform="rotate(90)"
+       inkscape:export-xdpi="35.576675"
+       inkscape:export-ydpi="35.576675" />
+    <rect
+       style="fill:#e6e6e6;fill-opacity:1;stroke:#6b7d89;stroke-width:2.9;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:75.5906;stroke-opacity:1;paint-order:markers stroke fill"
+       id="rect964"
+       width="5.7943387"
+       height="3.1416206"
+       x="121.77129"
+       y="-134.59946"
+       transform="rotate(90)"
+       inkscape:export-xdpi="35.576675"
+       inkscape:export-ydpi="35.576675" />
+    <rect
+       style="display:inline;opacity:1;fill:#c2d6bf;fill-opacity:0.01;stroke:none;stroke-width:2.13734;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:56.6929;stroke-opacity:1;paint-order:markers fill stroke"
+       id="rect976"
+       width="45.692848"
+       height="45.692848"
+       x="102.06187"
+       y="118.82756"
+       inkscape:export-xdpi="35.576675"
+       inkscape:export-ydpi="35.576675" />
   </g>
   <g
      inkscape:groupmode="layer"

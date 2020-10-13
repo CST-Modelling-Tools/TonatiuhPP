@@ -1,17 +1,18 @@
 #pragma once
 
 #include <QImage>
-#include <QString>
 #include <QStringList>
 
 
 class Image: public QImage
 {
 public:
-    Image(QString fileName);
+    Image();
 
     QString country(int x, int y);
-    void addCountries();
+
+private:
+    void initCountries();
 
 private:
     QStringList countries;

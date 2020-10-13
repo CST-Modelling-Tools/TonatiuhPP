@@ -39,7 +39,7 @@ bool gcf::solveQuadratic(double a, double b, double c, double* t0, double* t1)
     return true;
 }
 
-// normalize angle phi to the range [phi0, phi0 + pi)
+// normalize angle phi to the range [phi0, phi0 + 2pi)
 double gcf::normalizeAngle(double phi, double phi0)
 {
     return phi - TwoPi*floor((phi - phi0)/TwoPi);

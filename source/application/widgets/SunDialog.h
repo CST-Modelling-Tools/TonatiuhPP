@@ -28,6 +28,7 @@ private slots:
 
     void setFieldText(SoNode* node, QString field, QString value);
     void setFieldNode(SoNode* node, QString field, SoNode* value);
+    void setAzEl(double az, double el);
     void onPressed(const QModelIndex& index);
 
     void addNode();

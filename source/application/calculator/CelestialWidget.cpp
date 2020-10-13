@@ -1,3 +1,5 @@
+#include "CelestialWidget.h"
+
 #include <QLabel>
 #include <QVBoxLayout>
 
@@ -16,7 +18,7 @@
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
-#include "CelestialWidget.h"
+
 #include "libraries/math/3D/Ray.h"
 #include "libraries/math/gcf.h"
 #include "libraries/math/3D/vec3d.h"
@@ -31,12 +33,12 @@ CelestialWidget::CelestialWidget(QWidget* parent):
     QVBoxLayout* mainLayout = new QVBoxLayout;
     setLayout(mainLayout);
 
+    // viewer
     QWidget* examinerWidget = new QWidget;
-    examinerWidget->setFixedSize( 490, 300 );
     mainLayout->addWidget(examinerWidget);
+    mainLayout->setStretch(0, 1);
 
     m_rootNode = new SoSeparator;
-
     m_rootNode->addChild( Ejes() );
     m_rootNode->addChild( Sphere() );
     m_rootNode->addChild( CelestialEquator() );
@@ -48,50 +50,47 @@ CelestialWidget::CelestialWidget(QWidget* parent):
 
     SoQtExaminerViewer* viewer = new SoQtExaminerViewer(examinerWidget);
     viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND);
-    viewer->setSceneGraph( m_rootNode);
+    viewer->setSceneGraph(m_rootNode);
     viewer->setBackgroundColor(SbColor(0.86f, 0.86f, 0.86f));
-    viewer->show();
+    viewer->setDecoration(false);
 
+    // labels
     QWidget* labelsWidget = new QWidget;
     mainLayout->addWidget(labelsWidget);
     QGridLayout* labelsLayout = new QGridLayout;
     labelsWidget->setLayout(labelsLayout);
 
-    QLabel* m_rightLabel = new QLabel;
-    m_rightLabel->setText("Right Ascension:");
-    labelsLayout->addWidget(m_rightLabel, 0, 0, 1, 1 );
+    QLabel* rightLabel = new QLabel("Right Ascension:");
+    labelsLayout->addWidget(rightLabel, 0, 0, 1, 1);
 
-    m_rightValue = new QLabel;
-    m_rightValue->setText(QString::number(m_rightAscension));
+    m_rightValue = new QLabel(QString::number(m_rightAscension));
     labelsLayout->addWidget( m_rightValue, 0, 1, 1, 3 );
 
-    QLabel* m_declinationLabel = new QLabel;
-    m_declinationLabel->setText("Declination:");
-    labelsLayout->addWidget(m_declinationLabel, 1, 0, 1, 1);
+    QLabel* declinationLabel = new QLabel("Declination:");
+    labelsLayout->addWidget(declinationLabel, 1, 0, 1, 1);
 
-    m_declinationValue = new QLabel;
-    m_declinationValue->setText(QString::number(m_declination));
+    m_declinationValue = new QLabel(QString::number(m_declination));
     labelsLayout->addWidget(m_declinationValue, 1, 1, 1, 3);
 }
 
-void CelestialWidget::CoordinatesChanged( cSunCoordinates coordinates )
+void CelestialWidget::CoordinatesChanged(cSunCoordinates coordinates)
 {
     m_rightAscension = coordinates.dRightAscension;
-    m_rightValue->setText( QString::number( m_rightAscension ) );
+    m_rightValue->setText(QString::number(m_rightAscension) );
     m_declination = coordinates.dDeclination;
-    m_declinationValue->setText( QString::number( m_declination ) );
+    m_declinationValue->setText(QString::number(m_declination) );
 
     //Right Ascension
     SoSeparator* ascension = RightAscension();
-    m_rootNode->replaceChild( 5, ascension );
+    m_rootNode->replaceChild(5, ascension);
 
     //Declination
     SoSeparator* declination = Declination();
-    m_rootNode->replaceChild( 6, declination );
+    m_rootNode->replaceChild(6, declination);
 
     //Star
     SoSeparator* star = Star();
-    m_rootNode->replaceChild( 7, star );
+    m_rootNode->replaceChild(7, star);
 }
 
 SoSeparator* CelestialWidget::CelestialEquator() const

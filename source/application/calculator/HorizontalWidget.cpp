@@ -1,3 +1,5 @@
+#include "HorizontalWidget.h"
+
 #include <QLabel>
 #include <QVBoxLayout>
 
@@ -17,24 +19,25 @@
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
 #include "libraries/math/gcf.h"
-
-#include "HorizontalWidget.h"
 #include "libraries/math/3D/Ray.h"
 #include "libraries/math/3D/vec3d.h"
 
 
 HorizontalWidget::HorizontalWidget(QWidget* parent):
-    QWidget(parent), sphereRadio(120.), m_azimuth(0.), m_zenith(0.)
+    QWidget(parent),
+    sphereRadio(120.),
+    m_azimuth(0.),
+    m_zenith(0.)
 {
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    setLayout( mainLayout );
+    setLayout(mainLayout);
 
+    // viewer
     QWidget* examinerWidget = new QWidget;
-    examinerWidget->setFixedSize( 490, 300 );
     mainLayout->addWidget(examinerWidget);
+    mainLayout->setStretch(0, 1);
 
     m_rootNode = new SoSeparator;
-
     m_rootNode->addChild( Ejes( ) );
     m_rootNode->addChild( Text() );
     m_rootNode->addChild( Sphere() );
@@ -45,33 +48,27 @@ HorizontalWidget::HorizontalWidget(QWidget* parent):
 
     SoQtExaminerViewer* viewer = new SoQtExaminerViewer(examinerWidget);
     viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND);
-
     viewer->setSceneGraph(m_rootNode);
     viewer->setBackgroundColor(SbColor(0.86f, 0.86f, 0.86f));
-    viewer->show();
+    viewer->setDecoration(false);
 
+    // labels
     QWidget* labelsWidget = new QWidget;
     mainLayout->addWidget(labelsWidget);
-
     QGridLayout* labelsLayout = new QGridLayout;
     labelsWidget->setLayout(labelsLayout);
 
-    QLabel* m_AzimuthLabel = new QLabel;
-    m_AzimuthLabel->setText("Azimuth:");
-    labelsLayout->addWidget(m_AzimuthLabel, 0, 0, 1, 1);
+    QLabel* azimuthLabel = new QLabel("Azimuth:");
+    labelsLayout->addWidget(azimuthLabel, 0, 0, 1, 1);
 
-    m_azimuthValue = new QLabel;
-    m_azimuthValue->setText(QString::number(m_azimuth) );
-    labelsLayout->addWidget(m_azimuthValue, 0, 1, 1, 3 );
+    m_azimuthValue = new QLabel(QString::number(m_azimuth) );
+    labelsLayout->addWidget(m_azimuthValue, 0, 1, 1, 3);
 
-    QLabel* m_zenithLabel = new QLabel;
-    m_zenithLabel->setText("Zenith:" );
-    labelsLayout->addWidget(m_zenithLabel, 1, 0, 1, 1 );
+    QLabel* zenithLabel = new QLabel("Zenith:");
+    labelsLayout->addWidget(zenithLabel, 1, 0, 1, 1);
 
-    m_zenithValue = new QLabel;
-    m_zenithValue->setText(QString::number(m_zenith));
-    labelsLayout->addWidget(m_zenithValue, 1, 1, 1, 3 );
-
+    m_zenithValue = new QLabel(QString::number(m_zenith));
+    labelsLayout->addWidget(m_zenithValue, 1, 1, 1, 3);
 }
 
 HorizontalWidget::~HorizontalWidget()
@@ -79,24 +76,21 @@ HorizontalWidget::~HorizontalWidget()
 
 }
 
-void HorizontalWidget::CoordinatesChanged( cSunCoordinates coordinates )
+void HorizontalWidget::CoordinatesChanged(cSunCoordinates coordinates)
 {
     m_azimuth = coordinates.dAzimuth;
-    m_azimuthValue->setText( QString::number( m_azimuth ) );
+    m_azimuthValue->setText(QString::number(m_azimuth));
     m_zenith = coordinates.dZenithAngle;
-    m_zenithValue->setText( QString::number( m_zenith ) );
+    m_zenithValue->setText(QString::number(m_zenith));
 
-     //Azimuth Line update
-     SoSeparator* azimuth = AzimuthLine();
-     m_rootNode->replaceChild( 4, azimuth );
+    SoSeparator* azimuth = AzimuthLine();
+    m_rootNode->replaceChild(4, azimuth);
 
-     //Zenith Line update
-     SoSeparator* zenith = ZenithLine();
-     m_rootNode->replaceChild( 5, zenith );
+    SoSeparator* zenith = ZenithLine();
+    m_rootNode->replaceChild(5, zenith);
 
-     //Star update
-     SoSeparator* star = Star();
-     m_rootNode->replaceChild( 6, star );
+    SoSeparator* star = Star();
+    m_rootNode->replaceChild(6, star);
 }
 
 SoSeparator* HorizontalWidget::AzimuthLine()
@@ -104,16 +98,16 @@ SoSeparator* HorizontalWidget::AzimuthLine()
     //Azimuth Line
     SoSeparator* azimuth = new SoSeparator;
 
-     SoSeparator* azimuthLine = new SoSeparator;
-     azimuth->addChild( azimuthLine );
+    SoSeparator* azimuthLine = new SoSeparator;
+    azimuth->addChild( azimuthLine );
 
-      SoMaterial* azimuthMaterial = new SoMaterial;
-      azimuthMaterial->diffuseColor.setValue( 0.0, 1.0, 0.0 );   // Green
-      azimuthLine->addChild( azimuthMaterial );
+    SoMaterial* azimuthMaterial = new SoMaterial;
+    azimuthMaterial->diffuseColor.setValue( 0.0, 1.0, 0.0 );   // Green
+    azimuthLine->addChild( azimuthMaterial );
 
-      SoDrawStyle * drawstyle = new SoDrawStyle;
-      drawstyle->lineWidth = 3;
-      azimuthLine->addChild( drawstyle );
+    SoDrawStyle * drawstyle = new SoDrawStyle;
+    drawstyle->lineWidth = 3;
+    azimuthLine->addChild( drawstyle );
 
 
     float azimuthPoints[360][3];
@@ -123,45 +117,44 @@ SoSeparator* HorizontalWidget::AzimuthLine()
         azimuthPoints[fi][0] = sin( grad * (gcf::pi / 180) )* sphereRadio ;
         azimuthPoints[fi][1] = 0.;
         azimuthPoints[fi][2] = -cos( grad * (gcf::pi / 180) ) * sphereRadio ;
-
     }
 
     int azimuthLines[1] = {360};
     SoCoordinate3 * azimuthCoord3 = new SoCoordinate3;
-      azimuthCoord3->point.setValues( 0, 360, azimuthPoints );
-      azimuthLine->addChild( azimuthCoord3 );
+    azimuthCoord3->point.setValues( 0, 360, azimuthPoints );
+    azimuthLine->addChild( azimuthCoord3 );
 
-      SoLineSet* line=new SoLineSet;
-      line->numVertices.setValues( 0, 1, azimuthLines );
-      azimuthLine->addChild( line );
+    SoLineSet* line=new SoLineSet;
+    line->numVertices.setValues( 0, 1, azimuthLines );
+    azimuthLine->addChild( line );
 
 
-      SoSeparator* curve = new SoSeparator;
-      azimuth->addChild( curve );
+    SoSeparator* curve = new SoSeparator;
+    azimuth->addChild( curve );
 
-      SoMaterial* curveMaterial = new SoMaterial;
-      curveMaterial->diffuseColor.setValue( 0.0f, 1.0f, 0.0f );   // Green
-      curve->addChild( curveMaterial );
+    SoMaterial* curveMaterial = new SoMaterial;
+    curveMaterial->diffuseColor.setValue( 0.0f, 1.0f, 0.0f );   // Green
+    curve->addChild( curveMaterial );
 
-      float curvePoints[270][3];
-      vec3d center( 0, 0, 0 );
+    float curvePoints[270][3];
+    vec3d center( 0, 0, 0 );
 
     int numPoints = 0;
     int indexes[360];
-      for( int index = 1; index <= 90; ++index )
-      {
-          curvePoints[numPoints][0]= center.x;
-        curvePoints[numPoints][1]= center.y;
-        curvePoints[numPoints][2]= center.z;
-        indexes[ ( index -1 ) * 4 ] = numPoints;
-          numPoints++;
+    for( int index = 1; index <= 90; ++index )
+    {
+        curvePoints[numPoints][0] = center.x;
+        curvePoints[numPoints][1] = center.y;
+        curvePoints[numPoints][2] = center.z;
+        indexes[(index - 1)*4] = numPoints;
+        numPoints++;
 
-        double grad1 = ( m_azimuth / 360 ) * 4 * ( index -1 );
+        double grad1 = (m_azimuth / 360) * 4 * (index - 1);
         curvePoints[numPoints][0] = sin( grad1 * (gcf::pi / 180) )* sphereRadio ;
         curvePoints[numPoints][1] =  0.0;
         curvePoints[numPoints][2] = -cos( grad1 * (gcf::pi / 180) ) * sphereRadio ;
         indexes[ ( ( index -1 ) * 4  ) +1 ] = numPoints;
-          numPoints++;
+        numPoints++;
 
         double grad2 = ( m_azimuth / 360 ) * 4 * index;
         curvePoints[numPoints][0] = sin( grad2 * (gcf::pi / 180) )* sphereRadio ;
@@ -171,17 +164,17 @@ SoSeparator* HorizontalWidget::AzimuthLine()
         numPoints++;
 
         indexes[ ( ( index -1 ) * 4  ) + 3 ] = -1;
-      }
+    }
 
-      SoCoordinate3 * curveCoord3 = new SoCoordinate3;
-      curveCoord3->point.setValues( 0, 270, curvePoints );
-      curve->addChild( curveCoord3 );
+    SoCoordinate3 * curveCoord3 = new SoCoordinate3;
+    curveCoord3->point.setValues(0, 270, curvePoints);
+    curve->addChild(curveCoord3);
 
-      SoIndexedFaceSet* facet = new SoIndexedFaceSet;
-      facet->coordIndex.setValues( 0, 360, indexes );
-      curve->addChild( facet );
+    SoIndexedFaceSet* facet = new SoIndexedFaceSet;
+    facet->coordIndex.setValues(0, 360, indexes);
+    curve->addChild(facet);
 
-      return azimuth;
+    return azimuth;
 }
 
 SoSeparator* HorizontalWidget::Ejes() const
@@ -219,7 +212,6 @@ SoSeparator* HorizontalWidget::Horizon() const
         p[fi][0] = -sin( fi * (gcf::pi / 180) ) * sphereRadio ;
         p[fi][1] =  0.0;
         p[fi][2] = -cos( fi * (gcf::pi / 180) ) * sphereRadio ;
-
     }
 
     int lines[1]={360};
@@ -235,20 +227,20 @@ SoSeparator* HorizontalWidget::Horizon() const
     return ecuador;
 }
 
-SoSeparator* HorizontalWidget ::Sphere() const
+SoSeparator* HorizontalWidget::Sphere() const
 {
     SoSeparator* sph = new SoSeparator;
 
-    SoMaterial *myMaterial = new SoMaterial;
-    myMaterial->diffuseColor.setValue( 0.0f, 0.0f, 1.0f );   // Blue
-    myMaterial->transparency.setValue( 0.3f );
-    sph->addChild( myMaterial );
+    SoMaterial* myMaterial = new SoMaterial;
+    myMaterial->diffuseColor.setValue(0.0f, 0.0f, 1.0f);
+    myMaterial->transparency.setValue(0.3f);
+    sph->addChild(myMaterial);
 
     SoComplexity* complexity = new SoComplexity;
     complexity->value = 0.5;
-    sph->addChild( complexity );
+    sph->addChild(complexity);
 
-    SoSphere* sphere=new SoSphere;
+    SoSphere* sphere = new SoSphere;
     sphere->radius = sphereRadio;
     sph->addChild(sphere);
 
@@ -277,8 +269,8 @@ SoSeparator* HorizontalWidget::Star()
     return star;
 }
 
-SoSeparator* HorizontalWidget::Text(){
-
+SoSeparator* HorizontalWidget::Text()
+{
     SoSeparator* text = new SoSeparator;
 
     SoMaterial* myMaterial = new SoMaterial;
@@ -338,20 +330,19 @@ SoSeparator* HorizontalWidget::Text(){
 
 SoSeparator* HorizontalWidget::ZenithLine()
 {
-
-      SoSeparator* zenith = new SoSeparator;
+    SoSeparator* zenith = new SoSeparator;
 
     SoMaterial* zenithMaterial = new SoMaterial;
-      zenithMaterial->diffuseColor.setValue( 0.0, 1.0, 0.0 );   // Green
-      zenith->addChild( zenithMaterial );
+    zenithMaterial->diffuseColor.setValue( 0.0, 1.0, 0.0 );   // Green
+    zenith->addChild( zenithMaterial );
 
-      //Zenith Line
-      SoSeparator* zenithLine = new SoSeparator;
-      zenith->addChild( zenithLine );
+    //Zenith Line
+    SoSeparator* zenithLine = new SoSeparator;
+    zenith->addChild( zenithLine );
 
-      SoDrawStyle * drawstyle = new SoDrawStyle;
-      drawstyle->lineWidth = 4;
-      zenithLine->addChild( drawstyle );
+    SoDrawStyle * drawstyle = new SoDrawStyle;
+    drawstyle->lineWidth = 4;
+    zenithLine->addChild( drawstyle );
 
     float zenithPoints[360][3];
 
@@ -367,38 +358,38 @@ SoSeparator* HorizontalWidget::ZenithLine()
 
     int zenithLines[1] = {360};
     SoCoordinate3 * zenithCoord3 = new SoCoordinate3;
-      zenithCoord3->point.setValues( 0, 360, zenithPoints );
-      zenithLine->addChild( zenithCoord3 );
+    zenithCoord3->point.setValues( 0, 360, zenithPoints );
+    zenithLine->addChild( zenithCoord3 );
 
-      SoLineSet* line=new SoLineSet;
-      line->numVertices.setValues( 0, 1, zenithLines );
-      zenithLine->addChild( line );
+    SoLineSet* line=new SoLineSet;
+    line->numVertices.setValues( 0, 1, zenithLines );
+    zenithLine->addChild( line );
 
-      //Surface
+    //Surface
     SoSeparator* curve = new SoSeparator;
-      zenith->addChild( curve );
+    zenith->addChild( curve );
 
-      float curvePoints[270][3];
-      vec3d center( 0, 0, 0 );
+    float curvePoints[270][3];
+    vec3d center( 0, 0, 0 );
 
     int numPoints = 0;
     int indexes[360];
-      for( int index = 1; index <= 90; ++index )
-      {
-          curvePoints[numPoints][0]= center.x;
+    for( int index = 1; index <= 90; ++index )
+    {
+        curvePoints[numPoints][0]= center.x;
         curvePoints[numPoints][1]= center.y;
         curvePoints[numPoints][2]= center.z;
         indexes[ ( index -1 ) * 4 ] = numPoints;
-          numPoints++;
+        numPoints++;
 
-          double grad1 = ( m_zenith / 360 ) * 4 * (index -1 );
+        double grad1 = ( m_zenith / 360 ) * 4 * (index -1 );
         curvePoints[numPoints][0] = sin( grad1 * (gcf::pi / 180) ) * sin( m_azimuth * (gcf::pi / 180) )* sphereRadio;
         curvePoints[numPoints][1] = cos( grad1  * (gcf::pi / 180) ) * sphereRadio;
         curvePoints[numPoints][2] = -sin( grad1 * (gcf::pi / 180) ) * cos( m_azimuth * (gcf::pi / 180) ) * sphereRadio ;
         indexes[ ( ( index -1 ) * 4  ) +1 ] = numPoints;
-          numPoints++;
+        numPoints++;
 
-          double grad2 = ( m_zenith / 360 ) * 4 * index;
+        double grad2 = ( m_zenith / 360 ) * 4 * index;
         curvePoints[numPoints][0] = sin( grad2 * (gcf::pi / 180) ) * sin( m_azimuth * (gcf::pi / 180) )* sphereRadio;
         curvePoints[numPoints][1] = cos( grad2 * (gcf::pi / 180) ) * sphereRadio;
         curvePoints[numPoints][2] = -sin( grad2 * (gcf::pi / 180) ) * cos( m_azimuth * (gcf::pi / 180) ) * sphereRadio ;
@@ -406,17 +397,16 @@ SoSeparator* HorizontalWidget::ZenithLine()
         numPoints++;
 
         indexes[ ( ( index -1 ) * 4  ) + 3 ] = -1;
+    }
 
-      }
 
+    SoCoordinate3 * curveCoord3 = new SoCoordinate3;
+    curveCoord3->point.setValues( 0, 270, curvePoints );
+    curve->addChild( curveCoord3 );
 
-      SoCoordinate3 * curveCoord3 = new SoCoordinate3;
-      curveCoord3->point.setValues( 0, 270, curvePoints );
-      curve->addChild( curveCoord3 );
+    SoIndexedFaceSet* facet = new SoIndexedFaceSet;
+    facet->coordIndex.setValues( 0, 360, indexes );
+    curve->addChild( facet );
 
-      SoIndexedFaceSet* facet = new SoIndexedFaceSet;
-      facet->coordIndex.setValues( 0, 360, indexes );
-      curve->addChild( facet );
-
-      return zenith;
+    return zenith;
 }

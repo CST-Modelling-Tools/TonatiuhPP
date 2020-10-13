@@ -2,14 +2,16 @@
 
 #include <QDialog>
 
-#include "ui_SunCalculatorDialog.h"
+class QAbstractButton;
+
 #include "libraries/sun/sunpos.h"
 
-class QDateTime;
-class QTime;
+namespace Ui {
+class SunCalculatorDialog;
+}
 
 
-class SunCalculatorDialog: public QDialog, private Ui::SunPositionCalculatorDialog
+class SunCalculatorDialog: public QDialog
 {
     Q_OBJECT
 
@@ -17,24 +19,23 @@ public:
     SunCalculatorDialog(QWidget* parent = 0);
     ~SunCalculatorDialog();
 
+    QDateTime getTime();
+    cSunCoordinates getPosition();
+
+signals:
+    void changeSunLight(double azimuth, double zenith);
+
 protected:
     void closeEvent(QCloseEvent* event);
 
-private slots:
-    void UpdatePosition(QAbstractButton* button);
-    void ChangeDate();
-    void ChangeLongitude(double longitude);
-    void ChangeLatitude(double latitude);
-    void ChangeSunTime(QTime time);
-    void ChangeSunTimeZone(int timeZone);
-
-signals:
-    void changeRepresentation(cSunCoordinates results);
-    void changeSunLight(double azimuth, double zenith);
+protected slots:
+    void updatePosition(QAbstractButton* button);
+    void calculateSunPosition();
 
 private:
-    void CalculateSunPosition();
-    QDateTime GetTime();
-    void ReadSettings();
-    void WriteSettings();
+    void readSettings();
+    void writeSettings();
+
+private:
+    Ui::SunCalculatorDialog* ui;
 };

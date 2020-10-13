@@ -2493,14 +2493,14 @@ void MainWindow::SetCurrentFile(const QString& filePath)
  */
 void MainWindow::ShowRaysIn3DView()
 {
-    if (true || ui->actionViewRays->isChecked() || ui->actionViewPhotons->isChecked())
-    {
+//    if (true || ui->actionViewRays->isChecked() || ui->actionViewPhotons->isChecked())
+//    {
         trf::DrawRays(m_graphicsRoot->rays(), *m_photonsBuffer, m_raysScreen);
-        m_graphicsRoot->showRays(ui->actionViewRays->isChecked());
-        m_graphicsRoot->showPhotons(ui->actionViewPhotons->isChecked());
-    } else {
-        m_graphicsRoot->rays()->removeAllChildren();
-    }
+//        m_graphicsRoot->showRays(ui->actionViewRays->isChecked());
+//        m_graphicsRoot->showPhotons(ui->actionViewPhotons->isChecked());
+//    } else {
+//        m_graphicsRoot->rays()->removeAllChildren();
+//    }
 }
 
 /*!
@@ -2604,4 +2604,14 @@ void MainWindow::on_actionDocumentation_triggered()
     QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/../help/html/index.html"));
 //    HelpDialog dialog(this);
 //    dialog.exec();
+}
+
+void MainWindow::on_actionSunPosition_triggered()
+{
+    SunCalculatorDialog dialog(this);
+//    connect(
+//        &dialog, SIGNAL(changeSunLight(double, double)),
+//        this, SLOT(setAzEl(double, double))
+//    );
+    dialog.exec();
 }

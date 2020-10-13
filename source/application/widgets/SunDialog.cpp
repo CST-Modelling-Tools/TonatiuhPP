@@ -66,9 +66,12 @@ SunDialog::~SunDialog()
 
 void SunDialog::on_buttonSunCalc_clicked()
 {
-    SunCalculatorDialog sunposDialog(this);
-    //    connect(&sunposDialog, SIGNAL(changeSunLight(double,double)), this, SLOT(ChangeSunPosition(double,double)) );
-    sunposDialog.exec();
+    SunCalculatorDialog dialog(this);
+    connect(
+        &dialog, SIGNAL(changeSunLight(double, double)),
+        this, SLOT(setAzEl(double, double))
+    );
+    dialog.exec();
 }
 
 void SunDialog::setFieldText(SoNode* node, QString field, QString value)
@@ -87,6 +90,13 @@ void SunDialog::setFieldNode(SoNode* node, QString field, SoNode* value)
     SoSFNode* f = (SoSFNode*) node->getField(field.toLatin1().data());
     f->setValue(value);
     updateCustomPlot();
+}
+
+void SunDialog::setAzEl(double az, double el)
+{
+    SunPosition* sp = (SunPosition*) m_sun->getPart("position", false);
+    setFieldText(sp, "azimuth", QString::number(az));
+    setFieldText(sp, "elevation", QString::number(el));
 }
 
 #include <QDebug>
