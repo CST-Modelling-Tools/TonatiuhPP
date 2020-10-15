@@ -229,7 +229,7 @@ nodeM.setParameter("translation", "0 0 4.346");
 //nodeSR.setParameter("rotation", "0 1 0 180");
 var s = nodeM.createShape();
 var q = s.insertSurface("FunctionZ");
-q.setParameter("functionZ", "\"-33.0618*x*x*x*x + 0.0568046*x*x*x - 2.00404*x*x - 0.00608155*x + 0.132069\"");
+q.setParameter("functionZ", "-33.0618*x*x*x*x + 0.0568046*x*x*x - 2.00404*x*x - 0.00608155*x + 0.132069");
 q.setParameter("dims", "20 2");
 var p = s.insertProfile("Rectangular");
 p.setParameter("uMin", -0.199);

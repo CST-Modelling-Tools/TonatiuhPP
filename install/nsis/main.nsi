@@ -309,5 +309,7 @@ LangString DESC_SectionExamples ${LANG_ENGLISH} "Description of section 2."
 	!insertmacro MUI_DESCRIPTION_TEXT ${SectionTonatiuh} $(DESC_SectionTonatiuh)
 	!insertmacro MUI_DESCRIPTION_TEXT ${SectionExamples} $(DESC_SectionExamples)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
+
+# !finalize 'signcode -t http://example.com/timestamp "%1"' = 0 ; %1 is replaced by the install exe to be signed.
  
  

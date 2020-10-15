@@ -190,7 +190,12 @@ void NodeObject::setParameter(const QString& name, const QString& value)
     }
 
     SoField* field = node->getField(name.toLatin1().data());
-    if (field) field->set(value.toLatin1().data());
+    if (!field) return;
+    if (field->getTypeId() == SoSFString::getClassTypeId()) {
+        SoSFString* sf = (SoSFString*) field;
+        sf->setValue(value.toLatin1().data());
+    } else
+        field->set(value.toLatin1().data());
 }
 
 QScriptValue NodeObject::FindInterception(QScriptValue surface, QScriptValue rays)
