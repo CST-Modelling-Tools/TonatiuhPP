@@ -268,10 +268,13 @@ void ScriptWindow::setTitle(QString fileName)
 {
     m_fileName = fileName;
 
+    QFileInfo fileInfo(fileName);
     QString title = "Untitled";
     if (!fileName.isEmpty())
-        title = QFileInfo(fileName).fileName();
+        title = fileInfo.fileName();
     setWindowTitle(tr("%1[*] - Tonatiuh").arg(title));
+
+    FileObject::setDir(fileInfo.dir());
 }
 
 void ScriptWindow::closeEvent(QCloseEvent* event)

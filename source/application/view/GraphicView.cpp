@@ -408,14 +408,14 @@ void GraphicView::mousePressEvent(QMouseEvent* event)
     {
         SbVec2s vs = m_viewer->getViewportRegion().getViewportSizePixels();
         m_camera->findMoveAnchor(m_viewer, QPoint(vs[0]/2, vs[1]/2), m_graphicRoot->getScene()->getLayout());
-        if (!(m_modifiersPressed & Qt::ShiftModifier)) {
+        if (m_modifiersPressed & Qt::ShiftModifier) {
             qApp->changeOverrideCursor(m_cursors["orbitB"]);
             m_camera->findOrbitAnchor(m_viewer, m_mousePressed, m_graphicRoot->getScene()->getLayout());
         }
     }
     else if (m_modifiersPressed & Qt::ControlModifier)
     {
-        if (!(m_modifiersPressed & Qt::ShiftModifier)) {
+        if (m_modifiersPressed & Qt::ShiftModifier) {
             qApp->changeOverrideCursor(m_cursors["rotationB"]);
             m_camera->findRotationAnchor(m_viewer, m_mousePressed);
         }
@@ -433,13 +433,13 @@ void GraphicView::mouseReleaseEvent(QMouseEvent* event)
 //    qDebug() << "release" << event->pos();
     if (m_modifiersPressed & Qt::AltModifier)
     {
-        if (!(m_modifiersPressed & Qt::ShiftModifier)) {
+        if (m_modifiersPressed & Qt::ShiftModifier) {
             qApp->changeOverrideCursor(m_cursors["orbitA"]);
         }
     }
     else if (m_modifiersPressed & Qt::ControlModifier)
     {
-        if (!(m_modifiersPressed & Qt::ShiftModifier)) {
+        if (m_modifiersPressed & Qt::ShiftModifier) {
             qApp->changeOverrideCursor(m_cursors["rotationA"]);
         }
     }
@@ -456,7 +456,7 @@ void GraphicView::mouseMoveEvent(QMouseEvent* event)
 //    qDebug() << "move " << diff;
     if (m_modifiersPressed & Qt::AltModifier)
     {
-        if (!(m_modifiersPressed & Qt::ShiftModifier)) {
+        if (m_modifiersPressed & Qt::ShiftModifier) {
              m_camera->moveOrbitAnchor(m_viewer, event->pos());
         } else {
             QPoint diff = event->pos() - m_mousePressed;
@@ -468,7 +468,7 @@ void GraphicView::mouseMoveEvent(QMouseEvent* event)
     }
     else if (m_modifiersPressed & Qt::ControlModifier)
     {
-        if (!(m_modifiersPressed & Qt::ShiftModifier)) {
+        if (m_modifiersPressed & Qt::ShiftModifier) {
             m_camera->moveRotationAnchor(m_viewer, event->pos());
         } else {
             QPoint diff = event->pos() - m_mousePressed;
@@ -518,11 +518,11 @@ void GraphicView::keyPressEvent(QKeyEvent* event)
     QString nc;
     if (event->modifiers() & Qt::AltModifier) {
         nc = "orbit";
-        if (!(event->modifiers() & Qt::ShiftModifier))
+        if (event->modifiers() & Qt::ShiftModifier)
             nc += "A";
     } else if (event->modifiers() & Qt::ControlModifier) {
         nc = "rotation";
-        if (!(event->modifiers() & Qt::ShiftModifier))
+        if (event->modifiers() & Qt::ShiftModifier)
             nc += "A";
     } else if (event->modifiers() & Qt::ShiftModifier)
         nc = "shiftA";

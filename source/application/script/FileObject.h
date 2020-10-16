@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QScriptable>
 #include <QScriptValue>
-
+#include <QDir>
 
 class FileObject: public QObject, protected QScriptable
 {
@@ -11,6 +11,7 @@ class FileObject: public QObject, protected QScriptable
 
 public:
     explicit FileObject(QObject* parent = 0);
+    static void setDir(QDir dir) {s_dir = dir;}
 
 public slots:
     QScriptValue readCSV(const QString& name = "");
@@ -18,6 +19,7 @@ public slots:
     QScriptValue part(int n, int m);
 
 private:
+    static QDir s_dir;
     QStringList m_data;
 };
 

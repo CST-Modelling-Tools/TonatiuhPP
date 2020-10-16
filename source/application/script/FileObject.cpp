@@ -1,10 +1,11 @@
 #include "FileObject.h"
 
 #include <QFile>
-#include <QDir>
 #include <QTextStream>
 #include <QApplication>
 #include <QMessageBox>
+
+QDir FileObject::s_dir;
 
 FileObject::FileObject(QObject* parent):
     QObject(parent)
@@ -16,10 +17,14 @@ QScriptValue FileObject::readCSV(const QString& name)
 {
     m_data.clear();
 
-    QDir dir(qApp->applicationDirPath());
-    QFile file(dir.filePath(name));
-
-//    QMessageBox::information(0, "info", dir.filePath(name));
+    QFile file;
+    file.setFileName(s_dir.filePath(name));
+    if (!file.exists()) {
+        QDir dir(qApp->applicationDirPath());
+        file.setFileName(dir.filePath(name));
+        if (!file.exists()) return false;
+    }
+//    QMessageBox::information(0, "info", file.fileName());
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return false;

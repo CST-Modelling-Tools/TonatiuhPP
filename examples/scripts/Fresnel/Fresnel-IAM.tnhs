@@ -1,0 +1,14 @@
+print("azimuth [deg], elevation[deg], efficiency");
+var gamma = 90; //azimuth
+for (var alpha = 10; alpha <= 90; alpha += 10) // elevation 
+{
+	var sp = NodeObject().getScene().getPart("world.sun.position");
+	sp.setParameter("azimuth", gamma);
+	sp.setParameter("elevation", alpha);
+	
+	var w = tn.FindInterception("//Node/Fresnel_CSP/Receiver/Absorber/Shape", 1e6);
+	var wMax = 18*8*0.32*4*1000; // rows*mirrors*width*length*DNI
+	var eta = w/wMax;
+
+	print("" + gamma + ", " + alpha + ", " + eta);
+}
