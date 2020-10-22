@@ -18,12 +18,15 @@ ProfilePolygon::ProfilePolygon()
     SO_NODE_CONSTRUCTOR(ProfilePolygon);
 
 //    SO_NODE_ADD_FIELD( points, (0., 0.) ); // single value only
+
 //    float vs[][2] = { // rhombus
 //        {0.5, 0.},
 //        {0., 0.5},
 //        {-0.5, 0.},
 //        {0., -0.5}
 //    };
+//    points.setValues(0, 4, vs);
+
     float vs[][2] = { // chevron
         {0., 0.},
         {0.5, 0.},
@@ -32,7 +35,8 @@ ProfilePolygon::ProfilePolygon()
         {-0.5, -0.5},
         {0., -0.5}
     };
-    points.setValues(0, 4, vs);
+    points.setValues(0, 6, vs);
+
     points.setContainer(this);
     fieldData->addField(this, "points", &points);
 //    points.setNames({"x", "y"}); // for UserField

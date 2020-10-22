@@ -63,7 +63,7 @@ QScriptValue NodeObject::createNode(const QString& name)
 
     NodeObject* ans = new NodeObject(kit);
     if (!name.isEmpty()) ans->setName(name);
-    return engine()->newQObject(ans);
+    return engine()->newQObject(ans, QScriptEngine::ScriptOwnership);
 }
 
 QScriptValue NodeObject::createShape()
@@ -76,7 +76,7 @@ QScriptValue NodeObject::createShape()
     group->addChild(kit);
 
     NodeObject* ans = new NodeObject(kit);
-    return engine()->newQObject(ans);
+    return engine()->newQObject(ans, QScriptEngine::ScriptOwnership);
 }
 
 QScriptValue NodeObject::createTracker()
@@ -89,7 +89,7 @@ QScriptValue NodeObject::createTracker()
     group->addChild(kit);
 
     NodeObject* ans = new NodeObject(kit);
-    return engine()->newQObject(ans);
+    return engine()->newQObject(ans, QScriptEngine::ScriptOwnership);
 }
 
 QScriptValue NodeObject::getPart(const QString& name)
@@ -108,6 +108,16 @@ QScriptValue NodeObject::getPart(const QString& name)
     return engine()->newQObject(ans);
 }
 
+void NodeObject::setPart(const QString& name, QScriptValue node)
+{
+    if (m_node->getTypeId() == TrackerKit::getClassTypeId() && name == "armature") {
+        TrackerKit* kit = (TrackerKit*) m_node;
+        NodeObject* nodeTracker = (NodeObject*) node.toQObject();
+        kit->armature = nodeTracker->m_node;
+    }
+    return;
+}
+
 QScriptValue NodeObject::insertSurface(const QString& name)
 {
     if (m_node->getTypeId() != TShapeKit::getClassTypeId()) return 0;
@@ -119,7 +129,7 @@ QScriptValue NodeObject::insertSurface(const QString& name)
     parent->shapeRT = shape;
 
     NodeObject* ans = new NodeObject(shape);
-    return engine()->newQObject(ans);
+    return engine()->newQObject(ans, QScriptEngine::ScriptOwnership);
 }
 
 QScriptValue NodeObject::insertProfile(const QString& name)
@@ -133,7 +143,7 @@ QScriptValue NodeObject::insertProfile(const QString& name)
     parent->profileRT = profile;
 
     NodeObject* ans = new NodeObject(profile);
-    return engine()->newQObject(ans);
+    return engine()->newQObject(ans, QScriptEngine::ScriptOwnership);
 }
 
 QScriptValue NodeObject::insertMaterial(const QString& name)
@@ -147,7 +157,7 @@ QScriptValue NodeObject::insertMaterial(const QString& name)
     parent->materialRT = material;
 
     NodeObject* ans = new NodeObject(material);
-    return engine()->newQObject(ans);
+    return engine()->newQObject(ans, QScriptEngine::ScriptOwnership);
 }
 
 QScriptValue NodeObject::insertArmature(const QString& name)
@@ -161,7 +171,7 @@ QScriptValue NodeObject::insertArmature(const QString& name)
     parent->armature = tracker;
 
     NodeObject* ans = new NodeObject(tracker);
-    return engine()->newQObject(ans);
+    return engine()->newQObject(ans, QScriptEngine::ScriptOwnership);
 }
 
 void NodeObject::setName(const QString& name)

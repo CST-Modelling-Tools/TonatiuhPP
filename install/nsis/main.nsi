@@ -15,7 +15,7 @@
 !include FileFunc.nsh ; for estimated file size ${GetSize}
 
 
-RequestExecutionLevel user
+RequestExecutionLevel admin
 ManifestDPIAware true  
 Unicode True
 Name "${APP_NAME}"

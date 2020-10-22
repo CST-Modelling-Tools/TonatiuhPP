@@ -18,6 +18,7 @@
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
+#include "kernel/scene/TArrayKit.h"
 #include "kernel/scene/WorldKit.h"
 #include "kernel/scene/LocationNode.h"
 #include "kernel/scene/TerrainKit.h"
@@ -234,7 +235,12 @@ QVariant SceneTreeModel::data(const QModelIndex& index, int role) const
         {
             return QIcon(":/images/scene/nodeTracker.png");
         }
-//        else if (type.isDerivedFrom(ShapeRT::getClassTypeId()))
+        else if (type.isDerivedFrom(TArrayKit::getClassTypeId()))
+        {
+            return QIcon(":/images/scene/nodeArray.png");
+        }
+
+        //        else if (type.isDerivedFrom(ShapeRT::getClassTypeId()))
 //        {
 //            ShapeRT* shape = static_cast<ShapeRT*>(node);
 //            return QIcon(shape->getTypeIcon());
@@ -295,6 +301,15 @@ bool SceneTreeModel::setNodeName(SoNode* node, QString name)
 
     node->setName(sbname);
     emit layoutChanged();
+    return true;
+}
+
+bool SceneTreeModel::setNodeNameUnique(SoNode* node, QString name)
+{
+    QString nameU = name;
+    int count = 0;
+    while (!setNodeName(node, nameU))
+        nameU = name + "_" + QString::number(++count);
     return true;
 }
 
@@ -421,6 +436,17 @@ SoNodeKitPath* SceneTreeModel::pathFromIndex(const QModelIndex& index) const
     return path; // make unref later
 }
 
+bool SceneTreeModel::hasChild(SoType type, SoBaseKit* parent)
+{
+    TSeparatorKit* kit = dynamic_cast<TSeparatorKit*>(parent);
+    if (!kit) return false;
+
+    SoGroup* group = (SoGroup*) parent->getPart("group", true);
+    for (int n = 0; n < group->getNumChildren(); ++n)
+        if (group->getChild(n)->getTypeId() == type)  return true;
+    return false;
+}
+
 int SceneTreeModel::insertCoinNode(SoNode* node, SoBaseKit* parent)
 {
     int row = -1;
@@ -429,11 +455,11 @@ int SceneTreeModel::insertCoinNode(SoNode* node, SoBaseKit* parent)
             SoGroup* group = (SoGroup*) parent->getPart("group", true);
             row = group->getNumChildren();
 
-            if (SoBaseKit* kit = dynamic_cast<SoBaseKit*>(node))
-            {
+//            if (SoBaseKit* kit = dynamic_cast<SoBaseKit*>(node))
+//            {
 //                kit->setSearchingChildren(true);
-                group->addChild(kit);
-            }
+                group->addChild(node);
+//            }
     }
 
     for (InstanceNode* instanceParent : m_mapCoinQt[parent])

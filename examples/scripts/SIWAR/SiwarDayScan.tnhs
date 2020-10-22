@@ -1,5 +1,5 @@
 var file = FileObject();
-file.readCSV("../examples/scripts/clearSolsticeDayPROTEAS.csv");
+file.readCSV("clearSolsticeDayPROTEAS.csv");
 
 var degree = 3.14159/180;
 var wMax = 2.25*2.25*155*1000;

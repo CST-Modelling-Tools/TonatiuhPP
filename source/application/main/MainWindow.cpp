@@ -73,6 +73,7 @@
 #include "kernel/scene/TSceneKit.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
+#include "kernel/scene/TArrayKit.h"
 #include "kernel/shape/ShapeRT.h"
 #include "kernel/sun/SunAperture.h"
 #include "kernel/sun/SunShape.h"
@@ -170,7 +171,6 @@ MainWindow::MainWindow(QString fileName, CustomSplashScreen* splash, QWidget* pa
 
 //    ui->toolbarFile->hide();
     ui->toolbarEdit->hide();
-    ui->viewToolBar->hide();
 
     ui->centralWidget->setFocus();
 
@@ -448,6 +448,7 @@ void MainWindow::SetupTriggers()
     connect(ui->buttonInsertNode, SIGNAL(pressed()), this, SLOT(InsertNode()) );
     connect(ui->buttonInsertShape, SIGNAL(pressed()), this, SLOT(InsertShape()) );
     connect(ui->buttonInsertTracker, SIGNAL(pressed()), this, SLOT(InsertTracker()) );
+    connect(ui->buttonInsertArray, SIGNAL(pressed()), this, SLOT(InsertArray()) );
     connect(ui->buttonNodeExport, SIGNAL(pressed()), this, SLOT(nodeExport()) );
     connect(ui->buttonNodeImport, SIGNAL(pressed()), this, SLOT(nodeImport()) );
 }
@@ -486,7 +487,17 @@ void MainWindow::FinishManipulation()
 
 void MainWindow::onAbort(QString error)
 {
-    statusBar()->showMessage(error, 2000);
+    showInStatusBar(error);
+}
+
+void MainWindow::showWarning(QString message)
+{
+    QMessageBox::warning(this, "Tonatiuh", message);
+}
+
+void MainWindow::showInStatusBar(QString message, int time)
+{
+    statusBar()->showMessage(message, time);
 }
 
 void MainWindow::onUndoStack()
@@ -938,11 +949,6 @@ void MainWindow::ShowMenu(const QModelIndex& index)
     popupmenu.exec(QCursor::pos());
 }
 
-void MainWindow::showWarning(QString message)
-{
-    QMessageBox::warning(this, "Tonatiuh", message);
-}
-
 //View menu actions
 //void MainWindow::on_actionViewAxes_toggled()
 //{
@@ -1351,31 +1357,27 @@ void MainWindow::InsertNode()
     ui->sceneView->expand(index);
 
     InstanceNode* instance = m_modelScene->getInstance(index);
-    if (!instance)
-    {
-        emit Abort("CreateGroupNode: Error creating new group node.");
+    if (!instance) {
+        emit Abort("InsertNode: Error creating new group node.");
         return;
     }
     SoNode* node = instance->getNode();
-    if (!node)
-    {
-        emit Abort("CreateGroupNode: Error creating new group node.");
+    if (!node) {
+        emit Abort("InsertNode: Error creating new group node.");
         return;
     }
-    if (node->getTypeId() != TSeparatorKit::getClassTypeId())
+    if (node->getTypeId() != TSeparatorKit::getClassTypeId()) {
+        showInStatusBar("Parent must be a Group node");
         return;
+    }
 
     TSeparatorKit* kit = new TSeparatorKit;
-//    qDebug() << "dsfg " << kit->getRefCount();
+//    qDebug() << "InsertNode: refs " << kit->getRefCount();
     CmdInsertNode* cmd = new CmdInsertNode(kit, index);
     m_undoStack->push(cmd);
-//    qDebug() << "dsfg as " << kit->getRefCount();
+//    qDebug() << "InsertNode: refs " << kit->getRefCount();
 
-    QString name("Node");
-    int count = 0;
-    while (!m_modelScene->setNodeName(kit, name))
-        name = QString("Node_%1").arg(++count);
-
+    m_modelScene->setNodeNameUnique(kit, "Node");
     setDocumentModified(true);
 }
 
@@ -1389,18 +1391,16 @@ void MainWindow::InsertShape()
     if (!instance) return;
     SoNode* node = instance->getNode();
     if (!node) return;
-    if (!node->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
+    if (node->getTypeId() != TSeparatorKit::getClassTypeId()) {
+        showInStatusBar("Parent must be a Group node");
         return;
+    }
 
     TShapeKit* kit = new TShapeKit;
     CmdInsertNode* cmd = new CmdInsertNode(kit, index);
     m_undoStack->push(cmd);
 
-    QString name("Shape");
-    int count = 0;
-    while (!m_modelScene->setNodeName(kit, name))
-        name = QString("Shape_%1").arg(++count);
-
+    m_modelScene->setNodeName(kit, "Shape");
     setDocumentModified(true);
 }
 
@@ -1412,25 +1412,44 @@ void MainWindow::InsertTracker()
 
     InstanceNode* instance = m_modelScene->getInstance(index);
     SoNode* node = instance->getNode();
-    TSeparatorKit* parent = dynamic_cast<TSeparatorKit*>(node);
-    if (!parent) return;
+    if (node->getTypeId() != TSeparatorKit::getClassTypeId()) {
+        showInStatusBar("Parent must be a Group node");
+        return;
+    }
 
-//    Tracker* tracker = (Tracker*) kit->getPart("tracker", false);
-//    if (tracker)
-//    {
-//        ShowWarning("This TSeparatorKit already contains a tracker node");
-//        return;
-//    }
+    TSeparatorKit* parent = (TSeparatorKit*) node;
+    if (m_modelScene->hasChild(TrackerKit::getClassTypeId(), parent)) {
+        showInStatusBar("Parent already has a Tracker node");
+        return;
+    }
 
     TrackerKit* kit = new TrackerKit;
     CmdInsertNode* cmd = new CmdInsertNode(kit, index);
     m_undoStack->push(cmd);
 
-    QString name("Tracker");
-    int count = 0;
-    while (!m_modelScene->setNodeName(kit, name))
-        name = QString("Tracker_%1").arg(++count);
+    m_modelScene->setNodeNameUnique(kit, "Tracker");
+    setDocumentModified(true);
+}
 
+void MainWindow::InsertArray()
+{
+    QModelIndex index = ui->sceneView->currentIndex();
+    if (!index.isValid()) return;
+    ui->sceneView->expand(index);
+
+    InstanceNode* instance = m_modelScene->getInstance(index);
+    SoNode* node = instance->getNode();
+    if (node->getTypeId() != TSeparatorKit::getClassTypeId()) {
+        showInStatusBar("Parent must be a Group node");
+        return;
+    }
+
+    TArrayKit* kit = new TArrayKit;
+    CmdInsertNode* cmd = new CmdInsertNode(kit, index);
+    m_undoStack->push(cmd);
+    kit->m_parent = (TSeparatorKit*) node;
+
+    m_modelScene->setNodeName(kit, "Array");
     setDocumentModified(true);
 }
 
@@ -1755,7 +1774,7 @@ void MainWindow::Run()
     std::cout << "Elapsed time (Run): " << timer.elapsed() << std::endl;
 
     QString msg = QString("Timing: %1 s").arg(timer.elapsed()/1000., 0, 'f', 3);
-    statusBar()->showMessage(msg, 2000);
+    showInStatusBar(msg, 2000);
 }
 
 /*
@@ -2182,7 +2201,7 @@ void MainWindow::InsertShapeSurface(ShapeFactory* factory, int /*numberofParamet
     TShapeKit* kit = dynamic_cast<TShapeKit*>(node);
     if (!kit) return;
 
-    ShapeRT* shape = factory->create(parametersList);
+    /*ShapeRT* shape = */factory->create(parametersList);
 
 //    CmdInsertSurface* cmd = new CmdInsertSurface(kit, shape);
 //    m_undoStack->push(cmd);
@@ -2459,12 +2478,12 @@ bool MainWindow::fileSave(const QString& fileName)
 {
     if (!m_document->WriteFile(fileName))
     {
-        statusBar()->showMessage(tr("Saving canceled"), 2000);
+        showInStatusBar("Saving canceled");
         return false;
     }
 
     SetCurrentFile(fileName);
-    statusBar()->showMessage(tr("File saved"), 2000);
+    showInStatusBar("File saved");
     return true;
 }
 
@@ -2527,13 +2546,13 @@ bool MainWindow::StartOver(const QString& fileName)
 
     if (!fileName.isEmpty() && m_document->ReadFile(fileName) )
     {
-        statusBar()->showMessage("File loaded", 2000);
+        showInStatusBar("File loaded");
         SetCurrentFile(fileName);
     }
     else
     {
         m_document->New();
-        statusBar()->showMessage("New file", 2000);
+        showInStatusBar("New file");
         SetCurrentFile("");
     }
 

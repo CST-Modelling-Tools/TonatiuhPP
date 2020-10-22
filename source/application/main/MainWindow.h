@@ -88,12 +88,13 @@ public slots:
     void PasteCopy();
     void PasteLink();
 
-    void nodeExport(QString fileName = "");
-    void nodeImport(QString fileName = "");
-
     void InsertNode();
     void InsertShape();
     void InsertTracker();
+    void InsertArray();
+    void nodeExport(QString fileName = "");
+    void nodeImport(QString fileName = "");
+
     void InsertShapeSurface(QString shapeType, int numberOfParameters, QVector<QVariant> parametersList);
     void CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector<QVariant> parametersList);
     void InsertScene(QScriptValue v);
@@ -144,6 +145,7 @@ private slots:
     void RunFluxAnalysisDialog();
 
     void SelectionFinish(SoSelection* selection);
+
     void setFieldText(SoNode* node, QString field, QString value);
     void setFieldNode(SoNode* node, QString field, SoNode* value);
 
@@ -151,6 +153,7 @@ private slots:
 
     void onAbort(QString error);
     void showWarning(QString message);
+    void showInStatusBar(QString message, int time = 2000);
 
     // manipulators actions
     void SoTransform_to_SoCenterballManip(); // move to view
@@ -187,7 +190,7 @@ protected:
     void closeEvent(QCloseEvent* event);
 //    void mousePressEvent(QMouseEvent* e);
 
-private:
+private:   
     void ChangeModelScene();
     PhotonsAbstract* CreatePhotonMapExport() const;
 

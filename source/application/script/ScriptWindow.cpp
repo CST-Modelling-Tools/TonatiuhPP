@@ -340,6 +340,7 @@ QScriptValue ScriptWindow::PrintMessageTimed(QScriptContext* context, QScriptEng
     QPlainTextEdit* console = (QPlainTextEdit*) object.toQObject();
     if (!console) return false;
     console->appendPlainText(msg);
+    console->repaint(); // force refresh
     return true;
 }
 

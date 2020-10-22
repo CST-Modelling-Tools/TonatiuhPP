@@ -271,7 +271,8 @@ void ParametersDelegate::paint(QPainter* painter, const QStyleOptionViewItem& op
         if (f) {
             QStyleOptionButton optionButton;
             QRect r = option.rect;
-            r.setLeft(r.right() - 1.5*r.height());
+            QFontMetrics fm(QApplication::font());
+            r.setLeft(r.right() - 6*fm.averageCharWidth());
             optionButton.rect = r;
             optionButton.text = "...";
             optionButton.state = QStyle::State_Enabled;

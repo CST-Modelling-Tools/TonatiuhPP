@@ -91,7 +91,7 @@ QString FluxAnalysis::getShapeType(QString nodeURL)
 /*
  * Fun flux analysis
  */
-void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool photonBufferAppend, int uDivs, int vDivs, bool silent)
+void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool photonBufferAppend, int uDivs, int vDivs, bool /*silent*/)
 {
     m_surfaceURL = nodeURL;
     m_surfaceSide = surfaceSide;

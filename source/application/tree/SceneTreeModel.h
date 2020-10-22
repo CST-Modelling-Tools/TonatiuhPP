@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QAbstractItemModel>
+#include <Inventor/SoType.h>
 
 class InstanceNode;
 class QModelIndex;
@@ -41,11 +42,13 @@ public:
 
     InstanceNode* getInstance(const QModelIndex& index) const;
     bool setNodeName(SoNode* node, QString name);
+    bool setNodeNameUnique(SoNode* node, QString name);
     QModelIndex indexFromUrl(QString url) const;
     QModelIndex indexFromPath(const SoNodeKitPath& path) const;
     SoNodeKitPath* pathFromIndex(const QModelIndex& index) const;
 
-    int insertCoinNode(SoNode* coinChild, SoBaseKit* coinParent);
+    bool hasChild(SoType type, SoBaseKit* parent);
+    int insertCoinNode(SoNode* coinChild, SoBaseKit* parent);
     void removeCoinNode(int row, SoBaseKit* parent);
 
     bool Cut(SoBaseKit* parent, int row);

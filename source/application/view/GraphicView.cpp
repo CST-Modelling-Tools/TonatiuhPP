@@ -562,7 +562,7 @@ void GraphicView::keyReleaseEvent(QKeyEvent* event)
 #include <QMenuBar>
 
 #include "main/MainWindow.h"
-void GraphicView::focusInEvent(QFocusEvent* event)
+void GraphicView::focusInEvent(QFocusEvent* /*event*/)
 {
 //    MainWindow* mw = (MainWindow*) m_window;
 //    if (mw) {
@@ -608,7 +608,7 @@ void GraphicView::focusInEvent(QFocusEvent* event)
 //    QWidget::focusInEvent(event);
 }
 
-void GraphicView::focusOutEvent(QFocusEvent* event)
+void GraphicView::focusOutEvent(QFocusEvent* /*event*/)
 {
 //        qApp->installEventFilter(((QMainWindow*)m_window)->menuBar());
     setProperty("inFocus", false);
@@ -690,7 +690,23 @@ void GraphicView::onViewSelected()
 
     int c = m_graphicRoot->getSelection()->getNumSelected();
     if (c == 0) return;
-    SoPath* path = m_graphicRoot->getSelection()->getPath(0);
+    SoPath* path = m_graphicRoot->getSelection()->getPath(0); // without nodekits
+
+    SoFullPath* kp = (SoFullPath*) path; // includes nodekits
+
+    SoNode* tail = kp->getTail();
+//    qDebug() << "tail " <<tail->getName().getString();
+    if (tail->getTypeId() == TSeparatorKit::getClassTypeId()) {
+        TSeparatorKit* sk = (TSeparatorKit*) tail;
+        SoNode* node = ((SoSFNode*)sk->getField("topSeparator"))->getValue();
+        path->append(node);
+        node = sk->getPart("transform", false);
+        path->append(node);
+//        qDebug() << "added";
+    }
+//    for (int q = 0; q < kp->getLength(); ++q) {
+//        qDebug() << q << " " << kp->getNode(q)->getName().getString() << " " << kp->getNode(q)->getTypeId().getName().getString();
+//    }
 
     SbViewportRegion vpr;
     SoGetMatrixAction actionMatrix(vpr);
@@ -700,6 +716,12 @@ void GraphicView::onViewSelected()
     SbVec3f vL(0., 0., 0.);
     SbVec3f vG;
     matrix.multVecMatrix(vL, vG);
+
+//    SbVec3f qq, ww;
+//    SbRotation r1, r2;
+//    matrix.getTransform(qq,r1,ww,r2);
+//    qDebug() << qq.toString().getString();
+//    qDebug() << vG.toString().getString();
 
 //    SoCamera* camera = m_viewer->getCamera();
 //    camera->pointAt(vG, SbVec3f(0., 0., 1.));

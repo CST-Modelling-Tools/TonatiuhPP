@@ -29,7 +29,9 @@ public slots:
     QScriptValue createNode(const QString& name = "");
     QScriptValue createShape();
     QScriptValue createTracker();
+
     QScriptValue getPart(const QString& name = "");
+    void setPart(const QString& name, QScriptValue node);
 
     QScriptValue insertSurface(const QString& name = "");
     QScriptValue insertProfile(const QString& name = "");

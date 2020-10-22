@@ -38,7 +38,6 @@
         <file>images/scene/nodeAir.png</file>
         <file>images/scene/nodeCamera.png</file>
         <file>images/scene/nodeExport.png</file>
-        <file>images/scene/nodeFolder.png</file>
         <file>images/scene/nodeGroup.png</file>
         <file>images/scene/nodeImport.png</file>
         <file>images/scene/nodeLocation.png</file>
@@ -59,5 +58,6 @@
         <file>images/view/viewSunFrom.png</file>
         <file>images/run/runCalendar.png</file>
         <file>images/map/worldMap.jpg</file>
+        <file>images/scene/nodeArray.png</file>
     </qresource>
 </RCC>

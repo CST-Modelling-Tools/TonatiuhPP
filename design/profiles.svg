@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
+   sodipodi:docname="profiles.svg"
+   inkscape:export-filename="C:\Neo\Programming\Qt\Projects\TonatiuhProject\images\plugins\shapes\flat\ShapeBox.png"
+   inkscape:export-xdpi="57.824688"
+   inkscape:export-ydpi="57.824688">
+  <defs
+     id="defs2">
+    <marker
+       inkscape:stockid="Arrow2Mend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Mend"
+       style="overflow:visible;"
+       inkscape:isstock="true">
+      <path
+         id="path4563"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#333333;stroke-opacity:1;fill:#4d4d4d;fill-opacity:1"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.6) rotate(180) translate(0,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="TriangleOutM"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path4681"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#333333;stroke-width:1pt;stroke-opacity:1;fill:#4d4d4d;fill-opacity:1"
+         transform="scale(0.4)" />
+    </marker>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 148.5 : 1"
+       inkscape:vp_y="529.91922 : 848.04806 : 0"
+       inkscape:vp_z="210 : 148.5 : 1"
+       inkscape:persp3d-origin="105 : 99 : 1"
+       id="perspective4518" />
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern" />
+    <clipPath
+       id="clipEmfPath1"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         id="path1441"
+         d="M 2.0938583,0 L 189.49563,0 L 189.49563,120.40612 L 2.0938583,120.40612 z" />
+    </clipPath>
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern-1" />
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern-5" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.2636499"
+     inkscape:cx="-365.01044"
+     inkscape:cy="1006.1171"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:measure-start="-1365.71,1117.14"
+     inkscape:measure-end="-580,794.286"
+     inkscape:snap-global="false"
+     inkscape:window-width="1500"
+     inkscape:window-height="938"
+     inkscape:window-x="-6"
+     inkscape:window-y="-6"
+     inkscape:window-maximized="1"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-grids="true"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:document-rotation="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4714" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline">
+    <path
+       style="display:inline;opacity:1;fill:#8d9fb6;fill-opacity:0.882353;stroke:#556783;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:0.996078;paint-order:markers fill stroke"
+       d="m 171.83611,196.21064 c -7.74951,0 -14.03173,6.2822 -14.0317,14.0317 l 7.82523,-0.003 c 0.14322,-3.43452 2.26597,-6.60965 6.17001,-6.55915 3.90404,0.0505 6.32104,3.28507 6.27033,6.55915 l 7.79783,0.003 c 3e-5,-7.7495 -6.28218,-14.0317 -14.0317,-14.0317 z"
+       id="path1082"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccczccc"
+       inkscape:export-filename="C:\Users\Victor\Desktop\ProfileRing.png"
+       inkscape:export-xdpi="50.685406"
+       inkscape:export-ydpi="50.685406" />
+    <rect
+       y="227.99051"
+       x="29.107824"
+       height="32.072342"
+       width="32.072342"
+       id="rect1084"
+       style="display:inline;opacity:1;fill:none;fill-opacity:0.882353;stroke:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:0.996078;paint-order:markers fill stroke"
+       inkscape:export-xdpi="50.685406"
+       inkscape:export-ydpi="50.685406"
+       inkscape:export-filename="C:\Users\Victor\Desktop\ProfileRegular.png" />
+    <path
+       sodipodi:type="star"
+       style="fill:#8d9fb6;fill-opacity:0.882353;stroke:#556883;stroke-width:1.99169;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:66.3714;stroke-opacity:0.996078"
+       id="path1086"
+       sodipodi:sides="6"
+       sodipodi:cx="-11.546878"
+       sodipodi:cy="1055.5861"
+       sodipodi:r1="18.854462"
+       sodipodi:r2="18.854462"
+       sodipodi:arg1="0.52359878"
+       sodipodi:arg2="1.0471976"
+       inkscape:flatsided="true"
+       inkscape:rounded="-3.46945e-18"
+       inkscape:randomized="0"
+       d="m 4.7815649,1065.0133 -16.3284429,9.4272 -16.328443,-9.4272 0,-18.8545 16.328443,-9.4272 16.328443,9.4272 z"
+       inkscape:transform-center-y="-3.0752744"
+       transform="matrix(0.65203826,0.37613088,-0.37699917,0.65242044,450.77417,-439.96831)"
+       inkscape:transform-center-x="-1.7770403"
+       inkscape:export-filename="C:\Users\Victor\Desktop\ProfileRegular.png"
+       inkscape:export-xdpi="50.685406"
+       inkscape:export-ydpi="50.685406" />
+    <rect
+       inkscape:export-filename="C:\Users\Victor\Desktop\ProfileRing.png"
+       inkscape:export-ydpi="50.685406"
+       inkscape:export-xdpi="50.685406"
+       y="190.71454"
+       x="155.86508"
+       height="32.072342"
+       width="32.072342"
+       id="rect1088"
+       style="display:inline;opacity:1;fill:none;fill-opacity:0.882353;stroke:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:0.996078;paint-order:markers fill stroke" />
+    <rect
+       style="display:inline;opacity:1;fill:#8d9fb6;fill-opacity:0.882353;stroke:#546782;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:0.972549;paint-order:markers fill stroke"
+       id="rect1090"
+       width="27.789619"
+       height="17.630796"
+       x="92.63369"
+       y="194.58405"
+       ry="0"
+       inkscape:export-xdpi="50.685406"
+       inkscape:export-ydpi="50.685406"
+       inkscape:export-filename="C:\Users\Victor\Desktop\ProfileRectangular.png" />
+    <rect
+       style="display:inline;opacity:1;fill:none;fill-opacity:0.882353;stroke:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:0.996078;paint-order:markers fill stroke"
+       id="rect1092"
+       width="32.072342"
+       height="32.072342"
+       x="90.598671"
+       y="187.0141"
+       inkscape:export-xdpi="50.685406"
+       inkscape:export-ydpi="50.685406"
+       inkscape:export-filename="C:\Users\Victor\Desktop\ProfileRectangular.png" />
+    <rect
+       inkscape:export-filename="C:\Users\Victor\Desktop\ProfileBox.png"
+       inkscape:export-ydpi="50.685406"
+       inkscape:export-xdpi="50.685406"
+       ry="0"
+       y="194.27686"
+       x="31.262346"
+       height="17.630796"
+       width="27.789619"
+       id="rect1094"
+       style="display:inline;opacity:1;fill:#8d9fb6;fill-opacity:0.882353;stroke:#546782;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:0.972549;paint-order:markers fill stroke" />
+    <rect
+       inkscape:export-filename="C:\Users\Victor\Desktop\ProfileBox.png"
+       inkscape:export-ydpi="50.685406"
+       inkscape:export-xdpi="50.685406"
+       y="186.70691"
+       x="29.227343"
+       height="32.072342"
+       width="32.072342"
+       id="rect1096"
+       style="display:inline;opacity:1;fill:none;fill-opacity:0.882353;stroke:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:0.996078;paint-order:markers fill stroke" />
+    <path
+       sodipodi:type="star"
+       style="display:inline;opacity:1;fill:#8d9fb6;fill-opacity:0.882353;stroke:#556782;stroke-width:1.15892;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:0.980392;paint-order:markers fill stroke"
+       id="path1102"
+       sodipodi:sides="3"
+       sodipodi:cx="-443.80103"
+       sodipodi:cy="184.21227"
+       sodipodi:r1="12.198885"
+       sodipodi:r2="6.0994425"
+       sodipodi:arg1="0.52359878"
+       sodipodi:arg2="1.5707963"
+       inkscape:flatsided="true"
+       inkscape:rounded="-3.46945e-18"
+       inkscape:randomized="0"
+       d="m -433.23648,190.31171 -21.12909,0 10.56454,-18.29833 z"
+       inkscape:transform-center-x="-1.3091489e-05"
+       inkscape:transform-center-y="-3.9551861"
+       transform="matrix(1.29172,0,0,1.2968987,679.24267,10.807048)"
+       inkscape:export-xdpi="50.685406"
+       inkscape:export-ydpi="50.685406"
+       inkscape:export-filename="C:\Users\Victor\Desktop\ProfileTriangle.png" />
+    <rect
+       y="230.01929"
+       x="89.969437"
+       height="32.072342"
+       width="32.072342"
+       id="rect1104"
+       style="display:inline;opacity:1;fill:none;fill-opacity:0.882353;stroke:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:0.996078;paint-order:markers fill stroke"
+       inkscape:export-xdpi="50.685406"
+       inkscape:export-ydpi="50.685406"
+       inkscape:export-filename="C:\Users\Victor\Desktop\ProfileTriangle.png" />
+    <rect
+       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\ProfilePolygon.png"
+       inkscape:export-ydpi="50.685406"
+       inkscape:export-xdpi="50.685406"
+       style="display:inline;opacity:1;fill:none;fill-opacity:0.882353;stroke:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:0.996078;paint-order:markers fill stroke"
+       id="rect1106"
+       width="32.072342"
+       height="32.072342"
+       x="153.78458"
+       y="227.86578" />
+    <path
+       style="fill:#8d9fb6;fill-opacity:0.882353;stroke:#556883;stroke-width:1.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:66.3714;stroke-opacity:0.996078"
+       inkscape:transform-center-x="-1.7770403"
+       inkscape:transform-center-y="-3.0752744"
+       d="m 170.58057,255.97826 -12.81124,0.095 -0.1232,-24.42427 24.99592,-0.0918 0.0372,11.93507 -12.16124,0.1324 z"
+       id="path1108"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccc"
+       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\ProfilePolygon.png"
+       inkscape:export-xdpi="50.685406"
+       inkscape:export-ydpi="50.685406" />
+    <rect
+       style="fill:#61616c;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:66.3714;stroke-opacity:0.972549;paint-order:markers fill stroke"
+       id="rect1110"
+       width="4.5"
+       height="4.5"
+       x="-47.23468"
+       y="200.66977"
+       transform="scale(-1,1)"
+       inkscape:export-filename="C:\Users\Victor\Desktop\ProfileBox.png"
+       inkscape:export-xdpi="50.685406"
+       inkscape:export-ydpi="50.685406" />
+    <rect
+       style="fill:#61616c;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:66.3714;stroke-opacity:0.972549;paint-order:markers fill stroke"
+       id="rect1112"
+       width="4.5"
+       height="4.5"
+       x="-47.540092"
+       y="242.12448"
+       transform="scale(-1,1)"
+       inkscape:export-filename="C:\Users\Victor\Desktop\ProfileRegular.png"
+       inkscape:export-xdpi="50.685406"
+       inkscape:export-ydpi="50.685406" />
+    <rect
+       style="fill:#61616c;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:66.3714;stroke-opacity:0.972549;paint-order:markers fill stroke"
+       id="rect1114"
+       width="4.5"
+       height="4.5"
+       x="-174.08611"
+       y="208.03815"
+       transform="scale(-1,1)"
+       inkscape:export-filename="C:\Users\Victor\Desktop\ProfileRing.png"
+       inkscape:export-xdpi="50.685406"
+       inkscape:export-ydpi="50.685406" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2"
+     style="display:inline" />
+</svg>

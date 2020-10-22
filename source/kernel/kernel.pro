@@ -44,6 +44,7 @@ HEADERS += \
     scene/GridNode.h \
     scene/LocationNode.h \
     scene/MaterialGL.h \
+    scene/TArrayKit.h \
     scene/TCameraKit.h \
     scene/TPerspectiveCamera.h \
     scene/TSFRotation.h \
@@ -109,6 +110,7 @@ SOURCES += \
     scene/GridNode.cpp \
     scene/LocationNode.cpp \
     scene/MaterialGL.cpp \
+    scene/TArrayKit.cpp \
     scene/TCameraKit.cpp \
     scene/TPerspectiveCamera.cpp \
     scene/TSFRotation.cpp \

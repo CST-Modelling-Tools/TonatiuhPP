@@ -58,7 +58,7 @@ struct SkyGradient
 // boundingbox, so we just invalidate the bbox cache so stop the node
 // from being culled.
 static void
-background_bbfix(SoAction * action, SoNode * node)
+background_bbfix(SoAction * action, SoNode * /*node*/)
 {
   SoCacheElement::invalidate(action->getState());
 }

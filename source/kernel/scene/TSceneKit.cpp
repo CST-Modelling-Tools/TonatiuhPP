@@ -15,6 +15,7 @@
 #include "kernel/sun/SunPosition.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
+#include "kernel/scene/TArrayKit.h"
 #include "WorldKit.h"
 #include "LocationNode.h"
 
@@ -29,6 +30,7 @@ void TSceneKit::initClass()
 
     TSeparatorKit::initClass();
     TShapeKit::initClass();
+    TArrayKit::initClass();
 }
 
 #include <Inventor/nodes/SoSphere.h>
