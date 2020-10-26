@@ -22,7 +22,7 @@ MaterialSpecular::MaterialSpecular()
     SO_NODE_CONSTRUCTOR(MaterialSpecular);
     isBuiltIn = TRUE;
 
-    SO_NODE_ADD_FIELD(reflectivity, (0.9) ); // 1 may give infinite reflections
+    SO_NODE_ADD_FIELD(reflectivity, (0.95) ); // 1 may give infinite reflections
 
     SO_NODE_DEFINE_ENUM_VALUE(Distribution, pillbox);
     SO_NODE_DEFINE_ENUM_VALUE(Distribution, Gaussian);
