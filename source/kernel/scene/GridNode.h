@@ -6,7 +6,7 @@
 #include <Inventor/fields/SoSFDouble.h>
 #include <Inventor/fields/SoSFInt32.h>
 #include <Inventor/fields/SoSFVec2d.h>
-
+#include <Inventor/fields/SoSFString.h>
 
 class TONATIUH_KERNEL GridNode: public SoNode
 {
@@ -18,9 +18,12 @@ public:
 
     SoSFBool show;
     SoSFBool fill;
+
     SoSFDouble step;
     SoSFInt32 divisions;
     SoSFVec2d xRange;
     SoSFVec2d yRange;
+
+    SoSFString file;
 };
 

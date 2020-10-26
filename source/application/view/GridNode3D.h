@@ -15,19 +15,15 @@ public:
     ~GridNode3D();
 
     void attach(GridNode* grid);
-    void create();
 
 protected:
+    SoSwitch* m_grid;
+    void create();
     void makeAxes(double xMin, double xMax, double yMin, double yMax);
     void makeGround(double xMin, double xMax, double yMin, double yMax);
-    SoSwitch* m_grid;
+    void makeTerrain(QString fileName);
 
     SoNodeSensor* m_sensor;
     static void update(void* data, SoSensor*);
-
-    // SoSeparator interface
-//protected:
-//    SbBool cullTest(SoState* state) {return 0;}
-//    SbBool cullTest(SoGLRenderAction* action, int& cullresults) {return 0;}
 };
 

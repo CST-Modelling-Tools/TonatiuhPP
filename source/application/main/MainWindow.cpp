@@ -2543,6 +2543,14 @@ bool MainWindow::StartOver(const QString& fileName)
     ui->parametersTabs->setNode(0);
 
 //    SetSunPositionCalculatorEnabled(0);
+    QFileInfo info(fileName);
+    if (info.exists()) {
+        QDir::setSearchPaths("project", QStringList() << info.absolutePath() <<
+            QDir::currentPath() << qApp->applicationDirPath());
+    } else {
+        QDir::setSearchPaths("project", QStringList()
+            << QDir::currentPath() << qApp->applicationDirPath());
+    }
 
     if (!fileName.isEmpty() && m_document->ReadFile(fileName) )
     {

@@ -18,6 +18,7 @@ QScriptValue FileObject::readCSV(const QString& name)
     m_data.clear();
 
     QFile file;
+//    file.setFileName(QString("project:" + name);
     file.setFileName(s_dir.filePath(name));
     if (!file.exists()) {
         QDir dir(qApp->applicationDirPath());

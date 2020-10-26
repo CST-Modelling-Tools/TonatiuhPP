@@ -3,8 +3,10 @@
 #include <Inventor/sensors/SoFieldSensor.h>
 #include <Inventor/nodes/SoCoordinate3.h>
 #include <Inventor/nodes/SoNormal.h>
+#include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoIndexedFaceSet.h>
 #include <QFileInfo>
+#include <QMessageBox>
 
 #include "kernel/profiles/ProfileRT.h"
 #include "kernel/scene/TShapeKit.h"
@@ -91,11 +93,11 @@ bool ShapeMesh::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
     return true;
 }
 
-//#include "kernel/scene/MaterialGL.h"
+#include "kernel/scene/MaterialGL.h"
 void ShapeMesh::updateShapeGL(TShapeKit* parent)
 {
-//    MaterialGL* mGL = (MaterialGL*) parent->material.getValue();
-//    bool reverseNormals = mGL->reverseNormals.getValue();
+    MaterialGL* mGL = (MaterialGL*) parent->material.getValue();
+    bool reverseNormals = mGL->reverseNormals.getValue();
 
     SoShapeKit* shapeKit = parent->m_shapeKit;
 
@@ -103,10 +105,26 @@ void ShapeMesh::updateShapeGL(TShapeKit* parent)
     sVertices->point.setValues(0, vertices.getNum(), vertices.getValues(0));
     shapeKit->setPart("coordinate3", sVertices);
 
+//    SoShapeHints* sHints = new SoShapeHints;
+//    sHints->shapeType = SoShapeHints::SOLID;
+//    sHints->vertexOrdering = SoShapeHints::COUNTERCLOCKWISE;
+//    sHints->creaseAngle = 30*gcf::degree;
+//    shapeKit->setPart("shapeHints", sHints);
+
     SoNormal* sNormals = new SoNormal;
-    sNormals->vector.setValues(0, normals.getNum(), normals.getValues(0));
+    if (reverseNormals) {
+        SoMFVec3f temp;
+        temp.setValues(0, normals.getNum(), normals.getValues(0));
+        for (int n = 0; n < normals.getNum(); ++n) {
+            const SbVec3f& v = *temp.getValues(n);
+            temp.set1Value(n, -v[0], -v[1], -v[2]);
+        }
+        sNormals->vector.setValues(0, temp.getNum(), temp.getValues(0));
+    } else
+        sNormals->vector.setValues(0, normals.getNum(), normals.getValues(0));
     shapeKit->setPart("normal", sNormals);
 
+//    SoNorm
     SoIndexedFaceSet* sMesh = new SoIndexedFaceSet;
     sMesh->coordIndex.setValues(0, facesVertices.getNum(), facesVertices.getValues(0));
     sMesh->normalIndex.setValues(0, facesNormals.getNum(), facesNormals.getValues(0));
@@ -125,10 +143,19 @@ void ShapeMesh::onSensor(void* data, SoSensor*)
 {
     ShapeMesh* shape = (ShapeMesh*) data;
     QString fileName = shape->file.getValue().getString();
-
     if (fileName.isEmpty()) return;
+
+    fileName = QString("project:") + fileName;
     QFileInfo info(fileName);
-    if (info.suffix() != "obj") return;
+    if (info.suffix() != "obj") {
+        QMessageBox::warning(0, "Warning", "File in not in obj-format");
+        return;
+    }
+    if (!info.exists()) {
+        QMessageBox::warning(0, "Warning", QString("File not found:\n") + fileName);
+        return;
+    }
+    fileName = info.absoluteFilePath();
 
     // import
     std::string inputfile = fileName.toStdString();

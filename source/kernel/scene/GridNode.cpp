@@ -11,13 +11,17 @@ void GridNode::initClass()
 GridNode::GridNode()
 {
     SO_NODE_CONSTRUCTOR(GridNode);
+    isBuiltIn = TRUE;
 
     SO_NODE_ADD_FIELD(show, (TRUE) );
     SO_NODE_ADD_FIELD(fill, (TRUE) );
+
     SO_NODE_ADD_FIELD(step, (1.) );
     SO_NODE_ADD_FIELD(divisions, (5) );
     SO_NODE_ADD_FIELD(xRange, (SbVec2d(-10., 10.)) );
     SO_NODE_ADD_FIELD(yRange, (SbVec2d(-10., 10.)) );
+
+    SO_NODE_ADD_FIELD(file, ("") );
 
     setName("Grid");
 }

@@ -39,8 +39,8 @@ TSceneKit {
     camera 
     DEF Camera TCameraKit {
       fields [ SFVec3f position, SFVec2f rotation, SFDouble angle, SFBool perspective, SFNode callbackList, SFNode topSeparator ]
-      position -7.07205 -5.32917 7.36476
-      rotation 53 -39.75
+      position -6.65823 -5.88663 7.32605
+      rotation 48.5 -39.5
 
     }
 
@@ -156,7 +156,7 @@ TSceneKit {
                   26, 26, 26, -1, 27, 27, 27, -1,
                   28, 28, 28, -1, 29, 29, 29, -1,
                   30, 30, 30, -1, 31, 31, 31, -1 ]
-              file "..\examples\cad\parabolaFlat.obj"
+              file "parabolaFlat.obj"
 
             }
             profileRT 
@@ -271,7 +271,7 @@ TSceneKit {
                   16, 21, 17, -1, 22, 17, 21, -1,
                   17, 22, 18, -1, 23, 18, 22, -1,
                   18, 23, 19, -1, 24, 19, 23, -1 ]
-              file "..\examples\cad\parabolaSmooth.obj"
+              file "parabolaSmooth.obj"
 
             }
             profileRT 

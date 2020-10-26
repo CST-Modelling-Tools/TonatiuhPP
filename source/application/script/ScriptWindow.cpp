@@ -275,6 +275,7 @@ void ScriptWindow::setTitle(QString fileName)
     setWindowTitle(tr("%1[*] - Tonatiuh").arg(title));
 
     FileObject::setDir(fileInfo.dir());
+//    QDir::setSearchPaths("project", fileInfo.dir());
 }
 
 void ScriptWindow::closeEvent(QCloseEvent* event)

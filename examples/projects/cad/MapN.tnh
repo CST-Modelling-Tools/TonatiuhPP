@@ -36,8 +36,8 @@ TSceneKit {
     camera 
     DEF Camera TCameraKit {
       fields [ SFVec3f position, SFVec2f rotation, SFDouble angle, SFBool perspective, SFNode callbackList, SFNode topSeparator ]
-      position -2.16044 -4.64192 3.24424
-      rotation 25.75 -33.25
+      position -2.69996 -4.31645 3.242
+      rotation 33.75 -33
 
     }
 
@@ -46,6 +46,7 @@ TSceneKit {
   DEF Node TSeparatorKit {
     transform 
     TTransform {
+      translation 0 0 0.1
 
     }
     group 
