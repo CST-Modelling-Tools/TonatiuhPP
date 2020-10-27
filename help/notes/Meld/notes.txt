@@ -1,0 +1,2 @@
+git config --global merge.tool meld
+git config --global mergetool.meld.path "C:\Program Files (x86)\Meld\Meld.exe"
