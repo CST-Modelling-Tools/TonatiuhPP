@@ -36,9 +36,8 @@ TSceneKit {
       fields [ SFNode callbackList, SFNode grid ]
       grid 
       DEF Grid GridNode {
-        fields [ SFBool show, SFBool fill, SFDouble step, SFInt32 divisions, SFVec2d xRange, SFVec2d yRange ]
-        xRange -15 15
-        yRange -10 30
+        min -15 -10 0
+        max 15 30 0
 
       }
 
@@ -362,47 +361,6 @@ TSceneKit {
                 }
 
               }
-            }
-
-          }
-        }
-
-      }
-      DEF Ground TSeparatorKit {
-        transform 
-        TTransform {
-          translation 0 0 -0.05
-
-        }
-        group 
-        Group {
-
-          DEF Shape TShapeKit {
-            shapeRT 
-            ShapePlanar {
-
-            }
-            profileRT 
-            ProfileRectangular {
-              fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
-              uMin -10
-              uMax 10
-              vMin -5
-              vMax 25
-
-            }
-            materialRT 
-            MaterialTransparent {
-              fields [  ]
-
-            }
-            material 
-            MaterialGL {
-              ambientColor 0.85 0.85 0.8
-              diffuseColor 0.05 0.05 0.05
-              specularColor 0.1 0.1 0.1
-              shininess 0.1
-
             }
 
           }

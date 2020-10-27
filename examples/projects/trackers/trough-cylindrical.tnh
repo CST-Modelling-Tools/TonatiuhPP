@@ -26,7 +26,7 @@ TSceneKit {
       aperture 
       SunAperture {
         fields [ SFString disabledNodes ]
-        disabledNodes "//Node/Target;//Node/Trough/primary/axis;//Node/Ground"
+        disabledNodes "//Node/Target;//Node/Trough/primary/axis;"
 
       }
 
@@ -36,9 +36,8 @@ TSceneKit {
       fields [ SFNode callbackList, SFNode grid ]
       grid 
       DEF Grid GridNode {
-        fields [ SFBool show, SFBool fill, SFDouble step, SFInt32 divisions, SFVec2d xRange, SFVec2d yRange ]
-        xRange -15 15
-        yRange -20 20
+        min -10 -15 0
+        max 10 15 0
 
       }
 
@@ -46,8 +45,8 @@ TSceneKit {
     camera 
     DEF Camera TCameraKit {
       fields [ SFVec3f position, SFVec2f rotation, SFDouble angle, SFBool perspective, SFNode callbackList, SFNode topSeparator ]
-      position 1.77733 -30.9073 10.6748
-      rotation -2.5 -17
+      position 9.85419 -28.6698 13.0078
+      rotation -19.25 -23.5
 
     }
 
@@ -313,47 +312,6 @@ TSceneKit {
                 }
 
               }
-            }
-
-          }
-        }
-
-      }
-      DEF Ground TSeparatorKit {
-        transform 
-        TTransform {
-          translation 0 0 -0.05
-
-        }
-        group 
-        Group {
-
-          DEF Shape TShapeKit {
-            shapeRT 
-            ShapePlanar {
-
-            }
-            profileRT 
-            ProfileRectangular {
-              fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
-              uMin -10
-              uMax 10
-              vMin -15
-              vMax 15
-
-            }
-            materialRT 
-            MaterialTransparent {
-              fields [  ]
-
-            }
-            material 
-            MaterialGL {
-              ambientColor 0.85 0.85 0.8
-              diffuseColor 0.05 0.05 0.05
-              specularColor 0 0 0
-              shininess 0.1
-
             }
 
           }

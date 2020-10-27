@@ -60,7 +60,7 @@ void SunNode3D::create()
 
     SoTexture2* texture = new SoTexture2;
     QDir dir(QCoreApplication::applicationDirPath()); // relative to exe file
-    texture->filename.setValue(dir.filePath("../images/sun.png").toLatin1().data());
+    texture->filename = dir.filePath("../images/sun.png").toLatin1().data();
     texture->model = SoTexture2::REPLACE;
     addChild(texture);
 

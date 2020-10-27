@@ -19,8 +19,8 @@ public:
 protected:
     SoSwitch* m_grid;
     void create();
-    void makeAxes(double xMin, double xMax, double yMin, double yMax);
-    void makeGround(double xMin, double xMax, double yMin, double yMax);
+    void makeAxes(double xMin, double xMax, double yMin, double yMax, double zMean);
+    void makeGround(double xMin, double xMax, double yMin, double yMax, double zMean);
     void makeTerrain(QString fileName);
 
     SoNodeSensor* m_sensor;

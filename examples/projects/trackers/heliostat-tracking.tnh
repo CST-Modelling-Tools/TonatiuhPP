@@ -26,7 +26,7 @@ TSceneKit {
       aperture 
       SunAperture {
         fields [ SFString disabledNodes ]
-        disabledNodes "//Node/Target;//Node/Ground;//Node/HeliostatB/primary/secondary/target"
+        disabledNodes "//Node/Target;//Node/HeliostatB/primary/secondary/target"
 
       }
 
@@ -36,9 +36,8 @@ TSceneKit {
       fields [ SFNode callbackList, SFNode grid ]
       grid 
       DEF Grid GridNode {
-        fields [ SFBool show, SFBool fill, SFDouble step, SFInt32 divisions, SFVec2d xRange, SFVec2d yRange ]
-        xRange -15 15
-        yRange -10 30
+        min -15 -10 0
+        max 15 30 0
 
       }
 

@@ -2,11 +2,12 @@
 #include "kernel/TonatiuhKernel.h"
 
 #include <Inventor/nodes/SoSubNode.h>
+
 #include <Inventor/fields/SoSFBool.h>
-#include <Inventor/fields/SoSFDouble.h>
-#include <Inventor/fields/SoSFInt32.h>
-#include <Inventor/fields/SoSFVec2d.h>
+#include <Inventor/fields/SoSFVec3d.h>
+#include <Inventor/fields/SoSFVec3i32.h>
 #include <Inventor/fields/SoSFString.h>
+
 
 class TONATIUH_KERNEL GridNode: public SoNode
 {
@@ -16,13 +17,13 @@ public:
     static void initClass();
     GridNode();
 
-    SoSFBool show;
+    SoSFBool grid;
     SoSFBool fill;
 
-    SoSFDouble step;
-    SoSFInt32 divisions;
-    SoSFVec2d xRange;
-    SoSFVec2d yRange;
+    SoSFVec3d steps;
+    SoSFVec3i32 divisions;
+    SoSFVec3d min;
+    SoSFVec3d max;
 
     SoSFString file;
 };

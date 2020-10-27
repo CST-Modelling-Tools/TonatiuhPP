@@ -1,0 +1,15 @@
+print("azimuth [deg], elevation[deg], efficiency");
+var wMax = 2.25*2.25*155*1000;
+var azimuth = 180; 
+for (var elevation = 10; elevation <= 90; elevation += 20) 
+{
+	// set azimuth and elevation of the sun in degrees
+	var sp = NodeObject().getScene().getPart("world.sun.position");
+	sp.setParameter("azimuth", azimuth);
+	sp.setParameter("elevation", elevation);
+	
+	// find power intercepted by a node using a given number of rays
+	var w = tn.FindInterception("//Node/Script/Receiver/Plate/Shape", 1e6);
+	var eta = w/wMax;
+	print("" + azimuth + ", " + elevation + ", " + eta);
+}
