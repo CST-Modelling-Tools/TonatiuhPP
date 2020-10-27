@@ -47,7 +47,7 @@ Version: ${VERSION_NAME} (${DATE_NAME})\
 !insertmacro MUI_PAGE_WELCOME
 
 
-!insertmacro MUI_PAGE_LICENSE "license.txt"
+!insertmacro MUI_PAGE_LICENSE "../portable/help/license.txt"
 
 
 #!define MUI_TEXT_COMPONENTS_TITLE "Components"
@@ -180,9 +180,9 @@ Section "Tonatiuh" SectionTonatiuh
 	!ifdef ISBUILDTEST
 		File /r "bin*"
 	!else
-		File /r "..\packages\main\data\bin*"
+		File /r "..\portable\bin*"
 	!endif
-	File /r "..\packages\main\data\images*"
+	File /r "..\portable\images*"
 
     WriteRegStr HKCU "Software\${APP_NAME}\${EDITION_NAME}" "" $INSTDIR
 	WriteRegStr HKCU "${REG_KEY_UNINSTALL}" "DisplayName" $AppNameFull
@@ -239,7 +239,7 @@ Section "Examples" SectionExamples
 	!ifdef ISBUILDTEST
 		File /r "examples*"
 	!else
-		File /r "..\packages\main\data\examples*"
+		File /r "..\portable\examples*"
 	!endif
 
 	#!insertmacro MUI_STARTMENU_WRITE_BEGIN pageApplication
@@ -259,7 +259,7 @@ Section "Documentation" SectionDocumentations
 	!ifdef ISBUILDTEST
 		File /r "examples*"
 	!else
-		File /r "..\packages\main\data\help*"
+		File /r "..\portable\help*"
 	!endif
 
 	#!insertmacro MUI_STARTMENU_WRITE_BEGIN pageApplication

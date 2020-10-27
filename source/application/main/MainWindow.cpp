@@ -21,6 +21,7 @@
 #include <QElapsedTimer>
 #include <QPushButton>
 #include <QDebug>
+#include <QShortCut>
 
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/actions/SoGetBoundingBoxAction.h>
@@ -430,6 +431,11 @@ void MainWindow::SetupTriggers()
     connect(ui->actionFileSaveAs, SIGNAL(triggered()), this, SLOT(fileSaveAs()) );
     connect(ui->actionFileExit, SIGNAL(triggered()), this, SLOT(close()) );
 
+//    ui->menuFileRecent->menuAction()->setShortcut(QKeySequence("Ctrl+Alt+O"));
+//    connect(ui->menuFileRecent->menuAction(), SIGNAL(triggered()), this, SLOT(showOpenRecent()));
+    QShortcut* fileshortcut = new QShortcut(QKeySequence("Ctrl+Alt+O"), this);
+    connect(fileshortcut, SIGNAL(activated()), this, SLOT(showOpenRecent()));
+
     // edit
     connect(ui->actionEditUndo, SIGNAL(triggered()), m_undoStack, SLOT(undo()) );
     connect(ui->actionEditRedo, SIGNAL(triggered()), m_undoStack, SLOT(redo()) );
@@ -657,6 +663,25 @@ void MainWindow::fileOpenRecent()
         QString fileName = action->data().toString();
         StartOver(fileName);
     }
+}
+
+void MainWindow::showOpenRecent()
+{
+//    ui->menuFile->show();
+//    ui->menuFileRecent->popup(QPoint(0, 0));
+//    ui->menuFileRecent->show();
+
+//    ui->menubar->setActiveAction(ui->menuFile->menuAction());
+//    ui->menuFile->setActiveAction(ui->menuFileRecent->menuAction());
+//    QPoint p = ui->menuFileRecent->pos();
+//    ui->menuFileRecent->hide();
+//    ui->menuFile->setActiveAction(ui->actionFileNew);
+//    ui->menuFile->setActiveAction(ui->actionFileOpen);
+
+    ui->menuFileRecent->popup(mapToGlobal(ui->menubar->geometry().bottomLeft()));
+//    ui->menubar->setActiveAction(ui->menuFileRecent->menuAction());
+
+//    ui->menubar->setActiveAction(ui->menuFileRecent->menuAction());
 }
 
 /*!
@@ -2574,8 +2599,8 @@ bool MainWindow::StartOver(const QString& fileName)
 //    Select("//Node"); // ?
 //    on_actionViewAll_triggered(); // discard sun
 
-    GridNode* node = (GridNode*) m_document->getSceneKit()->getPart("world.terrain.grid", true);
-    if (node) ui->actionViewGrid->setChecked(node->show.getValue());
+//    GridNode* node = (GridNode*) m_document->getSceneKit()->getPart("world.terrain.grid", true);
+//    if (node) ui->actionViewGrid->setChecked(node->show.getValue());
     return true;
 }
 

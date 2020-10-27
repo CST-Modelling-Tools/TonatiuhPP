@@ -13,13 +13,13 @@ GridNode::GridNode()
     SO_NODE_CONSTRUCTOR(GridNode);
     isBuiltIn = TRUE;
 
-    SO_NODE_ADD_FIELD(show, (TRUE) );
+    SO_NODE_ADD_FIELD(grid, (TRUE) );
     SO_NODE_ADD_FIELD(fill, (TRUE) );
 
-    SO_NODE_ADD_FIELD(step, (1.) );
-    SO_NODE_ADD_FIELD(divisions, (5) );
-    SO_NODE_ADD_FIELD(xRange, (SbVec2d(-10., 10.)) );
-    SO_NODE_ADD_FIELD(yRange, (SbVec2d(-10., 10.)) );
+    SO_NODE_ADD_FIELD(steps, ( SbVec3d(1., 1., 1.) ));
+    SO_NODE_ADD_FIELD(divisions, ( SbVec3i32(5, 5, 5) ));
+    SO_NODE_ADD_FIELD(min, ( SbVec3d(-10., -10., 0.) ));
+    SO_NODE_ADD_FIELD(max, ( SbVec3d(10., 10., 0.) ));
 
     SO_NODE_ADD_FIELD(file, ("") );
 

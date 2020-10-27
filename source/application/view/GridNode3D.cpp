@@ -15,8 +15,15 @@
 #include <Inventor/nodes/SoNormal.h>
 #include <Inventor/nodes/SoLineSet.h>
 #include <Inventor/nodes/SoIndexedFaceSet.h>
+#include <Inventor/nodes/SoCube.h>
 
+#include <QApplication>
+#include <QDir>
 #include <Inventor/nodes/SoShaderProgram.h>
+#include <Inventor/nodes/SoVertexShader.h>
+#include <Inventor/nodes/SoShaderParameter.h>
+#include <Inventor/nodes/SoFragmentShader.h>
+#include <Inventor/annex/FXViz/nodes/SoShadowStyle.h>
 
 #include <Inventor/sensors/SoNodeSensor.h>
 
@@ -25,6 +32,7 @@ GridNode3D::GridNode3D()
 {
     m_grid = new SoSwitch;
     m_grid->setName("grid");
+    m_grid->whichChild = SO_SWITCH_ALL;
     addChild(m_grid);
 
     m_sensor = new SoNodeSensor(update, this);
@@ -46,117 +54,124 @@ void GridNode3D::create()
 {
     // grid parameters
     GridNode* grid = (GridNode*) m_sensor->getAttachedNode();
-    double dx = grid->step.getValue();
-    int divs = grid->divisions.getValue();
 
-    double xMin = grid->xRange.getValue()[0];
-    double xMax = grid->xRange.getValue()[1];
+    double dx = grid->steps.getValue()[0];
+    int divsX = grid->divisions.getValue()[0];
+    double xMin = grid->min.getValue()[0];
+    double xMax = grid->max.getValue()[0];
     int nxMin = floor(xMin/dx);
     int nxMax = ceil(xMax/dx);
     xMin = nxMin*dx;
     xMax = nxMax*dx;
 
-    double yMin = grid->yRange.getValue()[0];
-    double yMax = grid->yRange.getValue()[1];
-    int nyMin = floor(yMin/dx);
-    int nyMax = ceil(yMax/dx);
-    yMin = nyMin*dx;
-    yMax = nyMax*dx;
+    double dy = grid->steps.getValue()[1];
+    int divsY = grid->divisions.getValue()[1];
+    double yMin = grid->min.getValue()[1];
+    double yMax = grid->max.getValue()[1];
+    int nyMin = floor(yMin/dy);
+    int nyMax = ceil(yMax/dy);
+    yMin = nyMin*dy;
+    yMax = nyMax*dy;
+
+    double zMean = (grid->min.getValue()[2] + grid->max.getValue()[2])/2;
 
     // init
     m_grid->removeAllChildren();
-    m_grid->whichChild = grid->show.getValue() ? SO_SWITCH_ALL : SO_SWITCH_NONE;
-//    SoTransform* transform = new SoTransform;
-//    transform->translation.setValue(0., 0., 0*-0.01);
-//    m_grid->addChild(transform);
-
-    // ground
-    if (grid->fill.getValue())
-        makeGround(xMin, xMax, yMin, yMax);
+//    m_grid->whichChild = grid->show.getValue() ? SO_SWITCH_ALL : SO_SWITCH_NONE;
 
     // terrain
     QString fileName = grid->file.getValue().getString();
-    if (!fileName.isEmpty())
+    if (!fileName.isEmpty()) {
         makeTerrain(fileName);
-
-    // points
-    QVector<SbVec3f> pointsMajor;
-    QVector<SbVec3f> pointsMinor;
-    QVector<int> sizesMajor;
-    QVector<int> sizesMinor;
-
-    for (int n = nxMin; n <= nxMax; ++n) {
-        double x = n*dx;
-        if (n % divs == 0) {
-            if (n == 0) continue;
-            pointsMajor << SbVec3f(x, yMin, 0.);
-            pointsMajor << SbVec3f(x, yMax, 0.);
-            sizesMajor << 2;
-        } else {
-            pointsMinor << SbVec3f(x, yMin, 0.);
-            pointsMinor << SbVec3f(x, yMax, 0.);
-            sizesMinor << 2;
-        }
+        return;
     }
 
-    for (int n = nyMin; n <= nyMax; ++n) {
-        double y = n*dx;
-        if (n % divs == 0) {
-            if (n == 0) continue;
-            pointsMajor << SbVec3f(xMin, y, 0.);
-            pointsMajor << SbVec3f(xMax, y, 0.);
-            sizesMajor << 2;
-        } else {
-            pointsMinor << SbVec3f(xMin, y, 0.);
-            pointsMinor << SbVec3f(xMax, y, 0.);
-            sizesMinor << 2;
+    // fill
+    if (grid->fill.getValue())
+        makeGround(xMin, xMax, yMin, yMax, zMean);
+
+    // grid
+    if (grid->grid.getValue())
+    {
+        // points
+        QVector<SbVec3f> pointsMajor;
+        QVector<SbVec3f> pointsMinor;
+        QVector<int> sizesMajor;
+        QVector<int> sizesMinor;
+
+        for (int n = nxMin; n <= nxMax; ++n) {
+            double x = n*dx;
+            if (n % divsX == 0) {
+                if (n == 0) continue;
+                pointsMajor << SbVec3f(x, yMin, zMean);
+                pointsMajor << SbVec3f(x, yMax, zMean);
+                sizesMajor << 2;
+            } else {
+                pointsMinor << SbVec3f(x, yMin, zMean);
+                pointsMinor << SbVec3f(x, yMax, zMean);
+                sizesMinor << 2;
+            }
         }
+
+        for (int n = nyMin; n <= nyMax; ++n) {
+            double y = n*dy;
+            if (n % divsY == 0) {
+                if (n == 0) continue;
+                pointsMajor << SbVec3f(xMin, y, zMean);
+                pointsMajor << SbVec3f(xMax, y, zMean);
+                sizesMajor << 2;
+            } else {
+                pointsMinor << SbVec3f(xMin, y, zMean);
+                pointsMinor << SbVec3f(xMax, y, zMean);
+                sizesMinor << 2;
+            }
+        }
+
+        // major grid
+        SoMaterial* sMaterial = new SoMaterial;
+        sMaterial->diffuseColor.setValue(0., 0., 0.);
+        sMaterial->transparency = 0.8;
+        m_grid->addChild(sMaterial);
+
+        SoCoordinate3* sPoints = new SoCoordinate3;
+        sPoints->point.setValues(0, pointsMajor.size(), pointsMajor.data());
+        m_grid->addChild(sPoints);
+
+        SoLineSet* sLines = new SoLineSet;
+        sLines->numVertices.setValues(0, sizesMajor.size(), sizesMajor.data());
+        m_grid->addChild(sLines);
+
+        // minor grid
+        sMaterial = new SoMaterial;
+        sMaterial->diffuseColor.setValue(0., 0., 0.);
+        sMaterial->transparency = 0.95;
+        m_grid->addChild(sMaterial);
+
+        sPoints = new SoCoordinate3;
+        sPoints->point.setValues(0, pointsMinor.size(), pointsMinor.data());
+        m_grid->addChild(sPoints);
+
+        sLines = new SoLineSet;
+        sLines->numVertices.setValues(0, sizesMinor.size(), sizesMinor.data());
+        m_grid->addChild(sLines);
+
+        // axes
+        makeAxes(xMin - dx, xMax + dx, yMin - dy, yMax + dy, zMean);
     }
-
-    // major grid
-    SoMaterial* sMaterial = new SoMaterial;
-    sMaterial->diffuseColor.setValue(0., 0., 0.);
-    sMaterial->transparency = 0.8;
-    m_grid->addChild(sMaterial);
-
-    SoCoordinate3* sPoints = new SoCoordinate3;
-    sPoints->point.setValues(0, pointsMajor.size(), pointsMajor.data());
-    m_grid->addChild(sPoints);
-
-    SoLineSet* sLines = new SoLineSet;
-    sLines->numVertices.setValues(0, sizesMajor.size(), sizesMajor.data());
-    m_grid->addChild(sLines);
-
-    // minor grid
-    sMaterial = new SoMaterial;
-    sMaterial->diffuseColor.setValue(0., 0., 0.);
-    sMaterial->transparency = 0.95;
-    m_grid->addChild(sMaterial);
-
-    sPoints = new SoCoordinate3;
-    sPoints->point.setValues(0, pointsMinor.size(), pointsMinor.data());
-    m_grid->addChild(sPoints);
-
-    sLines = new SoLineSet;
-    sLines->numVertices.setValues(0, sizesMinor.size(), sizesMinor.data());
-    m_grid->addChild(sLines);
-
-    // axes
-    makeAxes(xMin - dx, xMax + dx, yMin - dx, yMax + dx);
 }
 
-void GridNode3D::makeAxes(double xMin, double xMax, double yMin, double yMax)
+void GridNode3D::makeAxes(double xMin, double xMax, double yMin, double yMax, double zMean)
 {
     // axes
     QVector<SbVec3f> points;
     QVector<int> sizes;
 
-    points << SbVec3f(xMin, 0., 0.);
-    points << SbVec3f(xMax, 0., 0.);
+    points << SbVec3f(xMin, 0., zMean);
+    points << SbVec3f(xMax, 0., zMean);
     sizes << 2;
 
-    points << SbVec3f(0., yMin, 0.);
-    points << SbVec3f(0., yMax, 0.);
+    points << SbVec3f(0., yMin, zMean);
+    points << SbVec3f(0., yMax, zMean);
     sizes << 2;
 
     SoMaterial* sMaterial = new SoMaterial;
@@ -177,23 +192,21 @@ void GridNode3D::makeAxes(double xMin, double xMax, double yMin, double yMax)
     m_grid->addChild(sLines);
 }
 
-void GridNode3D::makeGround(double xMin, double xMax, double yMin, double yMax)
+void GridNode3D::makeGround(double xMin, double xMax, double yMin, double yMax, double zMean)
 {
     SoShapeKit* kit = new SoShapeKit;
 
     float sv[][3] = {
-        {float(xMin), float(yMin), 0.},
-        {float(xMax), float(yMin), 0.},
-        {float(xMax), float(yMax), 0.},
-        {float(xMin), float(yMax), 0.}
+        {float(xMin), float(yMin), float(zMean)},
+        {float(xMax), float(yMin), float(zMean)},
+        {float(xMax), float(yMax), float(zMean)},
+        {float(xMin), float(yMax), float(zMean)}
     };
     SoCoordinate3* sVertices = new SoCoordinate3;
     sVertices->point.setValues(0, 4, sv);
     kit->setPart("coordinate3", sVertices);
 
-    int faces[] = {
-        0, 1, 2, 3, -1
-    };
+    int faces[] = {0, 1, 2, 3, -1};
     SoIndexedFaceSet* sMesh = new SoIndexedFaceSet;
     sMesh->coordIndex.setValues(0, 5, faces);
     kit->setPart("shape", sMesh);
@@ -228,6 +241,8 @@ void GridNode3D::makeGround(double xMin, double xMax, double yMin, double yMax)
 #include <QMessageBox>
 void GridNode3D::makeTerrain(QString fileName)
 {
+    GridNode* grid = (GridNode*) m_sensor->getAttachedNode();
+
     fileName = QString("project:") + fileName;
     QFileInfo info(fileName);
     if (info.suffix() != "obj") {
@@ -302,18 +317,12 @@ void GridNode3D::makeTerrain(QString fileName)
     material->specularColor = SbColor(0.02, 0.02, 0.02);
     material->emissiveColor = SbColor(0, 0, 0);
     material->shininess = 0.1;
-//    material->transparency = 0.;
+    material->transparency = 0.001;
     kit->setPart("material", material);
 
     SoCoordinate3* sVertices = new SoCoordinate3;
     sVertices->point.setValues(0, vertices.getNum(), vertices.getValues(0));
     kit->setPart("coordinate3", sVertices);
-
-//    SoShapeHints* sHints = new SoShapeHints;
-//    sHints->shapeType = SoShapeHints::SOLID;
-//    sHints->vertexOrdering = SoShapeHints::COUNTERCLOCKWISE;
-//    sHints->creaseAngle = 30*gcf::degree;
-//    shapeKit->setPart("shapeHints", sHints);
 
     SoNormal* sNormals = new SoNormal;
     sNormals->vector.setValues(0, normals.getNum(), normals.getValues(0));
@@ -324,9 +333,51 @@ void GridNode3D::makeTerrain(QString fileName)
     sMesh->normalIndex.setValues(0, facesNormals.getNum(), facesNormals.getValues(0));
     kit->setPart("shape", sMesh);
 
-    SoSeparator* sep = new SoSeparator;
-    sep->addChild(kit);
+    // shaders
+    QDir dir(QCoreApplication::applicationDirPath()); // relative to exe file
 
+    SoVertexShader* vs = new SoVertexShader;
+    vs->sourceProgram = dir.filePath("../images/terrain_vs.glsl").toLatin1().data();
+
+    SoFragmentShader* fs = new SoFragmentShader;
+    fs->sourceProgram = dir.filePath("../images/terrain_fs.glsl").toLatin1().data();
+
+    SoShaderParameter3f* paramSteps = new SoShaderParameter3f;
+    paramSteps->name = "steps";
+    paramSteps->value = SbVec3f(grid->steps.getValue());
+    fs->parameter.addNode(paramSteps);
+
+    SoShaderParameter3i* paramDivs = new SoShaderParameter3i;
+    paramDivs->name = "divs";
+    paramDivs->value = grid->divisions.getValue();
+    fs->parameter.addNode(paramDivs);
+
+    SoShaderProgram* shaderProgram = new SoShaderProgram;
+    shaderProgram->shaderObject.addNode(vs);
+    shaderProgram->shaderObject.addNode(fs);
+
+    SoShapeHints* sHintsA = new SoShapeHints;
+    sHintsA->shapeType = SoShapeHints::SOLID;
+    sHintsA->vertexOrdering = SoShapeHints::COUNTERCLOCKWISE;
+//    sHintsA->creaseAngle = 30*gcf::degree;
+
+    SoShapeHints* sHintsB = new SoShapeHints;
+    sHintsB->shapeType = SoShapeHints::UNKNOWN_SHAPE_TYPE;
+
+    SoShadowStyle* style = new SoShadowStyle;
+    style->style = SoShadowStyleElement::NO_SHADOWING;
+
+    SoSeparator* sep = new SoSeparator;
+    if (grid->fill.getValue()) {
+        sep->addChild(sHintsA);
+        sep->addChild(kit);
+    }
+    if (grid->grid.getValue()) {
+        sep->addChild(sHintsB);
+        sep->addChild(style);
+        sep->addChild(shaderProgram);
+        sep->addChild(kit);
+    }
     m_grid->addChild(sep);
 }
 

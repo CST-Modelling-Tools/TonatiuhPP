@@ -43,7 +43,7 @@ COPY %QT%\plugins\imageformats\qico.dll %DATA%\bin\imageformats\qico.dll
 COPY %QT%\plugins\imageformats\qjpeg.dll %DATA%\bin\imageformats\qjpeg.dll
 
 MD %DATA%\examples
-XCOPY %PROJECT%\examples %DATA%\examples /E
+XCOPY %PROJECT%\examples %DATA%\examples /e /exclude:exclude.txt
 
 MD %DATA%\images
 XCOPY %PROJECT%\images %DATA%\images /E

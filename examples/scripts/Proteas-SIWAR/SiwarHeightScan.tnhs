@@ -1,5 +1,5 @@
 var file = FileObject();
-file.readCSV("heliostats.csv");
+file.readCSV("../examples/scripts/heliostats.csv");
 
 
 function makeHeliostat(parent, name, position, aiming, focus)
@@ -243,23 +243,27 @@ function makeField()
 	sp.setParameter("elevation", 90. - 11.27182);
 
 	var sa = scene.getPart("world.sun.aperture");
-	sa.setParameter("disabledNodes", "//Node/Script/Ground");
+	sa.setParameter("disabledNodes", "");
+
+	var cm = scene.getPart("world.camera");
+	cm.setParameter("position", "-105.303 -119.109 117.728");
+	cm.setParameter("rotation", "33.9011 -31.417");
+
+	var tg = scene.getPart("world.terrain.grid");
+	tg.setParameter("steps", "5 5 5");
+	tg.setParameter("min", "-50 -25 0");
+	tg.setParameter("max", "50 100 0");
 }
 
 
-var zReceiver = 25;
-var vRec = "0.0467 -2.0216 " + zReceiver;
-
-tn.Clear();
-makeField();
-
-var scene = NodeObject().getScene();
-
-var cm = scene.getPart("world.camera");
-cm.setParameter("position", "-105.303 -119.109 117.728");
-cm.setParameter("rotation", "33.9011 -31.417");
-
-var tg = scene.getPart("world.terrain.grid");
-tg.setParameter("step", "5");
-tg.setParameter("xRange", "-50 50");
-tg.setParameter("yRange", "-25 100");
+var wMax = 2.25*2.25*155*1000;
+print("height [m], efficiency");
+for (var h = 10; h <= 30; h += 2)
+{
+	var zReceiver = h;
+	var vRec = "0.0467 -2.0216 " + zReceiver;
+	makeField();
+	var w = tn.FindInterception("//Node/Script/Receiver/Plate/Shape", 100000);
+	w /= wMax;
+	print("" + h + ", " + w);
+}
