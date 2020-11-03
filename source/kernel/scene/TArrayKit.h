@@ -12,7 +12,9 @@
 
 class SoFieldSensor;
 class SoSensor;
-
+class SoShaderParameterMatrix;
+class SoShaderParameter1i;
+class SoIndexedFaceSetT;
 
 class TONATIUH_KERNEL TArrayKit: public SoNode
 {
@@ -35,6 +37,11 @@ protected:
 
     SoFieldSensor* m_sensor;
     SoSeparator* m_root;
+    SoShaderParameterMatrix* m_vs_matrixViewModel;
+    SoShaderParameterMatrix* m_vs_matrixProjectionViewModel;
+    SoShaderParameter1i* m_vs_stride;
+    SoIndexedFaceSetT* m_mesh;
+
     static void onSensor(void* data, SoSensor*);
     void onSensor();
 

@@ -102,6 +102,8 @@ GraphicRoot::GraphicRoot()
     environment->ambientIntensity = 1.;
     m_root->addChild(environment);
 
+
+//    SoGroup* groupLit = new SoGroup;
     SoShadowGroup* groupLit = new SoShadowGroup;
     groupLit->renderCulling = SoSeparator::OFF;
     groupLit->precision = 1.;
@@ -110,6 +112,7 @@ GraphicRoot::GraphicRoot()
 
     SoTransformSeparator* ts = new SoTransformSeparator;
     ts->addChild(m_sun->getTransform());
+//    SoDirectionalLight* shadow = new SoDirectionalLight;
     SoShadowDirectionalLight* shadow = new SoShadowDirectionalLight;
     shadow->intensity = 1.;
     shadow->direction = SbVec3f(0., 0., 1.);
@@ -122,6 +125,11 @@ GraphicRoot::GraphicRoot()
     m_offset->units = 1.;
     m_offset->on = FALSE;
     groupLit->addChild(m_offset);
+
+    // possibly, inside SoSwitch
+    m_drawStyle = new SoDrawStyle;
+    m_drawStyle->style = SoDrawStyleElement::FILLED;
+    groupLit->addChild(m_drawStyle);
 
     m_selection = new SoSelection;
     m_selection->renderCulling = SoSeparator::OFF;
@@ -146,6 +154,8 @@ GraphicRoot::GraphicRoot()
 
     m_sensor = new SoFieldSensor(update, this);
     m_sensor->setPriority(0);
+
+    m_materialOn = true;
 }
 
 GraphicRoot::~GraphicRoot()
@@ -240,10 +250,13 @@ void GraphicRoot::showPhotons(bool on)
     group->whichChild = on ? SO_SWITCH_ALL : SO_SWITCH_NONE;
 }
 
-void GraphicRoot::showMesh(bool on)
+void GraphicRoot::setDrawStyle(bool materialOn, bool meshOn)
 {
-    m_offset->on = on;
-    m_sepStyle->showMesh = on;
+//    m_groupLitSwitch->whichChild = materialOn ? SO_SWITCH_ALL : SO_SWITCH_NONE;
+    m_drawStyle->style = materialOn ? SoDrawStyleElement::FILLED : SoDrawStyleElement::INVISIBLE;
+
+    m_offset->on = meshOn;
+    m_sepStyle->showMesh = meshOn;
 }
 
 void GraphicRoot::enableSelection(bool on)

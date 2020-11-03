@@ -170,10 +170,11 @@ private slots:
     void on_actionQuadView_toggled();
     void on_actionRunScript_triggered();
 
-    void on_actionDocumentation_triggered();
-    void on_actionExamples_triggered();
-    void on_actionScripts_triggered();
-    void on_actionAbout_triggered();
+    // help actions
+    void on_actionHelpDocumentation_triggered();
+    void on_actionHelpExamples_triggered();
+    void on_actionHelpScripts_triggered();
+    void on_actionHelpAbout_triggered();
 
 //    void on_actionViewAxes_toggled();
 //    void on_actionCheckForUpdates_triggered();
@@ -198,7 +199,7 @@ private:
     bool fileSave(const QString& fileName);
     void SetCurrentFile(const QString& filePath);
     bool OkToContinue();
-    bool StartOver(const QString& fileName);
+    bool openFileProject(const QString& fileName);
     void setDocumentModified(bool value);
 
     bool Delete(QModelIndex index);

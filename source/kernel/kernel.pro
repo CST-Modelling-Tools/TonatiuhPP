@@ -5,7 +5,7 @@ DEFINES += TONATIUH_KERNEL_EXPORT
 
 include(../config.pri)
 
-LIBS += -lTonatiuh-Libraries
+LIBS += -lTonatiuh-Libraries -lopengl32
 
 HEADERS += \
     TonatiuhKernel.h \
@@ -46,12 +46,14 @@ HEADERS += \
     scene/MaterialGL.h \
     scene/TArrayKit.h \
     scene/TCameraKit.h \
+#    scene/TIndexedFaceSet.h \
     scene/TPerspectiveCamera.h \
     scene/TSFRotation.h \
     scene/TSceneKit.h \
     scene/TSeparatorKit.h \
     scene/TShapeKit.h \
     scene/TTransform.h \
+#    scene/TVertexArrayIndexer.h \
     scene/TerrainKit.h \
     scene/WorldKit.h \
     shape/DifferentialGeometry.h \
@@ -112,12 +114,14 @@ SOURCES += \
     scene/MaterialGL.cpp \
     scene/TArrayKit.cpp \
     scene/TCameraKit.cpp \
+#    scene/TIndexedFaceSet.cpp \
     scene/TPerspectiveCamera.cpp \
     scene/TSFRotation.cpp \
     scene/TSceneKit.cpp \
     scene/TSeparatorKit.cpp \
     scene/TShapeKit.cpp \
     scene/TTransform.cpp \
+#    scene/TVertexArrayIndexer.cpp \
     scene/TerrainKit.cpp \
     scene/WorldKit.cpp \
     shape/DifferentialGeometry.cpp \

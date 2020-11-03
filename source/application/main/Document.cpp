@@ -36,6 +36,9 @@ void Document::New()
  */
 bool Document::ReadFile(const QString& fileName)
 {
+    if (fileName.isEmpty())
+        return false;
+
     SoInput input;
 
     if (!input.openFile(fileName.toLatin1().data()))

@@ -180,6 +180,7 @@ void GridNode3D::makeAxes(double xMin, double xMax, double yMin, double yMax, do
     m_grid->addChild(sMaterial);
 
     SoDrawStyle* sStyle = new SoDrawStyle;
+    sStyle->style = SoDrawStyleElement::LINES;
     sStyle->lineWidth = 1.5;
     m_grid->addChild(sStyle);
 
@@ -226,6 +227,11 @@ void GridNode3D::makeGround(double xMin, double xMax, double yMin, double yMax, 
     po->factor = 1.;
     po->units = 1.;
     m_grid->addChild(po);
+
+    // to show in mesh mode
+    SoDrawStyle* drawStyle = new SoDrawStyle;
+    drawStyle->style = SoDrawStyleElement::FILLED;
+    m_grid->addChild(drawStyle);
 
     // cull from bottom
     SoShapeHints* hints = new SoShapeHints;

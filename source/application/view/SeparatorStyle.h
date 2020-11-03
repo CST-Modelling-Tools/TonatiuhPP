@@ -17,10 +17,12 @@ public:
    ~SeparatorStyle();
 
     SoSeparator* m_root;
+    bool showMesh;
+
+protected:
     SoSwitch* sWires;
     SoDrawStyle* wireStyle;
 
-    bool showMesh;
    // SoNode interface
 public:
    void GLRender(SoGLRenderAction* action);
