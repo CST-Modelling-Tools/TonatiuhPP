@@ -22,6 +22,7 @@ SeparatorStyle::SeparatorStyle()
     SO_NODE_CONSTRUCTOR(SeparatorStyle);
 
     m_root = new SoSeparator;
+    m_root->pickCulling = SoSeparator::ON;
     m_root->ref();
 
     sWires = new SoSwitch;

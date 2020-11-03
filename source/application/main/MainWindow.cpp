@@ -287,6 +287,11 @@ void MainWindow::SetupGraphicView()
     m_graphicView[0]->setSceneGraph(m_graphicsRoot);
     m_graphicView[0]->m_window = this;
 
+    //    int q = 150*fontMetrics().xHeight();
+    //    QList<int> sizes = {rect.width() - q, q};
+//        QList<int> sizes = {500, 100, 100};
+    ui->splitterH->setStretchFactor(0, 1);
+
     connect(
         m_modelSelection, SIGNAL(currentChanged(QModelIndex,QModelIndex)),
         m_graphicView[0], SLOT(currentChanged(QModelIndex,QModelIndex))
@@ -297,8 +302,9 @@ void MainWindow::SetupGraphicView()
 //    delete splitter->widget(0);
 //    splitter->insertWidget(0, m_graphicView[0]);
 
-    QList<int> sizes = {700, 200};
-    ui->splitterH->setSizes(sizes);
+//    int q = 100*fontMetrics().xHeight();
+//    QList<int> sizes = {ui->splitterH->width() - q, q};
+//    ui->splitterH->setSizes(sizes);
 
 /*
     QSplitter* splitter = ui->splitterH;

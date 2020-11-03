@@ -131,19 +131,24 @@ GraphicRoot::GraphicRoot()
     m_drawStyle->style = SoDrawStyleElement::FILLED;
     groupLit->addChild(m_drawStyle);
 
+    m_groupStyle = new SoGroup;
+    groupLit->addChild(m_groupStyle);
+
     m_selection = new SoSelection;
     m_selection->renderCulling = SoSeparator::OFF;
     m_selection->policy = SoSelection::SINGLE;
     m_selection->addFinishCallback(selectionFinishCallback, (void*) this);
-    groupLit->addChild(m_selection);
+    m_groupStyle->addChild(m_selection);
 
     m_sepStyle = new SeparatorStyle;
-    m_sepStyle->m_root->addChild(m_selection);
+    m_sepStyle->m_root->addChild(m_groupStyle);
     m_root->addChild(m_sepStyle);
 
     m_grid = new GridNode3D; // better here for antialiasing
-    m_grid->renderCulling = SoSeparator::OFF;
-    groupLit->addChild(m_grid);
+//    m_grid->pickCulling = SoSeparator::ON; // disable selections
+//    m_grid->renderCulling = SoSeparator::OFF;
+//    groupLit->addChild(m_grid);
+    m_groupStyle->addChild(m_grid);
 
     m_rays = new SoSeparator; // order important for antialiasing
     m_root->addChild(m_rays);

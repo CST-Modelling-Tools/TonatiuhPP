@@ -45,7 +45,8 @@ GridNode3D::~GridNode3D()
 
 void GridNode3D::attach(GridNode* grid)
 {
-    m_sensor->detach();
+    if (m_sensor->getAttachedNode())
+        m_sensor->detach();
     m_sensor->attach(grid);
     create();
 }

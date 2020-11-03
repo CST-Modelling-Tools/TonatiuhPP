@@ -11,6 +11,7 @@ class SceneTreeView: public QTreeView
 
 public:
     SceneTreeView(QWidget* parent = 0);
+    QSize sizeHint() const;
 
 signals:
     void nodeRenamed(const QModelIndex& index, const QString& newName);

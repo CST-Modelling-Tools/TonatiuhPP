@@ -3,24 +3,24 @@ function makeHeliostat(parent, name, position, aiming, focus)
 	var n = parent.createNode(name);
 	n.setParameter("translation", position);
 
-	t = n.createTracker();
+	var t = n.createTracker();
 	var tt = t.getPart("target");
 	tt.setParameter("aimingPoint", aiming);
 
 	n = n.createNode("primary");
 	n = n.createNode("secondary");
 	n = n.createNode("facet");
-	s = n.createShape();
+	var s = n.createShape();
 
-	q = s.insertSurface("Parabolic");
+	var q = s.insertSurface("Parabolic");
 	q.setParameter("fX", focus);
 	q.setParameter("fY", focus);
 
-	p = s.insertProfile("Box");
+	var p = s.insertProfile("Box");
 	p.setParameter("uSize", 2.);
 	p.setParameter("vSize", 2.);
 
-	m = s.insertMaterial("Specular");
+	var m = s.insertMaterial("Specular");
 	m.setParameter("slope", "0.002");
 	
 	var mG = s.getPart("material");
@@ -30,69 +30,87 @@ function makeHeliostat(parent, name, position, aiming, focus)
 	mG.setParameter("shininess", "0.5");
 }
 
-nodeRoot = NodeObject();
-nodeRoot.setName("Script");
+function makeTower(parent)
+{
+	var nodeTower = parent.createNode("Tower");
 
-printTimed("Tower");
-nodeTower = nodeRoot.createNode("Tower");
+	var n = nodeTower.createNode("Base");
+	n.setParameter("translation", "0 0 10");
+	n.setParameter("scale", "1 1 20");
+	var s = n.createShape();
+	var q = s.insertSurface("Cylinder");
+	var mG = s.getPart("material");
+	mG.setParameter("ambientColor", "0.5 0.5 0.5");
+	mG.setParameter("diffuseColor", "0.5 0.5 0.5");
 
-n = nodeTower.createNode("Base");
-n.setParameter("translation", "0 0 10");
-n.setParameter("scale", "1 1 20");
-s = n.createShape();
-q = s.insertSurface("Cylinder");
-//mG = s.getPart("material");
-//mG.setParameter("ambientColor", "1 1 1");
-//mG.setParameter("diffuseColor", "0.5 0.5 0.5");
+	n = nodeTower.createNode("Receiver");
+	n.setParameter("translation", "0 0 21.5");
+	n.setParameter("scale", "1 1 3");
+	s = n.createShape();
+	q = s.insertSurface("Cylinder");
+	mG = s.getPart("material");
+	mG.setParameter("emissiveColor", "1 1 1")
 
-n = nodeTower.createNode("Receiver");
-n.setParameter("translation", "0 0 21.5");
-n.setParameter("scale", "1 1 3");
-s = n.createShape();
-q = s.insertSurface("Cylinder");
-mG = s.getPart("material");
-mG.setParameter("emissiveColor", "1 1 1")
+	n = nodeTower.createNode("Cap");
+	n.setParameter("translation", "0 0 23");
+	n.setParameter("scale", "1 1 1");
+	s = n.createShape();
+	q = s.insertSurface("Planar");
+	var p = s.insertProfile("Circular");
+	p.setParameter("rMax", 1.);
+	mG = s.getPart("material");
+	mG.setParameter("ambientColor", "0.5 0.5 0.5");
+	mG.setParameter("diffuseColor", "0.2 0.2 0.2");
+}
 
-n = nodeTower.createNode("Cap");
-n.setParameter("translation", "0 0 23");
-n.setParameter("scale", "1 1 1");
-s = n.createShape();
-q = s.insertSurface("Planar");
-p = s.insertProfile("Circular");
-p.setParameter("rMax", "1");
-//mG = s.getPart("material");
-//mG.setParameter("ambientColor", "1 1 1");
-//mG.setParameter("diffuseColor", "0.5 0.5 0.5");
-
-printTimed("Heliostats");
-nodeHeliostats = nodeRoot.createNode("Heliostats");
-iMax = 20/2;
-count = 1;
-for (i = -iMax; i <= iMax; i++) {
-	printTimed("row " + i);
-	nodeTemp = nodeHeliostats.createNode("Row" + i);
-	for (j = -iMax; j <= iMax; j++) {
-		name = "H_" + count;
-		x = 5*i;
-		y = 5*j;
-		z = 0.; 
-		rho = Math.sqrt(x*x + y*y);
-		if (rho < 10.) continue;
-		position = "" + x + " " + y + " " + z;
-		
-		xA = x/rho;
-		yA = y/rho;
-		zA = 21.5;
-		aiming = "" + xA + " " + yA + " " + zA;
+function makeField(parent)
+{
+	nodeHeliostats = parent.createNode("Heliostats");
+	iMax = 20/2;
+	count = 1;
+	for (i = -iMax; i <= iMax; i++) {
+		printTimed("row " + i);
+		nodeTemp = nodeHeliostats.createNode("Row" + i);
+		for (j = -iMax; j <= iMax; j++) {
+			name = "H_" + count;
+			x = 5*i;
+			y = 5*j;
+			z = 0.; 
+			rho = Math.sqrt(x*x + y*y);
+			if (rho < 10.) continue;
+			position = "" + x + " " + y + " " + z;
 			
-		focus = Math.sqrt((xA - x)*(xA - x) + (yA - y)*(yA - y) + (zA - z)*(zA - z));
-		makeHeliostat(nodeTemp, name, position, aiming, focus);
-		count++;
+			xA = x/rho;
+			yA = y/rho;
+			zA = 21.5;
+			aiming = "" + xA + " " + yA + " " + zA;
+				
+			focus = Math.sqrt((xA - x)*(xA - x) + (yA - y)*(yA - y) + (zA - z)*(zA - z));
+			makeHeliostat(nodeTemp, name, position, aiming, focus);
+			count++;
+		}
 	}
 }
 
+nodeRoot = NodeObject();
+nodeRoot.setName("Script");
+makeTower(nodeRoot);
+makeField(nodeRoot);
+
+tn.Clear();
 tn.InsertScene(nodeRoot);
 
-var sp = NodeObject().getScene().getPart("world.sun.position");
+var scene = NodeObject().getScene();
+
+var sp = scene.getPart("world.sun.position");
 sp.setParameter("azimuth", 180);
 sp.setParameter("elevation", 60);
+
+var cm = scene.getPart("world.camera");
+cm.setParameter("position", "-142.065 -212.839 159.843");
+cm.setParameter("rotation", "33.5 -31.5");
+
+var tg = scene.getPart("world.terrain.grid");
+tg.setParameter("steps", "10 10 1");
+tg.setParameter("min", "-100 -100 0");
+tg.setParameter("max", "100 100 0");

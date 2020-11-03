@@ -74,6 +74,7 @@ private:
     SoPolygonOffset* m_offset;
     SoDrawStyle* m_drawStyle;
     bool m_materialOn;
+    SoGroup* m_groupStyle;
 
     TSceneKit* m_scene;
     SoFieldSensor* m_sensor;
