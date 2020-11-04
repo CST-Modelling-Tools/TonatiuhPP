@@ -246,6 +246,8 @@ void GridNode3D::makeGround(double xMin, double xMax, double yMin, double yMax, 
 #include "libraries/auxiliary/tiny_obj_loader.h"
 #include <QFileInfo>
 #include <QMessageBox>
+
+#include <Inventor/nodes/SoDepthBuffer.h>
 void GridNode3D::makeTerrain(QString fileName)
 {
     GridNode* grid = (GridNode*) m_sensor->getAttachedNode();
@@ -374,6 +376,12 @@ void GridNode3D::makeTerrain(QString fileName)
     SoShadowStyle* style = new SoShadowStyle;
     style->style = SoShadowStyleElement::NO_SHADOWING;
 
+    SoDepthBuffer* depth = new SoDepthBuffer;
+    depth->test = true;
+    depth->write = false;
+    depth->function = SoDepthBufferElement::LEQUAL;
+    depth->range.setValue(0., 1.);
+
     SoSeparator* sep = new SoSeparator;
     if (grid->fill.getValue()) {
         sep->addChild(sHintsA);
@@ -381,6 +389,7 @@ void GridNode3D::makeTerrain(QString fileName)
     }
     if (grid->grid.getValue()) {
         sep->addChild(sHintsB);
+        sep->addChild(depth);
         sep->addChild(style);
         sep->addChild(shaderProgram);
         sep->addChild(kit);

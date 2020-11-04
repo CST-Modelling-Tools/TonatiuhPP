@@ -1,3 +1,6 @@
+var heliostatWidth = 2.;
+var heliostatHeight = 2.;
+
 function makeHeliostat(parent, name, position, aiming, focus)
 {
 	var n = parent.createNode(name);
@@ -17,8 +20,8 @@ function makeHeliostat(parent, name, position, aiming, focus)
 	q.setParameter("fY", focus);
 
 	var p = s.insertProfile("Box");
-	p.setParameter("uSize", 2.);
-	p.setParameter("vSize", 2.);
+	p.setParameter("uSize", heliostatWidth);
+	p.setParameter("vSize", heliostatHeight);
 
 	var m = s.insertMaterial("Specular");
 	m.setParameter("slope", "0.002");
@@ -30,13 +33,20 @@ function makeHeliostat(parent, name, position, aiming, focus)
 	mG.setParameter("shininess", "0.5");
 }
 
+var receiverZ = 20.;
+var receiverDiameter = 2.;
+var receierHeight = 3.;
+
 function makeTower(parent)
 {
+	var receiverRadius = receiverDiameter/2.;
+	var baseHeight = receiverZ - receierHeight/2.;
+	
 	var nodeTower = parent.createNode("Tower");
 
 	var n = nodeTower.createNode("Base");
-	n.setParameter("translation", "0 0 10");
-	n.setParameter("scale", "1 1 20");
+	n.setParameter("translation", "0 0 " + baseHeight/2.);
+	n.setParameter("scale", "" + receiverRadius + " " + receiverRadius + " " + baseHeight);
 	var s = n.createShape();
 	var q = s.insertSurface("Cylinder");
 	var mG = s.getPart("material");
@@ -44,16 +54,15 @@ function makeTower(parent)
 	mG.setParameter("diffuseColor", "0.5 0.5 0.5");
 
 	n = nodeTower.createNode("Receiver");
-	n.setParameter("translation", "0 0 21.5");
-	n.setParameter("scale", "1 1 3");
+	n.setParameter("translation", "0 0 " + receiverZ);
+	n.setParameter("scale", "" + receiverRadius + " " + receiverRadius + " " + receierHeight);
 	s = n.createShape();
 	q = s.insertSurface("Cylinder");
 	mG = s.getPart("material");
 	mG.setParameter("emissiveColor", "1 1 1")
 
 	n = nodeTower.createNode("Cap");
-	n.setParameter("translation", "0 0 23");
-	n.setParameter("scale", "1 1 1");
+	n.setParameter("translation", "0 0 " + (receiverZ + receierHeight/2.));
 	s = n.createShape();
 	q = s.insertSurface("Planar");
 	var p = s.insertProfile("Circular");
@@ -63,28 +72,34 @@ function makeTower(parent)
 	mG.setParameter("diffuseColor", "0.2 0.2 0.2");
 }
 
+var rhoMin = 0.75*receiverZ; // exclusion radius 
+var nR = 10;
+var sepX = 5.;
+var sepY = sepX;
+
 function makeField(parent)
 {
+	var receiverRadius = receiverDiameter/2.;
+
 	nodeHeliostats = parent.createNode("Heliostats");
-	iMax = 20/2;
 	count = 1;
-	for (i = -iMax; i <= iMax; i++) {
-		printTimed("row " + i);
-		nodeTemp = nodeHeliostats.createNode("Row" + i);
-		for (j = -iMax; j <= iMax; j++) {
+	for (i = -nR; i <= nR; i++) {
+		var row = i + nR + 1;
+		// printTimed("Row " + row);
+		nodeTemp = nodeHeliostats.createNode("Row" + row);
+		for (j = -nR; j <= nR; j++) {
 			name = "H_" + count;
-			x = 5*i;
-			y = 5*j;
+			x = sepX*i;
+			y = sepY*j;
 			z = 0.; 
 			rho = Math.sqrt(x*x + y*y);
-			if (rho < 10.) continue;
+			if (rho < rhoMin) continue;
 			position = "" + x + " " + y + " " + z;
 			
-			xA = x/rho;
-			yA = y/rho;
-			zA = 21.5;
+			xA = x/rho*receiverRadius;
+			yA = y/rho*receiverRadius;
+			zA = receiverZ;
 			aiming = "" + xA + " " + yA + " " + zA;
-				
 			focus = Math.sqrt((xA - x)*(xA - x) + (yA - y)*(yA - y) + (zA - z)*(zA - z));
 			makeHeliostat(nodeTemp, name, position, aiming, focus);
 			count++;
