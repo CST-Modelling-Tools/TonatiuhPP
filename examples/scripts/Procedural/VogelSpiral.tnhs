@@ -73,7 +73,7 @@ function makeTower(parent)
 }
 
 var rhoMin = 0.75*receiverZ; // exclusion radius 
-var rhoA = 1.; // radial coefficient
+var rhoA = 0.7; // radial coefficient
 var rhoP = 0.65; // radial power
 var phiG = (1. + Math.sqrt(5.))/2.; // golden ratio
 var phiA = 2.*Math.PI*Math.pow(phiG, -2); // angular coefficient

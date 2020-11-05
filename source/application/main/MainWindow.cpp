@@ -701,6 +701,13 @@ void MainWindow::showOpenRecent()
 //    ui->menubar->setActiveAction(ui->menuFileRecent->menuAction());
 }
 
+
+void MainWindow::on_actionFileReopen_triggered()
+{
+    if (!OkToContinue()) return;
+    openFileProject(m_fileName);
+}
+
 /*!
  * Runs complete ray tracer. First defines export settings if they are not defined and then runs ray tracer.
  */

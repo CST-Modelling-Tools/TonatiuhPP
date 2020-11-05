@@ -1,5 +1,7 @@
 var heliostatWidth = 2.;
 var heliostatHeight = 2.;
+var heliostatDistance = Math.sqrt(heliostatWidth*heliostatWidth + heliostatHeight*heliostatHeight); // safety distance between heliostats
+var heliostatZ = 1.5; // mirror center
 
 function makeHeliostat(parent, name, position, aiming, focus)
 {
@@ -74,8 +76,11 @@ function makeTower(parent)
 
 var rhoMin = 0.75*receiverZ; // exclusion radius 
 var nR = 10;
-var sepX = 5.;
-var sepY = sepX;
+
+var degree = Math.PI/180;
+var scale = 1.2;
+var sepX = scale*heliostatDistance;
+var sepY = scale*heliostatDistance;
 
 function makeField(parent)
 {
@@ -91,6 +96,7 @@ function makeField(parent)
 			name = "H_" + count;
 			x = sepX*i;
 			y = sepY*j;
+			//if (j % 2 == 0) x += sepX/2;
 			z = 0.; 
 			rho = Math.sqrt(x*x + y*y);
 			if (rho < rhoMin) continue;

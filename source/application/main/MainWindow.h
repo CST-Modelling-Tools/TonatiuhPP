@@ -129,6 +129,7 @@ private slots:
     void fileOpen();
     void fileOpenRecent();
     void showOpenRecent();
+    void on_actionFileReopen_triggered();
     bool fileSaveAs();
 
     void ChangeNodeName(const QModelIndex& index, const QString& name);

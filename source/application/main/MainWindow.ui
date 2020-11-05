@@ -397,6 +397,7 @@ border:none;
     <addaction name="actionEditPasteLink"/>
     <addaction name="actionEditDelete"/>
     <addaction name="separator"/>
+    <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -404,19 +405,21 @@ border:none;
     </property>
     <widget class="QMenu" name="menuFileRecent">
      <property name="title">
-      <string>Open &amp;Recent</string>
+      <string>O&amp;pen Recent</string>
      </property>
      <property name="icon">
       <iconset resource="../resources.qrc">
-       <normaloff>:/images/file/open.png</normaloff>:/images/file/open.png</iconset>
+       <normaloff>:/images/file/fileOpenRecent.png</normaloff>:/images/file/fileOpenRecent.png</iconset>
      </property>
      <property name="toolTipsVisible">
       <bool>true</bool>
      </property>
     </widget>
     <addaction name="actionFileNew"/>
+    <addaction name="separator"/>
     <addaction name="actionFileOpen"/>
     <addaction name="menuFileRecent"/>
+    <addaction name="actionFileReopen"/>
     <addaction name="separator"/>
     <addaction name="actionFileSave"/>
     <addaction name="actionFileSaveAs"/>
@@ -528,7 +531,7 @@ border:none;
   <action name="actionFileOpen">
    <property name="icon">
     <iconset resource="../resources.qrc">
-     <normaloff>:/images/file/open.png</normaloff>:/images/file/open.png</iconset>
+     <normaloff>:/images/file/fileOpen.png</normaloff>:/images/file/fileOpen.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Open...</string>
@@ -555,7 +558,7 @@ border:none;
      <normaloff>:/images/file/saveas.png</normaloff>:/images/file/saveas.png</iconset>
    </property>
    <property name="text">
-    <string>Save &amp;As...</string>
+    <string>S&amp;ave As...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+S</string>
@@ -737,7 +740,7 @@ border:none;
      <normaloff>:/images/run/runFluxAnalysis.png</normaloff>:/images/run/runFluxAnalysis.png</iconset>
    </property>
    <property name="text">
-    <string>Flux &amp;Analysis...</string>
+    <string>&amp;Flux Analysis...</string>
    </property>
    <property name="toolTip">
     <string>Run Flux Analysis</string>
@@ -839,6 +842,27 @@ border:none;
    </property>
    <property name="text">
     <string>Sun Position...</string>
+   </property>
+  </action>
+  <action name="actionFileReopen">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/file/fileReopen.png</normaloff>:/images/file/fileReopen.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Reopen</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+O</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/edit/editPreferences.png</normaloff>:/images/edit/editPreferences.png</iconset>
+   </property>
+   <property name="text">
+    <string>Preferences...</string>
    </property>
   </action>
  </widget>
