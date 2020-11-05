@@ -120,3 +120,10 @@ void SceneTreeView::startDrag(QMouseEvent* event)
     drag->setMimeData(mimeData);
     drag->exec(Qt::MoveAction);
 }
+
+QSize SceneTreeView::sizeHint() const
+{
+    QSize size = QTreeView::sizeHint();
+    size.setWidth(105*fontMetrics().xHeight());
+    return size;
+}

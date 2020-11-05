@@ -34,6 +34,7 @@ public:
 
 public slots:
     void fileOpen(QString fileName = QString());
+    void fileReopen();
     void fileNew();
     bool fileSaveAs(QString fileName = QString());
     bool fileSave();
@@ -49,6 +50,7 @@ private slots:
 
     void on_actionExamples_triggered();
     void on_actionAbout_triggered();
+
 
 private:
     Ui::ScriptWindow* ui;

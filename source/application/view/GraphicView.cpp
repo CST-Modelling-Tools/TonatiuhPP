@@ -263,19 +263,19 @@ GraphicView::GraphicView(QWidget* parent):
     menuShow->addAction(actionShowPhotons);
 
 
-    // menu render
-    QMenu* menuDraw = new QMenu("Rendering", this);
-    m_menu->addMenu(menuDraw);
+    // menu rendering
+    QMenu* menuRendering = new QMenu("Rendering", this);
+    m_menu->addMenu(menuRendering);
 
-    actionDrawMesh = new QAction("Wireframe", this);
+    actionDrawMesh = new QAction("Mesh", this);
     actionDrawMesh->setCheckable(true);
 
-    actionDrawFull = new QAction("Normal", this);
-    actionDrawFull->setCheckable(true);
-    actionDrawFull->setChecked(true);
+    actionDrawMaterial = new QAction("Material", this);
+    actionDrawMaterial->setCheckable(true);
+    actionDrawMaterial->setChecked(true);
 
-    actionDrawMeshOverlay = new QAction("Meshed", this);
-    actionDrawMeshOverlay->setCheckable(true);
+    actionDrawMaterialMesh = new QAction("Material + Mesh", this);
+    actionDrawMaterialMesh->setCheckable(true);
 
     actionDrawSwitch = new QAction("actionDrawSwitch", this);
     actionDrawSwitch->setObjectName("actionDrawSwitch");
@@ -283,16 +283,15 @@ GraphicView::GraphicView(QWidget* parent):
 
     actionViewGroup = new QActionGroup(this);
     actionViewGroup->setObjectName("actionViewGroup");
-//    actionViewGroup->addAction(actionDrawMesh);
-    actionViewGroup->addAction(actionDrawFull);
-    actionViewGroup->addAction(actionDrawMeshOverlay);
+    actionViewGroup->addAction(actionDrawMesh);
+    actionViewGroup->addAction(actionDrawMaterial);
+    actionViewGroup->addAction(actionDrawMaterialMesh);
 //    actionViewGroup->setExclusive(false);
 
-    menuDraw->addActions(actionViewGroup->actions());
-
+    menuRendering->addActions(actionViewGroup->actions());
 
     addActions(m_menu->actions()); // for shortcuts
-    addAction(actionDrawSwitch);
+    addAction(actionDrawSwitch);//?
     QMetaObject::connectSlotsByName(this);
 
     setStyleSheet(R"(
@@ -832,19 +831,19 @@ void GraphicView::setCameraViewTemp(double azimuth, double elevation)
 
 void GraphicView::on_actionViewGroup_triggered(QAction* action)
 {
-    if (action == actionDrawFull)
-        m_graphicRoot->showMesh(false);
-    else if (action == actionDrawMeshOverlay)
-        m_graphicRoot->showMesh(true);
+    if (action == actionDrawMaterial)
+        m_graphicRoot->setDrawStyle(true, false);
     else if (action == actionDrawMesh)
-        m_viewer->setDrawStyle(SoQtViewer::STILL, SoQtViewer::VIEW_LINE);
+        m_graphicRoot->setDrawStyle(false, true);
+    else if (action == actionDrawMaterialMesh)
+        m_graphicRoot->setDrawStyle(true, true);
 
     m_viewer->render();
 }
 
 void GraphicView::on_actionDrawSwitch_triggered()
 {
-    static int s = 0;
+    int s = actionViewGroup->actions().indexOf(actionViewGroup->checkedAction());
     s++;
     if (s == actionViewGroup->actions().size()) s = 0;
     actionViewGroup->actions()[s]->trigger();

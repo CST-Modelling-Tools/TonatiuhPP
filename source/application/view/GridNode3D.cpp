@@ -45,7 +45,8 @@ GridNode3D::~GridNode3D()
 
 void GridNode3D::attach(GridNode* grid)
 {
-    m_sensor->detach();
+    if (m_sensor->getAttachedNode())
+        m_sensor->detach();
     m_sensor->attach(grid);
     create();
 }
@@ -180,6 +181,7 @@ void GridNode3D::makeAxes(double xMin, double xMax, double yMin, double yMax, do
     m_grid->addChild(sMaterial);
 
     SoDrawStyle* sStyle = new SoDrawStyle;
+    sStyle->style = SoDrawStyleElement::LINES;
     sStyle->lineWidth = 1.5;
     m_grid->addChild(sStyle);
 
@@ -227,6 +229,11 @@ void GridNode3D::makeGround(double xMin, double xMax, double yMin, double yMax, 
     po->units = 1.;
     m_grid->addChild(po);
 
+    // to show in mesh mode
+    SoDrawStyle* drawStyle = new SoDrawStyle;
+    drawStyle->style = SoDrawStyleElement::FILLED;
+    m_grid->addChild(drawStyle);
+
     // cull from bottom
     SoShapeHints* hints = new SoShapeHints;
     hints->shapeType = SoShapeHints::SOLID;
@@ -239,6 +246,8 @@ void GridNode3D::makeGround(double xMin, double xMax, double yMin, double yMax, 
 #include "libraries/auxiliary/tiny_obj_loader.h"
 #include <QFileInfo>
 #include <QMessageBox>
+
+#include <Inventor/nodes/SoDepthBuffer.h>
 void GridNode3D::makeTerrain(QString fileName)
 {
     GridNode* grid = (GridNode*) m_sensor->getAttachedNode();
@@ -367,6 +376,12 @@ void GridNode3D::makeTerrain(QString fileName)
     SoShadowStyle* style = new SoShadowStyle;
     style->style = SoShadowStyleElement::NO_SHADOWING;
 
+    SoDepthBuffer* depth = new SoDepthBuffer;
+    depth->test = true;
+    depth->write = false;
+    depth->function = SoDepthBufferElement::LEQUAL;
+    depth->range.setValue(0., 1.);
+
     SoSeparator* sep = new SoSeparator;
     if (grid->fill.getValue()) {
         sep->addChild(sHintsA);
@@ -374,6 +389,7 @@ void GridNode3D::makeTerrain(QString fileName)
     }
     if (grid->grid.getValue()) {
         sep->addChild(sHintsB);
+        sep->addChild(depth);
         sep->addChild(style);
         sep->addChild(shaderProgram);
         sep->addChild(kit);

@@ -18,6 +18,7 @@ class SoPerspectiveCamera;
 class TCameraKit;
 class OverlayNode;
 class SeparatorStyle;
+class SoDrawStyle;
 class SoPolygonOffset;
 
 class GraphicRoot: public QObject
@@ -44,7 +45,7 @@ public:
     void showRays(bool on);
     void showPhotons(bool on);
 
-    void showMesh(bool on);
+    void setDrawStyle(bool materialOn, bool meshOn);
 
     void enableSelection(bool on);
     void select(const SoPath* path);
@@ -66,10 +67,14 @@ private:
     SunNode3D* m_sun;
     GridNode3D* m_grid;
     OverlayNode* m_overlayNode;
+
     SoSelection* m_selection;
     SoSeparator* m_rays;
     SeparatorStyle* m_sepStyle;
     SoPolygonOffset* m_offset;
+    SoDrawStyle* m_drawStyle;
+    bool m_materialOn;
+    SoGroup* m_groupStyle;
 
     TSceneKit* m_scene;
     SoFieldSensor* m_sensor;

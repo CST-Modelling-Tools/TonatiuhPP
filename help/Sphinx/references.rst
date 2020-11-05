@@ -1,8 +1,0 @@
-References
-==========
-
-OpenInventor
-------------
-
-Ray Tracing
------------

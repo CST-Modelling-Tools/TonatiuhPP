@@ -8,6 +8,8 @@
 
 #include "ParametersItemNode.h"
 #include "kernel/node/TNode.h"
+#include "kernel/scene/MaterialGL.h"
+#include "kernel/trackers/TrackerTarget.h"
 
 
 void ParametersItemField::updateItem(void* data, SoSensor*)
@@ -76,9 +78,14 @@ QVariant ParametersItemField::data(int role) const
     }
     else if (role == Qt::DecorationRole)
     {
-        if (SoSFNode* f = dynamic_cast<SoSFNode*>(m_field))
+        if (SoSFNode* f = dynamic_cast<SoSFNode*>(m_field)) {
             if (TNode* tn = dynamic_cast<TNode*>(f->getValue()))
                 return QIcon(tn->getTypeIcon());
+            else if (dynamic_cast<MaterialGL*>(f->getValue()))
+                return QIcon(":/images/scene/nodeMaterialGL.png");
+            else if (dynamic_cast<TrackerTarget*>(f->getValue()))
+                return QIcon(":/images/scene/nodeAim.png");
+        }
     }
     else if (role == Qt::EditRole)
     {

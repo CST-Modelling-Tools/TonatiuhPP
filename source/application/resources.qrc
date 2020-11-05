@@ -59,5 +59,10 @@
         <file>images/run/runCalendar.png</file>
         <file>images/map/worldMap.jpg</file>
         <file>images/scene/nodeArray.png</file>
+        <file>images/scene/nodeAim.png</file>
+        <file>images/file/fileOpen.png</file>
+        <file>images/file/fileOpenRecent.png</file>
+        <file>images/file/fileReopen.png</file>
+        <file>images/edit/editPreferences.png</file>
     </qresource>
 </RCC>

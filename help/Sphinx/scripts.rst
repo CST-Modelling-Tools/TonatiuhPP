@@ -1,3 +1,0 @@
-Scripts
-=======
-https://doc.qt.io/archives/qsa-1.2.2/language.html

@@ -157,7 +157,7 @@ MainWindow::MainWindow(QString fileName, CustomSplashScreen* splash, QWidget* pa
     if (splash) splash->setMessage("Opening file");
     QFileInfo fileInfo(fileName);
     if (!fileName.isEmpty() && fileInfo.completeSuffix() != "tnhs") {
-        StartOver(fileName);
+        openFileProject(fileName);
     } else {
         SetCurrentFile("");
         m_graphicView[0]->onViewHome();
@@ -287,6 +287,11 @@ void MainWindow::SetupGraphicView()
     m_graphicView[0]->setSceneGraph(m_graphicsRoot);
     m_graphicView[0]->m_window = this;
 
+    //    int q = 150*fontMetrics().xHeight();
+    //    QList<int> sizes = {rect.width() - q, q};
+//        QList<int> sizes = {500, 100, 100};
+    ui->splitterH->setStretchFactor(0, 1);
+
     connect(
         m_modelSelection, SIGNAL(currentChanged(QModelIndex,QModelIndex)),
         m_graphicView[0], SLOT(currentChanged(QModelIndex,QModelIndex))
@@ -297,8 +302,9 @@ void MainWindow::SetupGraphicView()
 //    delete splitter->widget(0);
 //    splitter->insertWidget(0, m_graphicView[0]);
 
-    QList<int> sizes = {700, 200};
-    ui->splitterH->setSizes(sizes);
+//    int q = 100*fontMetrics().xHeight();
+//    QList<int> sizes = {ui->splitterH->width() - q, q};
+//    ui->splitterH->setSizes(sizes);
 
 /*
     QSplitter* splitter = ui->splitterH;
@@ -427,13 +433,14 @@ void MainWindow::SetupTriggers()
     // file
     connect(ui->actionFileNew, SIGNAL(triggered()), this, SLOT(fileNew()) );
     connect(ui->actionFileOpen, SIGNAL(triggered()), this, SLOT(fileOpen()) );
+    connect(ui->actionFileReopen, SIGNAL(triggered()), this, SLOT(fileReopen()) );
     connect(ui->actionFileSave, SIGNAL(triggered()), this, SLOT(fileSave()) );
     connect(ui->actionFileSaveAs, SIGNAL(triggered()), this, SLOT(fileSaveAs()) );
     connect(ui->actionFileExit, SIGNAL(triggered()), this, SLOT(close()) );
 
-//    ui->menuFileRecent->menuAction()->setShortcut(QKeySequence("Ctrl+Alt+O"));
+//    ui->menuFileRecent->menuAction()->setShortcut(QKeySequence("Ctrl+Shift+O"));
 //    connect(ui->menuFileRecent->menuAction(), SIGNAL(triggered()), this, SLOT(showOpenRecent()));
-    QShortcut* fileshortcut = new QShortcut(QKeySequence("Ctrl+Alt+O"), this);
+    QShortcut* fileshortcut = new QShortcut(QKeySequence("Ctrl+Shift+O"), this);
     connect(fileshortcut, SIGNAL(activated()), this, SLOT(showOpenRecent()));
 
     // edit
@@ -611,45 +618,56 @@ void MainWindow::fileOpen()
     QFileInfo info(fileName);
     settings.setValue("dirProjects", info.path());
 
-    StartOver(fileName);
+    openFileProject(fileName);
 }
 
-void MainWindow::on_actionExamples_triggered()
+void setSearchPaths(const QString& fileName)
+{
+    QFileInfo info(fileName);
+    QStringList searchPaths;
+    if (info.exists())
+        searchPaths << info.absolutePath();
+    searchPaths << QDir::currentPath();
+    searchPaths << QCoreApplication::applicationDirPath();
+    QDir::setSearchPaths("project", searchPaths);
+}
+
+void MainWindow::on_actionHelpExamples_triggered()
 {
     if (!OkToContinue()) return;
 
-    QDir dir(QCoreApplication::applicationDirPath());
+    QDir dir = QCoreApplication::applicationDirPath();
     QString fileName = QFileDialog::getOpenFileName(
         this, "Open File", dir.filePath("../examples/projects"),
-        "Tonatiuh files (*.tnh *.tnpp)"
+        "Tonatiuh files (*.tnh *.tnpp);; All files (*)"
     );
     if (fileName.isEmpty()) return;
 
-    StartOver(fileName);
+    setSearchPaths(fileName);
+    openFileProject(fileName);
 }
 
-void MainWindow::on_actionScripts_triggered()
+void MainWindow::on_actionHelpScripts_triggered()
 {
-    QDir dir(QCoreApplication::applicationDirPath());
+    QDir dir = QCoreApplication::applicationDirPath();
+    QString fileName = QFileDialog::getOpenFileName(
+        this, "Open File", dir.filePath("../examples/scripts"),
+        "Tonatiuh script files (*.tnhs);; All files (*)"
+    );
+    if (fileName.isEmpty()) return;
 
 //    QFileDialog dialog(this);
 //    dialog.setAcceptMode(QFileDialog::AcceptOpen);
 //    dialog.setWindowTitle("Open File");
 //    dialog.setDirectory(dir.filePath("../examples/scripts"));
 //    dialog.setNameFilter("Tonatiuh script files (*.tnhs)");
-////    dialog.setOption(QFileDialog::DontUseNativeDialog);
+//    dialog.setOption(QFileDialog::DontUseNativeDialog);
 //    dialog.exec();
 
 //    if (dialog.selectedFiles().isEmpty()) return;
 //    QString fileName = dialog.selectedFiles().first();
 
-    QString fileName = QFileDialog::getOpenFileName(
-        this, "Open File", dir.filePath("../examples/scripts"),
-        "Tonatiuh script files (*.tnhs)"
-    );
-    if (fileName.isEmpty()) return;
-
-
+    setSearchPaths(fileName);
     openFileScript(fileName);
 }
 
@@ -658,11 +676,11 @@ void MainWindow::fileOpenRecent()
     if (!OkToContinue()) return;
 
     QAction* action = qobject_cast<QAction*>(sender());
-    if (action)
-    {
-        QString fileName = action->data().toString();
-        StartOver(fileName);
-    }
+    if (!action) return;
+    QString fileName = action->data().toString();
+
+    setSearchPaths(fileName);
+    openFileProject(fileName);
 }
 
 void MainWindow::showOpenRecent()
@@ -682,6 +700,13 @@ void MainWindow::showOpenRecent()
 //    ui->menubar->setActiveAction(ui->menuFileRecent->menuAction());
 
 //    ui->menubar->setActiveAction(ui->menuFileRecent->menuAction());
+}
+
+
+void MainWindow::fileReopen()
+{
+    if (!OkToContinue()) return;
+    openFileProject(m_fileName);
 }
 
 /*!
@@ -1013,7 +1038,7 @@ void MainWindow::on_actionRunScript_triggered()
 //    m_undoStack->endMacro();
 }
 
-void MainWindow::on_actionAbout_triggered()
+void MainWindow::on_actionHelpAbout_triggered()
 {
     AboutDialog dialog;
     dialog.exec();
@@ -1034,8 +1059,8 @@ void MainWindow::treeWorldClicked(QTreeWidgetItem* item, int /*column*/)
         node = sceneKit->getPart("world.terrain", false);
     else if (name == "Camera")
         node = sceneKit->getPart("world.camera", false);
-    else if (name == "SoCamera")
-        node = m_graphicView[m_focusView]->getCamera();
+//    else if (name == "SoCamera")
+//        node = m_graphicView[m_focusView]->getCamera();
 
     if (node)
         ui->parametersTabs->setNode(node);
@@ -1053,12 +1078,19 @@ void MainWindow::treeWorldDoubleClicked(QTreeWidgetItem* item, int /*column*/)
 void MainWindow::tabChanged(int tab)
 {
     if (tab == 2) { // Layout
-        InstanceNode* instance = m_modelScene->getInstance(ui->sceneView->currentIndex());
-        SoNode* node = instance->getNode();
+        QModelIndex index = ui->sceneView->currentIndex();
+        SoNode* node;
+        if (!index.isValid())
+            node = 0;
+        else if (index == ui->sceneView->rootIndex())
+            node = 0;
+        else {
+            InstanceNode* instance = m_modelScene->getInstance(index);
+            node = instance->getNode();
+        }
         ui->parametersTabs->setNode(node);
         m_graphicsRoot->enableSelection(true);
-    } else if (tab == 0) // World
-    {
+    } else if (tab == 0) { // World
         treeWorldClicked(ui->treeWorldWidget->currentItem(), 0); // redo
         m_graphicsRoot->enableSelection(false);
     }
@@ -1655,7 +1687,7 @@ void MainWindow::fileNew()
         emit Abort("Current Tonatiuh model cannot be closed.");
         return;
     }
-    StartOver("");
+    openFileProject("");
 }
 
 /*!
@@ -1663,7 +1695,7 @@ void MainWindow::fileNew()
  */
 void MainWindow::Clear()
 {
-    StartOver("");
+    openFileProject("");
 }
 
 
@@ -1687,7 +1719,7 @@ void MainWindow::fileOpen(QString fileName)
         return;
     }
 
-    StartOver(fileName);
+    openFileProject(fileName);
 }
 
 /*!
@@ -2172,13 +2204,17 @@ void MainWindow::SoManip_to_SoTransform()
 void MainWindow::ChangeSelection(const QModelIndex& index)
 {
     if (ui->tabWidget->currentIndex() == 2) { // Layout
-        InstanceNode* instance = m_modelScene->getInstance(index);
-        SoNode* node = instance->getNode();
-        if (index == ui->sceneView->rootIndex())
+        SoNode* node;
+        if (!index.isValid())
             node = 0;
+        else if (index == ui->sceneView->rootIndex())
+            node = 0;
+        else {
+            InstanceNode* instance = m_modelScene->getInstance(index);
+            node = instance->getNode();
+        }
         ui->parametersTabs->setNode(node);
-    } else if (ui->tabWidget->currentIndex() == 0) // World
-    {
+    } else if (ui->tabWidget->currentIndex() == 0) { // World
         treeWorldClicked(ui->treeWorldWidget->currentItem(), 0); // redo
     }
 }
@@ -2552,7 +2588,7 @@ void MainWindow::ShowRaysIn3DView()
  * Returns to the start origin state and starts with a new model defined in \a fileName.
  * If the file name is not defined, it starts with an empty scene.
  */
-bool MainWindow::StartOver(const QString& fileName)
+bool MainWindow::openFileProject(const QString& fileName)
 {
 //    InstanceNode* sceneInstance = m_modelScene->getInstance(ui->sceneView->rootIndex() );
 
@@ -2567,17 +2603,7 @@ bool MainWindow::StartOver(const QString& fileName)
     m_graphicsRoot->removeScene();
     ui->parametersTabs->setNode(0);
 
-//    SetSunPositionCalculatorEnabled(0);
-    QFileInfo info(fileName);
-    if (info.exists()) {
-        QDir::setSearchPaths("project", QStringList() << info.absolutePath() <<
-            QDir::currentPath() << qApp->applicationDirPath());
-    } else {
-        QDir::setSearchPaths("project", QStringList()
-            << QDir::currentPath() << qApp->applicationDirPath());
-    }
-
-    if (!fileName.isEmpty() && m_document->ReadFile(fileName) )
+    if (m_document->ReadFile(fileName))
     {
         showInStatusBar("File loaded");
         SetCurrentFile(fileName);
@@ -2591,9 +2617,8 @@ bool MainWindow::StartOver(const QString& fileName)
 
     ChangeModelScene();
     if (fileName.isEmpty()) {
-     m_graphicView[0]->onViewHome();
+        m_graphicView[0]->onViewHome();
     }
-
     ui->sceneView->expandToDepth(1);
 
 //    Select("//Node"); // ?
@@ -2635,7 +2660,7 @@ void MainWindow::dropEvent(QDropEvent* event)
     QString url = event->mimeData()->urls()[0].toLocalFile();
 
     if (OkToContinue())
-        StartOver(url);
+        openFileProject(url);
 
     event->acceptProposedAction();
 }
@@ -2652,7 +2677,7 @@ double findInterception(QString surface, uint rays, MainWindow* mw)
 
 //#include "widgets/HelpDialog.h"
 #include <QDesktopServices>
-void MainWindow::on_actionDocumentation_triggered()
+void MainWindow::on_actionHelpDocumentation_triggered()
 {
     QDesktopServices::openUrl(QUrl("file:///" + qApp->applicationDirPath() + "/../help/html/index.html"));
 //    HelpDialog dialog(this);

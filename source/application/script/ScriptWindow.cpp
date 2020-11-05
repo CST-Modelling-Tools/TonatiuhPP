@@ -89,6 +89,7 @@ ScriptWindow::ScriptWindow(MainWindow* mw, QWidget* parent):
 
     connect(ui->actionFileNew, SIGNAL(triggered()), this, SLOT(fileNew()) );
     connect(ui->actionFileOpen, SIGNAL(triggered()), this, SLOT(fileOpen()) );
+    connect(ui->actionFileReopen, SIGNAL(triggered()), this, SLOT(fileReopen()) );
     connect(ui->actionFileSave, SIGNAL(triggered()), this, SLOT(fileSave()) );
     connect(ui->actionFileSaveAs, SIGNAL(triggered()), this, SLOT(fileSaveAs()) );
     connect(ui->actionRunScript, SIGNAL(triggered()), this, SLOT(runScript()) );
@@ -162,6 +163,11 @@ void ScriptWindow::fileOpen(QString fileName)
     document->setModified(false);
 
     setTitle(fileName);
+}
+
+void ScriptWindow::fileReopen()
+{
+    fileOpen(m_fileName);
 }
 
 void ScriptWindow::fileNew()

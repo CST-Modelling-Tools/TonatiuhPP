@@ -100,8 +100,8 @@ private:
     QAction* actionViewSunAnchoredFrom;
 
     QActionGroup* actionViewGroup;
-    QAction* actionDrawFull;
-    QAction* actionDrawMeshOverlay;
+    QAction* actionDrawMaterial;
+    QAction* actionDrawMaterialMesh;
     QAction* actionDrawMesh;
     QAction* actionDrawSwitch;
 

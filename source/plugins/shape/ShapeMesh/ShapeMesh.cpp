@@ -37,7 +37,7 @@ ShapeMesh::ShapeMesh()
     };
     vertices.setValues(0, 3, vs);
     vertices.setContainer(this);
-    fieldData->addField(this, "vertices", &vertices);
+//    fieldData->addField(this, "vertices", &vertices);
 
     float ns[][3] = {
         {0., 0., 1.},
@@ -46,21 +46,21 @@ ShapeMesh::ShapeMesh()
     };
     normals.setValues(0, 3, ns);
     normals.setContainer(this);
-    fieldData->addField(this, "normals", &normals);
+//    fieldData->addField(this, "normals", &normals);
 
     int fvs[] = {
         0, 1, 2, -1
     };
     facesVertices.setValues(0, 4, fvs);
     facesVertices.setContainer(this);
-    fieldData->addField(this, "facesVertices", &facesVertices);
+//    fieldData->addField(this, "facesVertices", &facesVertices);
 
     int fns[] = {
         0, 1, 2, -1
     };
     facesNormals.setValues(0, 4, fns);
     facesNormals.setContainer(this);
-    fieldData->addField(this, "facesNormals", &facesNormals);
+//    fieldData->addField(this, "facesNormals", &facesNormals);
 
     SO_NODE_ADD_FIELD( file, ("") );
 
