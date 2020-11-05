@@ -865,6 +865,14 @@ border:none;
     <string>Preferences...</string>
    </property>
   </action>
+  <action name="actionFileOpenRecentS">
+   <property name="text">
+    <string>Open Recent</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+O</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="9"/>
  <customwidgets>

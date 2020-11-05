@@ -433,13 +433,14 @@ void MainWindow::SetupTriggers()
     // file
     connect(ui->actionFileNew, SIGNAL(triggered()), this, SLOT(fileNew()) );
     connect(ui->actionFileOpen, SIGNAL(triggered()), this, SLOT(fileOpen()) );
+    connect(ui->actionFileReopen, SIGNAL(triggered()), this, SLOT(fileReopen()) );
     connect(ui->actionFileSave, SIGNAL(triggered()), this, SLOT(fileSave()) );
     connect(ui->actionFileSaveAs, SIGNAL(triggered()), this, SLOT(fileSaveAs()) );
     connect(ui->actionFileExit, SIGNAL(triggered()), this, SLOT(close()) );
 
-//    ui->menuFileRecent->menuAction()->setShortcut(QKeySequence("Ctrl+Alt+O"));
+//    ui->menuFileRecent->menuAction()->setShortcut(QKeySequence("Ctrl+Shift+O"));
 //    connect(ui->menuFileRecent->menuAction(), SIGNAL(triggered()), this, SLOT(showOpenRecent()));
-    QShortcut* fileshortcut = new QShortcut(QKeySequence("Ctrl+Alt+O"), this);
+    QShortcut* fileshortcut = new QShortcut(QKeySequence("Ctrl+Shift+O"), this);
     connect(fileshortcut, SIGNAL(activated()), this, SLOT(showOpenRecent()));
 
     // edit
@@ -702,7 +703,7 @@ void MainWindow::showOpenRecent()
 }
 
 
-void MainWindow::on_actionFileReopen_triggered()
+void MainWindow::fileReopen()
 {
     if (!OkToContinue()) return;
     openFileProject(m_fileName);

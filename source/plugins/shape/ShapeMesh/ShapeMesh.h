@@ -48,8 +48,3 @@ class ShapeMeshFactory:
     Q_INTERFACES(ShapeFactory)
     Q_PLUGIN_METADATA(IID "tonatiuh.ShapeFactory")
 };
-
-// https://en.wikipedia.org/wiki/Wavefront_.obj_file
-// http://paulbourke.net/dataformats/obj/
-// https://gist.github.com/warmwaffles/961bed66d9c1d2ecf30c
-// https://docs.blender.org/manual/en/2.81/addons/import_export/io_scene_obj.html
