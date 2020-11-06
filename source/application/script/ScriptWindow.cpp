@@ -32,6 +32,7 @@ QString timeString()
     return QString("[%1] ").arg(QDateTime::currentDateTime().toString("hh:mm:ss"));
 }
 
+
 ScriptWindow::ScriptWindow(MainWindow* mw, QWidget* parent):
     QMainWindow(parent),
     ui(new Ui::ScriptWindow)
@@ -230,6 +231,14 @@ bool ScriptWindow::fileSave()
 
 void ScriptWindow::runScript()
 {
+    QStringList searchPaths = QDir::searchPaths("project");
+    QFileInfo info(m_fileName);
+    if (info.exists()) {
+        QStringList temp;
+        temp << info.absolutePath() << searchPaths;
+        QDir::setSearchPaths("project", temp);
+    }
+
     try {
         int initialized = tonatiuh_script::init(m_engine);
         if (!initialized)
@@ -268,6 +277,8 @@ void ScriptWindow::runScript()
         writeMessage(msg);
         std::cerr << msg.toStdString() << std::endl;
     }
+
+    QDir::setSearchPaths("project", searchPaths);
 }
 
 void ScriptWindow::setTitle(QString fileName)
@@ -279,9 +290,6 @@ void ScriptWindow::setTitle(QString fileName)
     if (!fileName.isEmpty())
         title = fileInfo.fileName();
     setWindowTitle(tr("%1[*] - Tonatiuh").arg(title));
-
-    FileObject::setDir(fileInfo.dir());
-//    QDir::setSearchPaths("project", fileInfo.dir());
 }
 
 void ScriptWindow::closeEvent(QCloseEvent* event)

@@ -3,6 +3,7 @@
 #include "kernel/TonatiuhKernel.h"
 
 #include <Inventor/nodekits/SoBaseKit.h>
+#include <Inventor/fields/SoSFBool.h>
 
 class TSeparatorKit;
 class Transform;
@@ -17,6 +18,7 @@ public:
     static void initClass();
     TrackerKit();
 
+    SoSFBool enabled;
     SoSFNode armature;
     SoSFNode target;
 

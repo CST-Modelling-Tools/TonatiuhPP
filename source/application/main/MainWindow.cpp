@@ -111,6 +111,20 @@ void finishManipulator(void* data, SoDragger* /*dragger*/)
     w->FinishManipulation();
 }
 
+void setSearchPaths(const QString& fileName)
+{
+    QStringList searchPaths;
+
+    QFileInfo info(fileName);
+    if (info.exists())
+        searchPaths << info.absolutePath();
+
+    searchPaths << QDir::currentPath();
+    searchPaths << QCoreApplication::applicationDirPath();
+
+    QDir::setSearchPaths("project", searchPaths);
+}
+
 MainWindow::MainWindow(QString fileName, CustomSplashScreen* splash, QWidget* parent, Qt::WindowFlags flags):
     QMainWindow(parent, flags),
     ui(new Ui::MainWindow),
@@ -159,6 +173,7 @@ MainWindow::MainWindow(QString fileName, CustomSplashScreen* splash, QWidget* pa
     if (!fileName.isEmpty() && fileInfo.completeSuffix() != "tnhs") {
         openFileProject(fileName);
     } else {
+        setSearchPaths(""); // refactor
         SetCurrentFile("");
         m_graphicView[0]->onViewHome();
     }
@@ -621,17 +636,6 @@ void MainWindow::fileOpen()
     openFileProject(fileName);
 }
 
-void setSearchPaths(const QString& fileName)
-{
-    QFileInfo info(fileName);
-    QStringList searchPaths;
-    if (info.exists())
-        searchPaths << info.absolutePath();
-    searchPaths << QDir::currentPath();
-    searchPaths << QCoreApplication::applicationDirPath();
-    QDir::setSearchPaths("project", searchPaths);
-}
-
 void MainWindow::on_actionHelpExamples_triggered()
 {
     if (!OkToContinue()) return;
@@ -643,7 +647,6 @@ void MainWindow::on_actionHelpExamples_triggered()
     );
     if (fileName.isEmpty()) return;
 
-    setSearchPaths(fileName);
     openFileProject(fileName);
 }
 
@@ -667,7 +670,6 @@ void MainWindow::on_actionHelpScripts_triggered()
 //    if (dialog.selectedFiles().isEmpty()) return;
 //    QString fileName = dialog.selectedFiles().first();
 
-    setSearchPaths(fileName);
     openFileScript(fileName);
 }
 
@@ -679,7 +681,6 @@ void MainWindow::fileOpenRecent()
     if (!action) return;
     QString fileName = action->data().toString();
 
-    setSearchPaths(fileName);
     openFileProject(fileName);
 }
 
@@ -2603,6 +2604,7 @@ bool MainWindow::openFileProject(const QString& fileName)
     m_graphicsRoot->removeScene();
     ui->parametersTabs->setNode(0);
 
+    setSearchPaths(fileName);
     if (m_document->ReadFile(fileName))
     {
         showInStatusBar("File loaded");

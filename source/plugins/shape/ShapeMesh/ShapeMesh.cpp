@@ -148,7 +148,7 @@ void ShapeMesh::onSensor(void* data, SoSensor*)
     fileName = QString("project:") + fileName;
     QFileInfo info(fileName);
     if (info.suffix() != "obj") {
-        QMessageBox::warning(0, "Warning", "File in not in obj-format");
+        QMessageBox::warning(0, "Warning", "File is not in obj-format");
         return;
     }
     if (!info.exists()) {
