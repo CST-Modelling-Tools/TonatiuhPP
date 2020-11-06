@@ -252,10 +252,12 @@ void GridNode3D::makeTerrain(QString fileName)
 {
     GridNode* grid = (GridNode*) m_sensor->getAttachedNode();
 
+    QStringList searchPaths = QDir::searchPaths("project");
+
     fileName = QString("project:") + fileName;
     QFileInfo info(fileName);
     if (info.suffix() != "obj") {
-        QMessageBox::warning(0, "Warning", "File in not in obj-format");
+        QMessageBox::warning(0, "Warning", "File is not in obj-format");
         return;
     }
     if (!info.exists()) {

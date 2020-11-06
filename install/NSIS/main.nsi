@@ -1,5 +1,5 @@
-!define APP_NAME "Tonatiuh"
-!define EDITION_NAME "Cyprus"
+!define APP_NAME "Tonatiuh++"
+!define EDITION_NAME "CyI"
 !define APP_NAME_FULL "${APP_NAME} (${EDITION_NAME})"
 !define DESCRIPTION "Ray tracing for Solar Energy (Open Source)"
 !define VERSION_MAJOR 0
@@ -19,7 +19,8 @@ RequestExecutionLevel admin
 ManifestDPIAware true  
 Unicode True
 Name "${APP_NAME}"
-Caption "${APP_NAME} - Installer"
+#Caption "${APP_NAME} - Installer"
+Caption "${APP_NAME} Installer"
 #BrandingText "Ray tracing for Solar Energy (Open Source)"
 BrandingText " "
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\orange-install.ico"
@@ -27,7 +28,8 @@ BrandingText " "
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_RIGHT
 !define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\orange-r.bmp"
-OutFile "${APP_NAME}-Installer-Win64-${EDITION_NAME}-v${VERSION_NAME}.exe"
+#OutFile "${APP_NAME}-Installer-Win64-${EDITION_NAME}-v${VERSION_NAME}.exe"
+OutFile "${APP_NAME}-Installer-Win64-v${VERSION_NAME}.exe"
 InstallDir "$LOCALAPPDATA\${APP_NAME}\${EDITION_NAME}"
 InstallDirRegKey HKCU "Software\${APP_NAME}\${EDITION_NAME}" ""
 
@@ -74,6 +76,10 @@ Var StartMenuFolder
 #!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 #!insertmacro MUI_PAGE_STARTMENU pageApplication $StartMenuFolder
 
+
+Var RadioClassic_State
+Var AppNameFull
+/*
 Var RadioClassic
 Var RadioClassic_State
 Var RadioRising
@@ -86,6 +92,7 @@ Function .onInit
 	StrCpy $RadioClassic_State 1
 	StrCpy $RadioRising_State 0
 FunctionEnd
+
 
 Function nsDialogsPage
 	!insertmacro MUI_HEADER_TEXT "Preferences" "Select a preferred theme."
@@ -114,17 +121,18 @@ Function nsDialogsPage
 	nsDialogs::Show
 FunctionEnd
 
+
 Function nsDialogsPageLeave
 	${NSD_GetState} $RadioClassic $RadioClassic_State	
 	${NSD_GetState} $RadioRising $RadioRising_State
 	
 	${If} $RadioClassic_State == 1
-		StrCpy $AppNameFull "${APP_NAME}++"
+		StrCpy $AppNameFull "${APP_NAME}"
 	${Else}
 		StrCpy $AppNameFull "${APP_NAME} (${EDITION_NAME})"
 	${EndIf}
 FunctionEnd
-
+*/
 
 !insertmacro MUI_PAGE_INSTFILES
 
@@ -132,13 +140,14 @@ FunctionEnd
 #!define MUI_ABORTWARNING
 #!define MUI_ABORTWARNING_TEXT "text"
 #!define MUI_UNABORTWARNING
-!define MUI_FINISHPAGE_RUN "$INSTDIR\bin\${APP_NAME}-Application.exe"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\bin\Tonatiuh-Application.exe"
 !define MUI_FINISHPAGE_RUN_TEXT "Run ${APP_NAME} now"
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !insertmacro MUI_PAGE_FINISH
 
 
-UninstallCaption "${APP_NAME} - Uninstaller"
+#UninstallCaption "${APP_NAME} - Uninstaller"
+UninstallCaption "${APP_NAME} Uninstaller"
 !define MUI_WELCOMEPAGE_TITLE "Welcome to ${APP_NAME} Uninstaller"
 !define MUI_WELCOMEPAGE_TEXT "\
 Setup will guide you through the uninstallation of ${APP_NAME}.$\n\
@@ -146,7 +155,7 @@ $\n\
 Before starting the uninstallation, make sure ${APP_NAME} is not runnning.$\n\
 $\n\
 Click Next to continue.$\n\
-$\n$\n$\n$\n$\n\
+$\n$\n$\n$\n\
 Desription: ${DESCRIPTION}$\n$\n\
 Edition: ${EDITION_NAME}$\n$\n\
 Version: ${VERSION_NAME} (${DATE_NAME})\
@@ -184,6 +193,9 @@ Section "Tonatiuh" SectionTonatiuh
 	!endif
 	File /r "..\portable\images*"
 
+	StrCpy $RadioClassic_State 1
+	StrCpy $AppNameFull "${APP_NAME}"
+	
     WriteRegStr HKCU "Software\${APP_NAME}\${EDITION_NAME}" "" $INSTDIR
 	WriteRegStr HKCU "${REG_KEY_UNINSTALL}" "DisplayName" $AppNameFull
 	WriteRegStr HKCU "${REG_KEY_UNINSTALL}" "DisplayVersion" "${VERSION_NAME}"
@@ -195,29 +207,28 @@ Section "Tonatiuh" SectionTonatiuh
 	WriteRegDWORD HKCU "${REG_KEY_UNINSTALL}" "NoRepair" 1
 	WriteUninstaller "$INSTDIR\uninstall.exe"
     
-	WriteRegStr HKCU "Software\Classes\.tnh" "" "tnhfile"
-	WriteRegStr HKCU "Software\Classes\.tnpp" "" "tnhfile"	
-	WriteRegStr HKCU "Software\Classes\.tnhs" "" "tnhsfile"
+	WriteRegStr HKCU "Software\Classes\.tnhpp" "" "tnhppfile"
+	WriteRegStr HKCU "Software\Classes\.tnhpps" "" "tnhppsfile"
 	
 	#!insertmacro MUI_STARTMENU_WRITE_BEGIN pageApplication
 		StrCpy $StartMenuFolder "."
 		CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
 		SetOutPath "$INSTDIR\bin"
-		StrCpy $AppPath "$INSTDIR\bin\${APP_NAME}-Application.exe"
+		StrCpy $AppPath "$INSTDIR\bin\Tonatiuh-Application.exe"
 		# add -Application because Windows indexing shows old icon
-		WriteRegStr HKCU "Software\Classes\tnhfile\shell\Open\Command" "" "$\"$AppPath$\" -i=$\"%1$\""	
-		WriteRegStr HKCU "Software\Classes\tnhsfile\shell\Open\Command" "" "$\"$AppPath$\" -i=$\"%1$\" -w"	
+		WriteRegStr HKCU "Software\Classes\tnhppfile\shell\Open\Command" "" "$\"$AppPath$\" -i=$\"%1$\""	
+		WriteRegStr HKCU "Software\Classes\tnhppsfile\shell\Open\Command" "" "$\"$AppPath$\" -i=$\"%1$\" -w"	
 		${If} $RadioClassic_State == 1
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$AppNameFull.lnk" $AppPath "" $AppPath 1
 			WriteRegStr HKCU "Software\${APP_NAME}\${EDITION_NAME}" "theme" ""
-			WriteRegStr HKCU "Software\Classes\tnhfile\DefaultIcon" "" "$AppPath,1"
-			WriteRegStr HKCU "Software\Classes\tnhsfile\DefaultIcon" "" "$AppPath,1" 
+			WriteRegStr HKCU "Software\Classes\tnhppfile\DefaultIcon" "" "$AppPath,1"
+			WriteRegStr HKCU "Software\Classes\tnhppsfile\DefaultIcon" "" "$AppPath,1" 
 			WriteRegStr HKCU "${REG_KEY_UNINSTALL}" "DisplayIcon" "$AppPath,1"
 		${Else}
 			CreateShortCut "$SMPROGRAMS\$StartMenuFolder\$AppNameFull.lnk" $AppPath
 			WriteRegStr HKCU "Software\${APP_NAME}\${EDITION_NAME}" "theme" "Cyprus"
-			WriteRegStr HKCU "Software\Classes\tnhfile\DefaultIcon" "" "$AppPath,2" 
-			WriteRegStr HKCU "Software\Classes\tnhsfile\DefaultIcon" "" "$AppPath,3" 
+			WriteRegStr HKCU "Software\Classes\tnhppfile\DefaultIcon" "" "$AppPath,2" 
+			WriteRegStr HKCU "Software\Classes\tnhppsfile\DefaultIcon" "" "$AppPath,3" 
 			WriteRegStr HKCU "${REG_KEY_UNINSTALL}" "DisplayIcon" $AppPath
 		${EndIf}
 		WriteRegStr HKCU "Software\${APP_NAME}\${EDITION_NAME}" "dirProjects" "$DESKTOP"
@@ -253,7 +264,7 @@ Section "Examples" SectionExamples
 SectionEnd
  
 
-Section "Documentation" SectionDocumentations
+Section "Documentation" SectionDocumentation
 	SectionIn 1
 	SetOutPath $INSTDIR
 	!ifdef ISBUILDTEST
@@ -290,11 +301,12 @@ Section "Uninstall"
     #Delete "$SMPROGRAMS\$StartMenuFolder\support.url"
 	RMDir "$SMPROGRAMS\$StartMenuFolder"
 	
-  	DeleteRegKey HKCU "Software\Classes\.tnh" 
-	DeleteRegKey HKCU "Software\Classes\.tnhs"
-	DeleteRegKey HKCU "Software\Classes\.tnpp"
-	DeleteRegKey HKCU "Software\Classes\tnhfile"	
-	DeleteRegKey HKCU "Software\Classes\tnhsfile"	
+  	#DeleteRegKey HKCU "Software\Classes\.tnh" 
+	#DeleteRegKey HKCU "Software\Classes\.tnhs"
+	DeleteRegKey HKCU "Software\Classes\.tnhpp"
+	DeleteRegKey HKCU "Software\Classes\.tnhpps"
+	DeleteRegKey HKCU "Software\Classes\tnhppfile"	
+	DeleteRegKey HKCU "Software\Classes\tnhppsfile"	
 	Exec '$WinDir\SysNative\ie4uinit.exe -show'
 	
     DeleteRegKey HKCU "Software\${APP_NAME}\${EDITION_NAME}"

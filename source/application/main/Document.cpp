@@ -102,7 +102,7 @@ bool Document::WriteFile(const QString& fileName)
     action.getOutput()->setFloatPrecision(6);
     // by default %.8g for floats and %.16lg for double
 
-    if (fileName.endsWith(".tnh") || fileName.endsWith(".tnpp")) // normal
+    if (fileName.endsWith(".tnh") || fileName.endsWith(".tnhpp")) // normal
         action.apply(m_scene);
     else if (fileName.endsWith(".tnhd")) // debug
         action.apply(m_scene->m_graphicRoot->getRoot());

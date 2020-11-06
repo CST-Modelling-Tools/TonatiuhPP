@@ -1,0 +1,202 @@
+var heliostatWidth = 2.;
+var heliostatHeight = 2.;
+var heliostatDistance = Math.sqrt(heliostatWidth*heliostatWidth + heliostatHeight*heliostatHeight); // safety distance between heliostats
+var heliostatZ = 1.5; // mirror center
+
+function makeHeliostat(parent, name, position, aiming, focus)
+{
+	var n = parent.createNode(name);
+	n.setParameter("translation", position);
+
+	var t = n.createTracker();
+	var tt = t.getPart("target");
+	tt.setParameter("aimingPoint", aiming);
+
+	n = n.createNode("primary");
+	n = n.createNode("secondary");
+	n = n.createNode("facet");
+	var s = n.createShape();
+
+	var q = s.insertSurface("Parabolic");
+	q.setParameter("fX", focus);
+	q.setParameter("fY", focus);
+
+	var p = s.insertProfile("Box");
+	p.setParameter("uSize", heliostatWidth);
+	p.setParameter("vSize", heliostatHeight);
+
+	var m = s.insertMaterial("Specular");
+	m.setParameter("slope", "0.002");
+	
+	var mG = s.getPart("material");
+	mG.setParameter("ambientColor", "0.65 0.72 0.79");
+	mG.setParameter("diffuseColor", "0.05 0.05 0.05");
+	mG.setParameter("specularColor", "0.3 0.25 0.2");
+	mG.setParameter("shininess", "0.5");
+}
+
+var receiverZ = 20.;
+var receiverDiameter = 2.;
+var receierHeight = 3.;
+var receiverRadius = receiverDiameter/2.;
+
+function makeTower(parent)
+{
+	var baseHeight = receiverZ - receierHeight/2.;
+	
+	var nodeTower = parent.createNode("Tower");
+
+	var n = nodeTower.createNode("Base");
+	n.setParameter("translation", "0 0 " + baseHeight/2.);
+	n.setParameter("scale", "" + receiverRadius + " " + receiverRadius + " " + baseHeight);
+	var s = n.createShape();
+	var q = s.insertSurface("Cylinder");
+	var mG = s.getPart("material");
+	mG.setParameter("ambientColor", "0.5 0.5 0.5");
+	mG.setParameter("diffuseColor", "0.5 0.5 0.5");
+
+	n = nodeTower.createNode("Receiver");
+	n.setParameter("translation", "0 0 " + receiverZ);
+	n.setParameter("scale", "" + receiverRadius + " " + receiverRadius + " " + receierHeight);
+	s = n.createShape();
+	q = s.insertSurface("Cylinder");
+	mG = s.getPart("material");
+	mG.setParameter("emissiveColor", "1 1 1");
+
+	n = nodeTower.createNode("Cap");
+	n.setParameter("translation", "0 0 " + (receiverZ + receierHeight/2.));
+	s = n.createShape();
+	q = s.insertSurface("Planar");
+	var p = s.insertProfile("Circular");
+	p.setParameter("rMax", receiverRadius);
+	mG = s.getPart("material");
+	mG.setParameter("ambientColor", "0.5 0.5 0.5");
+	mG.setParameter("diffuseColor", "0.2 0.2 0.2");
+}
+
+var dRMin;
+var degree = Math.PI/180;
+var latitude = 0*degree; 
+var declination = 23.4*degree;
+function radialStep(rPrev)
+{
+	var vZ = receiverZ - heliostatZ;
+	var vR = rPrev - receiverRadius;
+	var alpha = Math.atan(vZ/vR);
+	
+	var alphaS = 90.*degree - Math.abs(latitude) - declination;
+	var beta = (alpha + alphaS)/2.;
+	var gamma = Math.abs(90.*degree - alpha - beta);	
+	
+	var dR = heliostatHeight*Math.cos(gamma)/Math.sin(alpha);
+	if (dR <  dRMin)
+		dR = dRMin;
+	return dR;
+}
+
+function azimuthStep(r)
+{
+	var delta = Math.asin(azDistance*heliostatDistance/2./r);
+	var c = Math.floor(Math.PI/delta);
+	delta = Math.PI/c;
+	return delta;
+}
+
+function azimuthStepClose(r)
+{
+	var delta = Math.asin(heliostatDistance/2./r);
+	var c = Math.floor(Math.PI/delta);
+	delta = Math.PI/c;
+	return delta;
+}
+
+var rhoMin = 0.75*receiverZ; // exclusion radius 
+
+var azDistance = 1.6; // in heliostatDistance
+var azReset = 1.333; // reset conditions
+
+var dRMin = 1. - Math.pow(azDistance/2., 2);
+if (dRMin < 0.) dRMin = 0.;
+dRMin = 2.*Math.sqrt(dRMin);
+if (dRMin < 1) dRMin = 1;
+dRMin *= heliostatDistance;
+
+var dRClose = 2*heliostatDistance*Math.sin(60*degree);
+
+var heliostats = 500; // number of heliostats
+
+function makeField(parent)
+{
+	var nodeHeliostats = parent.createNode("Heliostats");
+	var counter = 0;
+	var rho = rhoMin;	
+	
+	var phiStep = azimuthStep(rho);
+	var phi0 = 0.;
+	for (var row = 1; counter < heliostats; row++) {
+			var nodeRow = nodeHeliostats.createNode("Row-" + row);
+
+			// close packing
+			if (radialStep(rho) < dRClose) {
+				
+			}		
+	
+			// fill row
+			for (var phi = phi0; phi < phi0 + 2.*Math.PI - phiStep; phi += 2.*phiStep)
+			{
+				counter++;
+				name = "H_" + counter;
+
+				x = -rho*Math.sin(phi);
+				y = -rho*Math.cos(phi);
+				z = 0.; 
+				var position = "" + x + " " + y + " " + z;
+				
+				xA = x/rho*receiverRadius;
+				yA = y/rho*receiverRadius;
+				zA = receiverZ;
+				aiming = "" + xA + " " + yA + " " + zA;
+				focus = Math.sqrt((xA - x)*(xA - x) + (yA - y)*(yA - y) + (zA - z)*(zA - z));
+				makeHeliostat(nodeRow, name, position, aiming, focus);			
+			}
+
+	
+				// prepare next row
+				var rhoNew = rho + radialStep(rho)/2.;
+				var phiStepNew = azimuthStep(rhoNew);
+				if (phiStep/phiStepNew > azReset) {
+					// phiStep = phiStepNew;
+					rhoNew = rho + radialStep(rho);
+					phiStep = azimuthStep(rhoNew);
+				}
+				rho = rhoNew;
+
+			if (phi0 == 0.)
+				phi0 = phiStep;
+			else
+				phi0 = 0.;	
+	}
+}
+
+nodeRoot = NodeObject();
+nodeRoot.setName("Script");
+makeTower(nodeRoot);
+makeField(nodeRoot);
+
+tn.Clear();
+tn.InsertScene(nodeRoot);
+
+var scene = NodeObject().getScene();
+
+var sp = scene.getPart("world.sun.position");
+sp.setParameter("azimuth", 180);
+sp.setParameter("elevation", 60);
+
+var cm = scene.getPart("world.camera");
+cm.setParameter("position", "-142.065 -212.839 159.843");
+cm.setParameter("rotation", "33.5 -31.5");
+
+var tg = scene.getPart("world.terrain.grid");
+tg.setParameter("steps", "10 10 1");
+tg.setParameter("min", "-100 -100 0");
+tg.setParameter("max", "100 100 0");

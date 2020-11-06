@@ -44,7 +44,7 @@ HEADERS += \
     run/SelectSurfaceDialog.h \
     script/AboutScriptDialog.h \
     script/CodeEditor.h \
-    script/FileObject.h \
+    script/DataObject.h \
     script/LineNumbers.h \
     script/NodeObject.h \
     script/ScriptRayTracer.h \
@@ -108,7 +108,7 @@ SOURCES += \
     run/SelectSurfaceDialog.cpp \
     script/AboutScriptDialog.cpp \
     script/CodeEditor.cpp \
-    script/FileObject.cpp \
+    script/DataObject.cpp \
     script/LineNumbers.cpp \
     script/NodeObject.cpp \
     script/ScriptRayTracer.cpp \

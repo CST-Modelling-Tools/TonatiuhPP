@@ -15,7 +15,7 @@
 Q_DECLARE_METATYPE(QVector<QVariant>)
 
 #include "NodeObject.h"
-#include "FileObject.h"
+#include "DataObject.h"
 #include "main/MainWindow.h"
 #include "kernel/scene/TSceneKit.h"
 #include "main/PluginManager.h"
@@ -25,12 +25,13 @@ Q_DECLARE_METATYPE(QVector<QVariant>)
 #include "AboutScriptDialog.h"
 
 Q_SCRIPT_DECLARE_QMETAOBJECT(NodeObject, QObject*)
-Q_SCRIPT_DECLARE_QMETAOBJECT(FileObject, QObject*)
+Q_SCRIPT_DECLARE_QMETAOBJECT(DataObject, QObject*)
 
 QString timeString()
 {
     return QString("[%1] ").arg(QDateTime::currentDateTime().toString("hh:mm:ss"));
 }
+
 
 ScriptWindow::ScriptWindow(MainWindow* mw, QWidget* parent):
     QMainWindow(parent),
@@ -69,8 +70,8 @@ ScriptWindow::ScriptWindow(MainWindow* mw, QWidget* parent):
     QScriptValue nodeObjectClass = m_engine->scriptValueFromQMetaObject<NodeObject>();
     m_engine->globalObject().setProperty("NodeObject", nodeObjectClass);
 
-    QScriptValue fileObjectClass = m_engine->scriptValueFromQMetaObject<FileObject>();
-    m_engine->globalObject().setProperty("FileObject", fileObjectClass);
+    QScriptValue fileObjectClass = m_engine->scriptValueFromQMetaObject<DataObject>();
+    m_engine->globalObject().setProperty("DataObject", fileObjectClass);
 
     // functions
     //    QString pluginsDirectory = QApplication::applicationDirPath() + QDir::separator() + "plugins";
@@ -139,7 +140,7 @@ void ScriptWindow::fileOpen(QString fileName)
 
         fileName = QFileDialog::getOpenFileName(
             this, "Open File", dirName,
-            "Tonatiuh script file (*.tnhs)"
+            "Tonatiuh script file (*.tnhpps)"
         );
         if (fileName.isEmpty()) return;
 
@@ -190,7 +191,7 @@ bool ScriptWindow::fileSaveAs(QString fileName)
 
         fileName = QFileDialog::getSaveFileName(
             this, "Save File", dirName,
-            "Tonatiuh script file (*.tnhs)"
+            "Tonatiuh script file (*.tnhpps)"
         );
         if (fileName.isEmpty()) return false;
 
@@ -230,6 +231,14 @@ bool ScriptWindow::fileSave()
 
 void ScriptWindow::runScript()
 {
+    QStringList searchPaths = QDir::searchPaths("project");
+    QFileInfo info(m_fileName);
+    if (info.exists()) {
+        QStringList temp;
+        temp << info.absolutePath() << searchPaths;
+        QDir::setSearchPaths("project", temp);
+    }
+
     try {
         int initialized = tonatiuh_script::init(m_engine);
         if (!initialized)
@@ -268,6 +277,8 @@ void ScriptWindow::runScript()
         writeMessage(msg);
         std::cerr << msg.toStdString() << std::endl;
     }
+
+    QDir::setSearchPaths("project", searchPaths);
 }
 
 void ScriptWindow::setTitle(QString fileName)
@@ -279,9 +290,6 @@ void ScriptWindow::setTitle(QString fileName)
     if (!fileName.isEmpty())
         title = fileInfo.fileName();
     setWindowTitle(tr("%1[*] - Tonatiuh").arg(title));
-
-    FileObject::setDir(fileInfo.dir());
-//    QDir::setSearchPaths("project", fileInfo.dir());
 }
 
 void ScriptWindow::closeEvent(QCloseEvent* event)
@@ -358,7 +366,7 @@ void ScriptWindow::on_actionExamples_triggered()
     QDir dir(QCoreApplication::applicationDirPath());
     QString fileName = QFileDialog::getOpenFileName(
         this, "Open File", dir.filePath("../examples/scripts"),
-        "Tonatiuh script file (*.tnhs)"
+        "Tonatiuh script file (*.tnhpps)"
     );
     if (fileName.isEmpty()) return;
 

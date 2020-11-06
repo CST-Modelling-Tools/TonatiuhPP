@@ -13,9 +13,10 @@ public:
     ~TrackerTarget();
 
     enum AimingFrame {
-        global = 0,
-        facets = 1
+        facets,
+        global
     };
+
     SoSFEnum aimingFrame;
     SoSFVec3f aimingPoint;
 };

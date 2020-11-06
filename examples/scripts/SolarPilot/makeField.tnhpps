@@ -1,0 +1,166 @@
+var file = DataObject();
+file.read("layout.csv");
+var nStep = 1;
+var nSplit = 1000;
+
+
+function makeHeliostat(parent, name, position, aiming, focus)
+{
+	var nm = parent.createNode(name);
+	nm.setParameter("translation", position);
+
+	var t = nm.createTracker();
+	t.setPart("armature", azel);
+	var tt = t.getPart("target");
+	tt.setParameter("aimingFrame", "global");
+	tt.setParameter("aimingPoint", aiming);
+						
+	var n = nm.createNode("primary");
+	n = n.createNode("secondary");
+	n = n.createNode("facet");
+	var s = n.createShape();
+
+	var q = s.insertSurface("Parabolic");
+	q.setParameter("fX", focus);
+	q.setParameter("fY", focus);
+
+	var p = s.insertProfile("Box");
+	p.setParameter("uSize", 6.00);
+	p.setParameter("vSize", 4.28);
+
+	var m = s.insertMaterial("Specular");
+	m.setParameter("reflectivity", "1");
+	m.setParameter("slope", "0.002");
+}
+
+var node = NodeObject();
+var t = node.createTracker();
+var azel = t.insertArmature("two-axes");
+azel.setParameter("primaryShift", "0 0 0");
+azel.setParameter("primaryAxis", "0 0 -1");
+azel.setParameter("primaryAngles", "-360 360");
+azel.setParameter("secondaryShift", "0 0 0");
+azel.setParameter("secondaryAxis", "1 0 0");
+azel.setParameter("secondaryAngles", "-180 180");
+azel.setParameter("facetShift", "0 0 0");
+azel.setParameter("facetNormal", "0 0 1");
+
+function makeTower(parent, zReceiver, dReceiver, hReceiver)
+{
+	var rReceiver = dReceiver/2;
+
+	var n = parent.createNode("Base");
+	n.setParameter("translation", "0 0 0");
+	n.setParameter("scale", "" + rReceiver + " " + rReceiver + " 1");
+	var s = n.createShape();
+	var q = s.insertSurface("Cylinder");
+	var p = s.insertProfile("Rectangular");
+	p.setParameter("vMin", 0.);
+	p.setParameter("vMax", zReceiver - hReceiver/2);
+	var mG = s.getPart("material");
+	mG.setParameter("ambientColor", "0.5 0.5 0.5");
+	mG.setParameter("diffuseColor", "0.2 0.2 0.2");
+
+	n = parent.createNode("Receiver");
+	n.setParameter("translation", "0 0 " + zReceiver);
+	n.setParameter("scale", "" + rReceiver + " " + rReceiver + " 1");
+	s = n.createShape();
+	s.setName("Shape");
+	q = s.insertSurface("Cylinder");
+	p = s.insertProfile("Box");
+	p.setParameter("vSize", hReceiver);
+	mG = s.getPart("material");
+	mG.setParameter("ambientColor", "0.7 0.7 0.7");
+	mG.setParameter("diffuseColor", "0.2 0.2 0.2");
+	
+	n = parent.createNode("Cap");
+	n.setParameter("translation", "0 0 " + (zReceiver + hReceiver/2));
+	s = n.createShape();
+	q = s.insertSurface("Planar");
+	p = s.insertProfile("Circular");
+	p.setParameter("rMax", rReceiver);
+	mG = s.getPart("material");
+	mG.setParameter("ambientColor", "0.5 0.5 0.5");
+	mG.setParameter("diffuseColor", "0.2 0.2 0.2");
+}
+
+function findFocalDistance(x, y, z)
+{
+	d = Math.sqrt(x*x + y*y + z*z);
+	return 5*Math.round(d/5);
+}
+
+function makeField()
+{
+	var nodeRoot = NodeObject();
+	nodeRoot.setName("Script");
+
+	var nodeHeliostats = nodeRoot.createNode("Heliostats");
+	var zHeliostats = 3.;
+	nodeRoot.setParameter("translation", "0 0 " + zHeliostats);
+	
+	var nMax = file.rows();
+	var counter = 0;
+	for (var ng = 2; ng < nMax; ng += nSplit) 
+	{
+		var nodeGroup = nodeHeliostats.createNode("H" + (ng - 1) + "-H" + (ng + nSplit - 2));	
+		for (var n = ng; n < ng + nSplit; n += nStep) 
+		{
+			name = "H" + (n - 1);
+			posX = file.array(n)[1];
+			posY = file.array(n)[2];
+			posZ = file.array(n)[3];
+			pos = "" + posX + " " + posY + " " + posZ;
+			aimX = file.array(n)[9];
+			aimY = file.array(n)[10];
+			aimZ = Number(file.array(n)[11]) + zHeliostats;
+			aim = "" + aimX + " " + aimY + " " + aimZ;
+			focus = findFocalDistance(aimX - posX, aimY - posY, aimZ - posZ);
+			makeHeliostat(nodeGroup, name, pos, aim, focus);
+			
+			counter++;
+			if (counter % 1000 == 0) 
+				printTimed("Heliostats: " + counter);
+		}
+	}
+
+	var nodeTower = nodeRoot.createNode("Tower");
+	makeTower(nodeTower, zHeliostats + 240., 30., 40.);
+
+	tn.InsertScene(nodeRoot);
+}
+
+
+tn.Clear();
+makeField();
+
+var scene = NodeObject().getScene();
+
+var sun = scene.getPart("world.sun");
+//sun.setParameter("shape", "Buie");
+
+var sp = sun.getPart("position");
+sp.setParameter("azimuth", 180.);
+sp.setParameter("elevation", 60.);
+
+var sa = sun.getPart("aperture");
+sa.setParameter("disabledNodes", "");
+
+var air = scene.getPart("world.air");
+air.setParameter("transmission", "Polynomial");
+
+var at = scene.getPart("world.air.transmission");
+at.setParameter("a0", 1.);
+at.setParameter("a1", -0.237672);
+at.setParameter("a2", 5.75826e-2);
+at.setParameter("a3", -4.87596e-3);
+	
+var cm = scene.getPart("world.camera");
+cm.setParameter("position", "-1375.85 -1663.44 1429.88");
+cm.setParameter("rotation", "33.9011 -31.417");
+
+var tg = scene.getPart("world.terrain.grid");
+tg.setParameter("steps", "100 100 1");
+tg.setParameter("divisions", "10 10 10");
+tg.setParameter("min", "-2100 -2100 0");
+tg.setParameter("max", "2100 2300 0");

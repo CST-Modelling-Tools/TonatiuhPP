@@ -19,6 +19,7 @@ TrackerKit::TrackerKit()
     SO_KIT_CONSTRUCTOR(TrackerKit);
     isBuiltIn = TRUE;
 
+    SO_NODE_ADD_FIELD( enabled, (TRUE) );
     SO_NODE_ADD_FIELD( armature, (0) );
     SO_NODE_ADD_FIELD( target, (0) );
 
@@ -30,6 +31,7 @@ TrackerKit::TrackerKit()
 
 void TrackerKit::update(TSeparatorKit* parent, const Transform& toGlobal, const vec3d& vSun)
 {
+    if (!enabled.getValue()) return;
     TrackerArmature* ta = (TrackerArmature*) armature.getValue();
     TrackerTarget* tt = (TrackerTarget*) target.getValue();
     ta->update(parent, toGlobal, vSun, tt);

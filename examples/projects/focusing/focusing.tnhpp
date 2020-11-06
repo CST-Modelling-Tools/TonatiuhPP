@@ -1,0 +1,332 @@
+#Inventor V2.1 ascii
+
+
+TSceneKit {
+  fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
+  version "2020"
+  world 
+  DEF World WorldKit {
+    fields [ SFNode callbackList, SFNode location, SFNode sun, SFNode air, SFNode terrain, SFNode camera ]
+    sun 
+    DEF Sun SunKit {
+      fields [ SFNode callbackList, SFNode position, SFNode shape, SFNode aperture ]
+      position 
+      SunPosition {
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
+
+      }
+      aperture 
+      SunAperture {
+        fields [ SFString disabledNodes ]
+        disabledNodes ""
+
+      }
+
+    }
+    terrain 
+    DEF Terrain TerrainKit {
+      fields [ SFNode callbackList, SFNode grid ]
+      grid 
+      DEF Grid GridNode {
+        fill FALSE
+
+      }
+
+    }
+    camera 
+    DEF Camera TCameraKit {
+      fields [ SFVec3f position, SFVec2f rotation, SFDouble angle, SFBool perspective, SFNode callbackList, SFNode topSeparator ]
+      position 18.1036 -29.0718 14.5522
+      rotation -30 -23.25
+
+    }
+
+  }
+  group 
+  DEF Node TSeparatorKit {
+    transform 
+    TTransform {
+
+    }
+    group 
+    Group {
+
+      DEF ParabolaPM TSeparatorKit {
+        transform 
+        TTransform {
+          translation 2 -2 0
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Parabolic ShapeParabolic {
+              fields [ SFDouble fX, SFDouble fY ]
+              fX 1
+              fY -1
+
+            }
+            profileRT 
+            DEF Circular ProfileCircular {
+              fields [ SFDouble rMin, SFDouble rMax, SFDouble phiMin, SFDouble phiMax ]
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+
+            }
+            material 
+            MaterialGL {
+
+            }
+
+          }
+        }
+
+      }
+      DEF ParabolaPP TSeparatorKit {
+        transform 
+        TTransform {
+          translation 2 2 0
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Parabolic ShapeParabolic {
+              fields [ SFDouble fX, SFDouble fY ]
+
+            }
+            profileRT 
+            DEF Box ProfileBox {
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+
+            }
+            material 
+            MaterialGL {
+
+            }
+
+          }
+        }
+
+      }
+      DEF ParabolaMM TSeparatorKit {
+        transform 
+        TTransform {
+          translation -2 -2 0
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Parabolic ShapeParabolic {
+              fields [ SFDouble fX, SFDouble fY ]
+              fX -1
+              fY -1
+
+            }
+            profileRT 
+            DEF Box ProfileBox {
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+
+            }
+            material 
+            MaterialGL {
+
+            }
+
+          }
+        }
+
+      }
+      DEF ParabolaMP TSeparatorKit {
+        transform 
+        TTransform {
+          translation -2 2 0
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Parabolic ShapeParabolic {
+              fields [ SFDouble fX, SFDouble fY ]
+              fX -1
+              fY 1
+
+            }
+            profileRT 
+            DEF Circular ProfileCircular {
+              fields [ SFDouble rMin, SFDouble rMax, SFDouble phiMin, SFDouble phiMax ]
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+
+            }
+            material 
+            MaterialGL {
+
+            }
+
+          }
+        }
+
+      }
+      DEF Spherical TSeparatorKit {
+        transform 
+        TTransform {
+          translation 5 0 0
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Spherical ShapeElliptic {
+              fields [ SFDouble aX, SFDouble aY, SFDouble aZ ]
+
+            }
+            profileRT 
+            DEF Box ProfileBox {
+              uSize 1
+              vSize 1.5
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+
+            }
+            material 
+            MaterialGL {
+
+            }
+
+          }
+        }
+
+      }
+      DEF Hyperbolic TSeparatorKit {
+        transform 
+        TTransform {
+          translation -5 0 0
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Hyperbolic ShapeHyperbolic {
+              fields [ SFDouble aX, SFDouble aY, SFDouble aZ ]
+
+            }
+            profileRT 
+            DEF Box ProfileBox {
+              uSize 1
+              vSize 1.5
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+
+            }
+            material 
+            MaterialGL {
+
+            }
+
+          }
+        }
+
+      }
+      DEF SphericalM TSeparatorKit {
+        transform 
+        TTransform {
+          translation 8 0 0
+          rotation 1 0 0  180
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Spherical ShapeElliptic {
+              fields [ SFDouble aX, SFDouble aY, SFDouble aZ ]
+
+            }
+            profileRT 
+            DEF Box ProfileBox {
+              uSize 1
+              vSize 1.5
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+
+            }
+            material 
+            MaterialGL {
+
+            }
+
+          }
+        }
+
+      }
+      DEF HyperbolicM TSeparatorKit {
+        transform 
+        TTransform {
+          translation -8 0 0
+          rotation 1 0 0  180
+
+        }
+        group 
+        Group {
+
+          DEF Shape TShapeKit {
+            shapeRT 
+            DEF Hyperbolic ShapeHyperbolic {
+              fields [ SFDouble aX, SFDouble aY, SFDouble aZ ]
+
+            }
+            profileRT 
+            DEF Box ProfileBox {
+              uSize 1
+              vSize 1.5
+
+            }
+            materialRT 
+            DEF Specular MaterialSpecular {
+
+            }
+            material 
+            MaterialGL {
+
+            }
+
+          }
+        }
+
+      }
+    }
+
+  }
+
+}

@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 //    QString fileName = parser.positionalArguments()[0];
     QString fileName = parser.value(optionInput);
     QFileInfo fileInfo(fileName);
-    if (fileInfo.completeSuffix() != "tnhs" || parser.isSet(optionWindow))
+    if (fileInfo.completeSuffix() != "tnhpps" || parser.isSet(optionWindow))
     {
         QPixmap pixmap(filePixmap);
         CustomSplashScreen splash(pixmap);
@@ -95,7 +95,7 @@ int main(int argc, char** argv)
         MainWindow mw(fileName, &splash);
         mw.show();
         splash.setFinishWindow();
-        if (fileInfo.completeSuffix() == "tnhs")
+        if (fileInfo.completeSuffix() == "tnhpps")
             mw.openFileScript(fileName);
 
         int code = app.exec();
