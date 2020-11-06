@@ -170,7 +170,7 @@ MainWindow::MainWindow(QString fileName, CustomSplashScreen* splash, QWidget* pa
 
     if (splash) splash->setMessage("Opening file");
     QFileInfo fileInfo(fileName);
-    if (!fileName.isEmpty() && fileInfo.completeSuffix() != "tnhs") {
+    if (!fileName.isEmpty() && fileInfo.completeSuffix() != "tnhpps") {
         openFileProject(fileName);
     } else {
         setSearchPaths(""); // refactor
@@ -625,7 +625,7 @@ void MainWindow::fileOpen()
 
     QString fileName = QFileDialog::getOpenFileName(
         this, "Open File", dirName,
-        "Tonatiuh files (*.tnh *.tnpp)"
+        "Tonatiuh files (*.tnhpp);; All files (*)"
     );
     if (fileName.isEmpty()) return;
 //    "Tonatiuh++ files (*.tnpp);;Tonatiuh files (*.tnh)"
@@ -643,7 +643,7 @@ void MainWindow::on_actionHelpExamples_triggered()
     QDir dir = QCoreApplication::applicationDirPath();
     QString fileName = QFileDialog::getOpenFileName(
         this, "Open File", dir.filePath("../examples/projects"),
-        "Tonatiuh files (*.tnh *.tnpp);; All files (*)"
+        "Tonatiuh files (*.tnhpp);; All files (*)"
     );
     if (fileName.isEmpty()) return;
 
@@ -655,7 +655,7 @@ void MainWindow::on_actionHelpScripts_triggered()
     QDir dir = QCoreApplication::applicationDirPath();
     QString fileName = QFileDialog::getOpenFileName(
         this, "Open File", dir.filePath("../examples/scripts"),
-        "Tonatiuh script files (*.tnhs);; All files (*)"
+        "Tonatiuh script files (*.tnhpps);; All files (*)"
     );
     if (fileName.isEmpty()) return;
 
@@ -796,7 +796,7 @@ bool MainWindow::fileSaveAs()
 
     QString fileName = QFileDialog::getSaveFileName(
         this, "Save", dirName,
-        "Tonatiuh files (*.tnh *.tnpp);;Tonatiuh debug (*.tnhd)"
+        "Tonatiuh files (*.tnhpp);;Tonatiuh debug (*.tnhd)"
     );
     if (fileName.isEmpty()) return false;
 
@@ -1713,7 +1713,7 @@ void MainWindow::fileOpen(QString fileName)
     }
 
     QFileInfo info(fileName);
-    if (!info.exists() || !info.isFile() || info.suffix() != "tnh") // todo
+    if (!info.exists() || !info.isFile() || info.suffix() != "tnhpp") // todo
     {
         showWarning(tr("Open: Cannot open file:\n%1.").arg(fileName));
         emit Abort(tr("Open: Cannot open file:\n%1.").arg(fileName));
@@ -1864,7 +1864,7 @@ void MainWindow::fileSaveAs(QString fileName)
         return;
     }
     QFileInfo info(fileName);
-    if (info.completeSuffix() != "tnh" || info.completeSuffix() != "tnpp")
+    if (info.completeSuffix() != "tnhpp")
     {
         emit Abort(tr("SaveAs: The file defined is not a tonatiuh file. The suffix must be tnh.") );
         return;
