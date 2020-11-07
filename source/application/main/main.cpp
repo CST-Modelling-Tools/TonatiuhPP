@@ -24,6 +24,11 @@ QTextStream cerr(stderr);
    </ol>
  */
 
+#include "script/NodeObject.h"
+#include "script/DataObject.h"
+Q_SCRIPT_DECLARE_QMETAOBJECT(NodeObject, QObject*)
+Q_SCRIPT_DECLARE_QMETAOBJECT(DataObject, QObject*)
+
 int main(int argc, char** argv)
 {  
     // application
@@ -111,6 +116,15 @@ int main(int argc, char** argv)
         MainWindow mw;
         QScriptValue tonatiuh = engine->newQObject(&mw);
         engine->globalObject().setProperty("tonatiuh", tonatiuh);
+        engine->globalObject().setProperty("tn", tonatiuh);
+
+        NodeObject::setMainWindow(&mw);
+        NodeObject::setEngine(engine);
+        QScriptValue nodeObjectClass = engine->scriptValueFromQMetaObject<NodeObject>();
+        engine->globalObject().setProperty("NodeObject", nodeObjectClass);
+
+        QScriptValue fileObjectClass = engine->scriptValueFromQMetaObject<DataObject>();
+        engine->globalObject().setProperty("DataObject", fileObjectClass);
 
         QFile file(fileName);
         if (!file.open(QIODevice::ReadOnly))

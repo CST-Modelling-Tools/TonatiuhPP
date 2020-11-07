@@ -1,4 +1,9 @@
-print("azimuth [deg], elevation[deg], efficiency");
+var data = DataObject();
+
+var line = "azimuth [deg], elevation[deg], efficiency"; 
+print(line);
+data.addRow(line);
+
 var azimuth = 90;
 for (var elevation = 10; elevation <= 90; elevation += 10) 
 {
@@ -10,5 +15,9 @@ for (var elevation = 10; elevation <= 90; elevation += 10)
 	var wMax = 18*8*0.32*4*1000; // rows*mirrors*width*length*DNI
 	var eta = w/wMax;
 
-	print("" + azimuth + ", " + elevation + ", " + eta);
+	line = "" + azimuth + ", " + elevation + ", " + eta;
+	print(line);
+	data.addRow(line);
 }
+
+data.write("Fresnel-IAM.csv");

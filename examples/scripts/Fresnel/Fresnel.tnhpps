@@ -336,3 +336,5 @@ cm.setParameter("rotation", "10.25 -10.5");
 var tg = scene.getPart("world.terrain.grid");
 tg.setParameter("min", "-10 -5 0");
 tg.setParameter("max", "10 40 0");
+
+#tn.fileSave();

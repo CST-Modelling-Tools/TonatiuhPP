@@ -2,6 +2,7 @@
 
 #include <QFileInfo>
 #include <QFile>
+#include <QDir>
 #include <QTextStream>
 #include <QMessageBox>
 #include <QScriptEngine>
@@ -40,7 +41,8 @@ QScriptValue DataObject::read(const QString& fileName)
 
 QScriptValue DataObject::write(const QString& fileName)
 {
-    QFile file(fileName);
+    QDir dir = QDir::searchPaths("project")[0];
+    QFile file(dir.absoluteFilePath(fileName));
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
           QMessageBox::warning(0, "Warning", QString("File cannot be opened:\n") + fileName);
         return false;
