@@ -1,6 +1,6 @@
 #include "ProfilePolygon.h"
 
-#include <Inventor/sensors/SoNodeSensor.h>
+#include <Inventor/sensors/SoFieldSensor.h>
 
 #include "kernel/node/TonatiuhFunctions.h"
 #include "libraries/math/gcf.h"
@@ -41,8 +41,9 @@ ProfilePolygon::ProfilePolygon()
     fieldData->addField(this, "points", &points);
 //    points.setNames({"x", "y"}); // for UserField
 
-    m_sensor = QSharedPointer<SoNodeSensor>::create(onSensor, this);
-    m_sensor->attach(this);
+    m_sensor = QSharedPointer<SoFieldSensor>::create(onSensor, this);
+    m_sensor->attach(&points);
+    m_sensor->setPriority(0);
     onSensor(this, 0);
 }
 
