@@ -132,9 +132,10 @@ function makeField()
 
 	var nMax = file.rows();
 	for (var n = 1; n < nMax; n++) {
-		name = file.array(n)[0];
-		position = file.array(n)[1];
-		focus = file.array(n)[2];
+		var data = file.array(n); 
+		name = data[0];
+		position = data[1];
+		focus = data[2];
 		makeHeliostat(nodeHeliostats, name, position, vRec, focus);
 	}
 
@@ -149,7 +150,6 @@ function makeField()
 	var n = nR.createNode("Plate");
 	n.setParameter("rotation", "0 0 1 180");
 	s = n.createShape();
-	s.setName("Shape")
 	q = s.insertSurface("Planar");
 	p = s.insertProfile("Box");
 	p.setParameter("uSize", 5);

@@ -62,6 +62,7 @@ TShapeKit::TShapeKit()
     m_sensorMaterial->attach(&material);
 
     shapeRT = new ShapePlanar;
+    setName("Shape");
 }
 
 TShapeKit* TShapeKit::copy(SbBool copyConnections) const
