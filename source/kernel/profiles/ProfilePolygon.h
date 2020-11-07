@@ -29,6 +29,6 @@ protected:
     QPolygonF m_polygon;
     Box2D m_box;
 
-    QSharedPointer<SoNodeSensor> m_sensor;
+    QSharedPointer<SoFieldSensor> m_sensor;
     static void onSensor(void* data, SoSensor*);
 };

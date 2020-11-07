@@ -29,7 +29,7 @@ BrandingText " "
 !define MUI_HEADERIMAGE_RIGHT
 !define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\orange-r.bmp"
 #OutFile "${APP_NAME}-Installer-Win64-${EDITION_NAME}-v${VERSION_NAME}.exe"
-OutFile "${APP_NAME}-Installer-Win64-v${VERSION_NAME}.exe"
+OutFile "${APP_NAME}_Installer_Win64_v${VERSION_NAME}.exe"
 InstallDir "$LOCALAPPDATA\${APP_NAME}\${EDITION_NAME}"
 InstallDirRegKey HKCU "Software\${APP_NAME}\${EDITION_NAME}" ""
 
