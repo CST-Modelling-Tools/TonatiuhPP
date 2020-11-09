@@ -1,0 +1,94 @@
+#Inventor V2.1 ascii
+
+
+TSceneKit {
+  fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
+  version "2020"
+  world 
+  DEF World WorldKit {
+    fields [ SFNode callbackList, SFNode location, SFNode sun, SFNode air, SFNode terrain, SFNode camera ]
+    sun 
+    DEF Sun SunKit {
+      fields [ SFNode callbackList, SFNode position, SFNode shape, SFNode aperture ]
+      position 
+      SunPosition {
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
+
+      }
+      aperture 
+      SunAperture {
+        fields [ SFString disabledNodes ]
+        disabledNodes ""
+
+      }
+
+    }
+    terrain 
+    DEF Terrain TerrainKit {
+      fields [ SFNode callbackList, SFNode grid ]
+      grid 
+      DEF Grid GridNode {
+
+      }
+
+    }
+    camera 
+    DEF Camera TCameraKit {
+      fields [ SFVec3f position, SFVec2f rotation, SFDouble angle, SFBool perspective, SFNode callbackList, SFNode topSeparator ]
+      position -2.69996 -4.31645 3.242
+      rotation 33.75 -33
+
+    }
+
+  }
+  group 
+  DEF Node TSeparatorKit {
+    transform 
+    TTransform {
+      translation 0 0 0.1
+
+    }
+    group 
+    Group {
+
+      DEF Shape TShapeKit {
+        shapeRT 
+        DEF MapN ShapeMapN {
+          fields [ MFVec3f normals, SFVec2i32 dims, SFVec2f xLimits, SFVec2f yLimits ]
+          normals [ 0.235702 0.235702 0.942809,
+              0.242536 -0 0.970143,
+              0.235702 -0.235702 0.942809,
+              -0 0.242536 0.970143,
+              -0 -0 1,
+              -0 -0.242536 0.970143,
+              -0.235702 0.235702 0.942809,
+              -0.242536 -0 0.970143,
+              -0.235702 -0.235702 0.942809 ]
+          dims 3 3
+          xLimits -0.5 0.5
+          yLimits -0.5 0.5
+
+        }
+        profileRT 
+        DEF Regular ProfileRegular {
+          fields [ SFDouble r, SFInt32 n ]
+          r 0.5
+          n 5
+
+        }
+        materialRT 
+        DEF Specular MaterialSpecular {
+          slope 0
+
+        }
+        material 
+        MaterialGL {
+
+        }
+
+      }
+    }
+
+  }
+
+}
