@@ -1,0 +1,92 @@
+// common include
+var degree = Math.PI/180;
+
+
+// input parameters
+var theta = 30*degree; // acceptance angle (from zenith)
+var rR = 0.5; // receiver radius
+
+
+// auxiliary parameters
+var f = rR*(1 + Math.sin(theta)); // focal distance
+// print("f = " + f);
+
+var x0 = f*Math.sin(theta) - rR; // center of parabola
+var z0 = -f*Math.cos(theta);
+
+var uMin = 2*rR*Math.cos(theta); // profile of parabola
+var uMax = 2*f/Math.tan(theta);
+
+var rA = rR/Math.sin(theta); // aperture radius
+var zA = (rR + rA)/Math.tan(theta); // aperture height (from receiver)
+
+var cr = Math.pow(Math.sin(theta), -2); // concentration ratio (estimated)
+
+
+// shapes 
+
+function makeCPC(parent)
+{
+	var nodeCPC = parent.createNode();
+	
+	var node = nodeCPC.createNode("Mirror");
+	var s = node.createShape();
+	var q = s.insertSurface("FunctionXYZ");
+	var cosT = Math.cos(theta);
+	var sinT = Math.sin(theta);
+	var temp = "(" + cosT + "*u - " + sinT/(4*f) + "*u*u - " + (-x0) + ")*";
+	q.setParameter("functionX", temp + "Math.cos(v)");
+	q.setParameter("functionY", temp + "Math.sin(v)");
+	q.setParameter("functionZ", "" + sinT + "*u + " + cosT/(4*f) + "*u*u - " + (-z0));
+	q.setParameter("dims", "12 48");
+	var p = s.insertProfile("Rectangular");
+	p.setParameter("uMin", uMin);
+	p.setParameter("uMax", uMax);
+	p.setParameter("vMin", -Math.PI);
+	p.setParameter("vMax", Math.PI);
+	var m = s.insertMaterial("Specular");
+	m.setParameter("slope", "0.002");
+	m.setParameter("reflectivity", "0.95");
+	var mG = s.getPart("material");
+	mG.setParameter("ambientColor", "0.3 0.4 0.5");
+	mG.setParameter("diffuseColor", "0.3 0.3 0.3");
+	mG.setParameter("specularColor", "0.1 0.1 0.1");
+	mG.setParameter("shininess", "0.5");
+	
+	var nodeAbsorber = nodeCPC.createNode("Absorber");
+	var s = nodeAbsorber.createShape();
+	var q = s.insertSurface("Planar");
+	var p = s.insertProfile("Circular");
+	p.setParameter("rMax", rR);
+	var mG = s.getPart("material");
+	mG.setParameter("ambientColor", "0.5 0.5 0.5");
+	mG.setParameter("diffuseColor", "0.2 0.2 0.2");
+
+	return nodeCPC;
+}
+
+var nodeRoot = NodeObject();
+nodeRoot.setName("Script");
+var nodeCPC = makeCPC(nodeRoot);
+nodeCPC.setName("CPC");
+tn.Clear();
+tn.InsertScene(nodeRoot);
+
+
+// world
+var scene = NodeObject().getScene();
+
+var sun = scene.getPart("world.sun");
+sun.setParameter("shape", "Pillbox");
+var sp = sun.getPart("position");
+sp.setParameter("azimuth", 180);
+sp.setParameter("elevation", 80);
+
+var cm = scene.getPart("world.camera");
+cm.setParameter("position", "0 -8.67789 10.9807");
+cm.setParameter("rotation", "0 -50");
+
+var tg = scene.getPart("world.terrain.grid");
+//tg.setParameter("fill", "FALSE");
+tg.setParameter("min", "-10 -10 0");
+tg.setParameter("max", "10 10 0");

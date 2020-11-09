@@ -61,14 +61,14 @@ FluxAnalysisDialog::FluxAnalysisDialog(TSceneKit* sceneKit, SceneTreeModel* scen
     ui->plotFxy->axisRect()->setupFullAxesBox(true);
     ui->plotFxy->plotLayout()->insertRow(0);
     ui->plotFxy->plotLayout()->addElement(0, 0, new QCPTextElement(ui->plotFxy, "Flux Distribution") );
-    ui->plotFxy->xAxis->setLabel("x, m");
-    ui->plotFxy->yAxis->setLabel("y, m");
+    ui->plotFxy->xAxis->setLabel("u");
+    ui->plotFxy->yAxis->setLabel("v");
 
-    ui->plotFx->xAxis->setLabel("x, m");
+    ui->plotFx->xAxis->setLabel("u");
     ui->plotFx->yAxis->setLabel(m_fluxLabel);
     ui->plotFx->yAxis->setRange(0, 1.08);
 
-    ui->plotFy->xAxis->setLabel("y, m");
+    ui->plotFy->xAxis->setLabel("v");
     ui->plotFy->yAxis->setLabel(m_fluxLabel);
     ui->plotFy->yAxis->setRange(0, 1.08);
 
@@ -368,12 +368,12 @@ void FluxAnalysisDialog::ClearAnalysis()
     }
     ui->plotFxy->replot();
 
-    ui->spinX->setValue(0.);
-    ui->spinX->setMinimum(0.);
-    ui->spinX->setMaximum(0.);
-    ui->spinY->setValue(0.);
-    ui->spinY->setMinimum(0.);
-    ui->spinY->setMaximum(0.);
+//    ui->spinX->setValue(0.);
+//    ui->spinX->setMinimum(0.);
+//    ui->spinX->setMaximum(0.);
+//    ui->spinY->setValue(0.);
+//    ui->spinY->setMinimum(0.);
+//    ui->spinY->setMaximum(0.);
 
     ui->powerTotal->setText(QString::number(0.));
     ui->fluxMin->setText(QString::number(0.));
@@ -463,26 +463,26 @@ void FluxAnalysisDialog::CreateSectorPlots(double xMin, double yMin, double xMax
 {
     QPen pen(QColor(137, 140, 140), 1);
 
+    m_lineV = new QCPItemLine(ui->plotFxy);
+//    ui->plotFxy->addItem(tickVLine);
+    m_lineV->start->setCoords(0, yMin - 1);
+    m_lineV->end->setCoords(0, yMax + 1);
+    m_lineV->setPen(pen);
+
+    m_lineH = new QCPItemLine(ui->plotFxy);
+//    ui->plotFxy->addItem(tickHLine);
+    m_lineH->start->setCoords(xMin - 1,  0);
+    m_lineH->end->setCoords(xMax + 1, 0);
+    m_lineH->setPen(pen);
+
     // Create a vertical and horizontal line for sectors
     ui->spinX->setMinimum(xMin);
     ui->spinX->setMaximum(xMax);
     ui->spinX->setSingleStep((xMax - xMin)/10);
 
-    QCPItemLine* lineV = new QCPItemLine(ui->plotFxy);
-//    ui->plotFxy->addItem(tickVLine);
-    lineV->start->setCoords(0, yMin - 1);
-    lineV->end->setCoords(0, yMax + 1);
-    lineV->setPen(pen);
-
     ui->spinY->setMinimum(yMin);
     ui->spinY->setMaximum(yMax);
     ui->spinY->setSingleStep((yMax - yMin)/10);
-
-    QCPItemLine* lineH = new QCPItemLine(ui->plotFxy);
-//    ui->plotFxy->addItem(tickHLine);
-    lineH->start->setCoords(xMin - 1,  0);
-    lineH->end->setCoords(xMax + 1, 0);
-    lineH->setPen(pen);
 }
 
 /*
@@ -493,13 +493,13 @@ void FluxAnalysisDialog::UpdateSectorPlots(const Matrix2D<int>& bins, double wPh
     double x = ui->spinX->value();
     double y = ui->spinY->value();
 
-    QCPItemLine* lineV = (QCPItemLine*) ui->plotFxy->item(0);
-    lineV->start->setCoords(x, lineV->start->coords().y());
-    lineV->end->setCoords(x, lineV->end->coords().y());
+//    m_lineV = (QCPItemLine*) ui->plotFxy->item(0);
+    m_lineV->start->setCoords(x, m_lineV->start->coords().y());
+    m_lineV->end->setCoords(x, m_lineV->end->coords().y());
 
-    QCPItemLine* lineH = (QCPItemLine*) ui->plotFxy->item(1);
-    lineH->start->setCoords(lineH->start->coords().x(), y);
-    lineH->end->setCoords(lineH->end->coords().x(), y);
+//    m_lineH = (QCPItemLine*) ui->plotFxy->item(1);
+    m_lineH->start->setCoords(m_lineH->start->coords().x(), y);
+    m_lineH->end->setCoords(m_lineH->end->coords().x(), y);
 
     ui->plotFxy->replot();
     ui->plotFx->clearPlottables();

@@ -38,7 +38,7 @@
          <item row="2" column="0">
           <widget class="QLabel" name="surfaceXLabel">
            <property name="text">
-            <string>Cells X:</string>
+            <string>Cells U:</string>
            </property>
           </widget>
          </item>
@@ -79,7 +79,7 @@
          <item row="3" column="0">
           <widget class="QLabel" name="surfaceYLabel">
            <property name="text">
-            <string>Cells Y:</string>
+            <string>Cells V:</string>
            </property>
           </widget>
          </item>
@@ -354,7 +354,7 @@
         <item>
          <widget class="QLabel" name="yCoordlabel">
           <property name="text">
-           <string>Slice y:</string>
+           <string>Slice v:</string>
           </property>
          </widget>
         </item>
@@ -391,7 +391,7 @@
         <item>
          <widget class="QLabel" name="xCoordlabel">
           <property name="text">
-           <string>Slice x:</string>
+           <string>Slice u:</string>
           </property>
          </widget>
         </item>

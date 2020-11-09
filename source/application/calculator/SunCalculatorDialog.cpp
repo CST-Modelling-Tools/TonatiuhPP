@@ -3,10 +3,13 @@
 
 #include <QCloseEvent>
 #include <QDateTime>
+//#include <QTimeZone>
 #include <QSettings>
 
 #include "libraries/math/gcf.h"
-
+#include "main/MainWindow.h"
+#include "kernel/scene/TSceneKit.h"
+#include "kernel/scene/LocationNode.h"
 
 SunCalculatorDialog::SunCalculatorDialog(QWidget* parent):
     QDialog(parent),
@@ -15,8 +18,27 @@ SunCalculatorDialog::SunCalculatorDialog(QWidget* parent):
     ui->setupUi(this);
 
     setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+    setWindowFlag(Qt::WindowMinimizeButtonHint, false);
+    setWindowFlag(Qt::WindowMaximizeButtonHint, true);
 
-    readSettings();
+    MainWindow* mw = dynamic_cast<MainWindow*>(parent);
+    if (parent) {
+        TSceneKit* scene = mw->getSceneKit();
+        LocationNode* location = (LocationNode*) scene->getPart("world.location", true);
+        ui->latitudeSpin->setValue(location->latitude.getValue());
+        ui->longitudeSpin->setValue(location->longitude.getValue());
+
+        QDateTime dt = QDateTime::currentDateTimeUtc();
+        ui->calendarWidget->setSelectedDate(dt.date());
+        ui->utRadio->setChecked(true);
+        ui->utTime->setTime(dt.time());
+//        ui->ctTime->setTime(settings.value("SunCalculator.ctTime").toTime());
+        ui->zoneSpin->setValue(dt.offsetFromUtc()/3600.);
+    } else {
+        readSettings();
+    }
+
+
 
     connect(ui->longitudeSpin, SIGNAL(valueChanged(double)), ui->worldMap, SLOT(LongitudeChanged(double)) );
     connect(ui->latitudeSpin, SIGNAL(valueChanged(double)), this, SLOT(calculateSunPosition()) );
@@ -34,8 +56,8 @@ SunCalculatorDialog::SunCalculatorDialog(QWidget* parent):
     int q = fontMetrics().height();
     resize(64*q, 36*q);
 
-     ui->worldMap->LongitudeChanged(ui->longitudeSpin->value());
-     ui->worldMap->LatitudeChanged(ui->latitudeSpin->value());
+    ui->worldMap->LongitudeChanged(ui->longitudeSpin->value());
+    ui->worldMap->LatitudeChanged(ui->latitudeSpin->value());
     calculateSunPosition();
 }
 
@@ -104,6 +126,7 @@ void SunCalculatorDialog::readSettings()
 {
     QSettings settings("Tonatiuh", "Cyprus");
 
+    // todo: take from project
     ui->latitudeSpin->setValue(settings.value("SunCalculator.latitude", 0.).toDouble());
     ui->longitudeSpin->setValue(settings.value("SunCalculator.longitude", 0.).toDouble());
 

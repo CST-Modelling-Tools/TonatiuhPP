@@ -8,4 +8,5 @@ Welcome to Tonatiuh's documentation!
    :maxdepth: 2
    
    main/index
+   examples/index
    development/index

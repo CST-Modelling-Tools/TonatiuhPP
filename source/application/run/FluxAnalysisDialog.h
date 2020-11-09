@@ -15,7 +15,7 @@ class QIntValidator;
 class Random;
 class TSceneKit;
 class FluxAnalysis;
-
+class QCPItemLine;
 
 class FluxAnalysisDialog: public QDialog
 {
@@ -53,4 +53,6 @@ private:
     QString m_fluxSurfaceURL;
     QString m_fluxLabel;
     QString m_path;
+    QCPItemLine* m_lineV;
+    QCPItemLine* m_lineH;
 };

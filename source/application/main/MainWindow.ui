@@ -456,7 +456,6 @@ border:none;
     </property>
     <addaction name="actionHelpDocumentation"/>
     <addaction name="actionHelpExamples"/>
-    <addaction name="actionHelpScripts"/>
     <addaction name="actionHelpAbout"/>
    </widget>
    <addaction name="menuFile"/>
@@ -814,7 +813,7 @@ border:none;
      <normaloff>:/images/about/tnh.ico</normaloff>:/images/about/tnh.ico</iconset>
    </property>
    <property name="text">
-    <string>&amp;Projects...</string>
+    <string>&amp;Examples..</string>
    </property>
   </action>
   <action name="actionHelpScripts">

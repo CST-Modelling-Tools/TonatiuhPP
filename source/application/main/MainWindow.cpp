@@ -625,29 +625,45 @@ void MainWindow::fileOpen()
 
     QString fileName = QFileDialog::getOpenFileName(
         this, "Open File", dirName,
-        "Tonatiuh files (*.tnhpp);; All files (*)"
+        "All files (*);;"
+        "Tonatiuh++ projects (*.tnhpp);;"
+        "Tonatiuh++ scripts (*.tnhpps)"
     );
+    //"Tonatiuh++ files (*.tnhpp *.tnhpps);;"
     if (fileName.isEmpty()) return;
-//    "Tonatiuh++ files (*.tnpp);;Tonatiuh files (*.tnh)"
 
     QFileInfo info(fileName);
     settings.setValue("dirProjects", info.path());
 
-    openFileProject(fileName);
+    fileOpen(fileName);
 }
 
 void MainWindow::on_actionHelpExamples_triggered()
 {
+//    if (!OkToContinue()) return;
+
+//    QDir dir = QCoreApplication::applicationDirPath();
+//    QString fileName = QFileDialog::getOpenFileName(
+//        this, "Open File", dir.filePath("../examples"),
+//        "Tonatiuh files (*.tnhpp);; All files (*)"
+//    );
+//    if (fileName.isEmpty()) return;
+
+//    openFileProject(fileName);
+
     if (!OkToContinue()) return;
 
     QDir dir = QCoreApplication::applicationDirPath();
     QString fileName = QFileDialog::getOpenFileName(
-        this, "Open File", dir.filePath("../examples/projects"),
-        "Tonatiuh files (*.tnhpp);; All files (*)"
+        this, "Open File", dir.filePath("../examples"),
+        "All files (*);;"
+        "Tonatiuh++ projects (*.tnhpp);;"
+        "Tonatiuh++ scripts (*.tnhpps)"
     );
+//    "Tonatiuh++ files (*.tnhpp *.tnhpps);;"
     if (fileName.isEmpty()) return;
 
-    openFileProject(fileName);
+    fileOpen(fileName);
 }
 
 void MainWindow::on_actionHelpScripts_triggered()
@@ -1705,22 +1721,25 @@ void MainWindow::Clear()
  */
 void MainWindow::fileOpen(QString fileName)
 {
-    if (fileName.isEmpty())
-    {
-        showWarning(tr("Open: Cannot open file:\n%1.").arg(fileName));
-        emit Abort(tr("Open: Cannot open file:\n%1.").arg(fileName));
-        return;
-    }
-
     QFileInfo info(fileName);
-    if (!info.exists() || !info.isFile() || info.suffix() != "tnhpp") // todo
+    if (!info.exists() || !info.isFile())
     {
-        showWarning(tr("Open: Cannot open file:\n%1.").arg(fileName));
-        emit Abort(tr("Open: Cannot open file:\n%1.").arg(fileName));
+        QString text = tr("Open: Cannot open file:\n%1.").arg(fileName);
+        showWarning(text);
+        emit Abort(text);
         return;
     }
 
-    openFileProject(fileName);
+    if (info.suffix() == "tnhpp")
+        openFileProject(fileName);
+    else if (info.suffix() == "tnhpps")
+        openFileScript(fileName);
+    else {
+        QString text = tr("Open: Unknown format:\n%1.").arg(fileName);
+        showWarning(text);
+        emit Abort(text);
+        return;
+    }
 }
 
 /*!
