@@ -3,6 +3,9 @@ CPC
 
 Compound Parabolic Concentrator 
 
+Properties
+**********
+
 .. image:: CPC.png
   :width: 50%
   :align: center
@@ -24,6 +27,7 @@ Maximal concentration
   
   
 Parameters
+**********
 
 | acceptance angle (theta)
 | receiver radius (rR)

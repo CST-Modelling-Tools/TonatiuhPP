@@ -625,11 +625,11 @@ void MainWindow::fileOpen()
 
     QString fileName = QFileDialog::getOpenFileName(
         this, "Open File", dirName,
-        "Tonatiuh++ files (*.tnhpp *.tnhpps);;"
+        "All files (*);;"
         "Tonatiuh++ projects (*.tnhpp);;"
-        "Tonatiuh++ scripts (*.tnhpps);;"
-        "All files (*)"
+        "Tonatiuh++ scripts (*.tnhpps)"
     );
+    //"Tonatiuh++ files (*.tnhpp *.tnhpps);;"
     if (fileName.isEmpty()) return;
 
     QFileInfo info(fileName);
@@ -656,11 +656,11 @@ void MainWindow::on_actionHelpExamples_triggered()
     QDir dir = QCoreApplication::applicationDirPath();
     QString fileName = QFileDialog::getOpenFileName(
         this, "Open File", dir.filePath("../examples"),
-        "Tonatiuh++ files (*.tnhpp *.tnhpps);;"
+        "All files (*);;"
         "Tonatiuh++ projects (*.tnhpp);;"
-        "Tonatiuh++ scripts (*.tnhpps);;"
-        "All files (*)"
+        "Tonatiuh++ scripts (*.tnhpps)"
     );
+//    "Tonatiuh++ files (*.tnhpp *.tnhpps);;"
     if (fileName.isEmpty()) return;
 
     fileOpen(fileName);

@@ -30,7 +30,8 @@ BrandingText " "
 !define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\orange-r.bmp"
 #OutFile "${APP_NAME}-Installer-Win64-${EDITION_NAME}-v${VERSION_NAME}.exe"
 OutFile "${APP_NAME}_Installer_Win64_v${VERSION_NAME}.exe"
-InstallDir "$LOCALAPPDATA\${APP_NAME}\${EDITION_NAME}"
+#InstallDir "$LOCALAPPDATA\${APP_NAME}\${EDITION_NAME}"
+InstallDir "$LOCALAPPDATA\${APP_NAME}"
 InstallDirRegKey HKCU "Software\${APP_NAME}\${EDITION_NAME}" ""
 
 
@@ -186,6 +187,12 @@ Section "Tonatiuh" SectionTonatiuh
 	SectionIn RO ; read only, always installed
 	#SectionIn 1 2
 	SetOutPath $INSTDIR
+	
+	RMDir /r "$INSTDIR\bin"
+	RMDir /r "$INSTDIR\images"	
+	RMDir /r "$INSTDIR\examples"
+	RMDir /r "$INSTDIR\help"
+	
 	!ifdef ISBUILDTEST
 		File /r "bin*"
 	!else
@@ -293,7 +300,7 @@ Section "Uninstall"
 	RMDir /r "$INSTDIR\help"
 	Delete "$INSTDIR\uninstall.exe"
 	RMDir "$INSTDIR"
-	RMDir "$INSTDIR\.."
+	#RMDir "$INSTDIR\.."
 	
     #!insertmacro MUI_STARTMENU_GETFOLDER pageApplication $StartMenuFolder
 	Delete "$SMPROGRAMS\$StartMenuFolder\$AppNameFull.lnk"
