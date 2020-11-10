@@ -38,6 +38,7 @@ void SunNode3D::attach(SunPosition* sp)
     update(this, 0);
 }
 
+#include <qDebug>
 void SunNode3D::create()
 {
     m_transform = new SoTransform;
@@ -59,8 +60,8 @@ void SunNode3D::create()
     addChild(sTransform);
 
     SoTexture2* texture = new SoTexture2;
-    QDir dir(QCoreApplication::applicationDirPath()); // relative to exe file
-    texture->filename = dir.filePath("../images/sun.png").toLatin1().data();
+    texture->filename = QFileInfo("resources:images/sun.png").filePath().toLatin1().data();
+    qDebug() << QFileInfo("resources:/images/sun.png").filePath();
     texture->model = SoTexture2::REPLACE;
     addChild(texture);
 

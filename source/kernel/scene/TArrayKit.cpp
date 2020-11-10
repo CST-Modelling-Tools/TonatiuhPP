@@ -120,13 +120,11 @@ void TArrayKit::onSensor()
 
 
     // shader
-    QDir dir(QCoreApplication::applicationDirPath()); // relative to exe file
-
     SoVertexShader* vs = new SoVertexShader;
-    vs->sourceProgram = dir.filePath("../images/light_vs.glsl").toLatin1().data();
+    vs->sourceProgram = QFileInfo("resources:/shaders/light_vs.glsl").filePath().toLatin1().data();
 
     SoFragmentShader* fs = new SoFragmentShader;
-    fs->sourceProgram = dir.filePath("../images/light_fs.glsl").toLatin1().data();
+    fs->sourceProgram = QFileInfo("resources:/shaders/light_fs.glsl").filePath().toLatin1().data();
 
     m_vs_matrixViewModel = new SoShaderParameterMatrix;
     m_vs_matrixViewModel->name = "matrixViewModel";

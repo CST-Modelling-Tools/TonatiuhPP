@@ -162,6 +162,10 @@ MainWindow::MainWindow(QString fileName, CustomSplashScreen* splash, QWidget* pa
     dir.cd("plugins");
     m_pluginManager->load(dir);
 
+    QDir dirApp(QCoreApplication::applicationDirPath());
+    QStringList paths = {dirApp.absoluteFilePath("../resources")};
+    QDir::setSearchPaths("resources", paths);
+
     if (splash) splash->setMessage("Creating views");
     SetupDocument();
     SetupViews();
@@ -1474,7 +1478,7 @@ void MainWindow::InsertShape()
     CmdInsertNode* cmd = new CmdInsertNode(kit, index);
     m_undoStack->push(cmd);
 
-    m_modelScene->setNodeName(kit, "Shape");
+    m_modelScene->setNodeNameUnique(kit, "Shape");
     setDocumentModified(true);
 }
 

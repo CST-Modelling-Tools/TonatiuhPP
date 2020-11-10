@@ -4,7 +4,8 @@
 !define DESCRIPTION "Ray tracing for Solar Energy (Open Source)"
 !define VERSION_MAJOR 0
 !define VERSION_MINOR 1
-!define VERSION_NAME "${VERSION_MAJOR}.${VERSION_MINOR}"
+!define VERSION_BUILD 1
+!define VERSION_NAME "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BUILD}"
 !define /date VERSION_DATE "%Y.%m.%d"
 
 #!define ISBUILDTEST 
@@ -190,6 +191,7 @@ Section "Tonatiuh" SectionTonatiuh
 	
 	RMDir /r "$INSTDIR\bin"
 	RMDir /r "$INSTDIR\images"	
+	RMDir /r "$INSTDIR\resources"	
 	RMDir /r "$INSTDIR\examples"
 	RMDir /r "$INSTDIR\help"
 	
@@ -198,7 +200,7 @@ Section "Tonatiuh" SectionTonatiuh
 	!else
 		File /r "..\portable\bin*"
 	!endif
-	File /r "..\portable\images*"
+	File /r "..\portable\resources*"
 
 	StrCpy $RadioClassic_State 1
 	StrCpy $AppNameFull "${APP_NAME}"
@@ -295,7 +297,7 @@ Section "Uninstall"
 	ReadRegStr $AppNameFull HKCU "${REG_KEY_UNINSTALL}" "DisplayName"
 		  
 	RMDir /r "$INSTDIR\bin"
-	RMDir /r "$INSTDIR\images"	
+	RMDir /r "$INSTDIR\resources"	
 	RMDir /r "$INSTDIR\examples"
 	RMDir /r "$INSTDIR\help"
 	Delete "$INSTDIR\uninstall.exe"
