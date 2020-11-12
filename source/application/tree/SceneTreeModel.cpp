@@ -352,16 +352,25 @@ QModelIndex SceneTreeModel::indexFromUrl(QString url) const
  *
  * \sa IndexFromNodeUrl, NodeFromIndex, PathFromIndex.
 **/
+#include <qDebug>
 QModelIndex SceneTreeModel::indexFromPath(const SoNodeKitPath& path) const
 {
+//    qDebug() << "asd";
+//    for (int q = 0; q < path.getLength(); q++)
+//    {
+//        qDebug() << path.getNodeFromTail(q)->getName().getString() << "/";
+//    }
+//    qDebug() <<"fin";
+
     SoBaseKit* coinNode = static_cast<SoBaseKit*>(path.getTail());
     if (!coinNode) gcf::SevereError("IndexFromPath Null coinNode.");
-    if (coinNode->getTypeId().getName() == "SunKit") return index(0, 0);
 
     if (path.getLength() <= 1) return QModelIndex();
-    SoBaseKit* coinParent = static_cast<SoBaseKit*>(path.getNodeFromTail(1));
-    if (!coinParent) gcf::SevereError("IndexFromPath Null coinParent.");
-    if (coinParent->getTypeId().getName() == "SunKit") return index(0, 0);
+    int temp = 1;
+    SoBaseKit* coinParent = static_cast<SoBaseKit*>(path.getNodeFromTail(temp));
+    if (!coinParent) return QModelIndex();
+//        gcf::SevereError("IndexFromPath Null coinParent.");
+
     if (coinParent->getTypeId().isDerivedFrom(SoSceneKit::getClassTypeId()))
     {
         int row = 0;
@@ -373,25 +382,29 @@ QModelIndex SceneTreeModel::indexFromPath(const SoNodeKitPath& path) const
         }
         return QModelIndex();
     }
-    int temp = 1;
-    if (coinParent->getTypeId().isDerivedFrom(SoGroup::getClassTypeId()))
+
+
+    while (coinParent->getTypeId().isDerivedFrom(SoShapeKit::getClassTypeId()))
     {
-        temp++;
         coinNode = coinParent;
-        coinParent = (SoBaseKit*)path.getNodeFromTail(temp);
+        coinParent = (SoBaseKit*) path.getNodeFromTail(++temp);
     }
     if (coinParent->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId()))
     {
-        temp++;
         coinNode = coinParent;
-        coinParent = (SoBaseKit*) path.getNodeFromTail(temp);
+        coinParent = (SoBaseKit*) path.getNodeFromTail(++temp);
+        if (coinParent->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
+        {
+            coinNode = coinParent;
+            coinParent = (SoBaseKit*) path.getNodeFromTail(++temp);
+        }
     }
 
     SoGroup* coinPartList = static_cast<SoGroup*>(coinParent->getPart("group", true));
-    if (!coinPartList) gcf::SevereError("IndexFromPath Null coinPartList.");
+    if (!coinPartList)
+        return QModelIndex(); // todo
+//        gcf::SevereError("IndexFromPath Null coinPartList.");
     int row = coinPartList->findChild(coinNode);
-    if (coinParent->getTypeId().isDerivedFrom(TSeparatorKit::getClassTypeId()))
-        if (coinParent->getPart("tracker", false)) row++;
 
     SoNodeKitPath* pathParent = static_cast<SoNodeKitPath*>(path.copy());
     pathParent->ref();

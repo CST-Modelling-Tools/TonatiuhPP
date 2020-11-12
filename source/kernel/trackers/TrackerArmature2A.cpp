@@ -65,23 +65,27 @@ void TrackerArmature2A::update(TSeparatorKit* parent, const Transform& toGlobal,
     Angles solution = m_solver->selectSolution(solutions);
 
     // rotate nodes
+    TSeparatorKit* nodePrimary = 0;
     SoGroup* childList = (SoGroup*) parent->getPart("group", false);
     for (int q = 0; q < childList->getNumChildren(); ++q) {
-        TSeparatorKit* nodePrimary = dynamic_cast<TSeparatorKit*>(childList->getChild(q));
-        if (!nodePrimary) continue;
-        TTransform* tPrimary = (TTransform*) nodePrimary->getPart("transform", true);
-        tPrimary->translation = primaryShift.getValue();
-        tPrimary->rotation.setValue(primaryAxis.getValue(), solution.x);
-
-        childList = (SoGroup*) nodePrimary->getPart("group", false);
-    //    auto nodeSecondary = static_cast<TSeparatorKit*>(nodePrimary->getPart("group[0]", false));
-        auto nodeSecondary = static_cast<TSeparatorKit*>(childList->getChild(0));
-        if (!nodeSecondary) return;
-        TTransform* tSecondary = (TTransform*) nodeSecondary->getPart("transform", true);
-        tSecondary->translation = secondaryShift.getValue();
-        tSecondary->rotation.setValue(secondaryAxis.getValue(), solution.y);
-        break;
+        nodePrimary = dynamic_cast<TSeparatorKit*>(childList->getChild(q));
+        if (nodePrimary) break;
     }
+    if (!nodePrimary) return;
+    TTransform* tPrimary = (TTransform*) nodePrimary->getPart("transform", true);
+    tPrimary->translation = primaryShift.getValue();
+    tPrimary->rotation.setValue(primaryAxis.getValue(), solution.x);
+
+    TSeparatorKit* nodeSecondary = 0;
+    childList = (SoGroup*) nodePrimary->getPart("group", false);
+    for (int q = 0; q < childList->getNumChildren(); ++q) {
+        nodeSecondary = dynamic_cast<TSeparatorKit*>(childList->getChild(q));
+        if (nodeSecondary) break;
+    }
+    if (!nodeSecondary) return;
+    TTransform* tSecondary = (TTransform*) nodeSecondary->getPart("transform", true);
+    tSecondary->translation = secondaryShift.getValue();
+    tSecondary->rotation.setValue(secondaryAxis.getValue(), solution.y);
 }
 
 void TrackerArmature2A::onModified(void* data, SoSensor*)

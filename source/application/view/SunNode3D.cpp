@@ -60,8 +60,7 @@ void SunNode3D::create()
     addChild(sTransform);
 
     SoTexture2* texture = new SoTexture2;
-    texture->filename = QFileInfo("resources:images/sun.png").filePath().toLatin1().data();
-    qDebug() << QFileInfo("resources:/images/sun.png").filePath();
+    texture->filename = QFileInfo("resources:/images/sun.png").filePath().toLatin1().data();
     texture->model = SoTexture2::REPLACE;
     addChild(texture);
 

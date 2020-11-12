@@ -31,8 +31,6 @@ TSeparatorKit::TSeparatorKit()
     SO_KIT_ADD_CATALOG_ENTRY(group, SoGroup, TRUE, topSeparator, "", TRUE);
 
     SO_KIT_INIT_INSTANCE();
-
-
 }
 
 // use bounding box in world coordinates ?
@@ -44,11 +42,11 @@ void TSeparatorKit::getBoundingBox(SoGetBoundingBoxAction* action)
     //    box.setTransform(SbMatrix::identity());
 }
 
-void TSeparatorKit::setCulling(bool on)
-{
-    SoSeparator* sep = (SoSeparator*) topSeparator.getValue();
-    sep->renderCulling = on ? SoSeparator::ON : SoSeparator::OFF;
-}
+//void TSeparatorKit::setCulling(bool on)
+//{
+//    SoSeparator* sep = (SoSeparator*) topSeparator.getValue();
+//    sep->renderCulling = on ? SoSeparator::ON : SoSeparator::OFF;
+//}
 
 
 //    SbViewportRegion vpr;// = m_graphicView[m_focusView]->getViewportRegion();

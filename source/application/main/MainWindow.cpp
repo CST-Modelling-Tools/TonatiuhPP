@@ -938,13 +938,6 @@ void MainWindow::SelectionFinish(SoSelection* selection)
     if (!path->containsNode(m_document->getSceneKit())) return;
 
     SoNodeKitPath* nodeKitPath = static_cast<SoNodeKitPath*>(path);
-//    if (nodeKitPath->getTail()->getTypeId().isDerivedFrom(SunKit::getClassTypeId() ) )
-//    {
-//        selection->deselectAll();
-//        QModelIndex currentIndex = m_modelSelection->currentIndex();
-//        m_modelSelection->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-//        return;
-//    }
 //    if (nodeKitPath->getTail()->getTypeId().isDerivedFrom(SoDragger::getClassTypeId() ) )
 //        return;
 
@@ -952,6 +945,11 @@ void MainWindow::SelectionFinish(SoSelection* selection)
     if (!index.isValid()) return;
     m_modelSelection->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
 //    m_selectionModel->select(index, QItemSelectionModel::ClearAndSelect);
+
+    SoPath* pathCorrected = m_modelScene->pathFromIndex(index);
+    m_graphicsRoot->deselectAll();
+    m_graphicsRoot->select(pathCorrected);
+    m_graphicView[0]->render();
 }
 
 void MainWindow::setFieldText(SoNode* node, QString field, QString value)

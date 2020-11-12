@@ -2,7 +2,6 @@
 
 
 TSceneKit {
-  fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
   version "2020"
   world 
   DEF World WorldKit {
@@ -65,7 +64,6 @@ TSceneKit {
           DEF Shape TShapeKit {
             shapeRT 
             DEF Mesh ShapeMesh {
-              fields [ SFString file ]
               file "parabola-flat.obj"
 
             }
@@ -98,7 +96,6 @@ TSceneKit {
           DEF Shape TShapeKit {
             shapeRT 
             DEF Mesh ShapeMesh {
-              fields [ SFString file ]
               file "parabola-smooth.obj"
 
             }

@@ -38,6 +38,7 @@ void TSceneKit::initClass()
 TSceneKit::TSceneKit()
 {
     SO_KIT_CONSTRUCTOR(TSceneKit);
+    isBuiltIn = TRUE;
 
     SO_NODE_ADD_FIELD(version, ("") );
     version.setValue("2020");
@@ -55,7 +56,7 @@ TSceneKit::TSceneKit()
 //    loc->name = "unknown";
 
     TSeparatorKit* nodeLayout = (TSeparatorKit*) getPart("group", true);
-    nodeLayout->setCulling(false);
+//    nodeLayout->setCulling(false);
     nodeLayout->setName("Node");
 
 //    setPart("cameraList[0]", new SoCameraKit);

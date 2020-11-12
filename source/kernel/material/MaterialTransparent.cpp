@@ -15,6 +15,7 @@ void MaterialTransparent::initClass()
 MaterialTransparent::MaterialTransparent()
 {
     SO_NODE_CONSTRUCTOR(MaterialTransparent);
+    isBuiltIn = TRUE;
 }
 
 bool MaterialTransparent::OutputRay(const Ray& rayIn, const DifferentialGeometry& dg, Random& rand, Ray& rayOut) const

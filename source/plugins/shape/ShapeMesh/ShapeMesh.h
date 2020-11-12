@@ -7,6 +7,7 @@
 #include "libraries/math/3D/Box3D.h"
 #include "BVH.h"
 
+class SoIndexedFaceSet;
 
 class ShapeMesh: public ShapeRT
 {
@@ -21,10 +22,10 @@ public:
 
     SoMFVec3f vertices;
     SoMFVec3f normals;
-    SoMFInt32 facesVertices;
-    SoMFInt32 facesNormals;
+
 
     SoSFString file;
+    SoSFString group;
 
     NAME_ICON_FUNCTIONS("Mesh", ":/ShapeMesh.png")
     void updateShapeGL(TShapeKit* parent);
@@ -32,10 +33,11 @@ public:
 protected:
     ~ShapeMesh();
 
+    QVector<SoIndexedFaceSet*> m_faceSets;
     std::vector<Triangle*> m_triangles;
     BVH* m_bvh;
 
-    QSharedPointer<SoFieldSensor> m_sensor;
+    QSharedPointer<SoNodeSensor> m_sensor;
     static void onSensor(void* data, SoSensor*);
 };
 
