@@ -73,6 +73,7 @@ HEADERS += \
     trackers/TrackerArmature.h \
     trackers/TrackerArmature1A.h \
     trackers/TrackerArmature2A.h \
+    trackers/TrackerArmature2AwD.h \
     trackers/TrackerKit.h \
     trackers/TrackerSolver.h \
     trackers/TrackerSolver1A.h \
@@ -141,6 +142,7 @@ SOURCES += \
     trackers/TrackerArmature.cpp \
     trackers/TrackerArmature1A.cpp \
     trackers/TrackerArmature2A.cpp \
+    trackers/TrackerArmature2AwD.cpp \
     trackers/TrackerKit.cpp \
     trackers/TrackerSolver.cpp \
     trackers/TrackerSolver1A.cpp \

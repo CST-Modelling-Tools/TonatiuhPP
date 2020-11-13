@@ -51,20 +51,6 @@ ShapeMesh::ShapeMesh()
 //    normals.setContainer(this);
 //    fieldData->addField(this, "normals", &normals);
 
-//    int fvs[] = {
-//        0, 1, 2, -1
-//    };
-//    facesVertices.setValues(0, 4, fvs);
-//    facesVertices.setContainer(this);
-//    fieldData->addField(this, "facesVertices", &facesVertices);
-
-//    int fns[] = {
-//        0, 1, 2, -1
-//    };
-//    facesNormals.setValues(0, 4, fns);
-//    facesNormals.setContainer(this);
-//    fieldData->addField(this, "facesNormals", &facesNormals);
-
     SO_NODE_ADD_FIELD( file, ("") );
     SO_NODE_ADD_FIELD( group, ("") );
 

@@ -1,0 +1,152 @@
+#Inventor V2.1 ascii
+
+
+TSceneKit {
+  version "2020"
+  world 
+  DEF World WorldKit {
+    sun 
+    DEF Sun SunKit {
+      position 
+      SunPosition {
+        azimuth -33
+        elevation 0
+
+      }
+      aperture 
+      SunAperture {
+        disabledNodes ""
+
+      }
+
+    }
+    camera 
+    DEF Camera TCameraKit {
+      position 14.8004 -18.7023 6.78332
+      rotation -38.5276 -14.0213
+
+    }
+
+  }
+  group 
+  DEF Node TSeparatorKit {
+    group 
+    Group {
+
+      DEF Heliostat TSeparatorKit {
+        group 
+        Group {
+
+          DEF Tracker TrackerKit {
+            armature 
+            TrackerArmature2AwD {
+              primaryShift 0 0.04 1.5
+              primaryAxis 1 0 0
+              secondaryShift 0 0.175 0
+              secondaryAxis 0 0 1
+              facetShift 0 0.125 0
+              facetNormal 0 1 0
+              drivePrimaryR -0.1 0 1.06
+              drivePrimaryP -0.1 0.115 1.23
+              driveSecondaryP 0.36 -0.232 1.54
+              driveSecondaryS 0.561 0.311 1.54
+
+            }
+            target 
+            TrackerTarget {
+
+            }
+
+          }
+          DEF Shape TShapeKit {
+            shapeRT 
+            ShapeMesh {
+              file "heliostat.obj"
+              group ""
+
+            }
+            profileRT 
+            ProfileBox {
+
+            }
+            materialRT 
+            MaterialTransparent {
+
+            }
+            material 
+            MaterialGL {
+              ambientColor 0.5 0.5 0.5
+              diffuseColor 0.5 0.5 0.5
+              reverseNormals TRUE
+
+            }
+
+          }
+          DEF primary TSeparatorKit {
+            transform 
+            TTransform {
+              translation 0 0.04 1.5
+              rotation 1 0 0  50.0918
+
+            }
+            group 
+            Group {
+
+              DEF secondary TSeparatorKit {
+                transform 
+                TTransform {
+                  translation 0 0.175 0
+                  rotation 0 0 1  22.6558
+
+                }
+                group 
+                Group {
+
+                  DEF facets TSeparatorKit {
+                    transform 
+                    TTransform {
+                      translation -0.03 0.155 0
+                      rotation 0 0.707107 0.707107  180
+
+                    }
+                    group 
+                    Group {
+
+                      DEF Shape TShapeKit {
+                        shapeRT 
+                        ShapePlanar {
+
+                        }
+                        profileRT 
+                        ProfileBox {
+                          uSize 2.25
+                          vSize 2.25
+
+                        }
+                        materialRT 
+                        MaterialSpecular {
+
+                        }
+                        material 
+                        MaterialGL {
+
+                        }
+
+                      }
+                    }
+
+                  }
+                }
+
+              }
+            }
+
+          }
+        }
+
+      }
+    }
+
+  }
+
+}

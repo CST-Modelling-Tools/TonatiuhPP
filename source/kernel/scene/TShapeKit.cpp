@@ -40,6 +40,7 @@ TShapeKit::TShapeKit()
 
     m_shapeKit = new SoShapeKit;
     m_shapeKit->ref();
+//    m_shapeKit->setSearchingChildren(TRUE);
     SoGroup* g = (SoGroup*) topSeparator.getValue();
     g->addChild(m_shapeKit);
 

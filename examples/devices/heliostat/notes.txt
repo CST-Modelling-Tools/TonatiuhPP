@@ -1,0 +1,27 @@
+The 3D model of heliostat should be provided as obj-file.
+
+
+Structure of obj-file
+---------------------
+The file should define a single object (o) with vertex (v) and normal (vn) buffers.
+The different moving parts of heliostat should be marked as groups (g): 
+Root,
+Primary,
+Secondary,
+DrivePrimaryR
+DrivePrimaryP,
+DriveSecondaryS,
+DriveSecondaryP.
+Triangulation of faces (f) is necessary for ray tracing, but not for display.
+
+
+Exporting from Blender
+----------------------
+The groups can be created as "Vertex Groups".
+The export settings are:
+"Selection only",
+"Y Forward",
+"Z Up",
+"Write Normals",
+"Polygroups",
+"Keep Vertex Order".

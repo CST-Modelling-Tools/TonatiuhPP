@@ -183,5 +183,5 @@ cm.setParameter("rotation", "33.4011 -32.917");
 
 var tg = scene.getPart("world.terrain.grid");
 tg.setParameter("steps", "5 5 1");
-tg.setParameter("file", "../examples/facilities/Proteas/terrain.obj");
+tg.setParameter("file", "../terrain/terrain.obj");
 

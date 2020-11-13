@@ -1,4 +1,4 @@
-#include "TrackerArmature2A.h"
+#include "TrackerArmature2AwD.h"
 
 #include <Inventor/sensors/SoNodeSensor.h>
 #include <Inventor/nodes/SoGroup.h>
@@ -11,46 +11,25 @@
 #include "TrackerSolver2A.h"
 #include "TrackerTarget.h"
 
-SO_NODE_SOURCE(TrackerArmature2A)
+SO_NODE_SOURCE(TrackerArmature2AwD)
 
 
-void TrackerArmature2A::initClass()
+void TrackerArmature2AwD::initClass()
 {
-    SO_NODE_INIT_CLASS(TrackerArmature2A, TrackerArmature, "TrackerArmature");
+    SO_NODE_INIT_CLASS(TrackerArmature2AwD, TrackerArmature2A, "TrackerArmature2A");
 }
 
-TrackerArmature2A::TrackerArmature2A()
+TrackerArmature2AwD::TrackerArmature2AwD()
 {
-    SO_NODE_CONSTRUCTOR(TrackerArmature2A);
+    SO_NODE_CONSTRUCTOR(TrackerArmature2AwD);
     isBuiltIn = TRUE;
 
-    SO_NODE_ADD_FIELD( primaryShift, (0.f, 0.f, 1.f) );
-    SO_NODE_ADD_FIELD( primaryAxis, (0.f, 0.f, -1.f) ); // azimuth
-    SO_NODE_ADD_FIELD( primaryAngles, (-90.f, 90.f) );
+    SO_NODE_ADD_FIELD( drivePrimaryR, (0.f, 0.f, 1.f) );
+    SO_NODE_ADD_FIELD( drivePrimaryP, (0.f, 0.1f, 1.f) );
 
-    SO_NODE_ADD_FIELD( secondaryShift, (0.f, 0.f, 0.1f) );
-    SO_NODE_ADD_FIELD( secondaryAxis, (1.f, 0.f, 0.f) ); // elevation
-    SO_NODE_ADD_FIELD( secondaryAngles, (-90.f, 90.f) );
-
-    SO_NODE_ADD_FIELD( facetShift, (0.f, 0.f, 0.f) );
-    SO_NODE_ADD_FIELD( facetNormal, (0.f, 0.f, 1.f) );
-
-    SO_NODE_ADD_FIELD( anglesDefault, (0., 0.) );
-
-    m_solver = new TrackerSolver2A(this);
-
-    m_sensor = new SoNodeSensor(onModified, this);
-    m_sensor->setPriority(0);
-    m_sensor->attach(this);
-    onModified(this, 0);
+    SO_NODE_ADD_FIELD( driveSecondaryP, (0.f, 0.2f, 1.f) );
+    SO_NODE_ADD_FIELD( driveSecondaryS, (0.f, 0.3f, 1.f) );
 }
-
-TrackerArmature2A::~TrackerArmature2A()
-{
-    delete m_sensor;
-    delete m_solver;
-}
-
 
 static SoTransform* findPart(SoShapeKit* parent, const char* name)
 {
@@ -71,9 +50,15 @@ static SoTransform* findPart(SoShapeKit* parent, const char* name)
     return (SoTransform*) shape->getPart("transform", true);
 }
 
-#include <QDebug>
-void TrackerArmature2A::update(TSeparatorKit* parent, const Transform& toGlobal,
-                               const vec3d& vSun, TrackerTarget* target)
+// rotation around a from m to v
+static double findAngle(const SbVec3f& a, SbVec3f m, SbVec3f v)
+{
+    m.normalize();
+    v.normalize();
+    return atan2(a.dot(m.cross(v)), m.dot(v));
+}
+
+void TrackerArmature2AwD::update(TSeparatorKit* parent, const Transform& toGlobal, const vec3d& vSun, TrackerTarget* target)
 {
     QVector<Angles> solutions;
     Transform toLocal = toGlobal.inversed();
@@ -136,7 +121,7 @@ void TrackerArmature2A::update(TSeparatorKit* parent, const Transform& toGlobal,
     m1.setTranslate( primaryShift.getValue() + secondaryShift.getValue());
     m2.setRotate(tSecondary->rotation.getValue());
     m3.setTranslate(-primaryShift.getValue() - secondaryShift.getValue());
-    mS = m3*m2*m1*mP;
+    mS = m3*m2*m1;
 
 
     st = findPart(pShape, "Primary");
@@ -145,35 +130,53 @@ void TrackerArmature2A::update(TSeparatorKit* parent, const Transform& toGlobal,
 
     st = findPart(pShape, "Secondary");
     if (!st) return;
-    st->setMatrix(mS);
-}
+    st->setMatrix(mS*mP);
 
-void TrackerArmature2A::onModified(void* data, SoSensor*)
-{
-    TrackerArmature2A* tracker = (TrackerArmature2A*) data;
-    tracker->onModified();
-}
+    /* refactor */
+    SbMatrix mD;
 
-void TrackerArmature2A::onModified()
-{
-    vec2d pa = tgf::makeVector2D(primaryAngles.getValue())*gcf::degree;
-    primary = ArmatureJoint(
-        tgf::makeVector3D(primaryShift.getValue()),
-        tgf::makeVector3D(primaryAxis.getValue()),
-        IntervalPeriodic(pa.x, pa.y)
-    );
+    SbVec3f dPR = drivePrimaryR.getValue();
+    SbVec3f dPP0 = drivePrimaryP.getValue();
+    SbVec3f dPP;
+    mP.multVecMatrix(dPP0, dPP);
+    float phi = findAngle(primaryAxis.getValue(), dPR - dPP0, dPR - dPP);
 
-    vec2d pb = tgf::makeVector2D(secondaryAngles.getValue())*gcf::degree;
-    secondary = ArmatureJoint(
-        tgf::makeVector3D(secondaryShift.getValue()),
-        tgf::makeVector3D(secondaryAxis.getValue()),
-        IntervalPeriodic(pb.x, pb.y)
-    );
+    st = findPart(pShape, "DrivePrimaryR");
+    if (!st) return;
+    m1.setTranslate(dPR);
+    m2.setRotate(SbRotation(primaryAxis.getValue(), phi));
+    m3.setTranslate(-dPR);
+    mD = m3*m2*m1;
+    st->setMatrix(mD);
 
-    facet = ArmatureVertex(
-        tgf::makeVector3D(facetShift.getValue()),
-        tgf::makeVector3D(facetNormal.getValue())
-    );
+    st = findPart(pShape, "DrivePrimaryP");
+    if (!st) return;
+    m1.setTranslate(dPP);
+    m2.setRotate(SbRotation(primaryAxis.getValue(), phi));
+    m3.setTranslate(-dPP0);
+    mD = m3*m2*m1;
+    st->setMatrix(mD);
 
-    angles0 = tgf::makeVector2D(anglesDefault.getValue());
+
+    SbVec3f dSP = driveSecondaryP.getValue();
+    SbVec3f dSS0 = driveSecondaryS.getValue();
+    SbVec3f dSS;
+    mS.multVecMatrix(dSS0, dSS);
+    phi = findAngle(secondaryAxis.getValue(), dSP - dSS0, dSP - dSS);
+
+    st = findPart(pShape, "DriveSecondaryP");
+    if (!st) return;
+    m1.setTranslate(dSP);
+    m2.setRotate(SbRotation(secondaryAxis.getValue(), phi));
+    m3.setTranslate(-dSP);
+    mD = m3*m2*m1;
+    st->setMatrix(mD*mP);
+
+    st = findPart(pShape, "DriveSecondaryS");
+    if (!st) return;
+    m1.setTranslate(dSS);
+    m2.setRotate(SbRotation(secondaryAxis.getValue(), phi));
+    m3.setTranslate(-dSS0);
+    mD = m3*m2*m1;
+    st->setMatrix(mD*mP);
 }

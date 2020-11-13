@@ -26,7 +26,8 @@ void SunPosition::initClass()
 SunPosition::SunPosition()
 {
     SO_NODE_CONSTRUCTOR(SunPosition);
-//    isBuiltIn = TRUE;
+    isBuiltIn = TRUE;
+
     SO_NODE_ADD_FIELD( azimuth, (0.) );
     SO_NODE_ADD_FIELD( elevation, (90.) );
     SO_NODE_ADD_FIELD( irradiance, (1000.) );

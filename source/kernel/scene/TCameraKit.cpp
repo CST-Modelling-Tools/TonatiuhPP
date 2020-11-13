@@ -22,6 +22,7 @@ TCameraKit::TCameraKit()
 
 
     SO_KIT_CONSTRUCTOR(TCameraKit);
+    isBuiltIn = TRUE;
 
     SO_KIT_ADD_CATALOG_ENTRY(topSeparator, SoGroup, FALSE, this, "", FALSE);
     SO_NODE_ADD_FIELD(position, (SbVec3f(0, 0, 10)));

@@ -2644,6 +2644,11 @@ bool MainWindow::openFileProject(const QString& fileName)
     }
     ui->sceneView->expandToDepth(1);
 
+
+    m_graphicsRoot->deselectAll();
+    m_graphicView[0]->render();
+    m_document->getSceneKit()->updateTrackers(); //todo
+
 //    Select("//Node"); // ?
 //    on_actionViewAll_triggered(); // discard sun
 

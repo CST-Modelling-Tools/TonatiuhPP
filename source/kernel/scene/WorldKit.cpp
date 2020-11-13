@@ -23,6 +23,7 @@ void WorldKit::initClass()
 WorldKit::WorldKit()
 {
     SO_KIT_CONSTRUCTOR(WorldKit);
+    isBuiltIn = TRUE;
 
     SO_KIT_ADD_CATALOG_ENTRY(location, LocationNode, FALSE, this, "", TRUE);
     SO_KIT_ADD_CATALOG_ENTRY(sun, SunKit, FALSE, this, "", TRUE);
