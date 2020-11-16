@@ -53,10 +53,10 @@ void TrackerArmature1A::update(TSeparatorKit* parent, const Transform& toGlobal,
     vec3d rAim = tgf::makeVector3D(target->aimingPoint.getValue());
 
     double angle;
-    if (target->aimingFrame.getValue() == TrackerTarget::global) {
+    if (target->aimingType.getValue() == TrackerTarget::global) {
         rAim = toLocal.transformPoint(rAim);
         angle = m_solver->solveReflectionGlobal(vSunL, rAim);
-    } else if (target->aimingFrame.getValue() == TrackerTarget::facets) {
+    } else if (target->aimingType.getValue() == TrackerTarget::local) {
         angle = m_solver->solveReflectionPrimary(vSunL, rAim);
     } else {
         angle = 0;
@@ -64,16 +64,16 @@ void TrackerArmature1A::update(TSeparatorKit* parent, const Transform& toGlobal,
     angle = m_solver->selectSolution(angle);
 
     // rotate nodes
-//    auto node = static_cast<TSeparatorKit*>(parent->getPart("group[0]", false));
+    TSeparatorKit* node = 0;
     SoGroup* childList = (SoGroup*) parent->getPart("group", false);
     for (int q = 0; q < childList->getNumChildren(); ++q) {
-        TSeparatorKit* node = dynamic_cast<TSeparatorKit*>(childList->getChild(q));
-        if (!node) continue;
-        TTransform* tPrimary = (TTransform*) node->getPart("transform", true);
-        tPrimary->translation = primaryShift.getValue();
-        tPrimary->rotation.setValue(primaryAxis.getValue(), angle);
-        break;
+        node = dynamic_cast<TSeparatorKit*>(childList->getChild(q));
+        if (node) break;
     }
+    if (!node) return;
+    TTransform* tPrimary = (TTransform*) node->getPart("transform", true);
+    tPrimary->translation = primaryShift.getValue();
+    tPrimary->rotation.setValue(primaryAxis.getValue(), angle);
 }
 
 void TrackerArmature1A::onModified(void* data, SoSensor*)

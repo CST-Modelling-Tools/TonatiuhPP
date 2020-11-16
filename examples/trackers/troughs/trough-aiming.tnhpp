@@ -266,7 +266,7 @@ TSceneKit {
             }
             target 
             TrackerTarget {
-              aimingFrame facets
+              aimingType local
               aimingPoint 0 0 1
 
             }

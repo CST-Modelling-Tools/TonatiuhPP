@@ -32,11 +32,11 @@ MD %PORTABLE%\bin\imageformats
 COPY %QT%\plugins\imageformats\qico.dll %PORTABLE%\bin\imageformats\qico.dll
 COPY %QT%\plugins\imageformats\qjpeg.dll %PORTABLE%\bin\imageformats\qjpeg.dll
 
+MD %PORTABLE%\resources
+XCOPY %PROJECT%\resources %PORTABLE%\resources /e
+
 MD %PORTABLE%\examples
 XCOPY %PROJECT%\examples %PORTABLE%\examples /e /exclude:exclude.txt
-
-MD %PORTABLE%\images
-XCOPY %PROJECT%\images %PORTABLE%\images /e
 
 MD %PORTABLE%\help\html
 XCOPY %PROJECT%\help\html %PORTABLE%\help\html /e

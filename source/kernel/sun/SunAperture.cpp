@@ -39,6 +39,8 @@ SunAperture::SunAperture():
     m_yCells(0)
 {
     SO_NODE_CONSTRUCTOR(SunAperture);
+    isBuiltIn = TRUE;
+
     SO_NODE_ADD_FIELD( disabledNodes, ("") );
 
     m_xMin = -0.5;

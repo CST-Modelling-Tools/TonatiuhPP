@@ -1,0 +1,130 @@
+#Inventor V2.1 ascii
+
+
+TSceneKit {
+  version "2020"
+  world 
+  DEF World WorldKit {
+    sun 
+    DEF Sun SunKit {
+      position 
+      SunPosition {
+        azimuth 0
+        elevation 0
+
+      }
+      aperture 
+      SunAperture {
+        disabledNodes ""
+
+      }
+
+    }
+    camera 
+    DEF Camera TCameraKit {
+      position 4.02704 -10.1033 5.77154
+      rotation -20.2776 -22.7713
+
+    }
+
+  }
+  group 
+  DEF Node TSeparatorKit {
+    group 
+    Group {
+
+      DEF Heliostat TSeparatorKit {
+        group 
+        Group {
+
+          DEF Tracker TrackerKit {
+            armature 
+            TrackerArmature2AwD {
+              primaryShift 0 0.04 1.5
+              primaryAxis 1 0 0
+              secondaryShift 0 0.175 0
+              secondaryAxis 0 0 1
+              facetShift -0.03 0.155 0
+              facetNormal 0 1 0
+              drivePrimaryR -0.1 0 1.06
+              drivePrimaryP -0.1 0.115 1.23
+              driveSecondaryP 0.36 -0.232 1.54
+              driveSecondaryS 0.561 0.311 1.54
+
+            }
+            shape "heliostat.obj"
+            target 
+            TrackerTarget {
+              angles 45.0734 0
+
+            }
+
+          }
+          DEF primary TSeparatorKit {
+            transform 
+            TTransform {
+              translation 0 0.04 1.5
+              rotation 1 0 0  45.0734
+
+            }
+            group 
+            Group {
+
+              DEF secondary TSeparatorKit {
+                transform 
+                TTransform {
+                  translation 0 0.175 0
+                  rotation 0 0 1  0
+
+                }
+                group 
+                Group {
+
+                  DEF facets TSeparatorKit {
+                    transform 
+                    TTransform {
+                      translation -0.03 0.155 0
+                      rotation 0 0.707107 0.707107  180
+
+                    }
+                    group 
+                    Group {
+
+                      DEF Shape TShapeKit {
+                        shapeRT 
+                        ShapePlanar {
+
+                        }
+                        profileRT 
+                        ProfileBox {
+                          uSize 2.25
+                          vSize 2.25
+
+                        }
+                        materialRT 
+                        MaterialSpecular {
+
+                        }
+                        material 
+                        MaterialGL {
+
+                        }
+
+                      }
+                    }
+
+                  }
+                }
+
+              }
+            }
+
+          }
+        }
+
+      }
+    }
+
+  }
+
+}

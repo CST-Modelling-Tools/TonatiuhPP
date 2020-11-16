@@ -58,7 +58,7 @@ center of parabola (x0, z0)
 .. math::
   z_0 = -f \cos\theta
   
-profile of parabola (uMin, uMax)
+bounds of parabola (uMin, uMax)
 
 .. math::
   u_{\rm min} = 2 r_{\rm R}  \cos\theta
@@ -70,4 +70,10 @@ profile of parabola (uMin, uMax)
   u_{\rm max} = 2f/ \tan\theta
   
   
+profile of parabola
+
+.. math::
+  x(u) = x_0 + u \cos\theta - \frac{u^2}{4f} \sin\theta
   
+.. math::
+  z(u) = z_0 + u \sin\theta + \frac{u^2}{4f} \cos\theta  

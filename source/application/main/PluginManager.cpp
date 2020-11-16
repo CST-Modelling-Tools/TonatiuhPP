@@ -36,6 +36,7 @@
 #include "kernel/trackers/TrackerArmature.h"
 #include "kernel/trackers/TrackerArmature1A.h"
 #include "kernel/trackers/TrackerArmature2A.h"
+#include "kernel/trackers/TrackerArmature2AwD.h"
 #include "libraries/Coin3D/MFVec2.h"
 #include "libraries/Coin3D/UserMField.h"
 #include "libraries/Coin3D/UserSField.h"
@@ -93,6 +94,7 @@ void PluginManager::load(QDir dir)
 
     loadPlugin(new TrackerFactoryT<TrackerArmature1A>);
     loadPlugin(new TrackerFactoryT<TrackerArmature2A>);
+    loadPlugin(new TrackerFactoryT<TrackerArmature2AwD>);
 
     loadPlugin(new PhotonsFactoryT<PhotonsAbstract, PhotonsWidget>);
 

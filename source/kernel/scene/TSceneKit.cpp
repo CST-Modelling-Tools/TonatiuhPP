@@ -38,6 +38,7 @@ void TSceneKit::initClass()
 TSceneKit::TSceneKit()
 {
     SO_KIT_CONSTRUCTOR(TSceneKit);
+    isBuiltIn = TRUE;
 
     SO_NODE_ADD_FIELD(version, ("") );
     version.setValue("2020");
@@ -55,7 +56,7 @@ TSceneKit::TSceneKit()
 //    loc->name = "unknown";
 
     TSeparatorKit* nodeLayout = (TSeparatorKit*) getPart("group", true);
-    nodeLayout->setCulling(false);
+//    nodeLayout->setCulling(false);
     nodeLayout->setName("Node");
 
 //    setPart("cameraList[0]", new SoCameraKit);
@@ -72,6 +73,24 @@ void TSceneKit::updateTrackers()
     SunPosition* sp = (SunPosition*) getPart("world.sun.position", false);
     vec3d vSun = sp->getSunVector();
     updateTrackers(getLayout(), Transform::Identity, vSun);
+}
+
+void TSceneKit::updateParents(TSeparatorKit* parent)
+{
+    if (!parent) parent = getLayout();
+
+    SoGroup* nodes = (SoGroup*) parent->getPart("group", false);
+    if (!nodes) return;
+    for (int n = 0; n < nodes->getNumChildren(); ++n)
+    {
+        SoNode* node = nodes->getChild(n);
+        if (TSeparatorKit* child = dynamic_cast<TSeparatorKit*>(node))
+            updateParents(child);
+        else if (TrackerKit* tracker = dynamic_cast<TrackerKit*>(node)) {
+            tracker->m_parent = parent;
+            return;
+        }
+    }
 }
 
 TSceneKit::~TSceneKit()

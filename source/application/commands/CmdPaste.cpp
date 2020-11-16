@@ -58,5 +58,5 @@ void CmdPaste::redo()
     QString name = m_name;
     int count = 0;
     while (!m_model->setNodeName(node, name))
-        name = m_name + QString("_copy_%1").arg(++count);
+        name = m_name + QString("_%1").arg(++count);
 }

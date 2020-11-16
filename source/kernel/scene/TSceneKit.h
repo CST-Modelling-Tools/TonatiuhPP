@@ -29,6 +29,7 @@ public:
     TSeparatorKit* getLayout();
 
     void updateTrackers();
+    void updateParents(TSeparatorKit* parent = 0);
 
     GraphicRoot* m_graphicRoot;
 

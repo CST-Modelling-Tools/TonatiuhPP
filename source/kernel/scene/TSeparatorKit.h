@@ -20,7 +20,7 @@ public:
     TSeparatorKit();
 
     void getBoundingBox(SoGetBoundingBoxAction* action);
-    void setCulling(bool on);
+//    void setCulling(bool on);
 
 protected:
     ~TSeparatorKit() {}

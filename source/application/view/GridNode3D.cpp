@@ -345,13 +345,11 @@ void GridNode3D::makeTerrain(QString fileName)
     kit->setPart("shape", sMesh);
 
     // shaders
-    QDir dir(QCoreApplication::applicationDirPath()); // relative to exe file
-
     SoVertexShader* vs = new SoVertexShader;
-    vs->sourceProgram = dir.filePath("../images/terrain_vs.glsl").toLatin1().data();
+    vs->sourceProgram = QFileInfo("resources:/shaders/terrain_vs.glsl").filePath().toLatin1().data();
 
     SoFragmentShader* fs = new SoFragmentShader;
-    fs->sourceProgram = dir.filePath("../images/terrain_fs.glsl").toLatin1().data();
+    fs->sourceProgram = QFileInfo("resources:/shaders/terrain_fs.glsl").filePath().toLatin1().data();
 
     SoShaderParameter3f* paramSteps = new SoShaderParameter3f;
     paramSteps->name = "steps";

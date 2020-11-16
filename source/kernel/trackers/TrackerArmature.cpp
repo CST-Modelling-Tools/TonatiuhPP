@@ -16,3 +16,10 @@ void TrackerArmature::update(TSeparatorKit* parent, const Transform& toGlobal, c
     Q_UNUSED(vSun)
     Q_UNUSED(target)
 }
+
+void TrackerArmature::updateShape(TSeparatorKit* parent, SoShapeKit* shape, TrackerTarget* target)
+{
+    Q_UNUSED(parent)
+    Q_UNUSED(shape)
+    Q_UNUSED(target)
+}

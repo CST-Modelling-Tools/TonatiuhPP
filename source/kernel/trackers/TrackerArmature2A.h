@@ -7,7 +7,8 @@ class TrackerSolver2A;
 class SoNodeSensor;
 class SoSensor;
 
-
+// 2 axis
+// all vectors should be for zero rotation
 class TONATIUH_KERNEL TrackerArmature2A: public TrackerArmature
 {
     SO_NODE_HEADER(TrackerArmature2A);
@@ -19,7 +20,8 @@ public:
     void update(TSeparatorKit* parent, const Transform& toGlobal,
                 const vec3d& vSun, TrackerTarget* target);
 
-    // all vectors should be for zero rotation
+    void updateShape(TSeparatorKit* parent, SoShapeKit* shape, TrackerTarget* target);
+
     SoSFVec3f primaryShift;
     SoSFVec3f primaryAxis;
     SoSFVec2f primaryAngles;
@@ -37,6 +39,7 @@ public:
     ArmatureJoint secondary;
     ArmatureVertex facet;
     vec2d angles0;
+
 
     NAME_ICON_FUNCTIONS("two-axes", ":/trackers/Tracker2A.png")
 

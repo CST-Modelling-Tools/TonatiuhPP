@@ -1,0 +1,413 @@
+#Inventor V2.1 ascii
+
+
+TSceneKit {
+  fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
+  version "2020"
+  world 
+  DEF World WorldKit {
+    fields [ SFNode callbackList, SFNode location, SFNode sun, SFNode air, SFNode terrain, SFNode camera ]
+    sun 
+    DEF Sun SunKit {
+      fields [ SFNode callbackList, SFNode position, SFNode shape, SFNode aperture ]
+      position 
+      SunPosition {
+        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
+        azimuth 166.07
+        elevation 74.6
+
+      }
+      shape 
+      SunShapePillbox {
+        fields [ SFDouble thetaMax ]
+
+      }
+      aperture 
+      SunAperture {
+        fields [ SFString disabledNodes ]
+        disabledNodes "//Node/target"
+
+      }
+
+    }
+    terrain 
+    DEF Terrain TerrainKit {
+      fields [ SFNode callbackList, SFNode grid ]
+      grid 
+      DEF Grid GridNode {
+        min -15 -10 0
+        max 15 40 0
+
+      }
+
+    }
+    camera 
+    DEF Camera TCameraKit {
+      fields [ SFVec3f position, SFVec2f rotation, SFDouble angle, SFBool perspective, SFNode callbackList, SFNode topSeparator ]
+      position -27.5454 78.4546 38.8736
+      rotation -207.5 -30.9
+
+    }
+
+  }
+  group 
+  DEF Node TSeparatorKit {
+    transform 
+    DEF _ TTransform {
+
+    }
+    group 
+    DEF _+0 Group {
+
+      DEF target TSeparatorKit {
+        group 
+        Group {
+
+          DEF post1 TSeparatorKit {
+            transform 
+            TTransform {
+              translation 0.7 -0.5 4.5
+              scale 0.1 0.1 10
+
+            }
+            group 
+            Group {
+
+              DEF Shape TShapeKit {
+                shapeRT 
+                ShapeCylinder {
+
+                }
+                profileRT 
+                ProfileBox {
+
+                }
+                materialRT 
+                MaterialAbsorber {
+
+                }
+                material 
+                MaterialGL {
+                  ambientColor 0.5 0.5 0.5
+
+                }
+
+              }
+            }
+
+          }
+          DEF post2 TSeparatorKit {
+            transform 
+            TTransform {
+              translation -0.7 -0.4 4.5
+              scale 0.1 0.1 10
+
+            }
+            group 
+            Group {
+
+              DEF Shape TShapeKit {
+                shapeRT 
+                ShapeCylinder {
+
+                }
+                profileRT 
+                ProfileBox {
+
+                }
+                materialRT 
+                MaterialAbsorber {
+
+                }
+                material 
+                MaterialGL {
+                  ambientColor 0.5 0.5 0.5
+
+                }
+
+              }
+            }
+
+          }
+          DEF post3 TSeparatorKit {
+            transform 
+            TTransform {
+              translation 0 -0.7 4.5
+              scale 0.1 0.1 10
+
+            }
+            group 
+            Group {
+
+              DEF Shape TShapeKit {
+                shapeRT 
+                ShapeCylinder {
+
+                }
+                profileRT 
+                ProfileBox {
+
+                }
+                materialRT 
+                MaterialAbsorber {
+
+                }
+                material 
+                MaterialGL {
+                  ambientColor 0.5 0.5 0.5
+
+                }
+
+              }
+            }
+
+          }
+          DEF roll TSeparatorKit {
+            transform 
+            TTransform {
+              translation 0 0 9.3
+              rotation -0 -0 -1  188.399
+
+            }
+            group 
+            Group {
+
+              DEF tilt TSeparatorKit {
+                transform 
+                TTransform {
+                  rotation 1 -0 -0  101.8
+
+                }
+                group 
+                Group {
+
+                  DEF Shape TShapeKit {
+                    shapeRT 
+                    ShapePlanar {
+
+                    }
+                    profileRT 
+                    ProfileBox {
+                      uSize 2
+                      vSize 2
+
+                    }
+                    materialRT 
+                    MaterialAbsorber {
+
+                    }
+                    material 
+                    MaterialGL {
+                      ambientColor 0.8 0.8 0.8
+
+                    }
+
+                  }
+                }
+
+              }
+            }
+
+          }
+        }
+
+      }
+      DEF Heliostat-1 TSeparatorKit {
+        transform 
+        TTransform {
+          translation 6.43 31.6 1.2
+          rotation 0 0 1  180
+
+        }
+        group 
+        Group {
+
+          DEF Tracker TrackerKit {
+            armature 
+            TrackerArmature2A {
+              primaryShift 0 0.04 1.5
+              primaryAxis 1 0 0
+              secondaryShift 0 0.175 0
+              secondaryAxis 0 0 1
+              facetShift 0 0.125 0
+              facetNormal 0 1 0
+
+            }
+            target 
+            TrackerTarget {
+              aimingPoint 0 0 9.3
+
+            }
+
+          }
+          DEF primary TSeparatorKit {
+            transform 
+            TTransform {
+              translation 0 0.04 1.5
+              rotation 1 0 0  43.5937
+
+            }
+            group 
+            Group {
+
+              DEF secondary TSeparatorKit {
+                transform 
+                TTransform {
+                  translation 0 0.175 0
+                  rotation -0 -0 -1.00001  4.515
+
+                }
+                group 
+                Group {
+
+                  DEF facet TSeparatorKit {
+                    transform 
+                    TTransform {
+                      translation 0 0.125 0
+                      rotation 0 0.707107 0.707107  180
+
+                    }
+                    group 
+                    Group {
+
+                      DEF Shape TShapeKit {
+                        shapeRT 
+                        ShapeMesh {
+                          fields [ SFString file ]
+                          file "Heliostat-1.obj"
+
+                        }
+                        profileRT 
+                        ProfileBox {
+                          uSize 1.85
+                          vSize 2.44
+
+                        }
+                        materialRT 
+                        MaterialSpecular {
+
+                        }
+                        material 
+                        MaterialGL {
+
+                        }
+
+                      }
+                    }
+
+                  }
+                }
+
+              }
+            }
+
+          }
+        }
+
+      }
+      DEF Heliostat-2 TSeparatorKit {
+        transform 
+        TTransform {
+          translation 1.93 31.6 1.2
+          rotation 0 0 1  180
+
+        }
+        group 
+        Group {
+
+          DEF Tracker TrackerKit {
+            armature 
+            TrackerArmature2A {
+              primaryShift 0 0.04 1.5
+              primaryAxis 1 0 0
+              secondaryShift 0 0.175 0
+              secondaryAxis 0 0 1
+              facetShift 0 0.125 0
+              facetNormal 0 1 0
+
+            }
+            target 
+            TrackerTarget {
+              aimingPoint 0 0 9.3
+
+            }
+
+          }
+          DEF primary TSeparatorKit {
+            transform 
+            TTransform {
+              translation 0 0.04 1.5
+              rotation 1 0 0  43.2769
+
+            }
+            group 
+            Group {
+
+              DEF secondary TSeparatorKit {
+                transform 
+                TTransform {
+                  translation 0 0.175 0
+                  rotation 0 0 0.996764  0.125115
+
+                }
+                group 
+                Group {
+
+                  DEF facet TSeparatorKit {
+                    transform 
+                    TTransform {
+                      translation 0 0.125 0
+                      rotation 0 0.707107 0.707107  180
+
+                    }
+                    group 
+                    Group {
+
+                      DEF Shape TShapeKit {
+                        shapeRT 
+                        ShapeParabolic {
+                          fields [ SFDouble fX, SFDouble fY ]
+                          fX 34
+                          fY 34
+
+                        }
+                        profileRT 
+                        ProfileBox {
+                          uSize 1.85
+                          vSize 2.44
+
+                        }
+                        materialRT 
+                        MaterialSpecular {
+
+                        }
+                        material 
+                        MaterialGL {
+
+                        }
+
+                      }
+                    }
+
+                  }
+                }
+
+              }
+            }
+
+          }
+        }
+
+      }
+    }
+    topSeparator 
+    Separator {
+      renderCulling OFF
+
+      USE _
+      USE _+0
+    }
+
+  }
+
+}

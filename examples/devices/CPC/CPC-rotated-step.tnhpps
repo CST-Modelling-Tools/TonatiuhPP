@@ -3,13 +3,15 @@ var degree = Math.PI/180;
 
 
 // input parameters
-var theta = 30*degree; // acceptance angle (from zenith)
-var rR = 0.5; // receiver radius (inscribed)
+var theta = 15*degree; // acceptance angle (from zenith)
+var rR = 0.05; // receiver radius (inscribed)
+var hMax = 0.50; // maximal height
 var k = 6; // number of sides
 
 
 // auxiliary parameters
 var f = rR*(1 + Math.sin(theta)); // focal distance
+var cr = Math.pow(Math.sin(theta), -2); // concentration ratio (estimated)
 // print("f = " + f);
 
 var x0 = f*Math.sin(theta) - rR; // center of parabola
@@ -19,16 +21,29 @@ var uMin = 2*rR*Math.cos(theta); // profile of parabola
 var uMax = 2*f/Math.tan(theta);
 
 var rA = rR/Math.sin(theta); // aperture radius (inscribed)
+var zA = (rR + rA)/Math.tan(theta); // aperture height (from receiver)
+
+if (zA > hMax) {
+	zA = hMax;
+	
+	var a = Math.cos(theta)/(4*f);
+	var b = Math.sin(theta);
+	var c = z0 - zA;
+	var d = b*b - 4*a*c;
+	uMax = (-b + Math.sqrt(d))/(2*a);
+
+	rA = x0 + uMax*Math.cos(theta) - uMax*uMax/(4*f)*Math.sin(theta);
+}
+
 var phi = 360*degree/k;
 var vMaxR = rR*Math.tan(phi/2);
 var vMaxA = rA*Math.tan(phi/2);
 
-var zA = (rR + rA)/Math.tan(theta); // aperture height (from receiver)
 var tR = 0.01*rR; // receiver thickness
 
-var cr = Math.pow(Math.sin(theta), -2); // concentration ratio (estimated)
 
 // shapes 
+
 function makeSide(parent)
 {
 	var node = parent.createNode("Inner");
@@ -63,8 +78,6 @@ function makeSide(parent)
 	p.setParameter("vMin", -vMaxA);
 	p.setParameter("vMax", vMaxA);
 	var mG = s.getPart("material");
-	mG.setParameter("ambientColor", "0.5 0.5 0.5");
-	mG.setParameter("diffuseColor", "0.5 0.5 0.5");
 	mG.setParameter("reverseNormals", "TRUE");
 }
 
@@ -95,13 +108,12 @@ function makeCPC(parent)
 	var p = s.insertProfile("Regular");
 	p.setParameter("n", k);
 	p.setParameter("r", rA/Math.cos(phi/2));
-	var mG = s.getPart("material");
-	mG.setParameter("ambientColor", "0.5 0.5 0.5");
-	mG.setParameter("diffuseColor", "0.5 0.5 0.5");
 
 	return nodeCPC;
 }
 
+
+// scene
 var nodeRoot = NodeObject();
 nodeRoot.setName("Script");
 var nodeCPC = makeCPC(nodeRoot);
@@ -120,11 +132,12 @@ sp.setParameter("azimuth", 180);
 sp.setParameter("elevation", 80);
 
 var cm = scene.getPart("world.camera");
-cm.setParameter("position", "0 -8.67789 10.9807");
-cm.setParameter("rotation", "0 -50");
+cm.setParameter("position", "0 -0.76 2.18");
+cm.setParameter("rotation", "0 -70");
 
 var tg = scene.getPart("world.terrain.grid");
 //tg.setParameter("fill", "FALSE");
-tg.setParameter("min", "-10 -10 0");
-tg.setParameter("max", "10 10 0");
+tg.setParameter("steps", "0.1 0.1 0.1");
+tg.setParameter("min", "-1 -1 0");
+tg.setParameter("max", "1 1 0");
 

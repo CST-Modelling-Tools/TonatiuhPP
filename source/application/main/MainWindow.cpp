@@ -162,6 +162,10 @@ MainWindow::MainWindow(QString fileName, CustomSplashScreen* splash, QWidget* pa
     dir.cd("plugins");
     m_pluginManager->load(dir);
 
+    QDir dirApp(QCoreApplication::applicationDirPath());
+    QStringList paths = {dirApp.absoluteFilePath("../resources")};
+    QDir::setSearchPaths("resources", paths);
+
     if (splash) splash->setMessage("Creating views");
     SetupDocument();
     SetupViews();
@@ -934,13 +938,6 @@ void MainWindow::SelectionFinish(SoSelection* selection)
     if (!path->containsNode(m_document->getSceneKit())) return;
 
     SoNodeKitPath* nodeKitPath = static_cast<SoNodeKitPath*>(path);
-//    if (nodeKitPath->getTail()->getTypeId().isDerivedFrom(SunKit::getClassTypeId() ) )
-//    {
-//        selection->deselectAll();
-//        QModelIndex currentIndex = m_modelSelection->currentIndex();
-//        m_modelSelection->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-//        return;
-//    }
 //    if (nodeKitPath->getTail()->getTypeId().isDerivedFrom(SoDragger::getClassTypeId() ) )
 //        return;
 
@@ -948,6 +945,11 @@ void MainWindow::SelectionFinish(SoSelection* selection)
     if (!index.isValid()) return;
     m_modelSelection->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
 //    m_selectionModel->select(index, QItemSelectionModel::ClearAndSelect);
+
+    SoPath* pathCorrected = m_modelScene->pathFromIndex(index);
+    m_graphicsRoot->deselectAll();
+    m_graphicsRoot->select(pathCorrected);
+    m_graphicView[0]->render();
 }
 
 void MainWindow::setFieldText(SoNode* node, QString field, QString value)
@@ -1474,7 +1476,7 @@ void MainWindow::InsertShape()
     CmdInsertNode* cmd = new CmdInsertNode(kit, index);
     m_undoStack->push(cmd);
 
-    m_modelScene->setNodeName(kit, "Shape");
+    m_modelScene->setNodeNameUnique(kit, "Shape");
     setDocumentModified(true);
 }
 
@@ -1498,6 +1500,7 @@ void MainWindow::InsertTracker()
     }
 
     TrackerKit* kit = new TrackerKit;
+    kit->m_parent = parent;
     CmdInsertNode* cmd = new CmdInsertNode(kit, index);
     m_undoStack->push(cmd);
 
@@ -2346,6 +2349,7 @@ void MainWindow::ChangeModelScene()
 {
     m_graphicsRoot->setDocument(m_document);
     m_modelScene->setDocument(m_document);
+    m_document->getSceneKit()->updateParents();
     m_graphicView[0]->setSceneGraph(m_graphicsRoot);
 
 //    QModelIndex index = m_modelScene->indexFromUrl("//Layout");
@@ -2641,6 +2645,11 @@ bool MainWindow::openFileProject(const QString& fileName)
         m_graphicView[0]->onViewHome();
     }
     ui->sceneView->expandToDepth(1);
+
+
+    m_graphicsRoot->deselectAll();
+    m_graphicView[0]->render();
+    m_document->getSceneKit()->updateTrackers(); //todo
 
 //    Select("//Node"); // ?
 //    on_actionViewAll_triggered(); // discard sun
