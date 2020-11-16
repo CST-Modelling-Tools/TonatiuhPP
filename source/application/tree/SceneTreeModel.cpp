@@ -16,6 +16,7 @@
 #include "kernel/material/MaterialRT.h"
 #include "kernel/run/InstanceNode.h"
 #include "kernel/scene/TSceneKit.h"
+#include "kernel/trackers/TrackerKit.h"
 #include "kernel/scene/TSeparatorKit.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/scene/TArrayKit.h"
@@ -389,7 +390,8 @@ QModelIndex SceneTreeModel::indexFromPath(const SoNodeKitPath& path) const
         coinNode = coinParent;
         coinParent = (SoBaseKit*) path.getNodeFromTail(++temp);
     }
-    if (coinParent->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId()))
+    if (coinParent->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId())
+        || coinParent->getTypeId().isDerivedFrom(TrackerKit::getClassTypeId()))
     {
         coinNode = coinParent;
         coinParent = (SoBaseKit*) path.getNodeFromTail(++temp);

@@ -34,7 +34,7 @@ function makeFacet(nodeM, radius)
 	ta.setParameter("facetShift", "0 0 0.045");
 	ta.setParameter("facetNormal", "0 0 1");
 	var tt = t.getPart("target");
-	tt.setParameter("aimingFrame", "global");
+	tt.setParameter("aimingType", "global");
 	tt.setParameter("aimingPoint", "0 0 4.273");
 						
 	var nodeP = nodeM.createNode("primary");

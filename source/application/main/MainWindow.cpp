@@ -1500,6 +1500,7 @@ void MainWindow::InsertTracker()
     }
 
     TrackerKit* kit = new TrackerKit;
+    kit->m_parent = parent;
     CmdInsertNode* cmd = new CmdInsertNode(kit, index);
     m_undoStack->push(cmd);
 
@@ -2348,6 +2349,7 @@ void MainWindow::ChangeModelScene()
 {
     m_graphicsRoot->setDocument(m_document);
     m_modelScene->setDocument(m_document);
+    m_document->getSceneKit()->updateParents();
     m_graphicView[0]->setSceneGraph(m_graphicsRoot);
 
 //    QModelIndex index = m_modelScene->indexFromUrl("//Layout");

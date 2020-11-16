@@ -75,6 +75,24 @@ void TSceneKit::updateTrackers()
     updateTrackers(getLayout(), Transform::Identity, vSun);
 }
 
+void TSceneKit::updateParents(TSeparatorKit* parent)
+{
+    if (!parent) parent = getLayout();
+
+    SoGroup* nodes = (SoGroup*) parent->getPart("group", false);
+    if (!nodes) return;
+    for (int n = 0; n < nodes->getNumChildren(); ++n)
+    {
+        SoNode* node = nodes->getChild(n);
+        if (TSeparatorKit* child = dynamic_cast<TSeparatorKit*>(node))
+            updateParents(child);
+        else if (TrackerKit* tracker = dynamic_cast<TrackerKit*>(node)) {
+            tracker->m_parent = parent;
+            return;
+        }
+    }
+}
+
 TSceneKit::~TSceneKit()
 {
 

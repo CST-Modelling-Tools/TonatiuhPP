@@ -12,7 +12,6 @@ function makeHeliostat(parent, name, position, aiming, focus)
 	t.setName("LF");
 	t.setPart("armature", hLF);
 	var tt = t.getPart("target");
-	tt.setParameter("aimingFrame", "global");
 	tt.setParameter("aimingPoint", aiming);
 						
 	var n = nm.createNode("primary");
@@ -183,5 +182,5 @@ cm.setParameter("rotation", "33.4011 -32.917");
 
 var tg = scene.getPart("world.terrain.grid");
 tg.setParameter("steps", "5 5 1");
-tg.setParameter("file", "../terrain/terrain.obj");
+tg.setParameter("file", "../examples/facilities/Proteas/terrain/terrain.obj");
 

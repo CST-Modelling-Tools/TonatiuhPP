@@ -6,6 +6,7 @@
 
 class TSeparatorKit;
 class Transform;
+class SoShapeKit;
 struct vec3d;
 class TrackerTarget;
 
@@ -19,6 +20,8 @@ public:
 
     virtual void update(TSeparatorKit* parent, const Transform& toGlobal,
                         const vec3d& vSun, TrackerTarget* target);
+
+    virtual void updateShape(TSeparatorKit* parent, SoShapeKit* shape, TrackerTarget* target);
 
     NAME_ICON_FUNCTIONS("X", ":/TrackerX.png")
 };

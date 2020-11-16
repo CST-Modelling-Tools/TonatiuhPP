@@ -121,7 +121,6 @@ TSceneKit {
             }
             target 
             TrackerTarget {
-              aimingFrame global
               aimingPoint 0 0 10
 
             }

@@ -64,14 +64,20 @@ void TrackerArmature2AwD::update(TSeparatorKit* parent, const Transform& toGloba
     Transform toLocal = toGlobal.inversed();
     vec3d vSunL = toLocal.transformVector(vSun);
     vec3d rAim = tgf::makeVector3D(target->aimingPoint.getValue());
-    if (target->aimingFrame.getValue() == TrackerTarget::global) {
+    if (target->aimingType.getValue() == TrackerTarget::global) {
         rAim = toLocal.transformPoint(rAim);
         solutions = m_solver->solveReflectionGlobal(vSunL, rAim);
-    } else if (target->aimingFrame.getValue() == TrackerTarget::facets) {
+    } else if (target->aimingType.getValue() == TrackerTarget::local) {
         solutions = m_solver->solveReflectionSecondary(vSunL, rAim);
     }
     Angles solution = m_solver->selectSolution(solutions);
+    target->angles.setValue(solution.x/gcf::degree, solution.y/gcf::degree);
+}
 
+void TrackerArmature2AwD::updateShape(TSeparatorKit* parent, SoShapeKit* shape, TrackerTarget* target)
+{
+    float alpha = target->angles.getValue()[0]*gcf::degree;
+    float beta = target->angles.getValue()[1]*gcf::degree;
 
     // rotate nodes
     TSeparatorKit* nodePrimary = 0;
@@ -83,7 +89,7 @@ void TrackerArmature2AwD::update(TSeparatorKit* parent, const Transform& toGloba
     if (!nodePrimary) return;
     TTransform* tPrimary = (TTransform*) nodePrimary->getPart("transform", true);
     tPrimary->translation = primaryShift.getValue();
-    tPrimary->rotation.setValue(primaryAxis.getValue(), solution.x);
+    tPrimary->rotation.setValue(primaryAxis.getValue(), alpha);
 
     TSeparatorKit* nodeSecondary = 0;
     childList = (SoGroup*) nodePrimary->getPart("group", false);
@@ -94,42 +100,36 @@ void TrackerArmature2AwD::update(TSeparatorKit* parent, const Transform& toGloba
     if (!nodeSecondary) return;
     TTransform* tSecondary = (TTransform*) nodeSecondary->getPart("transform", true);
     tSecondary->translation = secondaryShift.getValue();
-    tSecondary->rotation.setValue(secondaryAxis.getValue(), solution.y);
+    tSecondary->rotation.setValue(secondaryAxis.getValue(), beta);
 
-
-    // shape
-    TShapeKit* shapeKit = 0;
-    childList = (SoGroup*) parent->getPart("group", false);
-    for (int q = 0; q < childList->getNumChildren(); ++q) {
-        shapeKit = dynamic_cast<TShapeKit*>(childList->getChild(q));
-        if (shapeKit) break;
-    }
-    if (!shapeKit) return;
+//    SoShapeKit* shapeKit = parent;
+//    SoGroup* childList = (SoGroup*) parent->getPart("group", false);
+//    for (int q = 0; q < childList->getNumChildren(); ++q) {
+//        shapeKit = dynamic_cast<TShapeKit*>(childList->getChild(q));
+//        if (shapeKit) break;
+//    }
+//    if (!shapeKit) return;
 
 
 //    SoNodeKitListPart* cList = (SoNodeKitListPart*) shapeKit->m_shapeKit->getPart("childList", true);
-    SoShapeKit* pShape = shapeKit->m_shapeKit;
+    SoShapeKit* pShape = shape;
     SoTransform* st;
-
-
     SbMatrix m1, m2, m3, mP, mS;
-    m1.setTranslate(primaryShift.getValue());
-    m2.setRotate(tPrimary->rotation.getValue());
-    m3.setTranslate(-primaryShift.getValue());
-    mP = m3*m2*m1;
-
-    m1.setTranslate( primaryShift.getValue() + secondaryShift.getValue());
-    m2.setRotate(tSecondary->rotation.getValue());
-    m3.setTranslate(-primaryShift.getValue() - secondaryShift.getValue());
-    mS = m3*m2*m1;
-
 
     st = findPart(pShape, "Primary");
     if (!st) return;
+    m1.setTranslate(primaryShift.getValue());
+    m2.setRotate(SbRotation(primaryAxis.getValue(), alpha));
+    m3.setTranslate(-primaryShift.getValue());
+    mP = m3*m2*m1;
     st->setMatrix(mP);
 
     st = findPart(pShape, "Secondary");
     if (!st) return;
+    m1.setTranslate( primaryShift.getValue() + secondaryShift.getValue());
+    m2.setRotate(SbRotation(secondaryAxis.getValue(), beta));
+    m3.setTranslate(-primaryShift.getValue() - secondaryShift.getValue());
+    mS = m3*m2*m1;
     st->setMatrix(mS*mP);
 
     /* refactor */

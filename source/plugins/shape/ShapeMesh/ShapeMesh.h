@@ -23,7 +23,6 @@ public:
     SoMFVec3f vertices;
     SoMFVec3f normals;
 
-
     SoSFString file;
     SoSFString group;
 

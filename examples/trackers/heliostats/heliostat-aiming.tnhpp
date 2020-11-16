@@ -2,17 +2,13 @@
 
 
 TSceneKit {
-  fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
   version "2020"
   world 
   DEF World WorldKit {
-    fields [ SFNode callbackList, SFNode location, SFNode sun, SFNode air, SFNode terrain, SFNode camera ]
     sun 
     DEF Sun SunKit {
-      fields [ SFNode callbackList, SFNode position, SFNode shape, SFNode aperture ]
       position 
       SunPosition {
-        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
         azimuth 210
         elevation 60
         irradiance 1000
@@ -25,8 +21,7 @@ TSceneKit {
       }
       aperture 
       SunAperture {
-        fields [ SFString disabledNodes ]
-        disabledNodes "//Node/Target;//Node/Ground;//Node/HeliostatB/primary/secondary/target"
+        disabledNodes "//Node/Target-Global;//Node/Heliostat-Facets/primary/secondary/Target-Facets"
 
       }
 
@@ -44,7 +39,6 @@ TSceneKit {
     }
     camera 
     DEF Camera TCameraKit {
-      fields [ SFVec3f position, SFVec2f rotation, SFDouble angle, SFBool perspective, SFNode callbackList, SFNode topSeparator ]
       position -41.2679 68.523 29.9088
       rotation -215 -20.75
 
@@ -122,7 +116,19 @@ TSceneKit {
             target 
             TrackerTarget {
               aimingPoint 0 0 10
+              angles -19.6354 48.1121
 
+            }
+            topSeparator 
+            Group {
+
+              ShapeKit {
+                shape 
+                IndexedFaceSet {
+
+                }
+
+              }
             }
 
           }
@@ -210,7 +216,6 @@ TSceneKit {
                         }
                         materialRT 
                         MaterialTransparent {
-                          fields [  ]
 
                         }
                         material 
@@ -253,7 +258,6 @@ TSceneKit {
                     }
                     materialRT 
                     MaterialTransparent {
-                      fields [  ]
 
                     }
                     material 
@@ -295,7 +299,6 @@ TSceneKit {
                 }
                 materialRT 
                 MaterialTransparent {
-                  fields [  ]
 
                 }
                 material 
@@ -337,9 +340,21 @@ TSceneKit {
             }
             target 
             TrackerTarget {
-              aimingFrame facets
+              aimingType local
               aimingPoint 0 0.5 2
+              angles -30 44.7436
 
+            }
+            topSeparator 
+            Group {
+
+              ShapeKit {
+                shape 
+                IndexedFaceSet {
+
+                }
+
+              }
             }
 
           }
@@ -427,7 +442,6 @@ TSceneKit {
                         }
                         materialRT 
                         MaterialTransparent {
-                          fields [  ]
 
                         }
                         material 
@@ -508,7 +522,6 @@ TSceneKit {
                     }
                     materialRT 
                     MaterialTransparent {
-                      fields [  ]
 
                     }
                     material 
@@ -550,7 +563,6 @@ TSceneKit {
                 }
                 materialRT 
                 MaterialTransparent {
-                  fields [  ]
 
                 }
                 material 

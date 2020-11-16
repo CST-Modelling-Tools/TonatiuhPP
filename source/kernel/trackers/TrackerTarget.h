@@ -12,12 +12,14 @@ public:
     TrackerTarget();
     ~TrackerTarget();
 
-    enum AimingFrame {
-        facets,
+    enum AimingType {
+//        angles,
+        local,
         global
     };
 
-    SoSFEnum aimingFrame;
+    SoSFEnum aimingType;
     SoSFVec3f aimingPoint;
+    SoSFVec2f angles;
 };
 

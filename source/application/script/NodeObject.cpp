@@ -86,6 +86,7 @@ QScriptValue NodeObject::createTracker()
 
     TSeparatorKit* parent = (TSeparatorKit*) m_node;
     SoGroup* group = (SoGroup*) parent->getPart("group", true);
+    kit->m_parent = parent;
     group->addChild(kit);
 
     NodeObject* ans = new NodeObject(kit);

@@ -14,6 +14,8 @@ public:
     void update(TSeparatorKit* parent, const Transform& toGlobal,
                 const vec3d& vSun, TrackerTarget* target);
 
+    void updateShape(TSeparatorKit* parent, SoShapeKit* shape, TrackerTarget* target);
+
     SoSFVec3f drivePrimaryR;
     SoSFVec3f drivePrimaryP;
 

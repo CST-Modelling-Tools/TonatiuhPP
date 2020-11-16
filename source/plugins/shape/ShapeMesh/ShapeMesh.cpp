@@ -147,7 +147,7 @@ void ShapeMesh::onSensor(void* data, SoSensor*)
 {
     ShapeMesh* shape = (ShapeMesh*) data;
     shape->vertices.deleteValues(0); // todo move
-    shape->vertices.deleteValues(0);
+    shape->normals.deleteValues(0);
     shape->m_faceSets.clear();
 
     QString fileName = shape->file.getValue().getString();

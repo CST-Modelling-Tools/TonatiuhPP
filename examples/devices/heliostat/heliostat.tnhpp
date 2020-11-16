@@ -9,7 +9,7 @@ TSceneKit {
     DEF Sun SunKit {
       position 
       SunPosition {
-        azimuth -33
+        azimuth 0
         elevation 0
 
       }
@@ -22,8 +22,8 @@ TSceneKit {
     }
     camera 
     DEF Camera TCameraKit {
-      position 14.8004 -18.7023 6.78332
-      rotation -38.5276 -14.0213
+      position 4.02704 -10.1033 5.77154
+      rotation -20.2776 -22.7713
 
     }
 
@@ -44,7 +44,7 @@ TSceneKit {
               primaryAxis 1 0 0
               secondaryShift 0 0.175 0
               secondaryAxis 0 0 1
-              facetShift 0 0.125 0
+              facetShift -0.03 0.155 0
               facetNormal 0 1 0
               drivePrimaryR -0.1 0 1.06
               drivePrimaryP -0.1 0.115 1.23
@@ -52,32 +52,10 @@ TSceneKit {
               driveSecondaryS 0.561 0.311 1.54
 
             }
+            shape "heliostat.obj"
             target 
             TrackerTarget {
-
-            }
-
-          }
-          DEF Shape TShapeKit {
-            shapeRT 
-            ShapeMesh {
-              file "heliostat.obj"
-              group ""
-
-            }
-            profileRT 
-            ProfileBox {
-
-            }
-            materialRT 
-            MaterialTransparent {
-
-            }
-            material 
-            MaterialGL {
-              ambientColor 0.5 0.5 0.5
-              diffuseColor 0.5 0.5 0.5
-              reverseNormals TRUE
+              angles 45.0734 0
 
             }
 
@@ -86,7 +64,7 @@ TSceneKit {
             transform 
             TTransform {
               translation 0 0.04 1.5
-              rotation 1 0 0  50.0918
+              rotation 1 0 0  45.0734
 
             }
             group 
@@ -96,7 +74,7 @@ TSceneKit {
                 transform 
                 TTransform {
                   translation 0 0.175 0
-                  rotation 0 0 1  22.6558
+                  rotation 0 0 1  0
 
                 }
                 group 

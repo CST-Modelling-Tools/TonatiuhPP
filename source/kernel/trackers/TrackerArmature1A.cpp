@@ -53,10 +53,10 @@ void TrackerArmature1A::update(TSeparatorKit* parent, const Transform& toGlobal,
     vec3d rAim = tgf::makeVector3D(target->aimingPoint.getValue());
 
     double angle;
-    if (target->aimingFrame.getValue() == TrackerTarget::global) {
+    if (target->aimingType.getValue() == TrackerTarget::global) {
         rAim = toLocal.transformPoint(rAim);
         angle = m_solver->solveReflectionGlobal(vSunL, rAim);
-    } else if (target->aimingFrame.getValue() == TrackerTarget::facets) {
+    } else if (target->aimingType.getValue() == TrackerTarget::local) {
         angle = m_solver->solveReflectionPrimary(vSunL, rAim);
     } else {
         angle = 0;

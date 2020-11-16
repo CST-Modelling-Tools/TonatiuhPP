@@ -19,7 +19,6 @@ function makeHeliostat(parent, name, position, aiming, focus)
 	ta.setParameter("facetShift", "0 0.125 0");
 	ta.setParameter("facetNormal", "0 1 0");
 	var tt = t.getPart("target");
-	tt.setParameter("aimingFrame", "global");
 	tt.setParameter("aimingPoint", aiming);
 						
 	var n = nm.createNode("primary");

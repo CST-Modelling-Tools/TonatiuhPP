@@ -20,6 +20,8 @@ public:
     void update(TSeparatorKit* parent, const Transform& toGlobal,
                 const vec3d& vSun, TrackerTarget* target);
 
+    void updateShape(TSeparatorKit* parent, SoShapeKit* shape, TrackerTarget* target);
+
     SoSFVec3f primaryShift;
     SoSFVec3f primaryAxis;
     SoSFVec2f primaryAngles;
@@ -37,6 +39,7 @@ public:
     ArmatureJoint secondary;
     ArmatureVertex facet;
     vec2d angles0;
+
 
     NAME_ICON_FUNCTIONS("two-axes", ":/trackers/Tracker2A.png")
 
