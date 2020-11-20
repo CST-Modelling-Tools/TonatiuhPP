@@ -5,7 +5,7 @@ CONFIG += ordered
 #SUBDIRS += libraries
 SUBDIRS += kernel
 SUBDIRS += application
-#SUBDIRS += plugins
+SUBDIRS += plugins
 
 #SUBDIRS += tests
 #SUBDIRS += installer

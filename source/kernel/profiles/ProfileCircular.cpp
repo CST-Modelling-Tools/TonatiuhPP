@@ -13,18 +13,19 @@ void ProfileCircular::initClass()
 ProfileCircular::ProfileCircular()
 {
     SO_NODE_CONSTRUCTOR(ProfileCircular);
+    isBuiltIn = TRUE;
     SO_NODE_ADD_FIELD( rMin, (0.) );
-    SO_NODE_ADD_FIELD( rMax, (0.5) );
-    SO_NODE_ADD_FIELD( phiMin, (-gcf::pi) );
-    SO_NODE_ADD_FIELD( phiMax, (gcf::pi) );
+    SO_NODE_ADD_FIELD( rMax, (1.) );
+    SO_NODE_ADD_FIELD( phiMin, (-180.) );
+    SO_NODE_ADD_FIELD( phiMax, (180.) );
 }
 
 Box2D ProfileCircular::getBox() const
 {
     double rMinV = rMin.getValue();
     double rMaxV = rMax.getValue();
-    double phiMinV = phiMin.getValue();
-    double phiMaxV = phiMax.getValue();
+    double phiMinV = phiMin.getValue()*gcf::degree;
+    double phiMaxV = phiMax.getValue()*gcf::degree;
 
     double xMin = cos(phiMinV);
     double xMax = cos(phiMaxV);
@@ -59,7 +60,7 @@ bool ProfileCircular::isInside(double u, double v) const
     double r2 = u*u + v*v;
     if (r2 < gcf::pow2(rMin.getValue())) return false;
     if (r2 > gcf::pow2(rMax.getValue())) return false;
-    double phi = atan2(v, u);
+    double phi = atan2(v, u)/gcf::degree;
     if (phi < phiMin.getValue()) return false;
     if (phi > phiMax.getValue()) return false;
     return true;
@@ -67,7 +68,7 @@ bool ProfileCircular::isInside(double u, double v) const
 
 QVector<vec2d> ProfileCircular::makeMesh(QSize& dims) const
 {
-    double s = (phiMax.getValue() - phiMin.getValue())/gcf::TwoPi;
+    double s = (phiMax.getValue() - phiMin.getValue())/360;
     int iMax = 1 + ceil(48*s);
 //    int jMax = std::max(dims.width(), dims.height());//?
     int jMax = dims.width();
@@ -75,12 +76,11 @@ QVector<vec2d> ProfileCircular::makeMesh(QSize& dims) const
 
     QVector<vec2d> ans;
     for (int i = 0; i < iMax; ++i) {
-        double un = i/double(iMax - 1);
-        double u = (1. - un)*phiMin.getValue() + un*phiMax.getValue();
+        double u = gcf::lerp(phiMin.getValue(), phiMax.getValue(), i/double(iMax - 1))*gcf::degree;
+        vec2d rho(cos(u), sin(u));
         for (int j = 0; j < jMax; ++j) {
-            double vn = j/double(jMax - 1);
-            double v = (1. - vn)*rMin.getValue() + vn*rMax.getValue();
-            ans << v*vec2d(cos(u), sin(u));
+            double v = gcf::lerp(rMin.getValue(), rMax.getValue(), j/double(jMax - 1));
+            ans << v*rho;
         }
     }
     return ans;

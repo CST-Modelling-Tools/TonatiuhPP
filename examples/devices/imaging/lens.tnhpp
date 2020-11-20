@@ -2,17 +2,13 @@
 
 
 TSceneKit {
-  fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
   version "2020"
   world 
   DEF World WorldKit {
-    fields [ SFNode callbackList, SFNode location, SFNode sun, SFNode air, SFNode terrain, SFNode camera ]
     sun 
     DEF Sun SunKit {
-      fields [ SFNode callbackList, SFNode position, SFNode shape, SFNode aperture ]
       position 
       SunPosition {
-        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
 
       }
       shape 
@@ -22,7 +18,6 @@ TSceneKit {
       }
       aperture 
       SunAperture {
-        fields [ SFString disabledNodes ]
         disabledNodes "//Node/focus"
 
       }
@@ -33,14 +28,12 @@ TSceneKit {
       fields [ SFNode callbackList, SFNode grid ]
       grid 
       DEF Grid GridNode {
- 
 
       }
 
     }
     camera 
     DEF Camera TCameraKit {
-      fields [ SFVec3f position, SFVec2f rotation, SFDouble angle, SFBool perspective, SFNode callbackList, SFNode topSeparator ]
       position -4.00313 -9.5328 5.08329
       rotation 22.5 -24.75
 
@@ -79,8 +72,10 @@ TSceneKit {
                 }
                 profileRT 
                 ProfileRectangular {
-                  fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
-                  vMin 0.45
+                  uMin -180
+                  uMax 180
+                  vMin 80
+                  vMax 90
 
                 }
                 materialRT 
@@ -114,8 +109,10 @@ TSceneKit {
                 }
                 profileRT 
                 ProfileRectangular {
-                  fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
-                  vMax -0.45
+                  uMin -180
+                  uMax 180
+                  vMin -90
+                  vMax -80
 
                 }
                 materialRT 

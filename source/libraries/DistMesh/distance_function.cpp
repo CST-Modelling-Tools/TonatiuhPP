@@ -53,7 +53,7 @@ distmesh::Functional distmesh::distanceFunction::rectangle(
         auto d7 = (d2.square() + d3.square()).sqrt();
         auto d8 = (d2.square() + d4.square()).sqrt();
 
-        // distance to neares side of rectangle
+        // distance to nearest side of rectangle
         Eigen::ArrayXd d = -(-d1).min(-d2).min(-d3).min(-d4);
 
         // check if smallest distance is to one of the corners
@@ -109,6 +109,7 @@ distmesh::Functional
 }
 
 // creates distance function for a 2d domain described by polygon
+// https://stackoverflow.com/questions/10983872/distance-from-a-point-to-a-polygon
 distmesh::Functional distmesh::distanceFunction::polygon(
     Eigen::Ref<Eigen::ArrayXXd const> const polygon) {
     return DISTMESH_FUNCTIONAL({

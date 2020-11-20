@@ -13,12 +13,14 @@ public:
 
     vec3d getPoint(double u, double v) const;
     vec3d getNormal(double u, double v) const;
+    double getRadiusMin(double u, double v) const;
+    void updateShapeGL(TShapeKit* parent);
+
     Box3D getBox(ProfileRT* profile) const;
-    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
+    bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const;
 
     SoSFDouble fX;
     SoSFDouble fY;
 
     NAME_ICON_FUNCTIONS("Parabolic", ":/shape/ShapeParabolic.png")
-    void updateShapeGL(TShapeKit* parent);
 };

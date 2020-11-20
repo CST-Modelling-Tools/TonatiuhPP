@@ -1,6 +1,6 @@
 #include "ShapeCone.h"
 
-#include "kernel/profiles/ProfileRT.h"
+#include "kernel/profiles/ProfileBox.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/math/3D/Box3D.h"
@@ -24,7 +24,7 @@ ShapeCone::ShapeCone()
 
 vec3d ShapeCone::getPoint(double u, double v) const
 {
-    double phi = gcf::TwoPi*u;
+    double phi = gcf::degree*u;
     double r = 1. + dr.getValue()*v;
     return vec3d(r*cos(phi), r*sin(phi), v);
 }
@@ -33,16 +33,23 @@ vec3d ShapeCone::getPoint(double u, double v) const
 // [x, y, -(1 + dr*z)dr]
 vec3d ShapeCone::getNormal(double u, double v) const
 {
-    double phi = gcf::TwoPi*u;
+    double phi = gcf::degree*u;
     double drV = dr.getValue();
     double r = 1. + drV*v;
     r = r >= 0. ? 1. : -1;
     return vec3d(r*cos(phi), r*sin(phi), -r*drV).normalized();
 }
 
+ProfileRT* ShapeCone::getDefaultProfile() const
+{
+    ProfileBox* pr = new ProfileBox;
+    pr->uSize = 360.;
+    return pr;
+}
+
 vec2d ShapeCone::getUV(const vec3d& p) const
 {
-    return vec2d(atan2(p.y, p.x)/gcf::TwoPi, p.z);
+    return vec2d(atan2(p.y, p.x)/gcf::degree, p.z);
 }
 
 Box3D ShapeCone::getBox(ProfileRT* aperture) const
@@ -83,7 +90,7 @@ bool ShapeCone::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
 
         vec3d pHit = ray.point(t);
         double phi = atan2(pHit.y, pHit.x);
-        double u = phi/gcf::TwoPi;
+        double u = phi/gcf::degree;
         double v = pHit.z;
         if (!aperture->isInside(u, v)) continue;
 
@@ -115,7 +122,7 @@ void ShapeCone::updateShapeGL(TShapeKit* parent)
     Box2D box = profile->getBox();
     vec2d v = box.size();
 
-    double s = v.x;
+    double s = v.x/360;
     if (s > 1.) s = 1.;
     int rows = 1 + ceil(48*s);
 

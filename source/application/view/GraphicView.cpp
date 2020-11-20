@@ -801,7 +801,7 @@ void GraphicView::on_actionViewY_triggered()
 
 void GraphicView::on_actionViewZ_triggered()
 {
-    setCameraViewTemp(0., 90.);
+    setCameraViewTemp(180., 90.);
 }
 
 void GraphicView::setCameraView(double azimuth, double elevation, bool shift, bool alt)

@@ -23,6 +23,7 @@ public:
     virtual vec3d getNormal(double u, double v) const;
     virtual vec2d getUV(const vec3d& p) const;
     virtual Box3D getBox(ProfileRT* profile) const;
+    virtual ProfileRT* getDefaultProfile() const;
 
     // with computing dg, ray in local coordinates
     virtual bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const;

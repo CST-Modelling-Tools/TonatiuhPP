@@ -28,14 +28,18 @@ public:
 
 protected:
      ~TShapeKit();
+public:
+    SoFieldSensor* m_sensor_shapeRT;
+    SoFieldSensor* m_sensor_profileRT;
+    SoFieldSensor* m_sensor_material;
 
-    SoFieldSensor* m_sensorShape;
-    SoFieldSensor* m_sensorProfile;
-    SoFieldSensor* m_sensorMaterial;
     static void onSensor(void* data, SoSensor*);
+    static void onSensor_shapeRT(void* data, SoSensor*);
 
     void setDefaultOnNonWritingFields();
     SbBool setUpConnections(SbBool onoff, SbBool doitalways);
+
+    virtual SbBool readInstance(SoInput * in, unsigned short flags);
 
     // SoNode interface
 //public:

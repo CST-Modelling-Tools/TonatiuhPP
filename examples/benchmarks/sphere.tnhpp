@@ -2,22 +2,17 @@
 
 
 TSceneKit {
-  fields [ SFString version, SFNode callbackList, SFNode cameraList, SFNode lightList, SFNode childList, SFNode world, SFNode group, SFNode topSeparator ]
   version "2020"
   world 
   DEF World WorldKit {
-    fields [ SFNode callbackList, SFNode location, SFNode sun, SFNode air, SFNode terrain, SFNode camera ]
     sun 
     DEF Sun SunKit {
-      fields [ SFNode callbackList, SFNode position, SFNode shape, SFNode aperture ]
       position 
       SunPosition {
-        fields [ SFDouble azimuth, SFDouble elevation, SFDouble irradiance ]
 
       }
       aperture 
       SunAperture {
-        fields [ SFString disabledNodes ]
         disabledNodes ""
 
       }
@@ -35,7 +30,6 @@ TSceneKit {
     }
     camera 
     DEF Camera TCameraKit {
-      fields [ SFVec3f position, SFVec2f rotation, SFDouble angle, SFBool perspective, SFNode callbackList, SFNode topSeparator ]
       position -3.63062 -20.1374 3.35845
       rotation 10 -10
 
@@ -58,6 +52,8 @@ TSceneKit {
         }
         profileRT 
         ProfileBox {
+          uSize 360
+          vSize 180
 
         }
         materialRT 

@@ -213,6 +213,7 @@ void ParametersDelegate::setModelData(QWidget* editor, QAbstractItemModel* model
         MainWindow* main = modelP->getMain();
         TFactory* tf = main->getPlugins()->getFactories(node)[w->currentIndex()];
         modelP->setData(kit, name, tf->create());
+//        if (dynamic_cast)
 
         return;
     }

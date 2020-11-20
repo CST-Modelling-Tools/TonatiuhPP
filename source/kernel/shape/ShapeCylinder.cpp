@@ -5,7 +5,7 @@
 #include <Inventor/nodes/SoQuadMesh.h>
 #include <Inventor/nodes/SoIndexedFaceSet.h>
 
-#include "kernel/profiles/ProfileRT.h"
+#include "kernel/profiles/ProfileBox.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/math/3D/Box3D.h"
@@ -35,27 +35,34 @@ ShapeCylinder::ShapeCylinder()
 
 vec3d ShapeCylinder::getPoint(double u, double v) const
 {
-    double phi = gcf::TwoPi*u;
+    double phi = gcf::degree*u;
     return vec3d(cos(phi), sin(phi), v);
 }
 
 vec3d ShapeCylinder::getNormal(double u, double v) const
 {
     Q_UNUSED(v)
-    double phi = gcf::TwoPi*u;
+    double phi = gcf::degree*u;
     return vec3d(cos(phi), sin(phi), 0.);
+}
+
+ProfileRT* ShapeCylinder::getDefaultProfile() const
+{
+    ProfileBox* pr = new ProfileBox;
+    pr->uSize = 360.;
+    return pr;
 }
 
 vec2d ShapeCylinder::getUV(const vec3d& p) const
 {
-    return vec2d(atan2(p.y, p.x)/gcf::TwoPi, p.z);
+    return vec2d(atan2(p.y, p.x)/gcf::degree, p.z);
 }
 
 Box3D ShapeCylinder::getBox(ProfileRT* profile) const
 {
     Box2D box = profile->getBox();
-    double phiMin = gcf::TwoPi*box.min().x;
-    double phiMax = gcf::TwoPi*box.max().x;
+    double phiMin = gcf::degree*box.min().x;
+    double phiMax = gcf::degree*box.max().x;
     double zMin = box.min().y;
     double zMax = box.max().y;
 
@@ -101,7 +108,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
 
         vec3d pHit = ray.point(t);
         double phi = atan2(pHit.y, pHit.x);
-        double u = phi/gcf::TwoPi;
+        double u = phi/gcf::degree;
         double v = pHit.z;
         if (!profile->isInside(u, v)) continue;
 
@@ -130,7 +137,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
             else {
                 vec3d pHit = ray.point(t);
                 if (pHit.x*pHit.x + pHit.y*pHit.y <= 1) {
-                    double phi = atan2(pHit.y, pHit.x)/gcf::TwoPi;
+                    double phi = atan2(pHit.y, pHit.x)/gcf::degree;
                     if (phi <= box2d.max().x && phi >= box2d.min().x) {
                         *tHit = t;
                         dg->point = pHit;
@@ -152,7 +159,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
             else {
                 vec3d pHit = ray.point(t);
                 if (pHit.x*pHit.x + pHit.y*pHit.y <= 1) {
-                    double phi = atan2(pHit.y, pHit.x)/gcf::TwoPi;
+                    double phi = atan2(pHit.y, pHit.x)/gcf::degree;
                     if (phi <= box2d.max().x && phi >= box2d.min().x) {
                         *tHit = t;
                         dg->point = pHit;
@@ -179,7 +186,7 @@ void ShapeCylinder::updateShapeGL(TShapeKit* parent)
     Box2D box = profile->getBox();
     vec2d v = box.size();
 
-    double s = v.x;
+    double s = v.x/360;
     if (s > 1.) s = 1.;
     int rows = 1 + ceil(48*s);
 
@@ -196,7 +203,7 @@ void ShapeCylinder::updateShapeGL(TShapeKit* parent)
         Box2D box2d = profile->getBox();
         if (caps.getValue() & Caps::top) {
             for (int r = 0; r < rows; ++r) {
-                vec3d p = getPoint(r/(rows - 1.) - 0.5, box2d.max().y);
+                vec3d p = getPoint(360*(r/(rows - 1.) - 0.5), box2d.max().y);
                 sCoords->point.set1Value(++iVertices, p.x, p.y, p.z);
                 sNormals->vector.set1Value(iVertices, 0, 0, 1);
                 sMesh->coordIndex.set1Value(++iFaces, iVertices);
@@ -205,7 +212,7 @@ void ShapeCylinder::updateShapeGL(TShapeKit* parent)
         }
         if (caps.getValue() & Caps::bottom) {
             for (int r = 0; r < rows; ++r) {
-                vec3d p = getPoint(r/(rows - 1.) - 0.5, box2d.min().y);
+                vec3d p = getPoint(360*(r/(rows - 1.) - 0.5), box2d.min().y);
                 sCoords->point.set1Value(++iVertices, p.x, p.y, p.z);
                 sNormals->vector.set1Value(iVertices, 0, 0, -1);
                 sMesh->coordIndex.set1Value(++iFaces, iVertices);

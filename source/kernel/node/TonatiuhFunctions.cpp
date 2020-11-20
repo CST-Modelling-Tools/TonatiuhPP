@@ -73,6 +73,11 @@ SbMatrix tgf::makeSbMatrix(SoTransform* t)
     return ans;
 }
 
+vec2d tgf::makeVector2D(const QPointF& p)
+{
+    return vec2d(p.x(), p.y());
+}
+
 vec2d tgf::makeVector2D(const SbVec2f& v)
 {
     return vec2d(v[0], v[1]);

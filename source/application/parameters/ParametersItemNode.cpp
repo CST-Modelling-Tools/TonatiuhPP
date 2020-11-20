@@ -22,6 +22,7 @@ void ParametersItemNode::setNode(SoNode* node)
     if (m_node == node) return;
     m_node = node;
 
+//    begin
     removeRows(0, rowCount());
     if (!m_node) return;
     SoFieldList fields;
@@ -47,4 +48,5 @@ void ParametersItemNode::setNode(SoNode* node)
 
         appendRow({itemP, itemV});
     }
+    emitDataChanged();
 }

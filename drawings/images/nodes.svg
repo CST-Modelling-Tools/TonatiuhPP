@@ -20,6 +20,161 @@
    enable-background="new">
   <defs
      id="defs2">
+    <marker
+       style="overflow:visible"
+       id="marker1882"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#4c4c4c;stroke-width:1pt;stroke-opacity:1;fill:#4c4c4c;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path1880" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker1706"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#434343;stroke-width:1pt;stroke-opacity:1;fill:#434343;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path1704" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker1526"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#4c4c4c;stroke-width:1pt;stroke-opacity:1;fill:#4c4c4c;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path1524" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker1474"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path1472" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker1428"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path1426" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker1382"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#434343;stroke-width:1pt;stroke-opacity:1;fill:#434343;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path1380" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker1348"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path1346" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker1320"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path1318" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker1298"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path1296" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker1282"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path1280" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Lstart"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#434343;stroke-width:1pt;stroke-opacity:1;fill:#434343;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path1004" />
+    </marker>
     <inkscape:path-effect
        pattern-nodetypes="cccc"
        effect="skeletal"
@@ -589,17 +744,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.27179418"
-     inkscape:cx="316.27155"
-     inkscape:cy="274.0171"
+     inkscape:zoom="0.38437502"
+     inkscape:cx="266.64989"
+     inkscape:cy="221.67754"
      inkscape:document-units="mm"
      inkscape:current-layer="svg8"
      showgrid="false"
-     inkscape:window-width="1346"
-     inkscape:window-height="904"
-     inkscape:window-x="376"
-     inkscape:window-y="82"
-     inkscape:window-maximized="0"
+     inkscape:window-width="1500"
+     inkscape:window-height="938"
+     inkscape:window-x="-6"
+     inkscape:window-y="-6"
+     inkscape:window-maximized="1"
      inkscape:snap-global="false"
      inkscape:snap-bbox="true"
      inkscape:bbox-paths="true"
@@ -638,7 +793,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -666,16 +821,16 @@
      id="rect844"
      width="27.127855"
      height="27.127855"
-     x="-55.553085"
-     y="43.568863"
+     x="168.15964"
+     y="71.102737"
      rx="8.8999996"
      inkscape:export-xdpi="59.923649"
      inkscape:export-ydpi="59.923649" />
   <rect
      inkscape:export-ydpi="59.923649"
      inkscape:export-xdpi="59.923649"
-     y="49.124954"
-     x="-45.261368"
+     y="76.658829"
+     x="178.45135"
      height="6.5"
      width="6.5"
      id="rect846"
@@ -687,13 +842,13 @@
      id="rect848"
      width="6.5"
      height="6.5"
-     x="-40.389999"
-     y="57.958954" />
+     x="183.32272"
+     y="85.492828" />
   <rect
      inkscape:export-ydpi="59.923649"
      inkscape:export-xdpi="59.923649"
-     y="58.00441"
-     x="-49.88118"
+     y="85.538284"
+     x="173.83154"
      height="6.5"
      width="6.5"
      id="rect850"
@@ -822,4 +977,119 @@
      transform="matrix(0.80013543,0,0,0.77149113,303.17534,7.2771904)"
      inkscape:export-xdpi="59.923649"
      inkscape:export-ydpi="59.923649" />
+  <rect
+     ry="8.8999996"
+     style="display:inline;opacity:1;fill:#b3bcca;fill-opacity:1;stroke:none;stroke-width:0.750001;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:28.3465;stroke-opacity:1;paint-order:markers fill stroke"
+     id="rect956"
+     width="27.127855"
+     height="27.127855"
+     x="105.62037"
+     y="147.53513"
+     rx="8.8999996"
+     inkscape:export-xdpi="59.923649"
+     inkscape:export-ydpi="59.923649"
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeTracker.png" />
+  <path
+     style="fill:none;stroke:#4c4c4c;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-mid:url(#marker1526)"
+     d="m 118.36986,171.07498 v -9.98103"
+     id="path964"
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeTracker.png"
+     inkscape:export-xdpi="59.923649"
+     inkscape:export-ydpi="59.923649" />
+  <rect
+     style="opacity:1;fill:#b3bcca;fill-opacity:1;stroke:#4c4c4c;stroke-width:1.6174;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+     id="rect962"
+     width="14.335489"
+     height="12.023411"
+     x="145.62706"
+     y="158.24916"
+     transform="matrix(1,0,-0.20575521,0.97860349,0,0)"
+     inkscape:export-xdpi="59.923649"
+     inkscape:export-ydpi="59.923649"
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeTracker.png" />
+  <rect
+     inkscape:export-ydpi="59.923649"
+     inkscape:export-xdpi="59.923649"
+     rx="8.8999996"
+     y="148.17747"
+     x="71.894455"
+     height="27.127855"
+     width="27.127855"
+     id="rect984"
+     style="display:inline;opacity:1;fill:#b3bcca;fill-opacity:1;stroke:none;stroke-width:0.750001;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:28.3465;stroke-opacity:1;paint-order:markers fill stroke"
+     ry="8.8999996"
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeShape.png" />
+  <path
+     sodipodi:type="star"
+     style="display:inline;opacity:1;fill:#b3bcca;fill-opacity:1;stroke:#4c4c4c;stroke-width:2.36549454;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:1"
+     id="path986"
+     sodipodi:sides="3"
+     sodipodi:cx="-203.87881"
+     sodipodi:cy="102.68725"
+     sodipodi:r1="11.206612"
+     sodipodi:r2="5.6033058"
+     sodipodi:arg1="0.52359878"
+     sodipodi:arg2="1.5707963"
+     inkscape:flatsided="true"
+     inkscape:rounded="-3.46945e-18"
+     inkscape:randomized="0"
+     d="m -194.1736,108.29055 -19.41043,0 9.70522,-16.809913 z"
+     inkscape:transform-center-x="-2.6971693e-05"
+     inkscape:transform-center-y="-2.0920294"
+     transform="matrix(0.7754394,0,0,0.7467122,243.52994,86.685408)"
+     inkscape:export-xdpi="59.923649"
+     inkscape:export-ydpi="59.923649"
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeShape.png" />
+  <rect
+     ry="8.8999996"
+     style="display:inline;opacity:1;fill:#b3bcca;fill-opacity:1;stroke:none;stroke-width:0.750001;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:28.3465;stroke-opacity:1;paint-order:markers fill stroke"
+     id="rect1656"
+     width="27.127855"
+     height="27.127855"
+     x="139.71367"
+     y="146.96661"
+     rx="8.8999996"
+     inkscape:export-xdpi="59.923649"
+     inkscape:export-ydpi="59.923649"
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeArray.png" />
+  <rect
+     inkscape:export-ydpi="59.923649"
+     inkscape:export-xdpi="59.923649"
+     y="154.69235"
+     x="147.10379"
+     height="4.5"
+     width="4.5"
+     id="rect1658"
+     style="display:inline;opacity:1;fill:#4c4c4c;fill-opacity:1;stroke:none;stroke-width:1.20385;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:28.3465;stroke-opacity:1;paint-order:markers fill stroke"
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeArray.png" />
+  <rect
+     inkscape:export-ydpi="59.923649"
+     inkscape:export-xdpi="59.923649"
+     style="display:inline;opacity:1;fill:#4c4c4c;fill-opacity:1;stroke:none;stroke-width:1.20385;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:28.3465;stroke-opacity:1;paint-order:markers fill stroke"
+     id="rect1660"
+     width="4.5"
+     height="4.5"
+     x="155.14261"
+     y="162.75197"
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeArray.png" />
+  <rect
+     inkscape:export-ydpi="59.923649"
+     inkscape:export-xdpi="59.923649"
+     y="162.66119"
+     x="147.00677"
+     height="4.5"
+     width="4.5"
+     id="rect1662"
+     style="display:inline;opacity:1;fill:#4c4c4c;fill-opacity:1;stroke:none;stroke-width:1.20385;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:28.3465;stroke-opacity:1;paint-order:markers fill stroke"
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeArray.png" />
+  <rect
+     inkscape:export-ydpi="59.923649"
+     inkscape:export-xdpi="59.923649"
+     y="154.75319"
+     x="155.16153"
+     height="4.5"
+     width="4.5"
+     id="rect1664"
+     style="display:inline;opacity:1;fill:#4c4c4c;fill-opacity:1;stroke:none;stroke-width:1.20385;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:28.3465;stroke-opacity:1;paint-order:markers fill stroke"
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeArray.png" />
 </svg>

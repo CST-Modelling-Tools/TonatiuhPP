@@ -11,7 +11,7 @@ public:
     static void initClass();
     ProfileRegular();
 
-    SoSFDouble r; // outscribed radius
+    SoSFDouble r; // circumscribed radius
     SoSFInt32 n;
 
     Box2D getBox() const;

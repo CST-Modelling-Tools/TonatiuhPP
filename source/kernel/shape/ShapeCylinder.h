@@ -20,6 +20,8 @@ public:
 
     vec3d getPoint(double u, double v) const;
     vec3d getNormal(double u, double v) const;
+    ProfileRT* getDefaultProfile() const;
+
     vec2d getUV(const vec3d& p) const;
     Box3D getBox(ProfileRT* profile) const;
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;

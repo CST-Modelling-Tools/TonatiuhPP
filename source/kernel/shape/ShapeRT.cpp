@@ -10,7 +10,8 @@
 
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "kernel/profiles/ProfileRT.h"
+//#include "kernel/profiles/ProfileRT.h"
+#include "kernel/profiles/ProfileBox.h"
 #include "libraries/math/3D/vec3d.h"
 #include "libraries/math/3D/Box3D.h"
 #include "libraries/math/3D/Ray.h"
@@ -50,7 +51,15 @@ Box3D ShapeRT::getBox(ProfileRT* profile) const
     return Box3D(
         vec3d(box.min(), -zMax),
         vec3d(box.max(), zMax)
-    );
+                );
+}
+
+ProfileRT* ShapeRT::getDefaultProfile() const
+{
+    ProfileBox* pr = new ProfileBox;
+    pr->uSize = 1.;
+    pr->vSize = 1.;
+    return pr;
 }
 
 bool ShapeRT::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
@@ -90,21 +99,16 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool forceIndex
 
     if (ProfilePolygon* profilePolygon = dynamic_cast<ProfilePolygon*>(profile))
     {
+        // call
         const QPolygonF& qpolygon = profilePolygon->getPolygon();
         QSizeF rect = qpolygon.boundingRect().size();
         double s = std::min(rect.width()/(dims.width() - 1), rect.height()/(dims.height() - 1));
 
-        QPointF prev = qpolygon[qpolygon.size() - 1];
-        for (int n = 0; n < qpolygon.size(); ++n) {
-            QPointF ed = qpolygon[n] - prev;
-            prev = qpolygon[n];
-            double se = 0.3*sqrt(ed.x()*ed.x() + ed.y()*ed.y());
-            if (se < s) s = se;
-        }
-
         PolygonMesh polygonMesh(qpolygon);
-        polygonMesh.makeMesh(s);
+        if (!polygonMesh.makeMesh(s))
+            return;
 
+        // fill
         QVector<SbVec3f> vertices;
         QVector<SbVec3f> normals;
         for (const vec2d& uv : polygonMesh.getPoints()) {

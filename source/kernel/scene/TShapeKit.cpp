@@ -7,9 +7,11 @@
 #include <Inventor/sensors/SoFieldSensor.h>
 
 #include "kernel/profiles/ProfileBox.h"
+#include "kernel/profiles/ProfileRectangular.h"
 #include "kernel/material/MaterialAbsorber.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "kernel/shape/ShapePlanar.h"
+#include "kernel/shape/ShapeSphere.h"
 #include "libraries/math/3D/Ray.h"
 #include "scene/MaterialGL.h"
 
@@ -38,32 +40,32 @@ TShapeKit::TShapeKit()
     SO_NODE_ADD_FIELD( material, (0) );
     SO_KIT_INIT_INSTANCE();
 
+    shapeRT = new ShapePlanar;
+    profileRT = new ProfileBox;
+    materialRT = new MaterialAbsorber;
+    material = new MaterialGL;
+
     m_shapeKit = new SoShapeKit;
-    m_shapeKit->ref();
 //    m_shapeKit->setSearchingChildren(TRUE);
+    m_shapeKit->setPart("material", material.getValue());
+    m_shapeKit->ref();
     SoGroup* g = (SoGroup*) topSeparator.getValue();
     g->addChild(m_shapeKit);
 
-    profileRT = new ProfileBox;
-    materialRT = new MaterialAbsorber;
-    SoMaterial* sm = new MaterialGL;
-    material = sm;
-    m_shapeKit->setPart("material", material.getValue());
+    m_sensor_shapeRT = new SoFieldSensor(onSensor_shapeRT, this);
+    m_sensor_shapeRT->setPriority(1);
+    m_sensor_shapeRT->attach(&shapeRT);
 
-    m_sensorShape = new SoFieldSensor(onSensor, this);
-//    m_sensorShape->setPriority(0);
-    m_sensorShape->attach(&shapeRT);
+    m_sensor_profileRT = new SoFieldSensor(onSensor, this);
+    m_sensor_profileRT->setPriority(2);
+    m_sensor_profileRT->attach(&profileRT);
 
-    m_sensorProfile = new SoFieldSensor(onSensor, this);
+    m_sensor_material = new SoFieldSensor(onSensor, this);
 //    m_sensorProfile->setPriority(0);
-    m_sensorProfile->attach(&profileRT);
+    m_sensor_material->attach(&material);
 
-    m_sensorMaterial = new SoFieldSensor(onSensor, this);
-//    m_sensorProfile->setPriority(0);
-    m_sensorMaterial->attach(&material);
-
-    shapeRT = new ShapePlanar;
     setName("Shape");
+    onSensor(this, 0);
 }
 
 TShapeKit* TShapeKit::copy(SbBool copyConnections) const
@@ -79,9 +81,9 @@ TShapeKit* TShapeKit::copy(SbBool copyConnections) const
 
 TShapeKit::~TShapeKit()
 {
-    delete m_sensorShape;
-    delete m_sensorProfile;
-    delete m_sensorMaterial;
+    delete m_sensor_shapeRT;
+    delete m_sensor_profileRT;
+    delete m_sensor_material;
     m_shapeKit->unref();
 }
 
@@ -90,8 +92,21 @@ void TShapeKit::onSensor(void* data, SoSensor*)
     TShapeKit* kit = (TShapeKit*) data;
 //    qDebug() << "called " << kit->getName();
 
+
     ShapeRT* shape = (ShapeRT*) kit->shapeRT.getValue();
     shape->updateShapeGL(kit);
+}
+
+void TShapeKit::onSensor_shapeRT(void* data, SoSensor*)
+{
+    TShapeKit* kit = (TShapeKit*) data;
+
+    ShapeRT* shape = (ShapeRT*) kit->shapeRT.getValue();
+//    kit->profileRT.enableNotify(FALSE);
+    if (!kit->m_sensor_profileRT->isScheduled())
+        kit->profileRT = shape->getDefaultProfile();
+//    kit->profileRT.enableNotify(TRUE);
+//    shape->updateShapeGL(kit);
 }
 
 void TShapeKit::setDefaultOnNonWritingFields()
@@ -104,6 +119,14 @@ SbBool TShapeKit::setUpConnections(SbBool onoff, SbBool doitalways)
 {
     m_shapeKit->setPart("material", material.getValue());
     return SoBaseKit::setUpConnections(onoff, doitalways);
+}
+
+SbBool TShapeKit::readInstance(SoInput* in, unsigned short flags)
+{
+//    shapeRT.enableNotify(FALSE);
+    SbBool ans = SoBaseKit::readInstance(in, flags);
+//    shapeRT.enableNotify(TRUE);
+    return ans;
 }
 
 //#include <Inventor/actions/SoRayPickAction.h>

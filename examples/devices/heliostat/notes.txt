@@ -25,3 +25,11 @@ The export settings are:
 "Write Normals",
 "Polygroups",
 "Keep Vertex Order".
+
+
+Importing to Blender
+--------------------
+"Y Forward",
+"Z Up",
+"Keep Vertex Order",
+"Poly Groups".

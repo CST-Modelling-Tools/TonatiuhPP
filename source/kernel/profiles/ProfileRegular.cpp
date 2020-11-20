@@ -13,7 +13,7 @@ void ProfileRegular::initClass()
 ProfileRegular::ProfileRegular()
 {
     SO_NODE_CONSTRUCTOR(ProfileRegular);
-    SO_NODE_ADD_FIELD( r, (0.5) );
+    SO_NODE_ADD_FIELD( r, (1.) );
     SO_NODE_ADD_FIELD( n, (6) );
 }
 
@@ -21,7 +21,7 @@ Box2D ProfileRegular::getBox() const
 {
     double rV = r.getValue();
     return Box2D(
-        vec2d(-rV, -rV),
+        -vec2d(rV, rV),
         vec2d(rV, rV)
     );
 }
@@ -29,17 +29,16 @@ Box2D ProfileRegular::getBox() const
 bool ProfileRegular::isInside(double u, double v) const
 {
     double r2 = u*u + v*v;
-    double rV = r.getValue();
-    if (r2 > rV*rV) return false;
+    double rOut = r.getValue();
+    if (r2 > rOut*rOut) return false;
 
-    int nV = n.getValue();
-    double phiStep = gcf::TwoPi/nV;
-    double rMin = rV*cos(phiStep/2.);
-    if (r2 < rMin*rMin) return true;
+    double phiStep = gcf::TwoPi/n.getValue();
+    double rIn = rOut*cos(phiStep/2.);
+    if (r2 < rIn*rIn) return true;
 
     double phi = atan2(v, u) + phiStep/2. + 90.*gcf::degree;
     phi -= std::floor(phi/phiStep)*phiStep + phiStep/2.;
-    return sqrt(r2)*cos(phi) < rMin;
+    return sqrt(r2)*cos(phi) < rIn;
 }
 
 QVector<vec2d> ProfileRegular::makeMesh(QSize& dims) const
@@ -52,12 +51,14 @@ QVector<vec2d> ProfileRegular::makeMesh(QSize& dims) const
     dims = QSize(iMax, jMax);
 
     QVector<vec2d> ans;
+    double u0 = phiStep/2. + 90.*gcf::degree;
+    double rStep = r.getValue()/(jMax - 1);
     for (int i = 0; i <= iMax; ++i) {
-        double u = i*phiStep - phiStep/2. - 90.*gcf::degree;
+        double u = i*phiStep - u0;
+        vec2d rho(cos(u), sin(u));
         for (int j = 0; j < jMax; ++j) {
-            double vn = j/double(jMax - 1);
-            double v = vn*r.getValue();
-            ans << v*vec2d(cos(u), sin(u));
+            double v = j*rStep;
+            ans << v*rho;
         }
     }
     return ans;
