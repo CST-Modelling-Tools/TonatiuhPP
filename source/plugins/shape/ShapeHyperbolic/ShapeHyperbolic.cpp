@@ -88,8 +88,7 @@ bool ShapeHyperbolic::intersect(const Ray& ray, double* tHit, DifferentialGeomet
 
         *tHit = t;
         dg->point = pHit;
-        dg->u = pHit.x;
-        dg->v = pHit.y;
+        dg->uv = vec2d(pHit.x, pHit.y);
         double s = 1. + pHit.z/rZ;
         dg->dpdu = vec3d(1., 0., pHit.x/s*g.x*g.x*rZ);
         dg->dpdv = vec3d(0., 1., pHit.y/s*g.y*g.y*rZ);

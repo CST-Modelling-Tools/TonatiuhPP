@@ -29,6 +29,10 @@
 #include "ParametersEditor.h"
 #include "ComboBoxDelegate.h"
 
+#include "kernel/scene/TShapeKit.h"
+#include "kernel/shape/ShapeRT.h"
+#include "kernel/profiles/ProfileRT.h"
+
 ParametersDelegate::ParametersDelegate(QObject* parent):
     QStyledItemDelegate(parent)
 {
@@ -212,8 +216,17 @@ void ParametersDelegate::setModelData(QWidget* editor, QAbstractItemModel* model
         SoNode* node = f->getValue();
         MainWindow* main = modelP->getMain();
         TFactory* tf = main->getPlugins()->getFactories(node)[w->currentIndex()];
-        modelP->setData(kit, name, tf->create());
-//        if (dynamic_cast)
+        TNode* tn = tf->create();
+        if (ShapeRT* sh = dynamic_cast<ShapeRT*>(tn)) {
+            TShapeKit* skit = (TShapeKit*) kit;
+            skit->profileRT = sh->getDefaultProfile();
+        } else if (ProfileRT* pr = dynamic_cast<ProfileRT*>(tn)) {
+            TShapeKit* skit = (TShapeKit*) kit;
+            ProfileRT* prOld = (ProfileRT*) skit->profileRT.getValue();
+            Box2D box = prOld->getBox();
+            pr->setBox(box);
+        }
+        modelP->setData(kit, name, tn);
 
         return;
     }

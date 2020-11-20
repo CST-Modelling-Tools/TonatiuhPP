@@ -55,6 +55,15 @@ Box2D ProfileCircular::getBox() const
     );
 }
 
+void ProfileCircular::setBox(const Box2D& box)
+{
+    vec2d hs = vec2d::max(box.min().abs(), box.max().abs());
+    rMin = 0.;
+    rMax = hs.min();
+    phiMin = -180.;
+    phiMax = 180.;
+}
+
 bool ProfileCircular::isInside(double u, double v) const
 {
     double r2 = u*u + v*v;

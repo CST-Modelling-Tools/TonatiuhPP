@@ -52,12 +52,10 @@ TShapeKit::TShapeKit()
     SoGroup* g = (SoGroup*) topSeparator.getValue();
     g->addChild(m_shapeKit);
 
-    m_sensor_shapeRT = new SoFieldSensor(onSensor_shapeRT, this);
-    m_sensor_shapeRT->setPriority(1);
+    m_sensor_shapeRT = new SoFieldSensor(onSensor, this);
     m_sensor_shapeRT->attach(&shapeRT);
 
     m_sensor_profileRT = new SoFieldSensor(onSensor, this);
-    m_sensor_profileRT->setPriority(2);
     m_sensor_profileRT->attach(&profileRT);
 
     m_sensor_material = new SoFieldSensor(onSensor, this);
@@ -90,23 +88,10 @@ TShapeKit::~TShapeKit()
 void TShapeKit::onSensor(void* data, SoSensor*)
 {
     TShapeKit* kit = (TShapeKit*) data;
-//    qDebug() << "called " << kit->getName();
-
+    //    qDebug() << "called " << kit->getName();
 
     ShapeRT* shape = (ShapeRT*) kit->shapeRT.getValue();
     shape->updateShapeGL(kit);
-}
-
-void TShapeKit::onSensor_shapeRT(void* data, SoSensor*)
-{
-    TShapeKit* kit = (TShapeKit*) data;
-
-    ShapeRT* shape = (ShapeRT*) kit->shapeRT.getValue();
-//    kit->profileRT.enableNotify(FALSE);
-    if (!kit->m_sensor_profileRT->isScheduled())
-        kit->profileRT = shape->getDefaultProfile();
-//    kit->profileRT.enableNotify(TRUE);
-//    shape->updateShapeGL(kit);
 }
 
 void TShapeKit::setDefaultOnNonWritingFields()

@@ -44,6 +44,13 @@ vec2d ShapeRT::getUV(const vec3d& p) const
     return vec2d(p.x, p.y);
 }
 
+double ShapeRT::getStepHint(double u, double v) const
+{
+    Q_UNUSED(u)
+    Q_UNUSED(v)
+    return 1.; // use infinity
+}
+
 Box3D ShapeRT::getBox(ProfileRT* profile) const
 {
     Box2D box = profile->getBox();
@@ -79,8 +86,7 @@ bool ShapeRT::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, 
 
     *tHit = t;
     dg->point = pHit;
-    dg->u = pHit.x;
-    dg->v = pHit.y;
+    dg->uv = vec2d(pHit.x, pHit.y);
     dg->dpdu = vec3d(1., 0., 0.);
     dg->dpdv = vec3d(0., 1., 0.);
     dg->normal = vec3d(0., 0., 1.);
@@ -88,6 +94,12 @@ bool ShapeRT::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, 
     dg->isFront = dot(dg->normal, ray.direction()) <= 0.;
     return true;
 }
+
+struct MeshDensityShape: public MeshDensity
+{
+    virtual double operator()(double u, double v) {return shape->getStepHint(u, v);}
+    ShapeRT* shape;
+};
 
 void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool forceIndexed)
 {
@@ -104,8 +116,14 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool forceIndex
         QSizeF rect = qpolygon.boundingRect().size();
         double s = std::min(rect.width()/(dims.width() - 1), rect.height()/(dims.height() - 1));
 
+        MeshDensityShape mds;
+        mds.shape = (ShapeRT*) parent->shapeRT.getValue();
+
+
         PolygonMesh polygonMesh(qpolygon);
-        if (!polygonMesh.makeMesh(s))
+//        if (!polygonMesh.makeMesh(s))
+//            return;
+        if (!polygonMesh.makeMesh(1e8, mds))
             return;
 
         // fill

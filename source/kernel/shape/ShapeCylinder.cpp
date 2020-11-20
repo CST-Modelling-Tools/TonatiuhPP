@@ -33,6 +33,13 @@ ShapeCylinder::ShapeCylinder()
     SO_NODE_ADD_FIELD(caps, (none) );
 }
 
+ProfileRT* ShapeCylinder::getDefaultProfile() const
+{
+    ProfileBox* pr = new ProfileBox;
+    pr->uSize = 360.;
+    return pr;
+}
+
 vec3d ShapeCylinder::getPoint(double u, double v) const
 {
     double phi = gcf::degree*u;
@@ -44,13 +51,6 @@ vec3d ShapeCylinder::getNormal(double u, double v) const
     Q_UNUSED(v)
     double phi = gcf::degree*u;
     return vec3d(cos(phi), sin(phi), 0.);
-}
-
-ProfileRT* ShapeCylinder::getDefaultProfile() const
-{
-    ProfileBox* pr = new ProfileBox;
-    pr->uSize = 360.;
-    return pr;
 }
 
 vec2d ShapeCylinder::getUV(const vec3d& p) const
@@ -88,96 +88,24 @@ Box3D ShapeCylinder::getBox(ProfileRT* profile) const
     );
 }
 
-bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
+double ShapeCylinder::getStepHint(double u, double v) const
 {
-    const vec3d& rayO = ray.origin;
-    const vec3d& rayD = ray.direction();
+    Q_UNUSED(u)
+    Q_UNUSED(v)
 
-    // |rxy|^2 = 1, r = r0 + t*d
-    double A = rayD.x*rayD.x + rayD.y*rayD.y;
-    double B = 2.*(rayD.x*rayO.x + rayD.y*rayO.y);
-    double C = rayO.x*rayO.x + rayO.y*rayO.y - 1.;
-    double ts[2];
-    if (!gcf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
+    //    r = {cosu, sinu, v};
+    //    n = {cosu, sinu, 0};
+    //    ru = {-sinu, cosu, 0};
+    //    rv = {0, 0, 1};
+    //    ruu = -n;
+    //    ruv = 0;
+    //    rvv = 0;
 
-    bool ans = false;
-    for (int i = 0; i < 2; ++i)
-    {
-        double t = ts[i];
-        if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
+    //    L = ruu.n = -1;
+    //    M = ruv.n = 0;
+    //    N = rvv.n = 0;
 
-        vec3d pHit = ray.point(t);
-        double phi = atan2(pHit.y, pHit.x);
-        double u = phi/gcf::degree;
-        double v = pHit.z;
-        if (!profile->isInside(u, v)) continue;
-
-        if (tHit == 0 && dg == 0)
-            {ans = true; break;}
-        else if (tHit == 0 || dg == 0)
-            gcf::SevereError("ShapeCylinder::intersect");
-
-        *tHit = t;
-        dg->point = pHit;
-        dg->u = u;
-        dg->v = v;
-        dg->dpdu = vec3d(-pHit.y, pHit.x, 0.);
-        dg->dpdv = vec3d(0., 0., 1.);
-        dg->normal = vec3d(pHit.x, pHit.y, 0.);
-        dg->shape = this;
-        dg->isFront = dot(dg->normal, rayD) <= 0.;
-        {ans = true; break;}
-    }
-
-    if (caps.getValue() != Caps::none) {
-        Box2D box2d = profile->getBox();
-        if (caps.getValue() & Caps::top) {
-            double t = (box2d.max().y - rayO.z)*ray.invDirection().z;
-            if (t < ray.tMin + 1e-5 || t > ray.tMax || (ans && t > *tHit)) {}
-            else {
-                vec3d pHit = ray.point(t);
-                if (pHit.x*pHit.x + pHit.y*pHit.y <= 1) {
-                    double phi = atan2(pHit.y, pHit.x)/gcf::degree;
-                    if (phi <= box2d.max().x && phi >= box2d.min().x) {
-                        *tHit = t;
-                        dg->point = pHit;
-                        dg->u = phi;
-                        dg->v = box2d.max().y;
-                        dg->dpdu = vec3d(1., 0., 0.);
-                        dg->dpdv = vec3d(0., 1., 0.);
-                        dg->normal = vec3d(0., 0., 1.);
-                        dg->shape = this;
-                        dg->isFront = dot(dg->normal, rayD) <= 0.;
-                        ans = true;
-                    }
-                }
-            }
-        }
-        if (caps.getValue() & Caps::bottom) {
-            double t = (box2d.min().y - rayO.z)*ray.invDirection().z;
-            if (t < ray.tMin + 1e-5 || t > ray.tMax || (ans && t > *tHit)) {}
-            else {
-                vec3d pHit = ray.point(t);
-                if (pHit.x*pHit.x + pHit.y*pHit.y <= 1) {
-                    double phi = atan2(pHit.y, pHit.x)/gcf::degree;
-                    if (phi <= box2d.max().x && phi >= box2d.min().x) {
-                        *tHit = t;
-                        dg->point = pHit;
-                        dg->u = phi;
-                        dg->v = box2d.min().y;
-                        dg->dpdu = vec3d(1., 0., 0.);
-                        dg->dpdv = vec3d(0., -1., 0.);
-                        dg->normal = vec3d(0., 0., -1.);
-                        dg->shape = this;
-                        dg->isFront = dot(dg->normal, rayD) <= 0.;
-                        ans = true;
-                    }
-                }
-            }
-        }
-    }
-
-    return ans;
+    return 360./48;
 }
 
 void ShapeCylinder::updateShapeGL(TShapeKit* parent)
@@ -220,4 +148,93 @@ void ShapeCylinder::updateShapeGL(TShapeKit* parent)
             sMesh->coordIndex.set1Value(++iFaces, -1);
         }
     }
+}
+
+bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
+{
+    const vec3d& rayO = ray.origin;
+    const vec3d& rayD = ray.direction();
+
+    // |rxy|^2 = 1, r = r0 + t*d
+    double A = rayD.x*rayD.x + rayD.y*rayD.y;
+    double B = 2.*(rayD.x*rayO.x + rayD.y*rayO.y);
+    double C = rayO.x*rayO.x + rayO.y*rayO.y - 1.;
+    double ts[2];
+    if (!gcf::solveQuadratic(A, B, C, &ts[0], &ts[1])) return false;
+
+    bool ans = false;
+    for (int i = 0; i < 2; ++i)
+    {
+        double t = ts[i];
+        if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
+
+        vec3d pHit = ray.point(t);
+        double phi = atan2(pHit.y, pHit.x);
+        double u = phi/gcf::degree;
+        double v = pHit.z;
+        if (!profile->isInside(u, v)) continue;
+
+        if (tHit == 0 && dg == 0)
+            {ans = true; break;}
+        else if (tHit == 0 || dg == 0)
+            gcf::SevereError("ShapeCylinder::intersect");
+
+        *tHit = t;
+        dg->point = pHit;
+        dg->uv = vec2d(u, v);
+        dg->dpdu = vec3d(-pHit.y, pHit.x, 0.);
+        dg->dpdv = vec3d(0., 0., 1.);
+        dg->normal = vec3d(pHit.x, pHit.y, 0.);
+        dg->shape = this;
+        dg->isFront = dot(dg->normal, rayD) <= 0.;
+        {ans = true; break;}
+    }
+
+    if (caps.getValue() != Caps::none) {
+        Box2D box2d = profile->getBox();
+        if (caps.getValue() & Caps::top) {
+            double t = (box2d.max().y - rayO.z)*ray.invDirection().z;
+            if (t < ray.tMin + 1e-5 || t > ray.tMax || (ans && t > *tHit)) {}
+            else {
+                vec3d pHit = ray.point(t);
+                if (pHit.x*pHit.x + pHit.y*pHit.y <= 1) {
+                    double phi = atan2(pHit.y, pHit.x)/gcf::degree;
+                    if (phi <= box2d.max().x && phi >= box2d.min().x) {
+                        *tHit = t;
+                        dg->point = pHit;
+                        dg->uv = vec2d(phi, box2d.max().y);
+                        dg->dpdu = vec3d(1., 0., 0.);
+                        dg->dpdv = vec3d(0., 1., 0.);
+                        dg->normal = vec3d(0., 0., 1.);
+                        dg->shape = this;
+                        dg->isFront = dot(dg->normal, rayD) <= 0.;
+                        ans = true;
+                    }
+                }
+            }
+        }
+        if (caps.getValue() & Caps::bottom) {
+            double t = (box2d.min().y - rayO.z)*ray.invDirection().z;
+            if (t < ray.tMin + 1e-5 || t > ray.tMax || (ans && t > *tHit)) {}
+            else {
+                vec3d pHit = ray.point(t);
+                if (pHit.x*pHit.x + pHit.y*pHit.y <= 1) {
+                    double phi = atan2(pHit.y, pHit.x)/gcf::degree;
+                    if (phi <= box2d.max().x && phi >= box2d.min().x) {
+                        *tHit = t;
+                        dg->point = pHit;
+                        dg->uv = vec2d(phi, box2d.min().y);
+                        dg->dpdu = vec3d(1., 0., 0.);
+                        dg->dpdv = vec3d(0., -1., 0.);
+                        dg->normal = vec3d(0., 0., -1.);
+                        dg->shape = this;
+                        dg->isFront = dot(dg->normal, rayD) <= 0.;
+                        ans = true;
+                    }
+                }
+            }
+        }
+    }
+
+    return ans;
 }

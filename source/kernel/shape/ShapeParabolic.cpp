@@ -41,29 +41,24 @@ vec3d ShapeParabolic::getNormal(double u, double v) const
     ).normalized();
 }
 
-double ShapeParabolic::getRadiusMin(double u, double v) const
+double ShapeParabolic::getStepHint(double u, double v) const
 {
     vec3d n = getNormal(u, v);
+
 //    double L = n.z/(2.*fX.getValue());
 //    double M = 0.;
 //    double N = n.z/(2.*fY.getValue());
-
-//    double t1, t2;
-//    gcf::solveQuadratic(1., -(L + N), L*N - M*M, &t1, &t2);
-//    double radius = 1./std::max(std::abs(t1), std::abs(t2));
-//    return radius;
-
 //    double radius = std::min(std::abs(1./L), std::abs(1./N));
+
     double fMin = std::min(std::abs(fX.getValue()), std::abs(fY.getValue()));
     double radius = 2*fMin/std::abs(n.z);
-    return radius;
+    return 2*gcf::pi*radius/48;
 }
 
 void ShapeParabolic::updateShapeGL(TShapeKit* parent)
 {
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
-    Box2D box = profile->getBox();
-    vec2d s = box.size();
+    vec2d s = profile->getBox().size();
 
     double Rx = 2.*std::abs(fX.getValue());
     double Ax = 2*gcf::pi*Rx/48;
@@ -121,8 +116,7 @@ bool ShapeParabolic::intersect(const Ray& ray, double* tHit, DifferentialGeometr
 
         *tHit = t;
         dg->point = pHit;
-        dg->u = pHit.x;
-        dg->v = pHit.y;
+        dg->uv = vec2d(pHit.x, pHit.y);
         dg->dpdu = vec3d(1., 0., pHit.x*gX/2.);
         dg->dpdv = vec3d(0., 1., pHit.y*gY/2.);
         dg->normal = vec3d(-dg->dpdu.z, -dg->dpdv.z, 1.).normalized();

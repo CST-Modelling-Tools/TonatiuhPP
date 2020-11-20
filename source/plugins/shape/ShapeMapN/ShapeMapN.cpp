@@ -67,8 +67,7 @@ bool ShapeMapN::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
 
     *tHit = t;
     dg->point = pHit;
-    dg->u = pHit.x;
-    dg->v = pHit.y;
+    dg->uv = vec2d(pHit.x, pHit.y);
     dg->dpdu = vU;
     dg->dpdv = vV;
     dg->normal = vN;

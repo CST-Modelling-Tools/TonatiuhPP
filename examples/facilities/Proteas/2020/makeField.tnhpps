@@ -46,6 +46,8 @@ function makeHeliostat(parent, name, position, aiming, focus)
 	m = s.insertMaterial("Transparent");
 	q = s.insertSurface("Cylinder");
 	p = s.insertProfile("Rectangular");
+	p.setParameter("uMin", 0);
+	p.setParameter("uMax", 360);
 	p.setParameter("vMin", 0.);
 	p.setParameter("vMax", 1.5);
 	var mG = s.getPart("material");

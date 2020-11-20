@@ -13,10 +13,11 @@ public:
 
     vec3d getPoint(double u, double v) const;
     vec3d getNormal(double u, double v) const;
-    double getRadiusMin(double u, double v) const;
-    void updateShapeGL(TShapeKit* parent);
 
     Box3D getBox(ProfileRT* profile) const;
+    double getStepHint(double u, double v) const;
+
+    void updateShapeGL(TShapeKit* parent);
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const;
 
     SoSFDouble fX;

@@ -14,7 +14,7 @@ ProfileRectangular::ProfileRectangular()
 {
     SO_NODE_CONSTRUCTOR(ProfileRectangular);
     isBuiltIn = TRUE;
-    SO_NODE_ADD_FIELD( uMin, (-0.5) );
+    SO_NODE_ADD_FIELD( uMin, (-0.5) ); // todo use vec2
     SO_NODE_ADD_FIELD( uMax, (0.5) );
     SO_NODE_ADD_FIELD( vMin, (-0.5) );
     SO_NODE_ADD_FIELD( vMax, (0.5) );
@@ -26,6 +26,14 @@ Box2D ProfileRectangular::getBox() const
         vec2d(uMin.getValue(), vMin.getValue()),
         vec2d(uMax.getValue(), vMax.getValue())
     );
+}
+
+void ProfileRectangular::setBox(const Box2D& box)
+{
+    uMin = box.min().x;
+    vMin = box.min().y;
+    uMax = box.max().x;
+    vMax = box.max().y;
 }
 
 bool ProfileRectangular::isInside(double u, double v) const

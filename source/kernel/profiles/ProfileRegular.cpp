@@ -20,10 +20,14 @@ ProfileRegular::ProfileRegular()
 Box2D ProfileRegular::getBox() const
 {
     double rV = r.getValue();
-    return Box2D(
-        -vec2d(rV, rV),
-        vec2d(rV, rV)
-    );
+    vec2d h(rV, rV);
+    return Box2D(-h, h);
+}
+
+void ProfileRegular::setBox(const Box2D& box)
+{
+    vec2d hs = vec2d::max(box.min().abs(), box.max().abs());
+    r = hs.min();
 }
 
 bool ProfileRegular::isInside(double u, double v) const

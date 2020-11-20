@@ -104,8 +104,7 @@ bool ShapeCone::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
 
         *tHit = t;
         dg->point = pHit;
-        dg->u = u;
-        dg->v = v;
+        dg->uv = vec2d(u, v);
         dg->dpdu = vec3d(-pHit.y, pHit.x, 0.);
         dg->dpdv = vec3d(drV*pHit.x/r, drV*pHit.y/r, 1.);
         dg->normal = vec3d(pHit.x, pHit.y, -drV*r).normalized();

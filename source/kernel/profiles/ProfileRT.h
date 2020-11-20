@@ -20,6 +20,8 @@ public:
     static void initClass();
 
     virtual Box2D getBox() const {return Box2D::UnitCentered;}
+    virtual void setBox(const Box2D& /*box*/) {}
+
     virtual bool isInside(double /*x*/, double /*y*/) const {return true;}
     virtual QVector<vec2d> makeMesh(QSize& /*dims*/) const {return {};}
 

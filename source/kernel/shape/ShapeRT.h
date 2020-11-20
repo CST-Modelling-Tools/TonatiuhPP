@@ -19,12 +19,15 @@ class TONATIUH_KERNEL ShapeRT: public TNode
 public:
     static void initClass();
 
+    virtual ProfileRT* getDefaultProfile() const;
+
     virtual vec3d getPoint(double u, double v) const;
     virtual vec3d getNormal(double u, double v) const;
     virtual vec2d getUV(const vec3d& p) const;
-    virtual Box3D getBox(ProfileRT* profile) const;
-    virtual ProfileRT* getDefaultProfile() const;
+    virtual double getStepHint(double u, double v) const;
+    virtual void updateShapeGL(TShapeKit* /*parent*/) {}
 
+    virtual Box3D getBox(ProfileRT* profile) const;
     // with computing dg, ray in local coordinates
     virtual bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const;
     // without computing dg
@@ -32,7 +35,6 @@ public:
 
     NAME_ICON_FUNCTIONS("X", ":/ShapeX.png")
 
-    virtual void updateShapeGL(TShapeKit* /*parent*/) {}
 
 protected:
     void makeQuadMesh(TShapeKit* parent, const QSize& dims, bool forceIndexed = false);

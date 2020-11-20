@@ -133,8 +133,7 @@ bool ShapeCube::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
 
         *tHit = tMin;
         dg->point = pHit;
-        dg->u = 0.; //?
-        dg->v = 0.; //?
+        dg->uv = vec2d(0., 0.); //?
         dg->shape = this;
         dg->isFront = dot(dg->normal,  ray.direction()) <= 0.;
         return true;
