@@ -95,7 +95,7 @@ bool ShapeCone::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
         else if (tHit == 0 || dg == 0)
             gcf::SevereError("ShapeCone::intersect");
 
-        double r = 1. + drV*v;
+        double r = 1. + drV*uv.y;
         if (gcf::eqz(r)) return false;
 
         *tHit = t;
