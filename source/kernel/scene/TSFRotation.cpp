@@ -44,7 +44,7 @@ void sosfrotation_write_value(SoOutput* out, const SbRotation & r)
   if(!out->isBinary()) out->write(' ');
   out->write(axis[2]);
   if(!out->isBinary()) out->write("  ");
-  out->write(float(angle/gcf::degree));
+  out->write(float(angle/gcf::degree)); // less digits
 }
 
 
@@ -57,8 +57,7 @@ SO_SFIELD_SOURCE(TSFRotation, SbRotation, const SbRotation &)
 /*!
   \copydetails SoField::initClass(void)
 */
-void
-TSFRotation::initClass(void)
+void TSFRotation::initClass(void)
 {
   SO_SFIELD_INIT_CLASS(TSFRotation, SoSField);
 }
@@ -67,7 +66,7 @@ SbBool TSFRotation::readValue(SoInput* in)
 {
   SbRotation r;
   if (!sosfrotation_read_value(in, r)) return FALSE;
-  this->setValue(r);
+  setValue(r);
   return TRUE;
 }
 

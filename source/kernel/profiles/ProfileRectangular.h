@@ -11,10 +11,10 @@ public:
     static void initClass();
     ProfileRectangular();
 
-    SoSFDouble uMin;
-    SoSFDouble uMax;
-    SoSFDouble vMin;
-    SoSFDouble vMax;
+    TSFDoubleUnit uMin;
+    TSFDoubleUnit uMax;
+    TSFDoubleUnit vMin;
+    TSFDoubleUnit vMax;
 
     Box2D getBox() const;
     void setBox(const Box2D& box);

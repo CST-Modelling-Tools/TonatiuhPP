@@ -11,8 +11,8 @@ public:
     static void initClass();
     ProfileBox();
 
-    SoSFDouble uSize;
-    SoSFDouble vSize;
+    TSFDoubleUnit uSize;
+    TSFDoubleUnit vSize;
 
     Box2D getBox() const;
     void setBox(const Box2D& box);

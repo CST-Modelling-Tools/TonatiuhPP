@@ -113,8 +113,8 @@ TSceneKit {
                 }
                 profileRT 
                 ProfileBox {
-                  uSize 360
-                  vSize 180
+                  uSize 360d
+                  vSize 180d
 
                 }
                 materialRT 
@@ -150,8 +150,8 @@ TSceneKit {
                 }
                 profileRT 
                 ProfileBox {
-                  uSize 360
-                  vSize 180
+                  uSize 360d
+                  vSize 180d
 
                 }
                 materialRT 

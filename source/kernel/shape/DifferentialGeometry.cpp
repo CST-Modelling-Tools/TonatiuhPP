@@ -14,9 +14,9 @@ DifferentialGeometry::DifferentialGeometry(
     const vec3d& normal,
     const ShapeRT* sh, bool isFront):
     point(point),
-    uv(u, v),
     dpdu(dpdu), dpdv(dpdv),
     normal(normal),
+    uv(u, v),
     shape(sh), isFront(isFront)
 {
 

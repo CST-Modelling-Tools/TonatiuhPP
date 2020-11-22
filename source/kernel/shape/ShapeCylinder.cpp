@@ -36,33 +36,31 @@ ShapeCylinder::ShapeCylinder()
 ProfileRT* ShapeCylinder::getDefaultProfile() const
 {
     ProfileBox* pr = new ProfileBox;
-    pr->uSize = 360.;
+    pr->uSize.set("360d");
     return pr;
 }
 
 vec3d ShapeCylinder::getPoint(double u, double v) const
 {
-    double phi = gcf::degree*u;
-    return vec3d(cos(phi), sin(phi), v);
+    return vec3d(cos(u), sin(u), v);
 }
 
 vec3d ShapeCylinder::getNormal(double u, double v) const
 {
     Q_UNUSED(v)
-    double phi = gcf::degree*u;
-    return vec3d(cos(phi), sin(phi), 0.);
+    return vec3d(cos(u), sin(u), 0.);
 }
 
 vec2d ShapeCylinder::getUV(const vec3d& p) const
 {
-    return vec2d(atan2(p.y, p.x)/gcf::degree, p.z);
+    return vec2d(atan2(p.y, p.x), p.z);
 }
 
 Box3D ShapeCylinder::getBox(ProfileRT* profile) const
 {
     Box2D box = profile->getBox();
-    double phiMin = gcf::degree*box.min().x;
-    double phiMax = gcf::degree*box.max().x;
+    double phiMin = box.min().x;
+    double phiMax = box.max().x;
     double zMin = box.min().y;
     double zMax = box.max().y;
 
@@ -105,7 +103,7 @@ double ShapeCylinder::getStepHint(double u, double v) const
     //    M = ruv.n = 0;
     //    N = rvv.n = 0;
 
-    return 360./48;
+    return 2*gcf::pi/48;
 }
 
 void ShapeCylinder::updateShapeGL(TShapeKit* parent)
@@ -114,7 +112,7 @@ void ShapeCylinder::updateShapeGL(TShapeKit* parent)
     Box2D box = profile->getBox();
     vec2d v = box.size();
 
-    double s = v.x/360;
+    double s = v.x/(2*gcf::pi);
     if (s > 1.) s = 1.;
     int rows = 1 + ceil(48*s);
 
@@ -131,7 +129,7 @@ void ShapeCylinder::updateShapeGL(TShapeKit* parent)
         Box2D box2d = profile->getBox();
         if (caps.getValue() & Caps::top) {
             for (int r = 0; r < rows; ++r) {
-                vec3d p = getPoint(360*(r/(rows - 1.) - 0.5), box2d.max().y);
+                vec3d p = getPoint(2*gcf::pi*(r/(rows - 1.) - 0.5), box2d.max().y);
                 sCoords->point.set1Value(++iVertices, p.x, p.y, p.z);
                 sNormals->vector.set1Value(iVertices, 0, 0, 1);
                 sMesh->coordIndex.set1Value(++iFaces, iVertices);
@@ -140,7 +138,7 @@ void ShapeCylinder::updateShapeGL(TShapeKit* parent)
         }
         if (caps.getValue() & Caps::bottom) {
             for (int r = 0; r < rows; ++r) {
-                vec3d p = getPoint(360*(r/(rows - 1.) - 0.5), box2d.min().y);
+                vec3d p = getPoint(2*gcf::pi*(r/(rows - 1.) - 0.5), box2d.min().y);
                 sCoords->point.set1Value(++iVertices, p.x, p.y, p.z);
                 sNormals->vector.set1Value(iVertices, 0, 0, -1);
                 sMesh->coordIndex.set1Value(++iFaces, iVertices);
@@ -169,10 +167,8 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
         if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
 
         vec3d pHit = ray.point(t);
-        double phi = atan2(pHit.y, pHit.x);
-        double u = phi/gcf::degree;
-        double v = pHit.z;
-        if (!profile->isInside(u, v)) continue;
+        vec2d uv = getUV(pHit);
+        if (!profile->isInside(uv.x, uv.y)) continue;
 
         if (tHit == 0 && dg == 0)
             {ans = true; break;}
@@ -181,7 +177,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
 
         *tHit = t;
         dg->point = pHit;
-        dg->uv = vec2d(u, v);
+        dg->uv = uv;
         dg->dpdu = vec3d(-pHit.y, pHit.x, 0.);
         dg->dpdv = vec3d(0., 0., 1.);
         dg->normal = vec3d(pHit.x, pHit.y, 0.);
@@ -198,7 +194,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
             else {
                 vec3d pHit = ray.point(t);
                 if (pHit.x*pHit.x + pHit.y*pHit.y <= 1) {
-                    double phi = atan2(pHit.y, pHit.x)/gcf::degree;
+                    double phi = atan2(pHit.y, pHit.x);
                     if (phi <= box2d.max().x && phi >= box2d.min().x) {
                         *tHit = t;
                         dg->point = pHit;
@@ -219,7 +215,7 @@ bool ShapeCylinder::intersect(const Ray& ray, double* tHit, DifferentialGeometry
             else {
                 vec3d pHit = ray.point(t);
                 if (pHit.x*pHit.x + pHit.y*pHit.y <= 1) {
-                    double phi = atan2(pHit.y, pHit.x)/gcf::degree;
+                    double phi = atan2(pHit.y, pHit.x);
                     if (phi <= box2d.max().x && phi >= box2d.min().x) {
                         *tHit = t;
                         dg->point = pHit;

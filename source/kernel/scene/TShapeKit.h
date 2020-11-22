@@ -34,7 +34,7 @@ public:
     SoFieldSensor* m_sensor_material;
 
     static void onSensor(void* data, SoSensor*);
-    static void onSensor_shapeRT(void* data, SoSensor*);
+//    static void onSensor_shapeRT(void* data, SoSensor*);
 
     void setDefaultOnNonWritingFields();
     SbBool setUpConnections(SbBool onoff, SbBool doitalways);

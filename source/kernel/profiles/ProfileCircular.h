@@ -13,8 +13,8 @@ public:
 
     SoSFDouble rMin;
     SoSFDouble rMax;
-    SoSFDouble phiMin;
-    SoSFDouble phiMax;
+    TSFDoubleUnit phiMin;
+    TSFDoubleUnit phiMax;
 
     Box2D getBox() const;
     void setBox(const Box2D& box);

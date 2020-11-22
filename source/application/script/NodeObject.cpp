@@ -98,7 +98,7 @@ QScriptValue NodeObject::getPart(const QString& name)
     if (!m_node->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId())) return 0;
 
     SoBaseKit* kit = (SoBaseKit*)(m_node);
-    SoNode* node = kit->getPart(name.toLatin1().data(), true);
+    SoNode* node = kit->getPart(name.toLatin1().data(), false);
     if (!node) {
         SoField* field = m_node->getField(name.toLatin1().data());
         SoSFNode* fnode = dynamic_cast<SoSFNode*>(field);
@@ -126,8 +126,9 @@ QScriptValue NodeObject::insertSurface(const QString& name)
     ShapeFactory* f = s_mainWindow->getPlugins()->getShapeMap().value(name, 0);
     ShapeRT* shape = f->create();
 
-    TShapeKit* parent = (TShapeKit*)(m_node);
+    TShapeKit* parent = (TShapeKit*) m_node;
     parent->shapeRT = shape;
+    parent->profileRT = shape->getDefaultProfile();
 
     NodeObject* ans = new NodeObject(shape);
     return engine()->newQObject(ans, QScriptEngine::ScriptOwnership);
@@ -140,7 +141,7 @@ QScriptValue NodeObject::insertProfile(const QString& name)
     ProfileFactory* f = s_mainWindow->getPlugins()->getProfileMap().value(name, 0);
     ProfileRT* profile = f->create();
 
-    TShapeKit* parent = (TShapeKit*)(m_node);
+    TShapeKit* parent = (TShapeKit*) m_node;
     parent->profileRT = profile;
 
     NodeObject* ans = new NodeObject(profile);

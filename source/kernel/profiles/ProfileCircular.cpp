@@ -16,16 +16,25 @@ ProfileCircular::ProfileCircular()
     isBuiltIn = TRUE;
     SO_NODE_ADD_FIELD( rMin, (0.) );
     SO_NODE_ADD_FIELD( rMax, (1.) );
-    SO_NODE_ADD_FIELD( phiMin, (-180.) );
-    SO_NODE_ADD_FIELD( phiMax, (180.) );
+
+    phiMin.set("-180d");
+    phiMin.setContainer(this);
+    fieldData->addField(this, "phiMin", &phiMin);
+
+    phiMax.set("-180d");
+    phiMax.setContainer(this);
+    fieldData->addField(this, "phiMax", &phiMax);
+
+//    SO_NODE_ADD_FIELD( phiMin, ("-180d) );
+//    SO_NODE_ADD_FIELD( phiMax, ("180d") );
 }
 
 Box2D ProfileCircular::getBox() const
 {
     double rMinV = rMin.getValue();
     double rMaxV = rMax.getValue();
-    double phiMinV = phiMin.getValue()*gcf::degree;
-    double phiMaxV = phiMax.getValue()*gcf::degree;
+    double phiMinV = phiMin.getValue();
+    double phiMaxV = phiMax.getValue();
 
     double xMin = cos(phiMinV);
     double xMax = cos(phiMaxV);
@@ -60,8 +69,8 @@ void ProfileCircular::setBox(const Box2D& box)
     vec2d hs = vec2d::max(box.min().abs(), box.max().abs());
     rMin = 0.;
     rMax = hs.min();
-    phiMin = -180.;
-    phiMax = 180.;
+    phiMin.set("-180d");
+    phiMax.set("180d");
 }
 
 bool ProfileCircular::isInside(double u, double v) const
@@ -69,7 +78,7 @@ bool ProfileCircular::isInside(double u, double v) const
     double r2 = u*u + v*v;
     if (r2 < gcf::pow2(rMin.getValue())) return false;
     if (r2 > gcf::pow2(rMax.getValue())) return false;
-    double phi = atan2(v, u)/gcf::degree;
+    double phi = atan2(v, u);
     if (phi < phiMin.getValue()) return false;
     if (phi > phiMax.getValue()) return false;
     return true;
@@ -77,7 +86,7 @@ bool ProfileCircular::isInside(double u, double v) const
 
 QVector<vec2d> ProfileCircular::makeMesh(QSize& dims) const
 {
-    double s = (phiMax.getValue() - phiMin.getValue())/360;
+    double s = (phiMax.getValue() - phiMin.getValue())/(2*gcf::pi);
     int iMax = 1 + ceil(48*s);
 //    int jMax = std::max(dims.width(), dims.height());//?
     int jMax = dims.width();
@@ -85,7 +94,7 @@ QVector<vec2d> ProfileCircular::makeMesh(QSize& dims) const
 
     QVector<vec2d> ans;
     for (int i = 0; i < iMax; ++i) {
-        double u = gcf::lerp(phiMin.getValue(), phiMax.getValue(), i/double(iMax - 1))*gcf::degree;
+        double u = gcf::lerp(phiMin.getValue(), phiMax.getValue(), i/double(iMax - 1));
         vec2d rho(cos(u), sin(u));
         for (int j = 0; j < jMax; ++j) {
             double v = gcf::lerp(rMin.getValue(), rMax.getValue(), j/double(jMax - 1));

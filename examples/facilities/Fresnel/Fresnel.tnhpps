@@ -41,9 +41,6 @@ function makeFacet(nodeM, radius)
 
 	var nodeF = nodeP.createNode("facet");
 	var s = nodeF.createShape();
-	var p = s.insertProfile("Rectangular");
-	p.setParameter("vMin", 0);
-	p.setParameter("vMax", 4);
 	var m = s.insertMaterial("Specular");
 	m.setParameter("slope", "0.002");
 	if (!useCylinder) {
@@ -52,6 +49,9 @@ function makeFacet(nodeM, radius)
 		q.setParameter("aX", radius);
 		q.setParameter("aY", 1e100);
 		q.setParameter("aZ", radius);
+		var p = s.insertProfile("Rectangular");
+		p.setParameter("vMin", 0);
+		p.setParameter("vMax", 4);
 		p.setParameter("uMin", -0.16);
 		p.setParameter("uMax", 0.16);
 	}
@@ -59,9 +59,11 @@ function makeFacet(nodeM, radius)
 		nodeF.setParameter("translation", "0 0 " + (radius + 0.045));
 		nodeF.setParameter("rotation", "1 0 0 -90");
 		nodeF.setParameter("scale", "" + radius + " " + radius + " 1");
-		var q = s.insertSurface("Cylinder");
-		var deg = Math.PI/180;
-		var phi = (0.5*0.32/radius)/deg; 
+		var q = s.insertSurface("Cylinpatder");
+		var phi = (0.5*0.32/radius); 
+		var p = s.insertProfile("Rectangular");
+		p.setParameter("vMin", 0);
+		p.setParameter("vMax", 4);
 		p.setParameter("uMin", 90 - phi);
 		p.setParameter("uMax", 90 + phi);
 		var mG = s.getPart("material");
@@ -74,8 +76,8 @@ function makeFacet(nodeM, radius)
 	var s = nodeA.createShape();
 	var q = s.insertSurface("Cylinder");
 	var p = s.insertProfile("Rectangular");
-	p.setParameter("uMin", -180);
-	p.setParameter("uMax", 180);
+	p.setParameter("uMin", "-180d");
+	p.setParameter("uMax", "180d");
 	p.setParameter("vMin", 0);
 	p.setParameter("vMax", 4);
 	var m = s.insertMaterial("Transparent");
@@ -143,8 +145,8 @@ function makeOutlet(parent)
 	var q = s.insertSurface("Cylinder");
 	q.setParameter("caps", "bottom");
 	var p = s.insertProfile("Rectangular");
-	p.setParameter("uMin", -180);
-	p.setParameter("uMax", 180);
+	p.setParameter("uMin", "-180d");
+	p.setParameter("uMax", "180d");
 	p.setParameter("vMin", 0);
 	p.setParameter("vMax", 0.91);
 	setMaterialGray(s);
@@ -164,8 +166,8 @@ function makeOutlet(parent)
 	var s = node.createShape();
 	var q = s.insertSurface("Cylinder");
 	var p = s.insertProfile("Rectangular");
-	p.setParameter("uMin", -180);
-	p.setParameter("uMax", 180);
+	p.setParameter("uMin", "-180d");
+	p.setParameter("uMax", "180d");
 	p.setParameter("vMin", 0);
 	p.setParameter("vMax", 3.96);
 	setMaterialGray(s);
@@ -207,8 +209,8 @@ var s = nodeA.createShape();
 s.setName("Shape");
 var q = s.insertSurface("Cylinder");
 var p = s.insertProfile("Rectangular");
-p.setParameter("uMin", -180);
-p.setParameter("uMax", 180);
+p.setParameter("uMin", "-180d");
+p.setParameter("uMax", "180");
 p.setParameter("vMin", 0);
 p.setParameter("vMax", 32.544);
 setMaterialGray(s);

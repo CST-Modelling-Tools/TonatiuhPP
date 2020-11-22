@@ -103,7 +103,7 @@ TSceneKit {
                     }
                     profileRT 
                     DEF Box ProfileBox {
-                      uSize 360
+                      uSize 360d
 
                     }
                     materialRT 
@@ -251,7 +251,7 @@ TSceneKit {
                     }
                     profileRT 
                     DEF Box ProfileBox {
-                      uSize 360
+                      uSize 360d
 
                     }
                     materialRT 

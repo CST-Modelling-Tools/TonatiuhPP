@@ -39,15 +39,15 @@ function makeHeliostat(parent, name, position, aiming, focus)
 	mG.setParameter("specularColor", "0.3 0.25 0.2");
 	mG.setParameter("shininess", "0.5");
 	
-	// pylon
-	n = nm.createNode("pylon");
+	// post
+	n = nm.createNode("post");
 	n.setParameter("scale", "0.05 0.05 1");
 	s = n.createShape();
 	m = s.insertMaterial("Transparent");
 	q = s.insertSurface("Cylinder");
 	p = s.insertProfile("Rectangular");
 	p.setParameter("uMin", 0);
-	p.setParameter("uMax", 360);
+	p.setParameter("uMax", "360d");
 	p.setParameter("vMin", 0.);
 	p.setParameter("vMax", 1.5);
 	var mG = s.getPart("material");

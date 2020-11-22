@@ -200,7 +200,7 @@ TSceneKit {
                         }
                         profileRT 
                         DEF Box ProfileBox {
-                          uSize 360
+                          uSize 360d
                           vSize 1
 
                         }
@@ -242,7 +242,7 @@ TSceneKit {
                     profileRT 
                     ProfileRectangular {
                       uMin 0
-                      uMax 360
+                      uMax 360d
                       vMin 0
                       vMax 0.05
 
@@ -284,7 +284,7 @@ TSceneKit {
                 profileRT 
                 ProfileRectangular {
                   uMin 0
-                  uMax 360
+                  uMax 360d
                   vMin 0
                   vMax 1
 
@@ -417,7 +417,7 @@ TSceneKit {
                         }
                         profileRT 
                         DEF Box ProfileBox {
-                          uSize 360
+                          uSize 360d
                           vSize 1
 
                         }
@@ -497,7 +497,7 @@ TSceneKit {
                     profileRT 
                     ProfileRectangular {
                       uMin 0
-                      uMax 360
+                      uMax 360d
                       vMin 0
                       vMax 0.05
 
@@ -539,7 +539,7 @@ TSceneKit {
                 profileRT 
                 ProfileRectangular {
                   uMin 0
-                  uMax 360
+                  uMax 360d
                   vMin 0
                   vMax 1
 

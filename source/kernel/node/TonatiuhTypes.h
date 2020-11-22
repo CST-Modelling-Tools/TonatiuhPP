@@ -5,6 +5,7 @@
 #include <Inventor/fields/SoSFInt32.h>
 #include <Inventor/fields/SoSFFloat.h>
 #include <Inventor/fields/SoSFDouble.h>
+#include "kernel/scene/TSFDoubleUnit.h"
 
 #include <Inventor/fields/SoSFVec2f.h>
 #include <Inventor/fields/SoSFVec2d.h>

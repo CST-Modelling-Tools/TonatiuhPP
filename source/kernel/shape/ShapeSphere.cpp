@@ -23,19 +23,17 @@ ShapeSphere::ShapeSphere()
 ProfileRT* ShapeSphere::getDefaultProfile() const
 {
     ProfileBox* pr = new ProfileBox;
-    pr->uSize = 360.;
-    pr->vSize = 180.;
+    pr->uSize.set("360d");
+    pr->vSize.set("180d");
     return pr;
 }
 
 vec3d ShapeSphere::getPoint(double u, double v) const
 {
-    double phi = gcf::degree*u;
-    double alpha = gcf::degree*v;
     return vec3d(
-        cos(phi)*cos(alpha),
-        sin(phi)*cos(alpha),
-        sin(alpha)
+        cos(u)*cos(v),
+        sin(u)*cos(v),
+        sin(v)
     );
 }
 
@@ -48,17 +46,17 @@ vec2d ShapeSphere::getUV(const vec3d& p) const
 {
     double phi = atan2(p.y, p.x);
     double alpha = asin(gcf::clamp(p.z, -1., 1.));
-    return vec2d(phi, alpha)/gcf::degree;
+    return vec2d(phi, alpha);
 }
 
 
 Box3D ShapeSphere::getBox(ProfileRT* profile) const
 {
     Box2D box = profile->getBox();
-    double phiMin = gcf::degree*box.min().x;
-    double phiMax = gcf::degree*box.max().x;
-    double alphaMin = gcf::degree*gcf::clamp(box.min().y, -90., 90.);
-    double alphaMax = gcf::degree*gcf::clamp(box.max().y, -90., 90.);
+    double phiMin = box.min().x;
+    double phiMax = box.max().x;
+    double alphaMin = gcf::clamp(box.min().y, -gcf::pi/2, gcf::pi/2);
+    double alphaMax = gcf::clamp(box.max().y, -gcf::pi/2, gcf::pi/2);
 
     double rMin = cos(alphaMin);
     double rMax = cos(alphaMax);
@@ -121,13 +119,13 @@ double ShapeSphere::getStepHint(double u, double v) const
 //    double radius = 1.;
 //    return 2*gcf::pi*radius/48/gcf::degree;
 
-    return 360./48;
+    return 2*gcf::pi/48;
 }
 
 void ShapeSphere::updateShapeGL(TShapeKit* parent)
 {
     ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
-    vec2d v = profile->getBox().size()/360.;
+    vec2d v = profile->getBox().size()/(2*gcf::pi);
 
     int rows = 1 + ceil(48*v.x);
     int columns = 1 + ceil(48*v.y);
@@ -164,9 +162,7 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
         dg->point = pHit;
         dg->uv = uv;
         dg->dpdu = vec3d(-pHit.y, pHit.x, 0.);
-        double phi = uv.x*gcf::degree;
-        double alpha = uv.y*gcf::degree;
-        dg->dpdv = vec3d(-cos(phi)*pHit.z, -sin(phi)*pHit.z, cos(alpha));
+        dg->dpdv = vec3d(-cos(uv.x)*pHit.z, -sin(uv.x)*pHit.z, cos(uv.y));
         dg->normal = pHit;
         dg->shape = this;
         dg->isFront = dot(dg->normal, rayD) <= 0.;
