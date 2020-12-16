@@ -68,6 +68,8 @@ function makeTower(parent)
 	s = n.createShape();
 	q = s.insertSurface("Planar");
 	var p = s.insertProfile("Circular");
+	p.setParameter("phiMin", "-180d");
+	p.setParameter("phiMax", "180d");
 	p.setParameter("rMax", receiverRadius);
 	mG = s.getPart("material");
 	mG.setParameter("ambientColor", "0.5 0.5 0.5");

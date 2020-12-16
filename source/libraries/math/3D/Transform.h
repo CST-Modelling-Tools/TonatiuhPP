@@ -25,6 +25,8 @@ public:
     std::shared_ptr<Matrix4x4> getMatrix() const {return m_mdir;}
     Transform transposed() const {return Transform(m_mdir->transposed(), m_minv->transposed());}
     Transform inversed() const {return Transform(m_minv, m_mdir);}
+    vec3d getScales() const;
+
     bool SwapsHandedness() const;
 
     Transform operator*(const Transform& rhs) const;

@@ -51,6 +51,16 @@ vec3d ShapeCylinder::getNormal(double u, double v) const
     return vec3d(cos(u), sin(u), 0.);
 }
 
+vec3d ShapeCylinder::getDerivativeU(double u, double /*v*/) const
+{
+    return vec3d(-sin(u), cos(u), 0.);
+}
+
+vec3d ShapeCylinder::getDerivativeV(double /*u*/, double /*v*/) const
+{
+    return vec3d(0., 0., 1.);
+}
+
 vec2d ShapeCylinder::getUV(const vec3d& p) const
 {
     return vec2d(atan2(p.y, p.x), p.z);

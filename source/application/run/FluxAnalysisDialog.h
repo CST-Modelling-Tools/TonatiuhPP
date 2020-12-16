@@ -46,6 +46,8 @@ private:
     void CreateSectorPlots(double xMin, double yMin, double xMax, double yMax);
     void UpdateSectorPlots(const Matrix2D<int>& photonCounts, double wPhoton, int xDivs, int yDivs, double xMin, double yMin, double xMax, double yMax, double fluxMax);
 
+    double findAreaCell(double uStep, double vStep);
+
 private:
     Ui::FluxAnalysisDialog* ui;
     FluxAnalysis* m_fluxAnalysis;

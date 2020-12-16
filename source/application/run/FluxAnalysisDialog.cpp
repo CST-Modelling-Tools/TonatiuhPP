@@ -183,7 +183,8 @@ void FluxAnalysisDialog::UpdateAnalysis()
 
     double uStep = (uMax - uMin)/xDivs;
     double vStep = (vMax - vMin)/yDivs;
-    double areaCell = uStep*vStep;
+    double areaCell = findAreaCell(uStep, vStep);
+
     double fluxMin = 0.;
     double fluxAverage = powerTotal/(areaCell*xDivs*yDivs); // wrong
     double fluxMax = m_fluxAnalysis->photonsMax()*powerPhoton/areaCell;
@@ -339,7 +340,7 @@ void FluxAnalysisDialog::UpdateSectorPlotSlot()
     int heightDivisions = ui->surfaceYSpin->value();
     double widthCell = (xmax - xmin)/widthDivisions;
     double heightCell = (ymax - ymin)/heightDivisions;
-    double areaCell = widthCell*heightCell;
+    double areaCell = findAreaCell(widthCell, heightCell);
     double maximumFlux = (m_fluxAnalysis->photonsMax()*wPhoton)/areaCell;
     UpdateSectorPlots(photonCounts, wPhoton, widthDivisions, heightDivisions, xmin, ymin, xmax, ymax, maximumFlux);
 }
@@ -427,9 +428,9 @@ void FluxAnalysisDialog::UpdateFluxMapPlot(const Matrix2D<int>& photonCounts, do
     colorMap->data()->setRange(QCPRange(xMin, xMax), QCPRange(yMin, yMax));      // and span the coordinate range -4..4 in both key (x) and value (y) dimensions
 
 	//Assign flux data
-    double xStep = (xMax - xMin)/xDivs;
-    double yStep = (yMax - yMin)/yDivs;
-    double areaCell = xStep*yStep;
+    double uStep = (xMax - xMin)/xDivs;
+    double vStep = (yMax - yMin)/yDivs;
+    double areaCell = findAreaCell(uStep, vStep);
     for (int x = 0; x < xDivs; ++x)
         for (int y = 0; y < yDivs; ++y)
             colorMap->data()->setCell(x, y, photonCounts(x, y)*powerPhoton/areaCell);
@@ -506,9 +507,9 @@ void FluxAnalysisDialog::UpdateSectorPlots(const Matrix2D<int>& bins, double wPh
     ui->plotFy->clearPlottables();
 
 
-    double xSize = (xMax - xMin)/xDivs;
-    double ySize = (yMax - yMin)/yDivs;
-    double areaCell = xSize*ySize;
+    double uStep = (xMax - xMin)/xDivs;
+    double vStep = (yMax - yMin)/yDivs;
+    double areaCell = findAreaCell(uStep, vStep);
 
     int xBin = floor( (x - xMin) / (xMax - xMin) * xDivs);
     if (xBin >= xDivs) xBin = xDivs - 1;
@@ -519,14 +520,14 @@ void FluxAnalysisDialog::UpdateSectorPlots(const Matrix2D<int>& bins, double wPh
     QVector<double> dataY(yDivs), dataFy(yDivs);
     for (int ny = 0; ny < yDivs; ++ny)
 	{
-        dataY[ny] = yMin + (ny + 0.5)*ySize;
+        dataY[ny] = yMin + (ny + 0.5)*vStep;
         dataFy[ny] = bins(xBin, ny) * wPhoton / areaCell;
 	}
 
     QVector<double> dataX(xDivs), dataFx(xDivs);
     for (int nx = 0; nx < xDivs; ++nx)
 	{
-        dataX[nx] = xMin + (nx + 0.5)*xSize;
+        dataX[nx] = xMin + (nx + 0.5)*uStep;
         dataFx[nx] = bins(nx, yBin) * wPhoton / areaCell;
 	}
 
@@ -541,4 +542,18 @@ void FluxAnalysisDialog::UpdateSectorPlots(const Matrix2D<int>& bins, double wPh
     ui->plotFx->xAxis->setRange(xMin, xMax);
     ui->plotFx->yAxis->setRange(0, 1.2*fluxMax);
     ui->plotFx->replot();
+}
+
+double FluxAnalysisDialog::findAreaCell(double uStep, double vStep)
+{
+    QModelIndex nodeIndex = m_sceneModel->indexFromUrl(m_fluxSurfaceURL);
+    InstanceNode* instanceNode = m_sceneModel->getInstance(nodeIndex);
+    vec3d sJ = instanceNode->getTransform().getScales();
+    TShapeKit* kit = (TShapeKit*) instanceNode->getNode();
+    ShapeRT* shape = (ShapeRT*) kit->shapeRT.getValue();
+    // works for cylinder, not sphere
+    double areaCell = dot(sJ, shape->getDerivativeU(0., 0.))*uStep;
+    areaCell *= dot(sJ, shape->getDerivativeV(0., 0.))*vStep;
+
+    return areaCell;
 }

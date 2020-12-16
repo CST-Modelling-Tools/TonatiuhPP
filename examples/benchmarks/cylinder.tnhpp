@@ -1,0 +1,61 @@
+#Inventor V2.1 ascii
+
+
+TSceneKit {
+  version "2020"
+  world 
+  DEF World WorldKit {
+    sun 
+    DEF Sun SunKit {
+      aperture 
+      SunAperture {
+        disabledNodes ""
+
+      }
+
+    }
+    camera 
+    DEF Camera TCameraKit {
+      position -1.90628 -4.90916 5.07634
+      rotation 33.25 -40.5
+
+    }
+
+  }
+  group 
+  DEF Node TSeparatorKit {
+    transform 
+    TTransform {
+      translation 0 0 1
+      rotation 1 0 0  90
+      scale 0.2 0.2 0.2
+
+    }
+    group 
+    Group {
+
+      DEF Shape TShapeKit {
+        shapeRT 
+        ShapeCylinder {
+
+        }
+        profileRT 
+        ProfileBox {
+          uSize 360d
+
+        }
+        materialRT 
+        MaterialAbsorber {
+
+        }
+        material 
+        MaterialGL {
+
+        }
+
+      }
+    }
+
+  }
+
+}

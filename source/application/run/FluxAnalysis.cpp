@@ -231,7 +231,16 @@ void FluxAnalysis::write(QString fileName, bool withCoords)
 
     double uStep = (m_uMax - m_uMin)/m_bins.cols();
     double vStep = (m_vMax - m_vMin)/m_bins.rows();
-    double coeff = m_powerPhoton/(uStep*vStep);
+    QModelIndex nodeIndex = m_sceneModel->indexFromUrl(m_surfaceURL);
+    InstanceNode* instanceNode = m_sceneModel->getInstance(nodeIndex);
+    vec3d sJ = instanceNode->getTransform().getScales();
+    TShapeKit* kit = (TShapeKit*) instanceNode->getNode();
+    ShapeRT* shape = (ShapeRT*) kit->shapeRT.getValue();
+    // works for cylinder, not sphere
+    double areaCell = dot(sJ, shape->getDerivativeU(0., 0.))*uStep;
+    areaCell *= dot(sJ, shape->getDerivativeV(0., 0.))*vStep;
+
+    double coeff = m_powerPhoton/areaCell;
 
     if (withCoords)
     {

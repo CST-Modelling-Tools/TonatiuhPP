@@ -23,6 +23,9 @@ public:
 
     virtual vec3d getPoint(double u, double v) const;
     virtual vec3d getNormal(double u, double v) const;
+    virtual vec3d getDerivativeU(double u, double v) const;
+    virtual vec3d getDerivativeV(double u, double v) const;
+
     virtual vec2d getUV(const vec3d& p) const;
     virtual double getStepHint(double u, double v) const;
     virtual void updateShapeGL(TShapeKit* /*parent*/) {}

@@ -39,6 +39,27 @@ vec3d ShapeRT::getNormal(double u, double v) const
     return vec3d(0., 0., 1.);
 }
 
+vec3d ShapeRT::getDerivativeU(double u, double v) const
+{
+    Q_UNUSED(u)
+    Q_UNUSED(v)
+    return vec3d(1., 0., 0.);
+}
+
+vec3d ShapeRT::getDerivativeV(double u, double v) const
+{
+    Q_UNUSED(u)
+    Q_UNUSED(v)
+    return vec3d(0., 1., 0.);
+}
+
+//double ShapeRT::getJacobian(double u, double v) const
+//{
+//    Q_UNUSED(u)
+//    Q_UNUSED(v)
+//    return 1.;
+//}
+
 vec2d ShapeRT::getUV(const vec3d& p) const
 {
     return vec2d(p.x, p.y);

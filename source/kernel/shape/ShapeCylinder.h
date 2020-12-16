@@ -22,6 +22,8 @@ public:
 
     vec3d getPoint(double u, double v) const;
     vec3d getNormal(double u, double v) const;
+    vec3d getDerivativeU(double u, double v) const;
+    vec3d getDerivativeV(double u, double v) const;
 
     vec2d getUV(const vec3d& p) const;
     Box3D getBox(ProfileRT* profile) const;

@@ -61,11 +61,11 @@ void ShapeParabolic::updateShapeGL(TShapeKit* parent)
     vec2d s = profile->getBox().size();
 
     double Rx = 2.*std::abs(fX.getValue());
-    double Ax = 2*gcf::pi*Rx/48;
+    double Ax = 2*gcf::pi*Rx/48/2;
     int rows = 1 + ceil(s.x/Ax);
 
     double Ry = 2.*std::abs(fY.getValue());
-    double Ay = 2*gcf::pi*Ry/48;
+    double Ay = 2*gcf::pi*Ry/48/2;
     int columns = 1 + ceil(s.y/Ay);
 
     makeQuadMesh(parent, QSize(rows, columns));
