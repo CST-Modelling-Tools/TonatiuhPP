@@ -4,7 +4,7 @@
 !define DESCRIPTION "Ray tracing for Solar Energy (Open Source)"
 !define VERSION_MAJOR 0
 !define VERSION_MINOR 1
-!define VERSION_BUILD 1
+!define VERSION_BUILD 5
 !define VERSION_NAME "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BUILD}"
 !define /date VERSION_DATE "%Y.%m.%d"
 

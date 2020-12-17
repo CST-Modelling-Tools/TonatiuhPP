@@ -21,7 +21,7 @@ ProfileCircular::ProfileCircular()
     phiMin.setContainer(this);
     fieldData->addField(this, "phiMin", &phiMin);
 
-    phiMax.set("-180d");
+    phiMax.set("180d");
     phiMax.setContainer(this);
     fieldData->addField(this, "phiMax", &phiMax);
 

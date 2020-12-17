@@ -210,7 +210,7 @@ s.setName("Shape");
 var q = s.insertSurface("Cylinder");
 var p = s.insertProfile("Rectangular");
 p.setParameter("uMin", "-180d");
-p.setParameter("uMax", "180");
+p.setParameter("uMax", "180d");
 p.setParameter("vMin", 0);
 p.setParameter("vMax", 32.544);
 setMaterialGray(s);
