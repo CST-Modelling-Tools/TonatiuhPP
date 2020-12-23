@@ -84,17 +84,20 @@ GraphicView::GraphicView(QWidget* parent):
 
     m_viewer = new SoQtExaminerViewer(w);
     m_viewer->setAntialiasing(true, 1); // disable if slow
-    m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND); // do not move
+//    m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND); // inactive
     m_viewer->setViewing(false);
     SoBoxHighlightRenderAction* highlighter = new SoBoxHighlightRenderAction(m_viewer->getViewportRegion());
     highlighter->setColor(SbColor(100/255., 180/255., 120/255.));
     highlighter->setLineWidth(2.);
     m_viewer->setGLRenderAction(highlighter);
+
     m_viewer->setDrawStyle(SoQtViewer::INTERACTIVE, SoQtViewer::VIEW_SAME_AS_STILL);
+    m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND); // do not move
 //    m_viewer->setWireframeOverlayColor(SbColor(96/255., 123/255., 155/255.));
     m_viewer->setFeedbackVisibility(true); // axes
     m_viewer->setDecoration(false);
     m_viewer->setHeadlight(false);
+
     //    m_viewer->setAutoClipping(true);
     //    m_viewer->setAutoClippingStrategy(SoQtViewer::CONSTANT_NEAR_PLANE, 0.1, myfunc);
     m_camera = new TPerspectiveCamera;
