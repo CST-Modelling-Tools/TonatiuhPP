@@ -24,7 +24,7 @@
 namespace distmesh {
 namespace distanceFunction {
     // creates distance function for a nd rectangular domain
-    // Attention: Not a real distance function at the corners of domainm
+    // Attention: Not a real distance function at the corners of domain
     // you have to give the corners as fixed points to distmesh algorithm
     TONATIUH_LIBRARIES Functional rectangular(Eigen::Ref<Eigen::ArrayXXd const> const rectangle);
 
@@ -42,7 +42,7 @@ namespace distanceFunction {
         Eigen::Ref<Eigen::ArrayXd const> const midpoint=Eigen::ArrayXd());
 
     // creates distance function for a 2d domain described by polygon
-    // Attention: Not a real distance function at the corners of domainm
+    // Attention: Not a real distance function at the corners of domain
     // you have to give the corners as fixed points to distmesh algorithm
     TONATIUH_LIBRARIES Functional polygon(Eigen::Ref<Eigen::ArrayXXd const> const polygon);
 }

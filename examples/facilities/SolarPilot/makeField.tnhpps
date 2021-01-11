@@ -54,6 +54,8 @@ function makeTower(parent, zReceiver, dReceiver, hReceiver)
 	var s = n.createShape();
 	var q = s.insertSurface("Cylinder");
 	var p = s.insertProfile("Rectangular");
+	p.setParameter("uMin", 0);
+	p.setParameter("uMax", 360);
 	p.setParameter("vMin", 0.);
 	p.setParameter("vMax", zReceiver - hReceiver/2);
 	var mG = s.getPart("material");
@@ -67,6 +69,7 @@ function makeTower(parent, zReceiver, dReceiver, hReceiver)
 	s.setName("Shape");
 	q = s.insertSurface("Cylinder");
 	p = s.insertProfile("Box");
+	p.setParameter("uSize", 360);
 	p.setParameter("vSize", hReceiver);
 	mG = s.getPart("material");
 	mG.setParameter("ambientColor", "0.7 0.7 0.7");

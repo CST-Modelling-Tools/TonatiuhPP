@@ -10,6 +10,7 @@
 #include <Inventor/SbVec3f.h>
 
 #include "kernel/scene/TSFRotation.h"
+#include "kernel/scene/TSFDoubleUnit.h"
 
 
 class TONATIUH_KERNEL TTransform: public SoTransformation

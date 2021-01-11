@@ -1,6 +1,6 @@
 #include "ShapeCone.h"
 
-#include "kernel/profiles/ProfileRT.h"
+#include "kernel/profiles/ProfileBox.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/math/3D/Box3D.h"
@@ -24,25 +24,30 @@ ShapeCone::ShapeCone()
 
 vec3d ShapeCone::getPoint(double u, double v) const
 {
-    double phi = gcf::TwoPi*u;
     double r = 1. + dr.getValue()*v;
-    return vec3d(r*cos(phi), r*sin(phi), v);
+    return vec3d(r*cos(u), r*sin(u), v);
 }
 
 // |rxy|^2 = |1 + dr*z|^2
 // [x, y, -(1 + dr*z)dr]
 vec3d ShapeCone::getNormal(double u, double v) const
 {
-    double phi = gcf::TwoPi*u;
     double drV = dr.getValue();
     double r = 1. + drV*v;
     r = r >= 0. ? 1. : -1;
-    return vec3d(r*cos(phi), r*sin(phi), -r*drV).normalized();
+    return vec3d(r*cos(u), r*sin(u), -r*drV).normalized();
+}
+
+ProfileRT* ShapeCone::getDefaultProfile() const
+{
+    ProfileBox* pr = new ProfileBox;
+    pr->uSize.set("360d");
+    return pr;
 }
 
 vec2d ShapeCone::getUV(const vec3d& p) const
 {
-    return vec2d(atan2(p.y, p.x)/gcf::TwoPi, p.z);
+    return vec2d(atan2(p.y, p.x), p.z);
 }
 
 Box3D ShapeCone::getBox(ProfileRT* aperture) const
@@ -82,23 +87,20 @@ bool ShapeCone::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg
         if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
 
         vec3d pHit = ray.point(t);
-        double phi = atan2(pHit.y, pHit.x);
-        double u = phi/gcf::TwoPi;
-        double v = pHit.z;
-        if (!aperture->isInside(u, v)) continue;
+        vec2d uv = getUV(pHit);
+        if (!aperture->isInside(uv.x, uv.y)) continue;
 
         if (tHit == 0 && dg == 0)
             return true;
         else if (tHit == 0 || dg == 0)
             gcf::SevereError("ShapeCone::intersect");
 
-        double r = 1. + drV*v;
+        double r = 1. + drV*uv.y;
         if (gcf::eqz(r)) return false;
 
         *tHit = t;
         dg->point = pHit;
-        dg->u = u;
-        dg->v = v;
+        dg->uv = uv;
         dg->dpdu = vec3d(-pHit.y, pHit.x, 0.);
         dg->dpdv = vec3d(drV*pHit.x/r, drV*pHit.y/r, 1.);
         dg->normal = vec3d(pHit.x, pHit.y, -drV*r).normalized();
@@ -115,7 +117,7 @@ void ShapeCone::updateShapeGL(TShapeKit* parent)
     Box2D box = profile->getBox();
     vec2d v = box.size();
 
-    double s = v.x;
+    double s = v.x/(2*gcf::pi);
     if (s > 1.) s = 1.;
     int rows = 1 + ceil(48*s);
 

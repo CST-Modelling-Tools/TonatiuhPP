@@ -1,6 +1,6 @@
 #include "ShapeSphere.h"
 
-#include "kernel/profiles/ProfileRT.h"
+#include "kernel/profiles/ProfileBox.h"
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
 #include "libraries/math/3D/Box3D.h"
@@ -20,14 +20,20 @@ ShapeSphere::ShapeSphere()
     isBuiltIn = TRUE;
 }
 
+ProfileRT* ShapeSphere::getDefaultProfile() const
+{
+    ProfileBox* pr = new ProfileBox;
+    pr->uSize.set("360d");
+    pr->vSize.set("180d");
+    return pr;
+}
+
 vec3d ShapeSphere::getPoint(double u, double v) const
 {
-    double phi = gcf::TwoPi*u;
-    double alpha = gcf::pi*v;
     return vec3d(
-        cos(phi)*cos(alpha),
-        sin(phi)*cos(alpha),
-        sin(alpha)
+        cos(u)*cos(v),
+        sin(u)*cos(v),
+        sin(v)
     );
 }
 
@@ -40,16 +46,17 @@ vec2d ShapeSphere::getUV(const vec3d& p) const
 {
     double phi = atan2(p.y, p.x);
     double alpha = asin(gcf::clamp(p.z, -1., 1.));
-    return vec2d(phi/gcf::TwoPi, alpha/gcf::pi);
+    return vec2d(phi, alpha);
 }
+
 
 Box3D ShapeSphere::getBox(ProfileRT* profile) const
 {
     Box2D box = profile->getBox();
-    double phiMin = gcf::TwoPi*box.min().x;
-    double phiMax = gcf::TwoPi*box.max().x;
-    double alphaMin = gcf::pi*gcf::clamp(box.min().y, -0.5, 0.5);
-    double alphaMax = gcf::pi*gcf::clamp(box.max().y, -0.5, 0.5);
+    double phiMin = box.min().x;
+    double phiMax = box.max().x;
+    double alphaMin = gcf::clamp(box.min().y, -gcf::pi/2, gcf::pi/2);
+    double alphaMax = gcf::clamp(box.max().y, -gcf::pi/2, gcf::pi/2);
 
     double rMin = cos(alphaMin);
     double rMax = cos(alphaMax);
@@ -75,7 +82,6 @@ Box3D ShapeSphere::getBox(ProfileRT* profile) const
 
     xMax *= xMax > 0. ? rMax : rMin;
     xMin *= xMin > 0. ? rMin : rMax;
-
     yMax *= yMax > 0. ? rMax : rMin;
     yMin *= yMin > 0. ? rMin : rMax;
 
@@ -86,6 +92,44 @@ Box3D ShapeSphere::getBox(ProfileRT* profile) const
         vec3d(xMin, yMin, zMin),
         vec3d(xMax, yMax, zMax)
     );
+}
+
+// https://en.wikipedia.org/wiki/Second_fundamental_form
+double ShapeSphere::getStepHint(double u, double v) const
+{
+    Q_UNUSED(u)
+    Q_UNUSED(v)
+
+//    r = n = {cosu cosv, sinu cosv, sinv};
+//    ru = {-sinu cosv, cosu cosv, 0};
+//    rv = {-cosu sinv, -sinu sinv, cosv};
+//    ruu = {-cosu cosv, -sinu cosv, 0};
+//    ruv = {sinu sinv, -cosu sinv, 0};
+//    rvv = -r;
+
+//    L = ruu.n = -cosv^2;
+//    M = ruv.n = 0;
+//    N = rvv.n = -1;
+
+//    double t1, t2;
+//    gcf::solveQuadratic(1., -(L + N), L*N - M*M, &t1, &t2);
+//    double radius = 1./std::max(std::abs(t1), std::abs(t2));
+//    double radius = std::min(std::abs(1./L), std::abs(1./N));
+
+//    double radius = 1.;
+//    return 2*gcf::pi*radius/48/gcf::degree;
+
+    return 2*gcf::pi/48;
+}
+
+void ShapeSphere::updateShapeGL(TShapeKit* parent)
+{
+    ProfileRT* profile = (ProfileRT*) parent->profileRT.getValue();
+    vec2d v = profile->getBox().size()/(2*gcf::pi);
+
+    int rows = 1 + ceil(48*v.x);
+    int columns = 1 + ceil(48*v.y);
+    makeQuadMesh(parent, QSize(rows, columns));
 }
 
 bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
@@ -106,11 +150,8 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
         if (t < ray.tMin + 1e-5 || t > ray.tMax) continue;
 
         vec3d pHit = ray.point(t);
-        double phi = atan2(pHit.y, pHit.x);
-        double alpha = asin(gcf::clamp(pHit.z, -1., 1.));
-        double u = phi/gcf::TwoPi;
-        double v = alpha/gcf::pi;
-        if (!profile->isInside(u, v)) continue;
+        vec2d uv = getUV(pHit);
+        if (!profile->isInside(uv.x, uv.y)) continue;
 
         if (tHit == 0 && dg == 0)
             return true;
@@ -119,31 +160,13 @@ bool ShapeSphere::intersect(const Ray& ray, double* tHit, DifferentialGeometry* 
 
         *tHit = t;
         dg->point = pHit;
-        dg->u = u;
-        dg->v = v;
+        dg->uv = uv;
         dg->dpdu = vec3d(-pHit.y, pHit.x, 0.);
-        dg->dpdv = vec3d(-cos(phi)*pHit.z, -sin(phi)*pHit.z, cos(alpha));
+        dg->dpdv = vec3d(-cos(uv.x)*pHit.z, -sin(uv.x)*pHit.z, cos(uv.y));
         dg->normal = pHit;
         dg->shape = this;
         dg->isFront = dot(dg->normal, rayD) <= 0.;
         return true;
     }
     return false;
-}
-
-void ShapeSphere::updateShapeGL(TShapeKit* parent)
-{
-    ProfileRT* aperture = (ProfileRT*) parent->profileRT.getValue();
-    Box2D box = aperture->getBox();
-    vec2d v = box.size();
-
-    double s = v.x;
-    if (s > 1.) s = 1.;
-    int rows = 1 + ceil(48*s);
-
-    s = v.y;
-    if (s > 1.) s = 1.;
-    int columns = 1 + ceil(24*s);
-
-    makeQuadMesh(parent, QSize(rows, columns));
 }

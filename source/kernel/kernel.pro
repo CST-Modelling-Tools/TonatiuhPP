@@ -48,6 +48,7 @@ HEADERS += \
     scene/TCameraKit.h \
 #    scene/TIndexedFaceSet.h \
     scene/TPerspectiveCamera.h \
+    scene/TSFDoubleUnit.h \
     scene/TSFRotation.h \
     scene/TSceneKit.h \
     scene/TSeparatorKit.h \
@@ -117,6 +118,7 @@ SOURCES += \
     scene/TCameraKit.cpp \
 #    scene/TIndexedFaceSet.cpp \
     scene/TPerspectiveCamera.cpp \
+    scene/TSFDoubleUnit.cpp \
     scene/TSFRotation.cpp \
     scene/TSceneKit.cpp \
     scene/TSeparatorKit.cpp \

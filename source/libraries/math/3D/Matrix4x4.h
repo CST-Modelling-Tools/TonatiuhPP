@@ -21,6 +21,9 @@ public:
     std::shared_ptr<Matrix4x4> transposed() const;
     std::shared_ptr<Matrix4x4> inversed() const;
 
+    double determinant() const;
+
+
     double m[4][4];
 };
 

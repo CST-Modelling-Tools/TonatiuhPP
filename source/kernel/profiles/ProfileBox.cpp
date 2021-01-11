@@ -22,6 +22,13 @@ Box2D ProfileBox::getBox() const
     return Box2D(-v, v);
 }
 
+void ProfileBox::setBox(const Box2D& box)
+{
+    vec2d hs = vec2d::max(box.min().abs(), box.max().abs());
+    uSize = 2*hs.x;
+    vSize = 2*hs.y;
+}
+
 bool ProfileBox::isInside(double u, double v) const
 {
     return 2.*std::abs(u) <= uSize.getValue() &&

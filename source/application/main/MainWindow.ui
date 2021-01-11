@@ -815,6 +815,9 @@ border:none;
    <property name="text">
     <string>&amp;Examples..</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+F2</string>
+   </property>
   </action>
   <action name="actionHelpScripts">
    <property name="icon">
@@ -832,6 +835,9 @@ border:none;
    </property>
    <property name="text">
     <string>&amp;Documentation...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F1</string>
    </property>
   </action>
   <action name="actionSunPosition">

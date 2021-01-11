@@ -23,22 +23,29 @@
 namespace distmesh {
 namespace constants {
     // algorithm stops, when maximum relative points movement is below threshold
-    static double const pointsMovementThreshold = 1e-3;
+//    static double const pointsMovementThreshold = 1e-3;
+    static double const pointsMovementThreshold = 1e-2;
 
     // triangulation is updated, when maximum relative points movement is above threshold
     static double const retriangulationThreshold = 1e-1;
 
     // relative threshold in the geometry evaluations
-    static double const geometryEvaluationThreshold = 1e-3;
+//    static double const geometryEvaluationThreshold = 1e-3;
+    static double const geometryEvaluationThreshold = 1e-2;
+//    static double const geometryEvaluationThresholdInit = 0.3;
+//    static double const geometryEvaluationThresholdInit = 0.5;
 
     // time step for updating points positions with Euler's method
-    static double const deltaT = 1e-1;
+//    static double const deltaT = 1e-1;
+    static double const deltaT = 0.2;
 
     // step size for numerical differentiation
-    static double const deltaX = std::sqrt(std::numeric_limits<double>::epsilon());
+//    static double const deltaX = std::sqrt(std::numeric_limits<double>::epsilon());
+    static double const deltaX = 1e-6;
 
     // algorithm will be terminated after the maximum number of iterations,
     // when no convergence can be achieved
-    static unsigned const maxSteps = 10000;
+//    static unsigned const maxSteps = 10000;
+    static unsigned const maxSteps = 200;
 }
 }

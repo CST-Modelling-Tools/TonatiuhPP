@@ -27,7 +27,7 @@ ProfilePolygon::ProfilePolygon()
 //    };
 //    points.setValues(0, 4, vs);
 
-    float vs[][2] = { // chevron
+    float vs[][2] = { // chevron "Gamma"
         {0., 0.},
         {0.5, 0.},
         {0.5, 0.5},
@@ -36,6 +36,14 @@ ProfilePolygon::ProfilePolygon()
         {0., -0.5}
     };
     points.setValues(0, 6, vs);
+
+//    float vs[][2] = { // rect
+//          {0.5, 0.5},
+//          {-0.5, 0.5},
+//          {-0.5, -0.5},
+//          {0.5, -0.5}
+//    };
+//    points.setValues(0, 4, vs);
 
     points.setContainer(this);
     fieldData->addField(this, "points", &points);
@@ -50,6 +58,19 @@ ProfilePolygon::ProfilePolygon()
 Box2D ProfilePolygon::getBox() const
 {
     return m_box;
+}
+
+void ProfilePolygon::setBox(const Box2D& box)
+{
+    SbVec2f vs[] = {
+        SbVec2f(box.max().x, box.max().y),
+        SbVec2f(box.min().x, box.max().y),
+        SbVec2f(box.min().x, box.min().y),
+        SbVec2f(box.max().x, box.min().y)
+    };
+
+    points.setNum(4);
+    points.setValues(0, 4, vs);
 }
 
 bool ProfilePolygon::isInside(double u, double v) const

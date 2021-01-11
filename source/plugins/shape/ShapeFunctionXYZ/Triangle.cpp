@@ -50,8 +50,7 @@ bool Triangle::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg)
 
     *tHit = t;
     dg->point = pHit;
-    dg->u = u;
-    dg->v = v;
+    dg->uv = vec2d(u, v);
     dg->dpdu = vU;
     dg->dpdv = vV;
     dg->normal = vN;

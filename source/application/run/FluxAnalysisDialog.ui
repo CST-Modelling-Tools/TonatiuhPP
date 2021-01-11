@@ -203,73 +203,10 @@
       <item>
        <widget class="QWidget" name="statisticalWidget" native="true">
         <layout class="QGridLayout" name="gridLayout_3">
-         <item row="9" column="1">
-          <widget class="QLabel" name="centroidValue">
-           <property name="text">
-            <string>;</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="fluxMaxLabel">
-           <property name="text">
-            <string>Maximum Flux:</string>
-           </property>
-          </widget>
-         </item>
          <item row="3" column="0">
           <widget class="QLabel" name="fluxAverageLabel">
            <property name="text">
             <string>Average Flux: </string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="powerTotalLabel">
-           <property name="text">
-            <string>Total Power:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="0">
-          <widget class="QLabel" name="centroidLabel">
-           <property name="text">
-            <string>Centroid:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="fluxMinLabel">
-           <property name="text">
-            <string>Minimum Flux:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="0">
-          <widget class="QLabel" name="uniformityLabel">
-           <property name="text">
-            <string>Uniformity:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="errorLabel">
-           <property name="text">
-            <string>Error:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="QLabel" name="fluxMaxUV">
-           <property name="text">
-            <string>;</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0">
-          <widget class="QLabel" name="fluxMaxUVLabel">
-           <property name="text">
-            <string>Maximum Flux Coordinates:</string>
            </property>
           </widget>
          </item>
@@ -280,6 +217,48 @@
            </property>
           </widget>
          </item>
+         <item row="9" column="1">
+          <widget class="QLabel" name="uniformityValue">
+           <property name="text">
+            <string>0.0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="0">
+          <widget class="QLabel" name="centroidLabel">
+           <property name="text">
+            <string>Centroid:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1">
+          <widget class="QLabel" name="centroidValue">
+           <property name="text">
+            <string>;</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QLabel" name="fluxMaxUV">
+           <property name="text">
+            <string>;</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QLabel" name="errorLabel">
+           <property name="text">
+            <string>Error:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="fluxMaxUVLabel">
+           <property name="text">
+            <string>Maximum Flux Coordinates:</string>
+           </property>
+          </widget>
+         </item>
          <item row="4" column="1">
           <widget class="QLabel" name="fluxMax">
            <property name="text">
@@ -287,8 +266,29 @@
            </property>
           </widget>
          </item>
+         <item row="9" column="0">
+          <widget class="QLabel" name="uniformityLabel">
+           <property name="text">
+            <string>Uniformity:</string>
+           </property>
+          </widget>
+         </item>
          <item row="1" column="1">
           <widget class="QLabel" name="powerTotal">
+           <property name="text">
+            <string>0.0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="fluxMinLabel">
+           <property name="text">
+            <string>Minimum Flux:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QLabel" name="errorValue">
            <property name="text">
             <string>0.0</string>
            </property>
@@ -301,17 +301,24 @@
            </property>
           </widget>
          </item>
-         <item row="7" column="1">
-          <widget class="QLabel" name="errorValue">
+         <item row="4" column="0">
+          <widget class="QLabel" name="fluxMaxLabel">
            <property name="text">
-            <string>0.0</string>
+            <string>Maximum Flux:</string>
            </property>
           </widget>
          </item>
-         <item row="8" column="1">
-          <widget class="QLabel" name="uniformityValue">
+         <item row="1" column="0">
+          <widget class="QLabel" name="powerTotalLabel">
            <property name="text">
-            <string>0.0</string>
+            <string>Total Power:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string/>
            </property>
           </widget>
          </item>

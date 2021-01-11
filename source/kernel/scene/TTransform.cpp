@@ -30,6 +30,7 @@ void TTransform::initClass(void)
     SO_NODE_INIT_CLASS(TTransform,  SoTransformation, "Transformation");
 
     TSFRotation::initClass();
+    TSFDoubleUnit::initClass();
 } 
 
 /*!

@@ -10,7 +10,8 @@
 
 #include "kernel/scene/TShapeKit.h"
 #include "kernel/shape/DifferentialGeometry.h"
-#include "kernel/profiles/ProfileRT.h"
+//#include "kernel/profiles/ProfileRT.h"
+#include "kernel/profiles/ProfileBox.h"
 #include "libraries/math/3D/vec3d.h"
 #include "libraries/math/3D/Box3D.h"
 #include "libraries/math/3D/Ray.h"
@@ -38,9 +39,37 @@ vec3d ShapeRT::getNormal(double u, double v) const
     return vec3d(0., 0., 1.);
 }
 
+vec3d ShapeRT::getDerivativeU(double u, double v) const
+{
+    Q_UNUSED(u)
+    Q_UNUSED(v)
+    return vec3d(1., 0., 0.);
+}
+
+vec3d ShapeRT::getDerivativeV(double u, double v) const
+{
+    Q_UNUSED(u)
+    Q_UNUSED(v)
+    return vec3d(0., 1., 0.);
+}
+
+//double ShapeRT::getJacobian(double u, double v) const
+//{
+//    Q_UNUSED(u)
+//    Q_UNUSED(v)
+//    return 1.;
+//}
+
 vec2d ShapeRT::getUV(const vec3d& p) const
 {
     return vec2d(p.x, p.y);
+}
+
+double ShapeRT::getStepHint(double u, double v) const
+{
+    Q_UNUSED(u)
+    Q_UNUSED(v)
+    return 1.; // use infinity
 }
 
 Box3D ShapeRT::getBox(ProfileRT* profile) const
@@ -50,7 +79,15 @@ Box3D ShapeRT::getBox(ProfileRT* profile) const
     return Box3D(
         vec3d(box.min(), -zMax),
         vec3d(box.max(), zMax)
-    );
+                );
+}
+
+ProfileRT* ShapeRT::getDefaultProfile() const
+{
+    ProfileBox* pr = new ProfileBox;
+    pr->uSize = 1.;
+    pr->vSize = 1.;
+    return pr;
 }
 
 bool ShapeRT::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* profile) const
@@ -70,8 +107,7 @@ bool ShapeRT::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, 
 
     *tHit = t;
     dg->point = pHit;
-    dg->u = pHit.x;
-    dg->v = pHit.y;
+    dg->uv = vec2d(pHit.x, pHit.y);
     dg->dpdu = vec3d(1., 0., 0.);
     dg->dpdv = vec3d(0., 1., 0.);
     dg->normal = vec3d(0., 0., 1.);
@@ -79,6 +115,12 @@ bool ShapeRT::intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, 
     dg->isFront = dot(dg->normal, ray.direction()) <= 0.;
     return true;
 }
+
+struct MeshDensityShape: public MeshDensity
+{
+    virtual double operator()(double u, double v) {return shape->getStepHint(u, v);}
+    ShapeRT* shape;
+};
 
 void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool forceIndexed)
 {
@@ -90,21 +132,22 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool forceIndex
 
     if (ProfilePolygon* profilePolygon = dynamic_cast<ProfilePolygon*>(profile))
     {
+        // call
         const QPolygonF& qpolygon = profilePolygon->getPolygon();
-        QSizeF rect = qpolygon.boundingRect().size();
-        double s = std::min(rect.width()/(dims.width() - 1), rect.height()/(dims.height() - 1));
+//        QSizeF rect = qpolygon.boundingRect().size();
+//        double s = std::min(rect.width()/(dims.width() - 1), rect.height()/(dims.height() - 1));
 
-        QPointF prev = qpolygon[qpolygon.size() - 1];
-        for (int n = 0; n < qpolygon.size(); ++n) {
-            QPointF ed = qpolygon[n] - prev;
-            prev = qpolygon[n];
-            double se = 0.3*sqrt(ed.x()*ed.x() + ed.y()*ed.y());
-            if (se < s) s = se;
-        }
+        MeshDensityShape mds;
+        mds.shape = (ShapeRT*) parent->shapeRT.getValue();
+
 
         PolygonMesh polygonMesh(qpolygon);
-        polygonMesh.makeMesh(s);
+//        if (!polygonMesh.makeMesh(s))
+//            return;
+        if (!polygonMesh.makeMesh(1e8, mds))
+            return;
 
+        // fill
         QVector<SbVec3f> vertices;
         QVector<SbVec3f> normals;
         for (const vec2d& uv : polygonMesh.getPoints()) {

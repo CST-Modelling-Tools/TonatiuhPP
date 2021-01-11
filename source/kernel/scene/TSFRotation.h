@@ -3,7 +3,7 @@
 #include "kernel/TonatiuhKernel.h"
 
 #include <Inventor/fields/SoSField.h>
-#include <Inventor/fields/SoSubField.h>
+#include <Inventor/fields/SoSubField.h> // for SO_SFIELD_HEADER
 #include <Inventor/SbRotation.h>
 
 

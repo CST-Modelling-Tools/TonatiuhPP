@@ -21,7 +21,7 @@ void ParametersItemField::updateItem(void* data, SoSensor*)
         ParametersItemNode* itemNode = (ParametersItemNode*) item;
         itemNode->setNode(f->getValue()); // this line changes current?
     }
-    itemField->emitDataChanged();
+//    itemField->emitDataChanged();
 }
 
 

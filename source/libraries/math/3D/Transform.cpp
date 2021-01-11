@@ -61,6 +61,22 @@ Transform::Transform(const std::shared_ptr<Matrix4x4>& mdir, const std::shared_p
 
 }
 
+vec3d Transform::getScales() const
+{
+    // https://math.stackexchange.com/questions/237369/given-this-transformation-matrix-how-do-i-decompose-it-into-translation-rotati/417813
+    // polar decomposition
+
+    const double* t0 = m_mdir->m[0];
+    const double* t1 = m_mdir->m[1];
+    const double* t2 = m_mdir->m[2];
+
+    return vec3d(
+        vec3d(t0[0], t1[0], t2[0]).norm(),
+        vec3d(t0[1], t1[1], t2[1]).norm(),
+        vec3d(t0[2], t1[2], t2[2]).norm()
+    );
+}
+
 bool Transform::SwapsHandedness() const //?
 {
     double det =

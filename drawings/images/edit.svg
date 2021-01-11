@@ -15,7 +15,64 @@
    inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
    sodipodi:docname="edit.svg">
   <defs
-     id="defs2" />
+     id="defs2">
+    <marker
+       style="overflow:visible"
+       id="marker1350"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path1348" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker1328"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path1326" />
+    </marker>
+    <marker
+       style="overflow:visible;"
+       id="Arrow1Lend"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lend"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.8) rotate(180) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path1051" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1Lstart"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path1048" />
+    </marker>
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -24,8 +81,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.50498486"
-     inkscape:cx="149.49239"
-     inkscape:cy="1161.5463"
+     inkscape:cx="272.35787"
+     inkscape:cy="1971.8812"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -597,5 +654,466 @@
        sodipodi:nodetypes="cccc"
        inkscape:export-xdpi="28.189957"
        inkscape:export-ydpi="28.189957" />
+    <rect
+       y="17.282152"
+       x="524.1449"
+       height="57.665928"
+       width="57.665928"
+       id="rect888"
+       style="opacity:1;fill:#96b8ab;fill-opacity:0.01;stroke:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       transform="matrix(0,1,1,0,0,0)"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeExport.png" />
+    <rect
+       style="fill:#d7d1c6;fill-opacity:0.99215698;stroke:none;stroke-width:1.6;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:3.2, 1.60000000000000009;stroke-dashoffset:0;stroke-opacity:0.992157;paint-order:fill markers stroke"
+       id="rect997"
+       width="44.15659"
+       height="47.792397"
+       x="23.874228"
+       y="526.16052"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeExport.png"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957" />
+    <g
+       id="g894"
+       transform="matrix(0,-1.1771049,1.1771049,0,-415.52231,-196.56014)"
+       style="fill:#938777;fill-opacity:0.9921568;stroke-width:0.849542"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeExport.png">
+      <rect
+         style="opacity:1;fill:#938777;fill-opacity:0.9921568;stroke:none;stroke-width:2.12036;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         id="rect890"
+         width="16.249357"
+         height="5.9548941"
+         x="629.95465"
+         y="388.85992"
+         transform="scale(-1,1)" />
+      <path
+         sodipodi:type="star"
+         style="opacity:1;fill:#938777;fill-opacity:0.9921568;stroke:none;stroke-width:3.00713;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         id="path892"
+         sodipodi:sides="3"
+         sodipodi:cx="-652.55829"
+         sodipodi:cy="395.62634"
+         sodipodi:r1="4.304884"
+         sodipodi:r2="2.152442"
+         sodipodi:arg1="0.99712966"
+         sodipodi:arg2="2.0443272"
+         inkscape:flatsided="true"
+         inkscape:rounded="0"
+         inkscape:randomized="0"
+         d="m -650.22196,399.24209 -6.63582,-3.4003 6.26265,-4.04664 z"
+         inkscape:transform-center-x="-2.6559406"
+         inkscape:transform-center-y="-0.024543457"
+         transform="matrix(-1.9130298,0.12627595,0.08918072,2.845658,-1911.5795,-651.59219)" />
+    </g>
+    <path
+       style="fill:none;stroke:#717171;stroke-width:4;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 21.790283,559.14776 V 575.0343 H 70.003325 V 559.14776"
+       id="path896"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeExport.png" />
+    <rect
+       y="94.563759"
+       x="524.1449"
+       height="57.665928"
+       width="57.665928"
+       id="rect898"
+       style="opacity:1;fill:#96b8ab;fill-opacity:0.01;stroke:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       transform="matrix(0,1,1,0,0,0)"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeImport.png" />
+    <rect
+       style="display:inline;opacity:1;fill:#c7a881;fill-opacity:1;stroke:none;stroke-width:0.750001;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:28.3465;stroke-opacity:1;paint-order:markers fill stroke"
+       id="rect867"
+       width="27.127855"
+       height="27.127855"
+       x="212.7795"
+       y="505.13974"
+       rx="8.8999996"
+       inkscape:export-xdpi="59.923649"
+       inkscape:export-ydpi="59.923649"
+       ry="8.8999996" />
+    <g
+       id="g875"
+       style="display:inline;fill:#4d4d4d;stroke:#333333;stroke-width:1.5;stroke-miterlimit:4;stroke-dasharray:none"
+       transform="translate(362.29721,450.5269)"
+       inkscape:export-xdpi="59.923649"
+       inkscape:export-ydpi="59.923649">
+      <path
+         inkscape:connector-curvature="0"
+         id="path869"
+         d="M -136.04019,70.355446 V 61.23677"
+         style="fill:#4d4d4d;stroke:#333333;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path871"
+         d="m -143.0395,74.489561 6.99931,-4.134115"
+         style="fill:#4d4d4d;stroke:#333333;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         style="fill:#4d4d4d;stroke:#333333;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m -129.04088,74.489561 -6.99931,-4.134115"
+         id="path873"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <path
+       sodipodi:type="star"
+       style="display:inline;opacity:1;fill:#333333;fill-opacity:1;stroke:none;stroke-width:1.11092;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:1"
+       id="path877"
+       sodipodi:sides="3"
+       sodipodi:cx="-136.32367"
+       sodipodi:cy="61.892437"
+       sodipodi:r1="2.6226728"
+       sodipodi:r2="0.026226727"
+       sodipodi:arg1="0.52359878"
+       sodipodi:arg2="1.5707963"
+       inkscape:flatsided="true"
+       inkscape:rounded="-3.46945e-18"
+       inkscape:randomized="0"
+       d="m -134.05237,63.203773 -4.5426,0 2.2713,-3.934009 z"
+       inkscape:transform-center-y="-0.80160881"
+       inkscape:transform-center-x="1.3567864e-05"
+       transform="matrix(1.4912186,0,0,1.2225779,429.59266,436.65651)"
+       inkscape:export-xdpi="59.923649"
+       inkscape:export-ydpi="59.923649" />
+    <path
+       transform="matrix(-0.75466985,1.3071264,-1.0716498,-0.61871728,196.22478,741.09528)"
+       inkscape:transform-center-x="0.15439226"
+       inkscape:transform-center-y="-0.81133814"
+       d="m -134.05237,63.203773 -4.5426,0 2.2713,-3.934009 z"
+       inkscape:randomized="0"
+       inkscape:rounded="-3.46945e-18"
+       inkscape:flatsided="true"
+       sodipodi:arg2="1.5707963"
+       sodipodi:arg1="0.52359878"
+       sodipodi:r2="0.026226727"
+       sodipodi:r1="2.6226728"
+       sodipodi:cy="61.892437"
+       sodipodi:cx="-136.32367"
+       sodipodi:sides="3"
+       id="path879"
+       style="display:inline;opacity:1;fill:#333333;fill-opacity:1;stroke:none;stroke-width:1.09758;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:1"
+       sodipodi:type="star"
+       inkscape:export-xdpi="59.923649"
+       inkscape:export-ydpi="59.923649" />
+    <path
+       sodipodi:type="star"
+       style="display:inline;opacity:1;fill:#333333;fill-opacity:1;stroke:none;stroke-width:1.08403;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:1"
+       id="path881-4"
+       sodipodi:sides="3"
+       sodipodi:cx="-136.32367"
+       sodipodi:cy="61.892437"
+       sodipodi:r1="2.6226728"
+       sodipodi:r2="0.026226727"
+       sodipodi:arg1="0.52359878"
+       sodipodi:arg2="1.5707963"
+       inkscape:flatsided="true"
+       inkscape:rounded="-3.46945e-18"
+       inkscape:randomized="0"
+       d="m -134.05237,63.203773 -4.5426,0 2.2713,-3.934009 z"
+       inkscape:transform-center-y="-0.82149381"
+       inkscape:transform-center-x="-0.15633195"
+       transform="matrix(0.76410198,1.3234635,1.0850437,-0.62645025,256.68329,743.94276)"
+       inkscape:export-xdpi="59.923649"
+       inkscape:export-ydpi="59.923649" />
+    <rect
+       y="19.377924"
+       x="419.88022"
+       height="57.665928"
+       width="57.665928"
+       id="rect976"
+       style="opacity:1;fill:#96b8ab;fill-opacity:0.01;stroke:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       transform="matrix(0,1,1,0,0,0)"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeExport.png" />
+    <g
+       id="g982"
+       transform="matrix(0,-1.1771049,1.1771049,0,-413.42654,-302.67722)"
+       style="fill:#af9678;fill-opacity:0.976471;stroke-width:0.849542"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeExport.png">
+      <rect
+         style="opacity:1;fill:#af9678;fill-opacity:0.976471;stroke:none;stroke-width:2.12036;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         id="rect978"
+         width="18.609919"
+         height="6.5669227"
+         x="629.95465"
+         y="388.5817"
+         transform="scale(-1,1)" />
+      <path
+         sodipodi:type="star"
+         style="opacity:1;fill:#af9678;fill-opacity:0.976471;stroke:none;stroke-width:2.55792;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         id="path980"
+         sodipodi:sides="3"
+         sodipodi:cx="-652.55829"
+         sodipodi:cy="395.62634"
+         sodipodi:r1="4.304884"
+         sodipodi:r2="2.152442"
+         sodipodi:arg1="0.99712966"
+         sodipodi:arg2="2.0443272"
+         inkscape:flatsided="true"
+         inkscape:rounded="0"
+         inkscape:randomized="0"
+         d="m -650.22196,399.24209 -6.63582,-3.4003 6.26265,-4.04664 z"
+         inkscape:transform-center-x="-2.8390388"
+         inkscape:transform-center-y="-0.031814934"
+         transform="matrix(-2.4734292,0.13498137,0.11530517,3.0418366,-2288.5283,-723.44482)" />
+    </g>
+    <path
+       style="fill:none;stroke:#717171;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 25.58887,451.73941 v 19.03021 h 44.80741 v -19.03021"
+       id="path985"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeExport.png" />
+    <rect
+       y="96.659531"
+       x="419.88022"
+       height="57.665928"
+       width="57.665928"
+       id="rect987"
+       style="opacity:1;fill:#96b8ab;fill-opacity:0.01;stroke:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       transform="matrix(0,1,1,0,0,0)"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeImport.png" />
+    <g
+       id="g993"
+       transform="matrix(0,1.1771049,1.1771049,0,-336.14493,1188.431)"
+       style="fill:#af9678;fill-opacity:0.976471;stroke-width:0.849542"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeImport.png">
+      <rect
+         style="opacity:1;fill:#af9678;fill-opacity:0.976471;stroke:none;stroke-width:2.12036;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         id="rect989"
+         width="18.609919"
+         height="6.5669227"
+         x="629.95465"
+         y="388.5817"
+         transform="scale(-1,1)" />
+      <path
+         sodipodi:type="star"
+         style="opacity:1;fill:#af9678;fill-opacity:0.976471;stroke:none;stroke-width:2.55792;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         id="path991"
+         sodipodi:sides="3"
+         sodipodi:cx="-652.55829"
+         sodipodi:cy="395.62634"
+         sodipodi:r1="4.304884"
+         sodipodi:r2="2.152442"
+         sodipodi:arg1="0.99712966"
+         sodipodi:arg2="2.0443272"
+         inkscape:flatsided="true"
+         inkscape:rounded="0"
+         inkscape:randomized="0"
+         d="m -650.22196,399.24209 -6.63582,-3.4003 6.26265,-4.04664 z"
+         inkscape:transform-center-x="-2.8390388"
+         inkscape:transform-center-y="-0.031814934"
+         transform="matrix(-2.4734292,0.13498137,0.11530517,3.0418366,-2288.5283,-723.44482)" />
+    </g>
+    <path
+       style="fill:none;stroke:#717171;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.992157"
+       d="m 102.87048,451.73941 v 19.03021 h 44.8074 v -19.03021"
+       id="path995"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeImport.png" />
+    <rect
+       style="fill:#d7d1c6;fill-opacity:0.98431373;stroke:none;stroke-width:1.6;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:3.20001, 1.60000000000000009;stroke-dashoffset:0;stroke-opacity:0.992157;paint-order:fill markers stroke"
+       id="rect1016"
+       width="45.728416"
+       height="47.792397"
+       x="100.33418"
+       y="-573.95294"
+       transform="scale(1,-1)"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeImport.png"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957" />
+    <path
+       style="fill:none;stroke:#717171;stroke-width:4;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.992157"
+       d="m 98.67893,558.88578 v 16.14852 h 48.99895 v -16.14852"
+       id="path906"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeImport.png" />
+    <g
+       id="g1022"
+       transform="matrix(0,1.1771049,1.1771049,0,-338.27645,1295.6152)"
+       style="fill:#948877;fill-opacity:0.99215686;stroke-width:0.849542"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeImport.png">
+      <rect
+         style="opacity:1;fill:#948877;fill-opacity:0.99215686;stroke:none;stroke-width:2.12036;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         id="rect1018"
+         width="16.249357"
+         height="5.9548941"
+         x="629.95465"
+         y="388.85992"
+         transform="scale(-1,1)" />
+      <path
+         sodipodi:type="star"
+         style="opacity:1;fill:#948877;fill-opacity:0.99215686;stroke:none;stroke-width:3.00713;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         id="path1020"
+         sodipodi:sides="3"
+         sodipodi:cx="-652.55829"
+         sodipodi:cy="395.62634"
+         sodipodi:r1="4.304884"
+         sodipodi:r2="2.152442"
+         sodipodi:arg1="0.99712966"
+         sodipodi:arg2="2.0443272"
+         inkscape:flatsided="true"
+         inkscape:rounded="0"
+         inkscape:randomized="0"
+         d="m -650.22196,399.24209 -6.63582,-3.4003 6.26265,-4.04664 z"
+         inkscape:transform-center-x="-2.6559406"
+         inkscape:transform-center-y="-0.024543457"
+         transform="matrix(-1.9130298,0.12627595,0.08918072,2.845658,-1911.5795,-651.59219)" />
+    </g>
+    <rect
+       y="214.37949"
+       x="396.69852"
+       height="57.665928"
+       width="57.665928"
+       id="rect1024"
+       style="opacity:1;fill:#96b8ab;fill-opacity:0.01;stroke:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       transform="matrix(0,1,1,0,0,0)"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeExport.png" />
+    <rect
+       style="fill:#d5ccbb;fill-opacity:1;stroke:none;stroke-width:1.6;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:3.2, 1.6;stroke-dashoffset:0;stroke-opacity:0.992157;paint-order:fill markers stroke"
+       id="rect1026"
+       width="39.965042"
+       height="47.792397"
+       x="223.06734"
+       y="398.71414"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeExport.png"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957" />
+    <g
+       id="g1032"
+       transform="matrix(0,-1.1771049,1.1771049,0,-218.42497,-324.00654)"
+       style="fill:#a5937d;fill-opacity:0.968627;stroke-width:0.849542"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeExport.png">
+      <rect
+         style="opacity:1;fill:#a5937d;fill-opacity:0.968627;stroke:none;stroke-width:2.12036;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         id="rect1028"
+         width="16.249357"
+         height="5.9548941"
+         x="629.95465"
+         y="388.85992"
+         transform="scale(-1,1)" />
+      <path
+         sodipodi:type="star"
+         style="opacity:1;fill:#a5937d;fill-opacity:0.968627;stroke:none;stroke-width:3.00713;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         id="path1030"
+         sodipodi:sides="3"
+         sodipodi:cx="-652.55829"
+         sodipodi:cy="395.62634"
+         sodipodi:r1="4.304884"
+         sodipodi:r2="2.152442"
+         sodipodi:arg1="0.99712966"
+         sodipodi:arg2="2.0443272"
+         inkscape:flatsided="true"
+         inkscape:rounded="0"
+         inkscape:randomized="0"
+         d="m -650.22196,399.24209 -6.63582,-3.4003 6.26265,-4.04664 z"
+         inkscape:transform-center-x="-2.6559406"
+         inkscape:transform-center-y="-0.024543457"
+         transform="matrix(-1.9130298,0.12627595,0.08918072,2.845658,-1911.5795,-651.59219)" />
+    </g>
+    <path
+       style="fill:none;stroke:#717171;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 220.59044,431.70136 v 15.88654 h 44.80741 v -15.88654"
+       id="path1034"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeExport.png" />
+    <rect
+       y="291.6611"
+       x="396.69852"
+       height="57.665928"
+       width="57.665928"
+       id="rect1036"
+       style="opacity:1;fill:#96b8ab;fill-opacity:0.01;stroke:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       transform="matrix(0,1,1,0,0,0)"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeImport.png" />
+    <rect
+       style="fill:#d5ccbc;fill-opacity:1;stroke:none;stroke-width:1.6;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:3.2, 1.6;stroke-dashoffset:0;stroke-opacity:0.992157;paint-order:fill markers stroke"
+       id="rect1038"
+       width="39.965042"
+       height="47.792397"
+       x="300.3132"
+       y="-446.50656"
+       transform="scale(1,-1)"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeImport.png"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957" />
+    <path
+       style="fill:none;stroke:#717171;stroke-width:5;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.992157"
+       d="m 297.87205,431.43938 v 16.14852 h 44.8074 v -16.14852"
+       id="path1040"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeImport.png" />
+    <g
+       id="g1046"
+       transform="matrix(0,1.1771049,1.1771049,0,-141.17911,1168.1688)"
+       style="fill:#a5937d;fill-opacity:0.968627;stroke-width:0.849542"
+       inkscape:export-xdpi="28.189957"
+       inkscape:export-ydpi="28.189957"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\scene\nodeImport.png">
+      <rect
+         style="opacity:1;fill:#a5937d;fill-opacity:0.968627;stroke:none;stroke-width:2.12036;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         id="rect1042"
+         width="16.249357"
+         height="5.9548941"
+         x="629.95465"
+         y="388.85992"
+         transform="scale(-1,1)" />
+      <path
+         sodipodi:type="star"
+         style="opacity:1;fill:#a5937d;fill-opacity:0.968627;stroke:none;stroke-width:3.00713;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         id="path1044"
+         sodipodi:sides="3"
+         sodipodi:cx="-652.55829"
+         sodipodi:cy="395.62634"
+         sodipodi:r1="4.304884"
+         sodipodi:r2="2.152442"
+         sodipodi:arg1="0.99712966"
+         sodipodi:arg2="2.0443272"
+         inkscape:flatsided="true"
+         inkscape:rounded="0"
+         inkscape:randomized="0"
+         d="m -650.22196,399.24209 -6.63582,-3.4003 6.26265,-4.04664 z"
+         inkscape:transform-center-x="-2.6559406"
+         inkscape:transform-center-y="-0.024543457"
+         transform="matrix(-1.9130298,0.12627595,0.08918072,2.845658,-1911.5795,-651.59219)" />
+    </g>
   </g>
 </svg>

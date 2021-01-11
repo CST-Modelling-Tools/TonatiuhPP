@@ -15,9 +15,9 @@ void ProfileTriangle::initClass()
 ProfileTriangle::ProfileTriangle()
 {
     SO_NODE_CONSTRUCTOR(ProfileTriangle);
-    SO_NODE_ADD_FIELD( a, (0.5, 0.) );
-    SO_NODE_ADD_FIELD( b, (0., 0.5) );
-    SO_NODE_ADD_FIELD( c, (0., 0.) );
+    SO_NODE_ADD_FIELD( a, (0.5, -0.5) );
+    SO_NODE_ADD_FIELD( b, (-0.5, 0.5) );
+    SO_NODE_ADD_FIELD( c, (-0.5, -0.5) );
 
     m_sensor = new SoNodeSensor(onSensor, this);
     m_sensor->attach(this);
@@ -31,6 +31,13 @@ Box2D ProfileTriangle::getBox() const
     box << tgf::makeVector2D(b.getValue());
     box << tgf::makeVector2D(c.getValue());
     return box;
+}
+
+void ProfileTriangle::setBox(const Box2D& box)
+{
+    a = SbVec2f(box.max().x, box.min().y);
+    b = SbVec2f(box.min().x, box.max().y);
+    c = SbVec2f(box.min().x, box.min().y);
 }
 
 bool ProfileTriangle::isInside(double u, double v) const

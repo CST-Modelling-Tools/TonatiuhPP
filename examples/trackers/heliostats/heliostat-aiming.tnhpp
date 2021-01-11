@@ -119,17 +119,6 @@ TSceneKit {
               angles -19.6354 48.1121
 
             }
-            topSeparator 
-            Group {
-
-              ShapeKit {
-                shape 
-                IndexedFaceSet {
-
-                }
-
-              }
-            }
 
           }
           DEF primary TSeparatorKit {
@@ -211,6 +200,7 @@ TSceneKit {
                         }
                         profileRT 
                         DEF Box ProfileBox {
+                          uSize 360d
                           vSize 1
 
                         }
@@ -251,7 +241,8 @@ TSceneKit {
                     }
                     profileRT 
                     ProfileRectangular {
-                      fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
+                      uMin 0
+                      uMax 360d
                       vMin 0
                       vMax 0.05
 
@@ -292,7 +283,8 @@ TSceneKit {
                 }
                 profileRT 
                 ProfileRectangular {
-                  fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
+                  uMin 0
+                  uMax 360d
                   vMin 0
                   vMax 1
 
@@ -345,17 +337,6 @@ TSceneKit {
               angles -30 44.7436
 
             }
-            topSeparator 
-            Group {
-
-              ShapeKit {
-                shape 
-                IndexedFaceSet {
-
-                }
-
-              }
-            }
 
           }
           DEF primary TSeparatorKit {
@@ -398,7 +379,6 @@ TSceneKit {
                         }
                         profileRT 
                         ProfileCircular {
-                          fields [ SFDouble rMin, SFDouble rMax, SFDouble phiMin, SFDouble phiMax ]
                           rMax 1
 
                         }
@@ -437,6 +417,7 @@ TSceneKit {
                         }
                         profileRT 
                         DEF Box ProfileBox {
+                          uSize 360d
                           vSize 1
 
                         }
@@ -515,7 +496,8 @@ TSceneKit {
                     }
                     profileRT 
                     ProfileRectangular {
-                      fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
+                      uMin 0
+                      uMax 360d
                       vMin 0
                       vMax 0.05
 
@@ -556,7 +538,8 @@ TSceneKit {
                 }
                 profileRT 
                 ProfileRectangular {
-                  fields [ SFDouble uMin, SFDouble uMax, SFDouble vMin, SFDouble vMax ]
+                  uMin 0
+                  uMax 360d
                   vMin 0
                   vMax 1
 

@@ -266,6 +266,8 @@ void distmesh::utils::projectPointsToBoundary(
 
     // check for points outside of boundary
     Eigen::Array<bool, Eigen::Dynamic, 1> outside = distance > 0.0;
+//    Eigen::Array<bool, Eigen::Dynamic, 1> outside = (distance > -0.3*initialPointDistance
+//                                                     && distance.abs() > 0.001*initialPointDistance);
     if (outside.any()) {
         // calculate gradient
         Eigen::ArrayXXd gradient(points.rows(), points.cols());
