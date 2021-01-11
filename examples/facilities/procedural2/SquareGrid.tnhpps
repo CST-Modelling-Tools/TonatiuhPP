@@ -1,5 +1,7 @@
 var heliostatWidth = 2.;
 var heliostatHeight = 2.;
+var heliostatDistance = Math.sqrt(heliostatWidth*heliostatWidth + heliostatHeight*heliostatHeight); // safety distance between heliostats
+var heliostatZ = 1.5; // mirror center
 
 function makeHeliostat(parent, name, position, aiming, focus)
 {
@@ -36,10 +38,10 @@ function makeHeliostat(parent, name, position, aiming, focus)
 var receiverZ = 20.;
 var receiverDiameter = 2.;
 var receierHeight = 3.;
-var receiverRadius = receiverDiameter/2.;
-	
+
 function makeTower(parent)
 {
+	var receiverRadius = receiverDiameter/2.;
 	var baseHeight = receiverZ - receierHeight/2.;
 	
 	var nodeTower = parent.createNode("Tower");
@@ -59,7 +61,7 @@ function makeTower(parent)
 	s = n.createShape();
 	q = s.insertSurface("Cylinder");
 	mG = s.getPart("material");
-	mG.setParameter("emissiveColor", "1 1 1");
+	mG.setParameter("emissiveColor", "1 1 1")
 
 	n = nodeTower.createNode("Cap");
 	n.setParameter("translation", "0 0 " + (receiverZ + receierHeight/2.));
@@ -73,35 +75,41 @@ function makeTower(parent)
 }
 
 var rhoMin = 0.75*receiverZ; // exclusion radius 
-var rhoA = 0.7; // radial coefficient
-var rhoP = 0.65; // radial power
-var phiG = (1. + Math.sqrt(5.))/2.; // golden ratio
-var phiA = 2.*Math.PI*Math.pow(phiG, -2); // angular coefficient
+var nR = 10;
 
-var heliostats = 500; // number of heliostats
+var degree = Math.PI/180;
+var scale = 1.2;
+var sepX = scale*heliostatDistance;
+var sepY = scale*heliostatDistance;
 
 function makeField(parent)
 {
-	var nodeHeliostats = parent.createNode("Heliostats");
-	var counter = 0;
-	for (var n = 1; counter < heliostats; n++) {
-			var phi = phiA*n;
-			var rho = rhoA*Math.pow(n, rhoP);
-			if (rho < rhoMin) continue;
-			counter++;
-			name = "H_" + counter;
+	var receiverRadius = receiverDiameter/2.;
 
-			x = rho*Math.cos(phi);
-			y = rho*Math.sin(phi);
+	nodeHeliostats = parent.createNode("Heliostats");
+	count = 1;
+	for (i = -nR; i <= nR; i++) {
+		var row = i + nR + 1;
+		// printTimed("Row " + row);
+		nodeTemp = nodeHeliostats.createNode("Row" + row);
+		for (j = -nR; j <= nR; j++) {
+			name = "H_" + count;
+			x = sepX*i;
+			y = sepY*j;
+			//if (j % 2 == 0) x += sepX/2;
 			z = 0.; 
-			var position = "" + x + " " + y + " " + z;
+			rho = Math.sqrt(x*x + y*y);
+			if (rho < rhoMin) continue;
+			position = "" + x + " " + y + " " + z;
 			
 			xA = x/rho*receiverRadius;
 			yA = y/rho*receiverRadius;
 			zA = receiverZ;
 			aiming = "" + xA + " " + yA + " " + zA;
 			focus = Math.sqrt((xA - x)*(xA - x) + (yA - y)*(yA - y) + (zA - z)*(zA - z));
-			makeHeliostat(nodeHeliostats, name, position, aiming, focus);
+			makeHeliostat(nodeTemp, name, position, aiming, focus);
+			count++;
+		}
 	}
 }
 
