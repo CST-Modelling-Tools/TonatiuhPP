@@ -15,9 +15,9 @@ struct TONATIUH_KERNEL DifferentialGeometry
         const ShapeRT* shape, bool isFront);
 
     vec3d point; // in local coords?
-    vec3d normal; // normalized
     vec3d dpdu; // not normalized
     vec3d dpdv; // not normalized
+    vec3d normal; // normalized
     vec2d uv; // discard? not for all surfaces? replace with shape->getUV()
 
     const ShapeRT* shape;

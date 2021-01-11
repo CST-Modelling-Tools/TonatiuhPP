@@ -134,8 +134,8 @@ void ShapeRT::makeQuadMesh(TShapeKit* parent, const QSize& dims, bool forceIndex
     {
         // call
         const QPolygonF& qpolygon = profilePolygon->getPolygon();
-        QSizeF rect = qpolygon.boundingRect().size();
-        double s = std::min(rect.width()/(dims.width() - 1), rect.height()/(dims.height() - 1));
+//        QSizeF rect = qpolygon.boundingRect().size();
+//        double s = std::min(rect.width()/(dims.width() - 1), rect.height()/(dims.height() - 1));
 
         MeshDensityShape mds;
         mds.shape = (ShapeRT*) parent->shapeRT.getValue();

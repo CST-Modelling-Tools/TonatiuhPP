@@ -1,3 +1,3 @@
 CD "..\portable"
-tar -cvaf  "..\zip\Tonatiuh.zip" bin examples help images
+tar -cvaf  "..\zip\Tonatiuh.zip" bin examples help resources
 @PAUSE
