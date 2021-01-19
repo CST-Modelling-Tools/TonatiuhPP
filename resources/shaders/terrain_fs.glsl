@@ -65,5 +65,5 @@ void main(void)
 		gl_FragColor = vec4(0, 0, 0, 0.03);
 	else
 		gl_FragColor = vec4(1., 1., 1., 0.);
-		*/
+	*/
 }
