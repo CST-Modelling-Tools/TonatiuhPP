@@ -301,7 +301,7 @@ int ScriptRayTracer::Trace()
            trf::ComputeSceneTreeMap( rootSeparatorInstance, Transform( new Matrix4x4 ), true );
 
            SunKit* light = static_cast< SunKit* > ( lightInstance->GetNode() );
-           QStringList disabledNodes = QString( light->disabledNodes.getValue().getString() ).split( ";", QString::SkipEmptyParts );
+           QStringList disabledNodes = QString( light->disabledNodes.getValue().getString() ).split( ";", Qt::SkipEmptyParts );
            QVector< QPair< TShapeKit*, Transform > > surfacesList;
            trf::ComputeFistStageSurfaceList( rootSeparatorInstance, disabledNodes, &surfacesList );
            light->ComputeLightSourceArea( m_widthDivisions, m_heightDivisions, surfacesList );

@@ -9,7 +9,7 @@ class NetworkConnectionsDialog: public QDialog, private Ui::NetworkConnectionsDi
     Q_OBJECT
 
 public:
-    NetworkConnectionsDialog( QWidget * parent = 0, Qt::WindowFlags f = 0 );
+    NetworkConnectionsDialog(QWidget * parent = 0, Qt::WindowFlags f = Qt::WindowFlags());
     ~NetworkConnectionsDialog();
 
     bool IsProxyEnabled() const;
@@ -19,8 +19,8 @@ public:
 
     void SetProxyDisabled();
     void SetManualProxyConfiguration();
-    void SetProxyHttpHost( QString name );
-    void SetProxyHttpPort( int port );
+    void SetProxyHttpHost(QString name);
+    void SetProxyHttpPort(int port);
     void SetSystemProxyConfiguration();
 
 public slots:

@@ -131,7 +131,7 @@ void SunDialog::makeSunApertureTab()
 
     SunAperture* aperture = (SunAperture*) m_sun->getPart("aperture", false);
     QString nodes = aperture->disabledNodes.getValue().getString();
-    for (QString s : nodes.split(';', QString::SkipEmptyParts))
+    for (QString s : nodes.split(';', Qt::SkipEmptyParts))
         ui->disabledNodes->addItem(s);
 
     connect(

@@ -3,6 +3,7 @@
 #include <QVBoxLayout>
 #include <QAction>
 #include <QMenu>
+#include <QActionGroup>
 
 #include <Inventor/actions/SoBoxHighlightRenderAction.h>
 #include <Inventor/nodes/SoSeparator.h>
@@ -497,8 +498,8 @@ void GraphicView::wheelEvent(QWheelEvent* event)
     if (!event->modifiers()) {
         double z = event->angleDelta().y()/120.; // 15 degrees * 8 units
         m_camera->saveTransform();
-        m_camera->findMoveAnchor(m_viewer, event->pos(), m_graphicRoot->getScene()->getLayout());
-        m_camera->moveShiftAnchor(m_viewer, event->pos(), z);
+        m_camera->findMoveAnchor(m_viewer, event->position(), m_graphicRoot->getScene()->getLayout());
+        m_camera->moveShiftAnchor(m_viewer, event->position(), z);
     } else if (event->modifiers() & Qt::AltModifier) {
         double z = event->angleDelta().x()/120.;
         m_camera->zoomCenter(m_viewer, m_graphicRoot->getScene()->getLayout(), z);
@@ -509,7 +510,7 @@ void GraphicView::wheelEvent(QWheelEvent* event)
         double z = event->angleDelta().y()/120.;
 //        m_camera->zoomCenter(m_viewer, m_graphicRoot->getScene()->getLayout(), z);
         m_camera->saveTransform();
-        m_camera->moveCameraPlane(m_viewer, event->pos(), m_graphicRoot->getScene()->getLayout(),z);
+        m_camera->moveCameraPlane(m_viewer, event->position(), m_graphicRoot->getScene()->getLayout(),z);
         cursor().setPos(mapToGlobal(geometry().center()));
     }
     event->accept();

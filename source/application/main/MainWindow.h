@@ -58,7 +58,7 @@ class MainWindow: public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QString tonatiuhFile = "", CustomSplashScreen* splash = 0, QWidget* parent = 0, Qt::WindowFlags flags = 0);
+    MainWindow(QString tonatiuhFile = "", CustomSplashScreen* splash = 0, QWidget* parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
     ~MainWindow();
 
     PluginManager* getPlugins() {return m_pluginManager;}

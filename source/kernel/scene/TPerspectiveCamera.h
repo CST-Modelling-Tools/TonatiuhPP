@@ -29,13 +29,13 @@ public:
     void setOrbit(double az, double el, vec3d anchor);
 
     vec3d findRayGlobal0();
-    vec3d findRayGlobal(SoQtExaminerViewer* viewer, QPoint pos);
+    vec3d findRayGlobal(SoQtExaminerViewer* viewer, QPointF pos);
     vec3d findRayLocal(SoQtExaminerViewer* viewer, QPoint pos);
-    bool findAnchor(SoQtExaminerViewer* viewer, QPoint pos, SoNode* root, vec3d& anchor);
+    bool findAnchor(SoQtExaminerViewer* viewer, QPointF pos, SoNode* root, vec3d& anchor);
     bool findAnchor0(SoQtExaminerViewer* viewer, SoNode* root, vec3d& anchor);
 
-    void findMoveAnchor(SoQtExaminerViewer* viewer, QPoint pos, SoNode* root);
-    void moveShiftAnchor(SoQtExaminerViewer* viewer, QPoint pos, double zoom = 0.);
+    void findMoveAnchor(SoQtExaminerViewer* viewer, QPointF pos, SoNode* root);
+    void moveShiftAnchor(SoQtExaminerViewer* viewer, QPointF pos, double zoom = 0.);
     void movePanAnchor(SoQtExaminerViewer* viewer, QPoint pos, double zoom = 0.);
 
     void findRotationAnchor(SoQtExaminerViewer* viewer, QPoint pos);
@@ -45,7 +45,7 @@ public:
     void moveOrbitAnchor(SoQtExaminerViewer* viewer, QPoint pos);
 
     void zoomCenter(SoQtExaminerViewer* viewer, SoNode* root, double zoom = 0.);
-    void moveCameraPlane(SoQtExaminerViewer* viewer, QPoint pos, SoNode* root, double zoom);
+    void moveCameraPlane(SoQtExaminerViewer* viewer, QPointF pos, SoNode* root, double zoom);
 
 protected:
     SoPerspectiveCamera* m_camera;
