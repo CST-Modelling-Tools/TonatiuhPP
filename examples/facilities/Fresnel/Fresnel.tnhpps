@@ -175,7 +175,7 @@ function makeOutlet(parent)
 
 
 tn.Clear();
-var nodeFresnel = NodeObject();
+var nodeFresnel = new NodeObject;
 nodeFresnel.setName("Fresnel_CSP");
 
 
@@ -330,7 +330,7 @@ for (var j = 0; j < beamsY.length; j++) {
 tn.InsertScene(nodeFresnel);
 
 
-var scene = NodeObject().getScene();
+var scene = tn.getScene();
 
 var sun = scene.getPart("world.sun");
 sun.setParameter("shape", "Buie");

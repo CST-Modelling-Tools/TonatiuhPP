@@ -1,6 +1,6 @@
 include(../../plugins.pri)
 
-QT += script # for scripting
+QT += qml # for scripting
 
 HEADERS = $$files(*.h)
 SOURCES = $$files(*.cpp)

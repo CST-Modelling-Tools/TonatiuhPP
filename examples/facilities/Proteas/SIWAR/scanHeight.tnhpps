@@ -1,4 +1,4 @@
-var file = DataObject();
+var file = new DataObject;
 file.read("heliostats.csv");
 
 
@@ -199,7 +199,7 @@ function findFocalDistance(pA, pB)
 function makeField()
 {
 	tn.Clear();
-	var nodeRoot = NodeObject();
+	var nodeRoot = new NodeObject;
 	nodeRoot.setName("Script");
 
 	var nodeHeliostats = nodeRoot.createNode("Heliostats");
@@ -238,7 +238,7 @@ function makeField()
 
 	tn.InsertScene(nodeRoot);
 	
-	var scene = NodeObject().getScene();
+	var scene = tn.getScene();
 	var sp = scene.getPart("world.sun.position");
 	sp.setParameter("azimuth", 180.);
 	sp.setParameter("elevation", 90. - 11.27182);

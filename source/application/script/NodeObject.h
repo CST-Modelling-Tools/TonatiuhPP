@@ -1,51 +1,51 @@
 #pragma once
 
 #include <QObject>
-#include <QScriptable>
-#include <QScriptValue>
+//#include <QScriptable>
+#include <QJSValue>
 #include <Inventor/nodes/SoNode.h>
 
 
 class MainWindow;
 
 
-class NodeObject: public QObject, protected QScriptable
+class NodeObject: public QObject//, protected QScriptable
 {
     Q_OBJECT
 
 public:
-    explicit NodeObject(QObject* parent = 0);
+    Q_INVOKABLE NodeObject(QObject* parent = 0);
     NodeObject(SoNode* node);
 
     SoNode* getNode() const {return m_node;}
 
     static void setMainWindow(MainWindow* w) {s_mainWindow = w;}
-    static void setEngine(QScriptEngine* engine) {s_engine = engine;}
+    static void setEngine(QJSEngine* engine) {s_engine = engine;}
 
 public slots:
-    static QScriptValue getScene();
-    static QScriptValue getRoot();
+    static QJSValue getScene();
+    static QJSValue getRoot();
 
-    QScriptValue createNode(const QString& name = "");
-    QScriptValue createShape();
-    QScriptValue createTracker();
+    QJSValue createNode(const QString& name = "");
+    QJSValue createShape();
+    QJSValue createTracker();
 
-    QScriptValue getPart(const QString& name = "");
-    void setPart(const QString& name, QScriptValue node);
+    QJSValue getPart(const QString& name = "");
+    void setPart(const QString& name, QJSValue node);
 
-    QScriptValue insertSurface(const QString& name = "");
-    QScriptValue insertProfile(const QString& name = "");
-    QScriptValue insertMaterial(const QString& name = "");
-    QScriptValue insertArmature(const QString& name = "");
+    QJSValue insertSurface(const QString& name = "");
+    QJSValue insertProfile(const QString& name = "");
+    QJSValue insertMaterial(const QString& name = "");
+    QJSValue insertArmature(const QString& name = "");
 
     void setName(const QString& name);
     void setParameter(const QString& name, const QString& value);
 
-    static QScriptValue FindInterception(QScriptValue surface, QScriptValue rays);
+    static QJSValue FindInterception(QJSValue surface, QJSValue rays);
 
 private:
     SoNode* m_node;
     static MainWindow* s_mainWindow;
-    static QScriptEngine* s_engine;
+    static QJSEngine* s_engine;
 };
 

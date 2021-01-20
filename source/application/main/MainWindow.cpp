@@ -1596,9 +1596,13 @@ void MainWindow::CreateComponentNode(QString componentType, QString nodeName, in
 
 
 #include "script/NodeObject.h"
-
-void MainWindow::InsertScene(QScriptValue v)
+#include <QQmlEngine>
+void MainWindow::InsertScene(QJSValue v)
 {
+//    QQmlEngine::setObjectOwnership(v.toQObject(), QQmlEngine::CppOwnership);
+
+//    v.toQObject()->setParent(this);
+
     QModelIndex index = ui->sceneView->currentIndex();
     if (!index.isValid())
         index = m_modelScene->index(0, 0, ui->sceneView->rootIndex()); //! root is invisible
@@ -1618,9 +1622,15 @@ void MainWindow::InsertScene(QScriptValue v)
     setDocumentModified(true);
 }
 
-QScriptValue MainWindow::FindInterception(QScriptValue surface, QScriptValue rays)
+QJSValue MainWindow::getScene()
 {
-    return findInterception(surface.toString(), rays.toUInt32(), this);
+    NodeObject* ans = new NodeObject(getSceneKit());
+    return qjsEngine(this)->newQObject(ans);
+}
+
+QJSValue MainWindow::FindInterception(QJSValue surface, QJSValue rays)
+{
+    return findInterception(surface.toString(), rays.toUInt(), this);
 }
 
 /*!

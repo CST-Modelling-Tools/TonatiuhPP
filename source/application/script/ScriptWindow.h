@@ -1,13 +1,13 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QScriptValue>
+#include <QJSValue>
 
 class FilesModel;
 class QItemSelectionModel;
 class QLineEdit;
 class QScriptContext;
-class QScriptEngine;
+class QJSEngine;
 class RandomFactory;
 class MainWindow;
 class SyntaxHighlighter;
@@ -28,9 +28,9 @@ public:
     void runScript(QString fileName);
     bool isReady();
 
-    static QScriptValue ImportExtension(QScriptContext* context, QScriptEngine* engine);
-    static QScriptValue PrintMessage(QScriptContext* context, QScriptEngine* engine);
-    static QScriptValue PrintMessageTimed(QScriptContext* context, QScriptEngine* engine);
+//    static QJSValue ImportExtension(QScriptContext* context, QJSEngine* engine);
+    Q_INVOKABLE QJSValue print(QString text);
+    Q_INVOKABLE QJSValue printTimed(QString text);
 
 public slots:
     void fileOpen(QString fileName = QString());
@@ -51,11 +51,10 @@ private slots:
     void on_actionExamples_triggered();
     void on_actionAbout_triggered();
 
-
 private:
     Ui::ScriptWindow* ui;
 
     QString m_fileName;
-    QScriptEngine* m_engine;
+    QJSEngine* m_engine;
     SyntaxHighlighter* m_syntax;
 };

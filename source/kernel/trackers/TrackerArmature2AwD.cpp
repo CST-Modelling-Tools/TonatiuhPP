@@ -58,7 +58,7 @@ static double findAngle(const SbVec3f& a, SbVec3f m, SbVec3f v)
     return atan2(a.dot(m.cross(v)), m.dot(v));
 }
 
-void TrackerArmature2AwD::update(TSeparatorKit* parent, const Transform& toGlobal, const vec3d& vSun, TrackerTarget* target)
+void TrackerArmature2AwD::update(TSeparatorKit* /*parent*/, const Transform& toGlobal, const vec3d& vSun, TrackerTarget* target)
 {
     QVector<Angles> solutions;
     Transform toLocal = toGlobal.inversed();

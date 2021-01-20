@@ -1,4 +1,4 @@
-var file = DataObject();
+var file = new DataObject;
 file.read("heliostats.csv");
 
 
@@ -57,7 +57,7 @@ function makeHeliostat(parent, name, position, aiming, focus)
 	mG.setParameter("shininess", "0.1");
 }
 
-var node = NodeObject();
+var node = new NodeObject;
 var t = node.createTracker();
 var hLF = t.insertArmature("two-axes");
 hLF.setParameter("primaryShift", "0 0.04 1.5");
@@ -125,7 +125,7 @@ function makeTower(nT, xSize, ySize, zSize, zWindow)
 
 function makeField()
 {
-	var nodeRoot = NodeObject();
+	var nodeRoot = new NodeObject;
 	nodeRoot.setName("Script");
 
 	var nodeHeliostats = nodeRoot.createNode("Heliostats");
@@ -171,9 +171,8 @@ var vRec = "0.0467 -2.0216 " + zReceiver;
 tn.Clear();
 makeField();
 
-var scene = NodeObject().getScene();
 
-var scene = NodeObject().getScene();
+var scene = tn.getScene();
 var sp = scene.getPart("world.sun.position");
 sp.setParameter("azimuth", 180);
 sp.setParameter("elevation", 70);

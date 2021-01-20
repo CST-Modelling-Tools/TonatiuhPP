@@ -1,34 +1,37 @@
 #pragma once
 
 #include <QObject>
-#include <QScriptable>
-#include <QScriptValue>
+//#include <QScriptable>
+#include <QJSValue>
 
 
-class DataObject: public QObject, protected QScriptable
+class DataObject: public QObject//, protected QScriptable
 {
     Q_OBJECT
 
 public:
-    explicit DataObject(QObject* parent = 0);
+    Q_INVOKABLE DataObject(QObject* parent = 0);
+
+    static void setEngine(QJSEngine* engine) {s_engine = engine;}
 
 public slots:
-    QScriptValue read(const QString& fileName = "");
-    QScriptValue write(const QString& fileName = "");
+    QJSValue read(const QString& fileName = "");
+    QJSValue write(const QString& fileName = "");
     void clear();
 
-    QScriptValue rows();
-    QScriptValue row(int n);
+    QJSValue rows();
+    QJSValue row(int n);
     void setRow(int n, const QString& line);
     void addRow(const QString& line);
 
-    QScriptValue array(int n);
-    void setArray(int n, QScriptValue value);
-    void addArray(QScriptValue value);
+    QJSValue array(int n);
+    void setArray(int n, QJSValue value);
+    void addArray(QJSValue value);
 
-//    QScriptValue part(int n, int m);
+//    QJSValue part(int n, int m);
 
 private:
     QStringList m_data;
+    static QJSEngine* s_engine;
 };
 

@@ -2,7 +2,7 @@
 
 #include <QMainWindow>
 #include <QVariant>
-#include <QScriptValue>
+#include <QJSValue>
 
 class QItemSelectionModel;
 class QSplitter;
@@ -97,9 +97,11 @@ public slots:
 
     void InsertShapeSurface(QString shapeType, int numberOfParameters, QVector<QVariant> parametersList);
     void CreateComponentNode(QString componentType, QString nodeName, int numberofParameters, QVector<QVariant> parametersList);
-    void InsertScene(QScriptValue v);
-    QScriptValue FindInterception(QScriptValue surface, QScriptValue rays);
-//    QScriptValue getSceneKit()
+    void InsertScene(QJSValue v);
+    QJSValue getScene();
+
+    QJSValue FindInterception(QJSValue surface, QJSValue rays);
+//    QJSValue getSceneKit()
 
     void Select(QString url);
     void SetName(QString name);

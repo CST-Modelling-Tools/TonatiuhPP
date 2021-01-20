@@ -3,7 +3,7 @@
 #include <QFutureWatcher>
 #include <QMutex>
 #include <QPoint>
-#include <QScriptContext>
+//#include <QScriptContext>
 #include <QtConcurrentMap>
 
 #include <Inventor/actions/SoSearchAction.h>
@@ -34,7 +34,7 @@ ScriptRayTracer::ScriptRayTracer(QVector<RandomFactory*> randomFactories):
     m_photonMap(0),
     m_randomFactories(randomFactories),
     m_random(0),
-    m_sceneModel (0),
+    m_sceneModel(0),
     m_widthDivisions(200),
     m_heightDivisions(200),
     m_sunPosistionChanged(false),
