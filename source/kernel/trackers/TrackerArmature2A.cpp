@@ -72,7 +72,7 @@ static SoTransform* findPart(SoShapeKit* parent, const char* name)
 }
 
 #include <QDebug>
-void TrackerArmature2A::update(TSeparatorKit* parent, const Transform& toGlobal,
+void TrackerArmature2A::update(TSeparatorKit* /*parent*/, const Transform& toGlobal,
                                const vec3d& vSun, TrackerTarget* target)
 {
     QVector<Angles> solutions;

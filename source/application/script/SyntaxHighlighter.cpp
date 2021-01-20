@@ -11,30 +11,36 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent):
     keywordFormat.setForeground(Qt::darkBlue);
     keywordFormat.setFontWeight(QFont::Bold);
     const QString keywordPatterns[] = {
-        "\\bvar\\b", "\\bfunction\\b", "\\breturn\\b"
+        "var", "new",
+        "function", "return",
+        "if", "else",
+        "for", "continue", "break"
     };
     for (const QString& pattern : keywordPatterns) {
-        rule.pattern = QRegularExpression(pattern);
+        rule.pattern = QRegularExpression("\\b" + pattern + "\\b"); // word boundary \\b
         rule.format = keywordFormat;
         highlightingRules << rule;
     }
 
+    // . any single character
+    // zero or one ?, zero or more *, one or more +
+    // ? if added after another quantifier switches the matching mode from greedy to lazy
     QTextCharFormat classFormat;
     classFormat.setForeground(Qt::darkMagenta);
     classFormat.setFontWeight(QFont::Bold);
-    rule.pattern = QRegularExpression("\\bQ[A-Za-z]+\\b");
+    rule.pattern = QRegularExpression("\\bQ[A-Za-z]+\\b"); // starts with Q
     rule.format = classFormat;
     highlightingRules << rule;
 
     QTextCharFormat functionFormat;
     functionFormat.setForeground(QColor("#3465A4"));
     functionFormat.setFontItalic(true);
-    rule.pattern = QRegularExpression("\\b[A-Za-z0-9_]+(?=\\()");
+    rule.pattern = QRegularExpression("\\b[A-Za-z0-9_]+(?=\\()"); // positive lookahead (?=.) for (
     rule.format = functionFormat;
     highlightingRules << rule;
 
     quotationFormat.setForeground(Qt::darkGreen);
-    rule.pattern = QRegularExpression("\".*?\""); // ? for lazy match
+    rule.pattern = QRegularExpression("\".*?\""); // in quotes, .*?,  ? for lazy match
     rule.format = quotationFormat;
     highlightingRules << rule;
 

@@ -78,7 +78,7 @@ function makeCPC(parent)
 
 
 // scene
-var nodeRoot = NodeObject();
+var nodeRoot = new NodeObject;
 nodeRoot.setName("Script");
 var nodeCPC = makeCPC(nodeRoot);
 nodeCPC.setName("CPC");
@@ -87,7 +87,7 @@ tn.InsertScene(nodeRoot);
 
 
 // world
-var scene = NodeObject().getScene();
+var scene = tn.getScene();
 
 var sun = scene.getPart("world.sun");
 sun.setParameter("shape", "Pillbox");

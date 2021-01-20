@@ -5,7 +5,7 @@
 #include "CustomSplashScreen.h"
 
 #include <QFileInfo>
-#include <QScriptEngine>
+#include <QJSEngine>
 #include <QTextStream>
 
 #include <Inventor/Qt/SoQt.h>
@@ -26,8 +26,8 @@ QTextStream cerr(stderr);
 
 #include "script/NodeObject.h"
 #include "script/DataObject.h"
-Q_SCRIPT_DECLARE_QMETAOBJECT(NodeObject, QObject*)
-Q_SCRIPT_DECLARE_QMETAOBJECT(DataObject, QObject*)
+//Q_SCRIPT_DECLARE_QMETAOBJECT(NodeObject, QObject*)
+//Q_SCRIPT_DECLARE_QMETAOBJECT(DataObject, QObject*)
 
 int main(int argc, char** argv)
 {  
@@ -110,20 +110,27 @@ int main(int argc, char** argv)
     {
         SoQt::init((QWidget*) 0);
 
-        QScriptEngine* engine = new QScriptEngine;
-        qScriptRegisterSequenceMetaType<QVector<QVariant>>(engine);
+        QJSEngine* engine = new QJSEngine;
+//        qScriptRegisterSequenceMetaType<QVector<QVariant>>(engine);
 
         MainWindow mw;
-        QScriptValue tonatiuh = engine->newQObject(&mw);
+        QJSValue tonatiuh = engine->newQObject(&mw);
         engine->globalObject().setProperty("tonatiuh", tonatiuh);
         engine->globalObject().setProperty("tn", tonatiuh);
 
         NodeObject::setMainWindow(&mw);
         NodeObject::setEngine(engine);
-        QScriptValue nodeObjectClass = engine->scriptValueFromQMetaObject<NodeObject>();
+        DataObject::setEngine(engine);
+//        QJSValue nodeObjectClass = engine->scriptValueFromQMetaObject<NodeObject>();
+        QJSValue nodeObjectClass = engine->newQMetaObject(&NodeObject::staticMetaObject);
         engine->globalObject().setProperty("NodeObject", nodeObjectClass);
 
-        QScriptValue fileObjectClass = engine->scriptValueFromQMetaObject<DataObject>();
+        //https://doc.qt.io/qt-5/qjsengine.html???
+//        QJSValue jsMetaObject = engine->newQMetaObject(&NodeObject::staticMetaObject);??
+//        engine.globalObject().setProperty("MyObject", jsMetaObject);
+
+//        QJSValue fileObjectClass = engine->scriptValueFromQMetaObject<DataObject>();
+        QJSValue fileObjectClass = engine->newQMetaObject(&DataObject::staticMetaObject);
         engine->globalObject().setProperty("DataObject", fileObjectClass);
 
         QFile file(fileName);
@@ -136,17 +143,17 @@ int main(int argc, char** argv)
         QString program = in.readAll();
         file.close();
 
-        QScriptSyntaxCheckResult check = engine->checkSyntax(program);
-        if (check.state() != QScriptSyntaxCheckResult::Valid)
-        {
-            QString text = QString("Syntax error in line %1.\n%2")
-                .arg(check.errorLineNumber())
-                .arg(check.errorMessage());
-            cerr << text << endl;
-            return -1;
-        }
+//        QScriptSyntaxCheckResult check = engine->checkSyntax(program);
+//        if (check.state() != QScriptSyntaxCheckResult::Valid)
+//        {
+//            QString text = QString("Syntax error in line %1.\n%2")
+//                .arg(check.errorLineNumber())
+//                .arg(check.errorMessage());
+//            cerr << text << endl;
+//            return -1;
+//        }
 
-        QScriptValue result = engine->evaluate(program);
+        QJSValue result = engine->evaluate(program);
         if (result.isError())
         {
             QString text = QString("Runtime error.\nLine %1. %2")

@@ -4,7 +4,7 @@ print("azimuth [deg], elevation[deg], efficiency");
 for (var azimuth = 0; azimuth <= 360; azimuth += 10) {
 	for (var elevation = 0; elevation <= 90; elevation += 5) {
 		
-		var sp = NodeObject().getScene().getPart("world.sun.position");
+		var sp = tn.getScene().getPart("world.sun.position");
 		sp.setParameter("azimuth", azimuth);
 		sp.setParameter("elevation", elevation);
 

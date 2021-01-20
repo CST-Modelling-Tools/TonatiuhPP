@@ -1,4 +1,4 @@
-var data = DataObject();
+var data = new DataObject;
 
 var wMax = 50*2.25*2.25*1000; // mirrors*area*DNI
 for (var elevation = 10; elevation <= 90; elevation += 30) 
@@ -6,7 +6,7 @@ for (var elevation = 10; elevation <= 90; elevation += 30)
 	var line = "";
 	for (var azimuth = 180; azimuth <= 270; azimuth += 30) 
 	{
-		var sp = NodeObject().getScene().getPart("world.sun.position");
+		var sp = tn.getScene().getPart("world.sun.position");
 		sp.setParameter("elevation", elevation);
 		sp.setParameter("azimuth", azimuth);
 		

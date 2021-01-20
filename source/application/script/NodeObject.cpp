@@ -1,6 +1,6 @@
 #include "NodeObject.h"
 
-#include <QScriptEngine>
+#include <QJSEngine>
 
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTransform.h>
@@ -20,10 +20,10 @@
 
 #include "main/MainWindow.h"
 #include "main/PluginManager.h"
-
+#include <QQmlEngine>
 
 MainWindow* NodeObject::s_mainWindow = 0;
-QScriptEngine* NodeObject::s_engine = 0;
+QJSEngine* NodeObject::s_engine = 0;
 
 
 NodeObject::NodeObject(QObject* parent):
@@ -39,22 +39,22 @@ NodeObject::NodeObject(SoNode* node):
 
 }
 
-QScriptValue NodeObject::getScene()
+QJSValue NodeObject::getScene() // move to MainWindow
 {
     NodeObject* ans = new NodeObject(s_mainWindow->getSceneKit());
     return s_engine->newQObject(ans);
 }
 
-QScriptValue NodeObject::getRoot()
+QJSValue NodeObject::getRoot()
 {
     NodeObject* ans = new NodeObject(s_mainWindow->getSceneKit()->getLayout());
     return s_engine->newQObject(ans);
 }
 
-QScriptValue NodeObject::createNode(const QString& name)
+QJSValue NodeObject::createNode(const QString& name)
 {
     if (m_node->getTypeId() != TSeparatorKit::getClassTypeId())
-        return QScriptValue();
+        return QJSValue();
     TSeparatorKit* kit = new TSeparatorKit;
 
     TSeparatorKit* parent = (TSeparatorKit*) m_node;
@@ -63,12 +63,14 @@ QScriptValue NodeObject::createNode(const QString& name)
 
     NodeObject* ans = new NodeObject(kit);
     if (!name.isEmpty()) ans->setName(name);
-    return engine()->newQObject(ans, QScriptEngine::ScriptOwnership);
+//    return s_engine->newQObject(ans);
+    return qjsEngine(this)->newQObject(ans);
 }
 
-QScriptValue NodeObject::createShape()
+QJSValue NodeObject::createShape()
 {
-    if (m_node->getTypeId() != TSeparatorKit::getClassTypeId()) return 0;
+    if (m_node->getTypeId() != TSeparatorKit::getClassTypeId())
+        return QJSValue();
     TShapeKit* kit = new TShapeKit;
 
     TSeparatorKit* parent = (TSeparatorKit*) m_node;
@@ -76,12 +78,13 @@ QScriptValue NodeObject::createShape()
     group->addChild(kit);
 
     NodeObject* ans = new NodeObject(kit);
-    return engine()->newQObject(ans, QScriptEngine::ScriptOwnership);
+    return s_engine->newQObject(ans);
 }
 
-QScriptValue NodeObject::createTracker()
+QJSValue NodeObject::createTracker()
 {
-    if (m_node->getTypeId() != TSeparatorKit::getClassTypeId()) return 0;
+    if (m_node->getTypeId() != TSeparatorKit::getClassTypeId())
+        return 0;
     TrackerKit* kit = new TrackerKit;
 
     TSeparatorKit* parent = (TSeparatorKit*) m_node;
@@ -90,10 +93,10 @@ QScriptValue NodeObject::createTracker()
     group->addChild(kit);
 
     NodeObject* ans = new NodeObject(kit);
-    return engine()->newQObject(ans, QScriptEngine::ScriptOwnership);
+    return s_engine->newQObject(ans);
 }
 
-QScriptValue NodeObject::getPart(const QString& name)
+QJSValue NodeObject::getPart(const QString& name)
 {
     if (!m_node->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId())) return 0;
 
@@ -106,10 +109,10 @@ QScriptValue NodeObject::getPart(const QString& name)
     }
     if (!node) return 0;
     NodeObject* ans = new NodeObject(node);
-    return engine()->newQObject(ans);
+    return s_engine->newQObject(ans);
 }
 
-void NodeObject::setPart(const QString& name, QScriptValue node)
+void NodeObject::setPart(const QString& name, QJSValue node)
 {
     if (m_node->getTypeId() == TrackerKit::getClassTypeId() && name == "armature") {
         TrackerKit* kit = (TrackerKit*) m_node;
@@ -119,7 +122,7 @@ void NodeObject::setPart(const QString& name, QScriptValue node)
     return;
 }
 
-QScriptValue NodeObject::insertSurface(const QString& name)
+QJSValue NodeObject::insertSurface(const QString& name)
 {
     if (m_node->getTypeId() != TShapeKit::getClassTypeId()) return 0;
 
@@ -131,10 +134,10 @@ QScriptValue NodeObject::insertSurface(const QString& name)
     parent->profileRT = shape->getDefaultProfile();
 
     NodeObject* ans = new NodeObject(shape);
-    return engine()->newQObject(ans, QScriptEngine::ScriptOwnership);
+    return s_engine->newQObject(ans);
 }
 
-QScriptValue NodeObject::insertProfile(const QString& name)
+QJSValue NodeObject::insertProfile(const QString& name)
 {
     if (m_node->getTypeId() != TShapeKit::getClassTypeId()) return 0;
 
@@ -145,24 +148,24 @@ QScriptValue NodeObject::insertProfile(const QString& name)
     parent->profileRT = profile;
 
     NodeObject* ans = new NodeObject(profile);
-    return engine()->newQObject(ans, QScriptEngine::ScriptOwnership);
+    return s_engine->newQObject(ans);
 }
 
-QScriptValue NodeObject::insertMaterial(const QString& name)
+QJSValue NodeObject::insertMaterial(const QString& name)
 {
     if (m_node->getTypeId() != TShapeKit::getClassTypeId()) return 0;
 
     MaterialFactory* f = s_mainWindow->getPlugins()->getMaterialMap().value(name, 0);
     MaterialRT* material = f->create();
 
-    TShapeKit* parent = (TShapeKit*)(m_node);
+    TShapeKit* parent = (TShapeKit*) m_node;
     parent->materialRT = material;
 
     NodeObject* ans = new NodeObject(material);
-    return engine()->newQObject(ans, QScriptEngine::ScriptOwnership);
+    return s_engine->newQObject(ans);
 }
 
-QScriptValue NodeObject::insertArmature(const QString& name)
+QJSValue NodeObject::insertArmature(const QString& name)
 {
     if (m_node->getTypeId() != TrackerKit::getClassTypeId()) return 0;
 
@@ -173,7 +176,7 @@ QScriptValue NodeObject::insertArmature(const QString& name)
     parent->armature = tracker;
 
     NodeObject* ans = new NodeObject(tracker);
-    return engine()->newQObject(ans, QScriptEngine::ScriptOwnership);
+    return s_engine->newQObject(ans);
 }
 
 void NodeObject::setName(const QString& name)
@@ -210,7 +213,7 @@ void NodeObject::setParameter(const QString& name, const QString& value)
         field->set(value.toLatin1().data());
 }
 
-QScriptValue NodeObject::FindInterception(QScriptValue surface, QScriptValue rays)
+QJSValue NodeObject::FindInterception(QJSValue surface, QJSValue rays)
 {
-    return ::findInterception(surface.toString(), rays.toUInt32(), s_mainWindow);
+    return ::findInterception(surface.toString(), rays.toUInt(), s_mainWindow);
 }

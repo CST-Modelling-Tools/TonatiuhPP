@@ -1,6 +1,6 @@
 #include "ShapeFunctionXYZ.h"
 
-#include <QScriptEngine>
+#include <QJSEngine>
 
 #include <QDebug>
 
@@ -153,26 +153,26 @@ void ShapeFunctionXYZ::buildMesh(TShapeKit* parent)
     }
 
     // fill z
-    QScriptEngine engine;
+    QJSEngine engine;
     QString textX = functionX.getValue().getString();
     QString textY = functionY.getValue().getString();
     QString textZ = functionZ.getValue().getString();
-    QScriptValue object = engine.evaluate(QString(
+    QJSValue object = engine.evaluate(QString(
         "({ unitName: 'Shape', "
         "fX: function(u, v) {return %1;}, "
         "fY: function(u, v) {return %2;}, "
         "fZ: function(u, v) {return %3;} "
         " })"
     ).arg(textX, textY, textZ));
-    QScriptValue fX = object.property("fX");
-    QScriptValue fY = object.property("fY");
-    QScriptValue fZ = object.property("fZ");
+    QJSValue fX = object.property("fX");
+    QJSValue fY = object.property("fY");
+    QJSValue fZ = object.property("fZ");
 
     normals = vertices;
     for (SbVec3f& p : vertices) {
-        QScriptValue ansX = fX.call(object, QScriptValueList() << p[0] << p[1]);
-        QScriptValue ansY = fY.call(object, QScriptValueList() << p[0] << p[1]);
-        QScriptValue ansZ = fZ.call(object, QScriptValueList() << p[0] << p[1]);
+        QJSValue ansX = fX.call(QJSValueList() << p[0] << p[1]);
+        QJSValue ansY = fY.call(QJSValueList() << p[0] << p[1]);
+        QJSValue ansZ = fZ.call(QJSValueList() << p[0] << p[1]);
         p.setValue(ansX.toNumber(), ansY.toNumber(), ansZ.toNumber());
     }
 
@@ -184,25 +184,25 @@ void ShapeFunctionXYZ::buildMesh(TShapeKit* parent)
         double pL, pR;
 
         vec3d dfdu;
-        pL = fX.call(object, QScriptValueList() << u0 - hu << v0).toNumber();
-        pR = fX.call(object, QScriptValueList() << u0 + hu << v0).toNumber();
+        pL = fX.call(QJSValueList() << u0 - hu << v0).toNumber();
+        pR = fX.call(QJSValueList() << u0 + hu << v0).toNumber();
         dfdu.x = (pR - pL)/(2*hu);
-        pL = fY.call(object, QScriptValueList() << u0 - hu << v0).toNumber();
-        pR = fY.call(object, QScriptValueList() << u0 + hu << v0).toNumber();
+        pL = fY.call(QJSValueList() << u0 - hu << v0).toNumber();
+        pR = fY.call(QJSValueList() << u0 + hu << v0).toNumber();
         dfdu.y = (pR - pL)/(2*hu);
-        pL = fZ.call(object, QScriptValueList() << u0 - hu << v0).toNumber();
-        pR = fZ.call(object, QScriptValueList() << u0 + hu << v0).toNumber();
+        pL = fZ.call(QJSValueList() << u0 - hu << v0).toNumber();
+        pR = fZ.call(QJSValueList() << u0 + hu << v0).toNumber();
         dfdu.z = (pR - pL)/(2*hu);
 
         vec3d dfdv;
-        pL = fX.call(object, QScriptValueList() << u0 << v0 - hv).toNumber();
-        pR = fX.call(object, QScriptValueList() << u0 << v0 + hv).toNumber();
+        pL = fX.call(QJSValueList() << u0 << v0 - hv).toNumber();
+        pR = fX.call(QJSValueList() << u0 << v0 + hv).toNumber();
         dfdv.x = (pR - pL)/(2*hv);
-        pL = fY.call(object, QScriptValueList() << u0 << v0 - hv).toNumber();
-        pR = fY.call(object, QScriptValueList() << u0 << v0 + hv).toNumber();
+        pL = fY.call(QJSValueList() << u0 << v0 - hv).toNumber();
+        pR = fY.call(QJSValueList() << u0 << v0 + hv).toNumber();
         dfdv.y = (pR - pL)/(2*hv);
-        pL = fZ.call(object, QScriptValueList() << u0 << v0 - hv).toNumber();
-        pR = fZ.call(object, QScriptValueList() << u0 << v0 + hv).toNumber();
+        pL = fZ.call(QJSValueList() << u0 << v0 - hv).toNumber();
+        pR = fZ.call(QJSValueList() << u0 << v0 + hv).toNumber();
         dfdv.z = (pR - pL)/(2*hv);
 
         vec3d nv = cross(dfdu, dfdv);

@@ -178,7 +178,7 @@ function makeField(parent)
 	}
 }
 
-nodeRoot = NodeObject();
+var nodeRoot = new NodeObject;
 nodeRoot.setName("Script");
 makeTower(nodeRoot);
 makeField(nodeRoot);
@@ -186,7 +186,7 @@ makeField(nodeRoot);
 tn.Clear();
 tn.InsertScene(nodeRoot);
 
-var scene = NodeObject().getScene();
+var scene = tn.getScene();
 
 var sp = scene.getPart("world.sun.position");
 sp.setParameter("azimuth", 180);

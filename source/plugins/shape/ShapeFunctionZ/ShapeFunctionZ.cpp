@@ -1,6 +1,6 @@
 #include "ShapeFunctionZ.h"
 
-#include <QScriptEngine>
+#include <QJSEngine>
 
 #include <QDebug>
 
@@ -149,18 +149,18 @@ void ShapeFunctionZ::buildMesh(TShapeKit* parent)
     }
 
     // fill z
-    QScriptEngine engine;
+    QJSEngine engine;
     QString fZ = functionZ.getValue().getString();
-    QScriptValue object = engine.evaluate(QString(
+    QJSValue object = engine.evaluate(QString(
         "({ unitName: 'Shape', "
         "findZ: function(x, y) {return %1;}"
         " })"
     ).arg(fZ));
-    QScriptValue findZ = object.property("findZ");
+    QJSValue findZ = object.property("findZ");
 
 
     for (SbVec3f& v : vertices) {
-        QScriptValue ansZ = findZ.call(object, QScriptValueList() << v[0] << v[1]);
+        QJSValue ansZ = findZ.call(QJSValueList() << v[0] << v[1]);
         v[2] = ansZ.toNumber();
     }
 
@@ -170,12 +170,12 @@ void ShapeFunctionZ::buildMesh(TShapeKit* parent)
         double x0 = v[0];
         double y0 = v[1];
 
-        double zL = findZ.call(object, QScriptValueList() << x0 - h << y0).toNumber();
-        double zR = findZ.call(object, QScriptValueList() << x0 + h << y0).toNumber();
+        double zL = findZ.call(QJSValueList() << x0 - h << y0).toNumber();
+        double zR = findZ.call(QJSValueList() << x0 + h << y0).toNumber();
         double dfx = (zR - zL)/(2*h);
 
-        zL = findZ.call(object, QScriptValueList() << x0 << y0 - h).toNumber();
-        zR = findZ.call(object, QScriptValueList() << x0 << y0 + h).toNumber();
+        zL = findZ.call(QJSValueList() << x0 << y0 - h).toNumber();
+        zR = findZ.call(QJSValueList() << x0 << y0 + h).toNumber();
         double dfy = (zR - zL)/(2*h);
 
         vec3d nv(-dfx, -dfy, 1);

@@ -5,9 +5,12 @@
 #include <QDir>
 #include <QTextStream>
 #include <QMessageBox>
-#include <QScriptEngine>
+#include <QJSEngine>
 #include <QString>
 #include <QStringList>
+
+
+QJSEngine* DataObject::s_engine = 0;
 
 DataObject::DataObject(QObject* parent):
     QObject(parent)
@@ -15,7 +18,7 @@ DataObject::DataObject(QObject* parent):
 
 }
 
-QScriptValue DataObject::read(const QString& fileName)
+QJSValue DataObject::read(const QString& fileName)
 {
     m_data.clear();
 
@@ -39,7 +42,7 @@ QScriptValue DataObject::read(const QString& fileName)
     return true;
 }
 
-QScriptValue DataObject::write(const QString& fileName)
+QJSValue DataObject::write(const QString& fileName)
 {
     QDir dir = QDir::searchPaths("project")[0];
     QFile file(dir.absoluteFilePath(fileName));
@@ -60,12 +63,12 @@ void DataObject::clear()
     m_data.clear();
 }
 
-QScriptValue DataObject::rows()
+QJSValue DataObject::rows()
 {
     return m_data.size();
 }
 
-QScriptValue DataObject::row(int n)
+QJSValue DataObject::row(int n)
 {
     if (n < 0 || n >= m_data.size()) return "";
     return m_data[n];
@@ -82,29 +85,41 @@ void DataObject::addRow(const QString& line)
     m_data << line;
 }
 
-QScriptValue DataObject::array(int n)
+QJSValue DataObject::array(int n)
 {
     if (n < 0 || n >= m_data.size()) return "";
     QStringList list = m_data[n].split(',');
-    return qScriptValueFromSequence(engine(), list);
+    int iMax = list.size();
+
+    QJSValue jsArray = s_engine->newArray(iMax);
+    for (int i = 0; i < iMax; ++i)
+        jsArray.setProperty(i, list[i]);
+    return jsArray;
 }
 
-void DataObject::setArray(int n, QScriptValue value)
+void DataObject::setArray(int n, QJSValue value)
 {
     if (n < 0 || n >= m_data.size()) return;
+
     QStringList list;
-    qScriptValueToSequence(value, list);
+    const int iMax = value.property("length").toInt();
+    for (int i = 0; i < iMax; ++i)
+        list << value.property(i).toString();
+
     m_data[n] = list.join(',');
 }
 
-void DataObject::addArray(QScriptValue value)
+void DataObject::addArray(QJSValue value)
 {
     QStringList list;
-    qScriptValueToSequence(value, list);
+    const int iMax = value.property("length").toInt();
+    for (int i = 0; i < iMax; ++i)
+        list << value.property(i).toString();
+
     m_data << list.join(',');
 }
 
-//QScriptValue DataCSV::part(int n, int m)
+//QJSValue DataCSV::part(int n, int m)
 //{
 //    if (n < 0 || n >= m_data.size()) return "";
 //    QVector<QStringRef> refs = m_data[n].splitRef(',');

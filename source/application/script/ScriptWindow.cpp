@@ -5,7 +5,7 @@
 
 #include <QDateTime>
 #include <QElapsedTimer>
-#include <QScriptEngine>
+#include <QJSEngine>
 #include <QDir>
 #include <QMessageBox>
 #include <QSettings>
@@ -24,14 +24,15 @@ Q_DECLARE_METATYPE(QVector<QVariant>)
 #include "tonatiuh_script.h"
 #include "AboutScriptDialog.h"
 
-Q_SCRIPT_DECLARE_QMETAOBJECT(NodeObject, QObject*)
-Q_SCRIPT_DECLARE_QMETAOBJECT(DataObject, QObject*)
+//Q_SCRIPT_DECLARE_QMETAOBJECT(NodeObject, QObject*)
+//Q_SCRIPT_DECLARE_QMETAOBJECT(DataObject, QObject*)
+#include <QQmlEngine>
+#include <QDebug>
 
 QString timeString()
 {
     return QString("[%1] ").arg(QDateTime::currentDateTime().toString("hh:mm:ss"));
 }
-
 
 ScriptWindow::ScriptWindow(MainWindow* mw, QWidget* parent):
     QMainWindow(parent),
@@ -50,41 +51,48 @@ ScriptWindow::ScriptWindow(MainWindow* mw, QWidget* parent):
     m_syntax = new SyntaxHighlighter(ui->codeEditor->document());
 
     // engine
-    m_engine = new QScriptEngine(this);
-    qScriptRegisterSequenceMetaType<QVector<QVariant>>(m_engine);
+    m_engine = new QJSEngine(this);
+//    qScriptRegisterSequenceMetaType<QVector<QVariant>>(m_engine);
 
     // objects
-    QScriptValue tonatiuhObject = m_engine->newQObject(mw);
+    QJSValue tonatiuhObject = m_engine->newQObject(mw);
+//    qDebug() << QQmlEngine::objectOwnership(tonatiuhObject.toQObject());
+    QQmlEngine::setObjectOwnership(tonatiuhObject.toQObject(), QQmlEngine::CppOwnership); // important
     m_engine->globalObject().setProperty("tonatiuh", tonatiuhObject);
     m_engine->globalObject().setProperty("tn", tonatiuhObject);
 
-    QScriptValue consoleObject = m_engine->newQObject(ui->logWidget);
+    QJSValue consoleObject = m_engine->newQObject(ui->logWidget);
     m_engine->globalObject().setProperty("console", consoleObject);
 
     QObject* rayTracer = new ScriptRayTracer(mw->getPlugins()->getRandomFactories());
-    QScriptValue rayTracerObject = m_engine->newQObject(rayTracer);
+    QJSValue rayTracerObject = m_engine->newQObject(rayTracer);
     m_engine->globalObject().setProperty("rayTracer", rayTracerObject);
 
     NodeObject::setMainWindow(mw);
     NodeObject::setEngine(m_engine);
-    QScriptValue nodeObjectClass = m_engine->scriptValueFromQMetaObject<NodeObject>();
+    QJSValue nodeObjectClass = m_engine->newQMetaObject(&NodeObject::staticMetaObject);
     m_engine->globalObject().setProperty("NodeObject", nodeObjectClass);
 
-    QScriptValue fileObjectClass = m_engine->scriptValueFromQMetaObject<DataObject>();
+    DataObject::setEngine(m_engine);
+    QJSValue fileObjectClass = m_engine->newQMetaObject(&DataObject::staticMetaObject);
     m_engine->globalObject().setProperty("DataObject", fileObjectClass);
 
     // functions
     //    QString pluginsDirectory = QApplication::applicationDirPath() + QDir::separator() + "plugins";
     //    QCoreApplication::addLibraryPath(pluginsDirectory);
     //    QCoreApplication::addLibraryPath(QApplication::applicationDirPath());
-    QScriptValue importFunction = m_engine->newFunction(ScriptWindow::ImportExtension);
-    m_engine->globalObject().setProperty("Import", importFunction, QScriptValue::ReadOnly);
+//    QJSValue importFunction = m_engine->newFunction(ScriptWindow::ImportExtension);
+//    m_engine->globalObject().setProperty("Import", importFunction, QJSValue::ReadOnly);
 
-    QScriptValue printFunction = m_engine->newFunction(ScriptWindow::PrintMessage);
-    m_engine->globalObject().setProperty("print", printFunction);
+    QJSValue myExt = m_engine->newQObject(this);
+    QQmlEngine::setObjectOwnership(myExt.toQObject(), QQmlEngine::CppOwnership); // important
 
-    QScriptValue timeFunction = m_engine->newFunction(ScriptWindow::PrintMessageTimed);
-    m_engine->globalObject().setProperty("printTimed", timeFunction);
+
+//    QJSValue printFunction = m_engine->newFunction(ScriptWindow::print);
+    m_engine->globalObject().setProperty("print", myExt.property("print"));
+
+//    QJSValue timeFunction = m_engine->newFunction(ScriptWindow::printTimed);
+    m_engine->globalObject().setProperty("printTimed", myExt.property("printTimed"));
 
     connect(mw, SIGNAL(Abort(QString)), this, SLOT(abortScript(QString)) );
 
@@ -240,29 +248,29 @@ void ScriptWindow::runScript()
     }
 
     try {
-        int initialized = tonatiuh_script::init(m_engine);
-        if (!initialized)
-            throw timeString() + "Script engine could not start.";
+//        int initialized = tonatiuh_script::init(m_engine);
+//        if (!initialized)
+//            throw timeString() + "Script engine could not start.";
 
-        QScriptValue rayTracerObject = m_engine->globalObject().property("rayTracer");
+        QJSValue rayTracerObject = m_engine->globalObject().property("rayTracer");
         ScriptRayTracer* rayTracer = (ScriptRayTracer*) rayTracerObject.toQObject();
         QFileInfo fileInfo(m_fileName);
         rayTracer->setDir(fileInfo.absoluteDir().absolutePath());
 
         QTextDocument* document = ui->codeEditor->document();
-        QString program = document->toPlainText();
+//        QString program = document->toPlainText();
 
-        QScriptSyntaxCheckResult check = m_engine->checkSyntax(program);
-        if (check.state() != QScriptSyntaxCheckResult::Valid)
-            throw timeString() + QString("Syntax error in line %1.\n%2")
-                .arg(check.errorLineNumber())
-                .arg(check.errorMessage());
+//        QScriptSyntaxCheckResult check = m_engine->checkSyntax(program);
+//        if (check.state() != QScriptSyntaxCheckResult::Valid)
+//            throw timeString() + QString("Syntax error in line %1.\n%2")
+//                .arg(check.errorLineNumber())
+//                .arg(check.errorMessage());
 
         QElapsedTimer timer;
         timer.start();
         writeMessage(timeString() + "Script started.");
 
-        QScriptValue result = m_engine->evaluate(document->toPlainText());
+        QJSValue result = m_engine->evaluate(document->toPlainText());
         if (result.isError())
             throw timeString() + QString("Runtime error in line %1\n%2")
                 .arg(result.property("lineNumber").toNumber())
@@ -271,6 +279,8 @@ void ScriptWindow::runScript()
         QString msg = timeString() + QString("Script finished in %1 s.")
                 .arg(timer.elapsed()/1000., 0, 'f', 3);
         writeMessage(msg);
+
+        m_engine->collectGarbage();
     }
     catch (QString msg)
     {
@@ -305,56 +315,56 @@ void ScriptWindow::writeMessage(QString message)
     ui->logWidget->appendPlainText(message);
 }
 
-void ScriptWindow::abortScript(QString error)
+void ScriptWindow::abortScript(QString /*error*/)
 {
-    QScriptContext* context = m_engine->currentContext();
-    context->throwError(error);
+//    QScriptContext* context = m_engine->currentContext();
+//    context->throwError(error);
 }
 
-QScriptValue ScriptWindow::ImportExtension(QScriptContext* context, QScriptEngine* engine)
+//QJSValue ScriptWindow::ImportExtension(QScriptContext* context, QJSEngine* engine)
+//{
+//    if (context->argumentCount() != 1) return false;
+//    if (!context->argument(0).isString()) return false;
+//    QString name = context->argument(0).toString();
+
+//    if (!engine->importExtension(name).isUndefined())
+//    {
+//        QString msg = QString("Warning! %1 not found!").arg(name);
+
+//        //    writeMessage(msg); //?
+//        QJSValue object = engine->globalObject().property("console");
+//        QPlainTextEdit* console = (QPlainTextEdit*) object.toQObject();
+//        if (!console) return false;
+//        console->appendPlainText(msg);
+//        return false;
+//    }
+
+//    return true;
+//}
+
+QJSValue ScriptWindow::print(QString msg)
 {
-    if (context->argumentCount() != 1) return false;
-    if (!context->argument(0).isString()) return false;
-    QString name = context->argument(0).toString();
+//    if (context->argumentCount() < 1) return false;
+//    if (!context->argument(0).isString()) return false;
+//    QString msg = context->argument(0).toString();
 
-    if (!engine->importExtension(name).isUndefined())
-    {
-        QString msg = QString("Warning! %1 not found!").arg(name);
-
-        //    writeMessage(msg); //?
-        QScriptValue object = engine->globalObject().property("console");
-        QPlainTextEdit* console = (QPlainTextEdit*) object.toQObject();
-        if (!console) return false;
-        console->appendPlainText(msg);
-        return false;
-    }
-
-    return true;
-}
-
-QScriptValue ScriptWindow::PrintMessage(QScriptContext* context, QScriptEngine* engine)
-{
-    if (context->argumentCount() < 1) return false;
-    if (!context->argument(0).isString()) return false;
-    QString msg = context->argument(0).toString();
-
-    QScriptValue object = engine->globalObject().property("console");
+    QJSValue object = m_engine->globalObject().property("console");
     QPlainTextEdit* console = (QPlainTextEdit*) object.toQObject();
     if (!console) return false;
     console->appendPlainText(msg);
     return true;
 }
 
-QScriptValue ScriptWindow::PrintMessageTimed(QScriptContext* context, QScriptEngine* engine)
+QJSValue ScriptWindow::printTimed(QString msg)
 {
-    if (context->argumentCount() < 1) return false;
-    if (!context->argument(0).isString()) return false;
-    QString msg = timeString() + context->argument(0).toString();
+//    if (context->argumentCount() < 1) return false;
+//    if (!context->argument(0).isString()) return false;
+//    QString msg = timeString() + context->argument(0).toString();
 
-    QScriptValue object = engine->globalObject().property("console");
+    QJSValue object = m_engine->globalObject().property("console");
     QPlainTextEdit* console = (QPlainTextEdit*) object.toQObject();
     if (!console) return false;
-    console->appendPlainText(msg);
+    console->appendPlainText(timeString() + msg);
     console->repaint(); // force refresh
     return true;
 }

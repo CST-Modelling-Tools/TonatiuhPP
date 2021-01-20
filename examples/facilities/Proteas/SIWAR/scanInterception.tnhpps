@@ -4,7 +4,7 @@ var azimuth = 180;
 for (var elevation = 10; elevation <= 90; elevation += 20) 
 {
 	// set azimuth and elevation of the sun in degrees
-	var sp = NodeObject().getScene().getPart("world.sun.position");
+	var sp = tn.getScene().getPart("world.sun.position");
 	sp.setParameter("azimuth", azimuth);
 	sp.setParameter("elevation", elevation);
 	

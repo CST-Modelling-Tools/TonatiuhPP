@@ -1,4 +1,4 @@
-var file = DataObject();
+var file = new DataObject;
 file.read("layout.csv");
 var nStep = 1;
 var nSplit = 1000;
@@ -32,7 +32,7 @@ function makeHeliostat(parent, name, position, aiming, focus)
 	m.setParameter("slope", "0.002");
 }
 
-var node = NodeObject();
+var node = new NodeObject;
 var t = node.createTracker();
 var azel = t.insertArmature("two-axes");
 azel.setParameter("primaryShift", "0 0 0");
@@ -94,7 +94,7 @@ function findFocalDistance(x, y, z)
 
 function makeField()
 {
-	var nodeRoot = NodeObject();
+	var nodeRoot = new NodeObject;
 	nodeRoot.setName("Script");
 
 	var nodeHeliostats = nodeRoot.createNode("Heliostats");
@@ -136,7 +136,7 @@ function makeField()
 tn.Clear();
 makeField();
 
-var scene = NodeObject().getScene();
+var scene = tn.getScene();
 
 var sun = scene.getPart("world.sun");
 //sun.setParameter("shape", "Buie");

@@ -1,22 +1,22 @@
 #pragma once
 
-class QScriptValue;
+class QJSValue;
 class QScriptContext;
-class QScriptEngine;
+class QJSEngine;
 
 namespace tonatiuh_script
 {
-    int init(QScriptEngine* engine);
+    int init(QJSEngine* engine);
 
-    QScriptValue tonatiuh_filename(QScriptContext* context, QScriptEngine* engine);
-    QScriptValue tonatiuh_irradiance(QScriptContext* context, QScriptEngine* engine);
-    QScriptValue tonatiuh_numrays(QScriptContext* context, QScriptEngine* engine);
-    QScriptValue tonatiuh_numdivisions(QScriptContext* context, QScriptEngine* engine);
-    QScriptValue tonatiuh_photon_map_export_mode(QScriptContext* context, QScriptEngine* engine);
-    QScriptValue tonatiuh_random_generator(QScriptContext* context, QScriptEngine* engine);
-    QScriptValue tonatiuh_sunposition(QScriptContext* context, QScriptEngine* engine);
-    QScriptValue tonatiuh_calculatesun(QScriptContext* context, QScriptEngine* engine);
-    QScriptValue tonatiuh_setsunpositiontoscene(QScriptContext* context, QScriptEngine* engine);
-    QScriptValue tonatiuh_saveas(QScriptContext* context, QScriptEngine* engine);
-    QScriptValue tonatiuh_trace(QScriptContext* context, QScriptEngine* engine);
+//    QJSValue tonatiuh_filename(QScriptContext* context, QJSEngine* engine);
+//    QJSValue tonatiuh_irradiance(QScriptContext* context, QJSEngine* engine);
+//    QJSValue tonatiuh_numrays(QScriptContext* context, QJSEngine* engine);
+//    QJSValue tonatiuh_numdivisions(QScriptContext* context, QJSEngine* engine);
+//    QJSValue tonatiuh_photon_map_export_mode(QScriptContext* context, QJSEngine* engine);
+//    QJSValue tonatiuh_random_generator(QScriptContext* context, QJSEngine* engine);
+//    QJSValue tonatiuh_sunposition(QScriptContext* context, QJSEngine* engine);
+//    QJSValue tonatiuh_calculatesun(QScriptContext* context, QJSEngine* engine);
+//    QJSValue tonatiuh_setsunpositiontoscene(QScriptContext* context, QJSEngine* engine);
+//    QJSValue tonatiuh_saveas(QScriptContext* context, QJSEngine* engine);
+//    QJSValue tonatiuh_trace(QScriptContext* context, QJSEngine* engine);
 }

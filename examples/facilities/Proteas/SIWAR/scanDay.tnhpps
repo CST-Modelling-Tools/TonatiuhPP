@@ -1,4 +1,4 @@
-var file = DataObject();
+var file = new DataObject;
 file.read("irradiance.csv");
 
 var degree = 3.14159/180;
@@ -13,7 +13,7 @@ for (var n = 1; n < nMax; n++) {
 	var irradiance = file.array(n)[6];
 	if (irradiance <= 0) continue;
 	
-	var sp = NodeObject().getScene().getPart("world.sun.position");
+	var sp = tn.getScene().getPart("world.sun.position");
 	sp.setParameter("azimuth", gamma);
 	sp.setParameter("elevation", alpha);
 
