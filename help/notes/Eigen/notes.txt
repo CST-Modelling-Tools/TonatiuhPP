@@ -1,0 +1,73 @@
+Documentation
+-------------
+https://eigen.tuxfamily.org/dox/GettingStarted.html
+https://eigen.tuxfamily.org/dox/group__TutorialMatrixArithmetic.html
+https://eigen.tuxfamily.org/dox/group__QuickRefPage.html
+
+
+Debug helpers
+
+Qt Creator
+----------
+C:\Qt\Qt5.14.2\Tools\QtCreator\share\qtcreator\debugger\misctypes.py 
+copy
+def qdump__Eigen__Matrix(d, value):
+
+C:\Qt\Qt5.14.2\Tools\QtCreator\share\qtcreator\debugger\personaltypes.py 
+paste
+def qdump__Eigen__Array(d, value):
+    innerType = value.type[0]
+    argRow = value.type[1]
+    argCol = value.type[2]
+    options = value.type[3]
+    rowMajor = (int(options) & 0x1)
+    # The magic dimension value is -1 in Eigen3, but 10000 in Eigen2.
+    # 10000 x 10000 matrices are rare, vectors of dim 10000 less so.
+    # So 'fix' only the matrix case:
+    if argCol == 10000 and argRow == 10000:
+        argCol = -1
+        argRow = -1
+    if argCol != -1 and argRow != -1:
+        nrows = argRow
+        ncols = argCol
+        p = value.address()
+    else:
+        storage = value['m_storage']
+        nrows = storage['m_rows'].integer() if argRow == -1 else argRow
+        ncols = storage['m_cols'].integer() if argCol == -1 else argCol
+        p = storage['m_data'].pointer()
+    innerSize = innerType.size()
+    d.putValue('(%s x %s), %s' % (nrows, ncols, ['ColumnMajor', 'RowMajor'][rowMajor]))
+    d.putField('keeporder', '1')
+    d.putNumChild(nrows * ncols)
+
+    limit = 10000
+    nncols = min(ncols, limit)
+    nnrows = min(nrows, limit * limit / nncols)
+    if d.isExpanded():
+        #format = d.currentItemFormat() # format == 1 is 'Transposed'
+        with Children(d, nrows * ncols, childType=innerType):
+            if ncols == 1 or nrows == 1:
+                for i in range(0, min(nrows * ncols, 10000)):
+                    d.putSubItem(i, d.createValue(p + i * innerSize, innerType))
+            elif rowMajor == 1:
+                s = 0
+                for i in range(0, nnrows):
+                    for j in range(0, nncols):
+                        v = d.createValue(p + (i * ncols + j) * innerSize, innerType)
+                        d.putNamedSubItem(s, v, '[%d,%d]' % (i, j))
+                        s = s + 1
+            else:
+                s = 0
+                for j in range(0, nncols):
+                    for i in range(0, nnrows):
+                        v = d.createValue(p + (i + j * nrows) * innerSize, innerType)
+                        d.putNamedSubItem(s, v, '[%d,%d]' % (i, j))
+                        s = s + 1
+
+
+Eigen
+-----
+does not work
+python2? 
+C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\libraries\eigen-3.3.8\debug\gdb\printers.py 

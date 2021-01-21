@@ -85,7 +85,7 @@ void SceneTreeView::dropEvent(QDropEvent* event)
     }
 
     bool isMove = true;
-    if (event->modifiers() == Qt::ControlModifier)
+    if (event->keyboardModifiers() == Qt::ControlModifier)
         isMove = false;
     emit dragAndDrop(indexParent, index, isMove);
 

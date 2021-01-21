@@ -13,7 +13,9 @@ class SoTransform;
 class SoMaterial;
 class SoTexture2;
 
-
+/*!
+ * \brief The SunKit class
+ */
 class TONATIUH_KERNEL SunKit: public SoBaseKit
 {
     SO_KIT_HEADER(SunKit);
@@ -24,6 +26,7 @@ class TONATIUH_KERNEL SunKit: public SoBaseKit
 
 public:
     static void initClass(void);
+    /// Constructor
     SunKit();
 
     void updateTransform();

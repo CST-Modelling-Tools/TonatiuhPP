@@ -10,7 +10,8 @@ gcc {
         COINDIR = $$PWD/../../../Libraries/Coin/debug
         LIBS += -lCoind -lSoQtd
     } else {
-        COINDIR = $$PWD/../libraries/Coin3D
+        COINDIR = $$PWD/../libraries/Coin3D-qt6-mingw-release
+        COINDIR = $$PWD/../libraries/Coin3D-qt5-mingw-release
         LIBS += -lCoin -lSoQt
     }
     INCLUDEPATH += $$COINDIR/include
