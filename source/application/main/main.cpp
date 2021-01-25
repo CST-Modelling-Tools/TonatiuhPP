@@ -137,7 +137,7 @@ int main(int argc, char** argv)
         if (!file.open(QIODevice::ReadOnly))
         {
             QString text = QString("Cannot open file %1.").arg(fileName);
-            cerr << text << endl;
+            cerr << text << Qt::endl;
         }
         QTextStream in(&file);
         QString program = in.readAll();
@@ -159,7 +159,7 @@ int main(int argc, char** argv)
             QString text = QString("Runtime error.\nLine %1. %2")
                 .arg(result.property("lineNumber").toNumber())
                 .arg(result.toString());
-            cerr << text << endl;
+            cerr << text << Qt::endl;
             return -1;
         }
 

@@ -107,7 +107,7 @@ vec3d TPerspectiveCamera::findRayGlobal0()
     return rd0;
 }
 
-vec3d TPerspectiveCamera::findRayGlobal(SoQtExaminerViewer* viewer, QPoint pos)
+vec3d TPerspectiveCamera::findRayGlobal(SoQtExaminerViewer* viewer, QPointF pos)
 {
     SbVec2s vs = viewer->getViewportRegion().getViewportSizePixels();
     double x = 2.*pos.x()/double(vs[0]) - 1;
@@ -141,7 +141,7 @@ vec3d TPerspectiveCamera::findRayLocal(SoQtExaminerViewer* viewer, QPoint pos)
     return d0;
 }
 
-bool TPerspectiveCamera::findAnchor(SoQtExaminerViewer* viewer, QPoint pos, SoNode* root, vec3d& anchor)
+bool TPerspectiveCamera::findAnchor(SoQtExaminerViewer* viewer, QPointF pos, SoNode* root, vec3d& anchor)
 {
     vec3d rd = findRayGlobal(viewer, pos);
     double tMin = viewer->getCamera()->nearDistance.getValue();
@@ -171,12 +171,12 @@ bool TPerspectiveCamera::findAnchor0(SoQtExaminerViewer* viewer, SoNode* root, v
     return findAnchor(viewer, QPoint(vs[0]/2, vs[1]/2), root, anchor);
 }
 
-void TPerspectiveCamera::findMoveAnchor(SoQtExaminerViewer* viewer, QPoint pos, SoNode* root)
+void TPerspectiveCamera::findMoveAnchor(SoQtExaminerViewer* viewer, QPointF pos, SoNode* root)
 {
     m_isAnchored = findAnchor(viewer, pos, root, m_anchor);
 }
 
-void TPerspectiveCamera::moveShiftAnchor(SoQtExaminerViewer* viewer, QPoint pos, double zoom)
+void TPerspectiveCamera::moveShiftAnchor(SoQtExaminerViewer* viewer, QPointF pos, double zoom)
 {
     if (!m_isAnchored) return;
     vec3d rd = findRayGlobal(viewer, pos);
@@ -317,7 +317,7 @@ void TPerspectiveCamera::zoomCenter(SoQtExaminerViewer* viewer, SoNode* root, do
 
 
 // merge with movePanAnchor
-void TPerspectiveCamera::moveCameraPlane(SoQtExaminerViewer* viewer, QPoint pos, SoNode* root, double zoom)
+void TPerspectiveCamera::moveCameraPlane(SoQtExaminerViewer* viewer, QPointF pos, SoNode* root, double zoom)
 {
     m_isAnchored = findAnchor(viewer, pos, root, m_anchor);
     if (!m_isAnchored) return;

@@ -1,0 +1,11 @@
+add in CMake config
+
+for Coin
+-DBOOST_ROOT:STRING=C:/Users/Victor/Neo/Programming/Qt/Projects/Boost/boost_1_72_0
+-DCMAKE_INSTALL_PREFIX:PATH=C:/Users/Victor/Neo/Programming/Qt/Libraries/Coin/Coin3D-qt6-release
+
+
+for SoQt
+-DBOOST_ROOT:STRING=C:/Users/Victor/Neo/Programming/Qt/Projects/Boost/boost_1_72_0
+-DCMAKE_INSTALL_PREFIX:PATH=C:/Users/Victor/Neo/Programming/Qt/Libraries/Coin/Coin3D-qt6-release
+-DCoin_DIR:PATH=C:/Users/Victor/Neo/Programming/Qt/Libraries/Coin/Coin3D-qt6-release/lib/cmake/Coin-4.0.1

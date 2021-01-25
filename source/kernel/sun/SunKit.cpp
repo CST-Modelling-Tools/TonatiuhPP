@@ -146,7 +146,7 @@ bool SunKit::findTexture(int sizeX, int sizeY, InstanceNode* instanceRoot)
     SunAperture* aperture = static_cast<SunAperture*>(getPart("aperture", false));
     if (!aperture) return false;
 
-    QStringList disabledList = QString(aperture->disabledNodes.getValue().getString()).split(";", QString::SkipEmptyParts);
+    QStringList disabledList = QString(aperture->disabledNodes.getValue().getString()).split(";", Qt::SkipEmptyParts);
     QVector< QPair<TShapeKit*, Transform> > surfacesList;
     instanceRoot->collectShapeTransforms(disabledList, surfacesList);
     if (surfacesList.isEmpty()) return false;

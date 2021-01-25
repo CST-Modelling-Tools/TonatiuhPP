@@ -4,7 +4,7 @@
 #include "DoubleValuesDelegate.h"
 #include <QMessageBox>
 #include "libraries/math/gcf.h"
-
+#include <QRegularExpression>
 /*!
  * Creates an dialog object
  */
@@ -66,15 +66,15 @@ QString ContainerViewerMFVec2::GetData() const
  */
 bool ContainerViewerMFVec2::SetData(QString value)
 {
-    QStringList values = value.split( QRegExp("[\\[\\]]"), QString::SkipEmptyParts);
+    QStringList values = value.split(QRegularExpression("[\\[\\]]"), Qt::SkipEmptyParts);
     if (values.size() != 1) return false;
 
-    QStringList elements = values[0].split(QRegExp(","), QString::SkipEmptyParts);
+    QStringList elements = values[0].split(",", Qt::SkipEmptyParts);
     int rows = elements.count();
     int columns = -1;
     for (int r = 0; r < rows; r++)
     {
-        QStringList elementValues = elements[r].split(QRegExp("\\s+"), QString::SkipEmptyParts);
+        QStringList elementValues = elements[r].split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
         if (r == 0)
             columns = elementValues.count();
         else if (r > 0 && columns != elementValues.count())
@@ -85,7 +85,7 @@ bool ContainerViewerMFVec2::SetData(QString value)
     ui->tableWidget->setColumnCount(columns);
     for (int r = 0; r < rows; r++)
     {
-        QStringList elementValues = elements[r].split(QRegExp("\\s+"), QString::SkipEmptyParts);
+        QStringList elementValues = elements[r].split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
         for (int c = 0; c < columns; c++)
         {
             QTableWidgetItem* item = new QTableWidgetItem(elementValues[c]);

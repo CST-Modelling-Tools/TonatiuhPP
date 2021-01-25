@@ -175,7 +175,8 @@ void ParametersDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptio
     {
         cb->setGeometry(option.rect); // fit icons
 //        cb->showPopup();
-        QMouseEvent event(QEvent::MouseButtonPress, QPointF(0, 0), Qt::LeftButton, 0, 0);
+        QMouseEvent event(QEvent::MouseButtonPress, QPointF(0, 0), Qt::LeftButton,
+                          Qt::MouseButtons(), Qt::KeyboardModifiers());
         QApplication::sendEvent(cb, &event);
     }
 }

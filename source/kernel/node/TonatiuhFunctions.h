@@ -17,6 +17,7 @@ class SbVec3f;
 class QPointF;
 struct vec3d;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace tgf
 {
     TONATIUH_KERNEL SbMatrix makeSbMatrix(const Transform& transform);
@@ -30,3 +31,4 @@ namespace tgf
     TONATIUH_KERNEL Transform makeTransform(TTransform* soTransform);
     TONATIUH_KERNEL Transform makeTransform(SoTransform* soTransform);
 }
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */

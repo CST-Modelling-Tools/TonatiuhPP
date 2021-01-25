@@ -66,6 +66,7 @@ private:
     Transform m_transform; // from object to world
 };
 
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 TONATIUH_KERNEL QDataStream& operator<<(QDataStream& s, const InstanceNode& node);
 TONATIUH_KERNEL QDataStream& operator>>(QDataStream& s, const InstanceNode& node);
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */

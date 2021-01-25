@@ -324,7 +324,7 @@ bool SceneTreeModel::setNodeNameUnique(SoNode* node, QString name)
 **/
 QModelIndex SceneTreeModel::indexFromUrl(QString url) const
 {
-    QStringList path = url.split("/", QString::SkipEmptyParts);
+    QStringList path = url.split("/", Qt::SkipEmptyParts);
 
     if (path.size() == 0) return QModelIndex();
 

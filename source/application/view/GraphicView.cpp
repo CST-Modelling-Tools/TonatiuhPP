@@ -3,6 +3,7 @@
 #include <QVBoxLayout>
 #include <QAction>
 #include <QMenu>
+#include <QActionGroup>
 
 #include <Inventor/actions/SoBoxHighlightRenderAction.h>
 #include <Inventor/nodes/SoSeparator.h>
@@ -84,8 +85,8 @@ GraphicView::GraphicView(QWidget* parent):
 
     m_viewer = new SoQtExaminerViewer(w);
     m_viewer->setAntialiasing(true, 1); // disable if slow
-//    m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND); // inactive
-    m_viewer->setViewing(false);
+    m_viewer->setViewing(false); // viewing or editing
+
     SoBoxHighlightRenderAction* highlighter = new SoBoxHighlightRenderAction(m_viewer->getViewportRegion());
     highlighter->setColor(SbColor(100/255., 180/255., 120/255.));
     highlighter->setLineWidth(2.);
@@ -93,64 +94,44 @@ GraphicView::GraphicView(QWidget* parent):
 
     m_viewer->setDrawStyle(SoQtViewer::INTERACTIVE, SoQtViewer::VIEW_SAME_AS_STILL);
     m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND); // do not move
-//    m_viewer->setWireframeOverlayColor(SbColor(96/255., 123/255., 155/255.));
-    m_viewer->setFeedbackVisibility(true); // axes
-    m_viewer->setDecoration(false);
-    m_viewer->setHeadlight(false);
+//    m_viewer->setWireframeOverlayColor(SbColor(96/255., 123/255., 155/255.)); // overriden
+    m_viewer->setFeedbackVisibility(true); // show frame axes in the corner
+    m_viewer->setDecoration(false); // hide controls on the sides
+    m_viewer->setHeadlight(false); // camera light
 
     //    m_viewer->setAutoClipping(true);
     //    m_viewer->setAutoClippingStrategy(SoQtViewer::CONSTANT_NEAR_PLANE, 0.1, myfunc);
     m_camera = new TPerspectiveCamera;
 
-    //    QGLWidget* gw = () m_viewer->getGLWidget();
-
-    //    QPushButton* label  = new QPushButton("asdvasdv", w);
-    //    m_label  = new QPushButton("asdvasdv", w);
-    //    label->setGeometry(QRect(0, 0, 504, 14));
-    //    connect(m_viewer->getGLWidget(),SIGNAL()
+    // hud menu
+//    QGLWidget* gw = () m_viewer->getGLWidget();
+//    QPushButton* label  = new QPushButton("asdvasdv", w);
+//    m_label  = new QPushButton("asdvasdv", w);
+//    label->setGeometry(QRect(0, 0, 504, 14));
+//    connect(m_viewer->getGLWidget(),SIGNAL()
 
     // do not propogate key and mouse events
-//    w->setFocusPolicy(Qt::NoFocus);
-//    m_viewer->getGLWidget()->setFocusPolicy(Qt::NoFocus);
+    w->setFocusPolicy(Qt::NoFocus);
+    m_viewer->getGLWidget()->setFocusPolicy(Qt::NoFocus);
     m_viewer->getGLWidget()->setEnabled(false);
     setFocusPolicy(Qt::StrongFocus);
-    m_filter = new KeyFilter(this);
+//    m_filter = new KeyFilter(this);
     m_modifiersKeys = Qt::NoModifier; //delete
+
 
     // cursors
     QPixmap pixmap;
+    QStringList cursorNames = {
+        "ShiftA", "ShiftB",
+        "Rotation", "RotationA", "RotationB",
+        "Orbit", "OrbitA", "OrbitB"};
 
-    pixmap.load(":/images/cursors/cursorShiftA.png");
-    pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
-    m_cursors["shiftA"] = QCursor(pixmap);
-
-    pixmap.load(":/images/cursors/cursorShiftB.png");
-    pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
-    m_cursors["shiftB"] = QCursor(pixmap);
-
-    pixmap.load(":/images/cursors/cursorRotation.png");
-    pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
-    m_cursors["rotation"] = QCursor(pixmap);
-
-    pixmap.load(":/images/cursors/cursorRotationA.png");
-    pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
-    m_cursors["rotationA"] = QCursor(pixmap);
-
-    pixmap.load(":/images/cursors/cursorRotationB.png");
-    pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
-    m_cursors["rotationB"] = QCursor(pixmap);
-
-    pixmap.load(":/images/cursors/cursorOrbit.png");
-    pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
-    m_cursors["orbit"] = QCursor(pixmap);
-
-    pixmap.load(":/images/cursors/cursorOrbitA.png");
-    pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
-    m_cursors["orbitA"] = QCursor(pixmap);
-
-    pixmap.load(":/images/cursors/cursorOrbitB.png");
-    pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
-    m_cursors["orbitB"] = QCursor(pixmap);
+    for (QString cn : cursorNames) {
+        pixmap.load(QString(":/images/cursors/cursor") + cn + ".png");
+        pixmap = pixmap.scaledToWidth(24, Qt::SmoothTransformation);
+        cn[0] = cn[0].toLower();
+        m_cursors[cn] = QCursor(pixmap);
+    }
 
     // menu
     setContextMenuPolicy(Qt::CustomContextMenu);
@@ -294,7 +275,7 @@ GraphicView::GraphicView(QWidget* parent):
     menuRendering->addActions(actionViewGroup->actions());
 
     addActions(m_menu->actions()); // for shortcuts
-    addAction(actionDrawSwitch);//?
+    addAction(actionDrawSwitch); //?
     QMetaObject::connectSlotsByName(this);
 
     setStyleSheet(R"(
@@ -497,8 +478,8 @@ void GraphicView::wheelEvent(QWheelEvent* event)
     if (!event->modifiers()) {
         double z = event->angleDelta().y()/120.; // 15 degrees * 8 units
         m_camera->saveTransform();
-        m_camera->findMoveAnchor(m_viewer, event->pos(), m_graphicRoot->getScene()->getLayout());
-        m_camera->moveShiftAnchor(m_viewer, event->pos(), z);
+        m_camera->findMoveAnchor(m_viewer, event->position(), m_graphicRoot->getScene()->getLayout());
+        m_camera->moveShiftAnchor(m_viewer, event->position(), z);
     } else if (event->modifiers() & Qt::AltModifier) {
         double z = event->angleDelta().x()/120.;
         m_camera->zoomCenter(m_viewer, m_graphicRoot->getScene()->getLayout(), z);
@@ -509,7 +490,7 @@ void GraphicView::wheelEvent(QWheelEvent* event)
         double z = event->angleDelta().y()/120.;
 //        m_camera->zoomCenter(m_viewer, m_graphicRoot->getScene()->getLayout(), z);
         m_camera->saveTransform();
-        m_camera->moveCameraPlane(m_viewer, event->pos(), m_graphicRoot->getScene()->getLayout(),z);
+        m_camera->moveCameraPlane(m_viewer, event->position(), m_graphicRoot->getScene()->getLayout(),z);
         cursor().setPos(mapToGlobal(geometry().center()));
     }
     event->accept();
@@ -577,7 +558,7 @@ void GraphicView::focusInEvent(QFocusEvent* /*event*/)
 //    qApp->removeEventFilter();
 //    if (m_window)
 //        m_window->installEventFilter(m_filter);
-    qApp->installEventFilter(m_filter);
+//    qApp->installEventFilter(m_filter);
 //    installEventFilter(m_filter);
 
     setProperty("inFocus", true);
@@ -621,7 +602,7 @@ void GraphicView::focusOutEvent(QFocusEvent* /*event*/)
 
 //    qDebug() << "ena";
 //    if (m_window)
-        qApp->removeEventFilter(m_filter);
+//        qApp->removeEventFilter(m_filter);
 
 //    MenuStyle* ms = dynamic_cast<MenuStyle*> (m_window->style());
 //    if (ms)

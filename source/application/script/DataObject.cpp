@@ -22,7 +22,7 @@ QJSValue DataObject::read(const QString& fileName)
 {
     m_data.clear();
 
-    QFileInfo info = QString("project:") + fileName;
+    QFileInfo info(QString("project:") + fileName);
     if (!info.exists()) {
         QMessageBox::warning(0, "Warning", QString("File not found:\n") + fileName);
         return false;
@@ -65,7 +65,7 @@ void DataObject::clear()
 
 QJSValue DataObject::rows()
 {
-    return m_data.size();
+    return (int) m_data.size();
 }
 
 QJSValue DataObject::row(int n)

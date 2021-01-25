@@ -30,8 +30,8 @@ QWidget* SceneDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem
     if (type == TSeparatorKit::getClassTypeId() ||
                type == TShapeKit::getClassTypeId()) {
         QLineEdit* editor = new QLineEdit(parent);
-        QRegExp rx("[a-zA-Z]\\S*"); // \\S matches a non-whitespace character
-        QValidator* validator = new QRegExpValidator(rx);
+        QRegularExpression rx("[a-zA-Z]\\S*"); // \\S matches a non-whitespace character
+        QValidator* validator = new QRegularExpressionValidator(rx);
         editor->setValidator(validator);
         return editor;
     }

@@ -7,10 +7,13 @@ LIBS += -L..
 # Coin3D
 gcc {
     CONFIG(debug, debug|release) {
-        COINDIR = $$PWD/../../../Libraries/Coin/debug
-        LIBS += -lCoind -lSoQtd
+#        COINDIR = $$PWD/../libraries/Coin3D-qt5-mingw-debug
+#        LIBS += -lCoind -lSoQtd
+        COINDIR = $$PWD/../libraries/Coin3D-qt6-mingw-release
+        LIBS += -lCoin -lSoQt
     } else {
-        COINDIR = $$PWD/../libraries/Coin3D
+#        COINDIR = $$PWD/../libraries/Coin3D-qt5-mingw-release
+        COINDIR = $$PWD/../libraries/Coin3D-qt6-mingw-release
         LIBS += -lCoin -lSoQt
     }
     INCLUDEPATH += $$COINDIR/include
