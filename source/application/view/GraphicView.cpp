@@ -95,8 +95,8 @@ GraphicView::GraphicView(QWidget* parent):
     m_viewer->setDrawStyle(SoQtViewer::INTERACTIVE, SoQtViewer::VIEW_SAME_AS_STILL);
     m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND); // do not move
 //    m_viewer->setWireframeOverlayColor(SbColor(96/255., 123/255., 155/255.)); // overriden
-    m_viewer->setFeedbackVisibility(true); // slider rotations on the sides
-    m_viewer->setDecoration(false); // menu on the right side
+    m_viewer->setFeedbackVisibility(true); // show frame axes in the corner
+    m_viewer->setDecoration(false); // hide controls on the sides
     m_viewer->setHeadlight(false); // camera light
 
     //    m_viewer->setAutoClipping(true);
