@@ -30,8 +30,39 @@ release = 'Cyprus'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-]
+# extensions = [
+    # "breathe", "exhale"
+# ]
+
+# breathe_projects = {
+    # "Tonatiuh": "../../doxygen/xml"
+# }
+
+# breathe_default_project = "Tonatiuh"
+
+# # Setup the exhale extension
+# exhale_args = {
+    # # These arguments are required
+    # "containmentFolder":     "./api",
+    # "rootFileName":          "library_root.rst",
+    # "rootFileTitle":         "Library API",
+    # "doxygenStripFromPath":  "../..",
+    # # Suggested optional arguments
+    # "createTreeView":        True,
+    # # TIP: if using the sphinx-bootstrap-theme, you need
+    # #"treeViewIsBootstrap": True,
+    # "exhaleExecutesDoxygen": False, 
+    # "generateBreatheFileDirectives": True
+    # #"exhaleDoxygenStdin":    "INPUT = ../../doxygen/xml"
+# }
+
+# # Tell sphinx what the primary language being documented is.
+# primary_domain = 'cpp'
+
+# # Tell sphinx what the pygments highlight language should be.
+# highlight_language = 'cpp'
+
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -49,6 +80,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 #
 html_theme = 'alabaster'
 #html_theme = 'nature'
+#html_theme = 'bootstrap'
 html_theme_options = {
     'font_family': 'Arial',
     'font_size' : '8',

@@ -78,7 +78,7 @@ background-color: #d7e3ed;
          </font>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tabWorld">
          <attribute name="title">

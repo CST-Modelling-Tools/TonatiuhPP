@@ -10,3 +10,6 @@ Welcome to Tonatiuh's documentation!
    main/index
    examples/index
    development/index
+
+..   
+   api/library_root
