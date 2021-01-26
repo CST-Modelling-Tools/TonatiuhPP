@@ -304,7 +304,7 @@ void MainWindow::SetupGraphicView()
 {
     m_graphicView << ui->widgetView3D;
     m_graphicView[0]->setSceneGraph(m_graphicsRoot);
-    m_graphicView[0]->m_window = this;
+//    m_graphicView[0]->m_window = this;
 
     //    int q = 150*fontMetrics().xHeight();
     //    QList<int> sizes = {rect.width() - q, q};

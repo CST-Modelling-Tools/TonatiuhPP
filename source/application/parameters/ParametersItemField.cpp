@@ -31,6 +31,8 @@ ParametersItemField::ParametersItemField(SoField* field):
 {
      m_sensor = new SoFieldSensor(updateItem, this);
      m_sensor->attach(m_field);
+     setForeground(QBrush(Qt::red));
+     setBackground(QBrush(Qt::yellow));
 }
 
 ParametersItemField::~ParametersItemField()
@@ -42,6 +44,7 @@ QVariant ParametersItemField::data(int role) const
 {
     if (role == Qt::DisplayRole)
     {
+        return "sdasdg";
         if (SoSFNode* f = dynamic_cast<SoSFNode*>(m_field))
         {
             if (TNode* tn = dynamic_cast<TNode*>(f->getValue()))
@@ -93,6 +96,10 @@ QVariant ParametersItemField::data(int role) const
         m_field->get(v);
         return v.getString();
     }
+//    else if (role == Qt::ForegroundRole)
+//    {
+//        return QBrush(Qt::green);
+//    }
 
     return QStandardItem::data(role);
 }

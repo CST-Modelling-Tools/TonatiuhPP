@@ -54,7 +54,6 @@ public slots:
     void onShowPhotons(bool on);
 
 public:
-    QWidget* m_window;
     QObject* m_filter;
 
 protected:
@@ -72,6 +71,8 @@ protected:
 
 //    void paintEvent(QPaintEvent* event);
 
+    void initCursors();
+    void initContextMenu();
     void setCameraView(double azimuth, double elevation, bool shift = false, bool alt = false);
     void setCameraViewTemp(double azimuth, double elevation);
 

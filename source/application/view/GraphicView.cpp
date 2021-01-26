@@ -58,9 +58,9 @@
 //#include <QGLWidget>
 #include <QDebug>
 
-//SbVec2f myfunc(void* data, const SbVec2f& nearfar)
+//SbVec2f functionClip(void* data, const SbVec2f& nearfar)
 //{
-//    qDebug() << nearfar[0]<<" "<<nearfar[1];
+//    qDebug() << nearfar[0] << " " << nearfar[1];
 //    return SbVec2f(0.1, 10);
 //    return nearfar;
 //}
@@ -74,8 +74,6 @@ GraphicView::GraphicView(QWidget* parent):
     QFrame(parent),
     m_graphicRoot(0)
 {
-    m_window = 0;
-
     QVBoxLayout* layout = new QVBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
     setLayout(layout);
@@ -91,16 +89,17 @@ GraphicView::GraphicView(QWidget* parent):
     highlighter->setColor(SbColor(100/255., 180/255., 120/255.));
     highlighter->setLineWidth(2.);
     m_viewer->setGLRenderAction(highlighter);
+//    m_viewer->setWireframeOverlayColor(SbColor(96/255., 123/255., 155/255.)); // overriden
 
     m_viewer->setDrawStyle(SoQtViewer::INTERACTIVE, SoQtViewer::VIEW_SAME_AS_STILL);
     m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND); // do not move
-//    m_viewer->setWireframeOverlayColor(SbColor(96/255., 123/255., 155/255.)); // overriden
     m_viewer->setFeedbackVisibility(true); // show frame axes in the corner
-    m_viewer->setDecoration(false); // hide controls on the sides
+//    m_viewer->setDecoration(false); // hide controls on the sides
     m_viewer->setHeadlight(false); // camera light
 
-    //    m_viewer->setAutoClipping(true);
-    //    m_viewer->setAutoClippingStrategy(SoQtViewer::CONSTANT_NEAR_PLANE, 0.1, myfunc);
+//    m_viewer->setAutoClipping(true);
+//    m_viewer->setAutoClippingStrategy(SoQtViewer::CONSTANT_NEAR_PLANE, 0.1, functionClip);
+
     m_camera = new TPerspectiveCamera;
 
     // hud menu
@@ -111,172 +110,25 @@ GraphicView::GraphicView(QWidget* parent):
 //    connect(m_viewer->getGLWidget(),SIGNAL()
 
     // do not propogate key and mouse events
-    w->setFocusPolicy(Qt::NoFocus);
-    m_viewer->getGLWidget()->setFocusPolicy(Qt::NoFocus);
-    m_viewer->getGLWidget()->setEnabled(false);
+//    w->setEnabled(false);
+//    w->setFocusPolicy(Qt::NoFocus);
+//    m_viewer->getGLWidget()->setFocusPolicy(Qt::NoFocus);
+//    m_viewer->getGLWidget()->setEnabled(false);
+m_viewer->getRenderAreaWidget()->setFocusPolicy(Qt::NoFocus);
+m_viewer->getGLWidget()->setFocusPolicy(Qt::NoFocus);
+m_viewer->getBaseWidget()->setFocusPolicy(Qt::NoFocus);
+m_viewer->getParentWidget()->setFocusPolicy(Qt::NoFocus);
+//m_viewer->getShellWidget()->setFocusPolicy(Qt::NoFocus);
+m_viewer->getWidget()->setFocusPolicy(Qt::NoFocus);
+
+//m_viewer->getOverlayWidget()->setFocusPolicy(Qt::NoFocus);
     setFocusPolicy(Qt::StrongFocus);
 //    m_filter = new KeyFilter(this);
     m_modifiersKeys = Qt::NoModifier; //delete
 
 
-    // cursors
-    QPixmap pixmap;
-    QStringList cursorNames = {
-        "ShiftA", "ShiftB",
-        "Rotation", "RotationA", "RotationB",
-        "Orbit", "OrbitA", "OrbitB"};
-
-    for (QString cn : cursorNames) {
-        pixmap.load(QString(":/images/cursors/cursor") + cn + ".png");
-        pixmap = pixmap.scaledToWidth(24, Qt::SmoothTransformation);
-        cn[0] = cn[0].toLower();
-        m_cursors[cn] = QCursor(pixmap);
-    }
-
-    // menu
-    setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(
-        this, SIGNAL(customContextMenuRequested(QPoint)),
-        this, SLOT(showContextMenu(QPoint))
-    );
-    m_menu = new QMenu(this);
-
-    // menu camera
-    QMenu* menuCamera = new QMenu("Camera", this);
-    menuCamera->setIcon(QIcon(":/images/scene/nodeCamera.png"));
-    m_menu->addMenu(menuCamera);
-
-    m_actionViewHome = new QAction("Default", this);
-    m_actionViewHome->setShortcut(QKeySequence("Ctrl+,"));
-    connect(
-        m_actionViewHome, SIGNAL(triggered()),
-        this, SLOT(onViewHome())
-    );
-    menuCamera->addAction(m_actionViewHome);
-
-    m_actionViewSelected = new QAction("Selected", this);
-    m_actionViewSelected->setShortcut(QKeySequence("Ctrl+."));
-    connect(
-        m_actionViewSelected, SIGNAL(triggered()),
-        this, SLOT(onViewSelected())
-    );
-    menuCamera->addAction(m_actionViewSelected);
-
-    m_actionViewAll = new QAction("All", this);
-    m_actionViewAll->setShortcut(QKeySequence("Ctrl+/"));
-    connect(
-        m_actionViewAll, SIGNAL(triggered()),
-        this, SLOT(onViewAll())
-    );
-    menuCamera->addAction(m_actionViewAll);
-
-    menuCamera->addSeparator();
-
-    actionViewX = new QAction("East", this);
-    actionViewX->setObjectName("actionViewX");
-    actionViewX->setIcon(QIcon(":/images/view/viewX.png"));
-    actionViewX->setShortcuts(QKeySequence::listFromString(
-        "Ctrl+3; Ctrl+Shift+3; Ctrl+Alt+3; Ctrl+Alt+Shift+3"));
-    menuCamera->addAction(actionViewX);
-
-    actionViewY = new QAction("North", this);
-    actionViewY->setObjectName("actionViewY");
-    actionViewY->setIcon(QIcon(":/images/view/viewY.png"));
-    actionViewY->setShortcuts(QKeySequence::listFromString(
-        "Ctrl+7; Ctrl+Shift+7; Ctrl+Alt+7; Ctrl+Alt+Shift+7"));
-    menuCamera->addAction(actionViewY);
-
-    actionViewZ = new QAction("Zenith", this);
-    actionViewZ->setObjectName("actionViewZ");
-    actionViewZ->setIcon(QIcon(":/images/view/viewZ.png"));
-    actionViewZ->setShortcuts(QKeySequence::listFromString(
-        "Ctrl+1; Ctrl+Shift+1; Ctrl+Alt+1; Ctrl+Alt+Shift+1"));
-    menuCamera->addAction(actionViewZ);
-
-    menuCamera->addSeparator();
-
-//    actionViewSun = new QAction(QIcon(":/images/view/viewSun.png"), "to Sun", this);
-    actionViewSun = new QAction("Sun (to)", this);
-    actionViewSun->setObjectName("actionViewSun");
-    actionViewSun->setIcon(QIcon(":/images/view/viewSun.png"));
-    actionViewSun->setShortcuts(QKeySequence::listFromString(
-        "Ctrl+9")); // 0?
-    menuCamera->addAction(actionViewSun);
-
-    actionViewSunFrom = new QAction("Sun (from)", this);
-    actionViewSunFrom->setObjectName("actionViewSunFrom");
-    actionViewSunFrom->setIcon(QIcon(":/images/view/viewSunFrom.png"));
-    actionViewSunFrom->setShortcut(QKeySequence("Ctrl+Shift+9"));
-    menuCamera->addAction(actionViewSunFrom);
-
-    actionViewSunAnchoredTo = new QAction("Sun (to, anchored)", this);
-    actionViewSunAnchoredTo->setObjectName("actionViewSunAnchoredTo");
-    actionViewSunAnchoredTo->setIcon(QIcon(":/images/view/viewSun.png"));
-    actionViewSunAnchoredTo->setShortcut(QKeySequence("Ctrl+Alt+9"));
-    menuCamera->addAction(actionViewSunAnchoredTo);
-
-    actionViewSunAnchoredFrom = new QAction("Sun (from, anchored)", this);
-    actionViewSunAnchoredFrom->setObjectName("actionViewSunAnchoredFrom");
-    actionViewSunAnchoredFrom->setIcon(QIcon(":/images/view/viewSunFrom.png"));
-    actionViewSunAnchoredFrom->setShortcut(QKeySequence("Ctrl+Alt+Shift+9"));
-    menuCamera->addAction(actionViewSunAnchoredFrom);
-
-
-    // menu show
-    QMenu* menuShow = new QMenu("Show", this);
-    m_menu->addMenu(menuShow);
-
-    actionShowRays = new QAction("Rays", this);
-    actionShowRays->setCheckable(true);
-    actionShowRays->setChecked(true);
-    actionShowRays->setShortcut(QKeySequence("Ctrl+E,R"));
-    connect(
-        actionShowRays, SIGNAL(triggered(bool)),
-        this, SLOT(onShowRays(bool))
-    );
-    menuShow->addAction(actionShowRays);
-
-    actionShowPhotons = new QAction("Photons", this);
-    actionShowPhotons->setCheckable(true);
-    actionShowPhotons->setChecked(false);
-    actionShowPhotons->setShortcut(QKeySequence("Ctrl+E,P"));
-    connect(
-        actionShowPhotons, SIGNAL(triggered(bool)),
-        this, SLOT(onShowPhotons(bool))
-    );
-    menuShow->addAction(actionShowPhotons);
-
-
-    // menu rendering
-    QMenu* menuRendering = new QMenu("Rendering", this);
-    m_menu->addMenu(menuRendering);
-
-    actionDrawMesh = new QAction("Mesh", this);
-    actionDrawMesh->setCheckable(true);
-
-    actionDrawMaterial = new QAction("Material", this);
-    actionDrawMaterial->setCheckable(true);
-    actionDrawMaterial->setChecked(true);
-
-    actionDrawMaterialMesh = new QAction("Material + Mesh", this);
-    actionDrawMaterialMesh->setCheckable(true);
-
-    actionDrawSwitch = new QAction("actionDrawSwitch", this);
-    actionDrawSwitch->setObjectName("actionDrawSwitch");
-    actionDrawSwitch->setShortcut(QKeySequence("Ctrl+Tab"));
-
-    actionViewGroup = new QActionGroup(this);
-    actionViewGroup->setObjectName("actionViewGroup");
-    actionViewGroup->addAction(actionDrawMesh);
-    actionViewGroup->addAction(actionDrawMaterial);
-    actionViewGroup->addAction(actionDrawMaterialMesh);
-//    actionViewGroup->setExclusive(false);
-
-    menuRendering->addActions(actionViewGroup->actions());
-
-    addActions(m_menu->actions()); // for shortcuts
-    addAction(actionDrawSwitch); //?
-    QMetaObject::connectSlotsByName(this);
+    initCursors();
+    initContextMenu();
 
     setStyleSheet(R"(
 QFrame {
@@ -628,6 +480,170 @@ void GraphicView::resizeEvent(QResizeEvent* event)
     int h = std::min(size.width(), size.height());
     m_camera->camera()->heightAngle = 30*gcf::degree*h/hMax;
     m_graphicRoot->updateSkyCamera(m_camera->camera());
+}
+
+void GraphicView::initCursors()
+{
+    QStringList cursorNames = {
+        "ShiftA", "ShiftB",
+        "Rotation", "RotationA", "RotationB",
+        "Orbit", "OrbitA", "OrbitB"
+    };
+
+    QPixmap pixmap;
+    for (QString cn : cursorNames) {
+        pixmap.load(QString(":/images/cursors/cursor%1.png").arg(cn));
+        pixmap = pixmap.scaledToWidth(24, Qt::SmoothTransformation);
+        cn[0] = cn[0].toLower(); // redo
+        m_cursors[cn] = QCursor(pixmap);
+    }
+}
+
+void GraphicView::initContextMenu()
+{
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(
+        this, SIGNAL(customContextMenuRequested(QPoint)),
+        this, SLOT(showContextMenu(QPoint))
+    );
+    m_menu = new QMenu(this);
+
+    // menu camera
+    QMenu* menuCamera = new QMenu("Camera", this);
+    menuCamera->setIcon(QIcon(":/images/scene/nodeCamera.png"));
+    m_menu->addMenu(menuCamera);
+
+    m_actionViewHome = new QAction("Default", this);
+    m_actionViewHome->setShortcut(QKeySequence("Ctrl+,"));
+    connect(
+        m_actionViewHome, SIGNAL(triggered()),
+        this, SLOT(onViewHome())
+    );
+    menuCamera->addAction(m_actionViewHome);
+
+    m_actionViewSelected = new QAction("Selected", this);
+    m_actionViewSelected->setShortcut(QKeySequence("Ctrl+."));
+    connect(
+        m_actionViewSelected, SIGNAL(triggered()),
+        this, SLOT(onViewSelected())
+    );
+    menuCamera->addAction(m_actionViewSelected);
+
+    m_actionViewAll = new QAction("All", this);
+    m_actionViewAll->setShortcut(QKeySequence("Ctrl+/"));
+    connect(
+        m_actionViewAll, SIGNAL(triggered()),
+        this, SLOT(onViewAll())
+    );
+    menuCamera->addAction(m_actionViewAll);
+
+    menuCamera->addSeparator();
+
+    actionViewX = new QAction("East", this);
+    actionViewX->setObjectName("actionViewX");
+    actionViewX->setIcon(QIcon(":/images/view/viewX.png"));
+    actionViewX->setShortcuts(QKeySequence::listFromString(
+        "Ctrl+3; Ctrl+Shift+3; Ctrl+Alt+3; Ctrl+Alt+Shift+3"));
+    menuCamera->addAction(actionViewX);
+
+    actionViewY = new QAction("North", this);
+    actionViewY->setObjectName("actionViewY");
+    actionViewY->setIcon(QIcon(":/images/view/viewY.png"));
+    actionViewY->setShortcuts(QKeySequence::listFromString(
+        "Ctrl+7; Ctrl+Shift+7; Ctrl+Alt+7; Ctrl+Alt+Shift+7"));
+    menuCamera->addAction(actionViewY);
+
+    actionViewZ = new QAction("Zenith", this);
+    actionViewZ->setObjectName("actionViewZ");
+    actionViewZ->setIcon(QIcon(":/images/view/viewZ.png"));
+    actionViewZ->setShortcuts(QKeySequence::listFromString(
+        "Ctrl+1; Ctrl+Shift+1; Ctrl+Alt+1; Ctrl+Alt+Shift+1"));
+    menuCamera->addAction(actionViewZ);
+
+    menuCamera->addSeparator();
+
+//    actionViewSun = new QAction(QIcon(":/images/view/viewSun.png"), "to Sun", this);
+    actionViewSun = new QAction("Sun (to)", this);
+    actionViewSun->setObjectName("actionViewSun");
+    actionViewSun->setIcon(QIcon(":/images/view/viewSun.png"));
+    actionViewSun->setShortcuts(QKeySequence::listFromString(
+        "Ctrl+9")); // 0?
+    menuCamera->addAction(actionViewSun);
+
+    actionViewSunFrom = new QAction("Sun (from)", this);
+    actionViewSunFrom->setObjectName("actionViewSunFrom");
+    actionViewSunFrom->setIcon(QIcon(":/images/view/viewSunFrom.png"));
+    actionViewSunFrom->setShortcut(QKeySequence("Ctrl+Shift+9"));
+    menuCamera->addAction(actionViewSunFrom);
+
+    actionViewSunAnchoredTo = new QAction("Sun (to, anchored)", this);
+    actionViewSunAnchoredTo->setObjectName("actionViewSunAnchoredTo");
+    actionViewSunAnchoredTo->setIcon(QIcon(":/images/view/viewSun.png"));
+    actionViewSunAnchoredTo->setShortcut(QKeySequence("Ctrl+Alt+9"));
+    menuCamera->addAction(actionViewSunAnchoredTo);
+
+    actionViewSunAnchoredFrom = new QAction("Sun (from, anchored)", this);
+    actionViewSunAnchoredFrom->setObjectName("actionViewSunAnchoredFrom");
+    actionViewSunAnchoredFrom->setIcon(QIcon(":/images/view/viewSunFrom.png"));
+    actionViewSunAnchoredFrom->setShortcut(QKeySequence("Ctrl+Alt+Shift+9"));
+    menuCamera->addAction(actionViewSunAnchoredFrom);
+
+
+    // menu show
+    QMenu* menuShow = new QMenu("Show", this);
+    m_menu->addMenu(menuShow);
+
+    actionShowRays = new QAction("Rays", this);
+    actionShowRays->setCheckable(true);
+    actionShowRays->setChecked(true);
+    actionShowRays->setShortcut(QKeySequence("Ctrl+E,R"));
+    connect(
+        actionShowRays, SIGNAL(triggered(bool)),
+        this, SLOT(onShowRays(bool))
+    );
+    menuShow->addAction(actionShowRays);
+
+    actionShowPhotons = new QAction("Photons", this);
+    actionShowPhotons->setCheckable(true);
+    actionShowPhotons->setChecked(false);
+    actionShowPhotons->setShortcut(QKeySequence("Ctrl+E,P"));
+    connect(
+        actionShowPhotons, SIGNAL(triggered(bool)),
+        this, SLOT(onShowPhotons(bool))
+    );
+    menuShow->addAction(actionShowPhotons);
+
+
+    // menu rendering
+    QMenu* menuRendering = new QMenu("Rendering", this);
+    m_menu->addMenu(menuRendering);
+
+    actionDrawMesh = new QAction("Mesh", this);
+    actionDrawMesh->setCheckable(true);
+
+    actionDrawMaterial = new QAction("Material", this);
+    actionDrawMaterial->setCheckable(true);
+    actionDrawMaterial->setChecked(true);
+
+    actionDrawMaterialMesh = new QAction("Material + Mesh", this);
+    actionDrawMaterialMesh->setCheckable(true);
+
+    actionDrawSwitch = new QAction("actionDrawSwitch", this);
+    actionDrawSwitch->setObjectName("actionDrawSwitch");
+    actionDrawSwitch->setShortcut(QKeySequence("Ctrl+Tab"));
+
+    actionViewGroup = new QActionGroup(this);
+    actionViewGroup->setObjectName("actionViewGroup");
+    actionViewGroup->addAction(actionDrawMesh);
+    actionViewGroup->addAction(actionDrawMaterial);
+    actionViewGroup->addAction(actionDrawMaterialMesh);
+//    actionViewGroup->setExclusive(false);
+
+    menuRendering->addActions(actionViewGroup->actions());
+
+    addActions(m_menu->actions()); // for shortcuts
+    addAction(actionDrawSwitch); //?
+    QMetaObject::connectSlotsByName(this);
 }
 
 void GraphicView::showContextMenu(QPoint pos)

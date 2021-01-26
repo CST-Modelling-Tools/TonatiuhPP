@@ -3,10 +3,9 @@ DESTDIR = ..
 include(../config.pri)
 
 QT += concurrent # for multithreading
-#QT += script # for scripting
 QT += qml # for scripting
 QT += printsupport # for customplot
-QT += gui # QVector3D
+QT += gui # for QVector3D
 #QT += opengl
 
 LIBS += -lTonatiuh-Kernel -lTonatiuh-Libraries -lOpengl32

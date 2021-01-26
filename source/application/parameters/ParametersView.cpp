@@ -12,7 +12,7 @@ ParametersView::ParametersView(QWidget* parent):
 
     setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    setItemDelegate(new ParametersDelegate(this));
+//    setItemDelegate(new ParametersDelegate(this));
 
     connect(
         this, SIGNAL(pressed(QModelIndex)),
