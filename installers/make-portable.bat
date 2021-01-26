@@ -3,10 +3,10 @@
 RMDIR /s /q portable
 
 SET PROJECT=%CD%\..
-SET BUILD=%PROJECT%\build-Tonatiuh-Desktop_Qt_5_14_2_MinGW_64_bit-Release
+SET BUILD=%PROJECT%\build-Tonatiuh-Desktop_Qt_5_15_2_MinGW_64_bit-Release
 SET PORTABLE=%PROJECT%\installers\portable
-SET COIN=%PROJECT%\libraries\Coin3D\bin
-SET QT=C:\Qt\Qt5.14.2\5.14.2\mingw73_64
+SET COIN=%PROJECT%\libraries\Coin3D-qt5-mingw-release\bin
+SET QT=C:\QtOnline\5.15.2\mingw81_64
 
 MD %PORTABLE%\bin
 COPY %BUILD%\*.exe %PORTABLE%\bin
@@ -18,7 +18,7 @@ FOR %%i IN (air, material, photons, random, shape, sun, trackers) DO (
 
 COPY %COIN%\*.dll %PORTABLE%\bin
 
-SET A=Qt5Concurrent, Qt5Core, Qt5Gui, Qt5OpenGL, Qt5PrintSupport, Qt5Script, Qt5Widgets
+SET A=Qt5Concurrent, Qt5Core, Qt5Gui, Qt5OpenGL, Qt5PrintSupport, Qt5Qml, Qt5Network, Qt5Widgets
 SET B=libgcc_s_seh-1, libstdc++-6, libwinpthread-1
 FOR %%i IN (%A%, %B%) DO (
 	COPY "%QT%\bin\%%i.dll" %PORTABLE%\bin

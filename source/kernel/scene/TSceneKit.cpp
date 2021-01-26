@@ -88,7 +88,7 @@ void TSceneKit::updateParents(TSeparatorKit* parent)
             updateParents(child);
         else if (TrackerKit* tracker = dynamic_cast<TrackerKit*>(node)) {
             tracker->m_parent = parent;
-            return;
+//            return;
         }
     }
 }
@@ -116,7 +116,7 @@ void TSceneKit::updateTrackers(TSeparatorKit* parent, Transform toGlobal, const 
             updateTrackers(child, t, vSun);
         else if (TrackerKit* tracker = dynamic_cast<TrackerKit*>(node)) {
             tracker->update(parent, t, vSun);
-            return;
+//            return;  // for multitrackers
         }
     }
 }

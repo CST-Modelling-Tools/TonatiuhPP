@@ -18,7 +18,7 @@ AboutDialog::AboutDialog(QWidget* parent):
     QDate date = QDate::fromString(textDate, "MMM d yyyy");
     textDate = date.toString("d MMM yyyy");
 
-    QString text = QString("Version: %1 (%2)").arg(textVersion).arg(textDate);
+    QString text = QString("Version: %1 (%2)").arg(textVersion, textDate);
 
     ui->label_version->setText(text);
 

@@ -128,7 +128,7 @@ GraphicView::GraphicView(QWidget* parent):
 
     for (QString cn : cursorNames) {
         pixmap.load(QString(":/images/cursors/cursor") + cn + ".png");
-        pixmap = pixmap.scaledToWidth(24, Qt::SmoothTransformation);
+        pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
         cn[0] = cn[0].toLower();
         m_cursors[cn] = QCursor(pixmap);
     }
