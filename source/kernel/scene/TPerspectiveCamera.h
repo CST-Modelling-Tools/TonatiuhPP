@@ -4,6 +4,8 @@
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include "libraries/math/3D/vec3d.h"
 #include <QPoint>
+#include <QSize>
+
 class SoQtExaminerViewer;
 class TSeparatorKit;
 
@@ -47,9 +49,12 @@ public:
     void zoomCenter(SoQtExaminerViewer* viewer, SoNode* root, double zoom = 0.);
     void moveCameraPlane(SoQtExaminerViewer* viewer, QPointF pos, SoNode* root, double zoom);
 
+    void setWindowSize(QSize s) {m_size = s;}
+
 protected:
     SoPerspectiveCamera* m_camera;
 
+    QSize m_size;
     vec3d m_position0;
     vec3d m_rotation0;
 

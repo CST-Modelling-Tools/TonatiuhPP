@@ -6,6 +6,7 @@
 
 #include "LineNumbers.h"
 
+// https://stackoverflow.com/questions/2443358/how-to-add-lines-numbers-to-qtextedit
 
 CodeEditor::CodeEditor(QWidget* parent):
     QPlainTextEdit(parent)
@@ -14,6 +15,20 @@ CodeEditor::CodeEditor(QWidget* parent):
 //    if (font.exactMatch())
     setFont(font);
     setTabStopDistance(4*fontMetrics().horizontalAdvance('0'));
+
+//    QTextOption qto = document()->defaultTextOption();
+//    qto.setFlags(QTextOption::ShowTabsAndSpaces);
+//    document()->setDefaultTextOption(qto);
+
+//    QTextCursor cursor = textCursor();
+//    cursor.select(QTextCursor::Document);
+//    QTextBlockFormat fmt = cursor.blockFormat();
+//    fmt.setBackground(QColor(Qt::yellow));
+//    fmt.setTopMargin(-1);
+//    fmt.setBottomMargin(-1);
+////    fmt.setLineHeight(20, QTextBlockFormat::LineDistanceHeight);
+//    cursor.setBlockFormat(fmt);
+//    setTextCursor(cursor);
 
     // numbers
     m_lineNumbers = new LineNumbers(this);
@@ -38,7 +53,7 @@ CodeEditor::CodeEditor(QWidget* parent):
 int CodeEditor::widthLineNumbers() const
 {
     int digits = 1;
-    int temp = blockCount();
+    int temp = document()->blockCount();
     while (temp >= 10) {
         temp /= 10;
         ++digits;
@@ -110,10 +125,30 @@ void CodeEditor::highlightCurrentLine()
         QTextEdit::ExtraSelection selection;
         selection.format.setBackground(QColor("#C8DBE5"));
         selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+//        selection.format.setFontStrikeOut(true);
         selection.cursor = textCursor();
         selection.cursor.clearSelection();
+//        selection.cursor.select(QTextCursor::LineUnderCursor);
         selections << selection;
     }
 
     setExtraSelections(selections);
+
+//    setLineSpacing(-2);
 }
+
+//void CodeEditor::setLineSpacing(int lineSpacing)
+//{
+//    for (QTextBlock block = this->document()->begin(); block.isValid();
+//         block = block.next()) {
+//        QTextCursor tc = QTextCursor(block);
+//        QTextBlockFormat fmt = block.blockFormat();
+//        if (fmt.topMargin() != lineSpacing
+//                || fmt.bottomMargin() != lineSpacing) {
+//            fmt.setTopMargin(lineSpacing);
+//            fmt.setBottomMargin(lineSpacing);
+//            fmt.setBackground(Qt::yellow);
+//            tc.setBlockFormat(fmt);
+//        }
+//    }
+//}

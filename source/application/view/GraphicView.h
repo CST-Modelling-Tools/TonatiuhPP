@@ -52,9 +52,9 @@ public slots:
     void on_actionDrawSwitch_triggered();
     void onShowRays(bool on);
     void onShowPhotons(bool on);
+    void hideMenu();
 
 public:
-    QWidget* m_window;
     QObject* m_filter;
 
 protected:
@@ -71,7 +71,11 @@ protected:
     void resizeEvent(QResizeEvent* event);
 
 //    void paintEvent(QPaintEvent* event);
+   bool eventFilter(QObject *obj, QEvent *event);
 
+
+    void initCursors();
+    void initContextMenu();
     void setCameraView(double azimuth, double elevation, bool shift = false, bool alt = false);
     void setCameraViewTemp(double azimuth, double elevation);
 

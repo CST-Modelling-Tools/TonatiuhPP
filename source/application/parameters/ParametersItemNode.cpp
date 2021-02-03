@@ -45,8 +45,8 @@ void ParametersItemNode::setNode(SoNode* node)
             itemP->setEditable(false);
         }
         ParametersItemField* itemV = new ParametersItemField(field);
-
         appendRow({itemP, itemV});
     }
+
     emitDataChanged();
 }

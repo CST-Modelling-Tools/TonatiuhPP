@@ -6,18 +6,66 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>726</width>
-    <height>496</height>
+    <width>597</width>
+    <height>520</height>
    </rect>
   </property>
-  <property name="acceptDrops">
-   <bool>true</bool>
+  <property name="styleSheet">
+   <string notr="true">QAbstractItemView {
+outline: 0;
+}
+
+QTreeView
+{
+border: 1;
+border-style: solid;
+border-color: #B9B9B9;
+}
+
+QAbstractItemView::item:selected {
+color: black;
+background-color: #c8dbe5;
+}
+
+QAbstractItemView::item:hover:selected {
+background-color: #c8dbe5;
+}
+
+QAbstractItemView::item:hover:!selected {
+background-color: #eeeeee;
+}
+
+QHeaderView::section
+{
+background-color: #d2dddb;
+border-width: 0 1 1 0;
+border-style: solid;
+border-color: #B9B9B9; /* #abbaba */
+padding-left: 8;
+}
+
+QHeaderView::section:last, QHeaderView::section:only-one
+{
+border-width: 0 0 1 0;
+}
+
+QToolBar::handle:horizontal {
+image: url(:/images/ui/handle.png);
+width: 8;
+}
+QToolBar::handle:vertical {
+image: url(:/images/ui/handle-v.png);
+width: 19;
+height: 8;
+}
+</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="styleSheet">
     <string notr="true">QPushButton {  
 border: none;
-padding: 3;
+padding: 2 0 2 0;
+margin: 1 1 1 0;
 }   
 
 QPushButton:hover {
@@ -26,12 +74,12 @@ background-color: #d7e3ed;
 
 QTabWidget::pane {
 margin-top: 3;
-border:none;
+border: none;
 }
 
 QTabBar::tab {
 border: none;
-padding: 1ex 2ex 1ex 2ex;
+padding: 0.5ex 1ex 0.5ex 1ex;
 color: gray;
 }
 
@@ -65,7 +113,14 @@ background-color: #d7e3ed;
       <property name="handleWidth">
        <number>5</number>
       </property>
-      <widget class="GraphicView" name="widgetView3D"/>
+      <widget class="GraphicView" name="widgetView3D">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
       <widget class="QSplitter" name="splitterV">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -78,7 +133,7 @@ background-color: #d7e3ed;
          </font>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="tabWorld">
          <attribute name="title">
@@ -207,7 +262,7 @@ background-color: #d7e3ed;
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>10</width>
+                <width>6</width>
                 <height>20</height>
                </size>
               </property>
@@ -265,7 +320,7 @@ background-color: #d7e3ed;
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>10</width>
+                <width>6</width>
                 <height>20</height>
                </size>
               </property>
@@ -298,26 +353,23 @@ background-color: #d7e3ed;
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>40</width>
+                <width>24</width>
                 <height>0</height>
                </size>
               </property>
              </spacer>
             </item>
             <item>
-             <widget class="QLineEdit" name="lineEdit">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
+             <widget class="LineEditPlaceHolder" name="lineEdit">
+              <property name="minimumSize">
                <size>
-                <width>250</width>
-                <height>16777215</height>
+                <width>80</width>
+                <height>0</height>
                </size>
               </property>
               <property name="placeholderText">
@@ -391,7 +443,7 @@ border:none;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>726</width>
+     <width>597</width>
      <height>21</height>
     </rect>
    </property>
@@ -912,6 +964,11 @@ border:none;
    <extends>QFrame</extends>
    <header>view/GraphicView.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LineEditPlaceHolder</class>
+   <extends>QLineEdit</extends>
+   <header>main/LineEditPlaceHolder.h</header>
   </customwidget>
  </customwidgets>
  <resources>

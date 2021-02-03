@@ -1,0 +1,4 @@
+https://en.wikipedia.org/wiki/List_of_installation_software
+
+build
+https://cmake.org/cmake/help/latest/guide/tutorial/index.html

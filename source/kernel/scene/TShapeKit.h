@@ -17,7 +17,7 @@ class TONATIUH_KERNEL TShapeKit: public SoBaseKit
 public:
     static void initClass();
     TShapeKit();
-    TShapeKit* copy(SbBool copyConnections) const;
+//    TShapeKit* copy(SbBool copyConnections) const;
 
     SoSFNode shapeRT;
     SoSFNode profileRT;

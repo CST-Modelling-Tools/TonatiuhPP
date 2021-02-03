@@ -18,6 +18,8 @@ public:
     
     SoField* field() const {return m_field;}
 
+    void updateData();
+
 private:
     static void updateItem(void* data, SoSensor*);
 

@@ -194,41 +194,7 @@ MainWindow::MainWindow(QString fileName, CustomSplashScreen* splash, QWidget* pa
 
     ui->centralWidget->setFocus();
 
-    setStyleSheet(R"(
-QAbstractItemView {
-outline: 0;
-}
-
-QAbstractItemView::item:selected {
-color: black;
-background-color: #c8dbe5;
-}
-
-QAbstractItemView::item:hover:selected {
-background-color: #c8dbe5;
-}
-
-QAbstractItemView::item:hover:!selected {
-background-color: #eeeeee;
-}
-
-QHeaderView::section
-{
-background-color: #d2dddb;
-border-width: 0 1 1 0;
-border-style: solid;
-border-color: #abbaba;
-padding-left: 8;
-}
-
-QHeaderView::section:last, QHeaderView::section:only-one
-{
-border-width: 0 0 1 0;
-}
-
-    )");
-
-     setAcceptDrops(true);
+    setAcceptDrops(true);
 }
 
 MainWindow::~MainWindow()
@@ -304,12 +270,14 @@ void MainWindow::SetupGraphicView()
 {
     m_graphicView << ui->widgetView3D;
     m_graphicView[0]->setSceneGraph(m_graphicsRoot);
-    m_graphicView[0]->m_window = this;
+//    m_graphicView[0]->m_window = this;
 
-    //    int q = 150*fontMetrics().xHeight();
-    //    QList<int> sizes = {rect.width() - q, q};
-//        QList<int> sizes = {500, 100, 100};
-    ui->splitterH->setStretchFactor(0, 1);
+//    QList<int> sizes = {500, 200};
+//    int q = 50*fontMetrics().xHeight();
+//    QList<int> sizes = {width() - q, q};
+//    ui->splitterH->setSizes(sizes);
+
+//    ui->splitterH->setStretchFactor(0, 1);
 
     connect(
         m_modelSelection, SIGNAL(currentChanged(QModelIndex,QModelIndex)),
@@ -667,6 +635,7 @@ void MainWindow::on_actionHelpExamples_triggered()
 //    "Tonatiuh++ files (*.tnhpp *.tnhpps);;"
     if (fileName.isEmpty()) return;
 
+    setFocus();
     fileOpen(fileName);
 }
 

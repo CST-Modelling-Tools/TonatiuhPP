@@ -8,9 +8,8 @@ LIBS += -L..
 gcc {
     CONFIG(debug, debug|release) {
 #        COINDIR = $$PWD/../libraries/Coin3D-qt5-mingw-debug
-#        LIBS += -lCoind -lSoQtd
-        COINDIR = $$PWD/../libraries/Coin3D-qt6-mingw-release
-        LIBS += -lCoin -lSoQt
+        COINDIR = $$PWD/../libraries/Coin3D-qt6-mingw-debug
+        LIBS += -lCoind -lSoQtd
     } else {
         COINDIR = $$PWD/../libraries/Coin3D-qt5-mingw-release
 #        COINDIR = $$PWD/../libraries/Coin3D-qt6-mingw-release
@@ -27,10 +26,11 @@ gcc {
 
 msvc {
     COINDIR = $$PWD/../libraries/Coin3D
+    LIBS += -lCoin4 -lSoQt1
+
     INCLUDEPATH += $$COINDIR/include
     DEFINES += COIN_DLL SOQT_DLL
     LIBS += -L$$COINDIR/lib # for linking
-    LIBS += -lCoin4 -lSoQt1
     LIBS += -L$$COINDIR/bin # for running
 
     QMAKE_CXXFLAGS_RELEASE += /arch:AVX

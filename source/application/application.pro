@@ -3,10 +3,9 @@ DESTDIR = ..
 include(../config.pri)
 
 QT += concurrent # for multithreading
-#QT += script # for scripting
 QT += qml # for scripting
 QT += printsupport # for customplot
-QT += gui # QVector3D
+QT += gui # for QVector3D
 #QT += opengl
 
 LIBS += -lTonatiuh-Kernel -lTonatiuh-Libraries -lOpengl32
@@ -28,6 +27,7 @@ HEADERS += \
     commands/CmdSetFieldText.h \
     main/CustomSplashScreen.h \
     main/Document.h \
+    main/LineEditPlaceHolder.h \
     main/MainWindow.h \
     main/PluginManager.h \
     main/UndoView.h \
@@ -91,6 +91,7 @@ SOURCES += \
     commands/CmdSetFieldText.cpp \
     main/CustomSplashScreen.cpp \
     main/Document.cpp \
+    main/LineEditPlaceHolder.cpp \
     main/MainWindow.cpp \
     main/PluginManager.cpp \
     main/UndoView.cpp \

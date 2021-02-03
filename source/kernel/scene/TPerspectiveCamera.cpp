@@ -109,13 +109,13 @@ vec3d TPerspectiveCamera::findRayGlobal0()
 
 vec3d TPerspectiveCamera::findRayGlobal(SoQtExaminerViewer* viewer, QPointF pos)
 {
-    SbVec2s vs = viewer->getViewportRegion().getViewportSizePixels();
-    double x = 2.*pos.x()/double(vs[0]) - 1;
-    double y = 2.*pos.y()/double(vs[1]) - 1;
-    if (vs[0] > vs[1])
-        x *= vs[0]/double(vs[1]);
+//    SbVec2s vs = viewer->getViewportRegion().getViewportSizePixels();
+    double x = 2.*pos.x()/double(m_size.width()) - 1;
+    double y = 2.*pos.y()/double(m_size.height()) - 1;
+    if (m_size.width() > m_size.height())
+        x *= m_size.width()/double(m_size.height());
     else
-        y *= vs[1]/double(vs[0]);
+        y *= m_size.height()/double(m_size.width());
     double z = 1./std::tan(m_camera->heightAngle.getValue()/2);
     vec3d rd(x, -y, -z);
     rd.normalize();
@@ -127,13 +127,13 @@ vec3d TPerspectiveCamera::findRayGlobal(SoQtExaminerViewer* viewer, QPointF pos)
 
 vec3d TPerspectiveCamera::findRayLocal(SoQtExaminerViewer* viewer, QPoint pos)
 {
-    SbVec2s vs = viewer->getViewportRegion().getViewportSizePixels();
-    double x = pos.x()/double(vs[0])*2 - 1;
-    double y = pos.y()/double(vs[1])*2 - 1;
-    if (vs[0] > vs[1])
-        x *= double(vs[0])/vs[1];
+//    SbVec2s vs = viewer->getViewportRegion().getViewportSizePixels();
+    double x = pos.x()/double(m_size.width())*2 - 1;
+    double y = pos.y()/double(m_size.height())*2 - 1;
+    if (m_size.width() > m_size.height())
+        x *= double(m_size.width())/m_size.height();
     else
-        y *= double(vs[1])/vs[0];
+        y *= double(m_size.height())/m_size.width();
 
     double z = 1./std::tan(m_camera->heightAngle.getValue()/2);
     vec3d d0(x, z, -y);

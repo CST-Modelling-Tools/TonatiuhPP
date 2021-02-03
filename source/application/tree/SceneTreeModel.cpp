@@ -577,12 +577,8 @@ bool SceneTreeModel::Paste(SoBaseKit* parent, SoNode* node, int row, bool isShar
     else
         child = node->copy(true);
 
-    if (!child->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId()))
-    { // material, tracker, shape
-
-    }
-    else
-    {
+    if (child->getTypeId().isDerivedFrom(SoBaseKit::getClassTypeId()))
+    { // for TSeparatorKit, TrackerKit, TShapeKit
         SoGroup* parts = (SoGroup*) parent->getPart("group", true);
         parts->insertChild(child, row);
     }
