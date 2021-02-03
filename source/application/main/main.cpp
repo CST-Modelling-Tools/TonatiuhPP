@@ -88,6 +88,7 @@ int main(int argc, char** argv)
     if (fileInfo.completeSuffix() != "tnhpps" || parser.isSet(optionWindow))
     {
         QPixmap pixmap(filePixmap);
+//        pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
         CustomSplashScreen splash(pixmap);
         splash.setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
         splash.show();

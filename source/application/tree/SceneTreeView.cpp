@@ -18,7 +18,7 @@
 SceneTreeView::SceneTreeView(QWidget* parent):
     QTreeView(parent)
 {
-    header()->setFont(font()); // resolves Qt bug
+//    header()->setFont(font()); // resolves Qt bug
 
     setEditTriggers(QAbstractItemView::DoubleClicked);
 
@@ -124,6 +124,6 @@ void SceneTreeView::startDrag(QMouseEvent* event)
 QSize SceneTreeView::sizeHint() const
 {
     QSize size = QTreeView::sizeHint();
-    size.setWidth(105*fontMetrics().xHeight());
+    size.setWidth(30*fontMetrics().xHeight());
     return size;
 }

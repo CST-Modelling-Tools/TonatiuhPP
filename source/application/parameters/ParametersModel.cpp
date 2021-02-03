@@ -25,7 +25,6 @@ void ParametersModel::setNode(SoNode* node)
     beginResetModel();
     clear();
     setHorizontalHeaderLabels({"Parameter", "Value"});
-
     if (node) {
         QString nameP = node->getName().getString();
         ParametersItemNode* itemP = new ParametersItemNode(nameP, node);

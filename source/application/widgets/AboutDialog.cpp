@@ -51,8 +51,9 @@ void AboutDialog::updateLabel()
     qApp->setWindowIcon(QIcon(fileIcon));
 
     QPixmap pixmap(filePixmap);
+    pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
     int q = fontMetrics().height();
-    ui->label->setPixmap(pixmap.scaledToWidth(42*q, Qt::SmoothTransformation));
+    ui->label->setPixmap(pixmap.scaledToHeight(22*q, Qt::SmoothTransformation));
 }
 
 void AboutDialog::on_label_customContextMenuRequested(const QPoint& pos)

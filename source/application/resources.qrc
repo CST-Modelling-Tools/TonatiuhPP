@@ -64,5 +64,7 @@
         <file>images/file/fileOpenRecent.png</file>
         <file>images/file/fileReopen.png</file>
         <file>images/edit/editPreferences.png</file>
+        <file>images/ui/handle.png</file>
+        <file>images/ui/handle-v.png</file>
     </qresource>
 </RCC>

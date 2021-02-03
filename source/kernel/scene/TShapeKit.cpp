@@ -47,8 +47,8 @@ TShapeKit::TShapeKit()
 
     m_shapeKit = new SoShapeKit;
 //    m_shapeKit->setSearchingChildren(TRUE);
+//    m_shapeKit->ref();
     m_shapeKit->setPart("material", material.getValue());
-    m_shapeKit->ref();
     SoGroup* g = (SoGroup*) topSeparator.getValue();
     g->addChild(m_shapeKit);
 
@@ -66,29 +66,38 @@ TShapeKit::TShapeKit()
     onSensor(this, 0);
 }
 
-TShapeKit* TShapeKit::copy(SbBool copyConnections) const
-{
-    TShapeKit* kit = dynamic_cast<TShapeKit*>(SoBaseKit::copy(copyConnections));
-    kit->m_shapeKit = new SoShapeKit;
-    SoGroup* g = (SoGroup*) kit->topSeparator.getValue();
-    g->removeAllChildren();
-    g->addChild(kit->m_shapeKit);
-    kit->m_shapeKit->setPart("material", kit->material.getValue());
-    return kit;
-}
+//TShapeKit* TShapeKit::copy(SbBool copyConnections) const
+//{
+//    TShapeKit* kit = dynamic_cast<TShapeKit*>(SoBaseKit::copy(copyConnections));
+//    SoGroup* g = (SoGroup*) kit->topSeparator.getValue();
+//    qDebug() << "numC copy " << g->getNumChildren();
+//    qDebug() << "pointers  " << kit->m_shapeKit << " " << g->getChild(0);
+////    kit->m_shapeKit = new SoShapeKit;
+////    kit->m_shapeKit = (SoShapeKit*) g->getChild(0);
+////    g->removeAllChildren();
+////    g->addChild(kit->m_shapeKit);
+////    kit->m_shapeKit->setPart("material", kit->material.getValue());
+//    return kit;
+//}
 
 TShapeKit::~TShapeKit()
 {
     delete m_sensor_shapeRT;
     delete m_sensor_profileRT;
     delete m_sensor_material;
-    m_shapeKit->unref();
+//    m_shapeKit->unref();
 }
 
 void TShapeKit::onSensor(void* data, SoSensor*)
 {
     TShapeKit* kit = (TShapeKit*) data;
     //    qDebug() << "called " << kit->getName();
+
+    SoGroup* g = (SoGroup*) kit->topSeparator.getValue();
+    if (kit->m_shapeKit != g->getChild(0)) {
+        kit->m_shapeKit = (SoShapeKit*) g->getChild(0);
+//        kit->m_shapeKit->setPart("material", kit->material.getValue());
+    }
 
     ShapeRT* shape = (ShapeRT*) kit->shapeRT.getValue();
     shape->updateShapeGL(kit);

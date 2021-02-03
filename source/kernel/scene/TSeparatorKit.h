@@ -18,6 +18,7 @@ class TONATIUH_KERNEL TSeparatorKit: public SoBaseKit
 public:
     static void initClass();
     TSeparatorKit();
+//    TSeparatorKit* copy(SbBool copyConnections) const;
 
     void getBoundingBox(SoGetBoundingBoxAction* action);
 //    void setCulling(bool on);

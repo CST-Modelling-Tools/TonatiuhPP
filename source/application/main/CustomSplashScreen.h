@@ -17,10 +17,13 @@ public slots:
     void setFinishWindow();
 
 private:
+    // message rect, alignment and color
     QRect m_rect;
     int m_alignment;
-    QString m_message;
     QColor m_color;
+    QString m_message;
+
+    // conditions to close
     bool m_readyTime;
     bool m_readyWindow;
 };

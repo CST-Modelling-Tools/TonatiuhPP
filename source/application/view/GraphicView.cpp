@@ -57,6 +57,7 @@
 #include <QPushButton>
 //#include <QGLWidget>
 #include <QDebug>
+#include <QWindow>
 
 //SbVec2f functionClip(void* data, const SbVec2f& nearfar)
 //{
@@ -94,7 +95,7 @@ GraphicView::GraphicView(QWidget* parent):
     m_viewer->setDrawStyle(SoQtViewer::INTERACTIVE, SoQtViewer::VIEW_SAME_AS_STILL);
     m_viewer->setTransparencyType(SoGLRenderAction::SORTED_OBJECT_SORTED_TRIANGLE_BLEND); // do not move
     m_viewer->setFeedbackVisibility(true); // show frame axes in the corner
-//    m_viewer->setDecoration(false); // hide controls on the sides
+    m_viewer->setDecoration(false); // hide controls on the sides
     m_viewer->setHeadlight(false); // camera light
 
 //    m_viewer->setAutoClipping(true);
@@ -114,15 +115,20 @@ GraphicView::GraphicView(QWidget* parent):
 //    w->setFocusPolicy(Qt::NoFocus);
 //    m_viewer->getGLWidget()->setFocusPolicy(Qt::NoFocus);
 //    m_viewer->getGLWidget()->setEnabled(false);
-m_viewer->getRenderAreaWidget()->setFocusPolicy(Qt::NoFocus);
+//m_viewer->getGLWidget()->setFocusPolicy(Qt::StrongFocus);
+QWindow * hw  = m_viewer->getGLWidget()->property("SoQtGLArea").value<QWindow*>();
+hw->installEventFilter(this);
+setFocusPolicy(Qt::StrongFocus);
+
 m_viewer->getGLWidget()->setFocusPolicy(Qt::NoFocus);
-m_viewer->getBaseWidget()->setFocusPolicy(Qt::NoFocus);
-m_viewer->getParentWidget()->setFocusPolicy(Qt::NoFocus);
+
+//m_viewer->getBaseWidget()->setFocusPolicy(Qt::NoFocus);
+//m_viewer->getParentWidget()->setFocusPolicy(Qt::NoFocus);
 //m_viewer->getShellWidget()->setFocusPolicy(Qt::NoFocus);
-m_viewer->getWidget()->setFocusPolicy(Qt::NoFocus);
+//m_viewer->getWidget()->setFocusPolicy(Qt::NoFocus);
 
 //m_viewer->getOverlayWidget()->setFocusPolicy(Qt::NoFocus);
-    setFocusPolicy(Qt::StrongFocus);
+//    w->setFocusPolicy(Qt::StrongFocus);
 //    m_filter = new KeyFilter(this);
     m_modifiersKeys = Qt::NoModifier; //delete
 
@@ -229,6 +235,11 @@ void GraphicView::currentChanged(const QModelIndex& current, const QModelIndex& 
 
 void GraphicView::mousePressEvent(QMouseEvent* event)
 {
+    if (event->button() == Qt::RightButton) {
+        showContextMenu(event->pos());
+        return;
+    }
+
 //    qDebug() << "pressed" << event->localPos();
     m_mousePressed = event->pos();
     m_modifiersPressed = event->modifiers();
@@ -241,8 +252,8 @@ void GraphicView::mousePressEvent(QMouseEvent* event)
 
     if (m_modifiersPressed & Qt::AltModifier)
     {
-        SbVec2s vs = m_viewer->getViewportRegion().getViewportSizePixels();
-        m_camera->findMoveAnchor(m_viewer, QPoint(vs[0]/2, vs[1]/2), m_graphicRoot->getScene()->getLayout());
+//        SbVec2s vs = m_viewer->getViewportRegion().getViewportSizePixels();
+        m_camera->findMoveAnchor(m_viewer, QPoint(width()/2, height()/2), m_graphicRoot->getScene()->getLayout());
         if (m_modifiersPressed & Qt::ShiftModifier) {
             qApp->changeOverrideCursor(m_cursors["orbitB"]);
             m_camera->findOrbitAnchor(m_viewer, m_mousePressed, m_graphicRoot->getScene()->getLayout());
@@ -399,6 +410,9 @@ void GraphicView::keyReleaseEvent(QKeyEvent* event)
 #include "main/MainWindow.h"
 void GraphicView::focusInEvent(QFocusEvent* /*event*/)
 {
+    QWindow * hw  = m_viewer->getGLWidget()->property("SoQtGLArea").value<QWindow*>();
+    hw->requestActivate();
+
 //    MainWindow* mw = (MainWindow*) m_window;
 //    if (mw) {
 //            mw->menuBar()->installEventFilter(m_filter);
@@ -416,6 +430,7 @@ void GraphicView::focusInEvent(QFocusEvent* /*event*/)
     setProperty("inFocus", true);
     style()->unpolish(this);
     update();
+//    qDebug() << "foc in";
 
 //        setHook();
 //    qDebug() << "disa";
@@ -451,7 +466,7 @@ void GraphicView::focusOutEvent(QFocusEvent* /*event*/)
     update();
 
     qApp->restoreOverrideCursor();
-
+//  qDebug() << "foc out";
 //    qDebug() << "ena";
 //    if (m_window)
 //        qApp->removeEventFilter(m_filter);
@@ -480,6 +495,45 @@ void GraphicView::resizeEvent(QResizeEvent* event)
     int h = std::min(size.width(), size.height());
     m_camera->camera()->heightAngle = 30*gcf::degree*h/hMax;
     m_graphicRoot->updateSkyCamera(m_camera->camera());
+    m_camera->setWindowSize(size);
+}
+
+bool GraphicView::eventFilter(QObject* obj, QEvent* event)
+{
+    if (event->type() == QEvent::MouseButtonPress ||
+        event->type() == QEvent::MouseButtonRelease ||
+        event->type() == QEvent::MouseMove ||
+        event->type() == QEvent::Wheel
+    ) {
+        QApplication::sendEvent(this, event);
+        return false;
+    }
+
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent* ke = (QKeyEvent*) event;
+//        qDebug() <<  event->type()<< " " << ke->key();
+        keyPressEvent(ke);
+        return true;
+    } else if (event->type() == QEvent::KeyRelease) {
+        QKeyEvent* ke = (QKeyEvent*) event;
+//        qDebug() <<  event->type()<< " " << ke->key();
+        keyReleaseEvent(ke);
+        return true;
+    } else if (event->type() == QEvent::FocusIn) {
+//        qDebug() << event->type();
+        QFocusEvent* ke = (QFocusEvent*)event;
+        focusInEvent(ke);
+        return true;
+
+    } else if (event->type() == QEvent::FocusOut) {
+//        qDebug() << event->type();
+        QFocusEvent* ke = (QFocusEvent*)event;
+        focusOutEvent(ke);
+        return true;
+    }
+
+    return false;
+//    return obj->eventFilter(obj, event);
 }
 
 void GraphicView::initCursors()
@@ -493,7 +547,8 @@ void GraphicView::initCursors()
     QPixmap pixmap;
     for (QString cn : cursorNames) {
         pixmap.load(QString(":/images/cursors/cursor%1.png").arg(cn));
-        pixmap = pixmap.scaledToWidth(24, Qt::SmoothTransformation);
+        pixmap = pixmap.scaledToWidth(48, Qt::SmoothTransformation);
+        pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
         cn[0] = cn[0].toLower(); // redo
         m_cursors[cn] = QCursor(pixmap);
     }
@@ -501,12 +556,17 @@ void GraphicView::initCursors()
 
 void GraphicView::initContextMenu()
 {
-    setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(
-        this, SIGNAL(customContextMenuRequested(QPoint)),
-        this, SLOT(showContextMenu(QPoint))
-    );
+//    setContextMenuPolicy(Qt::CustomContextMenu);
+//    connect(
+//        this, SIGNAL(customContextMenuRequested(QPoint)),
+//        this, SLOT(showContextMenu(QPoint))
+//    );
+
     m_menu = new QMenu(this);
+//    connect(
+//        m_menu, SIGNAL(aboutToHide()),
+//        this, SLOT(hideMenu())
+//    );
 
     // menu camera
     QMenu* menuCamera = new QMenu("Camera", this);
@@ -856,7 +916,13 @@ void GraphicView::onShowRays(bool on)
 
 void GraphicView::onShowPhotons(bool on)
 {
-     m_graphicRoot->showPhotons(on);
+    m_graphicRoot->showPhotons(on);
+}
+
+void GraphicView::hideMenu()
+{
+    QWindow * hw  = m_viewer->getGLWidget()->property("SoQtGLArea").value<QWindow*>();
+//    hw->requestActivate();
 }
 
 //void MainWindow::showGrid() //?

@@ -33,6 +33,19 @@ TSeparatorKit::TSeparatorKit()
     SO_KIT_INIT_INSTANCE();
 }
 
+//// finish!
+//TSeparatorKit* TSeparatorKit::copy(SbBool copyConnections) const
+//{
+//    TSeparatorKit* kit = dynamic_cast<TSeparatorKit*>(SoBaseKit::copy(copyConnections));
+////    kit->m_shapeKit = new SoShapeKit;
+////    SoGroup* g = (SoGroup*) kit->topSeparator.getValue();
+////    g->removeAllChildren();
+////    g->addChild(kit->m_shapeKit);
+////    kit->m_shapeKit->setPart("material", kit->material.getValue());
+
+//    return kit;
+//}
+
 // use bounding box in world coordinates ?
 void TSeparatorKit::getBoundingBox(SoGetBoundingBoxAction* action)
 {

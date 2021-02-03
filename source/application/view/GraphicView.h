@@ -52,6 +52,7 @@ public slots:
     void on_actionDrawSwitch_triggered();
     void onShowRays(bool on);
     void onShowPhotons(bool on);
+    void hideMenu();
 
 public:
     QObject* m_filter;
@@ -70,6 +71,8 @@ protected:
     void resizeEvent(QResizeEvent* event);
 
 //    void paintEvent(QPaintEvent* event);
+   bool eventFilter(QObject *obj, QEvent *event);
+
 
     void initCursors();
     void initContextMenu();

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QTextEdit>
-#include <QPLainTextEdit>
+#include <QPlainTextEdit>
 
 
 class CodeEditor: public QPlainTextEdit
@@ -21,6 +21,8 @@ private slots:
     void updateLineNumbersWidth(int newBlockCount);
     void updateLineNumbersRect(const QRect& rect, int dy);
     void highlightCurrentLine();
+
+//    void setLineSpacing(int lineSpacing);
 
 private:
      QWidget* m_lineNumbers;

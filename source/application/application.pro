@@ -27,6 +27,7 @@ HEADERS += \
     commands/CmdSetFieldText.h \
     main/CustomSplashScreen.h \
     main/Document.h \
+    main/LineEditPlaceHolder.h \
     main/MainWindow.h \
     main/PluginManager.h \
     main/UndoView.h \
@@ -90,6 +91,7 @@ SOURCES += \
     commands/CmdSetFieldText.cpp \
     main/CustomSplashScreen.cpp \
     main/Document.cpp \
+    main/LineEditPlaceHolder.cpp \
     main/MainWindow.cpp \
     main/PluginManager.cpp \
     main/UndoView.cpp \
