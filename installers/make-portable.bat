@@ -1,12 +1,15 @@
+@REM cmd reference https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/windows-commands
+
 @ECHO OFF
 
-RMDIR /s /q portable
+@REM remove directory "portable" (with subdirectories, quiet mode)
+RMDIR portable /s /q
 
 SET PROJECT=%CD%\..
-SET BUILD=%PROJECT%\build-Tonatiuh-Desktop_Qt_5_14_2_MinGW_64_bit-Release
+SET BUILD=%PROJECT%\build-Tonatiuh-Desktop_Qt_6_0_0_MinGW_64_bit-Release
 SET PORTABLE=%PROJECT%\installers\portable
-SET COIN=%PROJECT%\libraries\Coin3D\bin
-SET QT=C:\Qt\Qt5.14.2\5.14.2\mingw73_64
+SET COIN=%PROJECT%\libraries\Coin3D-qt6-mingw-release\bin
+SET QT=C:\QtOnline\6.0.0\mingw81_64
 
 MD %PORTABLE%\bin
 COPY %BUILD%\*.exe %PORTABLE%\bin
@@ -18,7 +21,7 @@ FOR %%i IN (air, material, photons, random, shape, sun, trackers) DO (
 
 COPY %COIN%\*.dll %PORTABLE%\bin
 
-SET A=Qt5Concurrent, Qt5Core, Qt5Gui, Qt5OpenGL, Qt5PrintSupport, Qt5Script, Qt5Widgets
+SET A=Qt6Concurrent, Qt6Core, Qt6Gui, Qt6OpenGL, Qt6PrintSupport, Qt6Qml, Qt6Network, Qt6Widgets
 SET B=libgcc_s_seh-1, libstdc++-6, libwinpthread-1
 FOR %%i IN (%A%, %B%) DO (
 	COPY "%QT%\bin\%%i.dll" %PORTABLE%\bin
@@ -33,14 +36,16 @@ COPY %QT%\plugins\imageformats\qico.dll %PORTABLE%\bin\imageformats\qico.dll
 COPY %QT%\plugins\imageformats\qjpeg.dll %PORTABLE%\bin\imageformats\qjpeg.dll
 
 MD %PORTABLE%\resources
+@REM copy directory (with empty subdirectories)
 XCOPY %PROJECT%\resources %PORTABLE%\resources /e
 
 MD %PORTABLE%\examples
-XCOPY %PROJECT%\examples %PORTABLE%\examples /e /exclude:exclude.txt
+@REM copy directory (exclude python file)
+XCOPY %PROJECT%\examples %PORTABLE%\examples /e /exclude:exclude.txt /q
 
 MD %PORTABLE%\help\html
-XCOPY %PROJECT%\help\html %PORTABLE%\help\html /e
-XCOPY %PROJECT%\help\license.txt %PORTABLE%\help
+XCOPY %PROJECT%\help\html %PORTABLE%\help\html /e /q
+XCOPY %PROJECT%\help\license.txt %PORTABLE%\help\
 
 @ECHO ON
 @PAUSE

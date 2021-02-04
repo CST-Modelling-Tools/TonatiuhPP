@@ -26,9 +26,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.3075615"
-     inkscape:cx="600.10382"
-     inkscape:cy="718.64409"
+     inkscape:zoom="0.615123"
+     inkscape:cx="787.64522"
+     inkscape:cy="731.04358"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -223,7 +223,7 @@
          y="266.85385"
          style="font-weight:bold;fill:#4f6a80;fill-opacity:0.576071;stroke-width:0.264583">*</tspan></text>
     <rect
-       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\info.png"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\about\info.png"
        style="opacity:1;fill:#96b8ab;fill-opacity:0.00392157;stroke:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
        id="rect871"
        width="57.665928"
@@ -233,14 +233,14 @@
        inkscape:export-xdpi="28.189966"
        inkscape:export-ydpi="28.189966" />
     <rect
-       style="opacity:1;fill:#45759c;fill-opacity:0.941176;stroke:none;stroke-width:4.42383;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       style="opacity:1;fill:#6b89a1;fill-opacity:0.941176;stroke:none;stroke-width:4.42383;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
        id="rect4583"
        width="48.341904"
        height="48.341904"
        x="249.34851"
        y="219.91451"
        ry="6.8177595"
-       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\info.png"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\about\info.png"
        inkscape:export-xdpi="28.189966"
        inkscape:export-ydpi="28.189966" />
     <text
@@ -249,7 +249,7 @@
        x="272.5907"
        y="259.86243"
        id="text4581"
-       inkscape:export-filename="C:\Users\v.grigoriev\Desktop\info.png"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\about\info.png"
        inkscape:export-xdpi="28.189966"
        inkscape:export-ydpi="28.189966"><tspan
          sodipodi:role="line"
