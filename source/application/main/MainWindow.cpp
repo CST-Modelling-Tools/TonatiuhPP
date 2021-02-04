@@ -2702,3 +2702,10 @@ void MainWindow::on_actionSunPosition_triggered()
 //    );
     dialog.exec();
 }
+
+#include "updater/UpdateDialog.h"
+void MainWindow::on_action_Updates_triggered()
+{
+    UpdateDialog dialog(this);
+    dialog.exec();
+}

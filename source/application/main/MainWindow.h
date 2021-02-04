@@ -188,6 +188,8 @@ private slots:
 
     void on_actionSunPosition_triggered();
 
+    void on_action_Updates_triggered();
+
 signals:
     void Abort(QString error);
 
