@@ -1,5 +1,6 @@
 #include "FileDownloader.h"
 
+
 FileDownloader::FileDownloader(QUrl imageUrl, QObject* parent):
     QObject(parent)
 {
@@ -14,7 +15,11 @@ FileDownloader::FileDownloader(QUrl imageUrl, QObject* parent):
 
 void FileDownloader::fileDownloaded(QNetworkReply* pReply)
 {
-    m_data = pReply->readAll();
+    if (pReply->error())
+        m_status = pReply->errorString();
+    else
+        m_data = pReply->readAll();
+
     pReply->deleteLater();
     emit downloaded();
 }

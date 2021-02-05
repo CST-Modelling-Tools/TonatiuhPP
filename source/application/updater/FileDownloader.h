@@ -14,6 +14,7 @@ public:
     explicit FileDownloader(QUrl imageUrl, QObject* parent = 0);
     virtual ~FileDownloader() {}
 
+    QString status() const {return m_status;}
     QByteArray downloadedData() const {return m_data;}
 
 signals:
@@ -24,5 +25,6 @@ private slots:
 
 private:
     QNetworkAccessManager m_manager;
+    QString m_status;
     QByteArray m_data;
 };

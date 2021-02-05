@@ -34,7 +34,7 @@ bool UpdateReader::checkUpdates(const QString& data)
         return false;
     }
 
-     return true;
+    return true;
 }
 
 bool UpdateReader::isNewer()

@@ -40,7 +40,7 @@
          id="lpe_path-effect905"
          style="fill:#000000;fill-opacity:0.271386;fill-rule:evenodd;stroke:none;stroke-width:5.69997;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.19764;paint-order:markers stroke fill"
          class="powerclip"
-         d="m 361.92149,213.26593 h 56.30381 v 56.30381 h -56.30381 z m -3.19242,25.13406 v 10.00056 l 25.05511,-0.6452 13.22652,-3.54858 h 27.20576 l -1.29037,-11.29095 -24.84007,0.53767 -12.36625,4.9465 z" />
+         d="m 361.61669,212.96113 h 56.91341 v 56.91341 h -56.91341 z m -2.88762,25.43886 v 10.00056 l 25.05511,-0.6452 13.22652,-3.54858 h 27.20576 l -1.29037,-11.29095 -24.84007,0.53767 -12.36625,4.9465 z" />
     </clipPath>
   </defs>
   <sodipodi:namedview
@@ -50,9 +50,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.15378075"
-     inkscape:cx="2297.8218"
-     inkscape:cy="1137.3197"
+     inkscape:zoom="0.43495764"
+     inkscape:cx="1118.0182"
+     inkscape:cy="938.56837"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -293,18 +293,19 @@
        inkscape:export-ydpi="28.189966" />
     <path
        id="path881"
-       style="fill:none;fill-opacity:0.389381;fill-rule:evenodd;stroke:#598056;stroke-width:5.7;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
+       style="fill:none;fill-opacity:0.389381;fill-rule:evenodd;stroke:#598056;stroke-width:5.75613063;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill"
        d="m 410.3753,241.41783 a 20.301905,20.301905 0 0 1 -20.30191,20.30191 20.301905,20.301905 0 0 1 -20.3019,-20.30191 20.301905,20.301905 0 0 1 20.3019,-20.3019 20.301905,20.301905 0 0 1 20.30191,20.3019 z"
        clip-path="url(#clipPath901)"
        inkscape:path-effect="#path-effect905"
        inkscape:original-d="m 410.3753,241.41783 a 20.301905,20.301905 0 0 1 -20.30191,20.30191 20.301905,20.301905 0 0 1 -20.3019,-20.30191 20.301905,20.301905 0 0 1 20.3019,-20.3019 20.301905,20.301905 0 0 1 20.30191,20.3019 z"
        inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\about\update.png"
        inkscape:export-xdpi="28.189966"
-       inkscape:export-ydpi="28.189966" />
+       inkscape:export-ydpi="28.189966"
+       transform="matrix(0.90338464,0,0,0.90338464,37.684499,23.35481)" />
     <path
        id="rect876"
        style="fill:#598056;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2.5;paint-order:markers stroke fill"
-       d="m 366.43639,247.31777 h 18.02227 l -18.02227,18.02225 z"
+       d="m 368.71751,246.77788 h 16.28104 l -16.28104,16.28103 z"
        sodipodi:nodetypes="cccc"
        inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\about\update.png"
        inkscape:export-xdpi="28.189966"
@@ -312,7 +313,7 @@
     <path
        id="path879"
        style="fill:#598056;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2.5;paint-order:markers stroke fill"
-       d="M 413.6569,236.14177 H 395.63463 L 413.6569,218.11952 Z"
+       d="m 411.37579,236.68166 h -16.28104 l 16.28104,-16.28103 z"
        sodipodi:nodetypes="cccc"
        inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\application\images\about\update.png"
        inkscape:export-xdpi="28.189966"

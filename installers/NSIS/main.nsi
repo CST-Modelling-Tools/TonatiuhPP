@@ -4,8 +4,9 @@
 !define DESCRIPTION "Ray tracing for Solar Energy (Open Source)"
 !define VERSION_MAJOR 0
 !define VERSION_MINOR 1
-!define VERSION_BUILD 7
-!define VERSION_NAME "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BUILD}"
+!define VERSION_BUILD 8
+!define VERSION_SUB_BUILD 1
+!define VERSION_NAME "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_BUILD}.${VERSION_SUB_BUILD}"
 !define /date VERSION_DATE "%Y.%m.%d"
 
 #!define ISBUILDTEST 
@@ -184,6 +185,24 @@ InstType "Full"
 InstType "Minimal"
 
 
+
+; !include "LogicLib.nsh"
+
+; Section ""
+; StrCpy $1 "Tonatiuh-Application.exe"
+
+; nsProcess::_FindProcess "$1"
+; Pop $R0
+; ${If} $R0 = 0
+	; nsProcess::_KillProcess "$1"
+	; Pop $R0
+	; Sleep 500
+; ${EndIf}
+
+; SectionEnd
+  
+  
+  
 Section "Tonatiuh" SectionTonatiuh
 	SectionIn RO ; read only, always installed
 	#SectionIn 1 2

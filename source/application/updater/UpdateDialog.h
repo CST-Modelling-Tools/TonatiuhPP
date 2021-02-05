@@ -15,14 +15,16 @@ public:
     explicit UpdateDialog(QWidget* parent = 0);
     ~UpdateDialog();
 
+    void checkUpdates();
+
 private slots:
     void onUpdates();
-    void on_buttonDownload_pressed();
+    void on_downloadButton_pressed();
     void onDownloaded();
 
 private:
     Ui::UpdateDialog* ui;
-    QString m_path;
+    QString m_serverPath;
     QString m_update;
     FileDownloader* m_downloader;
 };

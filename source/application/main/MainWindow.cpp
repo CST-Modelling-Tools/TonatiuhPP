@@ -2425,12 +2425,12 @@ void MainWindow::readSettings()
     Qt::WindowStates ws = Qt::WindowNoState;
     if (settings.value("windowNoState", false).toBool())
         ws ^= Qt::WindowNoState;
-    if (settings.value("windowMinimized", false).toBool())
-        ws ^= Qt::WindowMinimized;
+//    if (settings.value("windowMinimized", false).toBool())
+//        ws ^= Qt::WindowMinimized;
     if (settings.value("windowMaximized", true).toBool())
         ws ^= Qt::WindowMaximized;
-    if (settings.value("windowFullScreen", false).toBool())
-        ws ^= Qt::WindowFullScreen;
+//    if (settings.value("windowFullScreen", false).toBool())
+//        ws ^= Qt::WindowFullScreen;
     if (settings.value("windowActive", false).toBool())
         ws ^= Qt::WindowActive;
     setWindowState(ws);
@@ -2456,9 +2456,9 @@ void MainWindow::writeSettings()
 
     Qt::WindowStates ws = windowState();
     settings.setValue("windowNoState", ws.testFlag(Qt::WindowNoState));
-    settings.setValue("windowMinimized", ws.testFlag(Qt::WindowMinimized));
+//    settings.setValue("windowMinimized", ws.testFlag(Qt::WindowMinimized));
     settings.setValue("windowMaximized", ws.testFlag(Qt::WindowMaximized));
-    settings.setValue("windowFullScreen", ws.testFlag(Qt::WindowFullScreen));
+//    settings.setValue("windowFullScreen", ws.testFlag(Qt::WindowFullScreen));
     settings.setValue("windowActive", ws.testFlag(Qt::WindowActive));
 
     settings.setValue("recentFiles", m_filesRecent);
