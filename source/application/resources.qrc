@@ -66,5 +66,6 @@
         <file>images/edit/editPreferences.png</file>
         <file>images/ui/handle.png</file>
         <file>images/ui/handle-v.png</file>
+        <file>images/about/update.png</file>
     </qresource>
 </RCC>

@@ -1,23 +1,27 @@
+@REM cmd reference https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/windows-commands
+
 @ECHO OFF
 
-RMDIR /s /q packages
+@REM remove directory "packages" (with subdirectories, quiet mode)
+RMDIR packages /s /q 
 
 SET PROJECT=%CD%\..
-SET BUILD=%PROJECT%\build-Tonatiuh-Desktop_Qt_5_14_2_MinGW_64_bit-Release
-SET PACKAGE=%PROJECT%\install\packages\main
-SET COIN=%PROJECT%\libraries\Coin3D\bin
-SET QT=C:\Qt\Qt5.14.2\5.14.2\mingw73_64
+SET BUILD=%PROJECT%\build-Tonatiuh-Desktop_Qt_6_0_0_MinGW_64_bit-Release
+SET PACKAGES_IN=%PROJECT%\source\installer\packages
+SET PACKAGES_OUT=%PROJECT%\installers\packages
+SET COIN=%PROJECT%\libraries\Coin3D-qt6-mingw-release\bin
+SET QT=C:\QtOnline\6.0.0\mingw81_64
 
-
-
-SET DATA=%PACKAGE%\data
-SET META=%PACKAGE%\meta
+SET PACKAGE=main
+SET PACKAGE_IN=%PACKAGES_IN%\%PACKAGE%
+SET PACKAGE_OUT=%PACKAGES_OUT%\%PACKAGE%
+SET DATA=%PACKAGE_OUT%\data
+SET META=%PACKAGE_OUT%\meta
 MD %DATA%
-COPY %PROJECT%\source\installer\packages\main\data\* %DATA%
+COPY %PACKAGE_IN%\data\* %DATA%
 MD %META%
-COPY %PROJECT%\source\installer\packages\main\meta\* %META%
-
-
+COPY %PACKAGE_IN%\meta\* %META%
+REM without *?
 
 MD %DATA%\bin
 COPY %BUILD%\*.exe %DATA%\bin
@@ -29,7 +33,7 @@ FOR %%i IN (air, material, photons, random, shape, sun, trackers) DO (
 
 COPY %COIN%\*.dll %DATA%\bin
 
-SET A=Qt5Concurrent, Qt5Core, Qt5Gui, Qt5OpenGL, Qt5PrintSupport, Qt5Script, Qt5Widgets
+SET A=Qt6Concurrent, Qt6Core, Qt6Gui, Qt6OpenGL, Qt6PrintSupport, Qt6Qml, Qt6Network, Qt6Widgets
 SET B=libgcc_s_seh-1, libstdc++-6, libwinpthread-1
 FOR %%i IN (%A%, %B%) DO (
 	COPY "%QT%\bin\%%i.dll" %DATA%\bin
@@ -42,24 +46,27 @@ MD %DATA%\bin\imageformats
 COPY %QT%\plugins\imageformats\qico.dll %DATA%\bin\imageformats\qico.dll
 COPY %QT%\plugins\imageformats\qjpeg.dll %DATA%\bin\imageformats\qjpeg.dll
 
-MD %DATA%\examples
-XCOPY %PROJECT%\examples %DATA%\examples /e /exclude:exclude.txt
-
-MD %DATA%\images
-XCOPY %PROJECT%\images %DATA%\images /E
+MD %DATA%\resources
+@REM copy directory (with empty subdirectories)
+XCOPY %PROJECT%\resources %DATA%\resources /e
 
 MD %DATA%\help\html
-XCOPY %PROJECT%\help\html %DATA%\help\html /E
+XCOPY %PROJECT%\help\html %DATA%\help\html /e /q
+XCOPY %PROJECT%\help\license.txt %DATA%\help\
 
-
-SET PACKAGE=%PROJECT%\install\packages\examples
-SET DATA=%PACKAGE%\data
-SET META=%PACKAGE%\meta
+SET PACKAGE=examples
+SET PACKAGE_IN=%PACKAGES_IN%\%PACKAGE%
+SET PACKAGE_OUT=%PACKAGES_OUT%\%PACKAGE%
+SET DATA=%PACKAGE_OUT%\data
+SET META=%PACKAGE_OUT%\meta
 MD %DATA%
-COPY %PROJECT%\source\installer\packages\examples\data\* %DATA%
+COPY %PACKAGE_IN%\data\* %DATA%
 MD %META%
-COPY %PROJECT%\source\installer\packages\examples\meta\* %META%
+COPY %PACKAGE_IN%\meta\* %META%
 
+MD %DATA%\examples
+@REM copy directory (exclude python files)
+XCOPY %PROJECT%\examples %DATA%\examples /e /exclude:exclude.txt /q
 
 @ECHO ON
 @PAUSE

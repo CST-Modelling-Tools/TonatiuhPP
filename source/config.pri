@@ -1,5 +1,5 @@
 # Tonatiuh
-VERSION = 0.1.8.0
+VERSION = 0.1.8.1
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 INCLUDEPATH += $$PWD
 LIBS += -L..
@@ -11,8 +11,8 @@ gcc {
         COINDIR = $$PWD/../libraries/Coin3D-qt6-mingw-debug
         LIBS += -lCoind -lSoQtd
     } else {
-        COINDIR = $$PWD/../libraries/Coin3D-qt5-mingw-release
-#        COINDIR = $$PWD/../libraries/Coin3D-qt6-mingw-release
+#        COINDIR = $$PWD/../libraries/Coin3D-qt5-mingw-release
+        COINDIR = $$PWD/../libraries/Coin3D-qt6-mingw-release
         LIBS += -lCoin -lSoQt
     }
     INCLUDEPATH += $$COINDIR/include

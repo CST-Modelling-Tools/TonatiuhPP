@@ -7,6 +7,7 @@ QT += qml # for scripting
 QT += printsupport # for customplot
 QT += gui # for QVector3D
 #QT += opengl
+#QT += network # for updater
 
 LIBS += -lTonatiuh-Kernel -lTonatiuh-Libraries -lOpengl32
 
@@ -57,6 +58,9 @@ HEADERS += \
     tree/SceneTreeModel.h \
     tree/SceneTreeView.h \
     tree/SoPathVariant.h \
+    updater/FileDownloader.h \
+    updater/UpdateDialog.h \
+    updater/UpdateReader.h \
     view/GraphicRoot.h \
     view/GraphicView.h \
     view/GridNode3D.h \
@@ -122,6 +126,9 @@ SOURCES += \
     tree/SceneTreeModel.cpp \
     tree/SceneTreeView.cpp \
     tree/SoPathVariant.cpp \
+    updater/FileDownloader.cpp \
+    updater/UpdateDialog.cpp \
+    updater/UpdateReader.cpp \
     view/GraphicRoot.cpp \
     view/GraphicView.cpp \
     view/GridNode3D.cpp \
@@ -150,6 +157,7 @@ FORMS += \
     parameters/ParametersEditor.ui \
     script/AboutScriptDialog.ui \
     script/ScriptWindow.ui \
+    updater/UpdateDialog.ui \
     widgets/AboutDialog.ui \
     widgets/AirDialog.ui \
     widgets/HelpDialog.ui \

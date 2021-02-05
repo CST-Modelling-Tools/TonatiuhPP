@@ -524,6 +524,7 @@ border:none;
     <addaction name="actionHelpDocumentation"/>
     <addaction name="actionHelpExamples"/>
     <addaction name="actionHelpAbout"/>
+    <addaction name="action_Updates"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -943,6 +944,15 @@ border:none;
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+O</string>
+   </property>
+  </action>
+  <action name="action_Updates">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/images/about/update.png</normaloff>:/images/about/update.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Updates...</string>
    </property>
   </action>
  </widget>
