@@ -1,0 +1,17 @@
+msys2
+https://wiki.qt.io/Compiling_OpenSSL_with_MinGW
+
+mingw
+export PATH="/C/Qt/Tools/mingw810_64/bin:$PATH"
+which gcc
+
+build
+cd /C/Users/../openssl-OpenSSL_1_1_1g 
+./Configure --prefix=$PWD/dist no-idea no-mdc2 no-rc5 shared mingw64
+mingw32-make depend && mingw32-make && mingw32-make install
+
+	
+qDebug() << QSslSocket::supportsSsl() << QSslSocket::sslLibraryBuildVersionString() << QSslSocket::sslLibraryVersionString();
+false "OpenSSL 1.1.1g  21 Apr 2020" ""
+download the same version
+https://github.com/openssl/openssl/releases

@@ -6,32 +6,80 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>580</width>
-    <height>220</height>
+    <width>523</width>
+    <height>367</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Checking for updates</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,0">
+  <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <widget class="QLabel" name="serverLabel">
      <property name="text">
-      <string>Server: </string>
+      <string>Server</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="resultLabel">
+     <property name="text">
+      <string>Result</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="passwordLabel">
+     <property name="text">
+      <string>Password</string>
      </property>
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="resultLabel">
+    <widget class="QLabel" name="userLabel">
      <property name="text">
-      <string>Result:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      <string>Username</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="userEdit"/>
+   </item>
+   <item row="0" column="3">
+    <widget class="QPushButton" name="checkButton">
+     <property name="text">
+      <string>Check</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="passwordEdit">
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <widget class="QLineEdit" name="serverEdit">
+     <property name="text">
+      <string>https://</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3">
     <widget class="QPushButton" name="downloadButton">
      <property name="enabled">
       <bool>false</bool>
@@ -41,34 +89,8 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>219</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="1" column="1" colspan="2">
+   <item row="3" column="1" rowspan="2" colspan="2">
     <widget class="QPlainTextEdit" name="resultText">
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-     <property name="plainText">
-      <string>No updates</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" colspan="2">
-    <widget class="QLineEdit" name="serverEdit">
-     <property name="text">
-      <string>https://</string>
-     </property>
      <property name="readOnly">
       <bool>true</bool>
      </property>
@@ -76,6 +98,14 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>serverEdit</tabstop>
+  <tabstop>userEdit</tabstop>
+  <tabstop>passwordEdit</tabstop>
+  <tabstop>resultText</tabstop>
+  <tabstop>checkButton</tabstop>
+  <tabstop>downloadButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

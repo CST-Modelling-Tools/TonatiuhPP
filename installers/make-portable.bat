@@ -6,10 +6,10 @@
 RMDIR portable /s /q
 
 SET PROJECT=%CD%\..
-SET BUILD=%PROJECT%\build-Tonatiuh-Desktop_Qt_6_0_0_MinGW_64_bit-Release
+SET BUILD=%PROJECT%\build-Tonatiuh-Desktop_Qt_6_0_1_MinGW_64_bit-Release
 SET PORTABLE=%PROJECT%\installers\portable
 SET COIN=%PROJECT%\libraries\Coin3D-qt6-mingw-release\bin
-SET QT=C:\QtOnline\6.0.0\mingw81_64
+SET QT=C:\Qt\6.0.1\mingw81_64
 
 MD %PORTABLE%\bin
 COPY %BUILD%\*.exe %PORTABLE%\bin
@@ -25,6 +25,11 @@ SET A=Qt6Concurrent, Qt6Core, Qt6Gui, Qt6OpenGL, Qt6PrintSupport, Qt6Qml, Qt6Net
 SET B=libgcc_s_seh-1, libstdc++-6, libwinpthread-1
 FOR %%i IN (%A%, %B%) DO (
 	COPY "%QT%\bin\%%i.dll" %PORTABLE%\bin
+)
+
+SET A=libssl-1_1-x64, libcrypto-1_1-x64
+FOR %%i IN (%A%) DO (
+	COPY "%QT%\..\..\Tools\OpenSSL\Win_x64\bin\%%i.dll" %PORTABLE%\bin
 )
 
 MD %PORTABLE%\bin\platforms
