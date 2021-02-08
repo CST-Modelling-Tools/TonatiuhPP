@@ -18,13 +18,14 @@ public:
     void checkUpdates();
 
 private slots:
+    void on_checkButton_pressed();
     void onUpdates();
-    void on_downloadButton_pressed();
+
     void onDownloaded();
+    void on_downloadButton_pressed();
 
 private:
     Ui::UpdateDialog* ui;
-    QString m_serverPath;
     QString m_update;
     FileDownloader* m_downloader;
 };

@@ -1,11 +1,15 @@
-add in CMake config
+"Build Settings / CMake / Initial CMake parameters":
+(separately for debug and release)
+(clear previos config "Clear CMake Configuration", "Run CMake")
 
-for Coin
+for Coin3D
 -DBOOST_ROOT:STRING=C:/Users/Victor/Neo/Programming/Qt/Projects/Boost/boost_1_72_0
 -DCMAKE_INSTALL_PREFIX:PATH=C:/Users/Victor/Neo/Programming/Qt/Libraries/Coin/Coin3D-qt6-mingw-release
-
 
 for SoQt
 -DBOOST_ROOT:STRING=C:/Users/Victor/Neo/Programming/Qt/Projects/Boost/boost_1_72_0
 -DCMAKE_INSTALL_PREFIX:PATH=C:/Users/Victor/Neo/Programming/Qt/Libraries/Coin/Coin3D-qt6-mingw-release
 -DCoin_DIR:PATH=C:/Users/Victor/Neo/Programming/Qt/Libraries/Coin/Coin3D-qt6-mingw-release/lib/cmake/Coin-4.0.1
+
+"Build Steps / Targets":
+all + install

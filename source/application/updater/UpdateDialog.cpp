@@ -11,10 +11,10 @@ UpdateDialog::UpdateDialog(QWidget* parent):
 {
     ui->setupUi(this);
 
-    m_serverPath = "file:///C:/Users/Victor/Neo/Programming/Qt/Projects/Tonatiuh2020/releases/";
-    ui->serverEdit->setText(m_serverPath);
-
-    checkUpdates();
+//    m_serverPath = "file:///C:/Users/Victor/Neo/Programming/Qt/Projects/Tonatiuh2020/releases/";
+//    m_serverPath = "https://scmt.cyi.ac.cy/bitbucket/projects/TNH/repos/main/browse/releases/";
+    QString temp = "https://scmt.cyi.ac.cy/bitbucket/login?j_username=%1&j_password=%2&next=/projects/TNH/repos/main/raw/releases/";
+    ui->serverEdit->setText(temp);
 }
 
 UpdateDialog::~UpdateDialog()
@@ -22,10 +22,11 @@ UpdateDialog::~UpdateDialog()
     delete ui;
 }
 
-void UpdateDialog::checkUpdates()
+void UpdateDialog::on_checkButton_pressed()
 {
-    QUrl urlUpdates(m_serverPath + "updates.xml");
-    m_downloader = new FileDownloader(urlUpdates, this);
+    QString temp = (ui->serverEdit->text() + "updates.xml").arg(ui->userEdit->text(), ui->passwordEdit->text());
+    QUrl url(temp);
+    m_downloader = new FileDownloader(url, this);
 
     connect(
         m_downloader, SIGNAL(downloaded()),
@@ -35,10 +36,13 @@ void UpdateDialog::checkUpdates()
 
 void UpdateDialog::onUpdates()
 {
+//    qDebug() << QSslSocket::supportsSsl() << QSslSocket::sslLibraryBuildVersionString() << QSslSocket::sslLibraryVersionString();
+
     if (!m_downloader->status().isEmpty())
     {
         QString t = "Connection failed:\n" + m_downloader->status();
         ui->resultText->setPlainText(t);
+        m_downloader->deleteLater();
         return;
     }
 
@@ -47,6 +51,7 @@ void UpdateDialog::onUpdates()
     {
         QString t = "Update failed:\n" + reader.m_message;
         ui->resultText->setPlainText(t);
+        m_downloader->deleteLater();
         return;
     }
     if (!reader.isNewer())
@@ -55,6 +60,7 @@ void UpdateDialog::onUpdates()
             .arg(reader.m_date.toString("d MMM yyyy"))
             .arg(reader.m_path);
         ui->resultText->setPlainText(t);
+        m_downloader->deleteLater();
         return;
     }
     QString t = QString("New update (%1):\n%2")
@@ -69,8 +75,9 @@ void UpdateDialog::onUpdates()
 
 void UpdateDialog::on_downloadButton_pressed()
 {
-    QUrl urlUpdates(m_serverPath + m_update);
-    m_downloader = new FileDownloader(urlUpdates, this);
+    QString temp = (ui->serverEdit->text() + m_update).arg(ui->userEdit->text(), ui->passwordEdit->text());
+    QUrl url(temp);
+    m_downloader = new FileDownloader(url, this);
 
     connect(
         m_downloader, SIGNAL(downloaded()),

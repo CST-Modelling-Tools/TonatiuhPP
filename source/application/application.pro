@@ -7,7 +7,7 @@ QT += qml # for scripting
 QT += printsupport # for customplot
 QT += gui # for QVector3D
 #QT += opengl
-#QT += network # for updater
+QT += network # for updater
 
 LIBS += -lTonatiuh-Kernel -lTonatiuh-Libraries -lOpengl32
 

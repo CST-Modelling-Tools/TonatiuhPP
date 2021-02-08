@@ -14,6 +14,8 @@ bool UpdateReader::checkUpdates(const QString& data)
     try
     {
         QXmlStreamReader xml(data);
+//        qDebug() << data;
+
         xml.readNextStartElement();
         if (xml.name().toString() != "Updates")
             throw QString("Updates tag expected");
