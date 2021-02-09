@@ -1,7 +1,7 @@
 #include "FileDownloader.h"
 
 
-FileDownloader::FileDownloader(QUrl imageUrl, QObject* parent):
+FileDownloader::FileDownloader(QUrl url, QObject* parent):
     QObject(parent)
 {
     connect(
@@ -9,8 +9,21 @@ FileDownloader::FileDownloader(QUrl imageUrl, QObject* parent):
         this, SLOT(fileDownloaded(QNetworkReply*))
     );
 
-    QNetworkRequest request(imageUrl);
-    m_manager.get(request);
+//    url.setPassword();
+    QNetworkRequest request(url);
+
+// attempt to get file size
+//    QNetworkReply* reply = m_manager.head(request);
+//    qDebug() << "size head " << reply->header(QNetworkRequest::ContentLengthHeader).toUInt();
+
+    m_reply = m_manager.get(request);
+
+    connect(m_reply, &QNetworkReply::downloadProgress, this, &FileDownloader::updateProgress);
+
+//    connect(
+//        m_reply, SIGNAL(downloadProgress(qint64,qint64)),
+//        this, SLOT(updateProgress(qint64,qint64))
+//    );
 }
 
 void FileDownloader::fileDownloaded(QNetworkReply* pReply)
@@ -20,7 +33,16 @@ void FileDownloader::fileDownloaded(QNetworkReply* pReply)
     else
         m_data = pReply->readAll();
 
+//    qDebug() << "headers " << pReply->rawHeaderList();
+//    qDebug() << "ContentLengthHeader " << pReply->header(QNetworkRequest::ContentLengthHeader).toUInt();
+//    qDebug() << "Transfer-Encoding " << pReply->rawHeader("Transfer-Encoding");
+//     ContentLengthHeader is 0 for chunked Transfer-Encoding!
+
     pReply->deleteLater();
     emit downloaded();
 }
 
+void FileDownloader::updateProgress(qint64 bytesReceived, qint64 bytesTotal)
+{
+    emit downloadProgress(bytesReceived, bytesTotal);
+}
