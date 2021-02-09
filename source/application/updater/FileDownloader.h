@@ -25,9 +25,6 @@ signals:
 private slots:
     void fileDownloaded(QNetworkReply* pReply);
     void updateProgress(qint64 bytesReceived, qint64 bytesTotal);
-    void updateProgressBar();
-
-    //    void fileSize();
 
 private:
     QNetworkAccessManager m_manager;

@@ -10,34 +10,20 @@ FileDownloader::FileDownloader(QUrl url, QObject* parent):
     );
 
 //    url.setPassword();
-
-//    QNetworkRequest requestSize(url);
-//    requestSize.setHeader(QNetworkRequest::ContentLengthHeader);
-
-//    QUrl url(UrlList.at(0));
-//    req.setHeader(Q);
-//    req.setUrl(url);
-//    QNetworkAccessManager manager;
-//    QNetworkReply* reply__ = manager.get(req);
-//    FileSize = reply__->header(QNetworkRequest::ContentLengthHeader).toUInt();
-
-
-
     QNetworkRequest request(url);
 
-//    QNetworkReply* reply = m_manager.get(request);
+// attempt to get file size
+//    QNetworkReply* reply = m_manager.head(request);
+//    qDebug() << "size head " << reply->header(QNetworkRequest::ContentLengthHeader).toUInt();
+
     m_reply = m_manager.get(request);
-    qDebug() << "size " << m_reply->header(QNetworkRequest::ContentLengthHeader).toUInt();
 
-//    connect(m_reply, SIGNAL(readyRead()), this, SLOT(updateProgressBar()));
+    connect(m_reply, &QNetworkReply::downloadProgress, this, &FileDownloader::updateProgress);
 
-//    connect(reply, &QNetworkReply::downloadProgress, this, &FileDownloader::updateProgress);
-    connect(
-        m_reply, SIGNAL(downloadProgress(qint64,qint64)),
-        this, SLOT(updateProgress(qint64,qint64))
-    );
-
-//     connect(reply, SIGNAL(metaDataChanged()), this, SLOT(fileSize()));
+//    connect(
+//        m_reply, SIGNAL(downloadProgress(qint64,qint64)),
+//        this, SLOT(updateProgress(qint64,qint64))
+//    );
 }
 
 void FileDownloader::fileDownloaded(QNetworkReply* pReply)
@@ -47,6 +33,11 @@ void FileDownloader::fileDownloaded(QNetworkReply* pReply)
     else
         m_data = pReply->readAll();
 
+//    qDebug() << "headers " << pReply->rawHeaderList();
+//    qDebug() << "ContentLengthHeader " << pReply->header(QNetworkRequest::ContentLengthHeader).toUInt();
+//    qDebug() << "Transfer-Encoding " << pReply->rawHeader("Transfer-Encoding");
+//     ContentLengthHeader is 0 for chunked Transfer-Encoding!
+
     pReply->deleteLater();
     emit downloaded();
 }
@@ -55,10 +46,3 @@ void FileDownloader::updateProgress(qint64 bytesReceived, qint64 bytesTotal)
 {
     emit downloadProgress(bytesReceived, bytesTotal);
 }
-
-void FileDownloader::updateProgressBar()
-{
-    qDebug() << "sizeddd " << m_reply->header(QNetworkRequest::ContentLengthHeader).toUInt();
-
-}
-

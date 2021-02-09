@@ -29,6 +29,7 @@ private slots:
 private:
     Ui::UpdateDialog* ui;
     QString m_update;
+    int m_size;
     FileDownloader* m_downloader;
 };
 

@@ -14,6 +14,7 @@ public:
 
     QDate m_date;
     QList<int> m_version;
+    int m_size;
     QString m_path;
 
     QString m_message;
