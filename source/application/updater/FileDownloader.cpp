@@ -26,6 +26,11 @@ FileDownloader::FileDownloader(QUrl url, QObject* parent):
 //    );
 }
 
+void FileDownloader::abort()
+{
+    m_reply->abort();
+}
+
 void FileDownloader::fileDownloaded(QNetworkReply* pReply)
 {
     if (pReply->error())
