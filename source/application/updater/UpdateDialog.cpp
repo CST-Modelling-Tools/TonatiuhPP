@@ -15,6 +15,14 @@ UpdateDialog::UpdateDialog(QWidget* parent):
 //    m_serverPath = "https://scmt.cyi.ac.cy/bitbucket/projects/TNH/repos/main/browse/releases/";
     QString temp = "https://scmt.cyi.ac.cy/bitbucket/login?j_username=%1&j_password=%2&next=/projects/TNH/repos/main/raw/releases/";
     ui->serverEdit->setText(temp);
+    ui->serverEdit->setCursorPosition(0);
+
+    ui->downloadButton->setEnabled(false);
+    ui->progressBar->hide();
+
+    m_downloaderF = 0;
+
+    ui->checkButton->setFocus();
 }
 
 UpdateDialog::~UpdateDialog()
@@ -28,57 +36,58 @@ void UpdateDialog::on_checkButton_pressed()
     temp += "updates.xml";
 
     QUrl url(temp);
-    m_downloader = new FileDownloader(url, this);
+    m_downloaderU = new FileDownloader(url, this);
 
     connect(
-        m_downloader, SIGNAL(downloaded()),
+        m_downloaderU, SIGNAL(downloaded()),
         this, SLOT(onUpdates())
     );
 
     ui->downloadButton->setEnabled(false);
-    ui->progressBar->reset();
+    ui->progressBar->hide();
 }
 
 void UpdateDialog::onUpdates()
 {
 //    qDebug() << QSslSocket::supportsSsl() << QSslSocket::sslLibraryBuildVersionString() << QSslSocket::sslLibraryVersionString();
 
-    if (!m_downloader->status().isEmpty())
+    if (!m_downloaderU->status().isEmpty())
     {
-        QString t = "Connection failed:\n" + m_downloader->status();
+        QString t = "Connection failed:\n" + m_downloaderU->status();
         ui->resultText->setPlainText(t);
-        m_downloader->deleteLater();
+        m_downloaderU->deleteLater();
         return;
     }
 
     UpdateReader reader;
-    if (!reader.checkUpdates(m_downloader->downloadedData()))
+    if (!reader.checkUpdates(m_downloaderU->downloadedData()))
     {
         QString t = "Update failed:\n" + reader.m_message;
         ui->resultText->setPlainText(t);
-        m_downloader->deleteLater();
+        m_downloaderU->deleteLater();
         return;
     }
-    if (!reader.isNewer())
-    {
-        QString t = QString("New update (%1):\n%2\nSize:%3B")
-                .arg(reader.m_date.toString("d MMM yyyy"))
-                .arg(reader.m_path)
-                .arg(reader.m_size);
-        ui->resultText->setPlainText(t);
-        m_downloader->deleteLater();
-        return;
-    }
-    QString t = QString("New update (%1):\n%2\nSize:%3B")
+    QString info = QString("Date: %1\nFile: \"%2\"\nSize: %3 MB")
             .arg(reader.m_date.toString("d MMM yyyy"))
             .arg(reader.m_path)
-            .arg(reader.m_size);
+            .arg(reader.m_size/1e6, 0, 'f', 1);
+    if (!reader.isNewer())
+    {
+        QString t = QString("Last update\n") + info;
+        ui->resultText->setPlainText(t);
+        m_downloaderU->deleteLater();
+        return;
+    }
+    QString t = QString("New update\n") + info;
     m_size = reader.m_size;
-    ui->resultText->setPlainText(t);
-    ui->downloadButton->setEnabled(true);
     m_update = reader.m_path;
+    ui->resultText->setPlainText(t);
 
-    m_downloader->deleteLater();
+    ui->downloadButton->setEnabled(true);
+
+    ui->progressBar->setRange(0, m_size);
+    ui->progressBar->show();
+    m_downloaderU->deleteLater();
 }
 
 void UpdateDialog::on_downloadButton_pressed()
@@ -87,24 +96,30 @@ void UpdateDialog::on_downloadButton_pressed()
     QString temp2 = m_update;
     temp += temp2.replace('+', "%2B");
 
+    if (m_downloaderF) {
+        disconnect(m_downloaderF, SIGNAL(downloaded()), 0, 0);
+        disconnect(m_downloaderF, SIGNAL(downloadProgress(qint64,qint64)), 0, 0);
+        m_downloaderF->abort();
+    }
+
     QUrl url(temp);
-    m_downloader = new FileDownloader(url, this); //? signals before ? async
+    m_downloaderF = new FileDownloader(url, this); //? signals before ? async
 
     connect(
-        m_downloader, SIGNAL(downloaded()),
+        m_downloaderF, SIGNAL(downloaded()),
         this, SLOT(onDownloaded())
     );
 
     connect(
-        m_downloader, SIGNAL(downloadProgress(qint64,qint64)),
+        m_downloaderF, SIGNAL(downloadProgress(qint64,qint64)),
         this, SLOT(updateProgress(qint64,qint64))
     );
 }
 
 void UpdateDialog::updateProgress(qint64 bytesReceived, qint64 bytesTotal)
 {
-    qDebug() << bytesReceived << " " << bytesTotal;
-    ui->progressBar->setRange(0, m_size);
+//    qDebug() << bytesReceived << " " << bytesTotal;
+//    ui->progressBar->setRange(0, m_size);
     ui->progressBar->setValue(bytesReceived);
 }
 
@@ -122,15 +137,15 @@ void UpdateDialog::onDownloaded()
     QDir dir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
 
     QFile file(dir.filePath(m_update));
-    qDebug() << file.fileName();
+//    qDebug() << file.fileName();
     if (file.open(QFile::WriteOnly)) {
-        file.write(m_downloader->downloadedData());
+        file.write(m_downloaderF->downloadedData());
         file.close();
     }
 
-    m_downloader->deleteLater();
+    m_downloaderF->deleteLater();
     QProcess::startDetached(dir.filePath(m_update));
-//    close();
-//    ((QMainWindow*) parent())->close();
+    close();
+    ((QMainWindow*) parent())->close();
 }
 

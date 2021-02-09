@@ -16,6 +16,7 @@ public:
 
     QString status() const {return m_status;}
     QByteArray downloadedData() const {return m_data;}
+    void abort();
 
 signals:
     void downloaded();
