@@ -24,7 +24,8 @@ UpdateDialog::~UpdateDialog()
 
 void UpdateDialog::on_checkButton_pressed()
 {
-    QString temp = (ui->serverEdit->text() + "updates.xml").arg(ui->userEdit->text(), ui->passwordEdit->text());
+    QString temp = ui->serverEdit->text().arg(ui->userEdit->text(), ui->passwordEdit->text());
+    temp += "updates.xml";
     QUrl url(temp);
     m_downloader = new FileDownloader(url, this);
 
@@ -32,6 +33,9 @@ void UpdateDialog::on_checkButton_pressed()
         m_downloader, SIGNAL(downloaded()),
         this, SLOT(onUpdates())
     );
+
+    ui->downloadButton->setEnabled(false);
+    ui->progressBar->reset();
 }
 
 void UpdateDialog::onUpdates()
@@ -75,14 +79,28 @@ void UpdateDialog::onUpdates()
 
 void UpdateDialog::on_downloadButton_pressed()
 {
-    QString temp = (ui->serverEdit->text() + m_update).arg(ui->userEdit->text(), ui->passwordEdit->text());
+    QString temp = ui->serverEdit->text().arg(ui->userEdit->text(), ui->passwordEdit->text());
+    QString temp2 = m_update;
+    temp += temp2.replace('+', "%2B");
     QUrl url(temp);
-    m_downloader = new FileDownloader(url, this);
+    m_downloader = new FileDownloader(url, this); //? signals before
 
     connect(
         m_downloader, SIGNAL(downloaded()),
         this, SLOT(onDownloaded())
     );
+
+    connect(
+        m_downloader, SIGNAL(downloadProgress(qint64,qint64)),
+        this, SLOT(updateProgress(qint64,qint64))
+    );
+}
+
+void UpdateDialog::updateProgress(qint64 bytesReceived, qint64 bytesTotal)
+{
+    qDebug() << bytesReceived << " " << bytesTotal;
+    ui->progressBar->setRange(0, bytesTotal);
+    ui->progressBar->setValue(bytesReceived);
 }
 
 #include <QMessageBox>
@@ -107,7 +125,7 @@ void UpdateDialog::onDownloaded()
 
     m_downloader->deleteLater();
     QProcess::startDetached(dir.filePath(m_update));
-    close();
-    ((QMainWindow*) parent())->close();
+//    close();
+//    ((QMainWindow*) parent())->close();
 }
 

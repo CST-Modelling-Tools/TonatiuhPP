@@ -24,6 +24,8 @@ private slots:
     void onDownloaded();
     void on_downloadButton_pressed();
 
+    void updateProgress(qint64 bytesReceived, qint64 bytesTotal);
+
 private:
     Ui::UpdateDialog* ui;
     QString m_update;
