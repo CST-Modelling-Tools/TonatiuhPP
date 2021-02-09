@@ -11,8 +11,9 @@ FileDownloader::FileDownloader(QUrl url, QObject* parent):
 
 //    url.setPassword();
     QNetworkRequest request(url);
+//    qDebug() << "size head " << request.header(QNetworkRequest::ContentLengthHeader).toUInt();
 
-// attempt to get file size
+// attempt to get file sizeB
 //    QNetworkReply* reply = m_manager.head(request);
 //    qDebug() << "size head " << reply->header(QNetworkRequest::ContentLengthHeader).toUInt();
 
