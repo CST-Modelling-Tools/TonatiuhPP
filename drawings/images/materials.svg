@@ -589,9 +589,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.54358835"
-     inkscape:cx="61.771625"
-     inkscape:cy="358.31851"
+     inkscape:zoom="1.5375"
+     inkscape:cx="612.25101"
+     inkscape:cy="539.4317"
      inkscape:document-units="mm"
      inkscape:current-layer="svg8"
      showgrid="false"
@@ -686,6 +686,25 @@
      width="25.711237"
      id="rect913"
      style="opacity:1;fill:#bfc7ce;fill-opacity:1;stroke:none;stroke-width:0.05490883;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.79527664;stroke-opacity:1;paint-order:markers fill stroke" />
+  <rect
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\kernel\material\MaterialRough.png"
+     inkscape:export-ydpi="63.2327"
+     inkscape:export-xdpi="63.2327"
+     y="116.23926"
+     x="112.27594"
+     height="18.637646"
+     width="25.604984"
+     id="rect933"
+     style="opacity:1;fill:#805d5d;fill-opacity:0.00392157;stroke:none;stroke-width:1.16848;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:1;paint-order:markers fill stroke" />
+  <circle
+     style="fill:#e9dcc8;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:5.19999;paint-order:markers stroke fill"
+     id="path951"
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\kernel\material\MaterialRough.png"
+     inkscape:export-xdpi="63.2327"
+     inkscape:export-ydpi="63.2327"
+     cx="124.8419"
+     cy="131.73543"
+     r="9.936307" />
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
@@ -718,6 +737,27 @@
       <ellipse
          style="opacity:1;fill:#e8d1ab;fill-opacity:0.69372696;stroke:none;stroke-width:3.8280406;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.79527664;stroke-opacity:1;paint-order:markers fill stroke"
          id="ellipse919"
+         transform="matrix(-0.6793712,0.73379478,-0.62872124,-0.77763076,0,0)"
+         cx="185.81116"
+         cy="-241.56097"
+         rx="6.1818833"
+         ry="21.227869" />
+    </g>
+    <g
+       inkscape:export-ydpi="63.2327"
+       inkscape:export-xdpi="63.2327"
+       transform="matrix(0.25415859,-0.05151526,0.05151526,0.25415859,110.07226,41.084124)"
+       id="g945"
+       inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\kernel\material\MaterialRough.png">
+      <path
+         style="fill:#dec090;fill-opacity:1;stroke:none;stroke-width:0.357129px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 12.8167,307.20416 -28.381916,48.46966 54.426851,-14.43605 c -4.690681,0.38627 -11.041183,-5.38931 -12.464598,-6.92781 -3.882228,-4.19611 -8.273249,-9.97822 -11.779612,-16.09149 -1.365343,-2.38044 -3.780923,-6.71905 -1.800725,-11.01431 z"
+         id="path941"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccssc" />
+      <ellipse
+         style="opacity:1;fill:#e8d1ab;fill-opacity:0.693727;stroke:none;stroke-width:3.82804;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:1;paint-order:markers fill stroke"
+         id="ellipse943"
          transform="matrix(-0.6793712,0.73379478,-0.62872124,-0.77763076,0,0)"
          cx="185.81116"
          cy="-241.56097"
@@ -957,4 +997,50 @@
      cx="31.720045"
      id="circle929"
      style="fill:#ead8b7;fill-opacity:1;stroke:#b88935;stroke-width:0.87075543;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <path
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\kernel\material\MaterialRough.png"
+     sodipodi:nodetypes="cc"
+     inkscape:export-ydpi="63.2327"
+     inkscape:export-xdpi="63.2327"
+     inkscape:connector-curvature="0"
+     id="path935"
+     d="m 113.5648,118.09973 13.70114,15.95466"
+     style="fill:#000000;fill-opacity:0;stroke:#bf7f00;stroke-width:1.14331;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <path
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\kernel\material\MaterialRough.png"
+     inkscape:export-ydpi="63.2327"
+     inkscape:export-xdpi="63.2327"
+     sodipodi:nodetypes="ccccc"
+     inkscape:connector-curvature="0"
+     id="path937"
+     d="m 121.12164,126.84165 -6.89347,-3.16309 2.79878,-1.59187 1.88014,-2.49184 z"
+     inkscape:transform-center-y="-0.41335802"
+     inkscape:transform-center-x="1.6681807"
+     style="opacity:1;fill:#bf7f00;fill-opacity:1;stroke:none;stroke-width:0.343678;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:1;paint-order:markers fill stroke" />
+  <path
+     id="rect939"
+     style="opacity:1;fill:#bfc7ce;fill-opacity:1;stroke:none;stroke-width:0.0549088;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:37.7953;stroke-opacity:1;paint-order:markers fill stroke"
+     d="m 112.22531,131.97768 5.44646,2.23274 4.83804,-2.23274 h 5.14224 l 4.71636,2.23274 5.56814,-2.23274 v 9.96979 h -25.71124 z"
+     sodipodi:nodetypes="ccccccccc"
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\kernel\material\MaterialRough.png"
+     inkscape:export-xdpi="63.2327"
+     inkscape:export-ydpi="63.2327" />
+  <path
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\kernel\material\MaterialRough.png"
+     sodipodi:nodetypes="cc"
+     inkscape:export-ydpi="63.2327"
+     inkscape:export-xdpi="63.2327"
+     style="fill:#d45500;stroke:#bf7f00;stroke-width:1.11241;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="m 136.36174,118.77119 -3.15931,3.5684"
+     id="path947"
+     inkscape:connector-curvature="0" />
+  <circle
+     inkscape:export-ydpi="63.2327"
+     inkscape:export-xdpi="63.2327"
+     inkscape:export-filename="C:\Users\Victor\Neo\Programming\Qt\Projects\Tonatiuh2020\source\kernel\material\MaterialRough.png"
+     style="fill:#ead8b7;fill-opacity:1;stroke:#b88935;stroke-width:0.870755;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="circle949"
+     cx="124.78604"
+     cy="131.84758"
+     r="2.3963547" />
 </svg>
