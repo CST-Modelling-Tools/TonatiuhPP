@@ -26,7 +26,7 @@ bool UpdateReader::checkUpdates(const QString& data)
 
         m_date = QDate::fromString(xml.attributes().value("date").toString(), "yyyy-M-d");
         m_version = toVersion(xml.attributes().value("version").toString());
-        m_size = xml.attributes().value("size").toInt();
+        m_size = xml.attributes().value("size").toString().replace(",", "").toInt();
         m_path = xml.attributes().value("path").toString();
 
         if (xml.hasError())

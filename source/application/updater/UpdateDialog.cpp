@@ -11,11 +11,14 @@ UpdateDialog::UpdateDialog(QWidget* parent):
 {
     ui->setupUi(this);
 
-//    m_serverPath = "file:///C:/Users/..../Projects/Tonatiuh2020/releases/";
-//    m_serverPath = "https://scmt.cyi.ac.cy/bitbucket/projects/TNH/repos/main/browse/releases/";
-    QString temp = "https://scmt.cyi.ac.cy/bitbucket/login?j_username=%1&j_password=%2&next=/projects/TNH/repos/main/raw/releases/";
+//    m_serverPath = "file:///C:/Users/";
+//    m_serverPath = "https://scmt.cyi.ac.cy/bitbucket/projects/TNH/repos/updates/raw/nsis/";
+//    QString temp = "https://scmt.cyi.ac.cy/bitbucket/login?j_username=%1&j_password=%2&next=/projects/TNH/repos/updates/raw/nsis/";
+    QString temp = "https://scmt.cyi.ac.cy/bitbucket/login";
     ui->serverEdit->setText(temp);
     ui->serverEdit->setCursorPosition(0);
+    ui->userEdit->setText("updates.tonatiuh");
+    ui->passwordEdit->setText("gIZ5QS2WKqsA");
 
     ui->downloadButton->setEnabled(false);
     ui->progressBar->hide();
@@ -32,11 +35,21 @@ UpdateDialog::~UpdateDialog()
 
 void UpdateDialog::on_checkButton_pressed()
 {
-    QString temp = ui->serverEdit->text().arg(ui->userEdit->text(), ui->passwordEdit->text());
+    QString temp = ui->serverEdit->text();
     temp += "updates.xml";
 
+    QByteArray postData;
+    if (!ui->userEdit->text().isEmpty()) {
+        postData.append(
+            QString("j_username=%1&j_password=%2&next=/projects/TNH/repos/updates/raw/nsis/%3").arg(
+                ui->userEdit->text(),
+                ui->passwordEdit->text(),
+                "updates.xml"
+        ).toUtf8());
+    }
+
     QUrl url(temp);
-    m_downloaderU = new FileDownloader(url, this);
+    m_downloaderU = new FileDownloader(url, postData, this);
 
     connect(
         m_downloaderU, SIGNAL(downloaded()),
@@ -92,9 +105,9 @@ void UpdateDialog::onUpdates()
 
 void UpdateDialog::on_downloadButton_pressed()
 {
-    QString temp = ui->serverEdit->text().arg(ui->userEdit->text(), ui->passwordEdit->text());
+    QString temp = ui->serverEdit->text();
     QString temp2 = m_update;
-    temp += temp2.replace('+', "%2B");
+    temp2 = temp2.replace('+', "%2B");
 
     if (m_downloaderF) {
         disconnect(m_downloaderF, SIGNAL(downloaded()), 0, 0);
@@ -102,8 +115,20 @@ void UpdateDialog::on_downloadButton_pressed()
         m_downloaderF->abort();
     }
 
+    QByteArray postData;
+    if (!ui->userEdit->text().isEmpty()) {
+        postData.append(
+            QString("j_username=%1&j_password=%2&next=/projects/TNH/repos/updates/raw/nsis/%3").arg(
+                ui->userEdit->text(),
+                ui->passwordEdit->text(),
+                temp2
+            ).toUtf8());
+    } else {
+        temp += temp2;
+    }
+
     QUrl url(temp);
-    m_downloaderF = new FileDownloader(url, this); //? signals before ? async
+    m_downloaderF = new FileDownloader(url, postData, this); //? signals before ? async
 
     connect(
         m_downloaderF, SIGNAL(downloaded()),
