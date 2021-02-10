@@ -1,7 +1,7 @@
 #include "FileDownloader.h"
 
 
-FileDownloader::FileDownloader(QUrl url, QObject* parent):
+FileDownloader::FileDownloader(QUrl url, QByteArray data, QObject* parent):
     QObject(parent)
 {
     connect(
@@ -17,7 +17,14 @@ FileDownloader::FileDownloader(QUrl url, QObject* parent):
 //    QNetworkReply* reply = m_manager.head(request);
 //    qDebug() << "size head " << reply->header(QNetworkRequest::ContentLengthHeader).toUInt();
 
-    m_reply = m_manager.get(request);
+    if (!data.isEmpty()) {
+    request.setHeader(QNetworkRequest::ContentTypeHeader,
+        "application/x-www-form-urlencoded");
+//    networkManager->post(request, postData.toString(QUrl::FullyEncoded).toUtf8());
+    m_reply = m_manager.post(request, data);
+    }
+    else
+        m_reply = m_manager.get(request);
 
     connect(m_reply, &QNetworkReply::downloadProgress, this, &FileDownloader::updateProgress);
 
