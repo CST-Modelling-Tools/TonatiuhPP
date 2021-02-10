@@ -22,5 +22,6 @@
         <file>shape/ShapeCylinder.png</file>
         <file>shape/ShapeParabolic.png</file>
         <file>shape/ShapeSphere.png</file>
+        <file>material/MaterialRough.png</file>
     </qresource>
 </RCC>

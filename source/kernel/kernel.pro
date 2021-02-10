@@ -18,6 +18,7 @@ HEADERS += \
     material/MaterialAbsorber.h \
     material/MaterialFresnelUnpolarized.h \
     material/MaterialRT.h \
+    material/MaterialRough.h \
     material/MaterialTransparent.h \
     material/MaterialVirtual.h \
     node/TFactory.h \
@@ -91,6 +92,7 @@ SOURCES += \
     material/MaterialAbsorber.cpp \
     material/MaterialFresnelUnpolarized.cpp \
     material/MaterialRT.cpp \
+    material/MaterialRough.cpp \
     material/MaterialTransparent.cpp \
     material/MaterialVirtual.cpp \
     node/TNode.cpp \

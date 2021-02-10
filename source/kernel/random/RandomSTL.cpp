@@ -4,7 +4,7 @@
 RandomSTL::RandomSTL(ulong seed, ulong size):
     Random(size),
     m_generator(static_cast<std::mt19937_64::result_type>(seed)),
-    m_distribution(0., 1.)
+    m_distribution(0., 1.) // 0 <= x < 1
 {
 
 }

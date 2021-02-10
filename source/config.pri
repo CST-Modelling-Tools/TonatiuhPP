@@ -1,5 +1,5 @@
 # Tonatiuh
-VERSION = 0.1.8.3
+VERSION = 0.1.8.4
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 INCLUDEPATH += $$PWD
 LIBS += -L..
