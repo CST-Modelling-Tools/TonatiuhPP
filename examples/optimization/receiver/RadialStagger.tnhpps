@@ -1,3 +1,9 @@
+var dataIn = new DataObject;
+dataIn.read("in.csv");
+var hR = dataIn.array(0)[0];
+var rays = dataIn.array(0)[1];
+
+
 var degree = Math.PI/180;
 var latitude = 0*degree;  // location
 var declination = 23.4*degree; // obliquity
@@ -8,7 +14,7 @@ var heliostatD = Math.sqrt(heliostatW*heliostatW + heliostatH*heliostatH); // di
 var heliostatZ = 1.5; // z-position
 
 var receiverD = 2.;
-var receiverH = 3.;
+var receiverH = hR;
 var receiverZ = 20.;
 var receiverR = receiverD/2.; // radius
 
@@ -116,15 +122,17 @@ dRMin *= heliostatD;
 // close packing (hexagonal grid)
 var dRClose = 2*heliostatD*Math.sin(60*degree); 
 
+var heliostatsPlaced;
+
 function makeField(parent)
 {
 	var nodeHeliostats = parent.createNode("Heliostats");
-	var counter = 0;
+	heliostatsPlaced = 0;
 	var rho = rhoMin;	
 	
 	var phiStep = azimuthStep(rho);
 	var phi0 = 0.;
-	for (var row = 1; counter < heliostats; row++) {
+	for (var row = 1; heliostatsPlaced < heliostats; row++) {
 			var nodeRow = nodeHeliostats.createNode("Row_" + row);
 
 			// close packing
@@ -135,8 +143,8 @@ function makeField(parent)
 			// fill row
 			for (var phi = phi0; phi < phi0 + 2.*Math.PI - phiStep/2.; phi += phiStep)
 			{
-				counter++;
-				name = "H_" + counter;
+				heliostatsPlaced++;
+				name = "H_" + heliostatsPlaced;
 
 				x = rho*Math.sin(phi);
 				y = rho*Math.cos(phi);
@@ -192,3 +200,15 @@ var tg = scene.getPart("world.terrain.grid");
 tg.setParameter("steps", "10 10 1");
 tg.setParameter("min", "-100 -100 0");
 tg.setParameter("max", "100 100 0");
+
+
+// simulation
+var w = tn.FindInterception("//Node/Script/Tower/Receiver/Shape", rays);
+var wMax = heliostatsPlaced*heliostatW*heliostatH*1000; // number*width*height*DNI
+var eta = w/wMax;
+
+var dataOut = new DataObject;
+var line = "" + receiverH + "," + eta;
+print(line);
+dataOut.addRow(line);
+dataOut.write("out.csv");

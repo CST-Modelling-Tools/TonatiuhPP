@@ -1,0 +1,2 @@
+copy Jupyter.bat to "C:\ProgramData\Anaconda3"
+run register.bat

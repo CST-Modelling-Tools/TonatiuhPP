@@ -1602,6 +1602,18 @@ QJSValue MainWindow::FindInterception(QJSValue surface, QJSValue rays)
     return findInterception(surface.toString(), rays.toUInt(), this);
 }
 
+QJSValue MainWindow::print(QString text)
+{
+    qDebug() << text;
+    return true;
+}
+
+QJSValue MainWindow::printTimed(QString text)
+{
+    qDebug() << text;
+    return true;
+}
+
 /*!
  * Changes selected node to the node with \a nodeUrl. If model does not contains a node with defined url,
  * the selection will be null.

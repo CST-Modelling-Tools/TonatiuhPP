@@ -102,6 +102,8 @@ public slots:
 
     QJSValue FindInterception(QJSValue surface, QJSValue rays);
 //    QJSValue getSceneKit()
+    Q_INVOKABLE QJSValue print(QString text);
+    Q_INVOKABLE QJSValue printTimed(QString text);
 
     void Select(QString url);
     void SetName(QString name);
