@@ -28,6 +28,8 @@ QTextStream cerr(stderr);
 #include "script/DataObject.h"
 //Q_SCRIPT_DECLARE_QMETAOBJECT(NodeObject, QObject*)
 //Q_SCRIPT_DECLARE_QMETAOBJECT(DataObject, QObject*)
+#include <QQmlEngine>
+
 
 int main(int argc, char** argv)
 {  
@@ -133,6 +135,11 @@ int main(int argc, char** argv)
 //        QJSValue fileObjectClass = engine->scriptValueFromQMetaObject<DataObject>();
         QJSValue fileObjectClass = engine->newQMetaObject(&DataObject::staticMetaObject);
         engine->globalObject().setProperty("DataObject", fileObjectClass);
+
+        QJSValue myExt = engine->newQObject(&mw);
+        QQmlEngine::setObjectOwnership(myExt.toQObject(), QQmlEngine::CppOwnership); // important
+        engine->globalObject().setProperty("print", myExt.property("print"));
+        engine->globalObject().setProperty("printTimed", myExt.property("printTimed"));
 
         QFile file(fileName);
         if (!file.open(QIODevice::ReadOnly))
