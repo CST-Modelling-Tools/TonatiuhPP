@@ -8,6 +8,8 @@ class FluxAnalysisDialog;
 
 #include "kernel/photons/PhotonsBuffer.h"
 #include "libraries/math/2D/Matrix2D.h"
+#include "libraries/math/2D/vec2i.h"
+#include "libraries/math/2D/Box2D.h"
 
 class InstanceNode;
 class SceneTreeModel;
@@ -42,9 +44,9 @@ private:
 
     void UpdateStatistics(double powerTotal, double fluxMin, double fluxAverage, double fluxMax,
                           double fluxMaxU, double fluxMaxV, double error, double uniformity, double gravityX, double gravityY);
-    void UpdateFluxMapPlot(const Matrix2D<int>& photonCounts, double powerPhoton, int widthDivisions, int heightDivisions, double xmin, double ymin, double xmax, double ymax);
+    void UpdateFluxMapPlot(const Matrix2D<double>& photonCounts, const Box2D& box);
     void CreateSectorPlots(double xMin, double yMin, double xMax, double yMax);
-    void UpdateSectorPlots(const Matrix2D<int>& photonCounts, double wPhoton, int xDivs, int yDivs, double xMin, double yMin, double xMax, double yMax, double fluxMax);
+    void UpdateSectorPlots(const Matrix2D<double>& flux, const Box2D& box);
 
     double findAreaCell(double uStep, double vStep);
 

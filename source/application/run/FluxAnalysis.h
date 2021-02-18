@@ -2,6 +2,8 @@
 
 #include <QString>
 #include "libraries/math/2D/Matrix2D.h"
+#include "libraries/math/2D/Box2D.h"
+#include "libraries/math/2D/vec2i.h"
 
 class TSceneKit;
 class SceneTreeModel;
@@ -22,14 +24,11 @@ public:
     void write(QString fileName, bool withCoords);
     void clear();
 
-    Matrix2D<int>& getBins() {return m_bins;}
-    double uMin() {return m_uMin;}
-    double uMax() {return m_uMax;}
-    double vMin() {return m_vMin;}
-    double vMax() {return m_vMax;}
+    Matrix2D<int>& getBinsPhotons() {return m_binsPhotons;}
+    Matrix2D<double>& getBinsFlux() {return m_binsFlux;}
+    const Box2D& box() const {return m_box;}
     int photonsMax() {return m_photonsMax;} // photons in bin with maximal photons
-    int photonsMaxRow() {return m_photonsMaxRow;} // row of bin with maximal photons
-    int photonsMaxCol() {return m_photonsMaxCol;} // col of bin with maximal photons
+    const vec2i& getPhotonMaxPos() const {return m_photonsMaxPos;} //  bin with maximal photons
     int photonsError() {return m_photonsError;} //?
     double powerPhoton() {return m_powerPhoton;}
     double powerTotal() {return m_powerTotal;}
@@ -40,8 +39,7 @@ private:
     TSceneKit* m_sceneKit;
     SceneTreeModel* m_sceneModel;
     InstanceNode* m_instanceLayout;
-    int m_sunWidthDivisions;
-    int m_sunHeightDivisions;
+    vec2i m_sunDivs;
     Random* m_rand;
 
     PhotonsBuffer* m_photons;
@@ -50,18 +48,15 @@ private:
     QString m_surfaceSide;
 
     ulong m_tracedRays;
-    double m_powerTotal;
+    double m_powerTotal; // photons * power
     double m_powerPhoton;
 
-    Matrix2D<int> m_bins;
+    Matrix2D<int> m_binsPhotons;
+    Matrix2D<double> m_binsFlux;
 
-    double m_uMin;
-    double m_uMax;
-    double m_vMin;
-    double m_vMax;
+    Box2D m_box;
 
-    int m_photonsMax;
-    int m_photonsMaxRow;
-    int m_photonsMaxCol;
-    int m_photonsError;
+    int m_photonsMax; // maximal number of photons in a cell
+    vec2i m_photonsMaxPos; // indices of cell with maximal number of photons
+    int m_photonsError; // ?maximal number of photons in a cell for a reduced grid
 };

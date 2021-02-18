@@ -163,45 +163,47 @@ void FluxAnalysisDialog::UpdateAnalysis()
 //		return;
 //	}
 
-    if (m_fluxAnalysis->getBins().isEmpty())
+    if (m_fluxAnalysis->getBinsPhotons().isEmpty())
         return;
 
-    int xDivs = ui->surfaceXSpin->value();
-    int yDivs = ui->surfaceYSpin->value();
-    m_fluxAnalysis->setBins(xDivs, yDivs);
+    vec2i divs(ui->surfaceXSpin->value(), ui->surfaceYSpin->value());
+    m_fluxAnalysis->setBins(divs.x, divs.y);
 
-    const Matrix2D<int>& photonCounts = m_fluxAnalysis->getBins();
+    const Matrix2D<int>& photonCounts = m_fluxAnalysis->getBinsPhotons();
+    const Matrix2D<double>& fluxCounts = m_fluxAnalysis->getBinsFlux();
 
     ClearAnalysis();
 
-    double uMin = m_fluxAnalysis->uMin();
-    double uMax = m_fluxAnalysis->uMax();
-    double vMin = m_fluxAnalysis->vMin();
-    double vMax = m_fluxAnalysis->vMax();
+    Box2D box = m_fluxAnalysis->box();
+    double uMin = box.min().x;
+    double vMin = box.min().y;
+    double uMax = box.max().x;
+    double vMax = box.max().y;
     double powerPhoton = m_fluxAnalysis->powerPhoton();
     double powerTotal = m_fluxAnalysis->powerTotal();
 
-    double uStep = (uMax - uMin)/xDivs;
-    double vStep = (vMax - vMin)/yDivs;
+    double uStep = box.size().x/divs.x;
+    double vStep = box.size().y/divs.y;
     double areaCell = findAreaCell(uStep, vStep);
 
     double fluxMin = 0.;
-    double fluxAverage = powerTotal/(areaCell*xDivs*yDivs); // wrong
+    double fluxAverage = powerTotal/(areaCell*divs.x*divs.y); // wrong
     double fluxMax = m_fluxAnalysis->photonsMax()*powerPhoton/areaCell;
-    double fluxMaxU = uMin + (m_fluxAnalysis->photonsMaxRow() + 0.5)*uStep;
-    double fluxMaxV = vMin + (m_fluxAnalysis->photonsMaxCol() + 0.5)*vStep;
-    double areaE = (uMax - uMin)/(xDivs - 1)*(vMax - vMin)/(yDivs - 1);
+    double fluxMaxU = uMin + (m_fluxAnalysis->getPhotonMaxPos().x + 0.5)*uStep;
+    double fluxMaxV = vMin + (m_fluxAnalysis->getPhotonMaxPos().y + 0.5)*vStep;
+
+    double areaE = box.size().x/(divs.x - 1)*box.size().y/(divs.y - 1);
     double maximumFluxError = m_fluxAnalysis->photonsError()*powerPhoton/areaE;
     double error = fabs(fluxMax - maximumFluxError)/fluxMax;
     double fluxMeanU = 0.;
     double fluxMeanV = 0.;
     double E = 0;
 
-    for (int r = 0; r < xDivs; ++r)
+    for (int r = 0; r < divs.x; ++r)
     {
-        for (int c = 0; c < yDivs; ++c)
+        for (int c = 0; c < divs.y; ++c)
         {
-            double fluxCell = photonCounts(r, c)*powerPhoton/areaCell;
+            double fluxCell = fluxCounts(r, c);
             if (fluxMin > fluxCell) fluxMin = fluxCell;
 
             fluxMeanU += fluxCell*(uMin + (r + 0.5)*uStep);
@@ -210,16 +212,16 @@ void FluxAnalysisDialog::UpdateAnalysis()
         }
     }
 
-    double standardDeviation = sqrt(E/(xDivs*yDivs));
+    double standardDeviation = sqrt(E/(divs.x*divs.y));
     double uniformity = standardDeviation/fluxAverage;
     double fluxNorm = powerTotal/areaCell;
     fluxMeanU /= fluxNorm;
     fluxMeanV /= fluxNorm;
 
     UpdateStatistics(powerTotal, fluxMin, fluxAverage, fluxMax, fluxMaxU, fluxMaxV, error, uniformity, fluxMeanU, fluxMeanV);
-    UpdateFluxMapPlot(photonCounts, powerPhoton, xDivs, yDivs, uMin, vMin, uMax, vMax);
+    UpdateFluxMapPlot(fluxCounts, box);
     CreateSectorPlots(uMin, vMin, uMax, vMax);
-    UpdateSectorPlots(photonCounts, powerPhoton, xDivs, yDivs, uMin, vMin, uMax, vMax, fluxMax);
+    UpdateSectorPlots(fluxCounts, box);
 }
 
 /*!
@@ -304,7 +306,7 @@ void FluxAnalysisDialog::on_pushButton_clicked()
     m_path = fileName;
 
 
-    const Matrix2D<int>& photonCounts = m_fluxAnalysis->getBins();
+    const Matrix2D<int>& photonCounts = m_fluxAnalysis->getBinsPhotons();
     if (photonCounts.data().isEmpty())
     {
         QString message = QString("Nothing available to export, first run the simulation");
@@ -328,21 +330,10 @@ void FluxAnalysisDialog::on_pushButton_clicked()
  */
 void FluxAnalysisDialog::UpdateSectorPlotSlot()
 {
-    const Matrix2D<int>& photonCounts = m_fluxAnalysis->getBins();
+    const Matrix2D<double>& flux = m_fluxAnalysis->getBinsFlux();
 //    if (!photonCounts || photonCounts == 0) return;
-
-    double xmin = m_fluxAnalysis->uMin();
-    double ymin = m_fluxAnalysis->vMin();
-    double xmax = m_fluxAnalysis->uMax();
-    double ymax = m_fluxAnalysis->vMax();
-    double wPhoton = m_fluxAnalysis->powerPhoton();
-    int widthDivisions = ui->surfaceXSpin->value();
-    int heightDivisions = ui->surfaceYSpin->value();
-    double widthCell = (xmax - xmin)/widthDivisions;
-    double heightCell = (ymax - ymin)/heightDivisions;
-    double areaCell = findAreaCell(widthCell, heightCell);
-    double maximumFlux = (m_fluxAnalysis->photonsMax()*wPhoton)/areaCell;
-    UpdateSectorPlots(photonCounts, wPhoton, widthDivisions, heightDivisions, xmin, ymin, xmax, ymax, maximumFlux);
+    Box2D box = m_fluxAnalysis->box();
+    UpdateSectorPlots(flux, box);
 }
 
 /*!
@@ -382,9 +373,9 @@ void FluxAnalysisDialog::ClearAnalysis()
     ui->fluxMax->setText(QString::number(0.));
 
     ui->fluxMaxUV->setText(" ; ");
-    ui->errorValue->setText(QString::number(0.));
-    ui->uniformityValue->setText(QString::number(0.));
-    ui->centroidValue->setText(" ; ");
+//    ui->errorValue->setText(QString::number(0.));
+//    ui->uniformityValue->setText(QString::number(0.));
+//    ui->centroidValue->setText(" ; ");
 }
 
 /*
@@ -398,17 +389,17 @@ void FluxAnalysisDialog::UpdateStatistics(double powerTotal, double fluxMin, dou
     ui->fluxAverage->setText(QString::number(fluxAverage));
     ui->fluxMax->setText(QString::number(fluxMax));
     ui->fluxMaxUV->setText(QString("%1 ; %2").arg(QString::number(fluxMaxU), QString::number(fluxMaxV)));
-    ui->errorValue->setText(QString::number(error) );
-    ui->uniformityValue->setText(QString::number(uniformity) );
-    ui->centroidValue->setText(QString("%1 ; %2").arg(QString::number(gravityX), QString::number(gravityY)));
+//    ui->errorValue->setText(QString::number(error) );
+//    ui->uniformityValue->setText(QString::number(uniformity) );
+//    ui->centroidValue->setText(QString("%1 ; %2").arg(QString::number(gravityX), QString::number(gravityY)));
 }
 
 /*
  * Updates the flux map plot
  */
-void FluxAnalysisDialog::UpdateFluxMapPlot(const Matrix2D<int>& photonCounts, double powerPhoton, int xDivs, int yDivs, double xMin, double yMin, double xMax, double yMax)
+void FluxAnalysisDialog::UpdateFluxMapPlot(const Matrix2D<double>& flux, const Box2D& box)
 {
-	//Delete previous colormap, scale
+    // delete previous colormap, scale
     ui->plotFxy->clearPlottables();
     ui->plotFxy->clearItems();
 
@@ -416,7 +407,7 @@ void FluxAnalysisDialog::UpdateFluxMapPlot(const Matrix2D<int>& photonCounts, do
 	{
         if (qobject_cast<QCPColorScale*>(ui->plotFxy->plotLayout()->elementAt(i) ) )
             ui->plotFxy->plotLayout()->removeAt(i);
-        //collapse the empty elements
+        // collapse the empty elements
         ui->plotFxy->plotLayout()->simplify();
 	}
 
@@ -424,16 +415,11 @@ void FluxAnalysisDialog::UpdateFluxMapPlot(const Matrix2D<int>& photonCounts, do
     QCPColorMap* colorMap = new QCPColorMap(ui->plotFxy->xAxis, ui->plotFxy->yAxis);
 //    ui->plotFxy->addPlottable(colorMap);
 
-    colorMap->data()->setSize(xDivs, yDivs);   // we want the color map to have widthDivisions * heightDivisions data points
-    colorMap->data()->setRange(QCPRange(xMin, xMax), QCPRange(yMin, yMax));      // and span the coordinate range -4..4 in both key (x) and value (y) dimensions
-
-	//Assign flux data
-    double uStep = (xMax - xMin)/xDivs;
-    double vStep = (yMax - yMin)/yDivs;
-    double areaCell = findAreaCell(uStep, vStep);
-    for (int x = 0; x < xDivs; ++x)
-        for (int y = 0; y < yDivs; ++y)
-            colorMap->data()->setCell(x, y, photonCounts(x, y)*powerPhoton/areaCell);
+    colorMap->data()->setSize(flux.rows(), flux.cols());
+    colorMap->data()->setRange(QCPRange(box.min().x, box.max().x), QCPRange(box.min().y, box.max().y));
+    for (int x = 0; x < flux.rows(); ++x)
+        for (int y = 0; y < flux.cols(); ++y)
+            colorMap->data()->setCell(x, y, flux(x, y));
 
 	// add a color scale:
     QCPColorScale* colorScale = new QCPColorScale(ui->plotFxy);
@@ -489,8 +475,9 @@ void FluxAnalysisDialog::CreateSectorPlots(double xMin, double yMin, double xMax
 /*
  * Updates the sector plots
  */
-void FluxAnalysisDialog::UpdateSectorPlots(const Matrix2D<int>& bins, double wPhoton, int xDivs, int yDivs, double xMin, double yMin, double xMax, double yMax, double fluxMax)
+void FluxAnalysisDialog::UpdateSectorPlots(const Matrix2D<double>& flux, const Box2D& box)
 {
+    vec2i divs(flux.rows(), flux.cols());
     double x = ui->spinX->value();
     double y = ui->spinY->value();
 
@@ -502,45 +489,44 @@ void FluxAnalysisDialog::UpdateSectorPlots(const Matrix2D<int>& bins, double wPh
     m_lineH->start->setCoords(m_lineH->start->coords().x(), y);
     m_lineH->end->setCoords(m_lineH->end->coords().x(), y);
 
-    ui->plotFxy->replot();
+    ui->plotFxy->replot(); // move lines
     ui->plotFx->clearPlottables();
     ui->plotFy->clearPlottables();
 
 
-    double uStep = (xMax - xMin)/xDivs;
-    double vStep = (yMax - yMin)/yDivs;
-    double areaCell = findAreaCell(uStep, vStep);
+    double uStep = box.size().x/divs.x;
+    double vStep = box.size().y/divs.y;
 
-    int xBin = floor( (x - xMin) / (xMax - xMin) * xDivs);
-    if (xBin >= xDivs) xBin = xDivs - 1;
-    int yBin = floor( (y - yMin) / (yMax - yMin) * yDivs);
-    if (yBin >= yDivs) yBin = yDivs - 1;
+    int xBin = floor((x - box.min().x)/uStep);
+    if (xBin >= divs.x) xBin = divs.x - 1;
+    int yBin = floor((y - box.min().y)/vStep);
+    if (yBin >= divs.y) yBin = divs.y - 1;
 
-
-    QVector<double> dataY(yDivs), dataFy(yDivs);
-    for (int ny = 0; ny < yDivs; ++ny)
+    double fMax = *std::max_element(flux.data().begin(), flux.data().end());
+    QVector<double> dataY(divs.y), dataFy(divs.y);
+    for (int ny = 0; ny < divs.y; ++ny)
 	{
-        dataY[ny] = yMin + (ny + 0.5)*vStep;
-        dataFy[ny] = bins(xBin, ny) * wPhoton / areaCell;
+        dataY[ny] = box.min().y + (ny + 0.5)*vStep;
+        dataFy[ny] = flux(xBin, ny);
 	}
 
-    QVector<double> dataX(xDivs), dataFx(xDivs);
-    for (int nx = 0; nx < xDivs; ++nx)
+    QVector<double> dataX(divs.x), dataFx(divs.x);
+    for (int nx = 0; nx < divs.x; ++nx)
 	{
-        dataX[nx] = xMin + (nx + 0.5)*uStep;
-        dataFx[nx] = bins(nx, yBin) * wPhoton / areaCell;
+        dataX[nx] = box.min().x + (nx + 0.5)*uStep;
+        dataFx[nx] = flux(nx, yBin);
 	}
 
     ui->plotFy->addGraph();
     ui->plotFy->graph(0)->setData(dataY, dataFy);
-    ui->plotFy->xAxis->setRange(yMin, yMax);
-    ui->plotFy->yAxis->setRange(0, 1.2*fluxMax);
+    ui->plotFy->xAxis->setRange(box.min().y, box.max().y);
+    ui->plotFy->yAxis->setRange(0, 1.2*fMax);
     ui->plotFy->replot();
 
     ui->plotFx->addGraph();
     ui->plotFx->graph(0)->setData(dataX, dataFx);
-    ui->plotFx->xAxis->setRange(xMin, xMax);
-    ui->plotFx->yAxis->setRange(0, 1.2*fluxMax);
+    ui->plotFx->xAxis->setRange(box.min().x, box.max().x);
+    ui->plotFx->yAxis->setRange(0, 1.2*fMax);
     ui->plotFx->replot();
 }
 

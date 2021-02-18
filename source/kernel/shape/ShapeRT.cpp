@@ -53,6 +53,23 @@ vec3d ShapeRT::getDerivativeV(double u, double v) const
     return vec3d(0., 1., 0.);
 }
 
+#include "libraries/math/3D/Transform.h"
+/*
+01 11
+00 10
+*/
+double ShapeRT::findArea(double u0, double v0, double u1, double v1, const Transform& t) const
+{
+    vec3d p00 = getPoint(u0, v0);
+    vec3d p01 = getPoint(u0, v1);
+    vec3d p10 = getPoint(u1, v0);
+    vec3d p11 = getPoint(u1, v1);
+
+    double a1 = cross(t.transformVector(p10 - p00), t.transformVector(p01 - p00)).norm();
+    double a2 = cross(t.transformVector(p10 - p11), t.transformVector(p01 - p11)).norm();
+    return (a1 + a2)/2;
+}
+
 //double ShapeRT::getJacobian(double u, double v) const
 //{
 //    Q_UNUSED(u)

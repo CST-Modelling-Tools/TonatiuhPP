@@ -3,7 +3,7 @@
 #include "libraries/math/2D/vec2d.h"
 
 
-class TONATIUH_LIBRARIES Box2D
+class TONATIUH_LIBRARIES Box2D // ? Box2d
 {
 public:
     Box2D();
@@ -11,8 +11,8 @@ public:
     void setLimits(const vec2d& a, const vec2d& b);
     bool isValid() const {return m_a <= m_b;}
 
-    vec2d min() const {return m_a;}
-    vec2d max() const {return m_b;}
+    const vec2d& min() const {return m_a;}
+    const vec2d& max() const {return m_b;}
     vec2d size() const {return m_b - m_a;}
     vec2d center() const {return (m_a + m_b)/2.;}
     double area() const;

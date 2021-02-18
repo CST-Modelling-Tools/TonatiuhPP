@@ -52,7 +52,7 @@ TShapeKit::TShapeKit()
     SoGroup* g = (SoGroup*) topSeparator.getValue();
     g->addChild(m_shapeKit);
 
-    m_sensor_shapeRT = new SoFieldSensor(onSensor, this);
+    m_sensor_shapeRT = new SoFieldSensor(onSensorShape, this);
     m_sensor_shapeRT->attach(&shapeRT);
 
     m_sensor_profileRT = new SoFieldSensor(onSensor, this);
@@ -100,6 +100,22 @@ void TShapeKit::onSensor(void* data, SoSensor*)
     }
 
     ShapeRT* shape = (ShapeRT*) kit->shapeRT.getValue();
+    shape->updateShapeGL(kit);
+}
+
+void TShapeKit::onSensorShape(void* data, SoSensor*)
+{
+    TShapeKit* kit = (TShapeKit*) data;
+
+    SoGroup* g = (SoGroup*) kit->topSeparator.getValue();
+    if (kit->m_shapeKit != g->getChild(0)) {
+        kit->m_shapeKit = (SoShapeKit*) g->getChild(0);
+    }
+
+    ShapeRT* shape = (ShapeRT*) kit->shapeRT.getValue();
+//    kit->enableNotify(FALSE);
+//    kit->profileRT = shape->getDefaultProfile();
+//    kit->enableNotify(TRUE);
     shape->updateShapeGL(kit);
 }
 

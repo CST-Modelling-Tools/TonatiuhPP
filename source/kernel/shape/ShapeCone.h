@@ -11,16 +11,18 @@ public:
     static void initClass();
     ShapeCone();
 
+    ProfileRT* getDefaultProfile() const;
+
     vec3d getPoint(double u, double v) const;
     vec3d getNormal(double u, double v) const;
-    ProfileRT* getDefaultProfile() const;
 
     vec2d getUV(const vec3d& p) const;
     Box3D getBox(ProfileRT* aperture) const;
+
     bool intersect(const Ray& ray, double* tHit, DifferentialGeometry* dg, ProfileRT* aperture) const;
+    void updateShapeGL(TShapeKit* parent);
 
     SoSFDouble dr;
 
     NAME_ICON_FUNCTIONS("Cone", ":/shape/ShapeCone.png")
-    void updateShapeGL(TShapeKit* parent);
 };

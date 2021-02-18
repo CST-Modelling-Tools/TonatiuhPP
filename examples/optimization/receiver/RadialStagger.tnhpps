@@ -1,7 +1,8 @@
 var dataIn = new DataObject;
 dataIn.read("in.csv");
-var hR = dataIn.array(0)[0];
-var rays = dataIn.array(0)[1];
+dataIn = dataIn.array(0);
+var hR = parseFloat(dataIn[0]); // receiver height
+var rays = parseInt(dataIn[1]);
 
 
 var degree = Math.PI/180;
