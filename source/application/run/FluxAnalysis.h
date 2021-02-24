@@ -33,6 +33,8 @@ public:
     double powerPhoton() {return m_powerPhoton;}
     double powerTotal() {return m_powerTotal;}
 
+    PhotonsBuffer* getPhotonsBuffer() {return m_photons;}
+
 private:
     void fillBins();
 

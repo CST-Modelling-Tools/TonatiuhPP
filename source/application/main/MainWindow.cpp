@@ -1597,9 +1597,45 @@ QJSValue MainWindow::getScene()
     return qjsEngine(this)->newQObject(ans);
 }
 
-QJSValue MainWindow::FindInterception(QJSValue surface, QJSValue rays)
+QJSValue MainWindow::FindInterception(QJSValue surface, QJSValue rays, QJSValue show)
 {
-    return findInterception(surface.toString(), rays.toUInt(), this);
+//    m_graphicView[0]->render();
+//    double ans = findInterception(surface.toString(), rays.toUInt(), this);
+//    return ans;
+
+    if (!m_rand)
+        m_rand = m_pluginManager->getRandomFactories()[m_raysRandomFactoryIndex]->create(0);
+
+    FluxAnalysis fa(m_document->getSceneKit(), m_modelScene, m_raysGridWidth, m_raysGridHeight, m_rand);
+    fa.run(surface.toString(), "front", rays.toUInt(), false, 5, 5, true);
+    double ans = fa.powerTotal();
+
+    if (show.toBool() == true) {
+         trf::DrawRays(m_graphicsRoot->rays(), *fa.getPhotonsBuffer(), m_raysScreen);
+        m_graphicsRoot->showRays(true);
+//       m_graphicView[0]->render();
+    }
+    return ans;
+}
+
+void MainWindow::Screenshot(QJSValue filename)
+{
+    QScreen* screen = QGuiApplication::primaryScreen();
+//    if (const QWindow *window = windowHandle())
+//        screen = window->screen();
+//    if (!screen) return;
+
+    raise();
+    repaint();
+    m_graphicView[0]->render();
+
+    QDir dir = QDir::searchPaths("project")[0];
+    QString fn = dir.absoluteFilePath(filename.toString());
+    QFileInfo fi(fn);
+    dir.mkpath(fi.absolutePath());
+
+    QPixmap pm = screen->grabWindow(winId());
+    pm.save(fn);
 }
 
 QJSValue MainWindow::print(QString text)
@@ -1611,6 +1647,16 @@ QJSValue MainWindow::print(QString text)
 QJSValue MainWindow::printTimed(QString text)
 {
     qDebug() << text;
+    return true;
+}
+
+#include "application/view/GraphicView.h"
+QJSValue MainWindow::render()
+{
+//    repaint();
+    m_graphicView[0]->repaint();
+    m_graphicView[0]->render();
+    m_graphicView[0]->repaint();
     return true;
 }
 
@@ -1756,7 +1802,19 @@ void MainWindow::Run()
 
     if (!m_photonsBuffer->getExporter() )
     {
-        if (!m_photonsSettings) return;
+//        if (!m_photonsSettings) return;
+        if (!m_photonsSettings) {
+            m_photonsSettings = new PhotonsSettings;
+            PhotonsSettings& settings = *m_photonsSettings;
+            settings.name = "No export";
+
+            settings.saveCoordinates = true;
+            settings.saveCoordinatesGlobal = true;
+            settings.saveSurfaceID = true;
+            settings.saveSurfaceSide = true;
+            settings.savePhotonsID = true;
+        }
+
         PhotonsAbstract* photonsExporter = CreatePhotonMapExport();
         if (!photonsExporter) return;
         if (!m_photonsBuffer->setExporter(photonsExporter)) return;
@@ -2618,7 +2676,7 @@ bool MainWindow::openFileProject(const QString& fileName)
     m_graphicsRoot->removeScene();
     ui->parametersTabs->setNode(0);
 
-    setSearchPaths(fileName);
+    if (!fileName.isEmpty()) setSearchPaths(fileName);
     if (m_document->ReadFile(fileName))
     {
         showInStatusBar("File loaded");

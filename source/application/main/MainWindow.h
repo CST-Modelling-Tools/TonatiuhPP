@@ -100,10 +100,13 @@ public slots:
     void InsertScene(QJSValue v);
     QJSValue getScene();
 
-    QJSValue FindInterception(QJSValue surface, QJSValue rays);
+    QJSValue FindInterception(QJSValue surface, QJSValue rays,  QJSValue show = false);
+    void Screenshot(QJSValue filename);
+
 //    QJSValue getSceneKit()
     Q_INVOKABLE QJSValue print(QString text);
     Q_INVOKABLE QJSValue printTimed(QString text);
+    QJSValue render();
 
     void Select(QString url);
     void SetName(QString name);

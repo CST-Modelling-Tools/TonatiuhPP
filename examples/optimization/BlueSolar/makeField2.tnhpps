@@ -8,9 +8,19 @@ fileB.read("heliostatsB.csv"); // 0.297
 var fileW = new DataObject;
 fileW.read("sampling.csv");
 
-
 var rays = 5e2; // if rays <= 0 no simulations
 
+// iteration points
+var iterationsA = 0; 
+var iterationsB = 23; 
+
+// weather points
+var weather0 = 11; // heading
+var weatherA = weather0 + 1;
+var weatherB = fileW.rows(); 
+weatherA = weather0 + 25;// lines in sampling.csv
+weatherB = weather0 + 38; 
+	
 function makeHeliostatA(parent, name, position, aiming, focus)
 {
 	var node = parent.createNode(name);
@@ -278,29 +288,38 @@ var vReceiverA = "0.0467 -2.0216 " + zReceiverA;
 var zReceiverB = zReceiverA;
 var vReceiverB = "8.0467 -2.0216 " + zReceiverB;
 
-tn.Clear();
-makeField();
 
-var scene = tn.getScene();
-var sp = scene.getPart("world.sun.position");
-sp.setParameter("azimuth", 180);
-sp.setParameter("elevation", 70);
-
-var cm = scene.getPart("world.camera");
-cm.setParameter("position", "-61.9296 -66.3768 75.5367");
-cm.setParameter("rotation", "33.4011 -32.917");
-
-var tg = scene.getPart("world.terrain.grid");
-tg.setParameter("steps", "5 5 1");
-tg.setParameter("file", "../examples/facilities/Proteas/terrain/terrain.obj");
-
+function pad(n, width, z) {
+  z = z || '0';
+  n = n + '';
+  return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+}
 
 if (rays > 0) {// simulation
+	for (var i = iterationsA; i < iterationsB; i++) 
+	{
+	fileB.read("temp/heliostatsB" + i + ".csv");
+	tn.Clear();
+	makeField();
+	
+	var scene = tn.getScene();
+	var sp = scene.getPart("world.sun.position");
+	sp.setParameter("azimuth", 180);
+	sp.setParameter("elevation", 70);
+
+	var cm = scene.getPart("world.camera");
+	cm.setParameter("position", "-45.1161 -94.4466 91.6898");
+	cm.setParameter("rotation", "18.6511 -33.167");
+
+	var tg = scene.getPart("world.terrain.grid");
+	tg.setParameter("steps", "5 5 1");
+	tg.setParameter("file", "../examples/facilities/Proteas/terrain/terrain.obj");
+
 	var qMax = 20*6*5*1000; // mirrors*area*irradiance
 	var etaAverage = 0;
+	
 
-	var nMax = fileW.rows();
-	for (var n = 12; n < nMax; n++) {
+	for (var n = weatherA; n < weatherB; n++) {
 		var azimuth = fileW.array(n)[1];
 		var elevation = fileW.array(n)[2];
 		var w = fileW.array(n)[4]/100.;
@@ -309,13 +328,11 @@ if (rays > 0) {// simulation
 		sp.setParameter("azimuth", azimuth);
 		sp.setParameter("elevation", elevation);
 
-		var q = tn.FindInterception("//Node/Script/ReceiverB/Plate/Shape", rays);
-		etaAverage += w*q/qMax;
+		tn.SetRaysNumber(1000);
+		tn.SetRaysScreen(1000);
+		tn.Run();
+		tn.Screenshot("screenshots/" + pad(i, 3) + "-" + pad(n - weather0, 2) + ".png");
 	}
 
-	var dataOut = new DataObject;
-	var line = "" + etaAverage;
-	print(etaAverage);
-	dataOut.addRow(line);
-	dataOut.write("out.csv");
+	}
 }
