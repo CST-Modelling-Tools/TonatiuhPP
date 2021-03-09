@@ -214,6 +214,15 @@ TSceneKit* MainWindow::getSceneKit()
 
 void MainWindow::openFileScript(QString fileName)
 {
+    // refactor
+    QStringList searchPaths = QDir::searchPaths("project:");
+
+    QFileInfo info(fileName);
+    if (info.exists())
+        searchPaths << info.absolutePath();
+
+    QDir::setSearchPaths("project", searchPaths);
+
     ScriptWindow* window = new ScriptWindow(this, 0);
     window->setAttribute(Qt::WA_DeleteOnClose);
     window->show();

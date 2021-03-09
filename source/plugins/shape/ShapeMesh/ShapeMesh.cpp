@@ -55,6 +55,7 @@ ShapeMesh::ShapeMesh()
     SO_NODE_ADD_FIELD( group, ("") );
 
     m_sensor = QSharedPointer<SoNodeSensor>::create(onSensor, this);
+    m_sensor->setPriority(0);
     m_sensor->attach(this);
     onSensor(this, 0);
 }
@@ -143,6 +144,7 @@ ShapeMesh::~ShapeMesh()
         delete t;
 }
 
+#include <QDir>
 void ShapeMesh::onSensor(void* data, SoSensor*)
 {
     ShapeMesh* shape = (ShapeMesh*) data;
@@ -156,6 +158,10 @@ void ShapeMesh::onSensor(void* data, SoSensor*)
 
     fileName = QString("project:") + fileName;
     QFileInfo info(fileName);
+
+    qDebug() << info.absoluteFilePath();
+    qDebug() << QDir::searchPaths("project");
+
     if (info.suffix() != "obj") {
         QMessageBox::warning(0, "Warning", "File is not in obj-format");
         return;
