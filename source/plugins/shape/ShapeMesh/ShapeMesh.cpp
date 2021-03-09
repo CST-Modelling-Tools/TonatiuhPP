@@ -219,7 +219,7 @@ void ShapeMesh::onSensor(void* data, SoSensor*)
         }
 
         SoIndexedFaceSet* faceSet = new SoIndexedFaceSet;
-            faceSet->ref();
+        faceSet->ref();
         faceSet->setName(shapeGroup.name.c_str());
         faceSet->coordIndex.setValues(0, facesVertices.getNum(), facesVertices.getValues(0));
         faceSet->normalIndex.setValues(0, facesNormals.getNum(), facesNormals.getValues(0));
