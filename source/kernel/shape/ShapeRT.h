@@ -10,6 +10,7 @@ struct DifferentialGeometry;
 class QSize;
 class TShapeKit;
 class ProfileRT;
+class Transform;
 
 
 class TONATIUH_KERNEL ShapeRT: public TNode
@@ -25,6 +26,7 @@ public:
     virtual vec3d getNormal(double u, double v) const;
     virtual vec3d getDerivativeU(double u, double v) const;
     virtual vec3d getDerivativeV(double u, double v) const;
+    double findArea(double u0, double v0, double u1, double v1, const Transform& t) const;
 
     virtual vec2d getUV(const vec3d& p) const;
     virtual double getStepHint(double u, double v) const;

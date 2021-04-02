@@ -11,5 +11,3 @@ Welcome to Tonatiuh's documentation!
    examples/index
    development/index
 
-..   
-   api/library_root

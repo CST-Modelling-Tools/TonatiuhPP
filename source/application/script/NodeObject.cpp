@@ -133,6 +133,7 @@ QJSValue NodeObject::insertSurface(const QString& name)
     parent->shapeRT = shape;
     parent->profileRT = shape->getDefaultProfile();
 
+
     NodeObject* ans = new NodeObject(shape);
     return s_engine->newQObject(ans);
 }

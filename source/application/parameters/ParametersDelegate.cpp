@@ -220,7 +220,13 @@ void ParametersDelegate::setModelData(QWidget* editor, QAbstractItemModel* model
         TNode* tn = tf->create();
         if (ShapeRT* sh = dynamic_cast<ShapeRT*>(tn)) {
             TShapeKit* skit = (TShapeKit*) kit;
-            skit->profileRT = sh->getDefaultProfile();
+            modelP->setData(kit, name, tn);
+//            skit->enableNotify(FALSE);
+//            skit->profileRT = sh->getDefaultProfile();
+//            skit->enableNotify(TRUE);
+//            skit->profileRT = sh->getDefaultProfile(); // bugs
+            modelP->setData(kit, "profileRT", sh->getDefaultProfile());
+            return;
         } else if (ProfileRT* pr = dynamic_cast<ProfileRT*>(tn)) {
             TShapeKit* skit = (TShapeKit*) kit;
             ProfileRT* prOld = (ProfileRT*) skit->profileRT.getValue();

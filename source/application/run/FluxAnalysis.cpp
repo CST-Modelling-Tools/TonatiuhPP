@@ -42,21 +42,14 @@ FluxAnalysis::FluxAnalysis(TSceneKit* sceneKit,
 ):
     m_sceneKit(sceneKit),
     m_sceneModel(sceneModel),
-    m_sunWidthDivisions(sunWidthDivisions),
-    m_sunHeightDivisions(sunHeightDivisions),
+    m_sunDivs(sunWidthDivisions, sunHeightDivisions),
     m_rand(randomDeviate),
     m_photons(0),
     m_surfaceURL(""),
     m_tracedRays(0),
     m_powerTotal(0.),
     m_powerPhoton(0.),
-    m_uMin(0.),
-    m_uMax(0.),
-    m_vMin(0.),
-    m_vMax(0.),
     m_photonsMax(0),
-    m_photonsMaxRow(0),
-    m_photonsMaxCol(0),
     m_photonsError(0)
 {
     m_instanceLayout = m_sceneModel->getInstance(QModelIndex());
@@ -91,12 +84,12 @@ QString FluxAnalysis::getShapeType(QString nodeURL)
 /*
  * Fun flux analysis
  */
-void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool photonBufferAppend, int uDivs, int vDivs, bool /*silent*/)
+void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool photonBufferAppend, int uDivs, int vDivs, bool silent)
 {
     m_surfaceURL = nodeURL;
     m_surfaceSide = surfaceSide;
 
-    m_bins.resize(uDivs, vDivs);
+    m_binsPhotons.resize(uDivs, vDivs);
 
     if (!m_sceneKit) return;
 
@@ -150,7 +143,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
     //Compute bounding boxes and world to object transforms
     m_instanceLayout->updateTree(Transform::Identity);
 
-    if (!sunKit->findTexture(m_sunWidthDivisions, m_sunHeightDivisions, m_instanceLayout)) return;
+    if (!sunKit->findTexture(m_sunDivs.x, m_sunDivs.y, m_instanceLayout)) return;
 
     QVector<long> raysPerThread;
     int maximumValueProgressScale = 100;
@@ -196,6 +189,8 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
     // Display the dialog and start the event loop.
 //    if (!silent) {
         dialog.exec();
+//    }
+
 //    dialog.setModal(false);
 //    dialog.show();
     watcher.waitForFinished();
@@ -214,7 +209,7 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
  */
 void FluxAnalysis::setBins(int rows, int cols)
 {
-    m_bins.resize(rows, cols);
+    m_binsPhotons.resize(rows, cols);
     fillBins();
 }
 
@@ -229,8 +224,8 @@ void FluxAnalysis::write(QString fileName, bool withCoords)
     file.open(QIODevice::WriteOnly);
     QTextStream out(&file);
 
-    double uStep = (m_uMax - m_uMin)/m_bins.cols();
-    double vStep = (m_vMax - m_vMin)/m_bins.rows();
+    double uStep = m_box.size().x/m_binsPhotons.rows();
+    double vStep = m_box.size().y/m_binsPhotons.cols();
     QModelIndex nodeIndex = m_sceneModel->indexFromUrl(m_surfaceURL);
     InstanceNode* instanceNode = m_sceneModel->getInstance(nodeIndex);
     vec3d sJ = instanceNode->getTransform().getScales();
@@ -239,22 +234,23 @@ void FluxAnalysis::write(QString fileName, bool withCoords)
     // works for cylinder, not sphere
     double areaCell = dot(sJ, shape->getDerivativeU(0., 0.))*uStep;
     areaCell *= dot(sJ, shape->getDerivativeV(0., 0.))*vStep;
+    // cross product better?
 
     double coeff = m_powerPhoton/areaCell;
 
     if (withCoords)
     {
         out << "x(m)\ty(m)\tFlux(W/m2)\n";
-        for (int r = 0; r < m_bins.rows(); ++r) {
-            for (int c = 0; c < m_bins.cols(); ++c)
-                out << m_uMin + uStep*(r + 0.5)  << "\t" << m_vMin + vStep*(c + 0.5) << "\t" << m_bins(r, c)*coeff << "\n";
+        for (int r = 0; r < m_binsPhotons.rows(); ++r) {
+            for (int c = 0; c < m_binsPhotons.cols(); ++c)
+                out << m_box.min().x + uStep*(r + 0.5)  << "\t" << m_box.min().y + vStep*(c + 0.5) << "\t" << m_binsPhotons(r, c)*coeff << "\n";
         }
     }
     else
     {
-        for (int r = 0; r < m_bins.rows(); ++r) {
-            for (int c = 0; c < m_bins.cols(); c++)
-                out << m_bins(r, c)*coeff << "\t";
+        for (int r = 0; r < m_binsPhotons.rows(); ++r) {
+            for (int c = 0; c < m_binsPhotons.cols(); c++)
+                out << m_binsPhotons(r, c)*coeff << "\t";
             out << "\n";
         }
     }
@@ -280,13 +276,12 @@ void FluxAnalysis::fillBins()
 {
     if (!m_photons) return;
 
-    m_bins.fill(0);
+    m_binsPhotons.fill(0);
     m_photonsMax = 0;
-    m_photonsMaxRow = 0;
-    m_photonsMaxCol = 0;
+    m_photonsMaxPos = vec2i(0, 0);
     m_photonsError = 0;
 
-    QString shapeType = getShapeType(m_surfaceURL);
+//    QString shapeType = getShapeType(m_surfaceURL);
     QModelIndex index = m_sceneModel->indexFromUrl(m_surfaceURL);
     InstanceNode* instance = m_sceneModel->getInstance(index);
     if (!instance) return;
@@ -295,16 +290,13 @@ void FluxAnalysis::fillBins()
     ShapeRT* shape = (ShapeRT*) shapeKit->shapeRT.getValue();
     if (!shape) return;
     ProfileRT* profile = (ProfileRT*) shapeKit->profileRT.getValue();
-    Box2D box = profile->getBox();
-    m_uMin = box.min().x;
-    m_vMin = box.min().y;
-    m_uMax = box.max().x;
-    m_vMax = box.max().y;
+    m_box = profile->getBox();
 
     int activeSideID = m_surfaceSide == "back" ? 0 : 1;
-    Transform toObject = instance->getTransform().inversed();
+    Transform toWorld = instance->getTransform();
+    Transform toObject = toWorld.inversed();
 
-    Matrix2D<int> binErrors(m_bins.rows() - 1, m_bins.cols() - 1);
+    Matrix2D<int> binErrors(m_binsPhotons.rows() - 1, m_binsPhotons.cols() - 1);
     binErrors.fill(0);
 
     int photonsTotal = 0;
@@ -314,20 +306,24 @@ void FluxAnalysis::fillBins()
         photonsTotal++;
         vec3d p = toObject.transformPoint(photon.pos);
         vec2d uv = shape->getUV(p);
-        int r = floor((uv.x - m_uMin)/(m_uMax - m_uMin)*m_bins.rows());
-        int c = floor((uv.y - m_vMin)/(m_vMax - m_vMin)*m_bins.cols());
+        vec2d q = (uv - m_box.min())/m_box.size();
 
-        int& bin = m_bins(r, c);
+        int r = floor(q.x*m_binsPhotons.rows());
+        int c = floor(q.y*m_binsPhotons.cols());
+        if (r == m_binsPhotons.rows()) r--;
+        if (c == m_binsPhotons.cols()) c--;
+        int& bin = m_binsPhotons(r, c);
         bin++;
         if (m_photonsMax < bin)
         {
             m_photonsMax = bin;
-            m_photonsMaxRow = r;
-            m_photonsMaxCol = c;
+            m_photonsMaxPos = vec2i(r, c);
         }
 
-        int rE = floor((uv.x - m_uMin)/(m_uMax - m_uMin)*binErrors.rows());
-        int cE = floor((uv.y - m_vMin)/(m_vMax - m_vMin)*binErrors.cols());
+        int rE = floor(q.x*binErrors.rows());
+        int cE = floor(q.y*binErrors.cols());
+        if (rE == binErrors.rows()) rE--;
+        if (cE == binErrors.cols()) cE--;
         int& binE = binErrors(rE, cE);
         binE++;
         if (m_photonsError < binE)
@@ -335,4 +331,17 @@ void FluxAnalysis::fillBins()
     }
 
     m_powerTotal = photonsTotal*m_powerPhoton;
+
+    // flux
+    vec2i dims(m_binsPhotons.rows(), m_binsPhotons.cols());
+    m_binsFlux.resize(dims.x, dims.y);
+    double uStep = m_box.size().x/dims.x;
+    double vStep = m_box.size().y/dims.y;
+    for (int r = 0; r < dims.x; ++r) {
+        for (int c = 0; c < dims.y; ++c) {
+            double u0 = m_box.min().x + r*uStep;
+            double v0 = m_box.min().y + c*vStep;
+            m_binsFlux(r, c) = m_binsPhotons(r, c)*m_powerPhoton/shape->findArea(u0, v0, u0 + uStep, v0 + vStep, toWorld);
+        }
+    }
 }
