@@ -122,7 +122,15 @@ setFocusPolicy(Qt::StrongFocus);
 
 m_viewer->getGLWidget()->setFocusPolicy(Qt::NoFocus);
 
-   m_modifiersKeys = Qt::NoModifier; //delete
+//m_viewer->getBaseWidget()->setFocusPolicy(Qt::NoFocus);
+//m_viewer->getParentWidget()->setFocusPolicy(Qt::NoFocus);
+//m_viewer->getShellWidget()->setFocusPolicy(Qt::NoFocus);
+//m_viewer->getWidget()->setFocusPolicy(Qt::NoFocus);
+
+//m_viewer->getOverlayWidget()->setFocusPolicy(Qt::NoFocus);
+//    w->setFocusPolicy(Qt::StrongFocus);
+//    m_filter = new KeyFilter(this);
+    m_modifiersKeys = Qt::NoModifier; //delete
 
 
     initCursors();
@@ -422,6 +430,7 @@ void GraphicView::focusInEvent(QFocusEvent* /*event*/)
     setProperty("inFocus", true);
     style()->unpolish(this);
     update();
+//    qDebug() << "foc in";
 
 //        setHook();
 //    qDebug() << "disa";
@@ -457,7 +466,7 @@ void GraphicView::focusOutEvent(QFocusEvent* /*event*/)
     update();
 
     qApp->restoreOverrideCursor();
-
+//  qDebug() << "foc out";
 //    qDebug() << "ena";
 //    if (m_window)
 //        qApp->removeEventFilter(m_filter);
@@ -907,7 +916,13 @@ void GraphicView::onShowRays(bool on)
 
 void GraphicView::onShowPhotons(bool on)
 {
-     m_graphicRoot->showPhotons(on);
+    m_graphicRoot->showPhotons(on);
+}
+
+void GraphicView::hideMenu()
+{
+    QWindow * hw  = m_viewer->getGLWidget()->property("SoQtGLArea").value<QWindow*>();
+//    hw->requestActivate();
 }
 
 //void MainWindow::showGrid() //?
