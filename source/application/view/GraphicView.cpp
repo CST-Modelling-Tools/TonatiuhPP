@@ -20,7 +20,7 @@
 //    ~ConstrainedViewer(){}
 //};
 
-
+#define NOMINMAX
 #include "KeyboardHook.h"
 //    HHOOK m_hook;
 //void MainWindow::setHook()
