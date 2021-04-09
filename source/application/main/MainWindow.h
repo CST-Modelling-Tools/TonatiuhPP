@@ -45,6 +45,7 @@ class SoBaseKit;
 class TNode;
 class QTreeWidgetItem;
 class TSceneKit;
+class SoNode;
 
 namespace Ui {
 class MainWindow;
