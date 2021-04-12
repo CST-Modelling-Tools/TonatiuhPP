@@ -28,10 +28,10 @@ LIBS += -LC:/Qt/Tools/OpenSSL/Win_x64/bin # for running
 msvc {
     CONFIG(debug, debug|release) {
         COINDIR = $$PWD/../libraries/Coin3D-qt6-msvc-debug
-        LIBS += -lCoind -lSoQtd -lUser32
+        LIBS += -lCoin4d -lSoQt1d -lUser32
     } else {
         COINDIR = $$PWD/../libraries/Coin3D-qt6-msvc-release
-        LIBS += -lCoin -lSoQt -lUser32
+        LIBS += -lCoin4 -lSoQt1 -lUser32
     }
 
     INCLUDEPATH += $$COINDIR/include
