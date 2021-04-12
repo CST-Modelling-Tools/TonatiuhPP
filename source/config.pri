@@ -26,8 +26,13 @@ gcc {
 LIBS += -LC:/Qt/Tools/OpenSSL/Win_x64/bin # for running
 
 msvc {
-    COINDIR = $$PWD/../libraries/Coin3D-qt6-msvc-release
-    LIBS += -lCoin4 -lSoQt1 -lUser32
+    CONFIG(debug, debug|release) {
+        COINDIR = $$PWD/../libraries/Coin3D-qt6-msvc-debug
+        LIBS += -lCoin4d -lSoQt1d -lUser32
+    } else {
+        COINDIR = $$PWD/../libraries/Coin3D-qt6-msvc-release
+        LIBS += -lCoin4 -lSoQt1 -lUser32
+    }
 
     INCLUDEPATH += $$COINDIR/include
     DEFINES += COIN_DLL SOQT_DLL

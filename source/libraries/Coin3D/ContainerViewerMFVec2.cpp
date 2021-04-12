@@ -1,6 +1,6 @@
 #include "ContainerViewerMFVec2.h"
 
-#include "ui_containerviewermfvec2.h"
+#include "ui_ContainerViewerMFVec2.h"
 #include "DoubleValuesDelegate.h"
 #include <QMessageBox>
 #include "libraries/math/gcf.h"

@@ -49,7 +49,7 @@ HEADERS += \
     math/3D/Transform3D.h \
     math/3D/vec3d.h \
     math/gcf.h \
-    QCustomPlot/qcustomplot.h \
+    qcustomplot/qcustomplot.h \
     sun/sunpos.h
 
 SOURCES += \
@@ -79,8 +79,8 @@ SOURCES += \
     math/3D/Transform3D.cpp \
     math/3D/vec3d.cpp \
     math/gcf.cpp \
-    QCustomPlot/qcustomplot.cpp \
-    sun\sunpos.cpp
+    qcustomplot/qcustomplot.cpp \
+    sun/sunpos.cpp
 
 FORMS += \
     Coin3D/ContainerViewerMFVec2.ui
