@@ -38,7 +38,7 @@ void SunNode3D::attach(SunPosition* sp)
     update(this, 0);
 }
 
-#include <qDebug>
+#include <QDebug>
 void SunNode3D::create()
 {
     m_transform = new SoTransform;

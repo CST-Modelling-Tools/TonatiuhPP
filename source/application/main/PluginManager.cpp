@@ -140,7 +140,7 @@ void PluginManager::findFiles(QDir dir, QStringList& files)
 {
     QString path = dir.absolutePath() + "/";
 
-    for (QString f : dir.entryList(QDir::Files))
+    for (QString f : dir.entryList(QDir::Files | QDir::NoSymLinks))
         files << path + f;
 
     for (QString d : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot))

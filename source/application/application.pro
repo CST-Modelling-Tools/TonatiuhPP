@@ -9,7 +9,11 @@ QT += gui # for QVector3D
 #QT += opengl
 QT += network # for updater
 
-LIBS += -lTonatiuh-Kernel -lTonatiuh-Libraries -lOpengl32
+LIBS += -lTonatiuh-Kernel -lTonatiuh-Libraries
+
+win32 {
+LIBS += -lopengl32
+}
 
 HEADERS += \
     calculator/CelestialWidget.h \

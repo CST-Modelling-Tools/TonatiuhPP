@@ -1,5 +1,8 @@
 #include "KeyboardHook.h"
 
+#ifdef __linux__
+    //linux code goes here
+#elif _WIN32
 
 LRESULT LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -55,3 +58,5 @@ LRESULT LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
     }
     return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
+
+#endif
