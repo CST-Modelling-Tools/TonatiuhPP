@@ -21,7 +21,7 @@
 #include <QElapsedTimer>
 #include <QPushButton>
 #include <QDebug>
-#include <QShortCut>
+#include <QShortcut>
 
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/actions/SoGetBoundingBoxAction.h>

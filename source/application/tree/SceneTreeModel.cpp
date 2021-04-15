@@ -353,7 +353,7 @@ QModelIndex SceneTreeModel::indexFromUrl(QString url) const
  *
  * \sa IndexFromNodeUrl, NodeFromIndex, PathFromIndex.
 **/
-#include <qDebug>
+#include <QDebug>
 QModelIndex SceneTreeModel::indexFromPath(const SoNodeKitPath& path) const
 {
 //    qDebug() << "asd";

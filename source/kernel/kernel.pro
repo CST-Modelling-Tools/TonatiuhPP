@@ -5,7 +5,11 @@ DEFINES += TONATIUH_KERNEL_EXPORT
 
 include(../config.pri)
 
-LIBS += -lTonatiuh-Libraries -lopengl32
+LIBS += -lTonatiuh-Libraries
+
+win32 {
+LIBS += -lopengl32
+}
 
 HEADERS += \
     TonatiuhKernel.h \

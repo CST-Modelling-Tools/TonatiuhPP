@@ -1,7 +1,7 @@
 #include "Matrix4x4.h"
 
 #include "math/gcf.h"
-
+#include <cstring>
 
 Matrix4x4::Matrix4x4()
 {
