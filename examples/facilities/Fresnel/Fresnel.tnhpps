@@ -27,6 +27,7 @@ function setMaterialTransparent(shape)
 function makeFacet(nodeM, radius)
 {
 	var t = nodeM.createTracker();
+	//t.setParameter("enabled", "FALSE");
 	var ta = t.insertArmature("one-axis");
 	ta.setParameter("primaryShift", "0 0 0.628");
 	ta.setParameter("primaryAxis", "0 1 0");

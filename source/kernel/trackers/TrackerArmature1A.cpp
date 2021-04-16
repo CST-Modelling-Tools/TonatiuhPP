@@ -62,6 +62,12 @@ void TrackerArmature1A::update(TSeparatorKit* parent, const Transform& toGlobal,
         angle = 0;
     }
     angle = m_solver->selectSolution(angle);
+    target->angles.setValue(angle/gcf::degree, 0.);
+}
+
+void TrackerArmature1A::updateShape(TSeparatorKit* parent, SoShapeKit* shape, TrackerTarget* target)
+{
+    float alpha = target->angles.getValue()[0]*gcf::degree;
 
     // rotate nodes
     TSeparatorKit* node = 0;
@@ -73,7 +79,7 @@ void TrackerArmature1A::update(TSeparatorKit* parent, const Transform& toGlobal,
     if (!node) return;
     TTransform* tPrimary = (TTransform*) node->getPart("transform", true);
     tPrimary->translation = primaryShift.getValue();
-    tPrimary->rotation.setValue(primaryAxis.getValue(), angle);
+    tPrimary->rotation.setValue(primaryAxis.getValue(), alpha);
 }
 
 void TrackerArmature1A::onModified(void* data, SoSensor*)

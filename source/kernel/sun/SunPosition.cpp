@@ -31,6 +31,7 @@ SunPosition::SunPosition()
     SO_NODE_ADD_FIELD( azimuth, (0.) );
     SO_NODE_ADD_FIELD( elevation, (90.) );
     SO_NODE_ADD_FIELD( irradiance, (1000.) );
+    SO_NODE_ADD_FIELD( trackable, (TRUE) );
 
     m_sensor = new SoNodeSensor(update, this);
     m_sensor->attach(this);

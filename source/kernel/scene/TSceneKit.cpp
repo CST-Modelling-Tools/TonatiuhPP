@@ -103,6 +103,9 @@ TSceneKit::~TSceneKit()
  */
 void TSceneKit::updateTrackers(TSeparatorKit* parent, Transform toGlobal, const vec3d& vSun)
 {
+    SunPosition* sp = (SunPosition*) getPart("world.sun.position", false);
+    if (!sp->trackable.getValue()) return;
+
     TTransform* tParent = (TTransform*) parent->getPart("transform", true);
     Transform t = toGlobal*tgf::makeTransform(tParent);
 

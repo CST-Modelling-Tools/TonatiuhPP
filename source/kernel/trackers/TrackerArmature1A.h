@@ -19,6 +19,8 @@ public:
     void update(TSeparatorKit* parent, const Transform& toGlobal,
                 const vec3d& vSun, TrackerTarget* target);
 
+    void updateShape(TSeparatorKit* parent, SoShapeKit* shape, TrackerTarget* target);
+
     // all vectors should be for zero rotation
     SoSFVec3f primaryShift;
     SoSFVec3f primaryAxis;

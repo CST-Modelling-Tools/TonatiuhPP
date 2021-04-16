@@ -3,6 +3,7 @@
 
 #include <Inventor/nodes/SoSubNode.h>
 #include <Inventor/fields/SoSFDouble.h>
+#include <Inventor/fields/SoSFBool.h>
 #include "libraries/math/3D/vec3d.h"
 
 class SoNodeSensor;
@@ -22,6 +23,7 @@ public:
     SoSFDouble azimuth;  // in degrees
     SoSFDouble elevation;
     SoSFDouble irradiance;
+    SoSFBool trackable;
 
     vec3d getSunVector();
 
