@@ -2,7 +2,7 @@
 
 #include <QDialog>
 
-#include "ui_networkconnectionsdialog.h"
+#include "ui_NetworkConnectionsDialog.h"
 
 class NetworkConnectionsDialog: public QDialog, private Ui::NetworkConnectionsDialog
 {

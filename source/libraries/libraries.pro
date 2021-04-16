@@ -49,7 +49,7 @@ HEADERS += \
     math/3D/Transform3D.h \
     math/3D/vec3d.h \
     math/gcf.h \
-    qcustomplot/qcustomplot.h \
+    QCustomPlot/qcustomplot.h \
     sun/sunpos.h
 
 SOURCES += \
@@ -79,7 +79,7 @@ SOURCES += \
     math/3D/Transform3D.cpp \
     math/3D/vec3d.cpp \
     math/gcf.cpp \
-    qcustomplot/qcustomplot.cpp \
+    QCustomPlot/qcustomplot.cpp \
     sun/sunpos.cpp
 
 FORMS += \

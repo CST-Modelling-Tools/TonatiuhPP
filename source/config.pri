@@ -20,6 +20,11 @@ gcc {
 
     QMAKE_CXXFLAGS_RELEASE -= -O2
     QMAKE_CXXFLAGS_RELEASE += -O3 -march=skylake # native?
+
+    unix {
+        LIBS += -L/usr/local/lib
+    }
+
 }
 
 # OpenSSL libssl-1_1-x64.dll libcrypto-1_1-x64.dll

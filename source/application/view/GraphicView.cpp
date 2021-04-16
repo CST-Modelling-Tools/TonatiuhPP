@@ -326,10 +326,14 @@ void GraphicView::mouseMoveEvent(QMouseEvent* event)
     }
     else if (m_modifiersPressed & Qt::ShiftModifier)
     {
+    #ifdef __linux__
+       m_camera->movePanAnchor(m_viewer, event->pos());
+    #elif _WIN32
        if (GetKeyState(VK_LSHIFT) < 0) // left pressed
            m_camera->movePanAnchor(m_viewer, event->pos());
        else
            m_camera->moveShiftAnchor(m_viewer, event->pos());
+    #endif
     }
 
     //    m_viewer->render();
@@ -884,9 +888,13 @@ void GraphicView::setCameraView(double azimuth, double elevation, bool shift, bo
 
 void GraphicView::setCameraViewTemp(double azimuth, double elevation)
 {
+#ifdef __linux__
+
+#elif _WIN32
     bool shift = GetKeyState(VK_SHIFT) < 0;
     bool alt = GetKeyState(VK_MENU) < 0;
     setCameraView(azimuth, elevation, shift, alt);
+#endif
 }
 
 void GraphicView::on_actionViewGroup_triggered(QAction* action)
