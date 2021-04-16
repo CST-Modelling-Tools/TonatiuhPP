@@ -8,7 +8,7 @@
 #include "libraries/math/gcf.h"
 
 
-SbBool sosfrotation_read_value(SoInput* in, SbRotation & r)
+SbBool sosfrotation_read_valueU(SoInput* in, SbRotation & r)
 {
   float f[4];
   for (int i = 0; i < 4; i++) {
@@ -26,7 +26,7 @@ SbBool sosfrotation_read_value(SoInput* in, SbRotation & r)
   return TRUE;
 }
 
-void sosfrotation_write_value(SoOutput* out, const SbRotation & r)
+void sosfrotation_write_valueU(SoOutput* out, const SbRotation & r)
 {
   SbVec3f axis;
   float angle;
@@ -65,14 +65,14 @@ void TSFRotation::initClass(void)
 SbBool TSFRotation::readValue(SoInput* in)
 {
   SbRotation r;
-  if (!sosfrotation_read_value(in, r)) return FALSE;
+  if (!sosfrotation_read_valueU(in, r)) return FALSE;
   setValue(r);
   return TRUE;
 }
 
 void TSFRotation::writeValue(SoOutput* out) const
 {
-  sosfrotation_write_value(out, this->getValue());
+  sosfrotation_write_valueU(out, this->getValue());
 }
 
 
