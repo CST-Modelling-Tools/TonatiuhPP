@@ -141,7 +141,7 @@ void UpdateDialog::on_downloadButton_pressed()
     );
 }
 
-void UpdateDialog::updateProgress(qint64 bytesReceived, qint64 bytesTotal)
+void UpdateDialog::updateProgress(qint64 bytesReceived, qint64 /*bytesTotal*/)
 {
 //    qDebug() << bytesReceived << " " << bytesTotal;
 //    ui->progressBar->setRange(0, m_size);

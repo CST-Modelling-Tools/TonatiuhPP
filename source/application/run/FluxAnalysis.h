@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QObject>
 #include <QString>
 #include "libraries/math/2D/Matrix2D.h"
 #include "libraries/math/2D/Box2D.h"
@@ -11,8 +12,9 @@ class InstanceNode;
 class Random;
 class PhotonsBuffer;
 
-class FluxAnalysis
+class FluxAnalysis: public QObject
 {
+Q_OBJECT
 
 public:
     FluxAnalysis(TSceneKit* sceneKit, SceneTreeModel* sceneModel, int sunWidthDivisions, int sunHeightDivisions, Random* randomDeviate);
@@ -34,6 +36,13 @@ public:
     double powerTotal() {return m_powerTotal;}
 
     PhotonsBuffer* getPhotonsBuffer() {return m_photons;}
+
+signals:
+    stopSignal();
+
+private slots:
+    void processEvents();
+    void stop();
 
 private:
     void fillBins();

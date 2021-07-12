@@ -313,6 +313,8 @@ void ScriptWindow::closeEvent(QCloseEvent* event)
 void ScriptWindow::writeMessage(QString message)
 {
     ui->logWidget->appendPlainText(message);
+//    ui->logWidget->repaint();
+    QCoreApplication::processEvents();
 }
 
 void ScriptWindow::abortScript(QString /*error*/)
@@ -352,8 +354,12 @@ QJSValue ScriptWindow::print(QString msg)
     QPlainTextEdit* console = (QPlainTextEdit*) object.toQObject();
     if (!console) return false;
     console->appendPlainText(msg);
+//    console->repaint();
+//    repaint();
+    QCoreApplication::processEvents();
     return true;
 }
+
 
 QJSValue ScriptWindow::printTimed(QString msg)
 {
@@ -365,7 +371,9 @@ QJSValue ScriptWindow::printTimed(QString msg)
     QPlainTextEdit* console = (QPlainTextEdit*) object.toQObject();
     if (!console) return false;
     console->appendPlainText(timeString() + msg);
-    console->repaint(); // force refresh
+//    console->repaint();
+//    repaint(); // force refresh
+    QCoreApplication::processEvents();
     return true;
 }
 

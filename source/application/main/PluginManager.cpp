@@ -272,6 +272,7 @@ void PluginManager::sort()
     sortFactories(exportNames, m_exportFactories);
 
     QStringList randomNames = {
+//        "Mersenne-Twister(STL)",
         "Mersenne-Twister"
     };
     sortFactories(randomNames, m_randomFactories);

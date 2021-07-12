@@ -169,7 +169,7 @@ void FluxAnalysisDialog::UpdateAnalysis()
     vec2i divs(ui->surfaceXSpin->value(), ui->surfaceYSpin->value());
     m_fluxAnalysis->setBins(divs.x, divs.y);
 
-    const Matrix2D<int>& photonCounts = m_fluxAnalysis->getBinsPhotons();
+//    const Matrix2D<int>& photonCounts = m_fluxAnalysis->getBinsPhotons();
     const Matrix2D<double>& fluxCounts = m_fluxAnalysis->getBinsFlux();
 
     ClearAnalysis();
@@ -382,7 +382,7 @@ void FluxAnalysisDialog::ClearAnalysis()
  * Updates the statistics
  */
 void FluxAnalysisDialog::UpdateStatistics(double powerTotal, double fluxMin, double fluxAverage, double fluxMax,
-                                          double fluxMaxU, double fluxMaxV, double error, double uniformity, double gravityX, double gravityY)
+                                          double fluxMaxU, double fluxMaxV, double /*error*/, double /*uniformity*/, double /*gravityX*/, double /*gravityY*/)
 {
     ui->powerTotal->setText(QString::number(powerTotal));
     ui->fluxMin->setText(QString::number(fluxMin));

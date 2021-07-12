@@ -30,9 +30,9 @@ public:
     RayTracer(InstanceNode* instanceRoot,
               InstanceNode* instanceSun,
               SunAperture* sunAperture,
-              SunShape* const sunShape,
+              SunShape* sunShape,
               AirTransmission* air,
-              Random& rand,
+              Random* rand,
               QMutex* mutexRand,
               PhotonsBuffer* photonBuffer,
               QMutex* mutexPhotons,
@@ -43,19 +43,19 @@ public:
     void operator()(ulong nRays);
 
 private:
-    bool NewPrimitiveRay(Ray* ray, RandomParallel& rand);
+    bool NewPrimitiveRay(Ray* ray, Random& rand);
 
     InstanceNode* m_instanceLayout;
     InstanceNode* m_instanceSun;
     SunAperture* m_sunAperture;
-    const SunShape* m_sunShape;
+    SunShape* m_sunShape;
     Transform m_sunTransform;
     AirTransmission* m_air;
     Random* m_rand;
     QMutex* m_mutexRand;
     PhotonsBuffer* m_photonBuffer;
     QMutex* m_mutexPhotonsBuffer;
-    QVector<InstanceNode*> m_exportSuraceList;
+    QVector<InstanceNode*> m_exportSurfaceList;
 
     const std::vector< QPair<int, int> >&  m_sunCells;
 };

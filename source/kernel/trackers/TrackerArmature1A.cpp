@@ -45,7 +45,7 @@ TrackerArmature1A::~TrackerArmature1A()
     delete m_solver;
 }
 
-void TrackerArmature1A::update(TSeparatorKit* parent, const Transform& toGlobal,
+void TrackerArmature1A::update(TSeparatorKit* /*parent*/, const Transform& toGlobal,
                                const vec3d& vSun, TrackerTarget* target)
 {
     Transform toLocal = toGlobal.inversed();
@@ -65,7 +65,7 @@ void TrackerArmature1A::update(TSeparatorKit* parent, const Transform& toGlobal,
     target->angles.setValue(angle/gcf::degree, 0.);
 }
 
-void TrackerArmature1A::updateShape(TSeparatorKit* parent, SoShapeKit* shape, TrackerTarget* target)
+void TrackerArmature1A::updateShape(TSeparatorKit* parent, SoShapeKit* /*shape*/, TrackerTarget* target)
 {
     float alpha = target->angles.getValue()[0]*gcf::degree;
 

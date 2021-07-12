@@ -20,7 +20,10 @@
 //    ~ConstrainedViewer(){}
 //};
 
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
+
 #include "KeyboardHook.h"
 //    HHOOK m_hook;
 //void MainWindow::setHook()
@@ -502,7 +505,7 @@ void GraphicView::resizeEvent(QResizeEvent* event)
     m_camera->setWindowSize(size);
 }
 
-bool GraphicView::eventFilter(QObject* obj, QEvent* event)
+bool GraphicView::eventFilter(QObject* /*obj*/, QEvent* event)
 {
     if (event->type() == QEvent::MouseButtonPress ||
         event->type() == QEvent::MouseButtonRelease ||
@@ -929,7 +932,7 @@ void GraphicView::onShowPhotons(bool on)
 
 void GraphicView::hideMenu()
 {
-    QWindow * hw  = m_viewer->getGLWidget()->property("SoQtGLArea").value<QWindow*>();
+//    QWindow * hw  = m_viewer->getGLWidget()->property("SoQtGLArea").value<QWindow*>();
 //    hw->requestActivate();
 }
 

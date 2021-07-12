@@ -1886,7 +1886,7 @@ void MainWindow::Run()
 
     photonMap = QtConcurrent::map(raysPerThread, RayTracer(instanceLayout,
                                                            &instanceSun, sunAperture, sunShape, airTemp,
-                                                           *m_rand,
+                                                           m_rand,
                                                            &mutex, m_photonsBuffer, &mutexPhotonMap,
                                                            exportSurfaceList) );
     watcher.setFuture(photonMap);

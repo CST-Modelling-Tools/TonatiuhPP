@@ -13,9 +13,9 @@
 RayTracer::RayTracer(InstanceNode* instanceRoot,
     InstanceNode* instanceSun,
     SunAperture* sunAperture,
-    SunShape* const sunShape,
+    SunShape* sunShape,
     AirTransmission* air,
-    Random& rand,
+    Random* rand,
     QMutex* mutexRand,
     PhotonsBuffer* photonBuffer,
     QMutex* mutexPhotons,
@@ -27,11 +27,11 @@ RayTracer::RayTracer(InstanceNode* instanceRoot,
     m_sunShape(sunShape),
     m_sunTransform(instanceSun->getTransform()),
     m_air(air),
-    m_rand(&rand),
+    m_rand(rand),
     m_mutexRand(mutexRand),
     m_photonBuffer(photonBuffer),
     m_mutexPhotonsBuffer(mutexPhotons),
-    m_exportSuraceList(exportSuraceList),
+    m_exportSurfaceList(exportSuraceList),
     m_sunCells(sunAperture->getCells())
 {   
 
@@ -40,8 +40,8 @@ RayTracer::RayTracer(InstanceNode* instanceRoot,
 void RayTracer::operator()(ulong nRays)
 {
     if (m_sunCells.empty()) return;
-    bool bExportAll = m_exportSuraceList.empty();
-    bool bExportLight = bExportAll ? true : m_exportSuraceList.contains(m_instanceSun);
+    bool bExportAll = m_exportSurfaceList.empty();
+    bool bExportLight = bExportAll ? true : m_exportSurfaceList.contains(m_instanceSun);
 
     std::vector<Photon> photons;
     photons.reserve(2*nRays);
@@ -80,7 +80,7 @@ void RayTracer::operator()(ulong nRays)
             // save intersection
             if (!isReflected) break;
             ++rayLength;
-            if (bExportAll || m_exportSuraceList.contains(intersectedSurface))
+            if (bExportAll || m_exportSurfaceList.contains(intersectedSurface))
                 photons.push_back(Photon(rayLength, ray.point(ray.tMax), intersectedSurface, isFront, true));
             ray = rayReflected;
         }
@@ -88,7 +88,7 @@ void RayTracer::operator()(ulong nRays)
         // Part 3: last photon point (absorption in air)
         // skip rays without intersections
         if (rayLength == 0 && ray.tMax == gcf::infinity) continue;
-        if (!bExportAll && !m_exportSuraceList.contains(intersectedSurface)) continue;
+        if (!bExportAll && !m_exportSurfaceList.contains(intersectedSurface)) continue;
         // limit length of other rays
         if (ray.tMax == gcf::infinity) {// always true?
             ray.tMax = 1.;
@@ -102,7 +102,7 @@ void RayTracer::operator()(ulong nRays)
     m_mutexPhotonsBuffer->unlock();
 }
 
-bool RayTracer::NewPrimitiveRay(Ray* ray, RandomParallel& rand)
+bool RayTracer::NewPrimitiveRay(Ray* ray, Random& rand)
 {
     int index = int(rand.RandomDouble()*m_sunCells.size());
     QPair<int, int> cell = m_sunCells[index];

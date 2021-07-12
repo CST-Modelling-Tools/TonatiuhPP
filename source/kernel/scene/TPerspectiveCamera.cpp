@@ -107,7 +107,7 @@ vec3d TPerspectiveCamera::findRayGlobal0()
     return rd0;
 }
 
-vec3d TPerspectiveCamera::findRayGlobal(SoQtExaminerViewer* viewer, QPointF pos)
+vec3d TPerspectiveCamera::findRayGlobal(SoQtExaminerViewer* /*viewer*/, QPointF pos)
 {
 //    SbVec2s vs = viewer->getViewportRegion().getViewportSizePixels();
     double x = 2.*pos.x()/double(m_size.width()) - 1;
@@ -125,7 +125,7 @@ vec3d TPerspectiveCamera::findRayGlobal(SoQtExaminerViewer* viewer, QPointF pos)
     return rd;
 }
 
-vec3d TPerspectiveCamera::findRayLocal(SoQtExaminerViewer* viewer, QPoint pos)
+vec3d TPerspectiveCamera::findRayLocal(SoQtExaminerViewer* /*viewer*/, QPoint pos)
 {
 //    SbVec2s vs = viewer->getViewportRegion().getViewportSizePixels();
     double x = pos.x()/double(m_size.width())*2 - 1;

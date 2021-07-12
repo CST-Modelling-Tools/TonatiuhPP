@@ -32,7 +32,7 @@
 #include "kernel/profiles/ProfileRT.h"
 #include "libraries/math/2D/Matrix2D.h"
 #include "kernel/photons/Photon.h"
-
+#include <QCoreApplication>
 
 FluxAnalysis::FluxAnalysis(TSceneKit* sceneKit,
     SceneTreeModel* sceneModel,
@@ -40,6 +40,7 @@ FluxAnalysis::FluxAnalysis(TSceneKit* sceneKit,
     int sunHeightDivisions,
     Random* randomDeviate
 ):
+    QObject(0),
     m_sceneKit(sceneKit),
     m_sceneModel(sceneModel),
     m_sunDivs(sunWidthDivisions, sunHeightDivisions),
@@ -58,6 +59,7 @@ FluxAnalysis::FluxAnalysis(TSceneKit* sceneKit,
 
 FluxAnalysis::~FluxAnalysis()
 {
+    stop();
     clear();
 }
 
@@ -84,7 +86,7 @@ QString FluxAnalysis::getShapeType(QString nodeURL)
 /*
  * Fun flux analysis
  */
-void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool photonBufferAppend, int uDivs, int vDivs, bool silent)
+void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool photonBufferAppend, int uDivs, int vDivs, bool /*silent*/)
 {
     m_surfaceURL = nodeURL;
     m_surfaceSide = surfaceSide;
@@ -166,10 +168,13 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
 
     // Create a QFutureWatcher and connect signals and slots.
     QFutureWatcher<void> watcher;
-    QObject::connect(&watcher, SIGNAL(finished()), &dialog, SLOT(reset()));
+//    QObject::connect(&watcher, SIGNAL(finished()), &dialog, SLOT(reset()));
     QObject::connect(&dialog, SIGNAL(canceled()), &watcher, SLOT(cancel()));
-    QObject::connect(&watcher, SIGNAL(progressRangeChanged(int,int)), &dialog, SLOT(setRange(int,int)));
-    QObject::connect(&watcher, SIGNAL(progressValueChanged(int)), &dialog, SLOT(setValue(int)));
+//    QObject::connect(&watcher, SIGNAL(progressRangeChanged(int,int)), &dialog, SLOT(setRange(int,int)));
+//    QObject::connect(&watcher, SIGNAL(progressValueChanged(int)), &dialog, SLOT(setValue(int)));
+
+    QObject::connect(&watcher, SIGNAL(progressValueChanged(int)), this, SLOT(processEvents()));
+    QObject::connect(this, SIGNAL(stopSignal()), &watcher, SLOT(cancel()));
 
     QMutex mutex;
     QMutex mutexPhotonMap;
@@ -181,14 +186,14 @@ void FluxAnalysis::run(QString nodeURL, QString surfaceSide, ulong nRays, bool p
     photonMap = QtConcurrent::map(raysPerThread, RayTracer(
         m_instanceLayout,
         &instanceSun, sunAperture, sunShape, airTemp,
-        *m_rand, &mutex, m_photons, &mutexPhotonMap, exportSuraceList
+        m_rand, &mutex, m_photons, &mutexPhotonMap, exportSuraceList
     ));
 
     watcher.setFuture(photonMap);
 
     // Display the dialog and start the event loop.
 //    if (!silent) {
-        dialog.exec();
+//        dialog.exec();
 //    }
 
 //    dialog.setModal(false);
@@ -267,6 +272,16 @@ void FluxAnalysis::clear()
     m_tracedRays = 0;
     m_powerPhoton = 0.;
     m_powerTotal = 0.;
+}
+
+void FluxAnalysis::processEvents()
+{
+    QCoreApplication::processEvents();
+}
+
+void FluxAnalysis::stop()
+{
+    emit stopSignal();
 }
 
 /*

@@ -60,7 +60,7 @@ function makeFacet(nodeM, radius)
 		nodeF.setParameter("translation", "0 0 " + (radius + 0.045));
 		nodeF.setParameter("rotation", "1 0 0 -90");
 		nodeF.setParameter("scale", "" + radius + " " + radius + " 1");
-		var q = s.insertSurface("Cylinpatder");
+		var q = s.insertSurface("Cylinder");
 		var phi = (0.5*0.32/radius); 
 		var p = s.insertProfile("Rectangular");
 		p.setParameter("vMin", 0);
