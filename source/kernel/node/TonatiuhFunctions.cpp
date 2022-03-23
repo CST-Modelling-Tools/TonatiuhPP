@@ -57,7 +57,7 @@ SbMatrix tgf::makeSbMatrix(TTransform* t)
         t->gScaleOrientation,
         t->gCenter
     );
-    return ans;
+    return ans.getValue();
 }
 
 SbMatrix tgf::makeSbMatrix(SoTransform* t)
@@ -70,7 +70,7 @@ SbMatrix tgf::makeSbMatrix(SoTransform* t)
         t->scaleOrientation.getValue(),
         t->center.getValue()
     );
-    return ans;
+    return ans.getValue();
 }
 
 vec2d tgf::makeVector2D(const QPointF& p)

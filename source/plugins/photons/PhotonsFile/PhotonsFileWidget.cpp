@@ -55,8 +55,8 @@ void PhotonsFileWidget::selectDirectory()
     QDir dir(dirName);
     if (!dir.exists())
 	{
-        QMessageBox::information(this, "Tonatiuh", "Selected directory is not valid", 1);
-		return;
+        QMessageBox::information(this, "Tonatiuh", "Selected directory is not valid");
+        return;
 	}
 
     settings.setValue("dirProjects", dirName);

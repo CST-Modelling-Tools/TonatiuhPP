@@ -216,9 +216,9 @@ void TArrayKit::GLRender(SoGLRenderAction* action)
 //    int major, minor;
 //        SoGLCacheContextElement::getOpenGLVersion(state, major, minor);
 //        qDebug() << "opengl "<< major << minor;
-    SbMatrix matrixModel = SoModelMatrixElement::get(state);
-    SbMatrix matrixView = SoViewingMatrixElement::get(state);
-    SbMatrix matrixProjection = SoProjectionMatrixElement::get(state);
+    SbMatrix matrixModel = SoModelMatrixElement::get(state).getValue();
+    SbMatrix matrixView = SoViewingMatrixElement::get(state).getValue();
+    SbMatrix matrixProjection = SoProjectionMatrixElement::get(state).getValue();
 
     if (m_vs_matrixViewModel) {
         m_vs_matrixViewModel->value = matrixModel*matrixView; // reversed order

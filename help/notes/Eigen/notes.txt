@@ -5,6 +5,11 @@ https://eigen.tuxfamily.org/dox/group__TutorialMatrixArithmetic.html
 https://eigen.tuxfamily.org/dox/group__QuickRefPage.html
 
 
+Download
+--------
+https://eigen.tuxfamily.org/index.php?title=Main_Page
+
+
 Debug helpers
 
 Qt Creator

@@ -13,6 +13,11 @@ FileDownloader::FileDownloader(QUrl url, QByteArray data, QObject* parent):
     QNetworkRequest request(url);
 //    qDebug() << "size head " << request.header(QNetworkRequest::ContentLengthHeader).toUInt();
 
+    // avoid expired ssl
+//    QSslConfiguration conf = request.sslConfiguration();
+//    conf.setPeerVerifyMode(QSslSocket::VerifyNone);
+//    request.setSslConfiguration(conf);
+
 // attempt to get file sizeB
 //    QNetworkReply* reply = m_manager.head(request);
 //    qDebug() << "size head " << reply->header(QNetworkRequest::ContentLengthHeader).toUInt();

@@ -1,18 +1,18 @@
 # Tonatiuh
-VERSION = 0.1.8.12
+VERSION = 0.1.8.15
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 INCLUDEPATH += $$PWD
 LIBS += -L..
 
 # Coin3D
 gcc {
-    CONFIG(debug, debug|release) {
-        COINDIR = $$PWD/../libraries/Coin3D-qt6-mingw-debug
-        LIBS += -lCoind -lSoQtd
-    } else {
-        COINDIR = $$PWD/../libraries/Coin3D-qt6-mingw-release
+#    CONFIG(debug, debug|release) {
+#        COINDIR = $$PWD/../libraries/Coin3D-qt6.2-mingw-debug
+#        LIBS += -lCoind -lSoQtd
+#    } else {
+        COINDIR = $$PWD/../libraries/Coin3D-qt6.2-mingw-release
         LIBS += -lCoin -lSoQt
-    }
+#    }
     INCLUDEPATH += $$COINDIR/include
     DEFINES += COIN_NOT_DLL SOQT_NOT_DLL
     LIBS += -L$$COINDIR/lib # for linking
@@ -32,10 +32,10 @@ LIBS += -LC:/Qt/Tools/OpenSSL/Win_x64/bin # for running
 
 msvc {
     CONFIG(debug, debug|release) {
-        COINDIR = $$PWD/../libraries/Coin3D-qt6-msvc-debug
+        COINDIR = $$PWD/../libraries/Coin3D-qt6.2-msvc-debug
         LIBS += -lCoin4d -lSoQt1d -lUser32
     } else {
-        COINDIR = $$PWD/../libraries/Coin3D-qt6-msvc-release
+        COINDIR = $$PWD/../libraries/Coin3D-qt6.2-msvc-release
         LIBS += -lCoin4 -lSoQt1 -lUser32
     }
 

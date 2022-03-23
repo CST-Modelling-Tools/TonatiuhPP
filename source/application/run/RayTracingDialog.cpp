@@ -120,7 +120,7 @@ void RayTracingDialog::surfaceAdd()
     if (surface.isEmpty()) return;
 
     if (m_surfaces.contains(surface)) {
-        QMessageBox::information(this, "Tonatiuh", "Selected node has already been added", 1);
+        QMessageBox::information(this, "Tonatiuh", "Selected node has already been added");
         return;
     }
 

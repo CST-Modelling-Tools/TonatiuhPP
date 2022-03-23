@@ -215,12 +215,14 @@ TSceneKit* MainWindow::getSceneKit()
 void MainWindow::openFileScript(QString fileName)
 {
     // refactor
-    QStringList searchPaths = QDir::searchPaths("project:");
+    QStringList searchPaths = QDir::searchPaths("project");
 
     QFileInfo info(fileName);
-    if (info.exists())
+    if (info.exists()) {
         searchPaths << info.absolutePath();
-
+//        searchPaths << QDir::currentPath();
+//        searchPaths << QCoreApplication::applicationDirPath();
+    }
     QDir::setSearchPaths("project", searchPaths);
 
     ScriptWindow* window = new ScriptWindow(this, 0);

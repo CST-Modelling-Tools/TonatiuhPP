@@ -777,7 +777,7 @@ void GraphicView::onViewSelected()
     SbViewportRegion vpr;
     SoGetMatrixAction actionMatrix(vpr);
     actionMatrix.apply(path);
-    SbMatrix matrix = actionMatrix.getMatrix();
+    SbMatrix matrix = actionMatrix.getMatrix().getValue();
 
     SbVec3f vL(0., 0., 0.);
     SbVec3f vG;

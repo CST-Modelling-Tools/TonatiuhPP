@@ -12,7 +12,7 @@ gcc {
     QMAKE_CXXFLAGS += -Wno-attributes # for Eigen
 }
 
-INCLUDEPATH += $$PWD/../../libraries/eigen-3.3.9
+INCLUDEPATH += $$PWD/../../libraries/eigen-3.4.0
 
 HEADERS += \
     TonatiuhLibraries.h \

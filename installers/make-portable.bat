@@ -6,10 +6,10 @@
 RMDIR portable /s /q
 
 SET PROJECT=%CD%\..
-SET BUILD=%PROJECT%\build-Tonatiuh-Desktop_Qt_6_0_1_MinGW_64_bit-Release
+SET BUILD=%PROJECT%\build-Tonatiuh-Desktop_Qt_6_2_4_MinGW_64_bit-Release
 SET PORTABLE=%PROJECT%\installers\portable
-SET COIN=%PROJECT%\libraries\Coin3D-qt6-mingw-release\bin
-SET QT=C:\Qt\6.0.1\mingw81_64
+SET COIN=%PROJECT%\libraries\Coin3D-qt6.2-mingw-release\bin
+SET QT=C:\Qt\6.2.4\mingw_64
 
 MD %PORTABLE%\bin
 COPY %BUILD%\*.exe %PORTABLE%\bin

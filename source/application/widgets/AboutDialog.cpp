@@ -4,7 +4,7 @@
 #include <QSettings>
 #include <QDate>
 #include <QIcon>
-
+#include <QDir>
 
 AboutDialog::AboutDialog(QWidget* parent):
     QDialog(parent),
@@ -26,6 +26,7 @@ AboutDialog::AboutDialog(QWidget* parent):
     setWindowFlag(Qt::MSWindowsFixedSizeDialogHint, true);
 
     updateLabel();
+    qDebug() << QDir::searchPaths("project");
 }
 
 AboutDialog::~AboutDialog()

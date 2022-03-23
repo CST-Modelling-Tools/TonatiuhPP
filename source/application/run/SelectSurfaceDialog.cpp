@@ -71,7 +71,7 @@ void SelectSurfaceDialog::accept()
         InstanceNode* instance = m_model->getInstance(currentIndex);
         if (!instance->getNode()->getTypeId().isDerivedFrom(TShapeKit::getClassTypeId() ) )
         {
-            QMessageBox::information(this, "Tonatiuh", tr("Selected node is not surface node"), 1);
+            QMessageBox::information(this, "Tonatiuh", "Selected node is not surface node");
             return;
         }
     }

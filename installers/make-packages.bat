@@ -6,11 +6,11 @@
 RMDIR packages /s /q 
 
 SET PROJECT=%CD%\..
-SET BUILD=%PROJECT%\build-Tonatiuh-Desktop_Qt_6_0_1_MinGW_64_bit-Release
+SET BUILD=%PROJECT%\build-Tonatiuh-Desktop_Qt_6_1_2_MinGW_64_bit-Release
 SET PACKAGES_IN=%PROJECT%\source\installer\packages
 SET PACKAGES_OUT=%PROJECT%\installers\packages
 SET COIN=%PROJECT%\libraries\Coin3D-qt6-mingw-release\bin
-SET QT=C:\Qt\6.0.1\mingw81_64
+SET QT=C:\Qt\6.1.2\mingw81_64
 
 SET PACKAGE=main
 SET PACKAGE_IN=%PACKAGES_IN%\%PACKAGE%

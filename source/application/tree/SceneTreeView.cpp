@@ -62,7 +62,7 @@ void SceneTreeView::dragMoveEvent(QDragMoveEvent* event)
 
 void SceneTreeView::dropEvent(QDropEvent* event)
 {
-    QModelIndex indexParent = indexAt(event->pos());
+    QModelIndex indexParent = indexAt(event->position().toPoint());
     if (!indexParent.isValid()) return;
     SceneTreeModel* modelScene = (SceneTreeModel*) model();
     SoNode* nodeParent = modelScene->getInstance(indexParent)->getNode();
@@ -85,7 +85,7 @@ void SceneTreeView::dropEvent(QDropEvent* event)
     }
 
     bool isMove = true;
-    if (event->keyboardModifiers() == Qt::ControlModifier)
+    if (event->modifiers() == Qt::ControlModifier)
         isMove = false;
     emit dragAndDrop(indexParent, index, isMove);
 
