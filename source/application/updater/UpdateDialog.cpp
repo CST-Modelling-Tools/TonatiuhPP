@@ -62,6 +62,7 @@ void UpdateDialog::on_checkButton_pressed()
 
 void UpdateDialog::onUpdates()
 {
+     // if TLS failed, check version of SSL (prints compiled version and in use)
 //    qDebug() << QSslSocket::supportsSsl() << QSslSocket::sslLibraryBuildVersionString() << QSslSocket::sslLibraryVersionString();
 
     if (!m_downloaderU->status().isEmpty())

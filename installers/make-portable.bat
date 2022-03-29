@@ -39,6 +39,8 @@ COPY %QT%\plugins\styles\qwindowsvistastyle.dll %PORTABLE%\bin\styles\qwindowsvi
 MD %PORTABLE%\bin\imageformats
 COPY %QT%\plugins\imageformats\qico.dll %PORTABLE%\bin\imageformats\qico.dll
 COPY %QT%\plugins\imageformats\qjpeg.dll %PORTABLE%\bin\imageformats\qjpeg.dll
+MD %PORTABLE%\bin\tls
+COPY %QT%\plugins\tls\qopensslbackend.dll %PORTABLE%\bin\tls\qopensslbackend.dll
 
 MD %PORTABLE%\resources
 @REM copy directory (with empty subdirectories)
