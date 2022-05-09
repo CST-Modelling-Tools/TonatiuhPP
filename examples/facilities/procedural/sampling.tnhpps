@@ -1,0 +1,39 @@
+// Calculation of annual efficiency
+var mirrorsArea = 2.*2.*500; // total area of mirrors
+var receiverName = "//Node/Script/Tower/Receiver/Shape"; // receiver object
+var rays = 1e5; // number of rays
+var fileName = "sampling.csv"; // sampling points
+
+var scene = tn.getScene();
+var sp = scene.getPart("world.sun.position")
+var irradiance = 1000.;
+sp.setParameter("irradiance", irradiance);
+
+var file = new DataObject;
+file.read(fileName);
+var sum = 0.;
+var sumMax = 0.;
+print("");
+var line = "azimuth [deg], elevation[deg], efficiency";
+print(line);
+
+var nMax = file.rows();
+for (var n = 1; n < nMax; n++) {
+    var azimuth = parseFloat(file.array(n)[1]);
+    var elevation = parseFloat(file.array(n)[2]);
+    var weight = parseFloat(file.array(n)[3]);
+    sp.setParameter("azimuth", azimuth);
+    sp.setParameter("elevation", elevation);
+
+    var f = tn.FindInterception(receiverName, rays);
+    var fMax = mirrorsArea*irradiance;
+    var eta = f/fMax;
+    sum += weight*eta;
+    sumMax += weight;
+    var line = "" + azimuth + ", " + elevation + ", " + eta;
+    print(line);
+}
+
+print("");
+eta = sum/sumMax;
+print("annual efficiency: " + eta);
