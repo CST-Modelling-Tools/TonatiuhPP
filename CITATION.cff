@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Grigoriev"
+  given-names: "Victor"
+  orcid: "https://orcid.org/0000-0003-2836-2372"
+- family-names: "Blanco"
+  given-names: "Manuel"
+  orcid: "https://orcid.org/0000-0003-2800-9886"
+- family-names: "Milidonis"
+  given-names: "Kypros"
+  orcid: "https://orcid.org/0000-0001-7536-8174"
+title: "Tonatiuh++ Solar Raytracer"
+version: 0.1.8.12z
+doi: 10.5281/zenodo.5116609
+date-released: 2021-07-20
+url: "https://github.com/CST-Modelling-Tools/TonatiuhPP"
