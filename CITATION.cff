@@ -1,17 +1,20 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+title: Tonatiuh++ Solar Raytracer
+message: 'If you use this software, please cite it as below.'
+type: software
 authors:
-- family-names: "Grigoriev"
-  given-names: "Victor"
-  orcid: "https://orcid.org/0000-0003-2836-2372"
-- family-names: "Blanco"
-  given-names: "Manuel"
-  orcid: "https://orcid.org/0000-0003-2800-9886"
-- family-names: "Milidonis"
-  given-names: "Kypros"
-  orcid: "https://orcid.org/0000-0001-7536-8174"
-title: "Tonatiuh++ Solar Raytracer"
-version: 0.1.8.12z
-doi: 10.5281/zenodo.5116609
-date-released: 2021-07-20
-url: "https://github.com/CST-Modelling-Tools/TonatiuhPP"
+  - given-names: Victor
+    family-names: Grigoriev
+    email: v.grigoriev@cyi.ac.cy
+    orcid: 'https://orcid.org/0000-0003-2836-2372'
+  - given-names: Manuel
+    family-names: Blanco
+    email: m.blanco@cyi.ac.cy
+    orcid: 'https://orcid.org/0000-0003-2800-9886'
+  - given-names: Kypros
+    family-names: Milidonis
+    email: k.milidonis@cyi.ac.cy
+    orcid: 'https://orcid.org/0000-0001-7536-8174'
